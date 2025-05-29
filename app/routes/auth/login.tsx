@@ -1,5 +1,3 @@
-"use client";
-
 import { LoginForm } from "~/components/auth/login-form";
 import { useAuth } from "~/context/AuthContext";
 import { Navigate } from "react-router";

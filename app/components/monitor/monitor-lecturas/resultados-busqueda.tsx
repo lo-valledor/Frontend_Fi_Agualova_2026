@@ -193,7 +193,9 @@ const StatusIndicator = ({
 
   return (
     <div
-      className={`rounded-full ${status.bgColor} ${sizeClasses[size ?? "md"]} flex-shrink-0`}
+      className={`rounded-full ${status.bgColor} ${
+        sizeClasses[size ?? "md"]
+      } flex-shrink-0`}
     />
   );
 };
@@ -330,7 +332,6 @@ export default function ResultadosBusqueda({
   const [expandedFilas, setExpandedFilas] = useState<Record<string, boolean>>(
     {}
   );
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Search function (same as before)
   const searchResults = async () => {
@@ -431,9 +432,6 @@ export default function ResultadosBusqueda({
 
   const handleRefresh = () => {
     if (sector && periodo && stfechaini && stfechafin) {
-      // Preservar el estado de expandedFilas antes de refrescar
-      const currentExpandedState = { ...expandedFilas };
-
       // Incrementar el contador de refrescar para desencadenar la recarga
       setRefreshCounter((prev) => prev + 1);
 

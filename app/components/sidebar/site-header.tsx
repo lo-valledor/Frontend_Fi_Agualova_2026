@@ -12,10 +12,13 @@ import {
   BreadcrumbSeparator,
 } from "~/components/ui/breadcrumb";
 import { useBreadcrumbs } from "~/context/BreadcrumbContext"; // Importa el hook del contexto
+import { NavUser } from "./nav-user";
+import { useAuth } from "~/context/AuthContext";
 
 export function SiteHeader() {
   // Obtén los breadcrumbs desde el contexto
   const { breadcrumbItems } = useBreadcrumbs();
+  const { user } = useAuth();
 
   return (
     <header className="group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear">
@@ -52,7 +55,19 @@ export function SiteHeader() {
               </BreadcrumbList>
             </Breadcrumb>
           </h1>
-          <ModeToggle />
+          <div className="flex items-center gap-2 ml-auto">
+            <ModeToggle />
+            {user && (
+              <NavUser
+                user={{
+                  name: user.fullName || user.username || "Usuario",
+                  username: user.username,
+                  avatar: "", // Si tienes avatar, pon user.avatar aquí
+                  role: user.role || "Usuario",
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
     </header>

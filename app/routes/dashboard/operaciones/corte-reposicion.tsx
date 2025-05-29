@@ -1,0 +1,21 @@
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import CorteReposicionComponent from "~/components/operaciones/corte-reposicion/corte-reposicion-component";
+import React, { useEffect } from "react";
+
+export default function CorteReposicion() {
+  const pageBreadcrumbs = [
+    { label: "Operaciones" },
+    { label: "Corte y Reposición" },
+  ];
+
+  useEffect(() => {
+    document.title = "Corte y Reposición";
+  }, []);
+
+  return (
+    <div className="container mx-auto p-3 md:p-6 space-y-6">
+      <BreadcrumbSetter items={pageBreadcrumbs} />
+      <CorteReposicionComponent />
+    </div>
+  );
+}
