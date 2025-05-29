@@ -15,9 +15,13 @@ RUN corepack enable
 COPY . /app/
 COPY --from=development-dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
+
+# Agregar las variables de entorno para el build
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 RUN pnpm run build
 
-# Para SPA, usa nginx para servir archivos estáticos
 FROM nginx:alpine
 COPY --from=build-env /app/build/client /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf

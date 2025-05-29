@@ -3,9 +3,6 @@ import axiosInstance from './axiosConfig'
 import { AxiosError } from 'axios'
 import { toast } from 'sonner'
 
-// Usar una URL hardcodeada si la variable de entorno no está disponible
-const API_URL = import.meta.env.VITE_API_URL
-
 interface LoginDto {
   usuario: string
   contrasena: string
