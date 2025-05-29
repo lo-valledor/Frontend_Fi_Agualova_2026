@@ -17,10 +17,6 @@ export default function AnularFacturaImpresa() {
     { label: "Anular Factura Impresa" },
   ];
 
-  useEffect(() => {
-    document.title = "Anular Factura Impresa";
-  }, []);
-
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
       <BreadcrumbSetter items={pageBreadcrumbs} />

@@ -1,9 +1,0 @@
-version: "3.8"
-services:
-  app:
-    build: .
-    ports:
-      - "8080:8080" # Expone el puerto 8080
-    environment:
-      - NODE_ENV=production # Define la variable de entorno
-    restart: unless-stopped # Reinicia el contenedor si se detiene

@@ -17,10 +17,6 @@ export default function RevisarCalculoFactura() {
     { label: "Revisar Calculo de Factura" },
   ];
 
-  useEffect(() => {
-    document.title = "Revisar Calculo de Factura";
-  }, []);
-
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
       <BreadcrumbSetter items={pageBreadcrumbs} />

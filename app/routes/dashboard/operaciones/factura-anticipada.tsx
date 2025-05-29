@@ -16,10 +16,6 @@ export default function FacturaAnticipada() {
     { label: "Factura Anticipada" },
   ];
 
-  useEffect(() => {
-    document.title = "Factura Anticipada";
-  }, []);
-
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
       <BreadcrumbSetter items={pageBreadcrumbs} />
