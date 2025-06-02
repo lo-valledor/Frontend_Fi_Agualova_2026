@@ -39,7 +39,7 @@ import {
 import { Button } from "~/components/ui/button";
 import { toast } from "sonner";
 import api from "~/lib/api";
-import { DataTable } from "../data-table";
+import { DataTable } from "../../data-table/data-table";
 import { columns } from "./columns";
 import DialogInformacion from "./dialog-informacion";
 

@@ -2,7 +2,7 @@ import { type Periodos } from "~/types/operaciones";
 import { type ColumnDef } from "@tanstack/react-table";
 import CerrarPeriodo from "./cerrar-periodo";
 import ConfirmarReapertura from "./confirmar-reapertura";
-import { DataTableColumnHeader } from "~/components/data-table-column-header";
+import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 
 const parseFecha = (fecha: string): Date | null => {
   const [day, month, year] = fecha.split("-").map(Number);

@@ -7,51 +7,98 @@ import {
 } from "~/components/ui/card";
 import {
   FileArchive,
-  Search,
-  Eraser,
   ChevronUp,
   ChevronDown,
   Download,
-  FilePlus2,
   FileText,
   Upload,
-  ArrowDown,
 } from "lucide-react";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "~/components/ui/collapsible";
+import api from "~/lib/api";
 
 export default function CrearArchivosSapComponent() {
-  const [selectedPeriodo, setSelectedPeriodo] = useState<string>("");
   const [archivoEncabezado, setArchivoEncabezado] = useState<string>("");
   const [archivoDetalle, setArchivoDetalle] = useState<string>("");
   const [isConfigOpen, setIsConfigOpen] = useState(true);
   const [isArchivosOpen, setIsArchivosOpen] = useState(true);
-
-  const handleDescargarEncabezado = () => {
-    // Implementar lógica de descarga
+  // Helper function to extract filename from Content-Disposition header
+  const extractFilenameFromHeaders = (headers: any): string => {
+    const contentDisposition = headers["content-disposition"];
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(
+        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+      );
+      if (filenameMatch && filenameMatch[1]) {
+        return filenameMatch[1].replace(/['"]/g, "");
+      }
+    }
+    return ""; // empty string to use custom fallback
   };
 
-  const handleDescargarDetalle = () => {
-    // Implementar lógica de descarga
+  // Helper function to generate filename with proper format
+  const generateFallbackFilename = (type: "FAC" | "DET"): string => {
+    const now = new Date();
+    const day = now.getDate().toString().padStart(2, "0");
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+    const year = now.getFullYear();
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    return `${type}-${day}${month}${year}-${hours}${minutes}.csv`;
+  };
+  const handleDescargarEncabezado = async () => {
+    try {
+      const response = await api.get("/exportar-encabezado", {
+        responseType: "blob",
+      });
+      // Extract filename from headers or use fallback with proper format
+      const filename =
+        extractFilenameFromHeaders(response.headers) ||
+        generateFallbackFilename("FAC");
+
+      const blob = new Blob([response.data as BlobPart], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al descargar archivo de encabezado:", error);
+    }
   };
 
-  const handleClearFilters = () => {
-    setSelectedPeriodo("");
-    setArchivoEncabezado("");
-    setArchivoDetalle("");
+  const handleDescargarDetalle = async () => {
+    try {
+      const response = await api.get("/exportar-detalle", {
+        responseType: "blob",
+      });
+      // Extract filename from headers or use fallback with proper format
+      const filename =
+        extractFilenameFromHeaders(response.headers) ||
+        generateFallbackFilename("DET");
+
+      const blob = new Blob([response.data as BlobPart], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error al descargar archivo de detalle:", error);
+    }
   };
 
   return (
@@ -83,10 +130,10 @@ export default function CrearArchivosSapComponent() {
                   </div>
                   <div>
                     <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                      Carga de Archivos a SAP
+                      Descarga de Archivos
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Selecciona los archivos para la carga
+                      Haz clic en los botones para descargar los archivos
                     </CardDescription>
                   </div>
                 </div>
@@ -100,26 +147,6 @@ export default function CrearArchivosSapComponent() {
 
             <CollapsibleContent>
               <CardContent className="p-4 space-y-4">
-                {/* Periodo */}
-                <div className="space-y-2">
-                  <Label htmlFor="periodo" className="text-muted-foreground">
-                    Periodo de Facturación
-                  </Label>
-                  <Select
-                    value={selectedPeriodo}
-                    onValueChange={setSelectedPeriodo}
-                  >
-                    <SelectTrigger id="periodo" className="w-full">
-                      <SelectValue placeholder="Selecciona un periodo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="202401">Enero 2024</SelectItem>
-                      <SelectItem value="202402">Febrero 2024</SelectItem>
-                      <SelectItem value="202403">Marzo 2024</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
                 {/* Archivo de Encabezado */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
@@ -138,15 +165,6 @@ export default function CrearArchivosSapComponent() {
                       <Download className="h-3.5 w-3.5" />
                       Descargar
                     </Button>
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      id="archivo-encabezado"
-                      value={archivoEncabezado}
-                      onChange={(e) => setArchivoEncabezado(e.target.value)}
-                      placeholder="FAC-10012025-1149"
-                      className="flex-grow"
-                    />
                   </div>
                 </div>
 
@@ -169,68 +187,6 @@ export default function CrearArchivosSapComponent() {
                       Descargar
                     </Button>
                   </div>
-                  <div className="flex gap-2">
-                    <Input
-                      id="archivo-detalle"
-                      value={archivoDetalle}
-                      onChange={(e) => setArchivoDetalle(e.target.value)}
-                      placeholder="DET-10012025-1149"
-                      className="flex-grow"
-                    />
-                  </div>
-                </div>
-
-                {/* Botones de acción */}
-                <div className="flex justify-center pt-4">
-                  <Button
-                    variant="default"
-                    className="gap-1.5 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
-                  >
-                    <Upload className="h-4 w-4" />
-                    Cargar Archivos
-                  </Button>
-                </div>
-              </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
-        </Card>
-
-        {/* Panel de Archivos */}
-        <Card className="shadow-sm border border-border/60">
-          <Collapsible
-            open={isArchivosOpen}
-            onOpenChange={setIsArchivosOpen}
-            className="w-full"
-          >
-            <CollapsibleTrigger asChild>
-              <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg shadow-sm">
-                    <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                      Historial de Carga
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      Últimos archivos cargados a SAP
-                    </CardDescription>
-                  </div>
-                </div>
-                {isArchivosOpen ? (
-                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                )}
-              </div>
-            </CollapsibleTrigger>
-
-            <CollapsibleContent>
-              <CardContent className="p-4">
-                <div className="rounded-lg border border-border/60 p-8 text-center bg-muted/20">
-                  <p className="text-muted-foreground">
-                    No hay archivos cargados recientemente
-                  </p>
                 </div>
               </CardContent>
             </CollapsibleContent>

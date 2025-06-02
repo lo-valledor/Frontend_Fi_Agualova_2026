@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "~/components/ui/table";
 import { useState } from "react";
-import { DataTablePagination } from "~/components/data-table-pagination";
+import { DataTablePagination } from "~/components/data-table/data-table-pagination";
 import { Input } from "~/components/ui/input";
 import { Search } from "lucide-react";
 import { cn } from "~/lib/utils";

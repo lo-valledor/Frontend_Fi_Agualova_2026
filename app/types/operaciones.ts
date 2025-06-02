@@ -335,3 +335,8 @@ export interface CambioMedidorProps {
   fechaCierre: string;
   codigoContrato: number;
 }
+
+export interface ConsultaPeriodosFacturacion {
+  descripcion: string;
+  id: string;
+}

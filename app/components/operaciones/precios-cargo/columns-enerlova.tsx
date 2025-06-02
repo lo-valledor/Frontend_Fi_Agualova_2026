@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import DetallePreciosEnerlova from "./detalle-precios-enerlova";
 import type { PreciosCargoEnerlova } from "~/types/operaciones";
-import { DataTableColumnHeader } from "~/components/data-table-column-header";
+import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 
 export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
   {

@@ -4,16 +4,13 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from "~/components/ui/card";
 import {
   FileX2,
-  Search,
   Eraser,
   ChevronUp,
   ChevronDown,
-  Receipt,
   X,
   AlertCircle,
   InfoIcon,
@@ -37,7 +34,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
-import { Badge } from "~/components/ui/badge";
 import { Separator } from "~/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import api from "~/lib/api";
@@ -106,40 +102,6 @@ export default function AnularFacturaImpresaComponent() {
           <p className="text-muted-foreground">
             Gestión de anulaciones de facturas ya impresas
           </p>
-        </div>
-        <div className="hidden md:block">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 border-sky-200 dark:border-sky-800"
-              >
-                <InfoIcon className="h-4 w-4" />
-                <span className="ml-2">Información</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  Información sobre anulación de facturas
-                </DialogTitle>
-              </DialogHeader>
-              <DialogDescription>
-                <p className="mb-2">
-                  Este proceso permite anular facturas que ya han sido impresas.
-                </p>
-                <p className="mb-2">
-                  Puede elegir si desea realizar la anulación con o sin toma de
-                  lectura.
-                </p>
-                <p>
-                  <strong>Importante:</strong> La anulación de facturas es un
-                  proceso irreversible. Asegúrese de tener los permisos
-                  necesarios antes de proceder.
-                </p>
-              </DialogDescription>
-            </DialogContent>
-          </Dialog>
         </div>
       </div>
 

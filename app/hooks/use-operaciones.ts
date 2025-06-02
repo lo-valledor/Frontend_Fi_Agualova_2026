@@ -10,6 +10,7 @@ import type {
   Periodos,
   ConsultarSectores,
   ValidarSectoresPendientes,
+  ConsultaPeriodosFacturacion,
 } from "~/types/operaciones";
 
 // Interfaz para agrupar los estados relacionados con la carga de datos
@@ -42,6 +43,8 @@ export function useOperaciones() {
   >([]);
   const [lecturasPendientes, setLecturasPendientes] =
     useState<ValidarSectoresPendientes | null>(null);
+  const [consultaPeriodosFacturacion, setConsultaPeriodosFacturacion] =
+    useState<ConsultaPeriodosFacturacion[]>([]);
 
   // Estado unificado para manejo de carga y errores
   const [loadingState, setLoadingState] = useState<
@@ -55,6 +58,7 @@ export function useOperaciones() {
     consultarSectores: { isLoading: false, error: null },
     global: { isLoading: false, error: null },
     lecturasPendientes: { isLoading: false, error: null },
+    consultaPeriodosFacturacion: { isLoading: false, error: null },
   });
 
   const auth = useAuth();
@@ -234,6 +238,24 @@ export function useOperaciones() {
     }
   }, [checkAuth, setLoading, setError]);
 
+  const fetchConsultaPeriodosFacturacion = useCallback(async () => {
+    if (!checkAuth()) return;
+
+    try {
+      setLoading("consultaPeriodosFacturacion", true);
+      const response = await api.get("/consulta-periodos-facturacion");
+      setConsultaPeriodosFacturacion(
+        response.data as ConsultaPeriodosFacturacion[]
+      );
+      return response.data;
+    } catch (error: any) {
+      setError("periodos", error);
+      throw error;
+    } finally {
+      setLoading("periodos", false);
+    }
+  }, [checkAuth, setLoading, setError]);
+
   // Cargar todos los datos iniciales
   const fetchAllData = useCallback(async () => {
     if (!checkAuth()) return;
@@ -248,6 +270,7 @@ export function useOperaciones() {
         fetchPeriodosFacturacion(),
         fetchConsultarSectores(),
         fetchLecturasPendientes(),
+        fetchConsultaPeriodosFacturacion(),
       ]);
     } catch (error: any) {
       setError("global", error);
@@ -263,6 +286,7 @@ export function useOperaciones() {
     fetchPeriodosFacturacion,
     fetchConsultarSectores,
     fetchLecturasPendientes,
+    fetchConsultaPeriodosFacturacion,
     setLoading,
     setError,
   ]);
@@ -282,7 +306,8 @@ export function useOperaciones() {
     loadingState.periodos.isLoading ||
     loadingState.consultarSectores.isLoading ||
     loadingState.global.isLoading ||
-    loadingState.lecturasPendientes.isLoading;
+    loadingState.lecturasPendientes.isLoading ||
+    loadingState.consultaPeriodosFacturacion.isLoading;
 
   // Estado global de error
   const error =
@@ -293,7 +318,8 @@ export function useOperaciones() {
     loadingState.ciclos.error ||
     loadingState.periodos.error ||
     loadingState.consultarSectores.error ||
-    loadingState.lecturasPendientes.error;
+    loadingState.lecturasPendientes.error ||
+    loadingState.consultaPeriodosFacturacion.error;
 
   return {
     // Datos
@@ -304,6 +330,7 @@ export function useOperaciones() {
     periodosFacturacion,
     consultarSectores,
     lecturasPendientes,
+    consultaPeriodosFacturacion,
     // Estado de carga
     isLoading,
     error,
