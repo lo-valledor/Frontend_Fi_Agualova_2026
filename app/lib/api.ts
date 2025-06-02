@@ -5,8 +5,6 @@ import { authService } from "../services/authService";
 const API_URL =
   import.meta.env.VITE_API_URL || "http://192.168.1.139:8081/Enerlova";
 
-console.log("API URL configurada:", API_URL); // Agregar log para depuración
-
 // Create axios instance with default config
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
@@ -23,8 +21,6 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    // Log para depuración
-    console.log(`Enviando solicitud a: ${config.baseURL}${config.url}`);
     return config;
   },
   (error) => {

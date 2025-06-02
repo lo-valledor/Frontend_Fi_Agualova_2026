@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { SiteHeader } from "~/components/sidebar/site-header";
 import { SidebarInset } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/sidebar/app-sidebar";
 import { SidebarProvider } from "~/components/ui/sidebar";
-import { Outlet, useLocation } from "react-router";
+import { Outlet} from "react-router";
 
 const DashboardLayout = () => {
-  useEffect(() => {
-    console.log("DashboardLayout MOUNTED");
-    return () => console.log("DashboardLayout UNMOUNTED");
-  }, []);
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" />

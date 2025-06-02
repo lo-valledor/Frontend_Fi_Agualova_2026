@@ -122,13 +122,10 @@ export default function DialogNuevoValorEnerlova({
         valor: formValues.valor,
       };
 
-      console.log("Enviando datos a API:", payload);
-
       const response = await api.post(
         "/ingresa-precio-cargo-enerlova",
         payload
       );
-      console.log("response", response);
 
       if (response.status === 200) {
         toast.success("Precios agregados correctamente");

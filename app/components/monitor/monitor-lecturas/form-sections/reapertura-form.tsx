@@ -63,7 +63,6 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
   const reabrirMedicion = async (data: any) => {
     try {
       setIsSubmitting(true)
-      console.log('Enviando solicitud de reapertura:', JSON.stringify(data))
 
       const response = await api.post('/habilitar-edicion-lectura', data)
 
@@ -77,7 +76,6 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
           onSuccess()
         }
       } else {
-        console.log('Respuesta del servidor:', response)
         toast.error(
           `Error al reabrir la medición: ${
             response.data &&

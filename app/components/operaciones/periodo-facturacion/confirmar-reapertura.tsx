@@ -38,11 +38,10 @@ export default function ConfirmarReapertura({
 
     setIsLoading(true);
     try {
-      console.log(periodoId, descripcion, clave);
       const response = await api.post("/reabrir-periodo", {
         periodoId,
         descripcion,
-        clave,
+        claveId: clave,
       });
 
       if (response.status === 200) {

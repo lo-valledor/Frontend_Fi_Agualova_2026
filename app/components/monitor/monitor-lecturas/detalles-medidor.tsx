@@ -112,7 +112,6 @@ export default function DetallesMedidor({
               break;
             case 4:
               setEtapa4Data(result.value.data as EtapaCuatro[]);
-              console.log(result.value.data);
               break;
           }
         } else {

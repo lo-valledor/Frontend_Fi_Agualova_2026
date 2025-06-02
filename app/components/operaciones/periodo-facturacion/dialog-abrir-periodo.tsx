@@ -64,9 +64,7 @@ export default function DialogAbrirPeriodo({
         mesi: selectedMonth,
         añoi: selectedYear,
       };
-      console.log(params);
       const response = await api.post("/ingresa-periodo", params);
-      console.log(response);
 
       if (response.status === 200) {
         toast.success("El periodo se ha abierto correctamente");

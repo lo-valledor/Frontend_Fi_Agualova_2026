@@ -41,10 +41,6 @@ export default function DialogLecturasPendientes({
   isLoading,
   onRefresh,
 }: DialogLecturasPendientesProps) {
-  // Depuración para verificar los datos que llegan
-  useEffect(() => {
-    console.log("DialogLecturasPendientes recibió datos:", data);
-  }, [data]);
 
   // Función para renderizar el badge del estado
   const renderEstadoBadge = (estado: number) => {

@@ -118,7 +118,6 @@ export default function TablaAsignacionSectores({
         descripcion: item.descripcionNicho,
       }));
       setSelectedNichos(allNichos);
-      console.log("allNichos", allNichos);
     }
     setSelectAll(!selectAll);
   };

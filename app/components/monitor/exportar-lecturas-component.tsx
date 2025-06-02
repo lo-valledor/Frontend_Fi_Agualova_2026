@@ -135,11 +135,6 @@ export default function ExportarLecturasComponent() {
         params.append("medidores", selectedMedidores.join(","));
       }
 
-      console.log(
-        "URL de exportación:",
-        `/exportar-lecturas-excel?${params.toString()}`
-      );
-
       // Realizar la petición
       const response = await api.get("/exportar-lecturas-excel", {
         params,

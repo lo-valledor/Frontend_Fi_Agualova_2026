@@ -222,9 +222,7 @@ export function useOperaciones() {
 
     try {
       setLoading("lecturasPendientes", true);
-      console.log("Iniciando fetchLecturasPendientes");
       const response = await api.get("/validar-lecturas-pendientes");
-      console.log("Respuesta de lecturas pendientes:", response.data);
       setLecturasPendientes(response.data as ValidarSectoresPendientes);
       return response.data;
     } catch (error: any) {

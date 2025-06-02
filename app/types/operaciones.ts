@@ -323,3 +323,15 @@ export interface NuevoContratoFormProps {
   isFormValid: boolean;
   onCambioMedidor: () => Promise<void>;
 }
+
+export interface CambioMedidorProps {
+  medidorAntiguoID: number;
+  medidorNuevoID: number;
+  valorUltimo: number;
+  valorLecturaActual: number;
+  valorPrimeraLectura: number;
+  acometidaCodigo: string;
+  usuario: string;
+  fechaCierre: string;
+  codigoContrato: number;
+}

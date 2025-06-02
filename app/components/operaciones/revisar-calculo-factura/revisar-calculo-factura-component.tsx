@@ -86,13 +86,6 @@ export default function RevisarCalculoFacturaComponent() {
     fetchCiclosFacturacion();
   }, [fetchPeriodoAbierto, fetchCiclosFacturacion]);
 
-  // Efecto para mostrar los ciclos disponibles
-  useEffect(() => {
-    if (ciclosFacturacionActivos && ciclosFacturacionActivos.length > 0) {
-      console.log("Ciclos disponibles:", ciclosFacturacionActivos);
-    }
-  }, [ciclosFacturacionActivos]);
-
   // Función para convertir el ciclo seleccionado al formato esperado por la API
   const obtenerCicloParaAPI = (cicloId: string): string => {
     // Si el ciclo es la cadena "1" o "2", lo devolvemos tal cual
@@ -138,8 +131,6 @@ export default function RevisarCalculoFacturaComponent() {
 
       // Convertir el cicloId al formato esperado por la API
       const cicloParaAPI = obtenerCicloParaAPI(cicloId);
-      console.log("cicloId original:", cicloId);
-      console.log("cicloParaAPI:", cicloParaAPI);
 
       params.append("cicloId", cicloParaAPI);
       params.append("periodo", periodoFormateado);
@@ -165,7 +156,6 @@ export default function RevisarCalculoFacturaComponent() {
 
       // Casting de la respuesta al tipo correcto
       const data = response.data as CalculoPrefacturaEncabezado;
-      console.log(data);
 
       if (data && data.resultados && Array.isArray(data.resultados)) {
         setData(data.resultados);

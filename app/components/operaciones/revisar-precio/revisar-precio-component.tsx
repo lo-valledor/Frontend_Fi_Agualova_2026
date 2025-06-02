@@ -163,7 +163,6 @@ export default function RevisarPrecioComponent() {
 
     try {
       setIsConfirming(true);
-      console.log("Iniciando confirmación de cambios...");
 
       // Confirmaciones de la tabla Enel
       const confirmacionesEnel = dataUno.filter(
@@ -173,8 +172,6 @@ export default function RevisarPrecioComponent() {
           item.confirmacion !== "Confirmado"
       );
 
-      console.log("Confirmaciones Enel a procesar:", confirmacionesEnel.length);
-
       // Confirmaciones de la tabla Enerlova
       const confirmacionesEnerlova = dataDos.filter(
         (item) =>
@@ -182,12 +179,6 @@ export default function RevisarPrecioComponent() {
           item.indice !== "" &&
           item.confirmacion !== "Confirmado"
       );
-
-      console.log(
-        "Confirmaciones Enerlova a procesar:",
-        confirmacionesEnerlova.length
-      );
-
       // Procesar todas las confirmaciones
       let confirmacionesExitosas = 0;
       let confirmacionesFallidas = 0;
@@ -195,16 +186,13 @@ export default function RevisarPrecioComponent() {
       // Procesar confirmaciones Enel
       for (const item of confirmacionesEnel) {
         try {
-          console.log(
-            `Procesando confirmación Enel: ${item.codigo}, índice: ${item.indice}`
-          );
+          
           const response = await api.post(
             `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
           );
 
           if (response.status === 200) {
             confirmacionesExitosas++;
-            console.log(`Confirmación exitosa para: ${item.codigo}`);
           } else {
             confirmacionesFallidas++;
             console.warn(
@@ -220,16 +208,13 @@ export default function RevisarPrecioComponent() {
       // Procesar confirmaciones Enerlova
       for (const item of confirmacionesEnerlova) {
         try {
-          console.log(
-            `Procesando confirmación Enerlova: ${item.codigo}, índice: ${item.indice}`
-          );
+          
           const response = await api.post(
             `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
           );
 
           if (response.status === 200) {
             confirmacionesExitosas++;
-            console.log(`Confirmación exitosa para: ${item.codigo}`);
           } else {
             confirmacionesFallidas++;
             console.warn(
@@ -244,9 +229,6 @@ export default function RevisarPrecioComponent() {
 
       // Actualizar datos después de confirmar
       if (confirmacionesExitosas > 0) {
-        console.log(
-          `Total de confirmaciones exitosas: ${confirmacionesExitosas}`
-        );
         // Recargar datos
         await fetchDataUno();
         if (cicloSeleccionado) {

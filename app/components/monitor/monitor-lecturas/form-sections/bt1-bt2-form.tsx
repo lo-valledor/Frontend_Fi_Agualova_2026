@@ -217,7 +217,6 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
           onSuccess()
         }
       } else {
-        console.log('Respuesta del servidor:', response)
         toast.error('Error al actualizar la lectura')
       }
     } catch (error: any) {

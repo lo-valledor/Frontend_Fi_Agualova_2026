@@ -90,7 +90,6 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
       const response = await api.get(`/modificar/${codigo}`);
 
       // Normalizamos los datos al recibirlos
-      console.log("response", response.data);
       const datosNormalizados = (
         response.data as DetallepreciosCargoEnerlova[]
       ).map((item) => ({
@@ -129,7 +128,6 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
     ultimaFechaFin: string | undefined
   ): string => {
     if (!ultimaFechaFin) {
-      console.log("No se proporcionó última fecha fin.");
       return "";
     }
 

@@ -33,11 +33,6 @@ export default function TablaLecturasPendientes({
   isAuthorized,
   onRefresh,
 }: TablaLecturasPendientesProps) {
-  // Depuración para verificar los datos que llegan
-  useEffect(() => {
-    console.log("TablaLecturasPendientes recibió datos:", data);
-  }, [data]);
-
   // Función para renderizar el badge del estado
   const renderEstadoBadge = (estado: number) => {
     switch (estado) {

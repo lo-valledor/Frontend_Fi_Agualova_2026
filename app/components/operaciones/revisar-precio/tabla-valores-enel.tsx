@@ -70,7 +70,6 @@ export default function TablaValoresEnel({
       const response = await api.post(
         `/ConfirmarPrecio?indice=${item.indice}&usuario=${user.username}`
       );
-      console.log(response);
       if (response.status === 200) {
         setSelectedRows((prev) => [...prev, item.codigo]);
         toast.success(`Se ha confirmado el precio para ${item.descripcion}`);

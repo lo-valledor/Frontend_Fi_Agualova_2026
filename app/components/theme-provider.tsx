@@ -30,11 +30,6 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(defaultTheme);
 
   useEffect(() => {
-    console.log("ThemeProvider MOUNTED");
-    return () => console.log("ThemeProvider UNMOUNTED");
-  }, []);
-
-  useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTheme = localStorage.getItem(storageKey) as Theme | null;
       if (storedTheme) setTheme(storedTheme);

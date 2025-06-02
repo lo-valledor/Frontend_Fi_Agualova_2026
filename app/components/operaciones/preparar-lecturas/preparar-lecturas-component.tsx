@@ -109,7 +109,7 @@ export default function PrepararLecturasComponent() {
   ]);
 
   // Función para verificar si el ciclo seleccionado es válido para el mes actual
-  const esCicloValido = useMemo(() => {
+  const _esCicloValido = useMemo(() => {
     if (!periodoAbierto || periodoAbierto.length === 0) return true;
     const mes = periodoAbierto[0].mes;
 

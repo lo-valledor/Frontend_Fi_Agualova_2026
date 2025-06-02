@@ -442,14 +442,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     try {
       setIsSubmitting(true)
       const response = await api.put('/actualizar-lectura-bt-4-3', data)
-      console.log('Respuesta del servidor:', response)
       if (response.status === 200) {
         toast.success('Lectura BT-4.3 actualizada correctamente')
         if (onSuccess) {
           onSuccess()
         }
       } else {
-        console.log('Respuesta del servidor:', response)
         toast.error('Error al actualizar la lectura BT-4.3')
       }
     } catch (error: any) {
