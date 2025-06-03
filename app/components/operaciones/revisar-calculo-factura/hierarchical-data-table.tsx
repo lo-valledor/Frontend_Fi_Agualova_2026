@@ -95,14 +95,7 @@ export function HierarchicalDataTable({
       <TableCell></TableCell>
 
       {/* Columnas vacías para alineación - expander y checkbox */}
-      <TableCell className="pl-8">
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-sky-600 dark:text-sky-400 font-medium">
-            {cargoIndex === 0 ? "└─" : "├─"}
-          </span>
-          <div className="w-2 h-2 rounded-full bg-sky-400 dark:bg-sky-500" />
-        </div>
-      </TableCell>
+      <TableCell className="pl-8"></TableCell>
 
       {/* Código del cargo */}
       <TableCell className="font-mono text-sm font-medium text-sky-700 dark:text-sky-300">
@@ -211,11 +204,7 @@ export function HierarchicalDataTable({
                       <TableCell></TableCell> {/* N° Serie */}
                       <TableCell></TableCell> {/* Fecha Lectura */}
                       {/* Columnas vacías para alineación - expander y checkbox */}
-                      <TableCell className="pl-8 font-semibold text-xs py-2">
-                        <span className="text-sky-700 dark:text-sky-300 uppercase tracking-wide">
-                          DETALLE DE CARGOS
-                        </span>
-                      </TableCell>
+                      <TableCell className="pl-8 font-semibold text-xs py-2"></TableCell>
                       {/* Código */}
                       <TableCell className="font-semibold text-xs text-sky-700 dark:text-sky-300 uppercase tracking-wide">
                         Código

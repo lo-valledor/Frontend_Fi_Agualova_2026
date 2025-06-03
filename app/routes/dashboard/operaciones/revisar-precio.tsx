@@ -1,7 +1,7 @@
 // eslint-disable no-empty-pattern
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import RevisarPrecioComponent from "~/components/operaciones/revisar-precio/revisar-precio-component";
-import React, { useEffect } from "react";
+import React from "react";
 import type { Route } from "./+types/revisar-precio";
 
 export function meta({}: Route.MetaArgs) {

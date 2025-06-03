@@ -10,13 +10,13 @@ import {
   AlertDialogTitle,
 } from "~/components/ui/alert-dialog";
 import { Badge } from "~/components/ui/badge";
-import { AlertTriangle, Trash2, X } from "lucide-react";
+import { AlertTriangle, Trash2, X, Gauge } from "lucide-react";
 
 interface DeleteConfirmDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  userName: string;
+  medidorName: string;
   isLoading?: boolean;
 }
 
@@ -24,7 +24,7 @@ export function DeleteConfirmDialog({
   isOpen,
   onClose,
   onConfirm,
-  userName,
+  medidorName,
   isLoading = false,
 }: DeleteConfirmDialogProps) {
   return (
@@ -49,7 +49,7 @@ export function DeleteConfirmDialog({
             <AlertDialogDescription className="text-slate-700 dark:text-slate-300 space-y-3">
               <div>
                 <span className="text-sm">
-                  Estás a punto de eliminar permanentemente el usuario:
+                  Estás a punto de eliminar permanentemente el medidor:
                 </span>
               </div>
 
@@ -58,7 +58,8 @@ export function DeleteConfirmDialog({
                   variant="outline"
                   className="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-600 px-3 py-1 text-sm font-medium"
                 >
-                  {userName}
+                  <Gauge className="h-3 w-3 mr-2" />
+                  {medidorName}
                 </Badge>
               </div>
 
@@ -67,9 +68,10 @@ export function DeleteConfirmDialog({
                   <strong>⚠️ Esta acción eliminará:</strong>
                 </p>
                 <ul className="list-disc list-inside ml-2 space-y-0.5">
-                  <li>Todos los datos del usuario</li>
-                  <li>Su acceso al sistema</li>
-                  <li>Su historial de actividades</li>
+                  <li>Todos los datos del medidor</li>
+                  <li>Su historial de lecturas</li>
+                  <li>Sus configuraciones técnicas</li>
+                  <li>Su asociación con acometidas</li>
                 </ul>
               </div>
             </AlertDialogDescription>
@@ -97,7 +99,7 @@ export function DeleteConfirmDialog({
             ) : (
               <>
                 <Trash2 className="h-4 w-4" />
-                Eliminar Usuario
+                Eliminar Medidor
               </>
             )}
           </AlertDialogAction>

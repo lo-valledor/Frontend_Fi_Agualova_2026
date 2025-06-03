@@ -237,20 +237,6 @@ const MonitorLecturasComponent = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {/* Search button visible even when collapsed */}
-                <Button
-                  variant="default"
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevent trigger toggle
-                    handleSearch();
-                  }}
-                  size="sm"
-                  className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
-                  disabled={!selectedSector || !selectedPeriodo} // Disable if required fields missing
-                >
-                  <Search className="h-4 w-4" />
-                  Buscar
-                </Button>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -462,6 +448,19 @@ const MonitorLecturasComponent = () => {
                 >
                   <Eraser className="h-4 w-4" />
                   Limpiar Filtros
+                </Button>
+                <Button
+                  variant="default"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent trigger toggle
+                    handleSearch();
+                  }}
+                  size="sm"
+                  className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
+                  disabled={!selectedSector || !selectedPeriodo} // Disable if required fields missing
+                >
+                  <Search className="h-4 w-4" />
+                  Buscar
                 </Button>
               </div>
             </CardContent>

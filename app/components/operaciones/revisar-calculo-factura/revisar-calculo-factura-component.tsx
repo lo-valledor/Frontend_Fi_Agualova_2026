@@ -32,6 +32,7 @@ import {
   FileTextIcon,
   SettingsIcon,
   ChevronRight,
+  RefreshCw,
 } from "lucide-react";
 import { Skeleton } from "~/components/ui/skeleton";
 import { toast } from "sonner";
@@ -56,6 +57,7 @@ export default function RevisarCalculoFacturaComponent() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isLaunchingCalculo, setIsLaunchingCalculo] = useState(false);
+  const [isAcceptingCalculo, setIsAcceptingCalculo] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<CalculoPrefacturaCompleto[]>([]);
   const [selectedContratos, setSelectedContratos] = useState<number[]>([]);
@@ -294,6 +296,79 @@ export default function RevisarCalculoFacturaComponent() {
     }
   };
 
+  const handleAceptarCalculo = async () => {
+    if (!periodoFormateado) {
+      toast.error("No hay un periodo abierto disponible");
+      return;
+    }
+
+    if (selectedContratos.length === 0) {
+      toast.error("Debe seleccionar al menos un contrato para aceptar");
+      return;
+    }
+
+    try {
+      setIsAcceptingCalculo(true);
+      setError(null);
+
+      // Procesar cada lecturaId individualmente
+      let successCount = 0;
+      let errorCount = 0;
+
+      for (const lecturaId of selectedContratos) {
+        try {
+          const requestBody = {
+            lecturaId: lecturaId,
+            periodoId: periodoFormateado,
+          };
+
+          await api.post("generar-detalle-factura", requestBody);
+          successCount++;
+        } catch (error) {
+          console.error(`Error procesando lecturaId ${lecturaId}:`, error);
+          errorCount++;
+        }
+      }
+
+      // Mostrar resultado final
+      if (successCount > 0) {
+        toast.success(
+          `Se aceptaron ${successCount} cálculos correctamente${
+            errorCount > 0 ? ` (${errorCount} con errores)` : ""
+          }`,
+          {
+            description: "Los cálculos aceptados se están procesando",
+            duration: 4000,
+          }
+        );
+      }
+
+      if (errorCount > 0 && successCount === 0) {
+        toast.error(`Error al procesar ${errorCount} cálculos`);
+      }
+
+      // Limpiar selecciones después de procesar
+      setSelectedContratos([]);
+    } catch (error: any) {
+      console.error("Error general al aceptar cálculo de facturación:", error);
+      setError(`Error: ${error.message || "Error desconocido"}`);
+      toast.error("Error al procesar los cálculos seleccionados");
+    } finally {
+      setIsAcceptingCalculo(false);
+    }
+  };
+
+  // Función para actualizar los datos
+  const handleRefreshData = async () => {
+    if (!cicloId) {
+      toast.error("Selecciona un ciclo antes de actualizar");
+      return;
+    }
+
+    toast.info("Actualizando datos...");
+    await handleRevisarCalculo();
+  };
+
   // Función para limpiar filtros
   const handleClearFilters = () => {
     setCicloId("");
@@ -490,6 +565,15 @@ export default function RevisarCalculoFacturaComponent() {
                   Limpiar
                 </Button>
                 <Button
+                  onClick={handleRefreshData}
+                  variant="outline"
+                  disabled={isLoading || !cicloId}
+                  className="gap-2 hover:bg-muted/50"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Actualizar
+                </Button>
+                <Button
                   onClick={handleRevisarCalculo}
                   disabled={isLoading || !cicloId}
                   className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
@@ -514,9 +598,24 @@ export default function RevisarCalculoFacturaComponent() {
                     </>
                   )}
                 </Button>
-                <Button className="gap-2 bg-amber-600 hover:bg-amber-700 text-white">
-                  <SettingsIcon className="h-4 w-4" />
-                  Aceptar Cálculo
+                <Button
+                  onClick={handleAceptarCalculo}
+                  disabled={
+                    isAcceptingCalculo || selectedContratos.length === 0
+                  }
+                  className="gap-2 bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
+                >
+                  {isAcceptingCalculo ? (
+                    <>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Aceptando...
+                    </>
+                  ) : (
+                    <>
+                      <SettingsIcon className="h-4 w-4" />
+                      Aceptar Cálculo ({selectedContratos.length})
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

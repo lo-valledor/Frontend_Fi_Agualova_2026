@@ -1,7 +1,7 @@
 // eslint-disable no-empty-pattern
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import CambioMedidorComponent from "~/components/operaciones/cambio-medidor/cambio-medidor-component";
-import React, { useEffect } from "react";
+import React from "react";
 import type { Route } from "./+types/cambio-medidor";
 
 export function meta({}: Route.MetaArgs) {

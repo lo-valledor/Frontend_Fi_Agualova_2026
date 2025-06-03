@@ -1,7 +1,7 @@
 // eslint-disable no-empty-pattern
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import AnularFacturaImpresaComponent from "~/components/operaciones/anular-factura-impresa/anular-factura-impresa-component";
-import React, { useEffect } from "react";
+import React from "react";
 import type { Route } from "./+types/anular-factura-impresa";
 
 export function meta({}: Route.MetaArgs) {
