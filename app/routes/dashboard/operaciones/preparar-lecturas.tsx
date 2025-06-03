@@ -1,7 +1,6 @@
 // eslint-disable no-empty-pattern
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import PrepararLecturasComponent from "~/components/operaciones/preparar-lecturas/preparar-lecturas-component";
-import React, { useEffect } from "react";
 import type { Route } from "./+types/preparar-lecturas";
 
 export function meta({}: Route.MetaArgs) {

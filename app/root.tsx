@@ -42,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <AuthProvider>{children}</AuthProvider>
           </BreadcrumbProvider>
         </ThemeProvider>
-        <Toaster richColors position="top-right" />
+        <Toaster richColors position="top-right" closeButton />
         <ScrollRestoration />
         <Scripts />
       </body>

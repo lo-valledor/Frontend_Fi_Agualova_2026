@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAdministracion } from "~/hooks/use-administracion";
-import { DataTable } from "./data-table";
+import { DataTable } from "~/components/data-table/data-table";
 import { createColumns } from "./columns";
 import { UsuarioForm } from "./usuario-form";
 import { DeleteConfirmDialog } from "./delete-confirm-dialog";

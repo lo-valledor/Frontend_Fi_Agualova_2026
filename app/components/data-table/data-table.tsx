@@ -1,11 +1,13 @@
 import {
   type ColumnDef,
   type SortingState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 
@@ -19,23 +21,27 @@ import {
 } from "~/components/ui/table";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Input } from "~/components/ui/input";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { LoadingSpinner } from "../loading-spinner";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   isLoading?: boolean;
-  reloadData?: () => void;
+  _reloadData?: () => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   isLoading = false,
-  reloadData,
+  _reloadData,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+
   const table = useReactTable({
     data,
     columns,
@@ -43,9 +49,14 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     state: {
       sorting,
+      columnFilters,
+      globalFilter,
     },
   });
 
@@ -56,9 +67,30 @@ export function DataTable<TData, TValue>({
       </div>
     );
   }
-
   return (
     <div className="space-y-4">
+      {/* Barra de búsqueda */}
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar en todos los campos..."
+            value={globalFilter ?? ""}
+            onChange={(event) => setGlobalFilter(String(event.target.value))}
+            className="pl-10"
+          />
+        </div>
+        {globalFilter && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setGlobalFilter("")}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            Limpiar
+          </Button>
+        )}
+      </div>
       <div className="rounded-md border border-border/60">
         <Table>
           <TableHeader>
@@ -103,17 +135,29 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  No hay resultados.
+                  {globalFilter
+                    ? `No se encontraron resultados para "${globalFilter}"`
+                    : "No hay datos disponibles."}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>
+      </div>{" "}
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-sm text-muted-foreground">
-          Página {table.getState().pagination.pageIndex + 1} de{" "}
-          {table.getPageCount()}
+          {globalFilter ? (
+            <>
+              Mostrando {table.getFilteredRowModel().rows.length} de{" "}
+              {data.length} resultados filtrados
+            </>
+          ) : (
+            <>
+              {" "}
+              Página {table.getState().pagination.pageIndex + 1} de{" "}
+              {table.getPageCount()} ({data.length} registros total)
+            </>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <Button

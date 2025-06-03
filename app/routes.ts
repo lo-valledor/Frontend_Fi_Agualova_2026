@@ -66,10 +66,6 @@ export default [
             "anular-factura-impresa",
             "routes/dashboard/operaciones/anular-factura-impresa.tsx"
           ),
-          route(
-            "factura-anticipada",
-            "routes/dashboard/operaciones/factura-anticipada.tsx"
-          ),
         ]),
         ...prefix("administracion", [
           route("usuarios", "routes/dashboard/administracion/usuarios.tsx"),

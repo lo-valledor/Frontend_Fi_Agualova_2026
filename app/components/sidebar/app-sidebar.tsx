@@ -88,10 +88,6 @@ const data = {
           title: "Anular Factura Imp.",
           url: "/dashboard/operaciones/anular-factura-impresa",
         },
-        {
-          title: "Factura Anticipada",
-          url: "/dashboard/operaciones/factura-anticipada",
-        },
       ],
     },
     {

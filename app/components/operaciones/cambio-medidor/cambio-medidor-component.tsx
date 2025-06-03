@@ -742,30 +742,6 @@ export default function CambioMedidorComponent() {
             Gestión y reemplazo de medidores en el sistema
           </p>
         </div>
-        <div className="hidden md:block">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800"
-              >
-                <InfoIcon className="h-4 w-4" />
-                <span className="ml-2">Información</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Información</DialogTitle>
-              </DialogHeader>
-              <DialogDescription>
-                <p>
-                  Este es un componente de cambio de medidor. Aquí puedes
-                  gestionar el reemplazo de medidores en el sistema.
-                </p>
-              </DialogDescription>
-            </DialogContent>
-          </Dialog>
-        </div>
       </div>
 
       {/* Stepper */}

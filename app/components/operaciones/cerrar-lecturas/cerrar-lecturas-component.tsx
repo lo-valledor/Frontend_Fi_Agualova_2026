@@ -5,7 +5,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
@@ -41,11 +40,9 @@ import { toast } from "sonner";
 import api from "~/lib/api";
 import { DataTable } from "../../data-table/data-table";
 import { columns } from "./columns";
-import DialogInformacion from "./dialog-informacion";
 
 export default function CerrarLecturasComponent() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
-  const [isResultsOpen, setIsResultsOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cicloSeleccionado, setCicloSeleccionado] = useState<string>("");
@@ -101,7 +98,6 @@ export default function CerrarLecturasComponent() {
       if (response.status === 200) {
         const data = response.data as EstadoCierreLecturas[];
         setEstadoCierreLecturas(data);
-        setIsResultsOpen(true);
         if (data.length === 0) {
           toast.info(
             "No se encontraron resultados para los criterios seleccionados"
@@ -137,6 +133,7 @@ export default function CerrarLecturasComponent() {
     setCicloSeleccionado("");
     setEstadoCierreLecturas([]);
     setError(null);
+    toast.success("Filtros limpiados");
   };
 
   // Función para manejar la actualización después de cerrar lecturas
@@ -160,7 +157,6 @@ export default function CerrarLecturasComponent() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <DialogInformacion />
           {periodoAbierto && periodoAbierto.length > 0 && (
             <Badge
               variant="outline"
@@ -173,209 +169,257 @@ export default function CerrarLecturasComponent() {
         </div>
       </div>
 
-      {/* Sección principal dividida en dos bloques */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Columna izquierda: Filtros */}
-        <div className="lg:col-span-1">
-          {/* Filtros */}
-          <Card className="shadow-sm border border-border/60">
-            <Collapsible
-              open={isFiltersOpen}
-              onOpenChange={setIsFiltersOpen}
-              className="w-full"
-            >
-              <CollapsibleTrigger asChild>
-                <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-sm">
-                      <SearchIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                        Filtros de Búsqueda
-                      </CardTitle>
-                      <CardDescription className="text-sm">
-                        Selecciona criterios para cerrar lecturas
-                      </CardDescription>
-                    </div>
-                  </div>
-                  {isFiltersOpen ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                  )}
+      {/* Sección principal con filtros */}
+      <Card className="shadow-sm border border-border/60">
+        <Collapsible
+          open={isFiltersOpen}
+          onOpenChange={setIsFiltersOpen}
+          className="w-full"
+        >
+          <CollapsibleTrigger asChild>
+            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-sm">
+                  <SearchIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
                 </div>
-              </CollapsibleTrigger>
+                <div>
+                  <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
+                    Criterios de Búsqueda
+                  </CardTitle>
+                  <CardDescription className="text-sm">
+                    Selecciona criterios para cerrar lecturas
+                  </CardDescription>
+                </div>
+              </div>
+              {isFiltersOpen ? (
+                <ChevronUp className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
+          </CollapsibleTrigger>
 
-              <CollapsibleContent>
-                <CardContent className="p-4 space-y-4">
-                  {/* Periodo */}
-                  <div className="space-y-2">
-                    <Label className="text-muted-foreground">
-                      Periodo actual
-                    </Label>
-                    {isPeriodoLoading ? (
-                      <Skeleton className="h-9 w-full" />
-                    ) : periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className="flex items-center gap-2 p-2 rounded-md bg-muted/50 border border-border/60">
+          <CollapsibleContent>
+            <CardContent className="p-4 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Periodo */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                    Periodo actual
+                  </Label>
+                  {isPeriodoLoading ? (
+                    <Skeleton className="h-10 w-full rounded-md" />
+                  ) : periodoAbierto && periodoAbierto.length > 0 ? (
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
+                      <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
                         <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                        <span className="font-medium">
+                      </div>
+                      <div>
+                        <span className="font-semibold text-sky-800 dark:text-sky-200">
                           {periodoAbierto[0].mes.toString().padStart(2, "0")}/
                           {periodoAbierto[0].anio}
                         </span>
+                        <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
+                          Periodo activo para facturación
+                        </p>
                       </div>
-                    ) : (
-                      <div className="flex items-center gap-2 p-2 rounded-md bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800">
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 shadow-sm">
+                      <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
                         <AlertCircleIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                        <span className="text-amber-600 dark:text-amber-400">
+                      </div>
+                      <div>
+                        <span className="font-medium text-amber-800 dark:text-amber-200">
                           No hay periodo abierto
                         </span>
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                          Contacta al administrador
+                        </p>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Ciclo de facturación */}
-                  <div className="space-y-2">
-                    <Label htmlFor="ciclo" className="text-muted-foreground">
-                      Ciclo de facturación
-                    </Label>
-                    {isCiclosLoading ? (
-                      <Skeleton className="h-9 w-full" />
-                    ) : (
-                      <Select
-                        value={cicloSeleccionado}
-                        onValueChange={setCicloSeleccionado}
-                      >
-                        <SelectTrigger id="ciclo" className="w-full">
-                          <SelectValue placeholder="Selecciona un ciclo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1">Ciclo dia 15</SelectItem>
-                          <SelectItem value="2">Ciclo dia 30</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-
-                  {/* Botones de acción */}
-                  <div className="flex gap-2 pt-2">
-                    <Button
-                      onClick={handleSearch}
-                      disabled={
-                        isLoading || !cicloSeleccionado || !periodoFormateado
-                      }
-                      className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
-                    >
-                      <SearchIcon className="h-4 w-4" />
-                      {isLoading ? "Buscando..." : "Buscar"}
-                    </Button>
-                    <Button
-                      onClick={handleClearFilters}
-                      variant="outline"
-                      disabled={isLoading}
-                      className="gap-2"
-                    >
-                      <Eraser className="h-4 w-4" />
-                      Limpiar
-                    </Button>
-                  </div>
-                </CardContent>
-              </CollapsibleContent>
-            </Collapsible>
-          </Card>
-        </div>
-
-        {/* Columna derecha: Resultados */}
-        <div className="lg:col-span-3">
-          <Card className="shadow-sm border border-border/60">
-            <Collapsible
-              open={isResultsOpen}
-              onOpenChange={setIsResultsOpen}
-              className="w-full"
-            >
-              <CollapsibleTrigger asChild>
-                <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg shadow-sm">
-                      <CheckCircleIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
                     </div>
-                    <div>
-                      <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                        Resultados
-                      </CardTitle>
-                      <CardDescription className="text-sm">
-                        {estadoCierreLecturas.length > 0
-                          ? `${estadoCierreLecturas.length} lecturas disponibles para cierre`
-                          : "No hay lecturas disponibles para cierre"}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  {isResultsOpen ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
                   )}
                 </div>
-              </CollapsibleTrigger>
 
-              <CollapsibleContent>
-                <CardContent className="p-4">
-                  {isLoading ? (
-                    <div className="flex justify-center items-center py-12">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600 dark:border-sky-400"></div>
-                        <span className="text-muted-foreground text-sm mt-2">
-                          Buscando lecturas...
-                        </span>
-                      </div>
-                    </div>
-                  ) : error ? (
-                    <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md p-4 my-4 text-red-600 dark:text-red-400">
-                      <div className="flex items-center gap-2">
-                        <AlertCircleIcon className="h-5 w-5" />
-                        <p>{error}</p>
-                      </div>
-                    </div>
-                  ) : estadoCierreLecturas.length === 0 ? (
-                    <div className="rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 p-4">
-                      <div className="flex items-start gap-3">
-                        <SearchIcon className="h-5 w-5 text-sky-500 mt-0.5" />
-                        <div>
-                          <h3 className="font-medium text-sky-800 dark:text-sky-300">
-                            Sin resultados
-                          </h3>
-                          <p className="text-sm text-sky-700 dark:text-sky-300/90">
-                            Utiliza los filtros para buscar lecturas disponibles
-                            para cierre
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                {/* Ciclo de facturación */}
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="ciclo"
+                    className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                  >
+                    <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                    Ciclo de facturación
+                  </Label>
+                  {isCiclosLoading ? (
+                    <Skeleton className="h-10 w-full rounded-md" />
                   ) : (
-                    <>
-                      <DataTable
-                        columns={columns({
-                          onCerrarLecturaSuccess: handleLecturaCerrada,
-                          cicloFact: cicloSeleccionado,
-                          periodo: periodoFormateado,
-                        })}
-                        data={estadoCierreLecturas}
-                      />
-
-                      <div className="mt-4 flex items-center justify-end gap-2 text-sm text-muted-foreground">
-                        <ClockIcon className="h-4 w-4" />
-                        <span>
-                          Total de registros: {estadoCierreLecturas.length}
-                        </span>
-                      </div>
-                    </>
+                    <Select
+                      value={cicloSeleccionado}
+                      onValueChange={setCicloSeleccionado}
+                    >
+                      <SelectTrigger
+                        id="ciclo"
+                        className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                      >
+                        <SelectValue placeholder="Selecciona un ciclo de facturación" />
+                      </SelectTrigger>
+                      <SelectContent className="border-border/60">
+                        <SelectItem
+                          value="1"
+                          className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                            <span className="font-medium">Ciclo día 15</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem
+                          value="2"
+                          className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                            <span className="font-medium">Ciclo día 30</span>
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   )}
-                </CardContent>
-              </CollapsibleContent>
-            </Collapsible>
-          </Card>
-        </div>
-      </div>
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-border/40 mt-4">
+                <Button
+                  onClick={handleClearFilters}
+                  variant="outline"
+                  disabled={isLoading}
+                  className="gap-2 hover:bg-muted/50"
+                >
+                  <Eraser className="h-4 w-4" />
+                  Limpiar
+                </Button>
+                <Button
+                  onClick={handleSearch}
+                  disabled={
+                    isLoading || !cicloSeleccionado || !periodoFormateado
+                  }
+                  className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
+                >
+                  <SearchIcon className="h-4 w-4" />
+                  {isLoading ? "Buscando..." : "Buscar Lecturas"}
+                </Button>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Collapsible>
+      </Card>
+
+      {/* Resultados de la búsqueda */}
+      <Card className="shadow-sm border border-border/60">
+        <CardHeader className="py-4 px-6 border-b border-border/60 bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg shadow-sm">
+              <CheckCircleIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
+                Estado de Cierre de Lecturas
+              </CardTitle>
+              <CardDescription className="text-sm">
+                {estadoCierreLecturas.length > 0
+                  ? `${estadoCierreLecturas.length} lecturas disponibles para cierre`
+                  : "No hay lecturas disponibles para cierre"}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6 text-sm">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800"></div>
+                  <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin"></div>
+                </div>
+                <div className="text-center">
+                  <p className="text-sky-700 dark:text-sky-300 font-medium">
+                    Buscando lecturas...
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Por favor espere mientras procesamos su consulta
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm">
+                  <AlertCircleIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-rose-800 dark:text-rose-200">
+                    Error al cargar los datos
+                  </h4>
+                  <p className="mt-2 text-rose-700 dark:text-rose-300 text-sm leading-relaxed">
+                    {error}
+                  </p>
+                  <Button
+                    onClick={() => setError(null)}
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20"
+                  >
+                    Cerrar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : estadoCierreLecturas.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground">
+              <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full">
+                <SearchIcon className="h-8 w-8 text-sky-500 dark:text-sky-400" />
+              </div>
+              <div className="text-center">
+                <p className="font-medium text-slate-700 dark:text-slate-300">
+                  Realizar consulta de lecturas
+                </p>
+                <p className="text-sm mt-1">
+                  Selecciona un ciclo y haz clic en "Buscar Lecturas" para ver
+                  los resultados
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-border/40">
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
+                    <CheckCircleIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <span className="font-medium text-emerald-700 dark:text-emerald-300">
+                    {estadoCierreLecturas.length} lecturas encontradas
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <ClockIcon className="h-4 w-4" />
+                  <span>Total de registros: {estadoCierreLecturas.length}</span>
+                </div>
+              </div>
+              <DataTable
+                columns={columns({
+                  onCerrarLecturaSuccess: handleLecturaCerrada,
+                  cicloFact: cicloSeleccionado,
+                  periodo: periodoFormateado,
+                })}
+                data={estadoCierreLecturas}
+              />
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

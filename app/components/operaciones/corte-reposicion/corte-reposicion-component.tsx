@@ -6,58 +6,82 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import {
-  Scissors,
-  Search,
-  Eraser,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "~/components/ui/dialog";
+import {
   ChevronUp,
   ChevronDown,
   FileText,
-  UserRound,
   ArrowUpToLine,
   ListChecks,
   Download,
   Play,
   CheckCircle2,
+  BarChart3,
 } from "lucide-react";
-import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "~/components/ui/collapsible";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "~/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "~/components/ui/table";
+import type {
+  TotalesCorteReposicion,
+  ConsultarMantenedorRevisionCorte,
+} from "~/types/operaciones";
+import { DataTable } from "~/components/data-table/data-table";
+import { columns } from "./columns";
+import api from "~/lib/api";
 
-export default function CorteReposicionComponent() {
-  const [acometida, setAcometida] = useState<string>("");
+interface CorteReposicionComponentProps {
+  totalesData: TotalesCorteReposicion[];
+  mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
+}
+
+export default function CorteReposicionComponent({
+  totalesData,
+  mantenedorCorteData,
+}: CorteReposicionComponentProps) {
   const [isRevisionOpen, setIsRevisionOpen] = useState(true);
-  const [isTotalesOpen, setIsTotalesOpen] = useState(true);
 
-  const handleSearch = () => {
-    // Implementar lógica de búsqueda
+  // Obtener cantidad por código
+  const getCantidadPorCodigo = (codigo: string): number => {
+    const item = totalesData.find((item) => item.codigo === codigo);
+    return item ? item.cantidad : 0;
   };
 
-  const handleExportarExcel = () => {
-    // Implementar lógica para exportar a Excel
+  const handleExportarExcel = async () => {
+    const res = await api.get("exportar-mantenedor-revision", {
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "corte_reposicion.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
-  const handleExportarExcelCorte = () => {
-    // Implementar lógica para exportar a Excel con corte
+  const handleExportarExcelCorte = async () => {
+    const res = await api.get("exportar-revision-corte", {
+      responseType: "blob",
+    });
+
+    const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "corte.xlsx";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   };
 
   const handleActivarActualizacion = () => {
@@ -102,9 +126,9 @@ export default function CorteReposicionComponent() {
                   <div>
                     <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
                       Revisión
-                    </CardTitle>
+                    </CardTitle>{" "}
                     <CardDescription className="text-sm">
-                      Buscar acometida y gestionar operaciones
+                      Acciones de gestión y operaciones
                     </CardDescription>
                   </div>
                 </div>
@@ -114,42 +138,94 @@ export default function CorteReposicionComponent() {
                   <ChevronDown className="h-5 w-5 text-muted-foreground" />
                 )}
               </div>
-            </CollapsibleTrigger>
-
+            </CollapsibleTrigger>{" "}
             <CollapsibleContent>
               <CardContent className="p-4 space-y-6">
-                {/* Búsqueda de Acometida */}
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center gap-3 flex-grow">
-                    <Label
-                      htmlFor="acometida"
-                      className="text-sky-800 dark:text-sky-300 font-medium whitespace-nowrap"
-                    >
-                      Acometida:
-                    </Label>
-                    <div className="flex-grow">
-                      <Input
-                        id="acometida"
-                        placeholder=""
-                        value={acometida}
-                        onChange={(e) => setAcometida(e.target.value)}
-                        className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700"
-                      />
-                    </div>
-                  </div>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={handleSearch}
-                    className="gap-1.5 bg-blue-900 hover:bg-blue-800 dark:bg-blue-800 dark:hover:bg-blue-700"
-                  >
-                    <Search className="h-3.5 w-3.5" />
-                    Buscar
-                  </Button>
-                </div>
-
                 {/* Botones de Acción */}
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3 justify-center">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 border-amber-200 hover:bg-amber-50 dark:border-amber-800 dark:hover:bg-amber-900/30"
+                      >
+                        <BarChart3 className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                        Ver Totales
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <BarChart3 className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                          Totales de Corte y Reposición
+                        </DialogTitle>
+                        <DialogDescription>
+                          Resumen de estados de corte y reposición
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-4">
+                        <Table className="border-collapse border">
+                          <TableBody>
+                            <TableRow className="border border-border/60 hover:bg-muted/30">
+                              <TableCell className="py-2 font-medium">
+                                Pendiente
+                              </TableCell>
+                              <TableCell className="py-2 text-center">
+                                :
+                              </TableCell>
+                              <TableCell className="py-2 text-right">
+                                {getCantidadPorCodigo("NULL")}
+                              </TableCell>
+                            </TableRow>
+                            <TableRow className="border border-border/60 hover:bg-muted/30">
+                              <TableCell className="py-2 font-medium">
+                                Liberado
+                              </TableCell>
+                              <TableCell className="py-2 text-center">
+                                :
+                              </TableCell>
+                              <TableCell className="py-2 text-right">
+                                {getCantidadPorCodigo("1")}
+                              </TableCell>
+                            </TableRow>
+                            <TableRow className="border border-border/60 hover:bg-muted/30">
+                              <TableCell className="py-2 font-medium">
+                                Cortado
+                              </TableCell>
+                              <TableCell className="py-2 text-center">
+                                :
+                              </TableCell>
+                              <TableCell className="py-2 text-right">
+                                {getCantidadPorCodigo("2")}
+                              </TableCell>
+                            </TableRow>
+                            <TableRow className="border border-border/60 hover:bg-muted/30">
+                              <TableCell className="py-2 font-medium">
+                                Reposición Solicitada
+                              </TableCell>
+                              <TableCell className="py-2 text-center">
+                                :
+                              </TableCell>
+                              <TableCell className="py-2 text-right">
+                                {getCantidadPorCodigo("3")}
+                              </TableCell>
+                            </TableRow>
+                            <TableRow className="bg-blue-100 dark:bg-blue-900/30 border border-border/60 font-bold">
+                              <TableCell className="py-2">TOTAL</TableCell>
+                              <TableCell className="py-2 text-center">
+                                :
+                              </TableCell>
+                              <TableCell className="py-2 text-right">
+                                {getCantidadPorCodigo("TOTAL")}
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+
                   <Button
                     variant="default"
                     size="sm"
@@ -198,81 +274,39 @@ export default function CorteReposicionComponent() {
                 </div>
               </CardContent>
             </CollapsibleContent>
-          </Collapsible>
+          </Collapsible>{" "}
         </Card>
 
-        {/* Panel de Totales */}
+        {/* Panel de Datos de Mantenedor */}
         <Card className="shadow-sm border border-border/60">
-          <Collapsible
-            open={isTotalesOpen}
-            onOpenChange={setIsTotalesOpen}
-            className="w-full"
-          >
-            <CollapsibleTrigger asChild>
-              <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg shadow-sm">
-                    <FileText className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                      Totales
-                    </CardTitle>
-                    <CardDescription className="text-sm">
-                      Resumen de estados de corte y reposición
-                    </CardDescription>
-                  </div>
-                </div>
-                {isTotalesOpen ? (
-                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                )}
+          <div className="p-4 border-b border-border/60 bg-muted/40">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg shadow-sm">
+                <FileText className="h-5 w-5 text-teal-600 dark:text-teal-400" />
               </div>
-            </CollapsibleTrigger>
-
-            <CollapsibleContent>
-              <CardContent className="p-4">
-                <Table className="border-collapse border">
-                  <TableBody>
-                    <TableRow className="border border-border/60 hover:bg-muted/30">
-                      <TableCell className="py-2 font-medium">
-                        Pendiente
-                      </TableCell>
-                      <TableCell className="py-2 text-center">:</TableCell>
-                      <TableCell className="py-2 text-right">376</TableCell>
-                    </TableRow>
-                    <TableRow className="border border-border/60 hover:bg-muted/30">
-                      <TableCell className="py-2 font-medium">
-                        Liberado
-                      </TableCell>
-                      <TableCell className="py-2 text-center">:</TableCell>
-                      <TableCell className="py-2 text-right">0</TableCell>
-                    </TableRow>
-                    <TableRow className="border border-border/60 hover:bg-muted/30">
-                      <TableCell className="py-2 font-medium">
-                        Cortado
-                      </TableCell>
-                      <TableCell className="py-2 text-center">:</TableCell>
-                      <TableCell className="py-2 text-right">1</TableCell>
-                    </TableRow>
-                    <TableRow className="border border-border/60 hover:bg-muted/30">
-                      <TableCell className="py-2 font-medium">
-                        Reposición Solicitada
-                      </TableCell>
-                      <TableCell className="py-2 text-center">:</TableCell>
-                      <TableCell className="py-2 text-right">0</TableCell>
-                    </TableRow>
-                    <TableRow className="bg-blue-100 dark:bg-blue-900/30 border border-border/60 font-bold">
-                      <TableCell className="py-2">TOTAL</TableCell>
-                      <TableCell className="py-2 text-center">:</TableCell>
-                      <TableCell className="py-2 text-right">377</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
+              <div>
+                <h3 className="text-lg font-semibold text-sky-800 dark:text-sky-200">
+                  Mantenedor de Revisión de Corte
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  Listado de registros de mantenimiento (
+                  {mantenedorCorteData.length} registros)
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="p-4">
+            {mantenedorCorteData.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                <FileText className="h-12 w-12 mb-2 opacity-50" />
+                <p>No se encontraron registros de mantenimiento</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <DataTable columns={columns} data={mantenedorCorteData} />
+              </div>
+            )}
+          </div>
         </Card>
       </div>
     </div>

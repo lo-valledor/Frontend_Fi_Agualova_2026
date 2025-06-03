@@ -249,10 +249,10 @@ export function useOperaciones() {
       );
       return response.data;
     } catch (error: any) {
-      setError("periodos", error);
+      setError("consultaPeriodosFacturacion", error);
       throw error;
     } finally {
-      setLoading("periodos", false);
+      setLoading("consultaPeriodosFacturacion", false);
     }
   }, [checkAuth, setLoading, setError]);
 

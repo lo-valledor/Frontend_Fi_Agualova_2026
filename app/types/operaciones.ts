@@ -212,6 +212,26 @@ export interface CalculoPrefacturaDetalle {
   lecturaId: number;
 }
 
+// Tipos para los cargos de prefactura
+export interface CalculoPrefacturaCargo {
+  codigoEnerlova: string;
+  descripcion: string;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+}
+
+export interface CalculoPrefacturaCargoResponse {
+  contratoId: number;
+  cargos: CalculoPrefacturaCargo[];
+}
+
+// Tipo combinado para mostrar en la tabla
+export interface CalculoPrefacturaCompleto extends CalculoPrefacturaDetalle {
+  cargos: CalculoPrefacturaCargo[];
+  totalFacturado: number;
+}
+
 export interface EstadoProceso {
   codigoEstado: number;
   mensaje: string;
@@ -336,7 +356,80 @@ export interface CambioMedidorProps {
   codigoContrato: number;
 }
 
+//Corte y Reposición
+export interface TotalesCorteReposicion {
+  codigo: string;
+  cantidad: number;
+}
+
+export interface ConsultaRegistrosRevision {
+  codigo: string;
+  cantidad: number;
+}
+
+export interface ModificarRevision {
+  success: boolean;
+}
+
+export interface IngresarRevision {
+  success: boolean;
+}
+
+export interface ConsultaMantenedorRevision {
+  ctId: string;
+  seCodigo: string;
+  meNSerie: string;
+  clRut: string;
+  clRazonSocialCompleto: string;
+  niDescripcion: string;
+  secDescripcion: string;
+  reEstado: string;
+  reCantDocumentos: number;
+  reDeudaTotal: number;
+  reFechaIngreso: string;
+}
+
+export interface ConsultarMantenedorRevisionCorte {
+  ctId: string;
+  seCodigo: string;
+  meNSerie: string;
+  clRut: string;
+  clRazonSocialCompleto: string;
+  niDescripcion: string;
+  secDescripcion: string;
+  reEstado: string;
+  reCantDocumentos: number;
+  reDeudaTotal: number;
+}
+
+export interface ReposicionESolicitadaProps {
+  acometida: string;
+}
+
+export interface CorteRegistradoProps {
+  acometida: string;
+  fecha: string;
+  hora: string;
+  periodo: string;
+}
+
+export interface MarcarLiberarProps {
+  acometida: string;
+  comentario: string;
+}
+
+// Factura Anticipada
+
 export interface ConsultaPeriodosFacturacion {
   descripcion: string;
   id: string;
+}
+
+export interface ConsultaPeriodoFacturacion {
+  nombre: string;
+  codigo: string;
+}
+
+export interface GenerarLecturaAnticipada {
+  success: boolean;
 }
