@@ -17,7 +17,7 @@ export default function PrepararLecturas() {
   ];
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <PrepararLecturasComponent />
     </div>

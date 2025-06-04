@@ -62,6 +62,16 @@ export interface Acometida {
   numeroMedidor: string;
 }
 
+export interface AcometidaPorId {
+  acometidaId: number;
+  ubicacion: string;
+  contratoId: string;
+  empalmeId: number;
+  nichoId: number;
+  codigo: string;
+  limitePotencia: number | null;
+}
+
 export interface CrearAcometidaProps {
   ubicacion: string;
   empalmeId: number;
@@ -78,6 +88,38 @@ export interface ActualizarAcometidaProps {
   nichoId: number;
   contratoId: string;
   limitePotencia: number;
+}
+
+export interface AcometidaPorContratos {
+  contratoId: string;
+  local: string;
+  tipoContrato: string;
+  tarifa: string;
+  propietario: string;
+  clienteNombre: string;
+  clienteApellidos: string;
+  empresa: string;
+  fechaInicio: string;
+  fechaFin: string;
+  direccionEnvio: string;
+  limiteInventario: number;
+  cicloFacturacion: string;
+  estadoActivo: boolean;
+}
+
+export interface ComboEmpalmes {
+  id: string;
+  nombre: string;
+}
+
+export interface ComboNichos {
+  id: string;
+  nombre: string;
+}
+
+export interface ComboSectores {
+  id: string;
+  nombre: string;
 }
 
 // Cargo Tipo Facturable

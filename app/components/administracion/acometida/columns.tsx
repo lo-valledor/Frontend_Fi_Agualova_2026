@@ -150,9 +150,6 @@ export const columns: ColumnDef<Acometida>[] = [
             <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
               {limite.toLocaleString("es-CL")} kW
             </div>
-            <div className="text-xs text-muted-foreground">
-              Límite establecido
-            </div>
           </div>
         </div>
       );

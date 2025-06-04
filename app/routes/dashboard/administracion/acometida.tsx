@@ -2,7 +2,13 @@
 import React from "react";
 import AcometidaComponent from "~/components/administracion/acometida/acometida-component";
 import api from "~/lib/api";
-import type { Acometida } from "~/types/administracion";
+import type {
+  Acometida,
+  ComboEmpalmes,
+  ComboNichos,
+  ComboSectores,
+  ContratosDisponibles,
+} from "~/types/administracion";
 import type { Route } from "./+types/acometida";
 
 export function meta({}: Route.MetaArgs) {
@@ -13,19 +19,39 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientActionArgs) {
-  const res = await api.post("buscar-Acometida", {
-    params: {},
-  });
+  const resAcometidas = await api.post("buscar-Acometida", { params: {} });
+  const resComboEmpalmes = await api.get("combo-empalmes");
+  const resComboNichos = await api.get("combo-nichos");
+  const resComboSectores = await api.get("combo-sectores");
+  const resContratosDisponibles = await api.get("contratos-disponibles");
+
   return {
-    acometidas: res.data as Acometida[],
+    acometidas: resAcometidas.data as Acometida[],
+    comboEmpalmes: resComboEmpalmes.data as ComboEmpalmes[],
+    comboNichos: resComboNichos.data as ComboNichos[],
+    comboSectores: resComboSectores.data as ComboSectores[],
+    contratosDisponibles:
+      resContratosDisponibles.data as ContratosDisponibles[],
   };
 }
 
 export default function Acometida({ loaderData }: Route.ComponentProps) {
-  const { acometidas } = loaderData;
+  const {
+    acometidas,
+    comboEmpalmes,
+    comboNichos,
+    comboSectores,
+    contratosDisponibles,
+  } = loaderData;
   return (
     <div>
-      <AcometidaComponent acometidas={acometidas} />
+      <AcometidaComponent
+        acometidas={acometidas}
+        comboEmpalmes={comboEmpalmes}
+        comboNichos={comboNichos}
+        comboSectores={comboSectores}
+        contratosDisponibles={contratosDisponibles}
+      />
     </div>
   );
 }

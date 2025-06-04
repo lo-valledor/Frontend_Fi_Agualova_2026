@@ -60,18 +60,7 @@ export default function PreciosCargoComponent({
   const [isEnerlovaOpen, setIsEnerlovaOpen] = useState(true);
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      {/* Page Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-          Precios de Cargo
-        </h1>
-        <p className="text-muted-foreground">
-          Gestión de precios de cargo desde compañías de electricidad
-        </p>
-      </div>
-
-      {/* Precios de Cargo - Enel */}
+    <div>
       <Card className="shadow-sm border border-border/60">
         <Collapsible open={isEnelOpen} onOpenChange={setIsEnelOpen}>
           <CollapsibleTrigger asChild>

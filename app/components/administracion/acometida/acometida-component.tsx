@@ -1,6 +1,12 @@
 import React, { useState, useMemo } from "react";
 import { DataTable } from "~/components/data-table/data-table";
-import type { Acometida } from "~/types/administracion";
+import type {
+  Acometida,
+  ComboSectores,
+  ComboNichos,
+  ComboEmpalmes,
+  ContratosDisponibles,
+} from "~/types/administracion";
 import { columns } from "./columns";
 import {
   Card,
@@ -14,23 +20,34 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import {
   Zap,
-  MapPin,
-  Building,
-  Hash,
   RefreshCw,
   SearchIcon,
   Gauge,
   Network,
   FileText,
 } from "lucide-react";
+import { AcometidaForm } from "./acometida-form";
 
 export default function AcometidaComponent({
   acometidas,
+  comboEmpalmes,
+  comboNichos,
+  comboSectores,
+  contratosDisponibles,
 }: {
   acometidas: Acometida[];
+  comboEmpalmes: ComboEmpalmes[];
+  comboNichos: ComboNichos[];
+  comboSectores: ComboSectores[];
+  contratosDisponibles: ContratosDisponibles[];
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  // Estado para modal de acometida
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [acometidaSeleccionada, setAcometidaSeleccionada] =
+    useState<Acometida | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Filtrar acometidas en tiempo real
   const filteredAcometidas = useMemo(() => {
@@ -71,6 +88,28 @@ export default function AcometidaComponent({
       .filter((a) => a.limitePotencia !== null && a.limitePotencia > 0)
       .reduce((sum, a) => sum + (a.limitePotencia || 0), 0) /
       acometidasConLimite || 0;
+
+  // Handlers para abrir/cerrar modal
+  const handleOpenForm = (acometida?: Acometida) => {
+    setAcometidaSeleccionada(acometida || null);
+    setIsFormOpen(true);
+  };
+  const handleCloseForm = () => {
+    setAcometidaSeleccionada(null);
+    setIsFormOpen(false);
+  };
+
+  // Handler para submit (simulación, reemplazar por lógica real)
+  const handleSubmitForm = async (data: any) => {
+    setIsLoading(true);
+    try {
+      // Aquí deberías llamar a tu lógica de crear/editar acometida
+      console.log("Datos enviados:", data);
+      // await modificarAcometidaExisten(data) o similar
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -167,6 +206,27 @@ export default function AcometidaComponent({
           </div>
         </div>
       </div>
+
+      {/* Botón para registrar acometida */}
+      <div className="flex justify-end mb-4">
+        <Button
+          onClick={() => handleOpenForm()}
+          className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
+        >
+          <Zap className="h-4 w-4" /> Registrar acometida
+        </Button>
+      </div>
+      {/* Modal de registro/edición */}
+      <AcometidaForm
+        isOpen={isFormOpen}
+        onClose={handleCloseForm}
+        onSubmit={handleSubmitForm}
+        acometida={acometidaSeleccionada}
+        isLoading={isLoading}
+        comboEmpalmes={comboEmpalmes}
+        comboNichos={comboNichos}
+        contratosDisponibles={contratosDisponibles}
+      />
 
       {/* Tabla de acometidas */}
       <Card className="shadow-sm border border-border/60">

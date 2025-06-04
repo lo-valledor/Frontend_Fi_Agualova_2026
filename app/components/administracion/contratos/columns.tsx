@@ -26,9 +26,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const contratoId = row.getValue("contratoId") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-md">
-            <Hash className="h-3 w-3 text-slate-600 dark:text-slate-400" />
-          </div>
           <span className="font-mono text-sm font-medium">{contratoId}</span>
         </div>
       );
@@ -43,9 +40,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const local = row.getValue("local") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
-            <Building className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-          </div>
           <span className="font-medium text-slate-900 dark:text-slate-100">
             {local}
           </span>
@@ -73,9 +67,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
 
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-md">
-            <FileText className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-          </div>
           <Badge
             variant="outline"
             className={`text-xs font-medium ${getColorByType(tipo)}`}
@@ -95,9 +86,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const tarifa = row.getValue("tarifa") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-            <DollarSign className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-          </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {tarifa}
           </span>
@@ -116,15 +104,9 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       return (
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md">
-              <Users className="h-3 w-3 text-sky-600 dark:text-sky-400" />
-            </div>
             <div className="font-medium text-slate-900 dark:text-slate-100">
               {nombre} {apellidos}
             </div>
-          </div>
-          <div className="text-xs text-muted-foreground ml-7">
-            Cliente principal
           </div>
         </div>
       );
@@ -139,9 +121,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const propietario = row.getValue("propietario") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md">
-            <Users className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-          </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {propietario}
           </span>
@@ -158,9 +137,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const empresa = row.getValue("empresa") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-md">
-            <Building className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
-          </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {empresa}
           </span>
@@ -179,9 +155,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       return (
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-md">
-              <Calendar className="h-3 w-3 text-green-600 dark:text-green-400" />
-            </div>
             <div className="text-xs font-medium text-slate-700 dark:text-slate-300">
               {new Date(fechaInicio).toLocaleDateString("es-CL")}
             </div>
@@ -204,9 +177,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const direccion = row.getValue("direccionEnvio") as string;
       return (
         <div className="flex items-center gap-2 max-w-[200px]">
-          <div className="p-1.5 bg-rose-100 dark:bg-rose-900/30 rounded-md">
-            <MapPin className="h-3 w-3 text-rose-600 dark:text-rose-400" />
-          </div>
           <span
             className="text-sm text-slate-700 dark:text-slate-300 truncate"
             title={direccion}
@@ -226,9 +196,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const limite = row.getValue("limiteInventario") as number;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-md">
-            <Truck className="h-3 w-3 text-orange-600 dark:text-orange-400" />
-          </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {limite.toLocaleString("es-CL")}
           </span>
@@ -245,9 +212,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
       const ciclo = row.getValue("cicloFacturacion") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-teal-100 dark:bg-teal-900/30 rounded-md">
-            <Activity className="h-3 w-3 text-teal-600 dark:text-teal-400" />
-          </div>
           <Badge
             variant="outline"
             className="bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs font-medium"
@@ -274,11 +238,6 @@ export const columns: ColumnDef<ContratosDisponibles>[] = [
               : "bg-rose-100 text-rose-800 border-rose-200 hover:bg-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800"
           }`}
         >
-          <div
-            className={`w-2 h-2 rounded-full mr-1.5 ${
-              isActive ? "bg-emerald-500" : "bg-rose-500"
-            }`}
-          />
           {isActive ? (
             <>
               <UserCheck className="h-3 w-3 mr-1" />

@@ -131,6 +131,15 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
     <div className="container mx-auto p-3 md:p-6 space-y-6">
       <BreadcrumbSetter items={pageBreadcrumbs} />
       {/* Filtros */}
+      {/* Page Header */}
+      <div className="space-y-1">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
+          Precios de Cargo
+        </h1>
+        <p className="text-muted-foreground">
+          Gestión de precios de cargo desde compañías de electricidad
+        </p>
+      </div>
       <Card className="shadow-sm border border-border/60">
         <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
           <CollapsibleTrigger asChild>

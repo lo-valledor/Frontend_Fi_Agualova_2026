@@ -11,8 +11,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-
-
 export default function CerrarLecturas() {
   const pageBreadcrumbs = [
     { label: "Operaciones" },
@@ -20,7 +18,7 @@ export default function CerrarLecturas() {
   ];
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <CerrarLecturasComponent />
     </div>
