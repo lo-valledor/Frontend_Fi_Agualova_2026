@@ -18,7 +18,7 @@ import { Badge } from "~/components/ui/badge";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import api from "~/lib/api";
-import { type Periodo } from "~/types/monitor";
+import { type Periodo, type Sector } from "~/types/monitor";
 import { Separator } from "~/components/ui/separator";
 import { ScrollArea } from "~/components/ui/scroll-area";
 import {
@@ -26,11 +26,20 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "~/components/ui/collapsible";
-import { useMonitor } from "~/hooks/use-monitor";
 
-export default function ExportarLecturasComponent() {
-  const { periodos, sectores, error, activePeriodoId } = useMonitor();
+interface ExportarLecturasComponentProps {
+  periodos: Periodo[];
+  sectores: Sector[];
+  activePeriodoId: number | null;
+  error: Error | null;
+}
 
+export default function ExportarLecturasComponent({
+  periodos,
+  sectores,
+  activePeriodoId,
+  error,
+}: ExportarLecturasComponentProps) {
   const [selectedPeriodo, setSelectedPeriodo] = useState<Periodo | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [selectedSectores, setSelectedSectores] = useState<string[]>([]);

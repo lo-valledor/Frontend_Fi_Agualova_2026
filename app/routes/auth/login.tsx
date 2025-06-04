@@ -1,9 +1,18 @@
+// eslint-disable no-empty-pattern
 import { LoginForm } from "~/components/auth/login-form";
 import { useAuth } from "~/context/AuthContext";
 import { Navigate } from "react-router";
 import { Bolt } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ThemeProvider } from "~/components/theme-provider";
+import type { Route } from "./+types/login";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Enerlova | Login" },
+    { name: "description", content: "Enerlova | Login" },
+  ];
+}
 
 const Login = () => {
   const { isAuthenticated, loading } = useAuth();

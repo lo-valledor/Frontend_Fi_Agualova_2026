@@ -1,6 +1,6 @@
 // eslint-disable no-empty-pattern
 import React from "react";
-import CargoFacturableComponent from "~/components/administracion/cargo-facturable-component";
+import CargoFacturableComponent from "~/components/administracion/cargo-facturable/cargo-facturable-component";
 import type { Route } from "./+types/cargo-facturable";
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +8,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Cargo Facturable" },
   ];
 }
+
 export default function CargoFacturable() {
   return <CargoFacturableComponent />;
 }

@@ -56,9 +56,6 @@ export const createColumns = ({
       const id = row.getValue("idUsuario") as number;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-md">
-            <Hash className="h-3 w-3 text-slate-600 dark:text-slate-400" />
-          </div>
           <span className="font-mono text-sm font-medium">{id}</span>
         </div>
       );
@@ -73,9 +70,6 @@ export const createColumns = ({
       const username = row.getValue("nombreDeUsuario") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md">
-            <User className="h-3 w-3 text-sky-600 dark:text-sky-400" />
-          </div>
           <span className="font-medium text-slate-900 dark:text-slate-100">
             {username}
           </span>
@@ -95,9 +89,6 @@ export const createColumns = ({
         <div className="space-y-1">
           <div className="font-medium text-slate-900 dark:text-slate-100">
             {nombres} {apellidos}
-          </div>
-          <div className="text-xs text-muted-foreground">
-            ID: {row.getValue("idUsuario")}
           </div>
         </div>
       );

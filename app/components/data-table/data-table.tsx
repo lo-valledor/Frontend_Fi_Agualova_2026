@@ -69,28 +69,6 @@ export function DataTable<TData, TValue>({
   }
   return (
     <div className="space-y-4">
-      {/* Barra de búsqueda */}
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Buscar en todos los campos..."
-            value={globalFilter ?? ""}
-            onChange={(event) => setGlobalFilter(String(event.target.value))}
-            className="pl-10"
-          />
-        </div>
-        {globalFilter && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setGlobalFilter("")}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            Limpiar
-          </Button>
-        )}
-      </div>
       <div className="rounded-md border border-border/60">
         <Table>
           <TableHeader>

@@ -2,17 +2,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
 import { Badge } from "~/components/ui/badge";
 import type { Acometida } from "~/types/administracion";
-import {
-  Hash,
-  Barcode,
-  MapPin,
-  FileText,
-  Network,
-  Building,
-  Gauge,
-  Activity,
-  Zap,
-} from "lucide-react";
 
 export const columns: ColumnDef<Acometida>[] = [
   {
@@ -24,9 +13,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const id = row.getValue("acometidaId") as number;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-md">
-            <Hash className="h-3 w-3 text-slate-600 dark:text-slate-400" />
-          </div>
           <span className="font-mono text-sm font-medium">{id}</span>
         </div>
       );
@@ -41,9 +27,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const codigo = row.getValue("codigo") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
-            <Barcode className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-          </div>
           <span className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100">
             {codigo}
           </span>
@@ -60,9 +43,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const ubicacion = row.getValue("ubicacion") as string;
       return (
         <div className="flex items-center gap-2 max-w-[200px]">
-          <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-            <MapPin className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-          </div>
           <span
             className="text-sm text-slate-700 dark:text-slate-300 truncate"
             title={ubicacion}
@@ -82,9 +62,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const contratoId = row.getValue("contratoId") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md">
-            <FileText className="h-3 w-3 text-sky-600 dark:text-sky-400" />
-          </div>
           <Badge
             variant="outline"
             className="bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:border-sky-800 text-xs font-mono"
@@ -104,9 +81,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const empalme = row.getValue("empalmeDescripcion") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-md">
-            <Network className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-          </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {empalme}
           </span>
@@ -123,9 +97,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const nicho = row.getValue("nichoDescripcion") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md">
-            <Building className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-          </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {nicho}
           </span>
@@ -142,9 +113,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const sector = row.getValue("sectorDescripcion") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-md">
-            <Activity className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
-          </div>
           <Badge
             variant="outline"
             className="bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs font-medium"
@@ -166,9 +134,6 @@ export const columns: ColumnDef<Acometida>[] = [
       if (limite === null || limite === 0) {
         return (
           <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-gray-100 dark:bg-gray-800 rounded-md">
-              <Gauge className="h-3 w-3 text-gray-500 dark:text-gray-400" />
-            </div>
             <Badge
               variant="outline"
               className="bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-700 text-xs"
@@ -181,9 +146,6 @@ export const columns: ColumnDef<Acometida>[] = [
 
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-md">
-            <Gauge className="h-3 w-3 text-green-600 dark:text-green-400" />
-          </div>
           <div className="space-y-0.5">
             <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
               {limite.toLocaleString("es-CL")} kW
@@ -205,9 +167,6 @@ export const columns: ColumnDef<Acometida>[] = [
       const numeroMedidor = row.getValue("numeroMedidor") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-md">
-            <Zap className="h-3 w-3 text-orange-600 dark:text-orange-400" />
-          </div>
           <span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
             {numeroMedidor}
           </span>

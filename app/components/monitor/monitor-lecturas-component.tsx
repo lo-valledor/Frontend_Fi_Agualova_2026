@@ -46,9 +46,23 @@ import { Separator } from "~/components/ui/separator"; // Import Separator
 import { cn } from "~/lib/utils"; // Assuming you have this utility
 import { toast } from "sonner";
 
-const MonitorLecturasComponent = () => {
-  const { periodos, sectores, claves, isLoading, error, activePeriodoId } =
-    useMonitor();
+interface MonitorLecturasComponentProps {
+  periodos: Periodo[];
+  sectores: Sector[];
+  claves: Clave[];
+  activePeriodoId: number | null;
+  error: Error | null;
+}
+
+const MonitorLecturasComponent = ({
+  periodos,
+  sectores,
+  claves,
+  activePeriodoId,
+  error,
+}: MonitorLecturasComponentProps) => {
+  // Solo usamos useMonitor para funciones específicas, no para carga inicial
+  const { fetchLecturas, fetchMedidores } = useMonitor();
 
   const pageBreadcrumbs = [
     { label: "Monitor" },
@@ -124,16 +138,7 @@ const MonitorLecturasComponent = () => {
     setSearchTrigger((prev) => prev + 1);
   };
 
-  // --- Loading and Error States ---
-  if (isLoading && !periodos) {
-    // Show full page loader only on initial load
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <ClimbingBoxLoader color="#0ea5e9" /> {/* Updated color */}
-      </div>
-    );
-  }
-
+  // --- Error State ---
   if (error) {
     return (
       <div className="container mx-auto p-6">
@@ -148,7 +153,7 @@ const MonitorLecturasComponent = () => {
       </div>
     );
   }
-  // --- End Loading and Error States ---
+  // --- End Error State ---
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
@@ -183,11 +188,7 @@ const MonitorLecturasComponent = () => {
           </div>
         </CardHeader>
         <CardContent className="p-4 md:p-6">
-          {isLoading && !sectores ? ( // Show spinner only if sectors are loading
-            <div className="flex items-center justify-center h-10">
-              <LoadingSpinner size="sm" />
-            </div>
-          ) : sectores && sectores.length > 0 ? (
+          {sectores && sectores.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {sectores.map((sector) => (
                 <Button
@@ -268,9 +269,7 @@ const MonitorLecturasComponent = () => {
                   >
                     <Calendar className="h-3.5 w-3.5" /> Periodo
                   </Label>
-                  {isLoading && !periodos ? (
-                    <div className="h-9 w-full animate-pulse bg-muted rounded-md"></div>
-                  ) : (
+                  {periodos && periodos.length > 0 ? (
                     <Select
                       value={selectedPeriodo?.IdPeriodo || ""}
                       onValueChange={(value) => {
@@ -297,6 +296,8 @@ const MonitorLecturasComponent = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                  ) : (
+                    <div className="h-9 w-full animate-pulse bg-muted rounded-md"></div>
                   )}
                 </div>
 
@@ -308,9 +309,7 @@ const MonitorLecturasComponent = () => {
                   >
                     <KeyRound className="h-3.5 w-3.5" /> Clave (Opcional)
                   </Label>
-                  {isLoading && !claves ? (
-                    <div className="h-9 w-full animate-pulse bg-muted rounded-md"></div>
-                  ) : (
+                  {claves && claves.length > 0 ? (
                     <Select
                       // Use 'ALL' when selectedClave is null, otherwise the ID
                       value={selectedClave?.IdClave.toString() || "ALL"}
@@ -346,6 +345,8 @@ const MonitorLecturasComponent = () => {
                         ))}
                       </SelectContent>
                     </Select>
+                  ) : (
+                    <div className="h-9 w-full animate-pulse bg-muted rounded-md"></div>
                   )}
                 </div>
 

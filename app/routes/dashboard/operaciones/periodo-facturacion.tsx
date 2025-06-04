@@ -1,8 +1,11 @@
 // eslint-disable no-empty-pattern
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import AbrirPeriodoFacturacion from "~/components/operaciones/periodo-facturacion/abrir-periodo-facturacion";
+import AbrirPeriodoFacturacion from "~/components/operaciones/periodo-facturacion/periodo-facturacion-component";
 import React from "react";
 import type { Route } from "./+types/periodo-facturacion";
+import api from "~/lib/api";
+import type { Anio } from "~/types/operaciones";
+import type { Periodos } from "~/types/operaciones";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,7 +14,18 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-const PeriodoFacturacion = () => {
+export async function clientLoader() {
+  const resYears = await api.get("/consulta-año");
+  const resPeriodos = await api.get("/consulta-periodo");
+  const years = resYears.data as Anio[];
+  const periodos = resPeriodos.data as Periodos[];
+  return { years, periodos };
+}
+
+export default function PeriodoFacturacion({
+  loaderData,
+}: Route.ComponentProps) {
+  const { years, periodos } = loaderData;
   const pageBreadcrumbs = [
     { label: "Operaciones" },
     { label: "Periodos de Facturación" },
@@ -20,9 +34,7 @@ const PeriodoFacturacion = () => {
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <AbrirPeriodoFacturacion />
+      <AbrirPeriodoFacturacion years={years} periodos={periodos} />
     </div>
   );
-};
-
-export default PeriodoFacturacion;
+}

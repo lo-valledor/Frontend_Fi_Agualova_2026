@@ -20,7 +20,7 @@ import { toast } from "sonner";
 import { CalendarDaysIcon, PlusCircleIcon, Eraser } from "lucide-react";
 import { useOperaciones } from "~/hooks/use-operaciones";
 import DialogAbrirPeriodo from "./dialog-abrir-periodo";
-
+import type { Anio } from "~/types/operaciones";
 const months = [
   { value: "01", label: "Enero" },
   { value: "02", label: "Febrero" },
@@ -40,12 +40,14 @@ interface DialogNuevoPeriodoProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onPeriodoCreated: () => void;
+  years: Anio[];
 }
 
 export default function DialogNuevoPeriodo({
   open,
   onOpenChange,
   onPeriodoCreated,
+  years,
 }: DialogNuevoPeriodoProps) {
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
@@ -127,15 +129,23 @@ export default function DialogNuevoPeriodo({
                   <SelectValue placeholder="Selecciona el Año" />
                 </SelectTrigger>
                 <SelectContent>
-                  {consultaAnio && consultaAnio.length > 0 ? (
-                    consultaAnio.map((year) => (
-                      <SelectItem key={year.idaño} value={year.año.toString()}>
-                        {year.año}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="2023">2023</SelectItem>
-                  )}
+                  {consultaAnio && consultaAnio.length > 0
+                    ? consultaAnio.map((year) => (
+                        <SelectItem
+                          key={year.idaño}
+                          value={year.año.toString()}
+                        >
+                          {year.año}
+                        </SelectItem>
+                      ))
+                    : years.map((year) => (
+                        <SelectItem
+                          key={year.idaño}
+                          value={year.año.toString()}
+                        >
+                          {year.año}
+                        </SelectItem>
+                      ))}
                 </SelectContent>
               </Select>
             </div>

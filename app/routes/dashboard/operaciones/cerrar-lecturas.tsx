@@ -11,6 +11,8 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+
+
 export default function CerrarLecturas() {
   const pageBreadcrumbs = [
     { label: "Operaciones" },

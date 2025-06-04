@@ -37,9 +37,6 @@ export const createColumns = ({
       const codigo = row.getValue("codigo") as number;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-md">
-            <Hash className="h-3 w-3 text-slate-600 dark:text-slate-400" />
-          </div>
           <span className="font-mono text-sm font-medium">{codigo}</span>
         </div>
       );
@@ -54,9 +51,6 @@ export const createColumns = ({
       const marca = row.getValue("marca") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
-            <Building className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-          </div>
           <span className="font-medium text-slate-900 dark:text-slate-100">
             {marca}
           </span>
@@ -73,20 +67,17 @@ export const createColumns = ({
       const tipo = row.getValue("tipo") as string;
       const getColorByType = (tipo: string) => {
         const lower = tipo.toLowerCase();
-        if (lower.includes("monofásico"))
+        if (lower.includes("monofasico"))
           return "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800";
-        if (lower.includes("trifásico"))
+        if (lower.includes("trifasico"))
           return "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800";
-        if (lower.includes("bifásico"))
+        if (lower.includes("ambos"))
           return "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800";
         return "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800";
       };
 
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-md">
-            <Zap className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-          </div>
           <Badge
             variant="outline"
             className={`text-xs font-medium ${getColorByType(tipo)}`}
@@ -106,9 +97,6 @@ export const createColumns = ({
       const modelo = row.getValue("modelo") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-            <Tag className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-          </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
             {modelo}
           </span>
@@ -125,9 +113,6 @@ export const createColumns = ({
       const serie = row.getValue("serie") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md">
-            <Barcode className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-          </div>
           <span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
             {serie}
           </span>
@@ -144,9 +129,6 @@ export const createColumns = ({
       const fechaInicio = row.getValue("fechaInicio") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-green-100 dark:bg-green-900/30 rounded-md">
-            <Calendar className="h-3 w-3 text-green-600 dark:text-green-400" />
-          </div>
           <div className="text-xs font-medium text-slate-700 dark:text-slate-300">
             {new Date(fechaInicio).toLocaleDateString("es-CL")}
           </div>
@@ -163,9 +145,6 @@ export const createColumns = ({
       const digitos = row.getValue("digitos") as number;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-md">
-            <Digits className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
-          </div>
           <Badge
             variant="outline"
             className="bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs font-medium"
@@ -189,7 +168,7 @@ export const createColumns = ({
             <X className="h-3 w-3 text-teal-600 dark:text-teal-400" />
           </div>
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {multiplicar}x
+            {multiplicar}
           </span>
         </div>
       );
@@ -204,9 +183,6 @@ export const createColumns = ({
       const ubicacion = row.getValue("ubicacion") as string;
       return (
         <div className="flex items-center gap-2 max-w-[150px]">
-          <div className="p-1.5 bg-rose-100 dark:bg-rose-900/30 rounded-md">
-            <MapPin className="h-3 w-3 text-rose-600 dark:text-rose-400" />
-          </div>
           <span
             className="text-sm text-slate-700 dark:text-slate-300 truncate"
             title={ubicacion}
@@ -254,9 +230,6 @@ export const createColumns = ({
       const codigoAcometida = row.getValue("codigoAcometida") as string;
       return (
         <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-cyan-100 dark:bg-cyan-900/30 rounded-md">
-            <Gauge className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
-          </div>
           <Badge
             variant="outline"
             className="bg-cyan-100 text-cyan-800 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800 text-xs font-mono"

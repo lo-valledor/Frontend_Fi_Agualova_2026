@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { columns } from "./columns";
-import { DataTable } from "~/components/operaciones/periodo-facturacion/data-table";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -17,53 +16,42 @@ import {
   ChevronDown,
 } from "lucide-react";
 import DialogNuevoPeriodo from "./dialog-nuevo-periodo";
-import type { Periodos } from "~/types/operaciones";
-import { useOperaciones } from "~/hooks/use-operaciones";
+import type { Anio, Periodos } from "~/types/operaciones";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "~/components/ui/collapsible";
 import { ScrollArea } from "~/components/ui/scroll-area";
+import { DataTable } from "~/components/data-table/data-table";
 
-export default function AbrirPeriodoFacturacion() {
-  const [data, setData] = useState(null);
+export default function AbrirPeriodoFacturacion({
+  years,
+  periodos,
+}: {
+  years: Anio[];
+  periodos: Periodos[];
+}) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredPeriodos, setFilteredPeriodos] = useState<Periodos[]>([]);
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [isResultsOpen, setIsResultsOpen] = useState(true);
 
-  // Usar el hook optimizado
-  const { periodosFacturacion, fetchAnios, fetchPeriodosFacturacion } =
-    useOperaciones();
-
-  // Cargar los datos iniciales usando el hook
-  useEffect(() => {
-    fetchAnios();
-    fetchPeriodosFacturacion();
-  }, [fetchAnios, fetchPeriodosFacturacion]);
-
   // Nueva función para filtrar periodos
-  const filterPeriodos = (data: Periodos[]) => {
-    if (!searchTerm) return data;
-
-    return data.filter(
+  const filteredPeriodos = useMemo(() => {
+    if (!searchTerm) {
+      return periodos; // Si no hay término de búsqueda, devuelve todos los periodos
+    }
+    return periodos.filter(
       (periodo) =>
         periodo.pf_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         periodo.pf_descripcion
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
-        periodo.Column1.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        periodo.Column1.toLowerCase().includes(searchTerm.toLowerCase()) || // Asegúrate que Column1 y Column2 existan en tu tipo Periodos
         periodo.Column2.toLowerCase().includes(searchTerm.toLowerCase()) ||
         periodo.epf_descripcion.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  };
-
-  // Efecto para actualizar los periodos filtrados
-  useEffect(() => {
-    const dataToFilter = data || periodosFacturacion;
-    setFilteredPeriodos(filterPeriodos(dataToFilter));
-  }, [searchTerm, data, periodosFacturacion, filterPeriodos]);
+  }, [periodos, searchTerm]);
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
@@ -123,7 +111,7 @@ export default function AbrirPeriodoFacturacion() {
           <CollapsibleContent>
             <CardContent className="p-4">
               <ScrollArea className="h-[calc(100vh-400px)]">
-                <DataTable columns={columns} data={filteredPeriodos} />
+                <DataTable columns={columns} data={periodos} />
               </ScrollArea>
             </CardContent>
 
@@ -142,7 +130,11 @@ export default function AbrirPeriodoFacturacion() {
       <DialogNuevoPeriodo
         open={isOpenDialog}
         onOpenChange={setIsOpenDialog}
-        onPeriodoCreated={fetchPeriodosFacturacion}
+        onPeriodoCreated={() => {
+          setIsOpenDialog(false);
+          setIsResultsOpen(true);
+        }}
+        years={years}
       />
     </div>
   );
