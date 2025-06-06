@@ -43,10 +43,15 @@ import {
   type CalculoPrefacturaDetalle,
   type CalculoPrefacturaCargoResponse,
   type CalculoPrefacturaCompleto,
+  type PeriodoAbierto,
 } from "~/types/operaciones";
 import { Input } from "~/components/ui/input";
 
-export default function RevisarCalculoFacturaComponent() {
+export default function RevisarCalculoFacturaComponent({
+  periodoAbierto,
+}: {
+  periodoAbierto: PeriodoAbierto[];
+}) {
   // Estados para el formulario
   const [cicloId, setCicloId] = useState<string>("");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -64,7 +69,6 @@ export default function RevisarCalculoFacturaComponent() {
 
   // Obtención de datos del hook useOperaciones
   const {
-    consultarPeriodoAbierto: periodoAbierto,
     fetchPeriodoAbierto,
     fetchCiclosFacturacion,
     loadingState,

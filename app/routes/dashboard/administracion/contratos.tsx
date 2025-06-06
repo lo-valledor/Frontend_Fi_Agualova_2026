@@ -2,8 +2,9 @@
 import React from "react";
 import ContratosComponent from "~/components/administracion/contratos/contratos-component";
 import type { Route } from "./+types/contratos";
-import type { ContratosDisponibles } from "~/types/administracion";
+import type { GetContratos } from "~/types/administracion";
 import api from "~/lib/api";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,13 +14,22 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientActionArgs) {
-  const res = await api.get("contratos-disponibles");
+  const res = await api.get("contrato/buscar");
   return {
-    contratos: res.data as ContratosDisponibles[],
+    contratos: res.data as GetContratos[],
   };
 }
 
 export default function Contratos({ loaderData }: Route.ComponentProps) {
   const { contratos } = loaderData;
-  return <ContratosComponent contratos={contratos} />;
+  const pageBreadcrumbs = [
+    { label: "Administracion" },
+    { label: "Contratos" },
+  ];
+  return (
+    <div>
+      <BreadcrumbSetter items={pageBreadcrumbs} />
+      <ContratosComponent contratos={contratos} />
+    </div>
+  );
 }

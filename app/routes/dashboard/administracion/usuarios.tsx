@@ -2,6 +2,7 @@
 import React from "react";
 import type { Route } from "./+types/usuarios";
 import UsuariosComponent from "~/components/administracion/usuarios/usuarios-component";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,5 +12,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Usuarios() {
-  return <UsuariosComponent />;
+  const pageBreadcrumbs = [
+    { label: "Administracion" },
+    { label: "Usuarios" },
+  ];
+  return (
+    <div>
+      <BreadcrumbSetter items={pageBreadcrumbs} />
+      <UsuariosComponent />
+    </div>
+  );
 }

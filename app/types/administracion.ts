@@ -31,6 +31,26 @@ export interface ActualizarUsuarioProps {
 
 //Contratos
 
+export interface GetContratos {
+  codigoContrato: string;
+  acometida: string;
+  tipoContrato: string;
+  tarifa: string;
+  nombrePropietario: string;
+  nombreCliente: string;
+  local: string;
+  fechaInicio: string;
+  activo: boolean;
+  fechaTermino: string;
+  comunaEnvio: string;
+  direccionEnvio: string;
+  limiteInvierno: number;
+  promedioAnual: string;
+  cicloFacturacion: string;
+  potenciaContratada: string;
+  liberadoCorte: boolean;
+}
+
 export interface ContratosDisponibles {
   contratoId: string;
   local: string;
@@ -46,6 +66,70 @@ export interface ContratosDisponibles {
   limiteInventario: number;
   cicloFacturacion: string;
   estadoActivo: boolean;
+}
+
+export interface ContratosDisponiblesPorId {
+  tipoContrato: string;
+  tarifa: string;
+  nombrePropietario: string;
+  rutPropietario: string;
+  nombreCliente: string;
+  rutCliente: string;
+  localId: string;
+  codigoLocal: string;
+  fechaInicio: string;
+  activoTexto: string;
+  fechaTermino: string;
+  direccion: string;
+  codigoComuna: string;
+  limiteInvierno: number;
+  cicloFacturacion: string;
+  potenciaContratada: string;
+  comunaNombre: string;
+  esMadreTexto: string;
+  codigoContratoMadre: string;
+  lugarEntrega: string;
+  liberadoCorteTexto: string;
+}
+
+export interface CrearContratoProps {
+  tipoContrato: number;
+  tarifa: number;
+  propietario: string;
+  cliente: string;
+  localId: string;
+  fechaInicio: string;
+  activo: boolean;
+  direccion: string;
+  comuna: string;
+  limite: number;
+  ciclo: number;
+  potencia: string;
+  guardaCliente: string;
+  esMadre: string;
+  madre: string;
+  lugar: string;
+  sinCorte: number;
+}
+
+export interface ModificarContratoProps {
+  codigo: string;
+  tipoContrato: number;
+  tarifa: number;
+  propietario: string;
+  cliente: string;
+  localId: string;
+  fechaInicio: string;
+  activo: boolean;
+  fechaTermino: string;
+  direccion: string;
+  comuna: string;
+  limite: number;
+  ciclo: number;
+  potencia: string;
+  madre: string;
+  lugar: string;
+  sinCorte: number;
 }
 
 // Acometidas

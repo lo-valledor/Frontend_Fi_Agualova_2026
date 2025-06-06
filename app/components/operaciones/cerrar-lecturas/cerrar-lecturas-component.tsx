@@ -8,7 +8,10 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 import { useOperaciones } from "~/hooks/use-operaciones";
-import { type EstadoCierreLecturas } from "~/types/operaciones";
+import {
+  type EstadoCierreLecturas,
+  type PeriodoAbierto,
+} from "~/types/operaciones";
 import {
   Collapsible,
   CollapsibleContent,
@@ -40,7 +43,11 @@ import api from "~/lib/api";
 import { DataTable } from "../../data-table/data-table";
 import { columns } from "./columns";
 
-export default function CerrarLecturasComponent() {
+export default function CerrarLecturasComponent({
+  periodoAbierto,
+}: {
+  periodoAbierto: PeriodoAbierto[];
+}) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,12 +55,8 @@ export default function CerrarLecturasComponent() {
   const [estadoCierreLecturas, setEstadoCierreLecturas] = useState<
     EstadoCierreLecturas[]
   >([]);
-  const {
-    consultarPeriodoAbierto: periodoAbierto,
-    fetchPeriodoAbierto,
-    fetchCiclosFacturacion,
-    loadingState,
-  } = useOperaciones();
+  const { fetchPeriodoAbierto, fetchCiclosFacturacion, loadingState } =
+    useOperaciones();
 
   const isPeriodoLoading = loadingState.periodoAbierto.isLoading;
   const isCiclosLoading = loadingState.ciclos.isLoading;

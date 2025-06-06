@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useState, useEffect } from "react"
 import { useAuth } from "~/context/AuthContext";
-import { useNavigate } from "react-router"
+import { useNavigate, useLocation } from "react-router"
 import { Bolt, Lock, Moon, Sun, User } from 'lucide-react'
 import { useTheme } from "~/components/theme-provider";
 
@@ -16,6 +16,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const { login, loading } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -35,8 +36,10 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
     if (input.usuario && input.contrasena) {
       try {
-        await login(input.usuario, input.contrasena)
-        navigate("/dashboard")
+        // Obtener la ruta desde donde vino el usuario, o usar dashboard por defecto
+        const from = (location.state as any)?.from?.pathname || "/dashboard"
+        await login(input.usuario, input.contrasena, from)
+        // La redirección se maneja en el contexto de autenticación
       } catch (error) {
         const message = error instanceof Error ? error.message : "Error desconocido al iniciar sesión"
         // Simplificar mensaje genérico si la API no da uno claro

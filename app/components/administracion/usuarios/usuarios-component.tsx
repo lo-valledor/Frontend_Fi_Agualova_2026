@@ -155,56 +155,7 @@ export default function UsuariosComponent() {
         </div>
       </div>
 
-      {/* Estadísticas resumidas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/30 dark:to-blue-900/30 rounded-lg border border-sky-200 dark:border-sky-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-sky-100 dark:bg-sky-800/50 rounded-lg">
-              <Users className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-sky-700 dark:text-sky-300">
-                {totalUsuarios}
-              </div>
-              <div className="text-xs text-sky-600 dark:text-sky-400 font-medium">
-                Total Usuarios
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg">
-              <UserCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
-                {usuariosActivos}
-              </div>
-              <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                Usuarios Activos
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 bg-gradient-to-r from-rose-50 to-red-50 dark:from-rose-900/30 dark:to-red-900/30 rounded-lg border border-rose-200 dark:border-rose-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-rose-100 dark:bg-rose-800/50 rounded-lg">
-              <UserX className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-rose-700 dark:text-rose-300">
-                {usuariosInactivos}
-              </div>
-              <div className="text-xs text-rose-600 dark:text-rose-400 font-medium">
-                Usuarios Inactivos
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Tabla de usuarios */}
       <Card className="shadow-sm border border-border/60">

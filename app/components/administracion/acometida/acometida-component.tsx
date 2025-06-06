@@ -140,78 +140,11 @@ export default function AcometidaComponent({
         </div>
       </div>
 
-      {/* Estadísticas resumidas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/30 dark:to-blue-900/30 rounded-lg border border-sky-200 dark:border-sky-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-sky-100 dark:bg-sky-800/50 rounded-lg">
-              <Zap className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-sky-700 dark:text-sky-300">
-                {totalAcometidas}
-              </div>
-              <div className="text-xs text-sky-600 dark:text-sky-400 font-medium">
-                Total Acometidas
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg">
-              <Gauge className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
-                {acometidasConLimite}
-              </div>
-              <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                Con Límite Potencia
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/30 dark:to-orange-900/30 rounded-lg border border-amber-200 dark:border-amber-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-100 dark:bg-amber-800/50 rounded-lg">
-              <Network className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
-                {sectoresUnicos}
-              </div>
-              <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                Sectores Únicos
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/30 dark:to-violet-900/30 rounded-lg border border-purple-200 dark:border-purple-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 dark:bg-purple-800/50 rounded-lg">
-              <Gauge className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <div className="text-xl font-bold text-purple-700 dark:text-purple-300">
-                {promedioLimitePotencia.toFixed(1)} kW
-              </div>
-              <div className="text-xs text-purple-600 dark:text-purple-400 font-medium">
-                Promedio Potencia
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Botón para registrar acometida */}
       <div className="flex justify-end mb-4">
         <Button
           onClick={() => handleOpenForm()}
-          className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
+          className="gap-2 bg-sky-600 hover:bg-sky-700 text-white dark:bg-sky-900/20 dark:hover:bg-sky-800/20"
         >
           <Zap className="h-4 w-4" /> Registrar acometida
         </Button>

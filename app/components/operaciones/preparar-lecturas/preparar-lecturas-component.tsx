@@ -34,6 +34,8 @@ import { Button } from "~/components/ui/button";
 import {
   type ConsultarAsignacionSectores,
   type OpcionesPrepararLecturas,
+  type ValidarSectoresPendientes,
+  type PeriodoAbierto,
 } from "~/types/operaciones";
 import { toast } from "sonner";
 import api from "~/lib/api";
@@ -42,7 +44,13 @@ import TablaAsignacionSectores from "./tabla-asignacion-sectores";
 import { Skeleton } from "~/components/ui/skeleton";
 import DialogLecturasPendientes from "./dialog-lecturas-pendientes";
 
-export default function PrepararLecturasComponent() {
+export default function PrepararLecturasComponent({
+  periodoAbierto,
+  lecturasPendientes,
+}: {
+  periodoAbierto: PeriodoAbierto[];
+  lecturasPendientes: ValidarSectoresPendientes[];
+}) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [asignacionSectores, setAsignacionSectores] = useState<
@@ -53,14 +61,12 @@ export default function PrepararLecturasComponent() {
   >([]);
   const [error, setError] = useState<string | null>(null);
   const {
-    consultarPeriodoAbierto: periodoAbierto,
     fetchPeriodoAbierto,
     fetchCiclosFacturacion,
     loadingState,
     consultarSectores,
     fetchConsultarSectores,
     fetchLecturasPendientes,
-    lecturasPendientes,
   } = useOperaciones();
 
   const [cicloSeleccionado, setCicloSeleccionado] = useState<string>("");

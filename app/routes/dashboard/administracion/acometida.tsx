@@ -10,6 +10,7 @@ import type {
   ContratosDisponibles,
 } from "~/types/administracion";
 import type { Route } from "./+types/acometida";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -43,8 +44,13 @@ export default function Acometida({ loaderData }: Route.ComponentProps) {
     comboSectores,
     contratosDisponibles,
   } = loaderData;
+  const pageBreadcrumbs = [
+    { label: "Administracion" },
+    { label: "Acometidas" },
+  ];
   return (
     <div>
+      <BreadcrumbSetter items={pageBreadcrumbs} />
       <AcometidaComponent
         acometidas={acometidas}
         comboEmpalmes={comboEmpalmes}

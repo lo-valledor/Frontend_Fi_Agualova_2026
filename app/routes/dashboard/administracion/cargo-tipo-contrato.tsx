@@ -2,6 +2,7 @@
 import React from "react";
 import CargoTipoContratoComponent from "~/components/administracion/cargo-tipo-contrato-component";
 import type { Route } from "./+types/cargo-tipo-contrato";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,5 +11,14 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 export default function CargoTipoContrato() {
-  return <CargoTipoContratoComponent />;
+  const pageBreadcrumbs = [
+    { label: "Administracion" },
+    { label: "Cargo Tipo Contrato" },
+  ];
+  return (
+    <div>
+      <BreadcrumbSetter items={pageBreadcrumbs} />
+      <CargoTipoContratoComponent />
+    </div>
+  );
 }

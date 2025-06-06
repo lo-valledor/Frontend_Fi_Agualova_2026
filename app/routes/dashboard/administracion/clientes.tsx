@@ -2,6 +2,7 @@
 import React from "react";
 import ClientesComponent from "~/components/administracion/clientes-component";
 import type { Route } from "./+types/clientes";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,5 +12,14 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Clientes() {
-  return <ClientesComponent />;
+  const pageBreadcrumbs = [
+    { label: "Administracion" },
+    { label: "Clientes" },
+  ];
+  return (
+    <div>
+      <BreadcrumbSetter items={pageBreadcrumbs} />
+      <ClientesComponent />
+    </div>
+  );
 }

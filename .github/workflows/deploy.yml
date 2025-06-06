@@ -1,0 +1,33 @@
+name: Deploy Frontend to Production
+
+on:
+  push:
+    branches:
+      - master # O 'main', según tu rama principal
+
+jobs:
+  build-and-deploy:
+    runs-on: self-hosted
+
+    steps:
+      # 1. Descarga el código del repositorio
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Crear un archivo .env para Docker Compose
+      - name: Create Compose .env file
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+
+      # 3. Limpieza del despliegue anterior (Paso Clave)
+      # Detiene y elimina contenedores, redes y volúmenes del despliegue anterior.
+      # Esto garantiza un estado 100% limpio.
+      - name: Tear Down Previous Deployment
+        run: docker-compose down --volumes
+
+      # 4. Construir y ejecutar el nuevo despliegue
+      # 'up' levanta los servicios definidos en docker-compose.yml
+      # '-d' (detached) lo ejecuta en segundo plano
+      # '--build' fuerza la reconstrucción de la imagen con el nuevo código
+      - name: Build and Deploy New Version
+        run: docker-compose up -d --build

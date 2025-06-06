@@ -2,6 +2,11 @@
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 import PrepararLecturasComponent from "~/components/operaciones/preparar-lecturas/preparar-lecturas-component";
 import type { Route } from "./+types/preparar-lecturas";
+import api from "~/lib/api";
+import type {
+  PeriodoAbierto,
+  ValidarSectoresPendientes,
+} from "~/types/operaciones";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,7 +15,29 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function PrepararLecturas() {
+export async function clientLoader() {
+  try {
+    const [periodoAbierto, lecturasPendientes] = await Promise.all([
+      api.get("/ConsultarPeriodoAbierto"),
+      api.get("/validar-lecturas-pendientes"),
+    ]);
+
+    return {
+      periodoAbierto: periodoAbierto.data as PeriodoAbierto[],
+      lecturasPendientes:
+        lecturasPendientes.data as ValidarSectoresPendientes[],
+    };
+  } catch (error) {
+    console.error("Error en clientLoader:", error);
+    return {
+      periodoAbierto: null,
+      lecturasPendientes: null,
+    };
+  }
+}
+
+export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
+  const { periodoAbierto, lecturasPendientes } = loaderData;
   const pageBreadcrumbs = [
     { label: "Operaciones" },
     { label: "Preparar Lecturas" },
@@ -19,7 +46,10 @@ export default function PrepararLecturas() {
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <PrepararLecturasComponent />
+      <PrepararLecturasComponent
+        periodoAbierto={periodoAbierto ?? []}
+        lecturasPendientes={lecturasPendientes ?? []}
+      />
     </div>
   );
 }

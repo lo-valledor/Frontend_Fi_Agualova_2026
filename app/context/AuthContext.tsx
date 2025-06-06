@@ -15,7 +15,7 @@ export interface UserData {
 interface AuthContextType {
   isAuthenticated: boolean
   user: UserData | null
-  login: (usuario: string, contrasena: string) => Promise<void>
+  login: (usuario: string, contrasena: string, redirectTo?: string) => Promise<void>
   logout: () => Promise<void>
   loading: boolean
   error: string | null
@@ -71,7 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(false)
   }, [])
 
-  const login = async (usuario: string, contrasena: string) => {
+  const login = async (usuario: string, contrasena: string, redirectTo?: string) => {
     try {
       setLoading(true)
       setError(null)
@@ -82,7 +82,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const userData = parseUserFromToken(token)
       setUser(userData)
 
-      navigate('/dashboard') // Redirigir al dashboard después del login
+      // Redirigir al dashboard o a la página específica después del login
+      navigate(redirectTo || '/dashboard')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido')
       throw err

@@ -5,6 +5,7 @@ import type { Route } from "./+types/medidores";
 import api from "~/lib/api";
 import { useLoaderData } from "react-router";
 import type { BuscarMedidores } from "~/types/administracion";
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -25,5 +26,14 @@ export const clientLoader = async () => {
 
 export default function Medidores() {
   const { medidores } = useLoaderData<typeof clientLoader>();
-  return <MedidoresComponent medidores={medidores} />;
+  const pageBreadcrumbs = [
+    { label: "Administracion" },
+    { label: "Medidores" },
+  ];
+  return (
+    <div>
+      <BreadcrumbSetter items={pageBreadcrumbs} />
+      <MedidoresComponent medidores={medidores} />
+    </div>
+  );
 }
