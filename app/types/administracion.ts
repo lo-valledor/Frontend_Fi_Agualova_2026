@@ -132,6 +132,64 @@ export interface ModificarContratoProps {
   sinCorte: number;
 }
 
+export interface ContratoFormData {
+  tipoContrato: string
+  tarifa: string
+  nombrePropietario: string
+  nombreCliente: string
+  local: string
+  fechaInicio: string
+  activo: boolean
+  fechaTermino: string
+  comunaEnvio: string
+  direccionEnvio: string
+  limiteInvierno: number
+  promedioAnual: string
+  cicloFacturacion: string
+  potenciaContratada: string
+  liberadoCorte: boolean
+}
+
+export interface GetRegiones {
+  region: string;
+  codigo: string;
+  totalComunas: number;
+}
+
+export interface GetComunas {
+  nombre: string;
+  region: string;
+  codigo: string;
+}
+
+export interface GetContratosClientes {
+  codigoContrato: string;
+  acometida: string;
+  tipoContrato: string;
+  tarifa: string;
+  nombrePropietario: string;
+  nombreCliente: string;
+  local: string;
+  fechaInicio: string;
+  activo: boolean;
+  fechaTermino: string;
+  comunaEnvio: string;
+  direccionEnvio: string;
+  limiteInvierno: number;
+  promedioAnual: string;
+  cicloFacturacion: string;
+  potenciaContratada: string;
+  liberadoCorte: boolean;
+}
+
+export interface GetLimiteInvierno {
+  valor: string;
+}
+
+export interface GetFechaActual {
+  fecha: string;
+}
+
 // Acometidas
 
 export interface Acometida {
@@ -295,4 +353,75 @@ export interface ActualizarMedidorProps {
 export interface ModificarSubempalmeProps {
   codigoMedidor: number;
   subempalmeId: number;
+}
+
+// Clientes
+
+export interface GetClientes {
+  rut: string;
+  nombreCompleto: string;
+  esEmpresa: boolean;
+  direccion: string;
+  comuna: string;
+  contacto: string;
+  telefono: string;
+  email: string;
+  codigoComuna: string;
+}
+
+export interface GetGiros {
+  codigo: string;
+  actividadEconomica: string;
+  afectoIVA: string;
+  categoriaTributaria: string;
+}
+
+export interface GetClientesByRut {
+  rut: string;
+  nombre: string;
+  apellido: string;
+  esEmpresa: boolean;
+  direccion: string;
+  comuna: string;
+  codComuna: string;
+  contacto: string;
+  telefono: string;
+  correo: string;
+  codigoGiro: string;
+  giro: string;
+}
+
+export interface ClientesFormData {
+  rut: string;
+  nombre: string;
+  apellido: string;
+  esEmpresa: boolean;
+  direccion: string;
+  codComuna: string;
+  contacto: string;
+  telefono: string;
+  correo: string;
+  codigoGiro: string;
+}
+
+// Cargo Tipo Contrato
+
+export interface GetCargoTipoContrato {
+  tipoContratoId: number;
+  tipoContratoDescripcion: string;
+  cargoFacturableDescripcion: string;
+  condicionContratoDescripcion: string;
+  estado: boolean;
+  descripcion: string;
+}
+
+// Condiciones Contrato
+
+export interface GetCondicionesContrato {
+  id: number;
+  descripcion: string;
+  concepto: string;
+  factorPorcentual: string;
+  valorFijo: number | null;
+  estado: boolean;
 }

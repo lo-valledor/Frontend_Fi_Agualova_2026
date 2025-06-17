@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { DataTable } from '~/components/data-table/data-table';
-import { createColumns } from './columns';
-import { MedidorForm } from './medidor-form';
-import { DeleteConfirmDialog } from './delete-confirm-dialog';
+import type { GetCondicionesContrato } from '~/types/administracion';
+import { DataTable } from '../../data-table/data-table';
+import { columns } from './columns';
 import {
   Card,
   CardContent,
@@ -14,237 +13,136 @@ import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import {
-  Gauge,
-  Plus,
-  RefreshCw,
-  SearchIcon,
-  Activity,
-  Hash,
-  Building,
-  Download,
-  FileText,
-  Zap,
-  X,
-  Filter,
-  UserCheck,
-  UserX,
-} from 'lucide-react';
-import type {
-  BuscarMedidores,
-  CrearMedidorProps,
-  ActualizarMedidorProps,
-} from '~/types/administracion';
-import { toast } from 'sonner';
-import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
+import {
+  FileText,
+  UserCheck,
+  RefreshCw,
+  SearchIcon,
+  Building,
+  Filter,
+  X,
+  Download,
+  Calculator,
+  DollarSign,
+} from 'lucide-react';
 
-export default function MedidoresComponent({
-  medidores,
+export default function CondicionesContratoComponent({
+  condicionesContrato,
 }: {
-  medidores: BuscarMedidores[];
+  condicionesContrato: GetCondicionesContrato[];
 }) {
-  // Estados para modales
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedMedidor, setSelectedMedidor] =
-    useState<BuscarMedidores | null>(null);
-  const [medidorToDelete, setMedidorToDelete] = useState<{
-    id: number;
-    name: string;
-  } | null>(null);
-
-  // Estados para búsqueda
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [selectedMarca, setSelectedMarca] = useState<string>('todos');
-  const [selectedTipo, setSelectedTipo] = useState<string>('todos');
+  const [selectedConcepto, setSelectedConcepto] = useState<string>('todos');
   const [selectedEstado, setSelectedEstado] = useState<string>('todos');
+  const [selectedTipoValor, setSelectedTipoValor] = useState<string>('todos');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  // Filtrar medidores en tiempo real
-  const filteredMedidores = useMemo(() => {
-    return medidores.filter((medidor) => {
+  // Obtener valores únicos para filtros
+  const conceptosUnicos = [
+    ...new Set(condicionesContrato.map((c) => c.concepto)),
+  ]
+    .filter(Boolean)
+    .sort();
+
+  // Filtrar condiciones de contrato en tiempo real
+  const filteredCondiciones = useMemo(() => {
+    return condicionesContrato.filter((condicion) => {
+      // Filtro de búsqueda por texto
       const searchLower = searchTerm.toLowerCase();
       const matchesSearch =
         !searchTerm ||
-        medidor.codigo.toString().includes(searchLower) ||
-        medidor.marca.toLowerCase().includes(searchLower) ||
-        medidor.tipo.toLowerCase().includes(searchLower) ||
-        medidor.modelo.toLowerCase().includes(searchLower) ||
-        medidor.serie.toLowerCase().includes(searchLower) ||
-        medidor.ubicacion.toLowerCase().includes(searchLower) ||
-        medidor.estado.toLowerCase().includes(searchLower) ||
-        medidor.codigoAcometida.toLowerCase().includes(searchLower);
+        condicion.descripcion.toLowerCase().includes(searchLower) ||
+        condicion.concepto.toLowerCase().includes(searchLower) ||
+        condicion.factorPorcentual.toLowerCase().includes(searchLower) ||
+        (condicion.valorFijo &&
+          condicion.valorFijo.toString().includes(searchLower));
 
-      const matchesMarca =
-        selectedMarca === 'todos' ||
-        medidor.marca.toLowerCase() === selectedMarca.toLowerCase();
-      const matchesTipo =
-        selectedTipo === 'todos' ||
-        medidor.tipo.toLowerCase() === selectedTipo.toLowerCase();
+      // Filtro por concepto
+      const matchesConcepto =
+        selectedConcepto === 'todos' || condicion.concepto === selectedConcepto;
+
+      // Filtro por estado
       const matchesEstado =
         selectedEstado === 'todos' ||
-        (selectedEstado === 'activo' &&
-          medidor.estado.toLowerCase() === 'activo') ||
-        (selectedEstado === 'inactivo' &&
-          medidor.estado.toLowerCase() !== 'activo');
+        (selectedEstado === 'activo' && condicion.estado) ||
+        (selectedEstado === 'inactivo' && !condicion.estado);
 
-      return matchesSearch && matchesMarca && matchesTipo && matchesEstado;
+      // Filtro por tipo de valor
+      const matchesTipoValor =
+        selectedTipoValor === 'todos' ||
+        (selectedTipoValor === 'porcentual' &&
+          condicion.factorPorcentual !== '0') ||
+        (selectedTipoValor === 'fijo' &&
+          condicion.valorFijo !== null &&
+          condicion.valorFijo > 0) ||
+        (selectedTipoValor === 'sin_valor' &&
+          (condicion.valorFijo === null || condicion.valorFijo === 0) &&
+          condicion.factorPorcentual === '0');
+
+      return (
+        matchesSearch && matchesConcepto && matchesEstado && matchesTipoValor
+      );
     });
-  }, [medidores, searchTerm, selectedMarca, selectedTipo, selectedEstado]);
-
-  // Obtener valores únicos para los filtros
-  const marcasUnicas = useMemo(() => {
-    return [...new Set(medidores.map((m) => m.marca))].filter(Boolean).sort();
-  }, [medidores]);
-
-  const tiposUnicos = useMemo(() => {
-    return [...new Set(medidores.map((m) => m.tipo))].filter(Boolean).sort();
-  }, [medidores]);
-
-  // Estadísticas de medidores
-  const totalMedidores = medidores.length;
-  const medidoresActivos = medidores.filter((m) =>
-    m.estado.toLowerCase().includes('activo'),
-  ).length;
-  const medidoresInactivos = medidores.filter((m) =>
-    m.estado.toLowerCase().includes('inactivo'),
-  ).length;
-
-  // Función para limpiar todos los filtros
-  const clearAllFilters = () => {
-    setSearchTerm('');
-    setSelectedMarca('todos');
-    setSelectedTipo('todos');
-    setSelectedEstado('todos');
-  };
-
-  // Contar filtros activos
-  const activeFiltersCount = [
+  }, [
+    condicionesContrato,
     searchTerm,
-    selectedMarca,
-    selectedTipo,
+    selectedConcepto,
     selectedEstado,
-  ].filter(Boolean).length;
+    selectedTipoValor,
+  ]);
 
-  // Handlers para crear medidor
-  const handleCreateMedidor = () => {
-    setSelectedMedidor(null);
-    setIsFormOpen(true);
-  };
+  // Estadísticas de condiciones de contrato
+  const condicionesActivas = condicionesContrato.filter((c) => c.estado).length;
+  const condicionesInactivas = condicionesContrato.filter(
+    (c) => !c.estado,
+  ).length;
+  const totalCondiciones = condicionesContrato.length;
+  const condicionesPorcentuales = condicionesContrato.filter(
+    (c) => c.factorPorcentual !== '0',
+  ).length;
+  const condicionesFijas = condicionesContrato.filter(
+    (c) => c.valorFijo !== null && c.valorFijo > 0,
+  ).length;
 
-  // Handlers para editar medidor
-  const handleEditMedidor = (medidor: BuscarMedidores) => {
-    setSelectedMedidor(medidor);
-    setIsFormOpen(true);
-  };
-
-  // Handlers para eliminar medidor
-  const handleDeleteMedidor = (codigo: number) => {
-    const medidor = medidores.find((m) => m.codigo === codigo);
-    if (medidor) {
-      setMedidorToDelete({
-        id: codigo,
-        name: `${medidor.marca} ${medidor.modelo} (${medidor.serie})`,
-      });
-      setIsDeleteDialogOpen(true);
-    }
-  };
-
-  // Función para actualizar datos
-  const handleRefreshData = async () => {
+  // Funciones de manejo
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    toast.info('Actualizando medidores...');
     // Simular refresh - en una app real esto triggearía el refetch
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setIsRefreshing(false);
   };
 
-  // Función para exportar Excel
   const handleExportExcel = async () => {
     setIsExporting(true);
     try {
-      toast.info('Generando archivo Excel...');
-
-      // Llamada a la API para exportar
-      const response = await fetch('/api/exportar-medidores', {
-        method: 'GET',
-        headers: {
-          'Content-Type':
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al exportar medidores');
-      }
-
-      // Descargar el archivo
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = `medidores_${new Date().toISOString().split('T')[0]}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-
-      toast.success('Archivo Excel descargado correctamente');
-    } catch (error) {
-      console.error('Error al exportar:', error);
-      toast.error('Error al exportar medidores a Excel');
+      // Aquí iría la lógica de exportación
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Simular descarga
+      console.log('Exportando condiciones de contrato a Excel...');
     } finally {
       setIsExporting(false);
     }
   };
 
-  // Submit del formulario (placeholder - necesitará integración con API)
-  const handleFormSubmit = async (
-    data: CrearMedidorProps | ActualizarMedidorProps,
-  ) => {
-    try {
-      if (selectedMedidor) {
-        // Actualizar medidor existente - PUT /Medidormodificar
-        console.log('Actualizando medidor:', data);
-        toast.success('El medidor ha sido actualizado correctamente.');
-      } else {
-        // Crear nuevo medidor - POST /MedidorCrear
-        console.log('Creando medidor:', data);
-        toast.success('El medidor ha sido creado correctamente.');
-      }
-      setIsFormOpen(false);
-    } catch (error) {
-      console.error('Error al guardar medidor:', error);
-      toast.error('Ha ocurrido un error al guardar el medidor.');
-    }
+  const clearAllFilters = () => {
+    setSearchTerm('');
+    setSelectedConcepto('todos');
+    setSelectedEstado('todos');
+    setSelectedTipoValor('todos');
   };
 
-  // Confirmar eliminación (placeholder)
-  const handleConfirmDelete = async () => {
-    if (medidorToDelete) {
-      try {
-        console.log('Eliminando medidor:', medidorToDelete.id);
-        toast.success('El medidor ha sido eliminado correctamente.');
-        setIsDeleteDialogOpen(false);
-        setMedidorToDelete(null);
-      } catch (error) {
-        console.error('Error al eliminar medidor:', error);
-        toast.error('Ha ocurrido un error al eliminar el medidor.');
-      }
-    }
-  };
-
-  // Crear columnas con handlers
-  const columns = createColumns({
-    onEdit: handleEditMedidor,
-    onDelete: handleDeleteMedidor,
-  });
+  const hasActiveFilters =
+    searchTerm ||
+    selectedConcepto !== 'todos' ||
+    selectedEstado !== 'todos' ||
+    selectedTipoValor !== 'todos';
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -252,10 +150,10 @@ export default function MedidoresComponent({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/40">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-50">
-            Gestión de Medidores
+            Condiciones de Contrato
           </h1>
           <p className="text-muted-foreground">
-            Administra medidores eléctricos, marcas y configuraciones
+            Gestión de condiciones y parámetros de facturación del sistema
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -263,29 +161,29 @@ export default function MedidoresComponent({
             variant="outline"
             className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
           >
-            Total: {totalMedidores} medidores
+            Total: {totalCondiciones} condiciones
           </Badge>
         </div>
       </div>
 
-      {/* Tabla de medidores */}
+      {/* Tabla de condiciones de contrato */}
       <Card className="shadow-sm border border-border/60">
         <CardHeader className="py-4 px-6 border-b border-border/60 bg-muted/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-sm">
-                <Gauge className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                <FileText className="h-5 w-5 text-sky-600 dark:text-sky-400" />
               </div>
               <div>
                 <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                  Lista de Medidores
+                  Lista de Condiciones de Contrato
                 </CardTitle>
                 <CardDescription className="text-sm">
-                  {filteredMedidores.length > 0
-                    ? `${filteredMedidores.length} medidores ${
-                        searchTerm ? 'filtrados' : 'registrados'
+                  {filteredCondiciones.length > 0
+                    ? `${filteredCondiciones.length} condiciones ${
+                        hasActiveFilters ? 'filtradas' : 'registradas'
                       } en el sistema`
-                    : 'No hay medidores registrados'}
+                    : 'No hay condiciones de contrato registradas'}
                 </CardDescription>
               </div>
             </div>
@@ -305,7 +203,7 @@ export default function MedidoresComponent({
                 Excel
               </Button>
               <Button
-                onClick={handleRefreshData}
+                onClick={handleRefresh}
                 variant="outline"
                 size="sm"
                 disabled={isRefreshing}
@@ -316,29 +214,21 @@ export default function MedidoresComponent({
                 />
                 Actualizar
               </Button>
-              <Button
-                onClick={handleCreateMedidor}
-                size="sm"
-                className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
-              >
-                <Plus className="h-4 w-4" />
-                Nuevo Medidor
-              </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          {medidores.length === 0 ? (
+          {condicionesContrato.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground">
               <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full">
-                <Gauge className="h-8 w-8 text-sky-500 dark:text-sky-400" />
+                <FileText className="h-8 w-8 text-sky-500 dark:text-sky-400" />
               </div>
               <div className="text-center">
                 <p className="font-medium text-slate-700 dark:text-slate-300">
-                  No hay medidores disponibles
+                  No hay condiciones de contrato disponibles
                 </p>
                 <p className="text-sm mt-1">
-                  Haz clic en "Nuevo Medidor" para agregar el primer medidor
+                  Las condiciones aparecerán aquí cuando estén disponibles
                 </p>
               </div>
             </div>
@@ -351,14 +241,15 @@ export default function MedidoresComponent({
                   <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="🔍 Buscar por código, marca, tipo, modelo, serie..."
+                    placeholder="🔍 Buscar por descripción, concepto, factor o valor..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
                   />
                   {searchTerm && (
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
-                      {filteredMedidores.length} de {medidores.length}
+                      {filteredCondiciones.length} de{' '}
+                      {condicionesContrato.length}
                     </div>
                   )}
                 </div>
@@ -371,13 +262,21 @@ export default function MedidoresComponent({
                       <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                         Filtros Avanzados
                       </span>
-                      {activeFiltersCount > 0 && (
+                      {hasActiveFilters && (
                         <Badge variant="secondary" className="text-xs">
-                          {activeFiltersCount} filtro activo
+                          {
+                            [
+                              searchTerm,
+                              selectedConcepto !== 'todos',
+                              selectedEstado !== 'todos',
+                              selectedTipoValor !== 'todos',
+                            ].filter(Boolean).length
+                          }{' '}
+                          activos
                         </Badge>
                       )}
                     </div>
-                    {activeFiltersCount > 0 && (
+                    {hasActiveFilters && (
                       <Button
                         variant="ghost"
                         size="sm"
@@ -414,47 +313,48 @@ export default function MedidoresComponent({
                           <SelectItem value="activo">
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                              Activos ({medidoresActivos})
+                              Activos ({condicionesActivas})
                             </div>
                           </SelectItem>
                           <SelectItem value="inactivo">
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full bg-rose-500" />
-                              Inactivos ({medidoresInactivos})
+                              Inactivos ({condicionesInactivas})
                             </div>
                           </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
-                    {/* Filtro por marca */}
+                    {/* Filtro por concepto */}
                     <div className="space-y-2">
                       <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
                         <Building className="h-3 w-3" />
-                        Marca
+                        Concepto
                       </label>
                       <Select
-                        value={selectedMarca}
-                        onValueChange={setSelectedMarca}
+                        value={selectedConcepto}
+                        onValueChange={setSelectedConcepto}
                       >
                         <SelectTrigger className="h-9 text-sm border-slate-300 focus:border-sky-400 focus:ring-sky-400/20">
-                          <SelectValue placeholder="Marca..." />
+                          <SelectValue placeholder="Concepto..." />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="todos">
                             <div className="flex items-center gap-2">
                               <Building className="h-3 w-3 text-slate-500" />
-                              Todas las marcas
+                              Todos los conceptos
                             </div>
                           </SelectItem>
-                          {marcasUnicas.map((marca) => (
-                            <SelectItem key={marca} value={marca}>
+                          {conceptosUnicos.map((concepto) => (
+                            <SelectItem key={concepto} value={concepto}>
                               <div className="flex items-center gap-2">
-                                <Building className="h-3 w-3 text-blue-500" />
-                                {marca} (
+                                <Building className="h-3 w-3 text-amber-500" />
+                                {concepto} (
                                 {
-                                  medidores.filter((m) => m.marca === marca)
-                                    .length
+                                  condicionesContrato.filter(
+                                    (c) => c.concepto === concepto,
+                                  ).length
                                 }
                                 )
                               </div>
@@ -464,15 +364,15 @@ export default function MedidoresComponent({
                       </Select>
                     </div>
 
-                    {/* Filtro por tipo */}
+                    {/* Filtro por tipo de valor */}
                     <div className="space-y-2">
                       <label className="text-xs font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1">
-                        <Zap className="h-3 w-3" />
-                        Tipo
+                        <Calculator className="h-3 w-3" />
+                        Tipo de Valor
                       </label>
                       <Select
-                        value={selectedTipo}
-                        onValueChange={setSelectedTipo}
+                        value={selectedTipoValor}
+                        onValueChange={setSelectedTipoValor}
                       >
                         <SelectTrigger className="h-9 text-sm border-slate-300 focus:border-sky-400 focus:ring-sky-400/20">
                           <SelectValue placeholder="Tipo..." />
@@ -480,23 +380,32 @@ export default function MedidoresComponent({
                         <SelectContent>
                           <SelectItem value="todos">
                             <div className="flex items-center gap-2">
-                              <Zap className="h-3 w-3 text-slate-500" />
+                              <Calculator className="h-3 w-3 text-slate-500" />
                               Todos los tipos
                             </div>
                           </SelectItem>
-                          {tiposUnicos.map((tipo) => (
-                            <SelectItem key={tipo} value={tipo}>
-                              <div className="flex items-center gap-2">
-                                <Zap className="h-3 w-3 text-violet-500" />
-                                {tipo} (
-                                {
-                                  medidores.filter((m) => m.tipo === tipo)
-                                    .length
-                                }
-                                )
-                              </div>
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="porcentual">
+                            <div className="flex items-center gap-2">
+                              <Calculator className="h-3 w-3 text-purple-500" />
+                              Porcentual ({condicionesPorcentuales})
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="fijo">
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="h-3 w-3 text-emerald-500" />
+                              Valor Fijo ({condicionesFijas})
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="sin_valor">
+                            <div className="flex items-center gap-2">
+                              <X className="h-3 w-3 text-slate-500" />
+                              Sin Valor (
+                              {totalCondiciones -
+                                condicionesPorcentuales -
+                                condicionesFijas}
+                              )
+                            </div>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -508,7 +417,7 @@ export default function MedidoresComponent({
                       </label>
                       <div className="h-9 flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-md">
                         <div className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                          {filteredMedidores.length} medidores
+                          {filteredCondiciones.length} condiciones
                         </div>
                       </div>
                     </div>
@@ -520,18 +429,15 @@ export default function MedidoresComponent({
               <div className="flex items-center justify-between pb-3 border-b border-border/40">
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-                    <Gauge className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <FileText className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                    {filteredMedidores.length} medidores{' '}
-                    {searchTerm ||
-                    selectedMarca !== 'todos' ||
-                    selectedTipo !== 'todos' ||
-                    selectedEstado !== 'todos'
-                      ? `encontrados de ${medidores.length} total`
+                    {filteredCondiciones.length} condiciones{' '}
+                    {hasActiveFilters
+                      ? `encontradas de ${condicionesContrato.length} total`
                       : 'disponibles'}
                   </span>
-                  {activeFiltersCount > 0 && (
+                  {hasActiveFilters && (
                     <Badge variant="outline" className="text-xs">
                       Filtrado
                     </Badge>
@@ -539,32 +445,11 @@ export default function MedidoresComponent({
                 </div>
               </div>
 
-              <DataTable columns={columns} data={filteredMedidores} />
+              <DataTable columns={columns} data={filteredCondiciones} />
             </div>
           )}
         </CardContent>
       </Card>
-
-      {/* Modal de formulario */}
-      <MedidorForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        onSubmit={handleFormSubmit}
-        medidor={selectedMedidor}
-        isLoading={false} // Placeholder
-      />
-
-      {/* Modal de confirmación de eliminación */}
-      <DeleteConfirmDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => {
-          setIsDeleteDialogOpen(false);
-          setMedidorToDelete(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        medidorName={medidorToDelete?.name || ''}
-        isLoading={false} // Placeholder
-      />
     </div>
   );
 }

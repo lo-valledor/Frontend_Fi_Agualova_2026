@@ -1,16 +1,16 @@
+'use client';
+
 import {
   type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getExpandedRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  getFilteredRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-
+} from '@tanstack/react-table';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
 import {
   Table,
   TableBody,
@@ -18,74 +18,64 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
-import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
-import { LoadingSpinner } from "../loading-spinner";
+} from '~/components/ui/table';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  isLoading?: boolean;
-  _reloadData?: () => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  isLoading = false,
-  _reloadData,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: 'includesString',
     state: {
-      sorting,
-      columnFilters,
       globalFilter,
     },
+    onGlobalFilterChange: setGlobalFilter,
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <LoadingSpinner message="Cargando datos..." />
-      </div>
-    );
-  }
   return (
     <div className="space-y-4">
-      <div className="rounded-md border border-border/60">
+      {/* Search */}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <Input
+          placeholder="Buscar usuarios..."
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="pl-10"
+        />
+      </div>
+
+      {/* Table */}
+      <div className="rounded-lg border bg-card">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+              <TableRow key={headerGroup.id} className="border-b bg-muted/50">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="font-semibold">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -94,14 +84,13 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-muted/50"
+                  className="hover:bg-muted/50 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -111,52 +100,49 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
+                  className="h-24 text-center"
                 >
-                  {globalFilter
-                    ? `No se encontraron resultados para "${globalFilter}"`
-                    : "No hay datos disponibles."}
+                  No se encontraron usuarios.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>{" "}
-      <div className="flex items-center justify-between space-x-2 py-4">
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
         <div className="text-sm text-muted-foreground">
-          {globalFilter ? (
-            <>
-              Mostrando {table.getFilteredRowModel().rows.length} de{" "}
-              {data.length} resultados filtrados
-            </>
-          ) : (
-            <>
-              {" "}
-              Página {table.getState().pagination.pageIndex + 1} de{" "}
-              {table.getPageCount()} ({data.length} registros total)
-            </>
-          )}
+          Mostrando{' '}
+          {table.getState().pagination.pageIndex *
+            table.getState().pagination.pageSize +
+            1}{' '}
+          a{' '}
+          {Math.min(
+            (table.getState().pagination.pageIndex + 1) *
+              table.getState().pagination.pageSize,
+            table.getFilteredRowModel().rows.length,
+          )}{' '}
+          de {table.getFilteredRowModel().rows.length} usuarios
         </div>
         <div className="flex items-center space-x-2">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="text-muted-foreground hover:text-muted-foreground hover:bg-muted"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="sr-only">Página anterior</span>
+            Anterior
           </Button>
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="text-muted-foreground hover:text-muted-foreground hover:bg-muted"
           >
+            Siguiente
             <ChevronRight className="h-4 w-4" />
-            <span className="sr-only">Página siguiente</span>
           </Button>
         </div>
       </div>

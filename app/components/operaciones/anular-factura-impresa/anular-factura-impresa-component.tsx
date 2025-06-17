@@ -91,19 +91,7 @@ export default function AnularFacturaImpresaComponent() {
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
-      {/* Page Header */}
-      <div className="flex items-center justify-between border-b border-border/40 pb-3.5">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Anular Factura Impresa
-            </h1>
-          </div>
-          <p className="text-muted-foreground">
-            Gestión de anulaciones de facturas ya impresas
-          </p>
-        </div>
-      </div>
+      c
 
       {/* Alertas */}
       {showAlert && (

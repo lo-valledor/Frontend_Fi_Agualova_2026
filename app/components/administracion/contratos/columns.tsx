@@ -1,162 +1,156 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import { Building, Shield, MapPin, Calendar, User, FileText } from "lucide-react";
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
-import { Badge } from "~/components/ui/badge";
-import type { GetContratos } from "~/types/administracion";
-import DetallesContrato from "./detalles-contrato";
+'use client';
 
-export const columns: ColumnDef<GetContratos>[] = [
-  {
-    header: "Detalles",
-    cell: ({ row }) => {
-      const codigoContrato = row.getValue("codigoContrato") as string;
-      return (
-       <DetallesContrato codigoContrato={codigoContrato} />
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código Contrato" />
-    ),
-    accessorKey: "codigoContrato",
-    cell: ({ row }) => {
-      const codigoContrato = row.getValue("codigoContrato") as string;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md">
-            <FileText className="h-3 w-3 text-sky-600 dark:text-sky-400" />
-          </div>
-          <span className="font-mono text-sm font-medium text-sky-800 dark:text-sky-200">{codigoContrato}</span>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acometida" />
-    ),
-    accessorKey: "acometida",
-    cell: ({ row }) => {
-      const acometida = row.getValue("acometida") as string;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md">
-            <Building className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-          </div>
-          <span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">{acometida}</span>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo Contrato" />
-    ),
-    accessorKey: "tipoContrato",
-    cell: ({ row }) => {
-      const tipoContrato = row.getValue("tipoContrato") as string;
-      return (
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800">
-            <Building className="h-3 w-3 mr-1" />
-            {tipoContrato}
-          </Badge>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tarifa" />
-    ),
-    accessorKey: "tarifa",
-    cell: ({ row }) => {
-      const tarifa = row.getValue("tarifa") as string;
+import type { ColumnDef } from '@tanstack/react-table';
+import { Button } from '~/components/ui/button';
+import { Badge } from '~/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu';
+import {
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  FileText,
+  Building,
+  User,
+  MapPin,
+  Calendar,
+  Shield,
+  Zap,
+} from 'lucide-react';
+import type { GetContratos } from '~/types/administracion';
 
-      const getTarifaColor = (tarifa: string) => {
-        switch (tarifa) {
-          case "BT-1":
-            return "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800";
-          case "BT-2":
-            return "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800";
-          case "BT-3":
-            return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800";
-          default:
-            return "bg-slate-100 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800";
-        }
+interface TableColumnsProps {
+  onEdit: (contract: GetContratos) => void;
+  onDelete: (contract: GetContratos) => void;
+  onViewDetails: (contract: GetContratos) => void;
+}
+
+export const columns = ({
+  onEdit,
+  onDelete,
+  onViewDetails,
+}: TableColumnsProps): ColumnDef<GetContratos>[] => [
+  {
+    accessorKey: 'codigoContrato',
+    header: 'Código Contrato',
+    cell: ({ row }) => {
+      const contract = row.original;
+      return (
+        <div className="flex items-center space-x-3">
+          <div className="flex-shrink-0">
+            <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+          </div>
+          <div>
+            <div className="font-mono text-sm font-medium text-sky-800 dark:text-sky-200">
+              {contract.codigoContrato}
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              {contract.acometida}
+            </div>
+          </div>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'tipoContrato',
+    header: 'Tipo',
+    cell: ({ row }) => {
+      const tipoContrato = row.getValue('tipoContrato') as string;
+      const tipoColors = {
+        Residencial:
+          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+        Comercial:
+          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+        Industrial:
+          'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+        Público:
+          'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
       };
 
       return (
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className={`text-xs font-medium ${getTarifaColor(tarifa)}`}>
-            <Shield className="h-3 w-3 mr-1" />
-            {tarifa}
-          </Badge>
-        </div>
+        <Badge
+          className={
+            tipoColors[tipoContrato as keyof typeof tipoColors] ||
+            tipoColors.Residencial
+          }
+        >
+          <Building className="w-3 h-3 mr-1" />
+          {tipoContrato}
+        </Badge>
       );
     },
   },
   {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Propietario" />
-    ),
-    accessorKey: "nombrePropietario",
+    accessorKey: 'tarifa',
+    header: 'Tarifa',
     cell: ({ row }) => {
-      const nombrePropietario = row.getValue("nombrePropietario") as string;
+      const tarifa = row.getValue('tarifa') as string;
+      const tarifaColors = {
+        'BT-1':
+          'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+        'BT-2': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+        'BT-3':
+          'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+        'AT-2':
+          'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
+        'AT-3': 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200',
+      };
+
       return (
-        <div className="flex items-center gap-2 max-w-[200px]">
+        <Badge
+          className={
+            tarifaColors[tarifa as keyof typeof tarifaColors] ||
+            'bg-gray-100 text-gray-800'
+          }
+        >
+          <Zap className="w-3 h-3 mr-1" />
+          {tarifa}
+        </Badge>
+      );
+    },
+  },
+  {
+    accessorKey: 'nombrePropietario',
+    header: 'Propietario',
+    cell: ({ row }) => {
+      const contract = row.original;
+      return (
+        <div className="flex items-center space-x-2">
           <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
             <User className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
           </div>
-          <span
-            className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate"
-            title={nombrePropietario}
-          >
-            {nombrePropietario}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Cliente" />
-    ),
-    accessorKey: "nombreCliente",
-    cell: ({ row }) => {
-      const nombreCliente = row.getValue("nombreCliente") as string;
-      return (
-        <div className="flex items-center gap-2 max-w-[200px]">
-          <div className="p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
-            <User className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+          <div className="max-w-[150px]">
+            <div className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">
+              {contract.nombrePropietario}
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              {contract.nombreCliente}
+            </div>
           </div>
-          <span
-            className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate"
-            title={nombreCliente}
-          >
-            {nombreCliente}
-          </span>
         </div>
       );
     },
   },
   {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Local" />
-    ),
-    accessorKey: "local",
+    accessorKey: 'local',
+    header: 'Local',
     cell: ({ row }) => {
-      const local = row.getValue("local") as string;
+      const local = row.getValue('local') as string;
       return (
-        <div className="flex items-center gap-2 max-w-[150px]">
+        <div className="flex items-center space-x-2">
           <div className="p-1.5 bg-teal-100 dark:bg-teal-900/30 rounded-md">
             <Building className="h-3 w-3 text-teal-600 dark:text-teal-400" />
           </div>
-          <span
-            className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate"
-            title={local}
-          >
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300 max-w-[120px] truncate">
             {local}
           </span>
         </div>
@@ -164,236 +158,101 @@ export const columns: ColumnDef<GetContratos>[] = [
     },
   },
   {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha Inicio" />
-    ),
-    accessorKey: "fechaInicio",
+    accessorKey: 'fechaInicio',
+    header: 'Fecha Inicio',
     cell: ({ row }) => {
-      const fechaInicio = row.getValue("fechaInicio") as string;
-      const fecha = new Date(fechaInicio);
-      const fechaFormateada = fecha.toLocaleDateString("es-CL", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      });
-
+      const fecha = new Date(row.getValue('fechaInicio'));
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center space-x-2">
           <div className="p-1.5 bg-cyan-100 dark:bg-cyan-900/30 rounded-md">
             <Calendar className="h-3 w-3 text-cyan-600 dark:text-cyan-400" />
           </div>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {fechaFormateada}
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            {fecha.toLocaleDateString('es-ES')}
           </span>
         </div>
       );
     },
   },
   {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
-    ),
-    accessorKey: "activo",
+    accessorKey: 'activo',
+    header: 'Estado',
     cell: ({ row }) => {
-      const activo = row.getValue("activo") as boolean;
+      const activo = row.getValue('activo') as boolean;
       return (
-        <div className="flex items-center gap-2">
-          <Badge
-            variant={activo ? "default" : "secondary"}
-            className={`text-xs font-medium ${
-              activo
-                ? "bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800"
-                : "bg-rose-100 text-rose-800 border-rose-200 hover:bg-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800"
-            }`}
-          >
-            <div
-              className={`w-2 h-2 rounded-full mr-1.5 ${
-                activo ? "bg-emerald-500" : "bg-rose-500"
-              }`}
-            />
-            {activo ? "Activo" : "Inactivo"}
-          </Badge>
-        </div>
+        <Badge variant={activo ? 'default' : 'secondary'}>
+          <div
+            className={`w-2 h-2 rounded-full mr-1.5 ${activo ? 'bg-green-500' : 'bg-red-500'}`}
+          />
+          {activo ? 'Activo' : 'Inactivo'}
+        </Badge>
       );
     },
   },
   {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha Término" />
-    ),
-    accessorKey: "fechaTermino",
+    accessorKey: 'comunaEnvio',
+    header: 'Comuna',
     cell: ({ row }) => {
-      const fechaTermino = row.getValue("fechaTermino") as string;
-
-      if (!fechaTermino) {
-        return (
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-slate-100 dark:bg-slate-900/30 rounded-md">
-              <Calendar className="h-3 w-3 text-slate-400" />
-            </div>
-            <span className="text-sm text-slate-500 dark:text-slate-400 italic">Sin fecha</span>
-          </div>
-        );
-      }
-
-      const fecha = new Date(fechaTermino);
-      const fechaFormateada = fecha.toLocaleDateString("es-CL", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      });
-
+      const comuna = row.getValue('comunaEnvio') as string;
       return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-md">
-            <Calendar className="h-3 w-3 text-orange-600 dark:text-orange-400" />
-          </div>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {fechaFormateada}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Comuna Envío" />
-    ),
-    accessorKey: "comunaEnvio",
-    cell: ({ row }) => {
-      const comunaEnvio = row.getValue("comunaEnvio") as string;
-      return (
-        <div className="flex items-center gap-2 max-w-[150px]">
+        <div className="flex items-center space-x-2">
           <div className="p-1.5 bg-violet-100 dark:bg-violet-900/30 rounded-md">
             <MapPin className="h-3 w-3 text-violet-600 dark:text-violet-400" />
           </div>
-          <span
-            className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate"
-            title={comunaEnvio}
-          >
-            {comunaEnvio}
+          <span className="text-sm text-gray-600 dark:text-gray-300 max-w-[100px] truncate">
+            {comuna}
           </span>
         </div>
       );
     },
   },
   {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Dirección Envío" />
-    ),
-    accessorKey: "direccionEnvio",
+    accessorKey: 'liberadoCorte',
+    header: 'Liberado Corte',
     cell: ({ row }) => {
-      const direccionEnvio = row.getValue("direccionEnvio") as string;
+      const liberado = row.getValue('liberadoCorte') as boolean;
       return (
-        <div className="flex items-center gap-2 max-w-[200px]">
-          <div className="p-1.5 bg-pink-100 dark:bg-pink-900/30 rounded-md">
-            <MapPin className="h-3 w-3 text-pink-600 dark:text-pink-400" />
-          </div>
-          <span
-            className="text-sm text-slate-600 dark:text-slate-400 truncate"
-            title={direccionEnvio}
-          >
-            {direccionEnvio}
-          </span>
-        </div>
+        <Badge variant={liberado ? 'default' : 'secondary'}>
+          <Shield className="w-3 h-3 mr-1" />
+          {liberado ? 'Liberado' : 'No Liberado'}
+        </Badge>
       );
     },
   },
   {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Límite Invierno" />
-    ),
-    accessorKey: "limiteInvierno",
+    id: 'actions',
+    header: 'Acciones',
     cell: ({ row }) => {
-      const limiteInvierno = row.getValue("limiteInvierno") as number;
+      const contract = row.original;
+
       return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-ice-100 dark:bg-slate-900/30 rounded-md">
-            <Shield className="h-3 w-3 text-blue-600 dark:text-blue-400" />
-          </div>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {limiteInvierno.toLocaleString("es-CL")} kWh
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Promedio Anual" />
-    ),
-    accessorKey: "promedioAnual",
-    cell: ({ row }) => {
-      const promedioAnual = row.getValue("promedioAnual") as string;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-yellow-100 dark:bg-yellow-900/30 rounded-md">
-            <Shield className="h-3 w-3 text-yellow-600 dark:text-yellow-400" />
-          </div>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {promedioAnual}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ciclo Facturación" />
-    ),
-    accessorKey: "cicloFacturacion",
-    cell: ({ row }) => {
-      const cicloFacturacion = row.getValue("cicloFacturacion") as string;
-      return (
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800">
-            <Calendar className="h-3 w-3 mr-1" />
-            {cicloFacturacion}
-          </Badge>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Potencia Contratada" />
-    ),
-    accessorKey: "potenciaContratada",
-    cell: ({ row }) => {
-      const potenciaContratada = row.getValue("potenciaContratada") as string;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-red-100 dark:bg-red-900/30 rounded-md">
-            <Shield className="h-3 w-3 text-red-600 dark:text-red-400" />
-          </div>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {potenciaContratada}
-          </span>
-        </div>
-      );
-    },
-  },
-  {
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Liberado Corte" />
-    ),
-    accessorKey: "liberadoCorte",
-    cell: ({ row }) => {
-      const liberadoCorte = row.getValue("liberadoCorte") as boolean;
-      return (
-        <div className="flex items-center gap-2">
-          <Badge
-            variant={liberadoCorte ? "default" : "secondary"}
-            className={`text-xs font-medium ${
-              liberadoCorte
-                ? "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
-                : "bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-800"
-            }`}
-          >
-            <Shield className="h-3 w-3 mr-1" />
-            {liberadoCorte ? "Liberado" : "No Liberado"}
-          </Badge>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir menú</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onViewDetails(contract)}>
+              <FileText className="mr-2 h-4 w-4" />
+              Ver Detalles
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(contract)}>
+              <Edit className="mr-2 h-4 w-4" />
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onDelete(contract)}
+              className="text-red-600 focus:text-red-600"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Eliminar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },

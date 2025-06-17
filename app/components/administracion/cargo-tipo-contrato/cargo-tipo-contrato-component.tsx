@@ -1,6 +1,13 @@
-import React from "react";
+import React from 'react';
+import { DataTable } from '~/components/data-table/data-table';
+import type { GetCargoTipoContrato } from '~/types/administracion';
+import { columns } from './columns';
 
-export default function CargoTipoContratoComponent() {
+export default function CargoTipoContratoComponent({
+  cargoTipoContrato,
+}: {
+  cargoTipoContrato: GetCargoTipoContrato[];
+}) {
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
       <div className="flex items-center justify-between border-b border-border/40 pb-3.5">
@@ -14,6 +21,9 @@ export default function CargoTipoContratoComponent() {
             Gestión de cargos y tipos de contrato del sistema
           </p>
         </div>
+      </div>
+      <div className="flex flex-col gap-4">
+        <DataTable columns={columns} data={cargoTipoContrato} />
       </div>
     </div>
   );
