@@ -1,3 +1,35 @@
+/* Ciclos de Facturación */
+// buscarCiclo, obtenerCiclo{id}, crearCiclo, modificarCiclo
+export type CiclosFacturacion = {
+  id: number;
+  descripcion: string;
+  diaFacturacion: number;
+  diaInicioLectura: number;
+  diasVencimientoFactura: number;
+  estado: boolean;
+}
+
+/* Claves */
+// buscarClaves, obtenerClave{id}, crearClave, modificarClave
+export type Claves = {
+  id: number;
+  descripcion: string;
+  estado: boolean;
+  tipo: string;
+  codigo: string;
+}
+
+/* Conceptos */
+// buscarConceptos, obtenerConcepto{id}, crearConcepto, modificarConcepto
+export type Conceptos = {
+  id: number;
+  denominacion: string;
+  descripcion: string;
+  unidad: string;
+  fijoVariable: string;
+  asociadoDescripcion: string | null;
+}
+
 /* Empalme */
 // buscarEmpalmes, obtenerEmpalme{id}, crearEmpalmes, modificarEmpalmes{id}
 export type Empalme = {

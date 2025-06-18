@@ -4,8 +4,9 @@ import MedidoresComponent from '~/components/administracion/medidores/medidores-
 import type { Route } from './+types/medidores';
 import api from '~/lib/api';
 import { useLoaderData } from 'react-router';
-import type { BuscarMedidores } from '~/types/administracion';
+import type { GetMedidores } from '~/types/administracion';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import type { Marca } from '~/types/mantencion';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,18 +17,20 @@ export function meta({}: Route.MetaArgs) {
 
 export async function clientLoader() {
   const res = await api.get('buscarMedidor');
+  const resMarcas = await api.get('buscarMarca');
   return {
-    medidores: res.data as BuscarMedidores[],
+    medidores: res.data as GetMedidores[],
+    marcas: resMarcas.data as Marca[],
   };
 }
 
 export default function Medidores() {
-  const { medidores } = useLoaderData<typeof clientLoader>();
+  const { medidores, marcas } = useLoaderData<typeof clientLoader>();
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Medidores' }];
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <MedidoresComponent medidores={medidores} />
+      <MedidoresComponent medidores={medidores} marcas={marcas} />
     </div>
   );
 }

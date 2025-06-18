@@ -1,679 +1,442 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+'use client';
+
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "~/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
-import {
-  Gauge,
-  Building,
-  Tag,
-  Barcode,
-  Calendar,
-  Hash,
-  X,
-  Save,
-  Activity,
-  Zap,
-  MapPin,
-} from "lucide-react";
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { toast } from 'sonner';
+import { Gauge } from 'lucide-react';
 import type {
-  BuscarMedidores,
+  GetMedidores,
   CrearMedidorProps,
   ActualizarMedidorProps,
-} from "~/types/administracion";
+} from '~/types/administracion';
+import type { Marca } from '~/types/mantencion';
+import Select, { type StylesConfig, type SingleValue } from 'react-select';
+import { useTheme } from '~/components/theme-provider';
 
-// Schema para crear medidor
-const crearMedidorSchema = z.object({
-  marcaId: z.number().min(1, "Debe seleccionar una marca"),
-  tipoId: z.number().min(1, "Debe seleccionar un tipo"),
-  modelo: z
-    .string()
-    .min(1, "El modelo es requerido")
-    .max(50, "El modelo no puede exceder 50 caracteres"),
-  serie: z
-    .string()
-    .min(1, "La serie es requerida")
-    .max(50, "La serie no puede exceder 50 caracteres"),
-  estadoId: z.number().min(1, "Debe seleccionar un estado"),
-  fechaInicio: z.string().min(1, "La fecha de inicio es requerida"),
-  digitos: z
-    .number()
-    .min(1, "Los dígitos deben ser mayor a 0")
-    .max(10, "Los dígitos no pueden exceder 10"),
-  multiplicar: z.number().min(1, "El multiplicador debe ser mayor a 0"),
-  primeraLectura: z.string().min(1, "La primera lectura es requerida"),
-  fechaPrimeraLectura: z
-    .string()
-    .min(1, "La fecha de primera lectura es requerida"),
-});
-
-// Schema para actualizar medidor
-const actualizarMedidorSchema = z.object({
-  codigoMedidor: z.number(),
-  marcaId: z.number().min(1, "Debe seleccionar una marca"),
-  modelo: z
-    .string()
-    .min(1, "El modelo es requerido")
-    .max(50, "El modelo no puede exceder 50 caracteres"),
-  serie: z
-    .string()
-    .min(1, "La serie es requerida")
-    .max(50, "La serie no puede exceder 50 caracteres"),
-  estadoId: z.number().min(1, "Debe seleccionar un estado"),
-  fechaInicio: z.string().min(1, "La fecha de inicio es requerida"),
-  digitos: z
-    .number()
-    .min(1, "Los dígitos deben ser mayor a 0")
-    .max(10, "Los dígitos no pueden exceder 10"),
-  multiplicar: z.number().min(1, "El multiplicador debe ser mayor a 0"),
-  tipoId: z.number().min(1, "Debe seleccionar un tipo"),
-  subempalmeCodigo: z.string().optional(),
-  primeraLectura: z.string().min(1, "La primera lectura es requerida"),
-  fechaPrimeraLectura: z
-    .string()
-    .min(1, "La fecha de primera lectura es requerida"),
-});
-
-type FormularioData = z.infer<typeof crearMedidorSchema> & {
-  codigoMedidor?: number;
-  subempalmeCodigo?: string;
-};
-
-interface MedidorFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: CrearMedidorProps | ActualizarMedidorProps) => Promise<void>;
-  medidor?: BuscarMedidores | null;
-  isLoading?: boolean;
+interface OptionType {
+  value: string;
+  label: string;
 }
 
-// Datos para dropdowns (placeholder - deberían venir de API)
-const marcas = [
-  {
-    id: 1,
-    nombre: "Schneider Electric",
-    descripcion: "Marca líder en gestión de energía",
-  },
-  { id: 2, nombre: "ABB", descripcion: "Tecnología de electrificación" },
-  { id: 3, nombre: "Siemens", descripcion: "Soluciones eléctricas avanzadas" },
-  { id: 4, nombre: "General Electric", descripcion: "Innovación en medición" },
-];
+interface MedidorFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (
+    data: CrearMedidorProps | ActualizarMedidorProps,
+    mode: 'add' | 'edit',
+  ) => Promise<void>;
+  medidor?: GetMedidores | null;
+  mode: 'add' | 'edit';
+  isLoading?: boolean;
+  marcas: Marca[];
+}
 
-const tipos = [
-  { id: 1, nombre: "Monofásico", descripcion: "Una fase" },
-  { id: 2, nombre: "Bifásico", descripcion: "Dos fases" },
-  { id: 3, nombre: "Trifásico", descripcion: "Tres fases" },
-];
+const initialFormData: CrearMedidorProps = {
+  marcaId: 0,
+  tipoId: 0,
+  modelo: '',
+  serie: '',
+  estadoId: 0,
+  fechaInicio: '',
+  digitos: 0,
+  multiplicar: 1,
+  primeraLectura: '',
+  fechaPrimeraLectura: '',
+};
 
-const estados = [
-  { id: 1, nombre: "Activo", descripcion: "En funcionamiento" },
-  { id: 2, nombre: "Inactivo", descripcion: "Fuera de servicio" },
-  { id: 3, nombre: "Mantenimiento", descripcion: "En mantenimiento" },
-  { id: 4, nombre: "Averiado", descripcion: "Requiere reparación" },
-];
-
-export function MedidorForm({
+export function MedidorFormModal({
   isOpen,
   onClose,
   onSubmit,
   medidor,
-  isLoading = false,
-}: MedidorFormProps) {
-  const isEdit = !!medidor;
+  mode,
+  isLoading,
+  marcas,
+}: MedidorFormModalProps) {
+  const [formData, setFormData] = useState<CrearMedidorProps>(initialFormData);
+  const { theme } = useTheme();
 
-  const form = useForm<FormularioData>({
-    resolver: zodResolver(
-      isEdit ? actualizarMedidorSchema : crearMedidorSchema
-    ),
-    defaultValues: {
-      marcaId: 0,
-      tipoId: 0,
-      modelo: "",
-      serie: "",
-      estadoId: 0,
-      fechaInicio: "",
-      digitos: 1,
-      multiplicar: 1,
-      primeraLectura: "",
-      fechaPrimeraLectura: "",
-      codigoMedidor: undefined,
-      subempalmeCodigo: "",
-    },
-  });
+  const selectStyles: StylesConfig = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+      borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+      '&:hover': {
+        borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
+      },
+    }),
+    menu: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+    }),
+    option: (styles, { isFocused, isSelected }) => ({
+      ...styles,
+      backgroundColor: isSelected
+        ? theme === 'dark'
+          ? '#0891B2'
+          : '#06B6D4'
+        : isFocused
+          ? theme === 'dark'
+            ? '#1E293B'
+            : '#F1F5F9'
+          : 'transparent',
+      color: isSelected ? '#FFFFFF' : theme === 'dark' ? '#F8FAFC' : '#0F172A',
+      ':active': {
+        ...styles[':active'],
+        backgroundColor: theme === 'dark' ? '#0891B2' : '#06B6D4',
+      },
+    }),
+    singleValue: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    input: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    placeholder: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+    indicatorSeparator: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+    }),
+    dropdownIndicator: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+      '&:hover': {
+        color: theme === 'dark' ? '#CBD5E1' : '#374151',
+      },
+    }),
+    noOptionsMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+    loadingMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+  };
 
-  // Cargar datos del medidor cuando es edición
   useEffect(() => {
-    if (isEdit && medidor) {
-      // Como no tenemos todos los IDs, usamos valores placeholder
-      form.reset({
-        codigoMedidor: medidor.codigo,
-        marcaId: 1, // Placeholder - debería mapear desde medidor.marca
-        tipoId: 1, // Placeholder - debería mapear desde medidor.tipo
+    if (medidor && mode === 'edit') {
+      setFormData({
+        ...initialFormData,
         modelo: medidor.modelo,
         serie: medidor.serie,
-        estadoId: 1, // Placeholder - debería mapear desde medidor.estado
-        fechaInicio: medidor.fechaInicio,
+        fechaInicio: medidor.fechaInicio.split('T')[0],
         digitos: medidor.digitos,
         multiplicar: medidor.multiplicar,
-        primeraLectura: "", // No disponible en BuscarMedidores
-        fechaPrimeraLectura: medidor.fechaInicio, // Usar fechaInicio como placeholder
-        subempalmeCodigo: medidor.codigoAcometida || "",
       });
     } else {
-      form.reset({
-        marcaId: 0,
-        tipoId: 0,
-        modelo: "",
-        serie: "",
-        estadoId: 0,
-        fechaInicio: "",
-        digitos: 1,
-        multiplicar: 1,
-        primeraLectura: "",
-        fechaPrimeraLectura: "",
-        codigoMedidor: undefined,
-        subempalmeCodigo: "",
-      });
+      setFormData(initialFormData);
     }
-  }, [medidor, isEdit, form]);
+  }, [medidor, mode, isOpen]);
 
-  const handleSubmit = async (data: FormularioData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     try {
-      if (isEdit) {
-        const submitData: ActualizarMedidorProps = {
-          codigoMedidor: data.codigoMedidor!,
-          marcaId: data.marcaId,
-          modelo: data.modelo,
-          serie: data.serie,
-          estadoId: data.estadoId,
-          fechaInicio: data.fechaInicio,
-          digitos: data.digitos,
-          multiplicar: data.multiplicar,
-          tipoId: data.tipoId,
-          subempalmeCodigo: data.subempalmeCodigo || "",
-          primeraLectura: data.primeraLectura,
-          fechaPrimeraLectura: data.fechaPrimeraLectura,
+      if (mode === 'add') {
+        await onSubmit(formData, 'add');
+      } else if (mode === 'edit' && medidor) {
+        const updatePayload: ActualizarMedidorProps = {
+          codigoMedidor: medidor.codigo,
+          marcaId: formData.marcaId,
+          modelo: formData.modelo,
+          serie: formData.serie,
+          estadoId: formData.estadoId,
+          fechaInicio: formData.fechaInicio,
+          digitos: formData.digitos,
+          multiplicar: formData.multiplicar,
+          tipoId: formData.tipoId,
+          subempalmeCodigo: '',
+          primeraLectura: formData.primeraLectura,
+          fechaPrimeraLectura: formData.fechaPrimeraLectura,
         };
-        await onSubmit(submitData);
-      } else {
-        const submitData: CrearMedidorProps = {
-          marcaId: data.marcaId,
-          tipoId: data.tipoId,
-          modelo: data.modelo,
-          serie: data.serie,
-          estadoId: data.estadoId,
-          fechaInicio: data.fechaInicio,
-          digitos: data.digitos,
-          multiplicar: data.multiplicar,
-          primeraLectura: data.primeraLectura,
-          fechaPrimeraLectura: data.fechaPrimeraLectura,
-        };
-        await onSubmit(submitData);
+        await onSubmit(updatePayload, 'edit');
       }
-      form.reset();
-      onClose();
     } catch (error) {
-      console.error("Error al guardar medidor:", error);
+      // El error se maneja en el componente padre
     }
   };
 
-  const handleClose = () => {
-    form.reset();
-    onClose();
+  const handleInputChange = (
+    field: keyof CrearMedidorProps,
+    value: string | number,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="pb-4 border-b border-border/40">
-          <div className="flex items-center gap-3">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-bold flex items-center gap-3 text-sky-900 dark:text-sky-100">
             <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
-              <Gauge className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+              <Gauge className="h-6 w-6 text-sky-600 dark:text-sky-400" />
             </div>
-            <div>
-              <DialogTitle className="text-xl font-semibold text-sky-800 dark:text-sky-200">
-                {isEdit ? "Editar Medidor" : "Crear Nuevo Medidor"}
-              </DialogTitle>
-              <p className="text-sm text-muted-foreground mt-1">
-                {isEdit
-                  ? "Modifica la información del medidor seleccionado"
-                  : "Completa los datos para crear un nuevo medidor"}
-              </p>
-            </div>
-          </div>
+            {mode === 'add' ? 'Crear Nuevo Medidor' : 'Editar Medidor'}
+          </DialogTitle>
+          <DialogDescription className="text-base text-muted-foreground">
+            {mode === 'add'
+              ? 'Complete la información para registrar un nuevo medidor.'
+              : 'Modifique la información del medidor.'}
+          </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6 pt-4"
-          >
-            {/* Información del Medidor */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b border-border/20">
-                <Gauge className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                <h3 className="font-semibold text-slate-700 dark:text-slate-300">
-                  Información del Medidor
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="marcaId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Marca *
-                      </FormLabel>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(parseInt(value))
-                        }
-                        value={field.value?.toString() || ""}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-border/60 focus:border-sky-400 focus:ring-sky-400/20">
-                            <SelectValue placeholder="Selecciona una marca" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {marcas.map((marca) => (
-                            <SelectItem
-                              key={marca.id}
-                              value={marca.id.toString()}
-                            >
-                              <div className="flex items-center gap-2">
-                                <Building className="h-4 w-4 text-blue-600" />
-                                <div>
-                                  <div className="font-medium">
-                                    {marca.nombre}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {marca.descripcion}
-                                  </div>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tipoId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Tipo *
-                      </FormLabel>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(parseInt(value))
-                        }
-                        value={field.value?.toString() || ""}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-border/60 focus:border-sky-400 focus:ring-sky-400/20">
-                            <SelectValue placeholder="Selecciona un tipo" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {tipos.map((tipo) => (
-                            <SelectItem
-                              key={tipo.id}
-                              value={tipo.id.toString()}
-                            >
-                              <div className="flex items-center gap-2">
-                                <Zap className="h-4 w-4 text-purple-600" />
-                                <div>
-                                  <div className="font-medium">
-                                    {tipo.nombre}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {tipo.descripcion}
-                                  </div>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="modelo"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Modelo *
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Ingrese el modelo"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="serie"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Serie *
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Barcode className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Ingrese la serie"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="estadoId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Estado *
-                      </FormLabel>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(parseInt(value))
-                        }
-                        value={field.value?.toString() || ""}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="border-border/60 focus:border-sky-400 focus:ring-sky-400/20">
-                            <SelectValue placeholder="Selecciona un estado" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {estados.map((estado) => (
-                            <SelectItem
-                              key={estado.id}
-                              value={estado.id.toString()}
-                            >
-                              <div className="flex items-center gap-2">
-                                <Activity className="h-4 w-4 text-emerald-600" />
-                                <div>
-                                  <div className="font-medium">
-                                    {estado.nombre}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {estado.descripcion}
-                                  </div>
-                                </div>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="fechaInicio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Fecha de Inicio *
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="date"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Configuración Técnica */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b border-border/20">
-                <Hash className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                <h3 className="font-semibold text-slate-700 dark:text-slate-300">
-                  Configuración Técnica
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="digitos"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Dígitos *
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="number"
-                            min="1"
-                            max="10"
-                            placeholder="Número de dígitos"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(parseInt(e.target.value) || 1)
-                            }
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="multiplicar"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Multiplicador *
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <X className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="number"
-                            min="1"
-                            placeholder="Factor multiplicador"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(parseInt(e.target.value) || 1)
-                            }
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {isEdit && (
-                <FormField
-                  control={form.control}
-                  name="subempalmeCodigo"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Código Subempalme
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Código del subempalme"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-            </div>
-
-            {/* Primera Lectura */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 pb-2 border-b border-border/20">
-                <Activity className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                <h3 className="font-semibold text-slate-700 dark:text-slate-300">
-                  Primera Lectura
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="primeraLectura"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Valor Primera Lectura *
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Gauge className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            placeholder="Valor de la primera lectura"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="fechaPrimeraLectura"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Fecha Primera Lectura *
-                      </FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                          <Input
-                            type="date"
-                            className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                            {...field}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Botones de acción */}
-            <div className="flex justify-end gap-3 pt-4 border-t border-border/40">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="serie">N° Serie</Label>
+              <Input
+                id="serie"
+                value={formData.serie}
+                onChange={(e) => handleInputChange('serie', e.target.value)}
+                placeholder="N° de Serie"
+                required
                 disabled={isLoading}
-                className="gap-2"
-              >
-                <X className="h-4 w-4" />
-                Cancelar
-              </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Guardando...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    {isEdit ? "Actualizar Medidor" : "Crear Medidor"}
-                  </>
-                )}
-              </Button>
+              />
             </div>
-          </form>
-        </Form>
+            <div className="space-y-2">
+              <Label htmlFor="modelo">Modelo</Label>
+              <Input
+                id="modelo"
+                value={formData.modelo}
+                onChange={(e) => handleInputChange('modelo', e.target.value)}
+                placeholder="Modelo del medidor"
+                required
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="marcaId">Marca</Label>
+              <Select
+                styles={selectStyles}
+                instanceId="marca-select"
+                options={marcas.map((marca) => ({
+                  value: marca.codigo,
+                  label: marca.nombre,
+                }))}
+                value={
+                  marcas
+                    .map((m) => ({ value: m.codigo, label: m.nombre }))
+                    .find((m) => Number(m.value) === formData.marcaId) || null
+                }
+                onChange={(option: any) =>
+                  handleInputChange(
+                    'marcaId',
+                    option ? Number(option.value) : 0,
+                  )
+                }
+                placeholder="Seleccione una marca"
+                noOptionsMessage={() => 'No hay marcas disponibles'}
+                required
+                isDisabled={isLoading}
+                isClearable={true}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tipoId">Tipo de Medidor</Label>
+              {/* Select pero los tipos no vienen de una api, son hardcodeados */}
+              <Select
+                styles={selectStyles}
+                instanceId="tipo-select"
+                options={[
+                  {
+                    value: 1,
+                    label: 'Monofásico',
+                  },
+                  {
+                    value: 2,
+                    label: 'Trifásico',
+                  },
+                ]}
+                value={
+                  [
+                    { value: 1, label: 'Monofásico' },
+                    { value: 2, label: 'Trifásico' },
+                  ].find(
+                    (t: { value: number }) =>
+                      Number(t.value) === formData.tipoId,
+                  ) || null
+                }
+                onChange={(option: any) =>
+                  handleInputChange('tipoId', option ? Number(option.value) : 0)
+                }
+                placeholder="Seleccione un tipo"
+                noOptionsMessage={() => 'No hay tipos disponibles'}
+                required
+                isDisabled={isLoading}
+                isClearable={true}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="digitos">Dígitos</Label>
+              <Input
+                id="digitos"
+                type="number"
+                value={formData.digitos}
+                onChange={(e) => handleInputChange('digitos', +e.target.value)}
+                placeholder="Cantidad de dígitos"
+                required
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="multiplicar">Cons. Multiplicar</Label>
+              <Input
+                id="multiplicar"
+                type="number"
+                value={formData.multiplicar}
+                onChange={(e) =>
+                  handleInputChange('multiplicar', +e.target.value)
+                }
+                placeholder="Factor multiplicador"
+                required
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="fechaInicio">Fecha de Inicio</Label>
+              <Input
+                id="fechaInicio"
+                type="date"
+                value={formData.fechaInicio}
+                onChange={(e) =>
+                  handleInputChange('fechaInicio', e.target.value)
+                }
+                required
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="estadoId">Estado</Label>
+              <Select
+                styles={selectStyles}
+                instanceId="estado-select"
+                options={[
+                  {
+                    value: 1,
+                    label: 'Activo',
+                  },
+                  {
+                    value: 2,
+                    label: 'En Bodega',
+                  },
+                  {
+                    value: 3,
+                    label: 'En reparación',
+                  },
+                  {
+                    value: 4,
+                    label: 'Inactivo',
+                  },
+                ]}
+                value={
+                  [
+                    { value: 1, label: 'Activo' },
+                    { value: 2, label: 'En Bodega' },
+                    { value: 3, label: 'En reparación' },
+                    { value: 4, label: 'Inactivo' },
+                  ].find(
+                    (t: { value: number }) =>
+                      Number(t.value) === formData.estadoId,
+                  ) || null
+                }
+                onChange={(option: any) =>
+                  handleInputChange(
+                    'estadoId',
+                    option ? Number(option.value) : 0,
+                  )
+                }
+                placeholder="Seleccione un estado"
+                noOptionsMessage={() => 'No hay estados disponibles'}
+                required
+                isDisabled={isLoading}
+                isClearable={true}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="text-sm font-medium text-gray-500 pt-2">
+              Primera Lectura (Opcional)
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="primeraLectura">Valor</Label>
+                <Input
+                  id="primeraLectura"
+                  value={formData.primeraLectura}
+                  onChange={(e) =>
+                    handleInputChange('primeraLectura', e.target.value)
+                  }
+                  placeholder="Valor de primera lectura"
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="fechaPrimeraLectura">Fecha</Label>
+                <Input
+                  id="fechaPrimeraLectura"
+                  type="date"
+                  value={formData.fechaPrimeraLectura}
+                  onChange={(e) =>
+                    handleInputChange('fechaPrimeraLectura', e.target.value)
+                  }
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 pt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isLoading}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              className="bg-sky-600 hover:bg-sky-700"
+              disabled={isLoading}
+            >
+              {isLoading
+                ? mode === 'add'
+                  ? 'Creando...'
+                  : 'Guardando...'
+                : mode === 'add'
+                  ? 'Crear Medidor'
+                  : 'Guardar Cambios'}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

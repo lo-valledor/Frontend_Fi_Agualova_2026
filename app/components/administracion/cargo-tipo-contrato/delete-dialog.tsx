@@ -10,33 +10,37 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '~/components/ui/alert-dialog';
-import type { GetMedidores } from '~/types/administracion';
+import type { GetCargoTipoContrato } from '~/types/administracion';
 
-interface DeleteConfirmationDialogProps {
+interface DeleteDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  medidor: GetMedidores | null;
+  data: GetCargoTipoContrato | null;
 }
 
-export function DeleteConfirmationDialog({
+export function DeleteDialog({
   isOpen,
   onClose,
   onConfirm,
-  medidor,
-}: DeleteConfirmationDialogProps) {
+  data,
+}: DeleteDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Estás realmente seguro?</AlertDialogTitle>
+          <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Se eliminará permanentemente el
-            medidor con serie{' '}
+            Esta acción no se puede deshacer. Se eliminará la relación entre el
+            tipo de contrato{' '}
             <span className="font-semibold text-foreground">
-              {medidor?.serie}
+              {data?.tipoContratoDescripcion}
             </span>{' '}
-            del sistema.
+            y el cargo facturable{' '}
+            <span className="font-semibold text-foreground">
+              {data?.cargoFacturableDescripcion}
+            </span>
+            .
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -45,7 +49,7 @@ export function DeleteConfirmationDialog({
             onClick={onConfirm}
             className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
           >
-            Sí, eliminar medidor
+            Sí, eliminar
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

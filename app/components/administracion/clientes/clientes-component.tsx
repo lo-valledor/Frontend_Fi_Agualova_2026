@@ -14,6 +14,7 @@ import type {
   ClientesFormData,
   GetComunas,
   GetRegiones,
+  GetClientesByRut,
 } from '~/types/administracion';
 import { columns } from './columns';
 import { Plus, Users, Building, Download } from 'lucide-react';
@@ -39,6 +40,9 @@ export default function ClientesComponent({
   const [selectedClient, setSelectedClient] = useState<GetClientes | null>(
     null,
   );
+  const [formClientData, setFormClientData] = useState<GetClientesByRut | null>(
+    null,
+  );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const {
@@ -48,6 +52,7 @@ export default function ClientesComponent({
     deleteCliente,
     exportClientesToExcel,
     loadingState,
+    fetchClienteByRut,
   } = useAdministracion();
 
   const handleClientSuccess = async () => {
@@ -64,14 +69,24 @@ export default function ClientesComponent({
 
   const handleAddClient = () => {
     setSelectedClient(null);
+    setFormClientData(null);
     setModalMode('add');
     setIsFormModalOpen(true);
   };
 
-  const handleEditClient = (client: GetClientes) => {
-    setSelectedClient(client);
-    setModalMode('edit');
-    setIsFormModalOpen(true);
+  const handleEditClient = async (client: GetClientes) => {
+    try {
+      const fullClientData = await fetchClienteByRut(client.rut);
+      if (fullClientData) {
+        setFormClientData(fullClientData);
+        setSelectedClient(client);
+        setModalMode('edit');
+        setIsFormModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error al obtener los detalles del cliente:', error);
+      toast.error('Error al obtener los detalles del cliente.');
+    }
   };
 
   const handleSubmitClient = async (formData: ClientesFormData) => {
@@ -161,7 +176,7 @@ export default function ClientesComponent({
             onClick={handleExportToExcel}
             variant="outline"
             disabled={loadingState.exportClientesToExcel?.isLoading}
-            className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300"
+            className="border-emerald-200 text-white bg-emerald-500 hover:bg-emerald-600 dark:border-emerald-800"
           >
             <Download className="mr-2 h-4 w-4" />
             {loadingState.exportClientesToExcel?.isLoading
@@ -170,7 +185,7 @@ export default function ClientesComponent({
           </Button>
           <Button
             onClick={handleAddClient}
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-sky-600 hover:bg-sky-700 text-white"
           >
             <Plus className="mr-2 h-4 w-4" />
             Agregar Cliente
@@ -290,7 +305,7 @@ export default function ClientesComponent({
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
         onSubmit={handleSubmitClient}
-        client={selectedClient}
+        client={formClientData}
         mode={modalMode}
         giros={giros}
         regiones={regiones}

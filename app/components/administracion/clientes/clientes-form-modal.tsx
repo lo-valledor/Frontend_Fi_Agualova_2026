@@ -13,30 +13,24 @@ import {
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
 import type {
   ClientesFormData,
-  GetClientes,
+  GetClientesByRut,
   GetGiros,
   GetRegiones,
 } from '~/types/administracion';
 import api from '~/lib/api';
 import { toast } from 'sonner';
-import { Combobox } from '~/components/ui/combobox';
+import Select, { type StylesConfig } from 'react-select';
+import { useTheme } from '~/components/theme-provider';
 
 interface ClientFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: ClientesFormData) => void;
-  client?: GetClientes | null;
+  client?: GetClientesByRut | null;
   mode: 'add' | 'edit';
   giros: GetGiros[];
   regiones: GetRegiones[];
@@ -73,32 +67,86 @@ export function ClientFormModal({
   const [selectedRegion, setSelectedRegion] = useState('');
   const [comunas, setComunas] = useState<Comuna[]>([]);
   const [isComunasLoading, setIsComunasLoading] = useState(false);
+  const { theme } = useTheme();
+
+  const selectStyles: StylesConfig = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+      borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+      '&:hover': {
+        borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
+      },
+    }),
+    menu: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+    }),
+    option: (styles, { isFocused, isSelected }) => ({
+      ...styles,
+      backgroundColor: isSelected
+        ? theme === 'dark'
+          ? '#166534'
+          : '#16A34A'
+        : isFocused
+          ? theme === 'dark'
+            ? '#1E293B'
+            : '#F1F5F9'
+          : 'transparent',
+      color: isSelected ? '#FFFFFF' : theme === 'dark' ? '#F8FAFC' : '#0F172A',
+      ':active': {
+        ...styles[':active'],
+        backgroundColor: theme === 'dark' ? '#166534' : '#16A34A',
+      },
+    }),
+    singleValue: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    input: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    placeholder: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+    indicatorSeparator: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+    }),
+    dropdownIndicator: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+      '&:hover': {
+        color: theme === 'dark' ? '#CBD5E1' : '#374151',
+      },
+    }),
+    noOptionsMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+    loadingMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+  };
 
   useEffect(() => {
     if (isOpen) {
       if (client && mode === 'edit') {
-        let nombre = '';
-        let apellido = '';
-
-        if (client.esEmpresa) {
-          nombre = client.nombreCompleto;
-        } else {
-          const nameParts = client.nombreCompleto.split(' ');
-          nombre = nameParts.shift() || '';
-          apellido = nameParts.join(' ');
-        }
-
         setFormData({
           rut: client.rut,
-          nombre,
-          apellido,
+          nombre: client.nombre,
+          apellido: client.apellido,
           esEmpresa: client.esEmpresa,
           direccion: client.direccion,
-          codComuna: client.codigoComuna,
+          codComuna: client.codComuna,
           contacto: client.contacto || '',
           telefono: client.telefono || '',
-          correo: client.email || '',
-          codigoGiro: '', // El giro debe ser seleccionado nuevamente en edición por ahora
+          correo: client.correo || '',
+          codigoGiro: client.codigoGiro || '',
         });
       } else {
         setFormData(initialFormData);
@@ -150,6 +198,27 @@ export function ClientFormModal({
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  const regionOptions = regiones.map((r) => ({
+    value: r.region,
+    label: r.region,
+  }));
+  const selectedRegionObject =
+    regionOptions.find((o) => o.value === selectedRegion) || null;
+
+  const comunaOptions = comunas.map((c) => ({
+    value: c.codigo,
+    label: c.nombre,
+  }));
+  if (
+    mode === 'edit' &&
+    client?.comuna &&
+    !comunaOptions.some((c) => c.value === client.codComuna)
+  ) {
+    comunaOptions.unshift({ value: client.codComuna, label: client.comuna });
+  }
+  const selectedComunaObject =
+    comunaOptions.find((o) => o.value === formData.codComuna) || null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -246,60 +315,48 @@ export function ClientFormModal({
               <div className="space-y-2">
                 <Label htmlFor="region">Región</Label>
                 <Select
-                  onValueChange={(value) => {
+                  styles={selectStyles}
+                  instanceId="region-select"
+                  options={regionOptions}
+                  value={selectedRegionObject}
+                  onChange={(option) => {
+                    const value = option
+                      ? (option as { value: string }).value
+                      : '';
                     setSelectedRegion(value);
-                    // Reset comuna when region changes
                     handleInputChange('codComuna', '');
                   }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona una región" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {regiones.map((region) => (
-                      <SelectItem key={region.codigo} value={region.region}>
-                        {region.region}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  placeholder="Selecciona una región"
+                  isClearable
+                  noOptionsMessage={() => 'No se encontraron regiones.'}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="codComuna">Comuna</Label>
                 <Select
-                  value={formData.codComuna}
-                  onValueChange={(value) =>
-                    handleInputChange('codComuna', value)
+                  styles={selectStyles}
+                  instanceId="comuna-select"
+                  options={comunaOptions}
+                  value={selectedComunaObject}
+                  onChange={(option) => {
+                    handleInputChange(
+                      'codComuna',
+                      option ? (option as { value: string }).value : '',
+                    );
+                  }}
+                  isDisabled={!selectedRegion || isComunasLoading}
+                  isLoading={isComunasLoading}
+                  placeholder={
+                    isComunasLoading ? 'Cargando...' : 'Selecciona una comuna'
                   }
-                  disabled={!selectedRegion || isComunasLoading}
+                  noOptionsMessage={() =>
+                    selectedRegion
+                      ? 'No hay comunas'
+                      : 'Selecciona una región primero'
+                  }
                   required
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        isComunasLoading
-                          ? 'Cargando...'
-                          : 'Selecciona una comuna'
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mode === 'edit' && !selectedRegion && client?.comuna && (
-                      <SelectItem
-                        key={client.codigoComuna}
-                        value={client.codigoComuna}
-                      >
-                        {client.comuna}
-                      </SelectItem>
-                    )}
-                    {comunas.map((comuna) => (
-                      <SelectItem key={comuna.codigo} value={comuna.codigo}>
-                        {comuna.nombre}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
               </div>
             </div>
           </div>
@@ -354,16 +411,29 @@ export function ClientFormModal({
             </h3>
             <div className="space-y-2">
               <Label htmlFor="codigoGiro">Giro Económico</Label>
-              <Combobox
+              <Select
+                styles={selectStyles}
                 options={giros.map((g) => ({
                   value: g.codigo,
-                  label: g.codigo + ' - ' + g.actividadEconomica,
+                  label: g.actividadEconomica,
                 }))}
-                value={formData.codigoGiro}
-                onChange={(value) => handleInputChange('codigoGiro', value)}
-                placeholder="Selecciona un giro"
-                searchPlaceholder="Buscar giro..."
-                emptyMessage="No se encontraron giros."
+                value={
+                  giros
+                    .map((g) => ({
+                      value: g.codigo,
+                      label: g.actividadEconomica,
+                    }))
+                    .find((g) => g.value === formData.codigoGiro) || null
+                }
+                onChange={(option) => {
+                  handleInputChange(
+                    'codigoGiro',
+                    option ? (option as { value: string }).value : '',
+                  );
+                }}
+                placeholder="Buscar y seleccionar un giro..."
+                isClearable
+                noOptionsMessage={() => 'No se encontraron giros.'}
               />
             </div>
           </div>

@@ -9,7 +9,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import {
   Table,
@@ -19,18 +18,31 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useState } from 'react';
+import { AdvancedPagination } from './advanced-pagination';
 
-interface DataTableProps<TData, TValue> {
+interface DataTableAdvancedProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  searchPlaceholder?: string;
+  defaultPageSize?: number;
+  pageSizeOptions?: number[];
+  showSearch?: boolean;
+  showPageSizeSelector?: boolean;
+  showPageNumbers?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  searchPlaceholder = 'Buscar...',
+  defaultPageSize = 10,
+  pageSizeOptions = [5, 10, 20, 50, 100],
+  showSearch = true,
+  showPageSizeSelector = true,
+  showPageNumbers = true,
+}: DataTableAdvancedProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
@@ -45,20 +57,27 @@ export function DataTable<TData, TValue>({
       globalFilter,
     },
     onGlobalFilterChange: setGlobalFilter,
+    initialState: {
+      pagination: {
+        pageSize: defaultPageSize,
+      },
+    },
   });
 
   return (
     <div className="space-y-4">
       {/* Search */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          placeholder="Buscar usuarios..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="pl-10"
-        />
-      </div>
+      {showSearch && (
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder={searchPlaceholder}
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      )}
 
       {/* Table */}
       <div className="rounded-lg border bg-card">
@@ -102,7 +121,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No se encontraron usuarios.
+                  No se encontraron resultados.
                 </TableCell>
               </TableRow>
             )}
@@ -110,42 +129,13 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          Mostrando{' '}
-          {table.getState().pagination.pageIndex *
-            table.getState().pagination.pageSize +
-            1}{' '}
-          a{' '}
-          {Math.min(
-            (table.getState().pagination.pageIndex + 1) *
-              table.getState().pagination.pageSize,
-            table.getFilteredRowModel().rows.length,
-          )}{' '}
-          de {table.getFilteredRowModel().rows.length} usuarios
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      {/* Advanced Pagination */}
+      <AdvancedPagination
+        table={table}
+        pageSizeOptions={pageSizeOptions}
+        showPageSizeSelector={showPageSizeSelector}
+        showPageNumbers={showPageNumbers}
+      />
     </div>
   );
 }

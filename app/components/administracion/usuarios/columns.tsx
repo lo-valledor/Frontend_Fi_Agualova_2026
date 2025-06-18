@@ -158,16 +158,3 @@ export const columns = ({
     },
   },
 ];
-
-/**
- * export interface Usuarios {
-  idUsuario: number;
-  nombreDeUsuario: string;
-  perfilId: number;
-  nombres: string;
-  apellidos: string;
-  departamento: number;
-  activo: boolean;
-  fechaCreacion: string;
-}
- */

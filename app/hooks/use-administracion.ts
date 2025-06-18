@@ -9,6 +9,9 @@ import type {
   GetClientes,
   ClientesFormData,
   GetClientesByRut,
+  GetMedidores,
+  CrearMedidorProps,
+  ActualizarMedidorProps,
 } from "~/types/administracion";
 
 interface LoadingState {
@@ -19,6 +22,7 @@ interface LoadingState {
 export function useAdministracion() {
   const [usuarios, setUsuarios] = useState<Usuarios[]>([]);
   const [clientes, setClientes] = useState<GetClientes[]>([]);
+  const [medidores, setMedidores] = useState<GetMedidores[]>([]);
 
   //Estado unificado para manejo de carga y errores
   const [loadingState, setLoadingState] = useState<
@@ -34,6 +38,10 @@ export function useAdministracion() {
     deleteCliente: { isLoading: false, error: null },
     fetchClienteByRut: { isLoading: false, error: null },
     exportClientesToExcel: { isLoading: false, error: null },
+    fetchMedidores: { isLoading: false, error: null },
+    createMedidor: { isLoading: false, error: null },
+    updateMedidor: { isLoading: false, error: null },
+    deleteMedidor: { isLoading: false, error: null },
   });
 
   const auth = useAuth();
@@ -263,7 +271,7 @@ export function useAdministracion() {
       });
       
       // Crear un enlace de descarga
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([response.data as BlobPart]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `clientes_${new Date().toISOString().split('T')[0]}.xlsx`);
@@ -280,6 +288,77 @@ export function useAdministracion() {
       setLoading("exportClientesToExcel", false);
     }
   }, [checkAuth, setLoading, setError]);
+
+  // ========== FUNCIONES DE MEDIDORES ==========
+
+  const fetchMedidores = useCallback(async () => {
+    if (!checkAuth()) return;
+    setLoading("fetchMedidores", true);
+    try {
+      const response = await api.get("/buscarMedidor");
+      setMedidores(response.data as GetMedidores[]);
+      return response.data;
+    } catch (error: any) {
+      setError("fetchMedidores", error);
+      throw error;
+    } finally {
+      setLoading("fetchMedidores", false);
+    }
+  }, [checkAuth, setLoading, setError]);
+
+  const createMedidor = useCallback(
+    async (data: CrearMedidorProps) => {
+      if (!checkAuth()) return;
+      setLoading("createMedidor", true);
+      try {
+        const response = await api.post("/crearMedidor", data);
+        await fetchMedidores();
+        return response.data;
+      } catch (error: any) {
+        setError("createMedidor", error);
+        throw error;
+      } finally {
+        setLoading("createMedidor", false);
+      }
+    },
+    [checkAuth, fetchMedidores, setLoading, setError]
+  );
+
+  const updateMedidor = useCallback(
+    async (id: number, data: ActualizarMedidorProps) => {
+      if (!checkAuth()) return;
+      setLoading("updateMedidor", true);
+      try {
+        const response = await api.put(`/actualizarMedidor/${id}`, data);
+        await fetchMedidores();
+        return response.data;
+      } catch (error: any) {
+        setError("updateMedidor", error);
+        throw error;
+      } finally {
+        setLoading("updateMedidor", false);
+      }
+    },
+    [checkAuth, fetchMedidores, setLoading, setError]
+  );
+
+  const deleteMedidor = useCallback(
+    async (id: number) => {
+      if (!checkAuth()) return;
+      setLoading("deleteMedidor", true);
+      try {
+        const response = await api.delete(`/eliminarMedidor/${id}`);
+        await fetchMedidores();
+        return response.data;
+      } catch (error: any) {
+        setError("deleteMedidor", error);
+        throw error;
+      } finally {
+        setLoading("deleteMedidor", false);
+      }
+    },
+    [checkAuth, fetchMedidores, setLoading, setError]
+  );
 
   const isLoading = Object.values(loadingState).some(
     (state) => state.isLoading
@@ -304,6 +383,13 @@ export function useAdministracion() {
     deleteCliente,
     fetchClienteByRut,
     exportClientesToExcel,
+    
+    // Medidores
+    medidores,
+    fetchMedidores,
+    createMedidor,
+    updateMedidor,
+    deleteMedidor,
     
     // Estado
     loadingState,

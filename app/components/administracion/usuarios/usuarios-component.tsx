@@ -1,4 +1,3 @@
-'use client';
 import React, { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
 import { columns } from './columns';

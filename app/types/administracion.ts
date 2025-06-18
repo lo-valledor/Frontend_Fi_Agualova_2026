@@ -308,7 +308,7 @@ export interface ActualizarCargoFacturableProps {
 
 // Medidores
 
-export interface BuscarMedidores {
+export interface GetMedidores {
   codigo: number;
   marca: string;
   tipo: string;
@@ -353,6 +353,24 @@ export interface ActualizarMedidorProps {
 export interface ModificarSubempalmeProps {
   codigoMedidor: number;
   subempalmeId: number;
+}
+
+export interface MedidorSubempalmeProps {
+  ubicacion: string;
+  codigoAcometida: string;
+}
+
+export interface GetMedidorByCodigo {
+
+}
+
+export interface GetMedidorByLecturas {
+  cantidadLecturas: string;
+}
+
+export interface GetExportarMedidoresByNombreYSerie {
+  nombre: string;
+  serie: string;
 }
 
 // Clientes
