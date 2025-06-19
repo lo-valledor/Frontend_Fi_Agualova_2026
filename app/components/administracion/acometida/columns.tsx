@@ -1,16 +1,25 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
-import { Badge } from "~/components/ui/badge";
-import type { Acometida } from "~/types/administracion";
+import type { ColumnDef } from '@tanstack/react-table';
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { Badge } from '~/components/ui/badge';
+import type { Acometida } from '~/types/administracion';
+import { Button } from '~/components/ui/button';
 
-export const columns: ColumnDef<Acometida>[] = [
+interface TableColumnsProps {
+  onEdit: (acometida: Acometida) => void;
+  editingAcometidaId: number | null;
+}
+
+export const columns = ({
+  onEdit,
+  editingAcometidaId,
+}: TableColumnsProps): ColumnDef<Acometida>[] => [
   {
-    accessorKey: "acometidaId",
+    accessorKey: 'acometidaId',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
     cell: ({ row }) => {
-      const id = row.getValue("acometidaId") as number;
+      const id = row.getValue('acometidaId') as number;
       return (
         <div className="flex items-center gap-2">
           <span className="font-mono text-sm font-medium">{id}</span>
@@ -19,12 +28,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "codigo",
+    accessorKey: 'codigo',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Código" />
     ),
     cell: ({ row }) => {
-      const codigo = row.getValue("codigo") as string;
+      const codigo = row.getValue('codigo') as string;
       return (
         <div className="flex items-center gap-2">
           <span className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100">
@@ -35,12 +44,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "ubicacion",
+    accessorKey: 'ubicacion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ubicación" />
     ),
     cell: ({ row }) => {
-      const ubicacion = row.getValue("ubicacion") as string;
+      const ubicacion = row.getValue('ubicacion') as string;
       return (
         <div className="flex items-center gap-2 max-w-[200px]">
           <span
@@ -54,12 +63,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "contratoId",
+    accessorKey: 'contratoId',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contrato" />
     ),
     cell: ({ row }) => {
-      const contratoId = row.getValue("contratoId") as string;
+      const contratoId = row.getValue('contratoId') as string;
       return (
         <div className="flex items-center gap-2">
           <Badge
@@ -73,12 +82,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "empalmeDescripcion",
+    accessorKey: 'empalmeDescripcion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Empalme" />
     ),
     cell: ({ row }) => {
-      const empalme = row.getValue("empalmeDescripcion") as string;
+      const empalme = row.getValue('empalmeDescripcion') as string;
       return (
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -89,12 +98,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "nichoDescripcion",
+    accessorKey: 'nichoDescripcion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Nicho" />
     ),
     cell: ({ row }) => {
-      const nicho = row.getValue("nichoDescripcion") as string;
+      const nicho = row.getValue('nichoDescripcion') as string;
       return (
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -105,12 +114,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "sectorDescripcion",
+    accessorKey: 'sectorDescripcion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sector" />
     ),
     cell: ({ row }) => {
-      const sector = row.getValue("sectorDescripcion") as string;
+      const sector = row.getValue('sectorDescripcion') as string;
       return (
         <div className="flex items-center gap-2">
           <Badge
@@ -124,12 +133,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "limitePotencia",
+    accessorKey: 'limitePotencia',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Límite Potencia" />
     ),
     cell: ({ row }) => {
-      const limite = row.getValue("limitePotencia") as number | null;
+      const limite = row.getValue('limitePotencia') as number | null;
 
       if (limite === null || limite === 0) {
         return (
@@ -148,7 +157,7 @@ export const columns: ColumnDef<Acometida>[] = [
         <div className="flex items-center gap-2">
           <div className="space-y-0.5">
             <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
-              {limite.toLocaleString("es-CL")} kW
+              {limite.toLocaleString('es-CL')} kW
             </div>
           </div>
         </div>
@@ -156,12 +165,12 @@ export const columns: ColumnDef<Acometida>[] = [
     },
   },
   {
-    accessorKey: "numeroMedidor",
+    accessorKey: 'numeroMedidor',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Número Medidor" />
     ),
     cell: ({ row }) => {
-      const numeroMedidor = row.getValue("numeroMedidor") as string;
+      const numeroMedidor = row.getValue('numeroMedidor') as string;
       return (
         <div className="flex items-center gap-2">
           <span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">

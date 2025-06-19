@@ -150,6 +150,11 @@ export interface ContratoFormData {
   liberadoCorte: boolean
 }
 
+export interface ActualizarPropietariosLocal {
+  "registrosAfectados": 0,
+  "mensaje": "Propietarios sincronizados correctamente."
+}
+
 export interface GetRegiones {
   region: string;
   codigo: string;
@@ -306,6 +311,22 @@ export interface ActualizarCargoFacturableProps {
   id: number;
 }
 
+export interface GeCombosConceptos {
+  id: number;
+  nombre: string;
+}
+
+export interface GetCombosTarifas {
+  id: number;
+  nombre: string;
+}
+
+export interface GetCombosTiposMedidor {
+
+  id: number;
+  nombre: string;
+}
+
 // Medidores
 
 export interface GetMedidores {
@@ -433,6 +454,7 @@ export interface GetCargoTipoContrato {
   descripcion: string;
 }
 
+
 // Condiciones Contrato
 
 export interface GetCondicionesContrato {
@@ -442,4 +464,16 @@ export interface GetCondicionesContrato {
   factorPorcentual: string;
   valorFijo: number | null;
   estado: boolean;
+}
+
+export interface GetCondicionesContratoPorId {
+  id: number;
+  descripcion: string;
+  conceptoId: number;
+  usaPorcentaje: boolean;
+  valor: number;
+  estado: boolean;
+  factorPorcentual: number;
+  valorFijo: number | null;
+  tipo: number;
 }

@@ -1,53 +1,62 @@
-import { Moon, Sun } from "lucide-react";
-import { Switch } from "~/components/ui/switch";
-import { useTheme } from "~/components/theme-provider";
-import { motion } from "motion/react";
+import { Moon, Sun } from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import { useTheme } from '~/components/theme-provider';
+import { motion, AnimatePresence } from 'motion/react';
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme();
 
+  const toggleTheme = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const iconVariants = {
+    initial: { y: -20, opacity: 0, rotate: -180 },
+    animate: {
+      y: 0,
+      opacity: 1,
+      rotate: 0,
+      transition: { type: 'spring', stiffness: 260, damping: 20 },
+    },
+    exit: {
+      y: 20,
+      opacity: 0,
+      rotate: 180,
+      transition: { duration: 0.2 },
+    },
+  };
+
   return (
-    <div
-      className="flex items-center gap-3 px-3 py-2 rounded-full bg-muted/60 border border-muted-foreground/10 shadow-sm"
-      tabIndex={0}
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={toggleTheme}
       aria-label="Alternar modo claro/oscuro"
+      className="relative overflow-hidden rounded-full border-2 border-muted-foreground/20 w-12 h-12"
     >
-      <motion.div
-        key="sun"
-        animate={{
-          scale: theme === "light" ? 1.2 : 1,
-          rotate: theme === "light" ? 15 : 0,
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      >
-        <Sun
-          className={`h-5 w-5 transition-colors duration-300 ${
-            theme === "light" ? "text-yellow-400" : "text-muted-foreground"
-          }`}
-        />
-      </motion.div>
-      <Switch
-        checked={theme === "dark"}
-        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-        aria-label={
-          theme === "dark" ? "Cambiar a modo claro" : "Cambiar a modo oscuro"
-        }
-        className="focus:ring-2 focus:ring-sky-400 focus:ring-offset-2"
-      />
-      <motion.div
-        key="moon"
-        animate={{
-          scale: theme === "dark" ? 1.2 : 1,
-          rotate: theme === "dark" ? -15 : 0,
-        }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      >
-        <Moon
-          className={`h-5 w-5 transition-colors duration-300 ${
-            theme === "dark" ? "text-sky-400" : "text-muted-foreground"
-          }`}
-        />
-      </motion.div>
-    </div>
+      <AnimatePresence mode="wait" initial={false}>
+        {theme === 'light' ? (
+          <motion.div
+            key="sun"
+            variants={iconVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <Sun className="h-6 w-6 text-yellow-500" />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="moon"
+            variants={iconVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <Moon className="h-6 w-6 text-sky-400" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </Button>
   );
 }

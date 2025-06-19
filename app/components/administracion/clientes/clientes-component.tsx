@@ -1,161 +1,113 @@
+import { Plus, Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
+import { useRevalidator } from 'react-router';
+import { toast } from 'sonner';
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
+  CardHeader,
 } from '~/components/ui/card';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter,
+  SheetClose,
+} from '~/components/ui/sheet';
+import { Separator } from '~/components/ui/separator';
 import type {
   GetClientes,
-  GetGiros,
-  ClientesFormData,
-  GetComunas,
-  GetRegiones,
   GetClientesByRut,
+  GetGiros,
+  GetRegiones,
 } from '~/types/administracion';
+import { useClientes } from '~/hooks/use-administracion';
 import { columns } from './columns';
-import { Plus, Users, Building, Download } from 'lucide-react';
-import { ClientDetailsModal } from './clientes-details-modal';
-import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
-import { useAdministracion } from '~/hooks/use-administracion';
-import { toast } from 'sonner';
-import { ClientFormModal } from './clientes-form-modal';
+import DetallesCliente from './detalles-cliente';
+import ClienteFormModal from './cliente-form-modal';
 
-export default function ClientesComponent({
-  clientes: initialClientes,
-  giros,
-  regiones,
-}: {
+interface ClientesComponentProps {
   clientes: GetClientes[];
   giros: GetGiros[];
   regiones: GetRegiones[];
-}) {
-  const [clientes, setClientes] = useState<GetClientes[]>(initialClientes);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<GetClientes | null>(
-    null,
-  );
-  const [formClientData, setFormClientData] = useState<GetClientesByRut | null>(
-    null,
-  );
+}
+
+export default function ClientesComponent({
+  clientes,
+  giros,
+  regiones,
+}: ClientesComponentProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCliente, setSelectedCliente] = useState<GetClientesByRut>();
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [detailedCliente, setDetailedCliente] = useState<GetClientesByRut>();
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [editingClienteRut, setEditingClienteRut] = useState<string | null>(
+    null,
+  );
+  const revalidator = useRevalidator();
+  const { getClienteByRut } = useClientes();
 
-  const {
-    fetchClientes,
-    createCliente,
-    updateCliente,
-    deleteCliente,
-    exportClientesToExcel,
-    loadingState,
-    fetchClienteByRut,
-  } = useAdministracion();
-
-  const handleClientSuccess = async () => {
-    try {
-      const updatedClientes = await fetchClientes();
-      if (updatedClientes) {
-        setClientes(updatedClientes as GetClientes[]);
-      }
-    } catch (error) {
-      console.error('Error al recargar clientes:', error);
-      toast.error('Error al recargar la lista de clientes');
-    }
-  };
-
-  const handleAddClient = () => {
-    setSelectedClient(null);
-    setFormClientData(null);
+  const handleAddCliente = () => {
+    setSelectedCliente(undefined);
     setModalMode('add');
-    setIsFormModalOpen(true);
+    setIsModalOpen(true);
   };
 
-  const handleEditClient = async (client: GetClientes) => {
+  const handleEditCliente = async (cliente: GetClientes) => {
     try {
-      const fullClientData = await fetchClienteByRut(client.rut);
-      if (fullClientData) {
-        setFormClientData(fullClientData);
-        setSelectedClient(client);
-        setModalMode('edit');
-        setIsFormModalOpen(true);
-      }
+      setEditingClienteRut(cliente.rut);
+      const clienteDetallado = await getClienteByRut(cliente.rut);
+      setSelectedCliente(clienteDetallado);
+      setModalMode('edit');
+      setIsModalOpen(true);
     } catch (error) {
-      console.error('Error al obtener los detalles del cliente:', error);
-      toast.error('Error al obtener los detalles del cliente.');
-    }
-  };
-
-  const handleSubmitClient = async (formData: ClientesFormData) => {
-    try {
-      if (modalMode === 'add') {
-        await createCliente(formData);
-        toast.success('Cliente creado exitosamente');
-      } else {
-        await updateCliente(formData);
-        toast.success('Cliente actualizado exitosamente');
-      }
-      await handleClientSuccess();
-    } catch (error) {
-      console.error('Error al guardar el cliente:', error);
-      toast.error('Error al guardar el cliente');
+      console.error('Error al cargar detalles del cliente:', error);
+      toast.error('Error al cargar los detalles del cliente');
     } finally {
-      setIsFormModalOpen(false);
+      setEditingClienteRut(null);
     }
   };
 
-  const handleViewDetails = (client: GetClientes) => {
-    setSelectedClient(client);
-    setIsDetailsModalOpen(true);
-  };
-
-  const handleDeleteClient = (client: GetClientes) => {
-    setSelectedClient(client);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!selectedClient) return;
-
+  const handleDetailsCliente = async (cliente: GetClientes) => {
     try {
-      await deleteCliente(selectedClient.rut);
-      toast.success('Cliente eliminado exitosamente');
-      await handleClientSuccess();
+      setIsLoadingDetails(true);
+      setIsDetailsOpen(true);
+
+      // Obtener los detalles completos del cliente
+      const clienteDetallado = await getClienteByRut(cliente.rut);
+      setDetailedCliente(clienteDetallado);
     } catch (error) {
-      console.error('Error al eliminar cliente:', error);
-      toast.error('Error al eliminar el cliente');
+      console.error('Error al cargar detalles del cliente:', error);
+      toast.error('Error al cargar los detalles del cliente');
+      setIsDetailsOpen(false);
     } finally {
-      setSelectedClient(null);
-      setIsDeleteDialogOpen(false);
+      setIsLoadingDetails(false);
     }
   };
 
-  const handleExportToExcel = async () => {
-    try {
-      await exportClientesToExcel();
-      toast.success('Archivo Excel descargado exitosamente');
-    } catch (error) {
-      console.error('Error al exportar a Excel:', error);
-      toast.error('Error al exportar a Excel');
-    }
+  const handleClienteSuccess = () => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
+    setSelectedCliente(undefined); // Limpiar cliente seleccionado
+    toast.success(
+      modalMode === 'add'
+        ? 'Cliente creado exitosamente'
+        : 'Cliente actualizado exitosamente',
+    );
   };
 
-  const columnsData = columns({
-    onViewDetails: handleViewDetails,
-    onEdit: handleEditClient,
-    onDelete: handleDeleteClient,
-  });
-
-  // Calcular estadísticas
-  const totalClientes = clientes.length;
-  const empresas = clientes.filter((c) => c.esEmpresa).length;
-  const personasNaturales = totalClientes - empresas;
-  const clientesConEmail = clientes.filter(
-    (c) => c.email && c.email.trim() !== '',
-  ).length;
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCliente(undefined); // Limpiar cliente seleccionado
+  };
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
@@ -163,7 +115,7 @@ export default function ClientesComponent({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-emerald-900 dark:text-emerald-100">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
               Gestión de Clientes
             </h1>
           </div>
@@ -171,141 +123,75 @@ export default function ClientesComponent({
             Administra los clientes del sistema de manera eficiente
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={handleExportToExcel}
-            variant="outline"
-            disabled={loadingState.exportClientesToExcel?.isLoading}
-            className="border-emerald-200 text-white bg-emerald-500 hover:bg-emerald-600 dark:border-emerald-800"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            {loadingState.exportClientesToExcel?.isLoading
-              ? 'Exportando...'
-              : 'Exportar Excel'}
-          </Button>
-          <Button
-            onClick={handleAddClient}
-            className="bg-sky-600 hover:bg-sky-700 text-white"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Agregar Cliente
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Clientes
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
-              {totalClientes}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Empresas</CardTitle>
-            <Building className="h-4 w-4 text-blue-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
-              {empresas}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {totalClientes > 0
-                ? Math.round((empresas / totalClientes) * 100)
-                : 0}
-              % del total
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Personas Naturales
-            </CardTitle>
-            <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-700 dark:text-green-300">
-              {personasNaturales}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {totalClientes > 0
-                ? Math.round((personasNaturales / totalClientes) * 100)
-                : 0}
-              % del total
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Con Email</CardTitle>
-            <div className="h-2 w-2 bg-purple-500 rounded-full"></div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-              {clientesConEmail}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {totalClientes > 0
-                ? Math.round((clientesConEmail / totalClientes) * 100)
-                : 0}
-              % del total
-            </p>
-          </CardContent>
-        </Card>
+        <Button
+          onClick={handleAddCliente}
+          className="bg-sky-600 hover:bg-sky-700 text-white"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Agregar Cliente
+        </Button>
       </div>
 
       {/* Table */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-emerald-800 dark:text-emerald-200">
-            Lista de Clientes
-          </CardTitle>
+          <CardTitle>Lista de Clientes</CardTitle>
           <CardDescription>
             Visualiza y gestiona todos los clientes registrados en el sistema
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <DataTable columns={columnsData} data={clientes} />
+          <DataTable
+            columns={columns({
+              onDetails: handleDetailsCliente,
+              onEdit: handleEditCliente,
+              editingClienteRut,
+            })}
+            data={clientes}
+          />
         </CardContent>
       </Card>
 
-      {/* Modals */}
-      <ClientDetailsModal
-        isOpen={isDetailsModalOpen}
-        onClose={() => {
-          setIsDetailsModalOpen(false);
-          setSelectedClient(null);
-        }}
-        client={selectedClient}
-      />
+      {/* Modal de Detalles */}
+      <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <SheetContent className="sm:max-w-2xl">
+          <SheetHeader>
+            <SheetTitle>Detalles del Cliente</SheetTitle>
+            <SheetDescription>
+              Información completa del cliente seleccionado.
+            </SheetDescription>
+          </SheetHeader>
+          <Separator className="my-4" />
+          <div className="h-[calc(100vh-150px)] overflow-y-auto pr-4">
+            {isLoadingDetails ? (
+              <div className="flex items-center justify-center h-32">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <span className="ml-2 text-muted-foreground">
+                  Cargando detalles...
+                </span>
+              </div>
+            ) : detailedCliente ? (
+              <DetallesCliente cliente={detailedCliente} />
+            ) : (
+              <div className="text-center text-muted-foreground py-8">
+                No se pudieron cargar los detalles del cliente
+              </div>
+            )}
+          </div>
+          <SheetFooter className="mt-4">
+            <SheetClose asChild>
+              <Button variant="outline">Cerrar</Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
 
-      <DeleteConfirmationDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => {
-          setIsDeleteDialogOpen(false);
-          setSelectedClient(null);
-        }}
-        onConfirm={handleConfirmDelete}
-        client={selectedClient}
-      />
-
-      <ClientFormModal
-        isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
-        onSubmit={handleSubmitClient}
-        client={formClientData}
+      {/* Modal de Formulario */}
+      <ClienteFormModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSuccess={handleClienteSuccess}
+        cliente={selectedCliente}
         mode={modalMode}
         giros={giros}
         regiones={regiones}

@@ -13,6 +13,8 @@ import type {
   CrearMedidorProps,
   ActualizarMedidorProps,
 } from "~/types/administracion";
+import { toast } from 'sonner';
+import axiosInstance from '~/services/axiosConfig';
 
 interface LoadingState {
   isLoading: boolean;
@@ -397,3 +399,20 @@ export function useAdministracion() {
     error,
   };
 }
+
+// Funciones para clientes
+export const useClientes = () => {
+  const getClienteByRut = async (rut: string): Promise<GetClientesByRut> => {
+    try {
+      const response = await axiosInstance.get(`/cliente/${rut}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener cliente por RUT:', error);
+      throw new Error('Error al cargar los detalles del cliente');
+    }
+  };
+
+  return {
+    getClienteByRut,
+  };
+};

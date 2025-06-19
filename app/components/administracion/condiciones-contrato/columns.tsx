@@ -1,137 +1,143 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import {
-  FileText,
-  Building,
-  Calculator,
-  DollarSign,
-  CheckCircle,
-} from 'lucide-react';
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import { Badge } from '~/components/ui/badge';
 import type { GetCondicionesContrato } from '~/types/administracion';
+import { Button } from '~/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '~/components/ui/dropdown-menu';
+import {
+  MoreHorizontal,
+  Edit,
+  Eye,
+  FileText,
+  DollarSign,
+  Percent,
+  Loader2,
+} from 'lucide-react';
+import { Badge } from '~/components/ui/badge';
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 
-export const columns: ColumnDef<GetCondicionesContrato>[] = [
+interface TableColumnsProps {
+  onEdit: (condicionContrato: GetCondicionesContrato) => void;
+  onView: (condicionContrato: GetCondicionesContrato) => void;
+  editingCondicionContrato: number | null;
+}
+
+export const columns = ({
+  onEdit,
+  onView,
+  editingCondicionContrato,
+}: TableColumnsProps): ColumnDef<GetCondicionesContrato>[] => [
   {
+    id: 'id',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="ID" />
+    ),
+    cell: ({ row }) => {
+      return <div className="font-medium">{row.original.id}</div>;
+    },
+  },
+  {
+    id: 'descripcion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
-    accessorKey: 'descripcion',
     cell: ({ row }) => {
-      const descripcion = row.getValue('descripcion') as string;
-      return (
-        <div className="flex items-center gap-2 max-w-[250px]">
-          <div className="p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md">
-            <FileText className="h-3 w-3 text-sky-600 dark:text-sky-400" />
-          </div>
-          <span
-            className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate"
-            title={descripcion}
-          >
-            {descripcion}
-          </span>
-        </div>
-      );
+      return <div className="font-medium">{row.original.descripcion}</div>;
     },
   },
   {
+    id: 'concepto',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Concepto" />
     ),
-    accessorKey: 'concepto',
     cell: ({ row }) => {
-      const concepto = row.getValue('concepto') as string;
-      return (
-        <div className="flex items-center gap-2 max-w-[200px]">
-          <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md">
-            <Building className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-          </div>
-          <span
-            className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate"
-            title={concepto}
-          >
-            {concepto}
-          </span>
-        </div>
-      );
+      return <div className="font-medium">{row.original.concepto}</div>;
     },
   },
   {
+    id: 'factorPorcentual',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Factor Porcentual" />
     ),
-    accessorKey: 'factorPorcentual',
     cell: ({ row }) => {
-      const factorPorcentual = row.getValue('factorPorcentual') as string;
-      return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-md">
-            <Calculator className="h-3 w-3 text-purple-600 dark:text-purple-400" />
-          </div>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            {factorPorcentual}%
-          </span>
-        </div>
-      );
+      return <div className="font-medium">{row.original.factorPorcentual}</div>;
     },
   },
   {
+    id: 'valorFijo',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Valor Fijo" />
     ),
-    accessorKey: 'valorFijo',
     cell: ({ row }) => {
-      const valorFijo = row.getValue('valorFijo') as number | null;
-
-      if (valorFijo === null) {
-        return (
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-slate-100 dark:bg-slate-900/30 rounded-md">
-              <DollarSign className="h-3 w-3 text-slate-400" />
-            </div>
-            <span className="text-sm text-slate-500 dark:text-slate-400 italic">
-              Sin valor
-            </span>
-          </div>
-        );
-      }
-
-      return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-            <DollarSign className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-          </div>
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            ${valorFijo.toLocaleString('es-CL')}
-          </span>
-        </div>
-      );
+      return <div className="font-medium">{row.original.valorFijo}</div>;
     },
   },
   {
+    accessorKey: 'estado',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Estado" />
     ),
-    accessorKey: 'estado',
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;
       return (
-        <div className="flex items-center gap-2">
-          <Badge
-            variant={estado ? 'default' : 'secondary'}
-            className={`text-xs font-medium ${
-              estado
-                ? 'bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800'
-                : 'bg-rose-100 text-rose-800 border-rose-200 hover:bg-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800'
-            }`}
-          >
-            <div
-              className={`w-2 h-2 rounded-full mr-1.5 ${
-                estado ? 'bg-emerald-500' : 'bg-rose-500'
-              }`}
-            />
-            {estado ? 'Activo' : 'Inactivo'}
-          </Badge>
-        </div>
+        <Badge
+          variant={estado ? 'default' : 'destructive'}
+          className={
+            estado
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
+          {estado ? 'Activo' : 'Inactivo'}
+        </Badge>
+      );
+    },
+    enableSorting: true,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
+  },
+  {
+    id: 'actions',
+    header: 'Acciones',
+    cell: ({ row }) => {
+      const condicionContrato = row.original;
+      const isEditing = editingCondicionContrato === condicionContrato.id;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Abrir menú</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onView(condicionContrato)}>
+              <Eye className="mr-2 h-4 w-4" />
+              Ver
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => onEdit(condicionContrato)}
+              disabled={isEditing}
+              className={isEditing ? 'opacity-50 cursor-not-allowed' : ''}
+            >
+              {isEditing ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Edit className="mr-2 h-4 w-4" />
+              )}
+              {isEditing ? 'Cargando...' : 'Editar'}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
