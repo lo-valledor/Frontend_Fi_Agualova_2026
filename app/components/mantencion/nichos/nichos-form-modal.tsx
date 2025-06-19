@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import api from '~/lib/api';
-import type { Sectores, Zonas } from '~/types/mantencion';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import type { Nicho, Sectores } from '~/types/mantencion';
+import api from '~/lib/api';
 import {
   Dialog,
   DialogContent,
@@ -29,115 +29,129 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
+import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
 import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
 
-const SectorFormSchema = z.object({
+const nichoFormSchema = z.object({
+  sectorId: z.string().min(1, { message: 'El sector es requerido.' }),
   nombre: z
     .string()
     .min(1, { message: 'El nombre es requerido.' })
     .max(50, { message: 'El nombre no puede exceder 50 caracteres.' }),
-  zona: z.string().min(1, { message: 'La zona es requerida.' }),
+  ubicacion: z
+    .string()
+    .min(1, { message: 'La ubicación es requerida.' })
+    .max(100, { message: 'La ubicación no puede exceder 100 caracteres.' }),
   estado: z.boolean(),
 });
 
-type SectorFormValues = z.infer<typeof SectorFormSchema>;
+type NichoFormValues = z.infer<typeof nichoFormSchema>;
 
-interface SectorFormModalProps {
+interface NichoFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  sector: Sectores | null;
+  nicho: Nicho | null;
   mode: 'add' | 'edit';
 }
 
-export default function SectorFormModal({
+export default function NichoFormModal({
   isOpen,
   onClose,
   onSuccess,
-  sector,
+  nicho,
   mode,
-}: SectorFormModalProps) {
+}: NichoFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [zonas, setZonas] = useState<Zonas[]>([]);
-  const [isLoadingZonas, setIsLoadingZonas] = useState(false);
+  const [sectores, setSectores] = useState<Sectores[]>([]);
+  const [isLoadingSectores, setIsLoadingSectores] = useState(false);
 
-  const form = useForm<SectorFormValues>({
-    resolver: zodResolver(SectorFormSchema),
+  const form = useForm<NichoFormValues>({
+    resolver: zodResolver(nichoFormSchema),
     defaultValues: {
+      sectorId: '',
       nombre: '',
-      zona: '',
+      ubicacion: '',
       estado: true,
     },
   });
 
   useEffect(() => {
-    const fetchZonas = async () => {
-      setIsLoadingZonas(true);
+    const fetchSectores = async () => {
+      setIsLoadingSectores(true);
       try {
-        const response = await api.get('/buscarZona');
+        const response = await api.get('/buscarSector');
 
         // Manejar diferentes formatos de respuesta de la API
-        let zonasData: Zonas[] = [];
+        let sectoresData: Sectores[] = [];
         if (
           response.data &&
           typeof response.data === 'object' &&
           'data' in response.data &&
           Array.isArray((response.data as any).data)
         ) {
-          zonasData = (response.data as { data: Zonas[] }).data;
+          sectoresData = (response.data as { data: Sectores[] }).data;
         } else if (Array.isArray(response.data)) {
-          zonasData = response.data;
+          sectoresData = response.data;
         }
 
-        setZonas(zonasData);
+        setSectores(sectoresData);
       } catch (error) {
-        console.error('Error al cargar las zonas:', error);
-        toast.error('No se pudieron cargar las zonas.');
+        console.error('Error al cargar los sectores:', error);
+        toast.error('No se pudieron cargar los sectores.');
       } finally {
-        setIsLoadingZonas(false);
+        setIsLoadingSectores(false);
       }
     };
 
     if (isOpen) {
-      fetchZonas();
+      fetchSectores();
     }
   }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
-      if (mode === 'edit' && sector) {
+      if (mode === 'edit' && nicho) {
+        const sector = sectores.find((s) => s.nombre === nicho.sectorNombre);
         form.reset({
-          nombre: sector.nombre,
-          zona: sector.zona,
-          estado: sector.estado,
+          sectorId: sector?.id.toString() || '',
+          nombre: nicho.nombre,
+          ubicacion: nicho.ubicacion,
+          estado: nicho.estado,
         });
       } else {
         form.reset({
+          sectorId: '',
           nombre: '',
-          zona: '',
+          ubicacion: '',
           estado: true,
         });
       }
     }
-  }, [isOpen, mode, sector, form]);
+  }, [isOpen, mode, nicho, sectores, form]);
 
-  const handleSubmit = async (data: SectorFormValues) => {
+  const handleSubmit = async (data: NichoFormValues) => {
     setIsLoading(true);
     try {
+      const payload = {
+        ...data,
+        sectorId: parseInt(data.sectorId, 10),
+      };
+
       if (mode === 'add') {
-        await api.post('/crearSector', data);
-      } else if (mode === 'edit' && sector) {
-        await api.put(`/modificarSector/${sector.id}`, data);
+        await api.post('/crearNichoM', payload);
+      } else if (mode === 'edit' && nicho) {
+        await api.put(`/modificarNicho/${nicho.id}`, payload);
       }
+
       onSuccess();
     } catch (error) {
-      console.error('Error al procesar sector:', error);
+      console.error('Error al procesar nicho:', error);
       toast.error(
         mode === 'add'
-          ? 'Error al crear el sector'
-          : 'Error al actualizar el sector',
+          ? 'Error al crear el nicho'
+          : 'Error al actualizar el nicho',
       );
     } finally {
       setIsLoading(false);
@@ -154,11 +168,11 @@ export default function SectorFormModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {mode === 'add' ? 'Agregar Nuevo Sector' : 'Editar Sector'}
+            {mode === 'add' ? 'Agregar Nuevo Nicho' : 'Editar Nicho'}
           </DialogTitle>
           <DialogDescription>
             {mode === 'add'
-              ? 'Complete la información para crear un nuevo sector.'
+              ? 'Complete la información para crear un nuevo nicho.'
               : 'Modifique los campos que desea actualizar.'}
           </DialogDescription>
         </DialogHeader>
@@ -170,44 +184,33 @@ export default function SectorFormModal({
           >
             <FormField
               control={form.control}
-              name="nombre"
+              name="sectorId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre del Sector</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: Sector Norte" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="zona"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Zona</FormLabel>
+                  <FormLabel>Sector</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
-                    disabled={isLoadingZonas}
+                    disabled={isLoadingSectores}
                   >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
                           placeholder={
-                            isLoadingZonas
-                              ? 'Cargando zonas...'
-                              : 'Selecciona una zona'
+                            isLoadingSectores
+                              ? 'Cargando sectores...'
+                              : 'Selecciona un sector'
                           }
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {zonas.map((zona) => (
-                        <SelectItem key={zona.id} value={zona.nombre}>
-                          {zona.nombre}
+                      {sectores.map((sector) => (
+                        <SelectItem
+                          key={sector.id}
+                          value={sector.id.toString()}
+                        >
+                          {sector.nombre}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -219,13 +222,41 @@ export default function SectorFormModal({
 
             <FormField
               control={form.control}
+              name="nombre"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nombre del Nicho</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ej: Nicho Norte 1" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="ubicacion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ubicación</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Ej: Pasaje Los Aromos 123" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="estado"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                   <div className="space-y-0.5">
-                    <FormLabel>Estado del Sector</FormLabel>
+                    <FormLabel>Estado del Nicho</FormLabel>
                     <FormDescription>
-                      {field.value ? 'Sector activo' : 'Sector inactivo'}
+                      {field.value ? 'Nicho activo' : 'Nicho inactivo'}
                     </FormDescription>
                   </div>
                   <FormControl>
@@ -249,7 +280,7 @@ export default function SectorFormModal({
               </Button>
               <Button
                 type="submit"
-                disabled={isLoading || isLoadingZonas}
+                disabled={isLoading || isLoadingSectores}
                 className="bg-sky-600 hover:bg-sky-700"
               >
                 {isLoading
@@ -257,8 +288,8 @@ export default function SectorFormModal({
                     ? 'Creando...'
                     : 'Actualizando...'
                   : mode === 'add'
-                    ? 'Crear Sector'
-                    : 'Actualizar Sector'}
+                    ? 'Crear Nicho'
+                    : 'Actualizar Nicho'}
               </Button>
             </DialogFooter>
           </form>

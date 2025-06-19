@@ -4,6 +4,7 @@ import { DataTable } from '~/components/data-table/data-table';
 import { columns } from './columns';
 import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useRevalidator } from 'react-router';
 import {
   Card,
   CardContent,
@@ -12,61 +13,45 @@ import {
   CardHeader,
 } from '~/components/ui/card';
 import ZonaFormModal from './zona-form-modal';
-import api from '~/lib/api';
 import { toast } from 'sonner';
 
-export default function ZonasComponent({
-  zonas: initialZonas,
-}: {
+interface ZonasComponentProps {
   zonas: Zonas[];
-}) {
+}
+
+export default function ZonasComponent({ zonas }: ZonasComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedZona, setSelectedZona] = useState<Zonas | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [zonas, setZonas] = useState<Zonas[]>(initialZonas);
+  const revalidator = useRevalidator();
 
   const handleAddZona = () => {
     setSelectedZona(null);
     setModalMode('add');
     setIsModalOpen(true);
   };
+
   const handleEditZona = (zona: Zonas) => {
     setSelectedZona(zona);
     setModalMode('edit');
     setIsModalOpen(true);
   };
+
   const handleDeleteZona = (zona: Zonas) => {
     setSelectedZona(zona);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const fetchZonas = async () => {
-    try {
-      const response = await api.get<Zonas[]>('/buscarZona');
-
-      // Comprobar si la respuesta tiene el formato ApiResponse<T>
-      if (
-        response.data &&
-        typeof response.data === 'object' &&
-        'data' in response.data &&
-        Array.isArray((response.data as any).data)
-      ) {
-        setZonas((response.data as { data: Zonas[] }).data);
-      } else {
-        // Asumir que la respuesta es T (Zonas[])
-        setZonas(response.data as Zonas[]);
-      }
-      toast.success('Lista de zonas actualizada.');
-    } catch (error) {
-      console.error('Error al recargar zonas:', error);
-      toast.error('Error al recargar la lista de zonas.');
-    }
+    // TODO: Implementar diálogo de confirmación de eliminación
+    setIsModalOpen(true);
   };
 
   const handleZonaSuccess = () => {
-    fetchZonas();
+    // Usar revalidation de React Router v7 en lugar de fetch manual
+    revalidator.revalidate();
     setIsModalOpen(false);
+    toast.success(
+      modalMode === 'add'
+        ? 'Zona creada exitosamente'
+        : 'Zona actualizada exitosamente',
+    );
   };
 
   return (
@@ -80,7 +65,7 @@ export default function ZonasComponent({
             </h1>
           </div>
           <p className="text-muted-foreground">
-            Administra los usuarios del sistema de manera eficiente
+            Administra las zonas del sistema de manera eficiente
           </p>
         </div>
         <Button
@@ -111,7 +96,7 @@ export default function ZonasComponent({
         </CardContent>
       </Card>
 
-      {/* Modals */}
+      {/* Modal */}
       <ZonaFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

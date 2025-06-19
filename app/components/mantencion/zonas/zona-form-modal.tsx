@@ -27,8 +27,14 @@ import { toast } from 'sonner';
 import api from '~/lib/api';
 
 const zonaFormSchema = z.object({
-  nombre: z.string().min(1, { message: 'El nombre es requerido.' }),
-  referencia: z.string().min(1, { message: 'La referencia es requerida.' }),
+  nombre: z
+    .string()
+    .min(1, { message: 'El nombre es requerido.' })
+    .max(50, { message: 'El nombre no puede exceder 50 caracteres.' }),
+  referencia: z
+    .string()
+    .min(1, { message: 'La referencia es requerida.' })
+    .max(20, { message: 'La referencia no puede exceder 20 caracteres.' }),
   estado: z.boolean(),
 });
 
@@ -50,6 +56,7 @@ export default function ZonaFormModal({
   mode,
 }: ZonaFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<ZonaFormValues>({
     resolver: zodResolver(zonaFormSchema),
     defaultValues: {
@@ -82,24 +89,29 @@ export default function ZonaFormModal({
     try {
       if (mode === 'add') {
         await api.post('/crearZona', data);
-        toast.success('Zona creada exitosamente.');
       } else if (mode === 'edit' && zona) {
-        console.log('Actualizando zona con ID:', zona.id, 'y datos:', data);
         await api.put(`/modificarZona/${zona.id}`, data);
-        toast.success('Zona actualizada exitosamente.');
       }
       onSuccess();
-      onClose();
     } catch (error) {
-      toast.error('No se pudo guardar la zona.');
-      console.error(error);
+      console.error('Error al procesar la zona:', error);
+      toast.error(
+        mode === 'add'
+          ? 'Error al crear la zona'
+          : 'Error al actualizar la zona',
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
@@ -111,6 +123,7 @@ export default function ZonaFormModal({
               : 'Modifique los campos que desea actualizar.'}
           </DialogDescription>
         </DialogHeader>
+
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
@@ -121,7 +134,7 @@ export default function ZonaFormModal({
               name="nombre"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre</FormLabel>
+                  <FormLabel>Nombre de la Zona</FormLabel>
                   <FormControl>
                     <Input placeholder="Ej: Zona Norte" {...field} />
                   </FormControl>
@@ -129,6 +142,7 @@ export default function ZonaFormModal({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="referencia"
@@ -142,13 +156,14 @@ export default function ZonaFormModal({
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="estado"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                   <div className="space-y-0.5">
-                    <FormLabel>Estado</FormLabel>
+                    <FormLabel>Estado de la Zona</FormLabel>
                     <FormDescription>
                       {field.value ? 'Zona activa' : 'Zona inactiva'}
                     </FormDescription>
@@ -162,21 +177,28 @@ export default function ZonaFormModal({
                 </FormItem>
               )}
             />
-            <DialogFooter>
+
+            <DialogFooter className="gap-2">
               <Button
                 type="button"
                 variant="outline"
-                onClick={onClose}
+                onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading}>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-sky-600 hover:bg-sky-700"
+              >
                 {isLoading
-                  ? 'Guardando...'
+                  ? mode === 'add'
+                    ? 'Creando...'
+                    : 'Actualizando...'
                   : mode === 'add'
-                    ? 'Crear'
-                    : 'Guardar Cambios'}
+                    ? 'Crear Zona'
+                    : 'Actualizar Zona'}
               </Button>
             </DialogFooter>
           </form>

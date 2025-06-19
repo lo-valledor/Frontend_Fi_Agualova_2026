@@ -1,27 +1,27 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Edit, MoreHorizontal, Trash2 } from 'lucide-react';
-import { Button } from '~/components/ui/button';
+import type { Marca } from '~/types/mantencion';
 import {
   DropdownMenu,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { Button } from '~/components/ui/button';
+import { Edit, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
-import type { Empalme } from '~/types/mantencion';
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 
 interface TableColumnsProps {
-  onEdit: (empalme: Empalme) => void;
-  onDelete: (empalme: Empalme) => void;
+  onEdit: (marca: Marca) => void;
+  onDelete: (marca: Marca) => void;
 }
 
 export const columns = ({
   onEdit,
   onDelete,
-}: TableColumnsProps): ColumnDef<Empalme>[] => [
+}: TableColumnsProps): ColumnDef<Marca>[] => [
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
@@ -47,45 +47,7 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       const nombre = row.getValue('nombre') as string;
-      return <div className="max-w-[150px] truncate font-medium">{nombre}</div>;
-    },
-    enableSorting: true,
-  },
-  {
-    accessorKey: 'codigoCliente',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código Cliente" />
-    ),
-    cell: ({ row }) => {
-      const codigoCliente = row.getValue('codigoCliente') as string;
-      return <div className="font-mono text-sm">{codigoCliente}</div>;
-    },
-    enableSorting: true,
-  },
-  {
-    accessorKey: 'potenciaContratada',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Potencia Contratada" />
-    ),
-    cell: ({ row }) => {
-      const potencia = row.getValue('potenciaContratada') as number;
-      return (
-        <div className="text-right">
-          <span className="font-medium">{potencia.toFixed(2)}</span>
-          <span className="text-xs text-muted-foreground ml-1">kW</span>
-        </div>
-      );
-    },
-    enableSorting: true,
-  },
-  {
-    accessorKey: 'tarifa',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tarifa" />
-    ),
-    cell: ({ row }) => {
-      const tarifa = row.getValue('tarifa') as string;
-      return <Badge variant="secondary">{tarifa}</Badge>;
+      return <div className="max-w-[200px] truncate font-medium">{nombre}</div>;
     },
     enableSorting: true,
   },
@@ -93,14 +55,14 @@ export const columns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const empalme = row.original;
+      const marca = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               className="h-8 w-8 p-0 hover:bg-muted"
-              aria-label={`Acciones para empalme ${empalme.codigo}`}
+              aria-label={`Acciones para marca ${marca.nombre}`}
             >
               <MoreHorizontal className="h-4 w-4" />
             </Button>
@@ -109,14 +71,14 @@ export const columns = ({
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => onEdit(empalme)}
+              onClick={() => onEdit(marca)}
               className="cursor-pointer"
             >
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(empalme)}
+              onClick={() => onDelete(marca)}
               className="cursor-pointer text-destructive focus:text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />

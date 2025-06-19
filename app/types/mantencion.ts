@@ -27,7 +27,12 @@ export type Conceptos = {
   descripcion: string;
   unidad: string;
   fijoVariable: string;
-  asociadoDescripcion: string | null;
+  asociadoId?: number;
+}
+
+export type ComboAsociadoConceptos = {
+  id: number;
+  descripcion: string;
 }
 
 /* Empalme */
@@ -51,7 +56,7 @@ export type Marca = {
 // buscarNichos, obtenerNicho{id}, crearNicho, modificarNicho
 export type Nicho = {
   id: number;
-  codigo: string;
+  sectorNombre: string;
   nombre: string;
   ubicacion: string;
   estado: boolean;

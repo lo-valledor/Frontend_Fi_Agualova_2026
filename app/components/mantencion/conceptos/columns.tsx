@@ -11,26 +11,29 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { Claves } from '~/types/mantencion';
+import type { Conceptos } from '~/types/mantencion';
 
-interface ClavesColumnsProps {
-  onEdit: (clave: Claves) => void;
-  onDelete: (clave: Claves) => void;
+interface ConceptosColumnsProps {
+  onEdit: (concepto: Conceptos) => void;
+  onDelete: (concepto: Conceptos) => void;
 }
 
 export const createColumns = ({
   onEdit,
   onDelete,
-}: ClavesColumnsProps): ColumnDef<Claves>[] => [
+}: ConceptosColumnsProps): ColumnDef<Conceptos>[] => [
   {
-    accessorKey: 'codigo',
+    accessorKey: 'denominacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+      <DataTableColumnHeader column={column} title="Denominación" />
     ),
     cell: ({ row }) => (
-      <Badge variant="outline" className="font-mono">
-        {row.getValue('codigo')}
-      </Badge>
+      <div
+        className="max-w-[150px] truncate font-medium"
+        title={row.getValue('denominacion')}
+      >
+        {row.getValue('denominacion')}
+      </div>
     ),
   },
   {
@@ -48,42 +51,51 @@ export const createColumns = ({
     ),
   },
   {
-    accessorKey: 'tipo',
+    accessorKey: 'unidad',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
+      <DataTableColumnHeader column={column} title="Unidad" />
     ),
     cell: ({ row }) => (
-      <div className="max-w-[150px] truncate" title={row.getValue('tipo')}>
-        {row.getValue('tipo')}
-      </div>
+      <Badge variant="outline" className="font-mono">
+        {row.getValue('unidad')}
+      </Badge>
     ),
   },
   {
-    accessorKey: 'estado',
+    accessorKey: 'fijoVariable',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title="Fijo/Variable" />
     ),
     cell: ({ row }) => {
-      const estado = row.getValue('estado') as boolean;
+      const valor = row.getValue('fijoVariable') as string;
       return (
         <Badge
-          variant={estado ? 'default' : 'destructive'}
-          className={
-            estado
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              : ''
-          }
+          variant={valor?.toLowerCase() === 'fijo' ? 'default' : 'secondary'}
         >
-          {estado ? 'Activo' : 'Inactivo'}
+          {valor}
         </Badge>
       );
     },
   },
   {
+    accessorKey: 'asociadoDescripcion',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Asociado" />
+    ),
+    cell: ({ row }) => (
+      <div
+        className="max-w-[150px] truncate"
+        title={row.getValue('asociadoDescripcion')}
+      >
+        {row.getValue('asociadoDescripcion') || 'N/A'}
+      </div>
+    ),
+  },
+  {
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const clave = row.original;
+      const concepto = row.original;
 
       return (
         <DropdownMenu>
@@ -96,12 +108,12 @@ export const createColumns = ({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(clave)}>
+            <DropdownMenuItem onClick={() => onEdit(concepto)}>
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(clave)}
+              onClick={() => onDelete(concepto)}
               className="text-red-600"
             >
               <Trash2 className="mr-2 h-4 w-4" />
@@ -113,11 +125,3 @@ export const createColumns = ({
     },
   },
 ];
-
-/**
- * id: number;
-  descripcion: string;
-  estado: boolean;
-  tipo: string;
-  codigo: string;
- */

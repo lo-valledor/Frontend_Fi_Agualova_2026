@@ -8,25 +8,50 @@ import type { CiclosFacturacion } from '~/types/mantencion';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Ciclos de Facturación' },
-    { name: 'description', content: 'Ciclos de Facturación' },
+    {
+      name: 'description',
+      content: 'Gestión de ciclos de facturación del sistema',
+    },
   ];
 }
 
 export async function clientLoader() {
-  const res = await api.get('/buscarCiclo');
-  return {
-    ciclosFacturacion: res.data as CiclosFacturacion[],
-  };
+  try {
+    const response = await api.get('/buscarCiclo');
+
+    // Manejar diferentes formatos de respuesta de la API
+    let ciclosFacturacion: CiclosFacturacion[] = [];
+
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      'data' in response.data &&
+      Array.isArray((response.data as any).data)
+    ) {
+      ciclosFacturacion = (response.data as { data: CiclosFacturacion[] }).data;
+    } else if (Array.isArray(response.data)) {
+      ciclosFacturacion = response.data;
+    }
+
+    return { ciclosFacturacion };
+  } catch (error) {
+    console.error('Error al cargar ciclos de facturación:', error);
+    throw new Response('Error al cargar los ciclos de facturación', {
+      status: 500,
+    });
+  }
 }
 
 export default function CiclosFacturacion({
   loaderData,
 }: Route.ComponentProps) {
   const { ciclosFacturacion } = loaderData;
+
   const pageBreadcrumbs = [
-    { label: 'Mantencion' },
-    { label: 'Ciclos Facturacion' },
+    { label: 'Mantención' },
+    { label: 'Ciclos de Facturación' },
   ];
+
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />

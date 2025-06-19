@@ -2,55 +2,53 @@ import React, { useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
-import type { TiposContrato } from '~/types/mantencion';
+import type { Tarifas } from '~/types/mantencion';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { DataTable } from '~/components/data-table/data-table';
 import { createColumns } from './columns';
-import TipoContratoFormModal from './tipo-contrato-form-modal';
+import TarifaFormModal from './tarifa-form-modal';
 
-interface TiposContratosComponentProps {
-  tiposContratos: TiposContrato[];
+interface TarifasComponentProps {
+  tarifas: Tarifas[];
 }
 
-export default function TiposContratosComponent({
-  tiposContratos,
-}: TiposContratosComponentProps) {
+export default function TarifasComponent({ tarifas }: TarifasComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTipoContrato, setSelectedTipoContrato] = useState<
-    TiposContrato | undefined
-  >(undefined);
+  const [selectedTarifa, setSelectedTarifa] = useState<Tarifas | undefined>(
+    undefined,
+  );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
 
   const handleAdd = () => {
-    setSelectedTipoContrato(undefined);
+    setSelectedTarifa(undefined);
     setModalMode('add');
     setIsModalOpen(true);
   };
 
-  const handleEdit = (tipoContrato: TiposContrato) => {
-    setSelectedTipoContrato(tipoContrato);
+  const handleEdit = (tarifa: Tarifas) => {
+    setSelectedTarifa(tarifa);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (tipoContrato: TiposContrato) => {
+  const handleDelete = async (tarifa: Tarifas) => {
     if (
       window.confirm(
-        `¿Está seguro de que desea eliminar el tipo de contrato "${tipoContrato.nombre}"?`,
+        `¿Está seguro de que desea eliminar la tarifa "${tarifa.nombre}"?`,
       )
     ) {
       try {
         const { default: api } = await import('~/lib/api');
-        await api.delete(`/eliminarTipoContrato/${tipoContrato.id}`);
+        await api.delete(`/eliminarTarifa/${tarifa.id}`);
 
-        toast.success('Tipo de contrato eliminado exitosamente');
+        toast.success('Tarifa eliminada exitosamente');
         revalidator.revalidate();
       } catch (error) {
-        console.error('Error al eliminar tipo de contrato:', error);
-        toast.error('Error al eliminar el tipo de contrato');
+        console.error('Error al eliminar tarifa:', error);
+        toast.error('Error al eliminar la tarifa');
       }
     }
   };
@@ -58,8 +56,8 @@ export default function TiposContratosComponent({
   const handleSuccess = () => {
     toast.success(
       modalMode === 'add'
-        ? 'Tipo de contrato creado exitosamente'
-        : 'Tipo de contrato actualizado exitosamente',
+        ? 'Tarifa creada exitosamente'
+        : 'Tarifa actualizada exitosamente',
     );
     revalidator.revalidate();
   };
@@ -76,11 +74,11 @@ export default function TiposContratosComponent({
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Tipos de Contratos
+              Gestión de Tarifas
             </h1>
           </div>
           <p className="text-muted-foreground">
-            Administra los tipos de contratos del sistema de manera eficiente
+            Administra las tarifas del sistema de manera eficiente
           </p>
         </div>
         <Button
@@ -88,23 +86,23 @@ export default function TiposContratosComponent({
           className="bg-sky-600 hover:bg-sky-700 text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
-          Agregar Tipo de Contrato
+          Agregar Tarifa
         </Button>
       </div>
 
       {/* Data Table */}
       <Card>
         <CardContent className="p-6">
-          <DataTable columns={columns} data={tiposContratos} />
+          <DataTable columns={columns} data={tarifas} />
         </CardContent>
       </Card>
 
       {/* Modal */}
-      <TipoContratoFormModal
+      <TarifaFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={handleSuccess}
-        tipoContrato={selectedTipoContrato}
+        tarifa={selectedTarifa}
         mode={modalMode}
       />
     </div>

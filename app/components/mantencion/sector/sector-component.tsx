@@ -4,6 +4,7 @@ import { columns } from './columns';
 import type { Sectores } from '~/types/mantencion';
 import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
+import { useRevalidator } from 'react-router';
 import {
   Card,
   CardContent,
@@ -12,16 +13,18 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import SectorFormModal from './sector-form-modal';
+import { toast } from 'sonner';
 
-export default function SectorComponent({
-  sectores,
-}: {
+interface SectorComponentProps {
   sectores: Sectores[];
-}) {
+}
+
+export default function SectorComponent({ sectores }: SectorComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSector, setSelectedSector] = useState<Sectores | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const revalidator = useRevalidator();
+
   const handleAddSector = () => {
     setSelectedSector(null);
     setModalMode('add');
@@ -36,12 +39,19 @@ export default function SectorComponent({
 
   const handleDeleteSector = (sector: Sectores) => {
     setSelectedSector(sector);
-    setIsDeleteDialogOpen(true);
+    // TODO: Implementar diálogo de confirmación de eliminación
+    setIsModalOpen(true);
   };
 
   const handleSectorSuccess = () => {
+    // Usar revalidation de React Router v7 en lugar de fetch manual
+    revalidator.revalidate();
     setIsModalOpen(false);
-    setIsDeleteDialogOpen(false);
+    toast.success(
+      modalMode === 'add'
+        ? 'Sector creado exitosamente'
+        : 'Sector actualizado exitosamente',
+    );
   };
 
   return (
@@ -86,6 +96,7 @@ export default function SectorComponent({
         </CardContent>
       </Card>
 
+      {/* Modal */}
       <SectorFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

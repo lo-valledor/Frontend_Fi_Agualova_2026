@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
 import { columns } from './columns';
-import type { Nicho } from '~/types/mantencion';
+import type { Marca } from '~/types/mantencion';
 import { Plus } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { useRevalidator } from 'react-router';
@@ -12,45 +12,45 @@ import {
   CardDescription,
   CardContent,
 } from '~/components/ui/card';
-import NichoFormModal from './nichos-form-modal';
 import { toast } from 'sonner';
+import MarcaFormModal from './marca-form-modal';
 
-interface NichosComponentProps {
-  nichos: Nicho[];
+interface MarcasComponentProps {
+  marcas: Marca[];
 }
 
-export default function NichosComponent({ nichos }: NichosComponentProps) {
+export default function MarcasComponent({ marcas }: MarcasComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedNicho, setSelectedNicho] = useState<Nicho | null>(null);
+  const [selectedMarca, setSelectedMarca] = useState<Marca | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const handleAddNicho = () => {
-    setSelectedNicho(null);
+  const handleAddMarca = () => {
+    setSelectedMarca(null);
     setModalMode('add');
     setIsModalOpen(true);
   };
 
-  const handleEditNicho = (nicho: Nicho) => {
-    setSelectedNicho(nicho);
+  const handleEditMarca = (marca: Marca) => {
+    setSelectedMarca(marca);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  const handleDeleteNicho = (nicho: Nicho) => {
-    setSelectedNicho(nicho);
+  const handleDeleteMarca = (marca: Marca) => {
+    setSelectedMarca(marca);
     // TODO: Implementar diálogo de confirmación de eliminación
     setIsModalOpen(true);
   };
 
-  const handleNichoSuccess = () => {
+  const handleMarcaSuccess = () => {
     // Usar revalidation de React Router v7 en lugar de fetch manual
     revalidator.revalidate();
     setIsModalOpen(false);
     toast.success(
       modalMode === 'add'
-        ? 'Nicho creado exitosamente'
-        : 'Nicho actualizado exitosamente',
+        ? 'Marca creada exitosamente'
+        : 'Marca actualizada exitosamente',
     );
   };
 
@@ -61,47 +61,47 @@ export default function NichosComponent({ nichos }: NichosComponentProps) {
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Nichos
+              Gestión de Marcas
             </h1>
           </div>
           <p className="text-muted-foreground">
-            Administra los nichos del sistema de manera eficiente
+            Administra las marcas del sistema de manera eficiente
           </p>
         </div>
         <Button
-          onClick={handleAddNicho}
+          onClick={handleAddMarca}
           className="bg-sky-600 hover:bg-sky-700 text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
-          Agregar Nicho
+          Agregar Marca
         </Button>
       </div>
 
       {/* Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Lista de Nichos</CardTitle>
+          <CardTitle>Lista de Marcas</CardTitle>
           <CardDescription>
-            Visualiza y gestiona todos los nichos registrados en el sistema
+            Visualiza y gestiona todas las marcas registradas en el sistema
           </CardDescription>
         </CardHeader>
         <CardContent>
           <DataTable
             columns={columns({
-              onEdit: handleEditNicho,
-              onDelete: handleDeleteNicho,
+              onEdit: handleEditMarca,
+              onDelete: handleDeleteMarca,
             })}
-            data={nichos}
+            data={marcas}
           />
         </CardContent>
       </Card>
 
       {/* Modal */}
-      <NichoFormModal
+      <MarcaFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={handleNichoSuccess}
-        nicho={selectedNicho}
+        onSuccess={handleMarcaSuccess}
+        marca={selectedMarca}
         mode={modalMode}
       />
     </div>

@@ -11,50 +11,28 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { Claves } from '~/types/mantencion';
+import type { TiposContrato } from '~/types/mantencion';
 
-interface ClavesColumnsProps {
-  onEdit: (clave: Claves) => void;
-  onDelete: (clave: Claves) => void;
+interface TiposContratoColumnsProps {
+  onEdit: (tipoContrato: TiposContrato) => void;
+  onDelete: (tipoContrato: TiposContrato) => void;
 }
 
 export const createColumns = ({
   onEdit,
   onDelete,
-}: ClavesColumnsProps): ColumnDef<Claves>[] => [
+}: TiposContratoColumnsProps): ColumnDef<TiposContrato>[] => [
   {
-    accessorKey: 'codigo',
+    accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
-    ),
-    cell: ({ row }) => (
-      <Badge variant="outline" className="font-mono">
-        {row.getValue('codigo')}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: 'descripcion',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
       <div
-        className="max-w-[200px] truncate"
-        title={row.getValue('descripcion')}
+        className="max-w-[200px] truncate font-medium"
+        title={row.getValue('nombre')}
       >
-        {row.getValue('descripcion')}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'tipo',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
-    ),
-    cell: ({ row }) => (
-      <div className="max-w-[150px] truncate" title={row.getValue('tipo')}>
-        {row.getValue('tipo')}
+        {row.getValue('nombre')}
       </div>
     ),
   },
@@ -83,7 +61,7 @@ export const createColumns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const clave = row.original;
+      const tipoContrato = row.original;
 
       return (
         <DropdownMenu>
@@ -96,12 +74,12 @@ export const createColumns = ({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(clave)}>
+            <DropdownMenuItem onClick={() => onEdit(tipoContrato)}>
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(clave)}
+              onClick={() => onDelete(tipoContrato)}
               className="text-red-600"
             >
               <Trash2 className="mr-2 h-4 w-4" />
@@ -113,11 +91,3 @@ export const createColumns = ({
     },
   },
 ];
-
-/**
- * id: number;
-  descripcion: string;
-  estado: boolean;
-  tipo: string;
-  codigo: string;
- */

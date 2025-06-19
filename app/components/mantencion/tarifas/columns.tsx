@@ -11,17 +11,17 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { Claves } from '~/types/mantencion';
+import type { Tarifas } from '~/types/mantencion';
 
-interface ClavesColumnsProps {
-  onEdit: (clave: Claves) => void;
-  onDelete: (clave: Claves) => void;
+interface TarifasColumnsProps {
+  onEdit: (tarifa: Tarifas) => void;
+  onDelete: (tarifa: Tarifas) => void;
 }
 
 export const createColumns = ({
   onEdit,
   onDelete,
-}: ClavesColumnsProps): ColumnDef<Claves>[] => [
+}: TarifasColumnsProps): ColumnDef<Tarifas>[] => [
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
@@ -34,56 +34,24 @@ export const createColumns = ({
     ),
   },
   {
-    accessorKey: 'descripcion',
+    accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
+      <DataTableColumnHeader column={column} title="Nombre" />
     ),
     cell: ({ row }) => (
       <div
-        className="max-w-[200px] truncate"
-        title={row.getValue('descripcion')}
+        className="max-w-[250px] truncate font-medium"
+        title={row.getValue('nombre')}
       >
-        {row.getValue('descripcion')}
+        {row.getValue('nombre')}
       </div>
     ),
-  },
-  {
-    accessorKey: 'tipo',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
-    ),
-    cell: ({ row }) => (
-      <div className="max-w-[150px] truncate" title={row.getValue('tipo')}>
-        {row.getValue('tipo')}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'estado',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
-    ),
-    cell: ({ row }) => {
-      const estado = row.getValue('estado') as boolean;
-      return (
-        <Badge
-          variant={estado ? 'default' : 'destructive'}
-          className={
-            estado
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              : ''
-          }
-        >
-          {estado ? 'Activo' : 'Inactivo'}
-        </Badge>
-      );
-    },
   },
   {
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const clave = row.original;
+      const tarifa = row.original;
 
       return (
         <DropdownMenu>
@@ -96,12 +64,12 @@ export const createColumns = ({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(clave)}>
+            <DropdownMenuItem onClick={() => onEdit(tarifa)}>
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(clave)}
+              onClick={() => onDelete(tarifa)}
               className="text-red-600"
             >
               <Trash2 className="mr-2 h-4 w-4" />
@@ -113,11 +81,3 @@ export const createColumns = ({
     },
   },
 ];
-
-/**
- * id: number;
-  descripcion: string;
-  estado: boolean;
-  tipo: string;
-  codigo: string;
- */

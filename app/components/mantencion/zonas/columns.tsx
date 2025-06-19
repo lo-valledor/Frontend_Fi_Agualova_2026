@@ -1,14 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Zonas } from '~/types/mantencion';
-import {
-  Edit,
-  MapPinIcon,
-  MoreHorizontal,
-  Trash2,
-} from 'lucide-react';
+import { Edit, MapPinIcon, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { TrashIcon } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 
 interface TableColumnsProps {
   onEdit: (zona: Zonas) => void;
@@ -28,8 +23,10 @@ export const columns = ({
   onDelete,
 }: TableColumnsProps): ColumnDef<Zonas>[] => [
   {
-    header: 'Nombre',
     accessorKey: 'nombre',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nombre" />
+    ),
     cell: ({ row }) => {
       const zona = row.original;
       return (
@@ -47,53 +44,78 @@ export const columns = ({
         </div>
       );
     },
+    enableSorting: true,
+    enableHiding: false,
   },
   {
-    header: 'Referencia',
     accessorKey: 'referencia',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Referencia" />
+    ),
     cell: ({ row }) => {
-      const zona = row.original;
+      const referencia = row.getValue('referencia') as string;
       return (
-        <div className="text-sm text-gray-600 dark:text-gray-300">
-          {zona.referencia}
+        <div className="font-mono text-sm text-muted-foreground">
+          {referencia}
         </div>
       );
     },
+    enableSorting: true,
   },
   {
-    header: 'Estado',
     accessorKey: 'estado',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;
       return (
-        <Badge variant={estado ? 'default' : 'secondary'}>
+        <Badge
+          variant={estado ? 'default' : 'destructive'}
+          className={
+            estado
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
           {estado ? 'Activo' : 'Inactivo'}
         </Badge>
       );
     },
+    enableSorting: true,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
+    id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
       const zona = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menú</span>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0 hover:bg-muted"
+              aria-label={`Acciones para zona ${zona.nombre}`}
+            >
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(zona)}>
+            <DropdownMenuItem
+              onClick={() => onEdit(zona)}
+              className="cursor-pointer"
+            >
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => onDelete(zona)}
-              className="text-red-600 focus:text-red-600"
+              className="cursor-pointer text-destructive focus:text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Eliminar
@@ -102,5 +124,7 @@ export const columns = ({
         </DropdownMenu>
       );
     },
+    enableSorting: false,
+    enableHiding: false,
   },
 ];

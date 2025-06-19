@@ -11,28 +11,17 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { Claves } from '~/types/mantencion';
+import type { Parametro } from '~/types/mantencion';
 
-interface ClavesColumnsProps {
-  onEdit: (clave: Claves) => void;
-  onDelete: (clave: Claves) => void;
+interface ParametrosColumnsProps {
+  onEdit: (parametro: Parametro) => void;
+  onDelete: (parametro: Parametro) => void;
 }
 
 export const createColumns = ({
   onEdit,
   onDelete,
-}: ClavesColumnsProps): ColumnDef<Claves>[] => [
-  {
-    accessorKey: 'codigo',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
-    ),
-    cell: ({ row }) => (
-      <Badge variant="outline" className="font-mono">
-        {row.getValue('codigo')}
-      </Badge>
-    ),
-  },
+}: ParametrosColumnsProps): ColumnDef<Parametro>[] => [
   {
     accessorKey: 'descripcion',
     header: ({ column }) => (
@@ -40,7 +29,7 @@ export const createColumns = ({
     ),
     cell: ({ row }) => (
       <div
-        className="max-w-[200px] truncate"
+        className="max-w-[200px] truncate font-medium"
         title={row.getValue('descripcion')}
       >
         {row.getValue('descripcion')}
@@ -48,14 +37,25 @@ export const createColumns = ({
     ),
   },
   {
-    accessorKey: 'tipo',
+    accessorKey: 'valor',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
+      <DataTableColumnHeader column={column} title="Valor" />
     ),
     cell: ({ row }) => (
-      <div className="max-w-[150px] truncate" title={row.getValue('tipo')}>
-        {row.getValue('tipo')}
+      <div className="max-w-[150px] truncate" title={row.getValue('valor')}>
+        {row.getValue('valor')}
       </div>
+    ),
+  },
+  {
+    accessorKey: 'sigla',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Sigla" />
+    ),
+    cell: ({ row }) => (
+      <Badge variant="outline" className="font-mono">
+        {row.getValue('sigla')}
+      </Badge>
     ),
   },
   {
@@ -66,14 +66,7 @@ export const createColumns = ({
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;
       return (
-        <Badge
-          variant={estado ? 'default' : 'destructive'}
-          className={
-            estado
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              : ''
-          }
-        >
+        <Badge variant={estado ? 'default' : 'secondary'}>
           {estado ? 'Activo' : 'Inactivo'}
         </Badge>
       );
@@ -83,7 +76,7 @@ export const createColumns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const clave = row.original;
+      const parametro = row.original;
 
       return (
         <DropdownMenu>
@@ -96,12 +89,12 @@ export const createColumns = ({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(clave)}>
+            <DropdownMenuItem onClick={() => onEdit(parametro)}>
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(clave)}
+              onClick={() => onDelete(parametro)}
               className="text-red-600"
             >
               <Trash2 className="mr-2 h-4 w-4" />
@@ -113,11 +106,3 @@ export const createColumns = ({
     },
   },
 ];
-
-/**
- * id: number;
-  descripcion: string;
-  estado: boolean;
-  tipo: string;
-  codigo: string;
- */

@@ -1,0 +1,356 @@
+import React from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import Select, { type StylesConfig } from 'react-select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '~/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { Textarea } from '~/components/ui/textarea';
+import { Button } from '~/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import type { ComboAsociadoConceptos, Conceptos } from '~/types/mantencion';
+import { useTheme } from '~/components/theme-provider';
+
+const conceptoSchema = z.object({
+  denominacion: z
+    .string()
+    .min(1, 'La denominación es requerida')
+    .max(100, 'La denominación no debe exceder 100 caracteres'),
+  descripcion: z
+    .string()
+    .min(1, 'La descripción es requerida')
+    .max(200, 'La descripción no debe exceder 200 caracteres'),
+  unidad: z
+    .string()
+    .min(1, 'La unidad es requerida')
+    .max(20, 'La unidad no debe exceder 20 caracteres'),
+  fijoVariable: z.string().min(1, 'El tipo Fijo/Variable es requerido'),
+  asociadoId: z.number().optional(),
+});
+
+type ConceptoFormData = z.infer<typeof conceptoSchema>;
+
+interface ConceptoFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+  concepto?: Conceptos;
+  mode: 'add' | 'edit';
+  comboAsociadoConceptos: ComboAsociadoConceptos[];
+}
+
+export default function ConceptoFormModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  concepto,
+  mode,
+  comboAsociadoConceptos,
+}: ConceptoFormModalProps) {
+  const form = useForm<ConceptoFormData>({
+    resolver: zodResolver(conceptoSchema),
+    defaultValues: {
+      denominacion: concepto?.denominacion || '',
+      descripcion: concepto?.descripcion || '',
+      unidad: concepto?.unidad || '',
+      fijoVariable: concepto?.fijoVariable || '',
+      asociadoId: concepto?.asociadoId || undefined,
+    },
+  });
+  const { theme } = useTheme();
+
+  const selectStyles: StylesConfig = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+      borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+      '&:hover': {
+        borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
+      },
+    }),
+    menu: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+    }),
+    option: (styles, { isFocused, isSelected }) => ({
+      ...styles,
+      backgroundColor: isSelected
+        ? theme === 'dark'
+          ? '#166534'
+          : '#16A34A'
+        : isFocused
+          ? theme === 'dark'
+            ? '#1E293B'
+            : '#F1F5F9'
+          : 'transparent',
+      color: isSelected ? '#FFFFFF' : theme === 'dark' ? '#F8FAFC' : '#0F172A',
+      ':active': {
+        ...styles[':active'],
+        backgroundColor: theme === 'dark' ? '#166534' : '#16A34A',
+      },
+    }),
+    singleValue: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    input: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    placeholder: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+    indicatorSeparator: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+    }),
+    dropdownIndicator: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+      '&:hover': {
+        color: theme === 'dark' ? '#CBD5E1' : '#374151',
+      },
+    }),
+    noOptionsMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+    loadingMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
+    }),
+  };
+
+  const isLoading = form.formState.isSubmitting;
+
+  React.useEffect(() => {
+    if (isOpen) {
+      form.reset({
+        denominacion: concepto?.denominacion || '',
+        descripcion: concepto?.descripcion || '',
+        unidad: concepto?.unidad || '',
+        fijoVariable: concepto?.fijoVariable || '',
+        asociadoId: concepto?.asociadoId || undefined,
+      });
+    }
+  }, [isOpen, concepto, form]);
+
+  const onSubmit = async (data: ConceptoFormData) => {
+    try {
+      const { default: api } = await import('~/lib/api');
+
+      if (mode === 'add') {
+        await api.post('/crearConceptos', data);
+      } else {
+        await api.put(`/modificarConceptos`, { ...data, id: concepto?.id });
+      }
+
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error('Error al guardar el concepto:', error);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>
+            {mode === 'add' ? 'Agregar Nuevo Concepto' : 'Editar Concepto'}
+          </DialogTitle>
+          <DialogDescription>
+            {mode === 'add'
+              ? 'Complete los datos para crear un nuevo concepto'
+              : 'Modifique los datos del concepto seleccionado'}
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="denominacion"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Denominación</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Ingrese la denominación" />
+                    </FormControl>
+                    <FormDescription>Máximo 100 caracteres</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="unidad"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unidad</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Ej: kWh, m3, unidades" />
+                    </FormControl>
+                    <FormDescription>Máximo 20 caracteres</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="descripcion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descripción</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      placeholder="Ingrese la descripción del concepto"
+                      rows={3}
+                    />
+                  </FormControl>
+                  <FormDescription>Máximo 200 caracteres</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Tipo
+                </label>
+                <Controller
+                  name="fijoVariable"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select
+                      value={
+                        field.value
+                          ? {
+                              value: field.value,
+                              label:
+                                field.value === 'FIJO' ? 'Fijo' : 'Variable',
+                            }
+                          : null
+                      }
+                      onChange={(selectedOption: any) =>
+                        field.onChange(selectedOption?.value || '')
+                      }
+                      options={[
+                        { value: 'FIJO', label: 'Fijo' },
+                        { value: 'VARIABLE', label: 'Variable' },
+                      ]}
+                      placeholder="Seleccione el tipo"
+                      isClearable
+                      className="mt-1"
+                      styles={selectStyles}
+                    />
+                  )}
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Indica si el concepto es fijo o variable
+                </p>
+                {form.formState.errors.fijoVariable && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {form.formState.errors.fijoVariable.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Asociado (Opcional)
+                </label>
+                <Controller
+                  name="asociadoId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Select
+                      value={
+                        field.value
+                          ? comboAsociadoConceptos.find(
+                              (a) => a.id === field.value,
+                            )
+                            ? {
+                                value: comboAsociadoConceptos.find(
+                                  (a) => a.id === field.value,
+                                )!.id,
+                                label: comboAsociadoConceptos.find(
+                                  (a) => a.id === field.value,
+                                )!.descripcion,
+                              }
+                            : null
+                          : null
+                      }
+                      onChange={(selectedOption: any) =>
+                        field.onChange(selectedOption?.value || undefined)
+                      }
+                      options={comboAsociadoConceptos.map((asociado) => ({
+                        value: asociado.id,
+                        label: asociado.descripcion,
+                      }))}
+                      placeholder="Seleccione el asociado"
+                      isClearable
+                      className="mt-1"
+                      styles={selectStyles}
+                    />
+                  )}
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Seleccione un concepto asociado
+                </p>
+                {form.formState.errors.asociadoId && (
+                  <p className="text-sm font-medium text-destructive mt-1">
+                    {form.formState.errors.asociadoId.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={isLoading}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-sky-600 hover:bg-sky-700"
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {mode === 'add' ? 'Crear' : 'Actualizar'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}

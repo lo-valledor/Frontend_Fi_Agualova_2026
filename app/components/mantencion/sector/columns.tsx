@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
 import { Button } from '~/components/ui/button';
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 
 interface TableColumnsProps {
   onEdit: (sector: Sectores) => void;
@@ -22,8 +23,10 @@ export const columns = ({
   onDelete,
 }: TableColumnsProps): ColumnDef<Sectores>[] => [
   {
-    header: 'Nombre',
     accessorKey: 'nombre',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Nombre" />
+    ),
     cell: ({ row }) => {
       const sector = row.original;
       return (
@@ -41,53 +44,78 @@ export const columns = ({
         </div>
       );
     },
+    enableSorting: true,
+    enableHiding: false,
   },
   {
-    header: 'Zona',
     accessorKey: 'zona',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Zona" />
+    ),
     cell: ({ row }) => {
-      const sector = row.original;
+      const zona = row.getValue('zona') as string;
       return (
-        <div className="text-sm text-gray-600 dark:text-gray-300">
-          {sector.zona}
-        </div>
+        <Badge variant="outline" className="font-medium">
+          {zona}
+        </Badge>
       );
     },
+    enableSorting: true,
   },
   {
-    header: 'Estado',
     accessorKey: 'estado',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Estado" />
+    ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;
       return (
-        <Badge variant={estado ? 'default' : 'secondary'}>
+        <Badge
+          variant={estado ? 'default' : 'destructive'}
+          className={
+            estado
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
           {estado ? 'Activo' : 'Inactivo'}
         </Badge>
       );
     },
+    enableSorting: true,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
+    id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const zona = row.original;
+      const sector = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menú</span>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0 hover:bg-muted"
+              aria-label={`Acciones para sector ${sector.nombre}`}
+            >
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(zona)}>
+            <DropdownMenuItem
+              onClick={() => onEdit(sector)}
+              className="cursor-pointer"
+            >
               <Edit className="mr-2 h-4 w-4" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(zona)}
-              className="text-red-600 focus:text-red-600"
+              onClick={() => onDelete(sector)}
+              className="cursor-pointer text-destructive focus:text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />
               Eliminar
@@ -96,5 +124,7 @@ export const columns = ({
         </DropdownMenu>
       );
     },
+    enableSorting: false,
+    enableHiding: false,
   },
 ];
