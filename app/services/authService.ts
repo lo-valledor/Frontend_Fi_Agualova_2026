@@ -15,19 +15,28 @@ interface LoginResponse {
 export const authService = {
   login: async (credentials: LoginDto): Promise<string> => {
     try {
+      console.log('Intentando login con:', { usuario: credentials.usuario });
       const response = await axiosInstance.post<LoginResponse>(
         '/login',
         credentials,
       )
+      console.log('Respuesta del servidor:', response.status, response.data);
+      
+      if (!response.data?.token) {
+        throw new Error('No se recibió token del servidor');
+      }
+      
       sessionStorage.setItem('token', response.data.token)
       toast.success('Inicio de sesión exitoso')
       return response.data.token
     } catch (error) {
+      console.error('Error en authService.login:', error);
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           toast.error('Usuario o contraseña incorrectos')
           throw new Error('Usuario o contraseña incorrectos')
         }
+        console.error('Error response:', error.response?.data);
         throw new Error(
           error.response?.data || 'Error al intentar iniciar sesión',
         )

@@ -5,25 +5,25 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "react-router";
+} from 'react-router';
 
-import type { Route } from "./+types/root";
-import "./app.css";
-import { ThemeProvider } from "./components/theme-provider";
-import { BreadcrumbProvider } from "./context/BreadcrumbContext";
-import { AuthProvider } from "./context/AuthContext";
-import { Toaster } from "sonner";
+import type { Route } from './+types/root';
+import './app.css';
+import { ThemeProvider } from './components/theme-provider';
+import { BreadcrumbProvider } from './context/BreadcrumbContext';
+import { AuthProvider } from './context/AuthContext';
+import { Toaster } from 'sonner';
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
+    rel: 'preconnect',
+    href: 'https://fonts.gstatic.com',
+    crossOrigin: 'anonymous',
   },
   {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
   },
 ];
 
@@ -55,30 +55,86 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  // Log detallado del error para debugging
+  console.error('=== ERROR BOUNDARY ACTIVADO ===');
+  console.error('Error completo:', error);
+  console.error('Navegador:', navigator.userAgent);
+  console.error('URL:', window.location.href);
+  console.error(
+    'SessionStorage token:',
+    sessionStorage.getItem('token') ? 'EXISTE' : 'NO EXISTE',
+  );
+
+  let message = '¡Ups!';
+  let details = 'Ha ocurrido un error inesperado.';
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? '404' : 'Error';
     details =
       error.status === 404
-        ? "The requested page could not be found."
+        ? 'La página solicitada no pudo ser encontrada.'
         : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
+  } else if (error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
+
+    // Log específico para errores de JavaScript
+    console.error('Mensaje del error:', error.message);
+    console.error('Stack trace:', error.stack);
   }
 
   return (
     <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-red-600 mb-4">{message}</h1>
+        <p className="text-lg mb-4">{details}</p>
+
+        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-4">
+          <h2 className="font-semibold mb-2">Información de depuración:</h2>
+          <ul className="text-sm space-y-1">
+            <li>
+              <strong>Navegador:</strong> {navigator.userAgent}
+            </li>
+            <li>
+              <strong>URL:</strong> {window.location.href}
+            </li>
+            <li>
+              <strong>Token en sessionStorage:</strong>{' '}
+              {sessionStorage.getItem('token') ? 'SÍ' : 'NO'}
+            </li>
+          </ul>
+        </div>
+
+        {stack && (
+          <details className="mb-4">
+            <summary className="cursor-pointer font-semibold">
+              Ver stack trace completo
+            </summary>
+            <pre className="w-full p-4 overflow-x-auto bg-gray-100 dark:bg-gray-800 rounded mt-2 text-xs">
+              <code>{stack}</code>
+            </pre>
+          </details>
+        )}
+
+        <div className="flex gap-4">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            Recargar página
+          </button>
+          <button
+            onClick={() => {
+              sessionStorage.clear();
+              window.location.href = '/auth/login';
+            }}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Limpiar sesión y volver al login
+          </button>
+        </div>
+      </div>
     </main>
   );
 }

@@ -5,15 +5,44 @@ const API_URL = import.meta.env.VITE_API_URL;
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  timeout: 15000, // 15 segundos de timeout
 });
 
 // Interceptor para añadir el token a las peticiones
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("token");
+    console.log(`🔑 REQUEST [${config.method?.toUpperCase()}] ${config.url}:`);
+    console.log('  Token disponible:', token ? 'SÍ' : 'NO');
+    console.log('  Token preview:', token ? `${token.substring(0, 30)}...` : 'N/A');
+    
     if (token) {
+      // Estrategia principal: Authorization header
       config.headers.Authorization = `Bearer ${token}`;
+      
+      // Estrategia de respaldo para Edge: múltiples métodos
+      if (navigator.userAgent.includes('Edg')) {
+        console.log('  🔧 Edge detectado - aplicando estrategias de respaldo');
+        
+        // Método 1: Header personalizado adicional
+        config.headers['X-Auth-Token'] = token;
+        
+        // Método 2: En el query parameter como respaldo
+        const url = new URL(config.url!, config.baseURL);
+        url.searchParams.set('token', token);
+        config.url = url.pathname + url.search;
+        
+        // Método 3: Forzar headers explícitamente
+        config.headers.set('Authorization', `Bearer ${token}`);
+        config.headers.set('Content-Type', 'application/json');
+      }
+      
+      console.log('  Authorization header agregado:', `Bearer ${token.substring(0, 30)}...`);
+    } else {
+      console.warn('  ⚠️ NO HAY TOKEN - La petición fallará');
     }
+    
+    console.log('  Headers finales:', config.headers);
     return config;
   },
   (error) => Promise.reject(error)
@@ -25,11 +54,12 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Si el error es 401 (Unauthorized) y no es una petición de refresh token
+    // Si el error es 401 (Unauthorized) y no es una petición de refresh token o login
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url.includes("refresh-token")
+      !originalRequest.url.includes("refresh-token") &&
+      !originalRequest.url.includes("login")
     ) {
       originalRequest._retry = true;
 
