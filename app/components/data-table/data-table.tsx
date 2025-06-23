@@ -72,6 +72,7 @@ export function DataTable<TData, TValue>({
       rowSelection,
       columnFilters,
       pagination,
+      globalFilter,
     },
     enableRowSelection: true,
     getRowId: rowIdKey ? (row) => String(row[rowIdKey]) : undefined,
@@ -97,6 +98,7 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -113,8 +115,8 @@ export function DataTable<TData, TValue>({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder={searchPlaceholder}
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
+            value={globalFilter ?? ''}
+            onChange={(e) => table.setGlobalFilter(e.target.value)}
             className="pl-10"
           />
         </div>

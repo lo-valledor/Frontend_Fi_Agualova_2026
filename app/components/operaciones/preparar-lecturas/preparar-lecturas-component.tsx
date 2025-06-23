@@ -36,6 +36,7 @@ import {
   type OpcionesPrepararLecturas,
   type ValidarSectoresPendientes,
   type PeriodoAbierto,
+  type ConsultarSectores,
 } from '~/types/operaciones';
 import { toast } from 'sonner';
 import api from '~/lib/api';
@@ -47,32 +48,24 @@ import DialogLecturasPendientes from './dialog-lecturas-pendientes';
 export default function PrepararLecturasComponent({
   periodoAbierto,
   lecturasPendientes,
+  sectores,
+  opcionesPreparar,
 }: {
   periodoAbierto: PeriodoAbierto[];
   lecturasPendientes: ValidarSectoresPendientes | null;
+  sectores: ConsultarSectores[];
+  opcionesPreparar: OpcionesPrepararLecturas[];
 }) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [asignacionSectores, setAsignacionSectores] = useState<
     ConsultarAsignacionSectores[]
   >([]);
-  const [opcionesPrepararLecturas, setOpcionesPrepararLecturas] = useState<
-    OpcionesPrepararLecturas[]
-  >([]);
   const [error, setError] = useState<string | null>(null);
-  const {
-    fetchPeriodoAbierto,
-    fetchCiclosFacturacion,
-    loadingState,
-    consultarSectores,
-    fetchConsultarSectores,
-    fetchLecturasPendientes,
-  } = useOperaciones();
-
   const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
-  const isPeriodoLoading = loadingState.periodoAbierto.isLoading;
-  const isCiclosLoading = loadingState.ciclos.isLoading;
-  const _isSectoresLoading = loadingState.consultarSectores.isLoading;
+
+  // Solo necesitamos fetchLecturasPendientes para el refresh del dialog
+  const { fetchLecturasPendientes, loadingState } = useOperaciones();
   const isLecturasPendientesLoading = loadingState.lecturasPendientes.isLoading;
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
@@ -82,38 +75,7 @@ export default function PrepararLecturasComponent({
     return '';
   }, [periodoAbierto]);
 
-  const fetchOpcionesPrepararLecturas = useCallback(async () => {
-    try {
-      const params = new URLSearchParams();
-      params.append('control', '1');
-      const response = await api.get('/opciones-preparar-lecturas', {
-        params,
-      });
-      setOpcionesPrepararLecturas(response.data as OpcionesPrepararLecturas[]);
-    } catch (error: any) {
-      console.error(
-        'Error al consultar opciones de preparación de lecturas:',
-        error,
-      );
-      toast.error('Error al consultar opciones de preparación de lecturas');
-    }
-  }, []);
-
-  // Cargar datos al inicio
-  useEffect(() => {
-    // Cargamos periodos, ciclos y sectores
-    fetchPeriodoAbierto();
-    fetchCiclosFacturacion();
-    fetchOpcionesPrepararLecturas();
-    fetchConsultarSectores();
-    fetchLecturasPendientes();
-  }, [
-    fetchPeriodoAbierto,
-    fetchCiclosFacturacion,
-    fetchConsultarSectores,
-    fetchLecturasPendientes,
-    fetchOpcionesPrepararLecturas,
-  ]);
+  // Ya no necesitamos cargar datos duplicados - todo viene del clientLoader
 
   // Función para verificar si el ciclo seleccionado es válido para el mes actual
   const _esCicloValido = useMemo(() => {
@@ -128,12 +90,12 @@ export default function PrepararLecturasComponent({
   }, [periodoAbierto, cicloSeleccionado]);
 
   const obtenerCicloParaAPI = (idCiclo: string): string => {
-    if (!opcionesPrepararLecturas || opcionesPrepararLecturas.length === 0) {
+    if (!opcionesPreparar || opcionesPreparar.length === 0) {
       return idCiclo === '1' ? '1' : '2';
     }
 
-    const opcionSeleccionada = opcionesPrepararLecturas.find(
-      (opcion) => opcion.id.toString() === idCiclo,
+    const opcionSeleccionada = opcionesPreparar.find(
+      (opcion: OpcionesPrepararLecturas) => opcion.id.toString() === idCiclo,
     );
 
     if (!opcionSeleccionada) {
@@ -301,9 +263,7 @@ export default function PrepararLecturasComponent({
                     <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                     Periodo actual
                   </Label>
-                  {isPeriodoLoading ? (
-                    <Skeleton className="h-10 w-full rounded-md" />
-                  ) : periodoAbierto && periodoAbierto.length > 0 ? (
+                  {periodoAbierto && periodoAbierto.length > 0 ? (
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
                       <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
                         <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
@@ -344,22 +304,20 @@ export default function PrepararLecturasComponent({
                     <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                     Ciclo de facturación
                   </Label>
-                  {isCiclosLoading ? (
-                    <Skeleton className="h-10 w-full rounded-md" />
-                  ) : (
-                    <Select
-                      value={cicloSeleccionado}
-                      onValueChange={setCicloSeleccionado}
+                  <Select
+                    value={cicloSeleccionado}
+                    onValueChange={setCicloSeleccionado}
+                  >
+                    <SelectTrigger
+                      id="ciclo"
+                      className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
                     >
-                      <SelectTrigger
-                        id="ciclo"
-                        className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                      >
-                        <SelectValue placeholder="Selecciona un ciclo de facturación" />
-                      </SelectTrigger>
-                      <SelectContent className="border-border/60">
-                        {opcionesPrepararLecturas &&
-                          opcionesPrepararLecturas.map((opcion) => (
+                      <SelectValue placeholder="Selecciona un ciclo de facturación" />
+                    </SelectTrigger>
+                    <SelectContent className="border-border/60">
+                      {opcionesPreparar &&
+                        opcionesPreparar.map(
+                          (opcion: OpcionesPrepararLecturas) => (
                             <SelectItem
                               key={opcion.id}
                               value={opcion.id.toString()}
@@ -372,10 +330,10 @@ export default function PrepararLecturasComponent({
                                 </span>
                               </div>
                             </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                          ),
+                        )}
+                    </SelectContent>
+                  </Select>
                   {/* {!esCicloValido && cicloSeleccionado && (
                     <p className="text-xs text-red-500 mt-1">
                       Este ciclo no es válido para el mes actual
@@ -503,7 +461,7 @@ export default function PrepararLecturasComponent({
                 data={asignacionSectores}
                 isLoading={isLoading}
                 isAuthorized={true}
-                sectores={consultarSectores}
+                sectores={sectores}
                 periodo={periodoFormateado}
                 cicloFacturable={obtenerCicloParaAPI(cicloSeleccionado)}
               />

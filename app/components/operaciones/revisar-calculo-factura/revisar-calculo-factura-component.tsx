@@ -68,16 +68,9 @@ export default function RevisarCalculoFacturaComponent({
   const [selectedContratos, setSelectedContratos] = useState<number[]>([]);
 
   // Obtención de datos del hook useOperaciones
-  const {
-    fetchPeriodoAbierto,
-    fetchCiclosFacturacion,
-    loadingState,
-    ciclosFacturacionActivos,
-  } = useOperaciones();
+  const { fetchCiclosFacturacion, ciclosFacturacionActivos } = useOperaciones();
 
   // Estados de carga
-  const isPeriodoLoading = loadingState.periodoAbierto.isLoading;
-  const isCiclosLoading = loadingState.ciclos.isLoading;
 
   // Formateo del periodo para la API (MMAAAA)
   const periodoFormateado = useMemo(() => {
@@ -90,9 +83,8 @@ export default function RevisarCalculoFacturaComponent({
 
   // Cargar datos iniciales
   useEffect(() => {
-    fetchPeriodoAbierto();
     fetchCiclosFacturacion();
-  }, [fetchPeriodoAbierto, fetchCiclosFacturacion]);
+  }, [fetchCiclosFacturacion]);
 
   // Filtrar datos en tiempo real
   useEffect(() => {
@@ -446,9 +438,7 @@ export default function RevisarCalculoFacturaComponent({
                     <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                     Periodo actual
                   </Label>
-                  {isPeriodoLoading ? (
-                    <Skeleton className="h-10 w-full rounded-md" />
-                  ) : periodoAbierto && periodoAbierto.length > 0 ? (
+                  {periodoAbierto && periodoAbierto.length > 0 ? (
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
                       <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
                         <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
@@ -488,73 +478,66 @@ export default function RevisarCalculoFacturaComponent({
                     <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                     Ciclo de facturación
                   </Label>
-                  {isCiclosLoading ? (
-                    <Skeleton className="h-10 w-full rounded-md" />
-                  ) : (
-                    <Select value={cicloId} onValueChange={setCicloId}>
-                      <SelectTrigger
-                        id="ciclo"
-                        className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                      >
-                        <SelectValue placeholder="Selecciona un ciclo de facturación" />
-                      </SelectTrigger>
-                      <SelectContent className="border-border/60">
-                        {ciclosFacturacionActivos &&
-                        ciclosFacturacionActivos.length > 0 ? (
-                          ciclosFacturacionActivos.map((ciclo) => {
-                            // Determinar el valor correcto para el API (1 o 2)
-                            let valorCiclo = '1';
-                            if (
-                              ciclo.diaFacturacion === '30' ||
-                              ciclo.descripcion.includes('30')
-                            ) {
-                              valorCiclo = '2';
-                            }
 
-                            return (
-                              <SelectItem
-                                key={ciclo.diaFacturacion}
-                                value={valorCiclo}
-                                className="hover:bg-sky-50 dark:hover:bg-sky-900/20 focus:bg-sky-50 dark:focus:bg-sky-900/20"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                                  <span className="font-medium">
-                                    {ciclo.descripcion}
-                                  </span>
-                                </div>
-                              </SelectItem>
-                            );
-                          })
-                        ) : (
-                          <>
+                  <Select value={cicloId} onValueChange={setCicloId}>
+                    <SelectTrigger
+                      id="ciclo"
+                      className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                    >
+                      <SelectValue placeholder="Selecciona un ciclo de facturación" />
+                    </SelectTrigger>
+                    <SelectContent className="border-border/60">
+                      {ciclosFacturacionActivos &&
+                      ciclosFacturacionActivos.length > 0 ? (
+                        ciclosFacturacionActivos.map((ciclo) => {
+                          // Determinar el valor correcto para el API (1 o 2)
+                          let valorCiclo = '1';
+                          if (
+                            ciclo.diaFacturacion === '30' ||
+                            ciclo.descripcion.includes('30')
+                          ) {
+                            valorCiclo = '2';
+                          }
+
+                          return (
                             <SelectItem
-                              value="1"
-                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                              key={ciclo.diaFacturacion}
+                              value={valorCiclo}
+                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20 focus:bg-sky-50 dark:focus:bg-sky-900/20"
                             >
                               <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-sky-500"></div>
                                 <span className="font-medium">
-                                  Ciclo día 15
+                                  {ciclo.descripcion}
                                 </span>
                               </div>
                             </SelectItem>
-                            <SelectItem
-                              value="2"
-                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
-                            >
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                                <span className="font-medium">
-                                  Ciclo día 30
-                                </span>
-                              </div>
-                            </SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  )}
+                          );
+                        })
+                      ) : (
+                        <>
+                          <SelectItem
+                            value="1"
+                            className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                              <span className="font-medium">Ciclo día 15</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="2"
+                            className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                              <span className="font-medium">Ciclo día 30</span>
+                            </div>
+                          </SelectItem>
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>{' '}
               {/* Botones de acción */}

@@ -119,4 +119,6 @@ export default [
       ]),
     ]),
   ]),
+  // Ruta catch-all para 404
+  route("*", "routes/not-found.tsx"),
 ] satisfies RouteConfig;
