@@ -86,11 +86,14 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Fijo/Variable" />
     ),
     cell: ({ row }) => {
+      const valor = row.original.fijoVariable;
+      const esF = valor === 'F' || valor === 'Fijo';
+
       return (
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="flex items-center gap-1">
             <Box className="w-3 h-3" />
-            {row.original.fijoVariable}
+            {esF ? 'Fijo' : 'Variable'}
           </Badge>
         </div>
       );
@@ -102,18 +105,23 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Periódico/Eventual" />
     ),
     cell: ({ row }) => {
+      const valor = row.original.periodicoEventual;
+      const esPeriodico =
+        valor === 'P' || valor === 'Periodico' || valor === 'Periódico';
+      const textoMostrar = esPeriodico ? 'Periódico' : 'Eventual';
+
       return (
         <div className="flex items-center gap-2">
           <Badge
             variant="outline"
             className={
-              row.original.periodicoEventual === 'Periodico'
+              esPeriodico
                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                 : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
             }
           >
             <Calendar className="w-3 h-3 mr-1" />
-            {row.original.periodicoEventual}
+            {textoMostrar}
           </Badge>
         </div>
       );

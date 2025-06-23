@@ -15,12 +15,12 @@ interface LoginResponse {
 export const authService = {
   login: async (credentials: LoginDto): Promise<string> => {
     try {
-      console.log('Intentando login con:', { usuario: credentials.usuario });
+      //console.log('Intentando login con:', { usuario: credentials.usuario });
       const response = await axiosInstance.post<LoginResponse>(
         '/login',
         credentials,
       )
-      console.log('Respuesta del servidor:', response.status, response.data);
+      //console.log('Respuesta del servidor:', response.status, response.data);
       
       if (!response.data?.token) {
         throw new Error('No se recibió token del servidor');

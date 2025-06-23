@@ -1,12 +1,11 @@
-import { Button } from "~/components/ui/button";
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { useMonitor } from "~/hooks/use-monitor";
+} from '~/components/ui/card';
 import {
   Calendar,
   Eraser,
@@ -18,33 +17,37 @@ import {
   Hash,
   ChevronUp,
   ChevronDown, // Icon for Medidor
-} from "lucide-react";
-import React, { Suspense, useEffect, useState } from "react";
-import ClimbingBoxLoader from "react-spinners/ClimbingBoxLoader";
-import { type Sector, type Periodo, type Clave } from "~/types/monitor";
-import { LoadingSpinner } from "~/components/loading-spinner";
-import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { Label } from "~/components/ui/label";
+} from 'lucide-react';
+import React, { Suspense, useEffect, useState } from 'react';
+import { type Sector, type Periodo, type Clave } from '~/types/monitor';
+import { LoadingSpinner } from '~/components/loading-spinner';
+import { Alert, AlertTitle, AlertDescription } from '~/components/ui/alert';
+import { AlertCircle } from 'lucide-react';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "~/components/ui/select";
-import { Input } from "~/components/ui/input";
-import { DatePicker } from "~/components/date-picker";
-import ResultadosBusqueda from "~/components/monitor/monitor-lecturas/resultados-busqueda";
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+} from '~/components/ui/select';
+import { Input } from '~/components/ui/input';
+import { DatePicker } from '~/components/date-picker';
+import ResultadosBusqueda from '~/components/monitor/monitor-lecturas/resultados-busqueda';
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible"; // Import Collapsible
-import { Separator } from "~/components/ui/separator"; // Import Separator
-import { cn } from "~/lib/utils"; // Assuming you have this utility
-import { toast } from "sonner";
+} from '~/components/ui/collapsible';
+import { Separator } from '~/components/ui/separator';
+import { cn } from '~/lib/utils';
+import { toast } from 'sonner';
+import {
+  findActivePeriod,
+  validateSearchParams,
+  getDefaultDates,
+} from '~/hooks/use-monitor';
 
 interface MonitorLecturasComponentProps {
   periodos: Periodo[];
@@ -61,84 +64,80 @@ const MonitorLecturasComponent = ({
   activePeriodoId,
   error,
 }: MonitorLecturasComponentProps) => {
-  // Solo usamos useMonitor para funciones específicas, no para carga inicial
-  const { fetchLecturas, fetchMedidores } = useMonitor();
-
   const pageBreadcrumbs = [
-    { label: "Monitor" },
-    { label: "Monitor de Lecturas" },
+    { label: 'Monitor' },
+    { label: 'Monitor de Lecturas' },
   ];
 
+  // Estados del formulario de filtros
   const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
   const [selectedPeriodo, setSelectedPeriodo] = useState<Periodo | null>(null);
   const [selectedClave, setSelectedClave] = useState<Clave | null>(null);
-  const [medidor, setMedidor] = useState<string>("");
-  const [selectedEstado, setSelectedEstado] = useState<number>(0); // Renamed from tipoclave for clarity
-  const [fechaInicio, setFechaInicio] = useState<string>(""); // Keep state for derived start date
-  const [fechaFin, setFechaFin] = useState<string>("");
+  const [medidor, setMedidor] = useState<string>('');
+  const [selectedEstado, setSelectedEstado] = useState<number>(0);
+  const [fechaInicio, setFechaInicio] = useState<string>('');
+  const [fechaFin, setFechaFin] = useState<string>('');
+
+  // Estados de UI
   const [shouldSearch, setShouldSearch] = useState(false);
   const [searchTrigger, setSearchTrigger] = useState(0);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(true); // State for collapsible filters
+  const [isFiltersOpen, setIsFiltersOpen] = useState(true);
 
-  // Effect to set default Periodo and Dates
+  // Establecer valores por defecto del período y fechas usando funciones utilitarias
   useEffect(() => {
     if (periodos && periodos.length > 0 && !selectedPeriodo) {
-      // Set only if not already set
-      const periodoActivo =
-        periodos.find((p) => Number(p.IdPeriodo) === Number(activePeriodoId)) ||
-        periodos[0]; // Fallback to first if active not found
+      const periodoActivo = findActivePeriod(periodos);
 
       if (periodoActivo) {
         setSelectedPeriodo(periodoActivo);
-        setFechaInicio(periodoActivo.FechaInicio);
-        // Set default end date only if not already set or if period changes
+        const defaultDates = getDefaultDates(periodoActivo);
+        setFechaInicio(defaultDates.fechaInicio);
         if (!fechaFin) {
-          setFechaFin(new Date().toISOString().split("T")[0]);
+          setFechaFin(defaultDates.fechaFin);
         }
       }
     }
-  }, [periodos, activePeriodoId, selectedPeriodo, fechaFin]);
+  }, [periodos, selectedPeriodo, fechaFin]);
 
-  // Update fechaInicio when selectedPeriodo changes
+  // Actualizar fechaInicio cuando cambia el período seleccionado
   useEffect(() => {
     if (selectedPeriodo) {
       setFechaInicio(selectedPeriodo.FechaInicio);
     }
   }, [selectedPeriodo]);
 
-  // Limpieza de filtros
+  // Limpiar filtros y resetear estado usando funciones utilitarias
   const handleLimpiezaFiltros = () => {
     setShouldSearch(false);
     setSearchTrigger(0);
     setSelectedSector(null);
-    const periodoActivo =
-      periodos.find((p) => Number(p.IdPeriodo) === Number(activePeriodoId)) ||
-      periodos[0] ||
-      null;
+
+    const periodoActivo = findActivePeriod(periodos);
     setSelectedPeriodo(periodoActivo);
     setSelectedClave(null);
-    setMedidor("");
+    setMedidor('');
     setSelectedEstado(0);
-    setFechaInicio(periodoActivo?.FechaInicio || "");
-    setFechaFin(new Date().toISOString().split("T")[0]);
-    setIsFiltersOpen(true); // Re-open filters on clear
+
+    const defaultDates = getDefaultDates(periodoActivo);
+    setFechaInicio(defaultDates.fechaInicio);
+    setFechaFin(defaultDates.fechaFin);
+    setIsFiltersOpen(true);
   };
 
+  // Ejecutar búsqueda con validaciones usando función utilitaria
   const handleSearch = () => {
-    // Basic validation example
-    if (!selectedSector) {
-      toast.error("Por favor, seleccione un sector.");
+    const validation = validateSearchParams(selectedSector, selectedPeriodo);
+
+    if (!validation.isValid) {
+      toast.error(validation.error);
       return;
     }
-    if (!selectedPeriodo) {
-      toast.error("Por favor, seleccione un periodo.");
-      return;
-    }
+
     setShouldSearch(true);
     setSearchTrigger((prev) => prev + 1);
   };
 
-  // --- Error State ---
+  // Manejo de errores
   if (error) {
     return (
       <div className="container mx-auto p-6">
@@ -147,13 +146,12 @@ const MonitorLecturasComponent = ({
           <AlertTitle>Error de Carga</AlertTitle>
           <AlertDescription>
             {error.message ||
-              "Ocurrió un error al cargar los datos iniciales. Por favor, intente recargar la página."}
+              'Ocurrió un error al cargar los datos iniciales. Por favor, intente recargar la página.'}
           </AlertDescription>
         </Alert>
       </div>
     );
   }
-  // --- End Error State ---
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
@@ -195,16 +193,16 @@ const MonitorLecturasComponent = ({
                   key={sector.sectorId}
                   variant={
                     selectedSector?.sectorId === sector.sectorId
-                      ? "default" // Use default variant for selected
-                      : "outline"
+                      ? 'default'
+                      : 'outline'
                   }
                   onClick={() => setSelectedSector(sector)}
                   size="sm"
                   className={cn(
-                    "transition-all duration-150",
+                    'transition-all duration-150',
                     selectedSector?.sectorId === sector.sectorId
-                      ? "bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white"
-                      : "dark:text-sky-300 border-border/70 hover:bg-muted/50"
+                      ? 'bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
+                      : 'dark:text-sky-300 border-border/70 hover:bg-muted/50',
                   )}
                 >
                   {sector.descripcion}
@@ -243,7 +241,7 @@ const MonitorLecturasComponent = ({
                   size="icon"
                   className="h-8 w-8"
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevenir que el evento se propague al CollapsibleTrigger
+                    e.stopPropagation();
                     setIsFiltersOpen(!isFiltersOpen);
                   }}
                 >
@@ -271,10 +269,10 @@ const MonitorLecturasComponent = ({
                   </Label>
                   {periodos && periodos.length > 0 ? (
                     <Select
-                      value={selectedPeriodo?.IdPeriodo || ""}
+                      value={selectedPeriodo?.IdPeriodo || ''}
                       onValueChange={(value) => {
                         const periodo = periodos.find(
-                          (p) => p.IdPeriodo === value
+                          (p) => p.IdPeriodo === value,
                         );
                         setSelectedPeriodo(periodo || null);
                       }}
@@ -311,16 +309,13 @@ const MonitorLecturasComponent = ({
                   </Label>
                   {claves && claves.length > 0 ? (
                     <Select
-                      // Use 'ALL' when selectedClave is null, otherwise the ID
-                      value={selectedClave?.IdClave.toString() || "ALL"}
+                      value={selectedClave?.IdClave.toString() || 'ALL'}
                       onValueChange={(value) => {
-                        if (value === "ALL") {
-                          // If user selects 'ALL', set selectedClave state to null
+                        if (value === 'ALL') {
                           setSelectedClave(null);
                         } else {
-                          // Otherwise, find the corresponding clave object
                           const clave = claves?.find(
-                            (c) => c.IdClave === parseInt(value)
+                            (c) => c.IdClave === parseInt(value),
                           );
                           setSelectedClave(clave || null);
                         }
@@ -333,12 +328,11 @@ const MonitorLecturasComponent = ({
                         <SelectValue placeholder="Todas las claves..." />
                       </SelectTrigger>
                       <SelectContent>
-                        {/* Use 'ALL' as the value for the "clear" option */}
                         <SelectItem value="ALL">Todas las claves</SelectItem>
                         {claves?.map((clave) => (
                           <SelectItem
                             key={clave.IdClave}
-                            value={String(clave.IdClave)} // Keep using the ID string here
+                            value={String(clave.IdClave)}
                           >
                             {clave.DescripcionClave} ({clave.IdClave})
                           </SelectItem>
@@ -393,7 +387,6 @@ const MonitorLecturasComponent = ({
                       <SelectItem value="3">Clave Informativa</SelectItem>
                       <SelectItem value="4">Clave Relevante</SelectItem>
                       <SelectItem value="5">Clave Crítica</SelectItem>
-                      {/* Add more if needed */}
                     </SelectContent>
                   </Select>
                 </div>
@@ -409,8 +402,8 @@ const MonitorLecturasComponent = ({
                   <Input
                     type="text"
                     id="fecha-inicio-lectura"
-                    value={fechaInicio || "Seleccione periodo"}
-                    readOnly // Use readOnly for better UX than disabled
+                    value={fechaInicio || 'Seleccione periodo'}
+                    readOnly
                     className="bg-muted/50 border-border/70 text-muted-foreground"
                   />
                 </div>
@@ -425,24 +418,23 @@ const MonitorLecturasComponent = ({
                   </Label>
                   <DatePicker
                     date={
-                      fechaFin ? new Date(fechaFin + "T00:00:00") : undefined
-                    } // Ensure correct date parsing
+                      fechaFin ? new Date(fechaFin + 'T00:00:00') : undefined
+                    }
                     setDate={(date) => {
                       if (date) {
-                        // No need for UTC conversion if only date matters
-                        setFechaFin(date.toISOString().split("T")[0]);
+                        setFechaFin(date.toISOString().split('T')[0]);
                       } else {
-                        setFechaFin("");
+                        setFechaFin('');
                       }
                     }}
                   />
                 </div>
               </div>
 
-              {/* Clear Filters Button */}
-              <div className="mt-6 flex justify-end">
+              {/* Action Buttons */}
+              <div className="mt-6 flex justify-end gap-2">
                 <Button
-                  variant="ghost" // Use ghost for less emphasis
+                  variant="ghost"
                   onClick={handleLimpiezaFiltros}
                   className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
                   size="sm"
@@ -453,12 +445,12 @@ const MonitorLecturasComponent = ({
                 <Button
                   variant="default"
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent trigger toggle
+                    e.stopPropagation();
                     handleSearch();
                   }}
                   size="sm"
                   className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
-                  disabled={!selectedSector || !selectedPeriodo} // Disable if required fields missing
+                  disabled={!selectedSector || !selectedPeriodo}
                 >
                   <Search className="h-4 w-4" />
                   Buscar
@@ -482,14 +474,13 @@ const MonitorLecturasComponent = ({
           }
         >
           <ResultadosBusqueda
-            // Pass necessary props
-            sector={selectedSector?.sectorId || ""}
-            periodo={selectedPeriodo?.IdPeriodo || ""}
-            stfechaini={fechaInicio} // Use state variable
+            sector={selectedSector?.sectorId || ''}
+            periodo={selectedPeriodo?.IdPeriodo || ''}
+            stfechaini={fechaInicio}
             stfechafin={fechaFin}
-            tipoclave={selectedEstado.toString()} // Pass selectedEstado as tipoclave
+            tipoclave={selectedEstado.toString()}
             medidor={medidor}
-            clave={selectedClave?.IdClave.toString() || ""} // Pass ID for potential backend use
+            clave={selectedClave?.IdClave.toString() || ''}
             triggerSearch={searchTrigger}
           />
         </Suspense>

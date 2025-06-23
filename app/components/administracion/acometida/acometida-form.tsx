@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import React, { useEffect, useState, useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import Select, { type StylesConfig, type SingleValue } from 'react-select';
+import { toast } from 'sonner';
+import { useTheme } from '~/components/theme-provider';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "~/components/ui/dialog";
+} from '~/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -16,31 +19,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Separator } from "~/components/ui/separator";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "~/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
+import { Badge } from '~/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -48,30 +30,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import {
-  CheckIcon,
-  MapPin,
-  Building,
-  Gauge,
-  Zap,
-  Save,
-  X,
-  ChevronDown,
-  Search,
-  List,
-  User,
-  Hash,
-  FileText,
-  Building2,
-} from "lucide-react";
-import { cn } from "~/lib/utils";
+} from '~/components/ui/table';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import { Zap, Save, X, Search, List, User, Building2 } from 'lucide-react';
 import type {
   Acometida,
   CrearAcometidaProps,
@@ -79,33 +40,52 @@ import type {
   ComboEmpalmes,
   ComboNichos,
   ContratosDisponibles,
-} from "~/types/administracion";
-import { ScrollArea } from "~/components/ui/scroll-area";
+  ComboSectores,
+} from '~/types/administracion';
 
+// Schema de validación
 const acometidaSchema = z.object({
-  ubicacion: z.string().min(2, "La ubicación es requerida"),
-  empalmeId: z.string().min(1, "Seleccione un empalme"),
-  nichoId: z.string().min(1, "Seleccione un nicho"),
-  contratoId: z.string().min(1, "Seleccione un contrato"),
-  codigo: z.string().min(1, "El código es requerido"),
+  ubicacion: z.string().min(2, 'La ubicación es requerida'),
+  empalmeId: z.string().min(1, 'Seleccione un empalme'),
+  nichoId: z.string().min(1, 'Seleccione un nicho'),
+  contratoId: z.string().min(1, 'Seleccione un contrato'),
+  codigo: z
+    .string()
+    .min(1, 'El código es requerido')
+    .refine((val) => val.trim().length > 0, 'El código no puede estar vacío'),
   limitePotencia: z
     .string()
-    .refine((val) => !val || !isNaN(Number(val)), "Debe ser un número válido"),
+    .refine(
+      (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
+      'Debe ser un número válido mayor o igual a 0',
+    ),
 });
 
 type FormularioAcometida = z.infer<typeof acometidaSchema>;
 
+// Tipos para las opciones de react-select
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+interface ContratoSelectOption extends SelectOption {
+  data: ContratosDisponibles;
+}
+
+// Interface principal del componente
 interface AcometidaFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (
-    data: CrearAcometidaProps | ActualizarAcometidaProps
+    data: CrearAcometidaProps | ActualizarAcometidaProps,
   ) => Promise<void>;
   acometida?: Acometida | null;
   isLoading?: boolean;
   comboEmpalmes: ComboEmpalmes[];
   comboNichos: ComboNichos[];
   contratosDisponibles: ContratosDisponibles[];
+  comboSectores: ComboSectores[];
 }
 
 export function AcometidaForm({
@@ -117,118 +97,346 @@ export function AcometidaForm({
   comboEmpalmes,
   comboNichos,
   contratosDisponibles,
+  comboSectores,
 }: AcometidaFormProps) {
+  // Hooks
+  const { theme } = useTheme();
   const isEdit = !!acometida;
+
+  // Estados
+  const [modalContratos, setModalContratos] = useState(false);
+  const [busquedaContrato, setBusquedaContrato] = useState('');
+
+  // Formulario
   const form = useForm<FormularioAcometida>({
     resolver: zodResolver(acometidaSchema),
     defaultValues: {
-      ubicacion: "",
-      empalmeId: "",
-      nichoId: "",
-      contratoId: "",
-      codigo: "",
-      limitePotencia: "",
+      ubicacion: '',
+      empalmeId: '',
+      nichoId: '',
+      contratoId: '',
+      codigo: '',
+      limitePotencia: '',
     },
   });
 
-  // Estados para los combos y modal
-  const [empalmeOpen, setEmpalmeOpen] = useState(false);
-  const [nichoOpen, setNichoOpen] = useState(false);
-  const [contratoOpen, setContratoOpen] = useState(false);
-  const [modalContratos, setModalContratos] = useState(false);
-  const [busquedaContrato, setBusquedaContrato] = useState("");
+  // Preparar opciones para react-select
+  const empalmeOptions: SelectOption[] = comboEmpalmes.map((empalme) => ({
+    value: empalme.id,
+    label: empalme.nombre,
+  }));
 
-  useEffect(() => {
-    if (isEdit && acometida) {
-      form.reset({
-        ubicacion: acometida.ubicacion || "",
-        empalmeId:
-          comboEmpalmes.find((e) => e.nombre === acometida.empalmeDescripcion)
-            ?.id || "",
-        nichoId:
-          comboNichos.find((n) => n.nombre === acometida.nichoDescripcion)
-            ?.id || "",
-        contratoId: acometida.contratoId || "",
-        codigo: acometida.codigo || "",
-        limitePotencia: acometida.limitePotencia?.toString() || "",
-      });
-    } else {
-      form.reset({
-        ubicacion: "",
-        empalmeId: "",
-        nichoId: "",
-        contratoId: "",
-        codigo: "",
-        limitePotencia: "",
-      });
-    }
-  }, [acometida, isEdit, form, comboEmpalmes, comboNichos]);
+  const nichoOptions: SelectOption[] = comboNichos.map((nicho) => ({
+    value: nicho.id,
+    label: nicho.nombre,
+  }));
 
-  const handleSubmit = async (data: FormularioAcometida) => {
-    try {
-      if (isEdit && acometida) {
-        const submitData: ActualizarAcometidaProps = {
-          acometidaId: acometida.acometidaId,
-          ubicacion: data.ubicacion,
-          empalmeId: Number(data.empalmeId),
-          nichoId: Number(data.nichoId),
-          contratoId: data.contratoId,
-          limitePotencia: Number(data.limitePotencia),
-        };
-        await onSubmit(submitData);
-      } else {
-        const submitData: CrearAcometidaProps = {
-          ubicacion: data.ubicacion,
-          empalmeId: Number(data.empalmeId),
-          nichoId: Number(data.nichoId),
-          contratoId: data.contratoId,
-          codigo: Number(data.codigo),
-          limitePotencia: Number(data.limitePotencia),
-        };
-        await onSubmit(submitData);
+  const contratoOptions: ContratoSelectOption[] = useMemo(() => {
+    let opciones = contratosDisponibles.map((contrato) => ({
+      value: contrato.contratoId,
+      label: `${contrato.contratoId} - ${contrato.clienteNombre} ${contrato.clienteApellidos}`,
+      data: contrato,
+    }));
+
+    // Si estamos editando y el contrato no está en la lista, agregarlo como opción temporal
+    if (isEdit && acometida?.contratoId) {
+      const contratoExiste = opciones.find(
+        (opt) => opt.value === acometida.contratoId,
+      );
+
+      if (!contratoExiste) {
+        console.log(
+          '⚠️ Contrato de acometida no encontrado en lista disponible, agregando como opción temporal',
+        );
+        opciones.unshift({
+          value: acometida.contratoId,
+          label: `${acometida.contratoId} - (Contrato asociado)`,
+          data: {
+            contratoId: acometida.contratoId,
+            local: '',
+            tipoContrato: '',
+            tarifa: '',
+            propietario: '',
+            clienteNombre: '',
+            clienteApellidos: '',
+            empresa: '',
+            fechaInicio: '',
+            fechaFin: '',
+            direccionEnvio: '',
+            limiteInventario: 0,
+            cicloFacturacion: '',
+            estadoActivo: false,
+          },
+        });
       }
-      form.reset();
-      onClose();
-    } catch (error) {
-      console.error("Error al guardar acometida:", error);
     }
+
+    return opciones;
+  }, [contratosDisponibles, isEdit, acometida]);
+
+  const sectorOptions: SelectOption[] = comboSectores.map((sector) => ({
+    value: sector.id,
+    label: sector.nombre,
+  }));
+
+  // Estilos personalizados para react-select
+  const selectStyles: StylesConfig<any> = {
+    control: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+      borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+      minHeight: '3rem',
+      fontSize: '1rem',
+      '&:hover': {
+        borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
+      },
+    }),
+    menu: (styles) => ({
+      ...styles,
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+      zIndex: 9999,
+      maxHeight: '300px',
+      border: theme === 'dark' ? '1px solid #334155' : '1px solid #E2E8F0',
+      boxShadow:
+        '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    }),
+    menuList: (styles) => ({
+      ...styles,
+      maxHeight: '280px',
+      overflowY: 'auto',
+      padding: '8px 0',
+    }),
+    option: (styles, { isFocused, isSelected }) => ({
+      ...styles,
+      backgroundColor: isSelected
+        ? theme === 'dark'
+          ? '#0ea5e9'
+          : '#0ea5e9'
+        : isFocused
+          ? theme === 'dark'
+            ? '#1e293b'
+            : '#f1f5f9'
+          : 'transparent',
+      color: isSelected ? '#FFFFFF' : theme === 'dark' ? '#f8fafc' : '#0f172a',
+      padding: '12px 16px',
+      cursor: 'pointer',
+      fontSize: '0.95rem',
+      ':active': {
+        ...styles[':active'],
+        backgroundColor: theme === 'dark' ? '#0ea5e9' : '#0ea5e9',
+      },
+    }),
+    singleValue: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    input: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
+    placeholder: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94a3b8' : '#6b7280',
+    }),
+    noOptionsMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94a3b8' : '#6b7280',
+      padding: '12px 16px',
+      textAlign: 'center' as const,
+    }),
+    loadingMessage: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#94a3b8' : '#6b7280',
+      padding: '12px 16px',
+      textAlign: 'center' as const,
+    }),
   };
 
-  const handleClose = () => {
-    form.reset();
-    setBusquedaContrato("");
-    onClose();
-  };
-
-  // Filtro de contratos
+  // Datos derivados
   const contratosFiltrados = contratosDisponibles.filter((c) => {
     const texto =
       `${c.contratoId} ${c.clienteNombre} ${c.clienteApellidos} ${c.empresa} ${c.local}`.toLowerCase();
     return texto.includes(busquedaContrato.toLowerCase());
   });
 
-  // Obtener contrato seleccionado
-  const contratoSeleccionado = contratosDisponibles.find(
-    (c) => c.contratoId === form.watch("contratoId")
+  const contratoSeleccionado = contratoOptions.find(
+    (c) => c.value === form.watch('contratoId'),
   );
+
+  const empalmeSeleccionado = comboEmpalmes.find(
+    (e) => e.id === form.watch('empalmeId'),
+  );
+
+  // Effect para valores por defecto
+  useEffect(() => {
+    if (isEdit && acometida) {
+      const empalmeId =
+        comboEmpalmes.find((e) => e.nombre === acometida.empalmeDescripcion)
+          ?.id || '';
+      const nichoId =
+        comboNichos.find((n) => n.nombre === acometida.nichoDescripcion)?.id ||
+        '';
+
+      // Verificar si el contrato existe en la lista
+      const contratoExiste = contratosDisponibles.find(
+        (c) => c.contratoId === acometida.contratoId,
+      );
+
+      //console.log('=== EDICIÓN DEBUG ===');
+      //console.log('Editando acometida:', acometida);
+      //console.log('ContratoId de acometida:', acometida.contratoId);
+      //console.log('Total contratos disponibles:', contratosDisponibles.length);
+      //console.log('Contrato encontrado:', contratoExiste);
+      //console.log('Empalme encontrado:', empalmeId);
+      //console.log('Nicho encontrado:', nichoId);
+
+      // Si no encontramos el contrato, buscar por diferentes criterios
+      if (!contratoExiste && acometida.contratoId) {
+        console.log('Buscando contrato con criterios alternativos...');
+        const contratoAlternativo = contratosDisponibles.find(
+          (c) => c.contratoId.trim() === acometida.contratoId.trim(),
+        );
+        console.log('Contrato alternativo encontrado:', contratoAlternativo);
+      }
+
+      form.reset({
+        ubicacion: acometida.ubicacion || '',
+        empalmeId,
+        nichoId,
+        contratoId: acometida.contratoId || '',
+        codigo: acometida.codigo || '',
+        limitePotencia: acometida.limitePotencia?.toString() || '0',
+      });
+
+      // Verificar que se estableció correctamente
+      setTimeout(() => {
+        const contratoActual = form.getValues('contratoId');
+        console.log('ContratoId establecido en el form:', contratoActual);
+      }, 100);
+    } else {
+      console.log('Creando nueva acometida');
+      form.reset({
+        ubicacion: '',
+        empalmeId: '',
+        nichoId: '',
+        contratoId: '',
+        codigo: '',
+        limitePotencia: '0',
+      });
+    }
+  }, [
+    acometida,
+    isEdit,
+    form,
+    comboEmpalmes,
+    comboNichos,
+    contratosDisponibles,
+  ]);
+
+  // Handlers
+  const handleSubmit = async (data: FormularioAcometida) => {
+    try {
+      // Validación adicional antes del envío
+      const empalmeId = Number(data.empalmeId);
+      const nichoId = Number(data.nichoId);
+      const codigo = data.codigo.trim();
+      const limitePotencia = data.limitePotencia
+        ? Number(data.limitePotencia)
+        : 0;
+
+      // Validación adicional
+      if (isNaN(empalmeId) || empalmeId <= 0) {
+        toast.error('Empalme no válido');
+        return;
+      }
+      if (isNaN(nichoId) || nichoId <= 0) {
+        toast.error('Nicho no válido');
+        return;
+      }
+      if (codigo.length === 0) {
+        toast.error('Código de acometida no válido');
+        return;
+      }
+      if (isNaN(limitePotencia) || limitePotencia < 0) {
+        toast.error('Límite de potencia no válido');
+        return;
+      }
+
+      if (isEdit && acometida) {
+        const submitData: ActualizarAcometidaProps = {
+          acometidaId: acometida.acometidaId,
+          ubicacion: data.ubicacion.trim(),
+          empalmeId,
+          nichoId,
+          contratoId: data.contratoId.trim(),
+          limitePotencia,
+        };
+
+        console.log('Datos para actualizar:', submitData);
+        await onSubmit(submitData);
+      } else {
+        const submitData: CrearAcometidaProps = {
+          ubicacion: data.ubicacion.trim(),
+          empalmeId,
+          nichoId,
+          contratoId: data.contratoId.trim(),
+          codigo,
+          limitePotencia,
+        };
+
+        console.log('Datos para crear:', submitData);
+        await onSubmit(submitData);
+      }
+
+      form.reset();
+      onClose();
+    } catch (error: any) {
+      console.error('Error al guardar acometida:', error);
+
+      // Manejo más específico de errores
+      if (error.response?.status === 400) {
+        const errorMessage =
+          error.response?.data?.message ||
+          'Datos inválidos enviados al servidor';
+        toast.error(`Error de validación: ${errorMessage}`);
+      } else if (error.response?.status === 500) {
+        toast.error('Error interno del servidor');
+      } else {
+        toast.error('Error al guardar la acometida');
+      }
+    }
+  };
+
+  const handleClose = () => {
+    form.reset();
+    setBusquedaContrato('');
+    onClose();
+  };
+
+  const handleSelectContrato = (contratoId: string) => {
+    form.setValue('contratoId', contratoId);
+    setModalContratos(false);
+    setBusquedaContrato('');
+  };
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="min-w-4xl max-h-[95vh] overflow-y-auto">
-          <DialogHeader className="space-y-3 pb-6">
+        <DialogContent className="max-w-5xl max-h-[95vh] min-h-[80vh] overflow-y-auto">
+          <DialogHeader className="space-y-2">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl shadow-sm">
-                <Zap className="h-6 w-6 text-sky-600 dark:text-sky-400" />
+              <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
+                <Zap className="h-5 w-5 text-sky-600 dark:text-sky-400" />
               </div>
               <div>
-                <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-sky-800 to-blue-800 dark:from-sky-200 dark:to-blue-200 bg-clip-text text-transparent">
-                  {isEdit ? "Editar Acometida" : "Registrar Nueva Acometida"}
+                <DialogTitle className="text-xl font-semibold">
+                  {isEdit ? 'Editar Acometida' : 'Nueva Acometida'}
                 </DialogTitle>
-                <DialogDescription className="text-base text-muted-foreground mt-1">
+                <DialogDescription>
                   {isEdit
-                    ? "Modifica la información de la acometida seleccionada"
-                    : "Completa los datos para registrar una nueva acometida eléctrica"}
+                    ? 'Modifica la información de la acometida'
+                    : 'Completa los datos para registrar una nueva acometida'}
                 </DialogDescription>
               </div>
             </div>
@@ -237,449 +445,339 @@ export function AcometidaForm({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-8"
+              className="space-y-6"
             >
               {/* Información Básica */}
-              <Card className="border-sky-200/50 dark:border-sky-800/50 shadow-sm">
-                <CardHeader className="bg-gradient-to-r from-sky-50/80 to-blue-50/80 dark:from-sky-900/20 dark:to-blue-900/20 rounded-t-lg">
-                  <div className="flex items-center gap-2">
-                    <Hash className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                    <CardTitle className="text-lg text-sky-800 dark:text-sky-200">
-                      Información Básica
-                    </CardTitle>
-                  </div>
-                  <CardDescription>
-                    Datos identificativos de la acometida
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="codigo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            <Hash className="h-4 w-4" />
-                            Código de Acometida *
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Ingrese el código único"
-                              className="h-11 border-slate-300 focus:border-sky-500 focus:ring-sky-500/20 transition-all"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="ubicacion"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            <MapPin className="h-4 w-4" />
-                            Ubicación Física *
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Ej: Pasillo 2, Local 15-A"
-                              className="h-11 border-slate-300 focus:border-sky-500 focus:ring-sky-500/20 transition-all"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Información de Contrato */}
-              <Card className="border-emerald-200/50 dark:border-emerald-800/50 shadow-sm">
-                <CardHeader className="bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg">
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                    <CardTitle className="text-lg text-emerald-800 dark:text-emerald-200">
-                      Información de Contrato
-                    </CardTitle>
-                  </div>
-                  <CardDescription>
-                    Selecciona el contrato asociado a esta acometida
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600">
+                  📋 Información Básica
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormField
                     control={form.control}
-                    name="contratoId"
+                    name="codigo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center justify-between text-sm font-semibold text-slate-700 dark:text-slate-300">
-                          <span className="flex items-center gap-2">
-                            <User className="h-4 w-4" />
-                            Contrato *
-                          </span>
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => setModalContratos(true)}
-                                  className="h-8 gap-2 bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-700"
-                                >
-                                  <List className="h-4 w-4" />
-                                  Ver Todos
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                Ver lista completa de contratos
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
+                        <FormLabel className="text-sm font-medium">
+                          Código de Acometida *
                         </FormLabel>
-
-                        <div className="space-y-3">
-                          <Popover
-                            open={contratoOpen}
-                            onOpenChange={setContratoOpen}
-                          >
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={contratoOpen}
-                                className={cn(
-                                  "w-full h-12 justify-between text-left font-normal border-slate-300 hover:border-sky-400 transition-all",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                <div className="flex items-center gap-2">
-                                  <User className="h-4 w-4 text-muted-foreground" />
-                                  <span className="truncate">
-                                    {field.value
-                                      ? `${field.value} - ${contratoSeleccionado?.clienteNombre} ${contratoSeleccionado?.clienteApellidos}`
-                                      : "Buscar y seleccionar contrato..."}
-                                  </span>
-                                </div>
-                                <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-full p-0"
-                              align="start"
-                            >
-                              <Command>
-                                <div className="flex items-center border-b px-3">
-                                  <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                                  <CommandInput
-                                    placeholder="Buscar por ID, cliente o empresa..."
-                                    className="flex h-11"
-                                  />
-                                </div>
-                                <CommandEmpty className="py-6 text-center text-sm">
-                                  No se encontraron contratos.
-                                </CommandEmpty>
-                                <ScrollArea className="h-64">
-                                  <CommandGroup>
-                                    {contratosDisponibles
-                                      .slice(0, 10)
-                                      .map((c) => (
-                                        <CommandItem
-                                          key={c.contratoId}
-                                          value={c.contratoId}
-                                          onSelect={(currentValue) => {
-                                            form.setValue(
-                                              "contratoId",
-                                              currentValue
-                                            );
-                                            setContratoOpen(false);
-                                          }}
-                                          className="flex items-center justify-between p-3 cursor-pointer"
-                                        >
-                                          <div className="flex flex-col gap-1">
-                                            <div className="flex items-center gap-2">
-                                              <Badge
-                                                variant="secondary"
-                                                className="font-mono text-xs"
-                                              >
-                                                {c.contratoId}
-                                              </Badge>
-                                              <span className="font-medium">
-                                                {c.clienteNombre}{" "}
-                                                {c.clienteApellidos}
-                                              </span>
-                                            </div>
-                                            <div className="text-xs text-muted-foreground flex items-center gap-2">
-                                              <Building2 className="h-3 w-3" />
-                                              {c.empresa} • {c.local}
-                                            </div>
-                                          </div>
-                                          {field.value === c.contratoId && (
-                                            <CheckIcon className="h-4 w-4 text-emerald-600" />
-                                          )}
-                                        </CommandItem>
-                                      ))}
-                                  </CommandGroup>
-                                </ScrollArea>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
-
-                          {/* Información del contrato seleccionado */}
-                          {contratoSeleccionado && (
-                            <div className="p-4 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                              <div className="grid grid-cols-2 gap-4 text-sm">
-                                <div>
-                                  <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                                    Cliente:
-                                  </span>
-                                  <p className="text-slate-600 dark:text-slate-400">
-                                    {contratoSeleccionado.clienteNombre}{" "}
-                                    {contratoSeleccionado.clienteApellidos}
-                                  </p>
-                                </div>
-                                <div>
-                                  <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                                    Empresa:
-                                  </span>
-                                  <p className="text-slate-600 dark:text-slate-400">
-                                    {contratoSeleccionado.empresa}
-                                  </p>
-                                </div>
-                                <div>
-                                  <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                                    Local:
-                                  </span>
-                                  <p className="text-slate-600 dark:text-slate-400">
-                                    {contratoSeleccionado.local}
-                                  </p>
-                                </div>
-                                <div>
-                                  <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                                    Tarifa:
-                                  </span>
-                                  <p className="text-slate-600 dark:text-slate-400">
-                                    {contratoSeleccionado.tarifa}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
+                        <FormControl>
+                          <Input
+                            placeholder="Código único"
+                            className="h-12 text-base"
+                            {...field}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                </CardContent>
-              </Card>
+
+                  <FormField
+                    control={form.control}
+                    name="ubicacion"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Ubicación Física *
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Ej: Pasillo 2, Local 15-A"
+                            className="h-12 text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Contrato */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600">
+                  📄 Contrato Asociado
+                </h3>
+                <FormField
+                  control={form.control}
+                  name="contratoId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center justify-between text-sm font-medium">
+                        Contrato *
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setModalContratos(true)}
+                          className="h-8 gap-2 text-xs"
+                        >
+                          <List className="h-3 w-3" />
+                          Ver Todos
+                        </Button>
+                      </FormLabel>
+                      <Controller
+                        control={form.control}
+                        name="contratoId"
+                        render={({ field: { onChange, value, ...field } }) => (
+                          <div className="space-y-2">
+                            <Select
+                              {...field}
+                              options={contratoOptions.slice(0, 50)}
+                              styles={selectStyles}
+                              placeholder="Buscar y seleccionar contrato..."
+                              isSearchable
+                              filterOption={(option, inputValue) => {
+                                if (!inputValue) return true;
+                                const searchValue = inputValue.toLowerCase();
+                                return (
+                                  option.value
+                                    .toLowerCase()
+                                    .includes(searchValue) ||
+                                  option.label
+                                    .toLowerCase()
+                                    .includes(searchValue) ||
+                                  option.data?.empresa
+                                    ?.toLowerCase()
+                                    .includes(searchValue) ||
+                                  option.data?.local
+                                    ?.toLowerCase()
+                                    .includes(searchValue)
+                                );
+                              }}
+                              value={
+                                contratoOptions.find(
+                                  (option) => option.value === value,
+                                ) || null
+                              }
+                              onChange={(option) =>
+                                onChange(option?.value || '')
+                              }
+                              noOptionsMessage={({ inputValue }) =>
+                                inputValue
+                                  ? `No se encontraron contratos para "${inputValue}"`
+                                  : 'Escriba para buscar contratos...'
+                              }
+                              menuPlacement="auto"
+                              maxMenuHeight={280}
+                            />
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                              💡 Busque por ID, cliente, empresa o local. Use el
+                              botón "Ver Todos" para más opciones.
+                            </p>
+                          </div>
+                        )}
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Información del contrato seleccionado */}
+                {contratoSeleccionado && (
+                  <div
+                    className={`p-3 rounded-lg border ${
+                      contratoSeleccionado.data.estadoActivo === false
+                        ? 'bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
+                        : 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800'
+                    }`}
+                  >
+                    {contratoSeleccionado.data.estadoActivo === false && (
+                      <div className="mb-2 flex items-center gap-2 text-amber-700 dark:text-amber-300">
+                        <svg
+                          className="h-4 w-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        <span className="text-xs font-medium">
+                          Contrato asociado (puede estar inactivo)
+                        </span>
+                      </div>
+                    )}
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <span
+                          className={`font-medium ${
+                            contratoSeleccionado.data.estadoActivo === false
+                              ? 'text-amber-700 dark:text-amber-300'
+                              : 'text-emerald-700 dark:text-emerald-300'
+                          }`}
+                        >
+                          Cliente:
+                        </span>
+                        <p className="text-slate-600 dark:text-slate-400">
+                          {contratoSeleccionado.data.clienteNombre ||
+                            'No disponible'}{' '}
+                          {contratoSeleccionado.data.clienteApellidos || ''}
+                        </p>
+                      </div>
+                      <div>
+                        <span
+                          className={`font-medium ${
+                            contratoSeleccionado.data.estadoActivo === false
+                              ? 'text-amber-700 dark:text-amber-300'
+                              : 'text-emerald-700 dark:text-emerald-300'
+                          }`}
+                        >
+                          Empresa:
+                        </span>
+                        <p className="text-slate-600 dark:text-slate-400">
+                          {contratoSeleccionado.data.empresa || 'No disponible'}
+                        </p>
+                      </div>
+                      <div>
+                        <span
+                          className={`font-medium ${
+                            contratoSeleccionado.data.estadoActivo === false
+                              ? 'text-amber-700 dark:text-amber-300'
+                              : 'text-emerald-700 dark:text-emerald-300'
+                          }`}
+                        >
+                          Local:
+                        </span>
+                        <p className="text-slate-600 dark:text-slate-400">
+                          {contratoSeleccionado.data.local || 'No disponible'}
+                        </p>
+                      </div>
+                      <div>
+                        <span
+                          className={`font-medium ${
+                            contratoSeleccionado.data.estadoActivo === false
+                              ? 'text-amber-700 dark:text-amber-300'
+                              : 'text-emerald-700 dark:text-emerald-300'
+                          }`}
+                        >
+                          Tarifa:
+                        </span>
+                        <p className="text-slate-600 dark:text-slate-400">
+                          {contratoSeleccionado.data.tarifa || 'No disponible'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Configuración Técnica */}
-              <Card className="border-amber-200/50 dark:border-amber-800/50 shadow-sm">
-                <CardHeader className="bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20 rounded-t-lg">
-                  <div className="flex items-center gap-2">
-                    <Building className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                    <CardTitle className="text-lg text-amber-800 dark:text-amber-200">
-                      Configuración Técnica
-                    </CardTitle>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600">
+                  ⚡ Configuración Técnica
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Controller
+                    name="empalmeId"
+                    control={form.control}
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Empalme *
+                        </FormLabel>
+                        <Select
+                          {...field}
+                          options={empalmeOptions}
+                          styles={selectStyles}
+                          placeholder="Seleccionar empalme"
+                          isSearchable
+                          value={
+                            empalmeOptions.find(
+                              (option) => option.value === value,
+                            ) || null
+                          }
+                          onChange={(option) => onChange(option?.value || '')}
+                          noOptionsMessage={() => 'No se encontraron empalmes'}
+                          menuPlacement="auto"
+                          maxMenuHeight={280}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Controller
+                    name="nichoId"
+                    control={form.control}
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Nicho *
+                        </FormLabel>
+                        <Select
+                          {...field}
+                          options={nichoOptions}
+                          styles={selectStyles}
+                          placeholder="Seleccionar nicho"
+                          isSearchable
+                          value={
+                            nichoOptions.find(
+                              (option) => option.value === value,
+                            ) || null
+                          }
+                          onChange={(option) => onChange(option?.value || '')}
+                          noOptionsMessage={() => 'No se encontraron nichos'}
+                          menuPlacement="auto"
+                          maxMenuHeight={280}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="limitePotencia"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Límite Potencia (kW)
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Ej: 50"
+                            className="h-12 text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Información del empalme seleccionado */}
+                {empalmeSeleccionado && (
+                  <div className="p-3 bg-sky-50 dark:bg-sky-900/10 rounded-lg border">
+                    <div className="flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      <span className="text-sm font-medium text-sky-700 dark:text-sky-300">
+                        Empalme seleccionado:
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className="text-sky-700 dark:text-sky-300"
+                      >
+                        {empalmeSeleccionado.nombre}
+                      </Badge>
+                    </div>
                   </div>
-                  <CardDescription>
-                    Especificaciones técnicas de la conexión eléctrica
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Empalme */}
-                    <FormField
-                      control={form.control}
-                      name="empalmeId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            <Zap className="h-4 w-4" />
-                            Empalme *
-                          </FormLabel>
-                          <Popover
-                            open={empalmeOpen}
-                            onOpenChange={setEmpalmeOpen}
-                          >
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={empalmeOpen}
-                                className={cn(
-                                  "w-full h-11 justify-between font-normal border-slate-300 hover:border-amber-400 transition-all",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                <span>
-                                  {field.value
-                                    ? comboEmpalmes.find(
-                                        (e) => e.id === field.value
-                                      )?.nombre
-                                    : "Seleccionar empalme"}
-                                </span>
-                                <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-full p-0"
-                              align="start"
-                            >
-                              <Command>
-                                <CommandInput
-                                  placeholder="Buscar empalme..."
-                                  className="h-9"
-                                />
-                                <CommandEmpty>
-                                  No se encontraron empalmes.
-                                </CommandEmpty>
-                                <ScrollArea className="h-48">
-                                  <CommandGroup>
-                                    {comboEmpalmes.map((e) => (
-                                      <CommandItem
-                                        key={e.id}
-                                        value={e.nombre}
-                                        onSelect={() => {
-                                          form.setValue("empalmeId", e.id);
-                                          setEmpalmeOpen(false);
-                                        }}
-                                        className="cursor-pointer"
-                                      >
-                                        {e.nombre}
-                                        {field.value === e.id && (
-                                          <CheckIcon className="ml-auto h-4 w-4 text-amber-600" />
-                                        )}
-                                      </CommandItem>
-                                    ))}
-                                  </CommandGroup>
-                                </ScrollArea>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Nicho */}
-                    <FormField
-                      control={form.control}
-                      name="nichoId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            <Building className="h-4 w-4" />
-                            Nicho *
-                          </FormLabel>
-                          <Popover open={nichoOpen} onOpenChange={setNichoOpen}>
-                            <PopoverTrigger asChild>
-                              <Button
-                                variant="outline"
-                                role="combobox"
-                                aria-expanded={nichoOpen}
-                                className={cn(
-                                  "w-full h-11 justify-between font-normal border-slate-300 hover:border-amber-400 transition-all",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                <span>
-                                  {field.value
-                                    ? comboNichos.find(
-                                        (n) => n.id === field.value
-                                      )?.nombre
-                                    : "Seleccionar nicho"}
-                                </span>
-                                <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-full p-0"
-                              align="start"
-                            >
-                              <Command>
-                                <CommandInput
-                                  placeholder="Buscar nicho..."
-                                  className="h-9"
-                                />
-                                <CommandEmpty>
-                                  No se encontraron nichos.
-                                </CommandEmpty>
-                                <ScrollArea className="h-48">
-                                  <CommandGroup>
-                                    {comboNichos.map((n) => (
-                                      <CommandItem
-                                        key={n.id}
-                                        value={n.nombre}
-                                        onSelect={() => {
-                                          form.setValue("nichoId", n.id);
-                                          setNichoOpen(false);
-                                        }}
-                                        className="cursor-pointer"
-                                      >
-                                        {n.nombre}
-                                        {field.value === n.id && (
-                                          <CheckIcon className="ml-auto h-4 w-4 text-amber-600" />
-                                        )}
-                                      </CommandItem>
-                                    ))}
-                                  </CommandGroup>
-                                </ScrollArea>
-                              </Command>
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Límite de Potencia */}
-                    <FormField
-                      control={form.control}
-                      name="limitePotencia"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                            <Gauge className="h-4 w-4" />
-                            Límite de Potencia
-                          </FormLabel>
-                          <div className="relative">
-                            <FormControl>
-                              <Input
-                                placeholder="Ej: 50"
-                                className="h-11 pl-10 border-slate-300 focus:border-amber-500 focus:ring-amber-500/20 transition-all"
-                                {...field}
-                              />
-                            </FormControl>
-                            <Gauge className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground font-medium">
-                              kW
-                            </div>
-                          </div>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Separator />
+                )}
+              </div>
 
               {/* Botones de acción */}
-              <div className="flex justify-end gap-4 pt-4">
+              <div className="flex justify-end gap-4 pt-6 border-t border-slate-200 dark:border-slate-600">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleClose}
                   disabled={isLoading}
-                  className="gap-2 h-11 px-8"
+                  className="gap-2"
                 >
                   <X className="h-4 w-4" />
                   Cancelar
@@ -687,7 +785,7 @@ export function AcometidaForm({
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="gap-2 h-11 px-8 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white shadow-lg"
+                  className="gap-2 bg-sky-600 hover:bg-sky-700"
                 >
                   {isLoading ? (
                     <>
@@ -697,7 +795,7 @@ export function AcometidaForm({
                   ) : (
                     <>
                       <Save className="h-4 w-4" />
-                      {isEdit ? "Actualizar Acometida" : "Registrar Acometida"}
+                      {isEdit ? 'Actualizar' : 'Registrar'}
                     </>
                   )}
                 </Button>
@@ -709,19 +807,18 @@ export function AcometidaForm({
 
       {/* Modal de Selección de Contratos */}
       <Dialog open={modalContratos} onOpenChange={setModalContratos}>
-        <DialogContent className="min-w-7xl max-h-[90vh] overflow-x-auto">
-          <DialogHeader className="space-y-3">
+        <DialogContent className="min-w-6xl max-h-[80vh] overflow-hidden">
+          <DialogHeader>
             <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
                 <List className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <DialogTitle className="text-xl font-bold text-emerald-800 dark:text-emerald-200">
+                <DialogTitle className="text-xl font-semibold">
                   Seleccionar Contrato
                 </DialogTitle>
                 <DialogDescription>
-                  Explore y seleccione el contrato que desea asociar a esta
-                  acometida
+                  Explore y seleccione el contrato que desea asociar
                 </DialogDescription>
               </div>
             </div>
@@ -732,29 +829,25 @@ export function AcometidaForm({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar por ID de contrato, nombre del cliente, empresa o local..."
+                placeholder="Buscar por ID, cliente, empresa o local..."
                 value={busquedaContrato}
                 onChange={(e) => setBusquedaContrato(e.target.value)}
-                className="h-12 pl-10 text-base border-slate-300 focus:border-emerald-500 focus:ring-emerald-500/20"
+                className="h-11 pl-10"
               />
             </div>
 
             {/* Tabla de contratos */}
             <div className="border rounded-lg overflow-hidden">
-              <div className="overflow-y-auto max-h-[50vh]">
+              <ScrollArea className="h-[50vh]">
                 <Table>
-                  <TableHeader className="bg-emerald-50 dark:bg-emerald-900/20">
+                  <TableHeader className="bg-muted/50">
                     <TableRow>
-                      <TableHead className="font-semibold">
-                        ID Contrato
-                      </TableHead>
-                      <TableHead className="font-semibold">Cliente</TableHead>
-                      <TableHead className="font-semibold">Empresa</TableHead>
-                      <TableHead className="font-semibold">Local</TableHead>
-                      <TableHead className="font-semibold">Tarifa</TableHead>
-                      <TableHead className="font-semibold text-center">
-                        Acción
-                      </TableHead>
+                      <TableHead>ID Contrato</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Empresa</TableHead>
+                      <TableHead>Local</TableHead>
+                      <TableHead>Tarifa</TableHead>
+                      <TableHead className="text-center">Acción</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -777,7 +870,7 @@ export function AcometidaForm({
                     {contratosFiltrados.map((c) => (
                       <TableRow
                         key={c.contratoId}
-                        className="hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-colors"
+                        className="hover:bg-muted/50 transition-colors"
                       >
                         <TableCell>
                           <Badge variant="outline" className="font-mono">
@@ -803,11 +896,7 @@ export function AcometidaForm({
                         <TableCell className="text-center">
                           <Button
                             size="sm"
-                            onClick={() => {
-                              form.setValue("contratoId", c.contratoId);
-                              setModalContratos(false);
-                              setBusquedaContrato("");
-                            }}
+                            onClick={() => handleSelectContrato(c.contratoId)}
                             className="bg-emerald-600 hover:bg-emerald-700 text-white"
                           >
                             Seleccionar
@@ -817,7 +906,7 @@ export function AcometidaForm({
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </ScrollArea>
             </div>
           </div>
         </DialogContent>

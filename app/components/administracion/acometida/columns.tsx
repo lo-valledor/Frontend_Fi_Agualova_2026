@@ -3,6 +3,7 @@ import { DataTableColumnHeader } from '~/components/data-table/data-table-column
 import { Badge } from '~/components/ui/badge';
 import type { Acometida } from '~/types/administracion';
 import { Button } from '~/components/ui/button';
+import { Pencil } from 'lucide-react';
 
 interface TableColumnsProps {
   onEdit: (acometida: Acometida) => void;
@@ -176,6 +177,31 @@ export const columns = ({
           <span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
             {numeroMedidor}
           </span>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'actions',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Acciones" />
+    ),
+    cell: ({ row }) => {
+      const acometida = row.original;
+      const id = row.getValue('acometidaId') as number;
+      const isEditing = editingAcometidaId === id;
+
+      return (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onEdit(acometida)}
+            disabled={isEditing}
+          >
+            <Pencil className="h-4 w-4" />
+            {isEditing ? 'Editando...' : 'Editar'}
+          </Button>
         </div>
       );
     },

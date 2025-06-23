@@ -12,9 +12,9 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = sessionStorage.getItem("token");
-    console.log(`🔑 REQUEST [${config.method?.toUpperCase()}] ${config.url}:`);
-    console.log('  Token disponible:', token ? 'SÍ' : 'NO');
-    console.log('  Token preview:', token ? `${token.substring(0, 30)}...` : 'N/A');
+    //console.log(`🔑 REQUEST [${config.method?.toUpperCase()}] ${config.url}:`);
+    //console.log('  Token disponible:', token ? 'SÍ' : 'NO');
+    //console.log('  Token preview:', token ? `${token.substring(0, 30)}...` : 'N/A');
     
     if (token) {
       // Estrategia principal: Authorization header
@@ -22,7 +22,7 @@ axiosInstance.interceptors.request.use(
       
       // Estrategia de respaldo para Edge: múltiples métodos
       if (navigator.userAgent.includes('Edg')) {
-        console.log('  🔧 Edge detectado - aplicando estrategias de respaldo');
+        //console.log('  🔧 Edge detectado - aplicando estrategias de respaldo');
         
         // Método 1: Header personalizado adicional
         config.headers['X-Auth-Token'] = token;
@@ -37,12 +37,12 @@ axiosInstance.interceptors.request.use(
         config.headers.set('Content-Type', 'application/json');
       }
       
-      console.log('  Authorization header agregado:', `Bearer ${token.substring(0, 30)}...`);
+      //console.log('  Authorization header agregado:', `Bearer ${token.substring(0, 30)}...`);
     } else {
       console.warn('  ⚠️ NO HAY TOKEN - La petición fallará');
     }
     
-    console.log('  Headers finales:', config.headers);
+    //console.log('  Headers finales:', config.headers);
     return config;
   },
   (error) => Promise.reject(error)

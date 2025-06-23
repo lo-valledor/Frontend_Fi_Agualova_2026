@@ -21,7 +21,7 @@ export function meta({}: Route.MetaArgs) {
 
 export async function clientLoader({}: Route.ClientActionArgs) {
   const resAcometidas = await api.get('buscar-Acometida', { params: {} });
-  const resComboEmpalmes = await api.get('combo-empalmes');
+  const resComboEmpalmes = await api.get('combo-empalmes-Acometida');
   const resComboNichos = await api.get('combo-nichos');
   const resComboSectores = await api.get('combo-sectores');
   const resContratosDisponibles = await api.get('contratos-disponibles');

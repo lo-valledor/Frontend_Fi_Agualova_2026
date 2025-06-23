@@ -6,7 +6,7 @@ import {
   getSortedRowModel,
   type SortingState,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -15,10 +15,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
-import { useState } from "react";
-import { DataTablePagination } from "~/components/data-table/data-table-pagination";
-import { cn } from "~/lib/utils";
+} from '~/components/ui/table';
+import { useState } from 'react';
+import { DataTablePagination } from '~/components/data-table/data-table-pagination';
+import { cn } from '~/lib/utils';
 
 interface DataTableNichosProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -49,6 +49,11 @@ export function DataTableNichos<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 15,
+      },
     },
   });
 
@@ -82,13 +87,13 @@ export function DataTableNichos<TData, TValue>({
     });
 
     return (
-      <TableRow>
+      <TableRow className="border-b border-border/20 h-8">
         {headerGroup.headers.map((header) => {
           // Buscar si esta columna es la primera de algún grupo
           const group = columnGroups.find(
             (g) =>
               g.columns.includes(header.column.id) &&
-              g.columns[0] === header.column.id
+              g.columns[0] === header.column.id,
           );
 
           if (group) {
@@ -96,7 +101,10 @@ export function DataTableNichos<TData, TValue>({
               <TableHead
                 key={`group-${group.id}`}
                 colSpan={groupedRow[group.id].span}
-                className={cn("text-center", groupedRow[group.id].className)}
+                className={cn(
+                  'text-center font-semibold text-xs tracking-wide border-r border-border/30 last:border-r-0 py-1 px-2',
+                  groupedRow[group.id].className,
+                )}
               >
                 {groupedRow[group.id].title}
               </TableHead>
@@ -107,12 +115,15 @@ export function DataTableNichos<TData, TValue>({
           const belongsToGroup = columnGroups.some(
             (g) =>
               g.columns.includes(header.column.id) &&
-              g.columns[0] !== header.column.id
+              g.columns[0] !== header.column.id,
           );
 
           // Si pertenece a un grupo, no renderizar nada (ya está cubierto por el colSpan)
           return belongsToGroup ? null : (
-            <TableHead key={`single-${header.id}`}>
+            <TableHead
+              key={`single-${header.id}`}
+              className="text-center font-semibold text-xs tracking-wide border-r border-border/30 last:border-r-0 py-1 px-2"
+            >
               {header.column.columnDef.header?.toString()}
             </TableHead>
           );
@@ -122,72 +133,105 @@ export function DataTableNichos<TData, TValue>({
   };
 
   return (
-    <div>
-      <div className="overflow-auto">
-        <Table>
-          <TableHeader>
-            {renderGroupedHeaders()}
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const meta = header.column.columnDef.meta as
-                    | { className?: string }
-                    | undefined;
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className={cn("text-center text-xs", meta?.className)}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
+    <div className="space-y-3">
+      <div className="rounded-lg border border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        <div className="relative overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-muted/40">
+                {renderGroupedHeaders()}
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow
+                    key={headerGroup.id}
+                    className="border-b border-border/40 h-8"
+                  >
+                    {headerGroup.headers.map((header) => {
+                      const meta = header.column.columnDef.meta as
+                        | { className?: string }
+                        | undefined;
+                      return (
+                        <TableHead
+                          key={header.id}
+                          className={cn(
+                            'text-center text-xs font-medium h-8 border-r border-border/20 last:border-r-0 py-1 px-2',
+                            meta?.className,
                           )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="text-center hover:bg-muted/30"
-                  onClick={() => onRowClick?.(row.original)}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    const meta = cell.column.columnDef.meta as
-                      | { className?: string }
-                      | undefined;
-                    return (
-                      <TableCell key={cell.id} className={meta?.className}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No se encontraron resultados.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                        </TableHead>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      className={cn(
+                        'text-center text-xs transition-colors cursor-pointer h-9',
+                        'hover:bg-muted/50 active:bg-muted/70',
+                        'border-b border-border/20 last:border-b-0',
+                      )}
+                      onClick={() => onRowClick?.(row.original)}
+                    >
+                      {row.getVisibleCells().map((cell) => {
+                        const meta = cell.column.columnDef.meta as
+                          | { className?: string }
+                          | undefined;
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            className={cn(
+                              'py-1.5 px-2 border-r border-border/10 last:border-r-0',
+                              meta?.className,
+                            )}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center text-muted-foreground"
+                    >
+                      <div className="flex flex-col items-center justify-center space-y-1">
+                        <div className="text-xl">📊</div>
+                        <p className="text-xs font-medium">
+                          No se encontraron resultados
+                        </p>
+                        <p className="text-xs text-muted-foreground/70">
+                          Intente ajustar los filtros de búsqueda
+                        </p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+
+      {/* Paginación compacta */}
+      <div className="flex items-center justify-between px-2">
+        <div className="flex items-center text-xs text-muted-foreground">
+          Mostrando {table.getRowModel().rows.length} de {data.length} registros
+        </div>
         <DataTablePagination table={table} />
       </div>
     </div>

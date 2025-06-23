@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import api from "~/lib/api";
-import ClockLoader from "react-spinners/ClockLoader";
-import { Badge } from "~/components/ui/badge";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent } from "~/components/ui/card";
-import { Separator } from "~/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { ScrollArea } from "~/components/ui/scroll-area";
+import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import api from '~/lib/api';
+import ClockLoader from 'react-spinners/ClockLoader';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Separator } from '~/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { ScrollArea } from '~/components/ui/scroll-area';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+} from '~/components/ui/collapsible';
 import {
   AlertCircle,
   ChevronDown,
@@ -29,14 +29,15 @@ import {
   AlertTriangle,
   Info,
   Calendar,
-} from "lucide-react";
+  Gauge,
+} from 'lucide-react';
 import {
   Sheet,
   SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from "~/components/ui/sheet";
+} from '~/components/ui/sheet';
 import {
   Dialog,
   DialogTrigger,
@@ -44,88 +45,88 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "~/components/ui/dialog";
+} from '~/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+} from '~/components/ui/dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
-import MonitorNichos from "~/components/monitor/monitor-lecturas/monitor-nichos";
-import DetallesMedidor from "~/components/monitor/monitor-lecturas/detalles-medidor";
-import { Alert, AlertDescription } from "~/components/ui/alert";
-import { formatToYYYYMMDD } from "~/utils/date-formatter";
-import { cn } from "~/lib/utils"; // Assuming you have this utility for conditional classes
-import type { Fila, Medidor, NichoBusqueda } from "~/types/monitor";
+} from '~/components/ui/tooltip';
+import MonitorNichos from '~/components/monitor/monitor-lecturas/monitor-nichos';
+import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { formatToYYYYMMDD } from '~/utils/date-formatter';
+import { cn } from '~/lib/utils'; // Assuming you have this utility for conditional classes
+import type { Fila, Medidor, NichoBusqueda } from '~/types/monitor';
 // Status helpers with enhanced information
 const getMeterStatus = (claveHtml: string) => {
   const statusMap = {
     SINLEC: {
-      color: "gray",
-      bgColor: "bg-gray-500",
-      borderColor: "border-gray-500",
-      textColor: "text-gray-500",
-      label: "Sin Lectura",
+      color: 'gray',
+      bgColor: 'bg-gray-500',
+      borderColor: 'border-gray-500',
+      textColor: 'text-gray-500',
+      label: 'Sin Lectura',
       icon: <History className="h-3.5 w-3.5" />,
       severity: 1,
     },
     SINCLA: {
-      color: "green",
-      bgColor: "bg-green-500",
-      borderColor: "border-green-500",
-      textColor: "text-green-500",
-      label: "Lectura Normal",
+      color: 'green',
+      bgColor: 'bg-green-500',
+      borderColor: 'border-green-500',
+      textColor: 'text-green-500',
+      label: 'Lectura Normal',
       icon: <Grid3X3 className="h-3.5 w-3.5" />,
       severity: 0,
     },
     CLAINF: {
-      color: "yellow",
-      bgColor: "bg-yellow-500",
-      borderColor: "border-yellow-500",
-      textColor: "text-yellow-500",
-      label: "Clave Informativa",
+      color: 'yellow',
+      bgColor: 'bg-yellow-500',
+      borderColor: 'border-yellow-500',
+      textColor: 'text-yellow-500',
+      label: 'Clave Informativa',
       icon: <AlertCircle className="h-3.5 w-3.5" />,
       severity: 2,
     },
     CLAREL: {
-      color: "orange",
-      bgColor: "bg-orange-500",
-      borderColor: "border-orange-500",
-      textColor: "text-orange-500",
-      label: "Clave Relevante",
+      color: 'orange',
+      bgColor: 'bg-orange-500',
+      borderColor: 'border-orange-500',
+      textColor: 'text-orange-500',
+      label: 'Clave Relevante',
       icon: <AlertTriangle className="h-3.5 w-3.5" />,
       severity: 3,
     },
     CLACRI: {
-      color: "red",
-      bgColor: "bg-red-500",
-      borderColor: "border-red-500",
-      textColor: "text-red-500",
-      label: "Clave Crítica",
+      color: 'red',
+      bgColor: 'bg-red-500',
+      borderColor: 'border-red-500',
+      textColor: 'text-red-500',
+      label: 'Clave Crítica',
       icon: <AlertCircle className="h-3.5 w-3.5" />,
       severity: 4,
     },
     LECCER: {
-      color: "blue",
-      bgColor: "bg-blue-500",
-      borderColor: "border-blue-500",
-      textColor: "text-blue-500",
-      label: "Lectura Cerrada",
+      color: 'blue',
+      bgColor: 'bg-blue-500',
+      borderColor: 'border-blue-500',
+      textColor: 'text-blue-500',
+      label: 'Lectura Cerrada',
       icon: <MapPin className="h-3.5 w-3.5" />,
       severity: 0,
     },
     LECIMP: {
-      color: "purple",
-      bgColor: "bg-purple-500",
-      borderColor: "border-purple-500",
-      textColor: "text-purple-500",
-      label: "En Facturación",
+      color: 'purple',
+      bgColor: 'bg-purple-500',
+      borderColor: 'border-purple-500',
+      textColor: 'text-purple-500',
+      label: 'En Facturación',
       icon: <BarChart3 className="h-3.5 w-3.5" />,
       severity: 0,
     },
@@ -173,28 +174,28 @@ const calculateTotalStats = (nichos: NichoBusqueda[]) => {
         sinlec: acc.sinlec + stats.sinlec,
       };
     },
-    { total: 0, critical: 0, warning: 0, info: 0, normal: 0, sinlec: 0 }
+    { total: 0, critical: 0, warning: 0, info: 0, normal: 0, sinlec: 0 },
   );
 };
 
 // Component for status circle indicator
 const StatusIndicator = ({
   status,
-  size = "md",
+  size = 'md',
 }: {
   status: any;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
 }) => {
-  const sizeClasses: { [key in "sm" | "md" | "lg"]: string } = {
-    sm: "h-2 w-2",
-    md: "h-3 w-3",
-    lg: "h-4 w-4",
+  const sizeClasses: { [key in 'sm' | 'md' | 'lg']: string } = {
+    sm: 'h-2 w-2',
+    md: 'h-3 w-3',
+    lg: 'h-4 w-4',
   };
 
   return (
     <div
       className={`rounded-full ${status.bgColor} ${
-        sizeClasses[size ?? "md"]
+        sizeClasses[size ?? 'md']
       } flex-shrink-0`}
     />
   );
@@ -263,22 +264,22 @@ const MeterCard = ({
         <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
           <div>
             <div className="text-muted-foreground text-xs">Lectura</div>
-            <div className="font-semibold">{medidor.ultimaLectura || "-"}</div>
+            <div className="font-semibold">{medidor.ultimaLectura || '-'}</div>
           </div>
           <div>
             <div className="text-muted-foreground text-xs">Consumo</div>
-            <div className="font-semibold">{medidor.consumo || "0"}</div>
+            <div className="font-semibold">{medidor.consumo || '0'}</div>
           </div>
           <div className="col-span-2">
             <div className="font-semibold flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               {medidor.fechaLectura
-                ? new Date(medidor.fechaLectura).toLocaleString("es-CL", {
-                    dateStyle: "short",
-                    timeStyle: "short",
+                ? new Date(medidor.fechaLectura).toLocaleString('es-CL', {
+                    dateStyle: 'short',
+                    timeStyle: 'short',
                     hour12: false,
                   })
-                : "Sin registro"}
+                : 'Sin registro'}
             </div>
           </div>
         </div>
@@ -327,28 +328,28 @@ export default function ResultadosBusqueda({
   const [searchError, setSearchError] = useState(null);
   const [results, setResults] = useState<ResultsState>({ nichos: [] });
   const [refreshCounter, setRefreshCounter] = useState(0);
-  const [viewMode, setViewMode] = useState("default"); // 'default', 'compact', 'detailed'
+  const [viewMode, setViewMode] = useState('default'); // 'default', 'compact', 'detailed'
   const [selectedNichoIndex, setSelectedNichoIndex] = useState(0);
   const [expandedFilas, setExpandedFilas] = useState<Record<string, boolean>>(
-    {}
+    {},
   );
 
   // Search function (same as before)
   const searchResults = async () => {
     if (!sector) {
-      toast.error("Sector no seleccionado");
+      toast.error('Sector no seleccionado');
       return;
     }
     if (!periodo) {
-      toast.error("Periodo no seleccionado");
+      toast.error('Periodo no seleccionado');
       return;
     }
     if (!stfechaini) {
-      toast.error("Fecha de inicio no seleccionada");
+      toast.error('Fecha de inicio no seleccionada');
       return;
     }
     if (!stfechafin) {
-      toast.error("Fecha de fin no seleccionada");
+      toast.error('Fecha de fin no seleccionada');
       return;
     }
 
@@ -363,31 +364,31 @@ export default function ResultadosBusqueda({
       stfechafin: formatToYYYYMMDD(stfechafin),
     });
 
-    if (tipoclave) params.append("tipoclave", tipoclave);
-    if (medidor) params.append("medidor", medidor);
-    if (clave) params.append("clave", clave);
+    if (tipoclave) params.append('tipoclave', tipoclave);
+    if (medidor) params.append('medidor', medidor);
+    if (clave) params.append('clave', clave);
 
     try {
-      const response = await api.get("/sector", { params });
+      const response = await api.get('/sector', { params });
 
       // Asegurarse de que la respuesta tenga la estructura esperada
       const responseData =
-        response.data && typeof response.data === "object"
+        response.data && typeof response.data === 'object'
           ? response.data
           : { nichos: [] };
 
       // Extraer los nichos de la respuesta con validación de tipo
       let rawNichos: any[] = [];
       if (
-        "data" in responseData &&
+        'data' in responseData &&
         responseData.data &&
-        typeof responseData.data === "object"
+        typeof responseData.data === 'object'
       ) {
         rawNichos = Array.isArray((responseData.data as any).nichos)
           ? (responseData.data as any).nichos
           : [];
       } else if (
-        "nichos" in responseData &&
+        'nichos' in responseData &&
         Array.isArray(responseData.nichos)
       ) {
         rawNichos = responseData.nichos;
@@ -416,9 +417,9 @@ export default function ResultadosBusqueda({
       }
       setExpandedFilas(newExpandedState);
     } catch (error) {
-      console.error("Error fetching search results:", error);
+      console.error('Error fetching search results:', error);
       setSearchError(null); // Cambiado para coincidir con el tipo esperado
-      toast.error("Error al buscar lecturas");
+      toast.error('Error al buscar lecturas');
     } finally {
       setIsSearching(false);
     }
@@ -438,7 +439,7 @@ export default function ResultadosBusqueda({
       // Después de que se completa la búsqueda, restauramos el estado expandido
       // Esto se maneja automáticamente si preservamos el objeto de estado
     } else {
-      toast.info("Seleccione Sector, Periodo y Fechas para refrescar.");
+      toast.info('Seleccione Sector, Periodo y Fechas para refrescar.');
     }
   };
 
@@ -486,20 +487,20 @@ export default function ResultadosBusqueda({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                className={cn(viewMode === "default" && "bg-accent")}
-                onClick={() => setViewMode("default")}
+                className={cn(viewMode === 'default' && 'bg-accent')}
+                onClick={() => setViewMode('default')}
               >
                 <Grid3X3 className="mr-2 h-4 w-4" /> Estándar
               </DropdownMenuItem>
               <DropdownMenuItem
-                className={cn(viewMode === "compact" && "bg-accent")}
-                onClick={() => setViewMode("compact")}
+                className={cn(viewMode === 'compact' && 'bg-accent')}
+                onClick={() => setViewMode('compact')}
               >
                 <AlertCircle className="mr-2 h-4 w-4" /> Solo Problemas
               </DropdownMenuItem>
               <DropdownMenuItem
-                className={cn(viewMode === "detailed" && "bg-accent")}
-                onClick={() => setViewMode("detailed")}
+                className={cn(viewMode === 'detailed' && 'bg-accent')}
+                onClick={() => setViewMode('detailed')}
               >
                 <Search className="mr-2 h-4 w-4" /> Detallado
               </DropdownMenuItem>
@@ -515,7 +516,7 @@ export default function ResultadosBusqueda({
             className="gap-1 text-sky-800 dark:text-sky-200"
           >
             <RefreshCw
-              className={`h-4 w-4 ${isSearching ? "animate-spin" : ""}`}
+              className={`h-4 w-4 ${isSearching ? 'animate-spin' : ''}`}
             />
             <span className="hidden sm:inline">Refrescar</span>
           </Button>
@@ -653,7 +654,7 @@ export default function ResultadosBusqueda({
             defaultValue={`nicho-0`}
             className="w-full"
             onValueChange={(value) =>
-              handleNichoChange(parseInt(value.split("-")[1]))
+              handleNichoChange(parseInt(value.split('-')[1]))
             }
           >
             <ScrollArea className="w-full">
@@ -671,9 +672,9 @@ export default function ResultadosBusqueda({
                         <TabsTrigger
                           value={`nicho-${index}`}
                           className={cn(
-                            "flex items-center gap-2 data-[state=active]:bg-background",
+                            'flex items-center gap-2 data-[state=active]:bg-background',
                             index === selectedNichoIndex &&
-                              "dark:font-bold text-sky-800 dark:text-sky-200 bg-sky-100 dark:bg-sky-900/30"
+                              'dark:font-bold text-sky-800 dark:text-sky-200 bg-sky-100 dark:bg-sky-900/30',
                           )}
                         >
                           {(() => {
@@ -719,8 +720,8 @@ export default function ResultadosBusqueda({
                             {nicho.filas.length} filas,
                             {nicho.filas.reduce(
                               (acc, fila) => acc + fila.medidores.length,
-                              0
-                            )}{" "}
+                              0,
+                            )}{' '}
                             medidores
                           </p>
                         </div>
@@ -769,13 +770,13 @@ export default function ResultadosBusqueda({
                             <div className="space-y-2">
                               {/* Lista estática de todos los estados posibles */}
                               {[
-                                "SINLEC",
-                                "SINCLA",
-                                "CLAINF",
-                                "CLAREL",
-                                "CLACRI",
-                                "LECCER",
-                                "LECIMP",
+                                'SINLEC',
+                                'SINCLA',
+                                'CLAINF',
+                                'CLAREL',
+                                'CLACRI',
+                                'LECCER',
+                                'LECIMP',
                               ].map((claveHtml) => {
                                 const status = getMeterStatus(claveHtml);
                                 return (
@@ -817,7 +818,10 @@ export default function ResultadosBusqueda({
                     </DialogTrigger>
                     <DialogContent className="min-w-full h-auto overflow-y-auto">
                       <DialogTitle>
-                        <h2 className="text-2xl font-bold">Agregar Lecturas</h2>
+                        <div className="text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500">
+                          <Gauge className="h-5 w-5 text-sky-700 dark:text-sky-500" />
+                          Monitor de Medidores
+                        </div>
                       </DialogTitle>
                       <ScrollArea className="h-[calc(100vh-200px)]">
                         <MonitorNichos
@@ -835,11 +839,11 @@ export default function ResultadosBusqueda({
                   {nicho.filas.map((fila: Fila, filaIndex: number) => {
                     // Get all problems in this fila for the badge
                     const problemCount = fila.medidores.filter(
-                      (m: Medidor) => getMeterStatus(m.claveHtml).severity > 2
+                      (m: Medidor) => getMeterStatus(m.claveHtml).severity > 2,
                     ).length;
 
                     // For 'compact' view, skip filas with no problems
-                    if (viewMode === "compact" && problemCount === 0) {
+                    if (viewMode === 'compact' && problemCount === 0) {
                       return null;
                     }
 
@@ -865,7 +869,7 @@ export default function ResultadosBusqueda({
                                 {problemCount > 0 && (
                                   <Badge variant="destructive">
                                     {problemCount} clave
-                                    {problemCount !== 1 && "s"}
+                                    {problemCount !== 1 && 's'}
                                   </Badge>
                                 )}
                               </div>
@@ -889,7 +893,7 @@ export default function ResultadosBusqueda({
                                 {fila.medidores.map((medidor: Medidor) => {
                                   // For 'compact' view, only show problematic medidores
                                   if (
-                                    viewMode === "compact" &&
+                                    viewMode === 'compact' &&
                                     getMeterStatus(medidor.claveHtml)
                                       .severity <= 1
                                   ) {

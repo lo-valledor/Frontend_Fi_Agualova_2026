@@ -809,7 +809,6 @@ export default function RevisarCalculoFacturaComponent({
                 columns={columns}
                 data={filteredData}
                 onSelectionChange={(selectedContratos) => {
-                  console.log('Contratos seleccionados:', selectedContratos);
                   setSelectedContratos(
                     selectedContratos.map((contrato) => contrato.lecturaId),
                   );

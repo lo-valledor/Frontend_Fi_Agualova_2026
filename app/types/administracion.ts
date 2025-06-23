@@ -224,7 +224,7 @@ export interface CrearAcometidaProps {
   empalmeId: number;
   nichoId: number;
   contratoId: string;
-  codigo: number;
+  codigo: string;
   limitePotencia: number;
 }
 

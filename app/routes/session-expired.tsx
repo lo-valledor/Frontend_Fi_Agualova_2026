@@ -23,7 +23,7 @@ export const SessionExpired: React.FC<SessionExpiredProps> = ({
 
   useEffect(() => {
     // Limpiar la sesión cuando se muestra este componente
-    console.log('SessionExpired component mounted');
+    //console.log('SessionExpired component mounted');
     logout();
   }, [logout]);
 

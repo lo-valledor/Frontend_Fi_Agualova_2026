@@ -1,25 +1,54 @@
 // eslint-disable no-empty-pattern
-import React from "react";
-import type { Route } from "./+types/monitor-lecturas";
-import MonitorLecturasComponent from "~/components/monitor/monitor-lecturas-component";
-import { loadMonitorData } from "~/hooks/use-monitor";
+import React from 'react';
+import type { Route } from './+types/monitor-lecturas';
+import MonitorLecturasComponent from '~/components/monitor/monitor-lecturas-component';
+import api from '~/lib/api';
+import type { Periodo, Sector, Clave } from '~/types/monitor';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Enerlova | Monitor Lecturas" },
-    { name: "description", content: "Monitoreo de lecturas de medidores" },
+    { title: 'Enerlova | Monitor Lecturas' },
+    { name: 'description', content: 'Monitoreo de lecturas de medidores' },
   ];
 }
 
 export async function clientLoader() {
   try {
-    const data = await loadMonitorData();
+    // Cargar datos básicos del monitor directamente en el loader
+    const [periodosRes, clavesRes, sectoresRes] = await Promise.all([
+      api.get<Periodo[]>('/Periodos'),
+      api.get<Clave[]>('/Claves'),
+      api.get<Sector[]>('/Sectores'),
+    ]);
+
+    const periodosData = Array.isArray(periodosRes.data)
+      ? periodosRes.data
+      : [];
+    const clavesData = Array.isArray(clavesRes.data) ? clavesRes.data : [];
+    const sectoresData = Array.isArray(sectoresRes.data)
+      ? sectoresRes.data
+      : [];
+
+    // Encontrar el período activo
+    let activePeriodoId: number | null = null;
+    if (periodosData && periodosData.length > 0) {
+      const activePeriodo = periodosData.find(
+        (periodo: Periodo) => periodo.EstadoPeriodo === 2,
+      );
+      if (activePeriodo) {
+        activePeriodoId = Number(activePeriodo.IdPeriodo);
+      }
+    }
+
     return {
-      ...data,
+      periodos: periodosData,
+      claves: clavesData,
+      sectores: sectoresData,
+      activePeriodoId,
       error: null,
     };
   } catch (error: any) {
-    console.error("Error al cargar datos del monitor:", error);
+    console.error('Error al cargar datos del monitor:', error);
 
     // Retornar datos vacíos con error para que el componente pueda manejar el error
     return {

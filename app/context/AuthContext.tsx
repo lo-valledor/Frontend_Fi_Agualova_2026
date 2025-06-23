@@ -41,12 +41,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const currentTime = Date.now() / 1000;
       // El token es válido si no ha expirado aún
       const isValid = decoded.exp > currentTime;
-      console.log('Token validation:', {
+      /* console.log('Token validation:', {
         tokenExp: decoded.exp,
         currentTime,
         isValid,
         expiresAt: new Date(decoded.exp * 1000).toISOString(),
-      });
+      }); */
       return isValid;
     } catch (error) {
       console.warn('Token inválido o mal formateado:', error);
@@ -83,35 +83,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     // Verificar si hay un token almacenado al cargar la aplicación
     const initializeAuth = async () => {
       try {
-        console.log('=== INICIALIZANDO AUTENTICACIÓN ===');
-        console.log('Navegador:', navigator.userAgent);
-        console.log('URL actual:', window.location.href);
-        
+        //console.log('=== INICIALIZANDO AUTENTICACIÓN ===');
+        //console.log('Navegador:', navigator.userAgent);
+        //console.log('URL actual:', window.location.href);
+
         const token = sessionStorage.getItem('token');
-        console.log('Token encontrado en sessionStorage:', token ? 'SÍ' : 'NO');
-        
+        //console.log('Token encontrado en sessionStorage:', token ? 'SÍ' : 'NO');
+
         if (token) {
-          console.log('Token completo:', token);
+          //console.log('Token completo:', token);
           const isValid = isTokenValid(token);
-          console.log('¿Token válido?', isValid);
-          
+          //console.log('¿Token válido?', isValid);
+
           if (isValid) {
             const userData = parseUserFromToken(token);
-            console.log('Datos del usuario:', userData);
+            //console.log('Datos del usuario:', userData);
             setUser(userData);
           } else {
             // Token expirado o inválido
             sessionStorage.removeItem('token');
-            console.warn('Token expirado o inválido, removido del sessionStorage');
+            console.warn(
+              'Token expirado o inválido, removido del sessionStorage',
+            );
           }
         } else {
-          console.log('No hay token en sessionStorage');
+          //console.log('No hay token en sessionStorage');
         }
       } catch (error) {
         console.error('Error al inicializar autenticación:', error);
         sessionStorage.removeItem('token');
       } finally {
-        console.log('=== FIN INICIALIZACIÓN AUTENTICACIÓN ===');
+        //console.log('=== FIN INICIALIZACIÓN AUTENTICACIÓN ===');
         setLoading(false);
       }
     };
@@ -130,7 +132,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const token = await authService.login({ usuario, contrasena });
 
       // Verificar que el token recibido es válido antes de guardarlo
-      console.log('Token recibido del servidor:', token);
+      //console.log('Token recibido del servidor:', token);
       if (!token || token.trim() === '') {
         throw new Error('Token vacío recibido del servidor');
       }
@@ -138,7 +140,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Intentar validar el token, pero no fallar si hay problemas menores
       try {
         const isValid = isTokenValid(token);
-        console.log('¿Token válido?', isValid);
+        //console.log('¿Token válido?', isValid);
         if (!isValid) {
           console.warn(
             'Token posiblemente inválido, pero continuando con el login',

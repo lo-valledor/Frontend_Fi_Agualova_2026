@@ -11,8 +11,8 @@ import type {
 
 export type { Periodo, Sector, Clave, Lectura, MedidorNicho };
 
-// Hook optimizado que solo provee funciones utilitarias
-// La carga inicial de datos se debe hacer via clientLoader
+// Hook optimizado que solo provee funciones utilitarias para operaciones específicas
+// La carga inicial de datos se hace via clientLoader siguiendo las mejores prácticas de React Router v7
 export function useMonitor() {
   const [lecturas, setLecturas] = useState<Lectura[]>([]);
   const [medidores, setMedidores] = useState<MedidorNicho[]>([]);
@@ -90,47 +90,7 @@ export function useMonitor() {
   };
 }
 
-// Función utilitaria para cargar datos básicos del monitor
-// Úsala en clientLoaders cuando necesites los datos iniciales
-export async function loadMonitorData() {
-  try {
-    const [periodosRes, clavesRes, sectoresRes] = await Promise.all([
-      api.get<Periodo[]>("/Periodos"),
-      api.get<Clave[]>("/Claves"),
-      api.get<Sector[]>("/Sectores"),
-    ]);
-
-    const periodosData = Array.isArray(periodosRes.data)
-      ? periodosRes.data
-      : [];
-    const clavesData = Array.isArray(clavesRes.data) ? clavesRes.data : [];
-    const sectoresData = Array.isArray(sectoresRes.data)
-      ? sectoresRes.data
-      : [];
-
-    // Encontrar el período activo
-    let activePeriodoId: number | null = null;
-    if (periodosData && periodosData.length > 0) {
-      const activePeriodo = periodosData.find(
-        (periodo: Periodo) => periodo.EstadoPeriodo === 2
-      );
-      if (activePeriodo) {
-        activePeriodoId = Number(activePeriodo.IdPeriodo);
-      }
-    }
-
-    return {
-      periodos: periodosData,
-      claves: clavesData,
-      sectores: sectoresData,
-      activePeriodoId,
-    };
-  } catch (error: any) {
-    console.error("Error al cargar datos del monitor:", error);
-    throw error instanceof Error ? error : new Error(String(error));
-  }
-}
-
+// Funciones utilitarias para formateo de fechas (sin dependencias de estado)
 export const formatDateToYYYYMMDD = (dateString: string): string => {
   if (!dateString) return "";
 
@@ -154,4 +114,44 @@ export const formatDateToYYYYMMDD = (dateString: string): string => {
   }
 
   return `${year}${month}${day}`;
+};
+
+// Función utilitaria para encontrar el período activo
+export const findActivePeriod = (periodos: Periodo[]): Periodo | null => {
+  if (!periodos || periodos.length === 0) return null;
+  
+  const activePeriodo = periodos.find(
+    (periodo) => periodo.EstadoPeriodo === 2
+  );
+  
+  return activePeriodo || periodos[0]; // Fallback al primero si no hay activo
+};
+
+// Función utilitaria para validar parámetros de búsqueda
+export const validateSearchParams = (
+  sector: Sector | null,
+  periodo: Periodo | null
+): { isValid: boolean; error?: string } => {
+  if (!sector) {
+    return { isValid: false, error: "Por favor, seleccione un sector." };
+  }
+  
+  if (!periodo) {
+    return { isValid: false, error: "Por favor, seleccione un periodo." };
+  }
+  
+  return { isValid: true };
+};
+
+// Función utilitaria para obtener fechas por defecto basadas en el período
+export const getDefaultDates = (periodo: Periodo | null): { 
+  fechaInicio: string; 
+  fechaFin: string; 
+} => {
+  const today = new Date().toISOString().split("T")[0];
+  
+  return {
+    fechaInicio: periodo?.FechaInicio || "",
+    fechaFin: today,
+  };
 };

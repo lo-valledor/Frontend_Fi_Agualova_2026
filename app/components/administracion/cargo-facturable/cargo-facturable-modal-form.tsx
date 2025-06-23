@@ -157,13 +157,28 @@ export default function CargoFacturableModalForm({
 
   useEffect(() => {
     if (isOpen && cargo) {
+      // Mapear valores abreviados a valores completos
+      const mapearFijoVariable = (valor: string) => {
+        if (valor === 'F') return 'Fijo';
+        if (valor === 'V') return 'Variable';
+        return valor; // Si ya viene completo
+      };
+
+      const mapearPeriodicoEventual = (valor: string) => {
+        if (valor === 'P') return 'Periodico';
+        if (valor === 'E') return 'Eventual';
+        return valor; // Si ya viene completo
+      };
+
       form.reset({
         cuenta: cargo.cuenta || '',
         descripcion: cargo.descripcion || '',
         codigo: cargo.codigoEnerlova || '',
         tipo: cargo.tipo || '',
-        fijoVariable: cargo.fijoVariable || '',
-        periodicoEventual: cargo.periodicoEventual || '',
+        fijoVariable: mapearFijoVariable(cargo.fijoVariable || ''),
+        periodicoEventual: mapearPeriodicoEventual(
+          cargo.periodicoEventual || '',
+        ),
         conceptoId: conceptos.find((c) => c.nombre === cargo.concepto)?.id || 0,
         tarifaId: tarifas.find((t) => t.nombre === cargo.tarifa)?.id || 0,
         tipoMedidorId:
@@ -188,16 +203,93 @@ export default function CargoFacturableModalForm({
 
   const onSubmit = async (data: CargoFacturableFormValues) => {
     try {
-      if (mode === 'add') {
-        await api.post('crearCargoFacturableNuevo', data);
-      } else {
-        await api.put(`modificarCargoFacturable`, data);
+      // Función para mapear tipo string a número
+      const getTipoNumero = (tipoString: string): number => {
+        switch (tipoString) {
+          case 'Base CH':
+            return 1;
+          case 'Cargo Fact.':
+            return 2;
+          case 'Condición':
+            return 3;
+          default:
+            return 1; // Valor por defecto
+        }
+      };
+
+      // Validación previa
+      if (!data.cuenta.trim()) {
+        toast.error('La cuenta es requerida');
+        return;
       }
+      if (!data.descripcion.trim()) {
+        toast.error('La descripción es requerida');
+        return;
+      }
+      if (!data.codigo.trim()) {
+        toast.error('El código es requerido');
+        return;
+      }
+      if (data.conceptoId === 0) {
+        toast.error('Debe seleccionar un concepto');
+        return;
+      }
+      if (data.tarifaId === 0) {
+        toast.error('Debe seleccionar una tarifa');
+        return;
+      }
+      if (data.tipoMedidorId === 0) {
+        toast.error('Debe seleccionar un tipo de medidor');
+        return;
+      }
+
+      // Mapear los datos del formulario a los nombres que espera el backend
+      const mappedData = {
+        cuenta: data.cuenta.trim(),
+        descripcion: data.descripcion.trim(),
+        fijoVariable: data.fijoVariable,
+        periodicoEventual: data.periodicoEventual,
+        conceptoId: data.conceptoId,
+        tarifaId: data.tarifaId,
+        tipoMedidorId: data.tipoMedidorId,
+        tipo: getTipoNumero(data.tipo),
+        codigoEnerlova: data.codigo.trim(),
+        mostrarValorCero: data.muestraValorEn0,
+      };
+
+      console.log('Datos del formulario:', data);
+      console.log('Datos mapeados para enviar:', mappedData);
+
+      if (mode === 'add') {
+        await api.post('crearCargoFacturableNuevo', mappedData);
+        toast.success('Cargo facturable creado exitosamente');
+      } else if (cargo) {
+        // Para el PUT, agregar el ID del cargo
+        const updateData = {
+          id: cargo.id,
+          ...mappedData,
+        };
+        console.log('Datos para actualizar:', updateData);
+        await api.put('modificarCargoFacturable', updateData);
+        toast.success('Cargo facturable actualizado exitosamente');
+      }
+
       onSuccess();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al guardar el cargo facturable:', error);
-      toast.error('Error al guardar el cargo facturable');
+
+      // Manejo más específico de errores
+      if (error.response?.status === 400) {
+        const errorMessage =
+          error.response?.data?.message ||
+          'Datos inválidos enviados al servidor';
+        toast.error(`Error de validación: ${errorMessage}`);
+      } else if (error.response?.status === 500) {
+        toast.error('Error interno del servidor');
+      } else {
+        toast.error('Error al guardar el cargo facturable');
+      }
     }
   };
 
