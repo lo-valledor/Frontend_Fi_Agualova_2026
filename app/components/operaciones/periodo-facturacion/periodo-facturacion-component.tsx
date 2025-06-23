@@ -1,29 +1,31 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from "react";
-import { columns } from "./columns";
-import { Button } from "~/components/ui/button";
+import React, { useMemo, useState } from 'react';
+import { columns } from './columns';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
-  CardFooter,
-} from "~/components/ui/card";
+  CardHeader,
+} from '~/components/ui/card';
 import {
   PlusCircleIcon,
-  CalendarRangeIcon,
-  ChevronUp,
-  ChevronDown,
-} from "lucide-react";
-import DialogNuevoPeriodo from "./dialog-nuevo-periodo";
-import type { Anio, Periodos } from "~/types/operaciones";
+  AlertTriangle,
+  FileX2,
+  Bell,
+  CheckCircle,
+} from 'lucide-react';
+import DialogNuevoPeriodo from './dialog-nuevo-periodo';
+import type { Anio, Periodos } from '~/types/operaciones';
+import { DataTable } from '~/components/data-table/data-table';
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "~/components/ui/collapsible";
-import { ScrollArea } from "~/components/ui/scroll-area";
-import { DataTable } from "~/components/data-table/data-table";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '~/components/ui/tooltip';
+import CerrarPeriodo from './cerrar-periodo';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 
 export default function AbrirPeriodoFacturacion({
   years,
@@ -32,26 +34,11 @@ export default function AbrirPeriodoFacturacion({
   years: Anio[];
   periodos: Periodos[];
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [isResultsOpen, setIsResultsOpen] = useState(true);
 
-  // Nueva función para filtrar periodos
-  const filteredPeriodos = useMemo(() => {
-    if (!searchTerm) {
-      return periodos; // Si no hay término de búsqueda, devuelve todos los periodos
-    }
-    return periodos.filter(
-      (periodo) =>
-        periodo.pf_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        periodo.pf_descripcion
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        periodo.Column1.toLowerCase().includes(searchTerm.toLowerCase()) || // Asegúrate que Column1 y Column2 existan en tu tipo Periodos
-        periodo.Column2.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        periodo.epf_descripcion.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [periodos, searchTerm]);
+  const periodoAbierto = useMemo(() => {
+    return periodos.find((periodo) => periodo.epf_descripcion === 'Abierto');
+  }, [periodos]);
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
@@ -62,68 +49,85 @@ export default function AbrirPeriodoFacturacion({
             Periodos de Facturación
           </h1>
           <div className="flex items-center gap-3">
-            <Button
-              onClick={() => setIsOpenDialog(true)}
-              className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
-            >
-              <PlusCircleIcon className="h-4 w-4" />
-              Nuevo Periodo
-            </Button>
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger asChild>
+                  <div className="inline-block">
+                    <Button
+                      onClick={() => setIsOpenDialog(true)}
+                      disabled={!!periodoAbierto}
+                      className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <PlusCircleIcon className="h-4 w-4" />
+                      Nuevo Periodo
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                {periodoAbierto && (
+                  <TooltipContent>
+                    <p>
+                      Debe cerrar el periodo vigente para poder crear uno nuevo.
+                    </p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         <p className="text-muted-foreground">
           Gestiona los periodos de facturación del sistema
         </p>
       </div>
-
+      {periodoAbierto ? (
+        <Card className="border-amber-500/50 bg-amber-50/50 dark:bg-amber-900/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-amber-800 dark:text-amber-300">
+              <AlertTriangle className="h-5 w-5" />
+              <span>Periodo Vigente Abierto</span>
+            </CardTitle>
+            <CardDescription className="text-amber-700 dark:text-amber-400">
+              El periodo de{' '}
+              <span className="font-semibold">
+                {periodoAbierto.pf_descripcion}
+              </span>{' '}
+              está actualmente abierto.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 rounded-b-lg p-4 bg-amber-50/80 dark:bg-amber-900/20">
+            <p className="text-sm text-amber-900 dark:text-amber-200 flex-1">
+              Para crear un nuevo periodo de facturación, primero debe cerrar el
+              actual. Esta acción es irreversible a menos que un administrador
+              lo reabra.
+            </p>
+            <CerrarPeriodo
+              periodoId={periodoAbierto.pf_id}
+              className="w-full md:w-auto"
+            />
+          </CardContent>
+        </Card>
+      ) : (
+        <Alert className="border-green-500/50 bg-green-50/50 dark:bg-green-900/10">
+          <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <AlertTitle className="text-green-800 dark:text-green-300">
+            No hay periodos abiertos
+          </AlertTitle>
+          <AlertDescription className="text-green-700 dark:text-green-400">
+            Puede crear un nuevo periodo de facturación. Todas las operaciones
+            se registrarán en el nuevo periodo.
+          </AlertDescription>
+        </Alert>
+      )}
       {/* Tabla de resultados como componente principal */}
-      <Card className="shadow-sm border border-border/60">
-        <Collapsible
-          open={isResultsOpen}
-          onOpenChange={setIsResultsOpen}
-          className="w-full"
-        >
-          <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg shadow-sm">
-                  <CalendarRangeIcon className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                    Periodos de Facturación
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    {filteredPeriodos.length > 0
-                      ? `${filteredPeriodos.length} periodos`
-                      : "No hay periodos"}
-                  </CardDescription>
-                </div>
-              </div>
-              {isResultsOpen ? (
-                <ChevronUp className="h-5 w-5 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
-              )}
-            </div>
-          </CollapsibleTrigger>
-
-          <CollapsibleContent>
-            <CardContent className="p-4">
-              <ScrollArea className="h-[calc(100vh-400px)]">
-                <DataTable columns={columns} data={periodos} />
-              </ScrollArea>
-            </CardContent>
-
-            {filteredPeriodos.length > 0 && (
-              <CardFooter className="border-t border-border/60 p-4 bg-muted/30 flex justify-between">
-                <div className="text-sm text-muted-foreground">
-                  Mostrando {filteredPeriodos.length} periodos
-                </div>
-              </CardFooter>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
+      <Card>
+        <CardHeader>
+          <CardTitle>Historial de Periodos</CardTitle>
+          <CardDescription>
+            Visualiza todos los periodos de facturación pasados del sistema.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DataTable columns={columns} data={periodos} />
+        </CardContent>
       </Card>
 
       {/* Dialog para crear nuevo periodo */}
@@ -132,7 +136,6 @@ export default function AbrirPeriodoFacturacion({
         onOpenChange={setIsOpenDialog}
         onPeriodoCreated={() => {
           setIsOpenDialog(false);
-          setIsResultsOpen(true);
         }}
         years={years}
       />

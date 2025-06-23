@@ -1,5 +1,3 @@
-'use client';
-
 import { Badge } from '~/components/ui/badge';
 import { Card, CardContent } from '~/components/ui/card';
 import { Filter, TrendingUp, TrendingDown } from 'lucide-react';

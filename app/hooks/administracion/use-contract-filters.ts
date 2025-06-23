@@ -1,5 +1,3 @@
-"use client"
-
 import { useMemo } from "react"
 import type { GetContratos } from "~/types/administracion"
 import type { ContractFilters } from "~/components/administracion/contratos/contract-filters"

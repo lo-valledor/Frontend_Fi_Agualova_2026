@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
+} from '~/components/ui/card';
+import { Badge } from '~/components/ui/badge';
 import {
   ChevronDown,
   SearchIcon,
@@ -16,40 +16,40 @@ import {
   AlertCircleIcon,
   UsersIcon,
   FileTextIcon,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+} from '~/components/ui/collapsible';
 import {
   Select,
   SelectItem,
   SelectContent,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { Label } from "~/components/ui/label";
-import { Button } from "~/components/ui/button";
+} from '~/components/ui/select';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
 import {
   type ConsultarAsignacionSectores,
   type OpcionesPrepararLecturas,
   type ValidarSectoresPendientes,
   type PeriodoAbierto,
-} from "~/types/operaciones";
-import { toast } from "sonner";
-import api from "~/lib/api";
-import { useOperaciones } from "~/hooks/use-operaciones";
-import TablaAsignacionSectores from "./tabla-asignacion-sectores";
-import { Skeleton } from "~/components/ui/skeleton";
-import DialogLecturasPendientes from "./dialog-lecturas-pendientes";
+} from '~/types/operaciones';
+import { toast } from 'sonner';
+import api from '~/lib/api';
+import { useOperaciones } from '~/hooks/use-operaciones';
+import TablaAsignacionSectores from './tabla-asignacion-sectores';
+import { Skeleton } from '~/components/ui/skeleton';
+import DialogLecturasPendientes from './dialog-lecturas-pendientes';
 
 export default function PrepararLecturasComponent({
   periodoAbierto,
   lecturasPendientes,
 }: {
   periodoAbierto: PeriodoAbierto[];
-  lecturasPendientes: ValidarSectoresPendientes[];
+  lecturasPendientes: ValidarSectoresPendientes | null;
 }) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +69,7 @@ export default function PrepararLecturasComponent({
     fetchLecturasPendientes,
   } = useOperaciones();
 
-  const [cicloSeleccionado, setCicloSeleccionado] = useState<string>("");
+  const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
   const isPeriodoLoading = loadingState.periodoAbierto.isLoading;
   const isCiclosLoading = loadingState.ciclos.isLoading;
   const _isSectoresLoading = loadingState.consultarSectores.isLoading;
@@ -77,25 +77,25 @@ export default function PrepararLecturasComponent({
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
       const { mes, anio } = periodoAbierto[0];
-      return `${mes.toString().padStart(2, "0")}${anio.toString()}`;
+      return `${mes.toString().padStart(2, '0')}${anio.toString()}`;
     }
-    return "";
+    return '';
   }, [periodoAbierto]);
 
   const fetchOpcionesPrepararLecturas = useCallback(async () => {
     try {
       const params = new URLSearchParams();
-      params.append("control", "1");
-      const response = await api.get("/opciones-preparar-lecturas", {
+      params.append('control', '1');
+      const response = await api.get('/opciones-preparar-lecturas', {
         params,
       });
       setOpcionesPrepararLecturas(response.data as OpcionesPrepararLecturas[]);
     } catch (error: any) {
       console.error(
-        "Error al consultar opciones de preparación de lecturas:",
-        error
+        'Error al consultar opciones de preparación de lecturas:',
+        error,
       );
-      toast.error("Error al consultar opciones de preparación de lecturas");
+      toast.error('Error al consultar opciones de preparación de lecturas');
     }
   }, []);
 
@@ -129,11 +129,11 @@ export default function PrepararLecturasComponent({
 
   const obtenerCicloParaAPI = (idCiclo: string): string => {
     if (!opcionesPrepararLecturas || opcionesPrepararLecturas.length === 0) {
-      return idCiclo === "1" ? "1" : "2";
+      return idCiclo === '1' ? '1' : '2';
     }
 
     const opcionSeleccionada = opcionesPrepararLecturas.find(
-      (opcion) => opcion.id.toString() === idCiclo
+      (opcion) => opcion.id.toString() === idCiclo,
     );
 
     if (!opcionSeleccionada) {
@@ -143,19 +143,19 @@ export default function PrepararLecturasComponent({
 
     const descripcion = opcionSeleccionada.descripcion.toLowerCase();
 
-    if (descripcion.includes("15") || opcionSeleccionada.id === 1) {
-      return "1";
+    if (descripcion.includes('15') || opcionSeleccionada.id === 1) {
+      return '1';
     } else if (
-      descripcion.includes("30") ||
-      descripcion.includes("fin de mes") ||
+      descripcion.includes('30') ||
+      descripcion.includes('fin de mes') ||
       opcionSeleccionada.id === 2 ||
       opcionSeleccionada.id === 3
     ) {
-      return "2";
+      return '2';
     }
 
     console.warn(
-      `No se pudo determinar el ciclo para API a partir de: ${descripcion}`
+      `No se pudo determinar el ciclo para API a partir de: ${descripcion}`,
     );
     return opcionSeleccionada.id.toString();
   };
@@ -163,12 +163,12 @@ export default function PrepararLecturasComponent({
   // Función para realizar la búsqueda
   const handleSearch = async () => {
     if (!periodoFormateado) {
-      toast.error("No hay un periodo abierto disponible");
+      toast.error('No hay un periodo abierto disponible');
       return;
     }
 
     if (!cicloSeleccionado) {
-      toast.error("Debe seleccionar un ciclo de facturación");
+      toast.error('Debe seleccionar un ciclo de facturación');
       return;
     }
 
@@ -185,10 +185,10 @@ export default function PrepararLecturasComponent({
       const cicloParaAPI = obtenerCicloParaAPI(cicloSeleccionado);
 
       const params = new URLSearchParams();
-      params.append("cicloFacturable", cicloParaAPI);
-      params.append("periodo", periodoFormateado);
+      params.append('cicloFacturable', cicloParaAPI);
+      params.append('periodo', periodoFormateado);
 
-      const response = await api.get("/consultar-asignacion-sectores", {
+      const response = await api.get('/consultar-asignacion-sectores', {
         params,
       });
 
@@ -196,27 +196,27 @@ export default function PrepararLecturasComponent({
         setAsignacionSectores(response.data as ConsultarAsignacionSectores[]);
         if (response.data.length === 0) {
           toast.info(
-            "No se encontraron resultados para los criterios seleccionados"
+            'No se encontraron resultados para los criterios seleccionados',
           );
         } else {
           toast.success(`Se encontraron ${response.data.length} sectores`);
         }
       } else {
         setAsignacionSectores([]);
-        toast.info("No se encontraron sectores para preparar lecturas");
+        toast.info('No se encontraron sectores para preparar lecturas');
       }
     } catch (error: any) {
-      console.error("Error al buscar sectores:", error);
-      setError(`Error: ${error.message || "Error desconocido"}`);
+      console.error('Error al buscar sectores:', error);
+      setError(`Error: ${error.message || 'Error desconocido'}`);
 
       if (error.response) {
         toast.error(
           `Error ${error.response.status}: ${
-            error.response.data?.mensaje || "Error en la consulta"
-          }`
+            error.response.data?.mensaje || 'Error en la consulta'
+          }`,
         );
       } else if (error.request) {
-        toast.error("No se recibió respuesta del servidor");
+        toast.error('No se recibió respuesta del servidor');
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -226,10 +226,10 @@ export default function PrepararLecturasComponent({
   };
 
   const handleClearFilters = () => {
-    setCicloSeleccionado("");
+    setCicloSeleccionado('');
     setAsignacionSectores([]);
     setError(null);
-    toast.success("Filtros limpiados");
+    toast.success('Filtros limpiados');
   };
 
   return (
@@ -255,7 +255,7 @@ export default function PrepararLecturasComponent({
               variant="outline"
               className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
             >
-              Periodo: {periodoAbierto[0].mes.toString().padStart(2, "0")}/
+              Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
               {periodoAbierto[0].anio}
             </Badge>
           )}
@@ -310,7 +310,7 @@ export default function PrepararLecturasComponent({
                       </div>
                       <div>
                         <span className="font-semibold text-sky-800 dark:text-sky-200">
-                          {periodoAbierto[0].mes.toString().padStart(2, "0")}/
+                          {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                           {periodoAbierto[0].anio}
                         </span>
                         <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
@@ -403,7 +403,7 @@ export default function PrepararLecturasComponent({
                   className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
                 >
                   <SearchIcon className="h-4 w-4" />
-                  {isLoading ? "Buscando..." : "Buscar Sectores"}
+                  {isLoading ? 'Buscando...' : 'Buscar Sectores'}
                 </Button>
               </div>
             </CardContent>
@@ -425,7 +425,7 @@ export default function PrepararLecturasComponent({
               <CardDescription className="text-sm">
                 {asignacionSectores.length > 0
                   ? `${asignacionSectores.length} sectores encontrados`
-                  : "No hay sectores asignados"}
+                  : 'No hay sectores asignados'}
               </CardDescription>
             </div>
           </div>

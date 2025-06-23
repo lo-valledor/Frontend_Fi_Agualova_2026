@@ -1,27 +1,27 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Badge } from "~/components/ui/badge";
+import React, { useState, useEffect, useMemo } from 'react';
+import { Badge } from '~/components/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
+} from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { Button } from "~/components/ui/button";
-import { useOperaciones } from "~/hooks/use-operaciones";
+} from '~/components/ui/select';
+import { Button } from '~/components/ui/button';
+import { useOperaciones } from '~/hooks/use-operaciones';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+} from '~/components/ui/collapsible';
 import {
   AlertCircleIcon,
   CalendarIcon,
@@ -33,19 +33,19 @@ import {
   SettingsIcon,
   ChevronRight,
   RefreshCw,
-} from "lucide-react";
-import { Skeleton } from "~/components/ui/skeleton";
-import { toast } from "sonner";
-import api from "~/lib/api";
-import { HierarchicalDataTable } from "./hierarchical-data-table";
-import { columns } from "./columnsPrecalculo";
+} from 'lucide-react';
+import { Skeleton } from '~/components/ui/skeleton';
+import { toast } from 'sonner';
+import api from '~/lib/api';
+import { HierarchicalDataTable } from './hierarchical-data-table';
+import { columns } from './columnsPrecalculo';
 import {
   type CalculoPrefacturaDetalle,
   type CalculoPrefacturaCargoResponse,
   type CalculoPrefacturaCompleto,
   type PeriodoAbierto,
-} from "~/types/operaciones";
-import { Input } from "~/components/ui/input";
+} from '~/types/operaciones';
+import { Input } from '~/components/ui/input';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
@@ -53,10 +53,10 @@ export default function RevisarCalculoFacturaComponent({
   periodoAbierto: PeriodoAbierto[];
 }) {
   // Estados para el formulario
-  const [cicloId, setCicloId] = useState<string>("");
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [cicloId, setCicloId] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredData, setFilteredData] = useState<CalculoPrefacturaCompleto[]>(
-    []
+    [],
   );
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
@@ -83,9 +83,9 @@ export default function RevisarCalculoFacturaComponent({
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
       const { mes, anio } = periodoAbierto[0];
-      return `${mes.toString().padStart(2, "0")}${anio.toString()}`;
+      return `${mes.toString().padStart(2, '0')}${anio.toString()}`;
     }
-    return "";
+    return '';
   }, [periodoAbierto]);
 
   // Cargar datos iniciales
@@ -117,34 +117,34 @@ export default function RevisarCalculoFacturaComponent({
   // Función para convertir el ciclo seleccionado al formato esperado por la API
   const obtenerCicloParaAPI = (cicloId: string): string => {
     // Si el ciclo es la cadena "1" o "2", lo devolvemos tal cual
-    if (cicloId === "1" || cicloId === "2") {
+    if (cicloId === '1' || cicloId === '2') {
       return cicloId;
     }
 
     // Si el ciclo contiene "15", devolvemos "1"
-    if (cicloId.includes("15")) {
-      return "1";
+    if (cicloId.includes('15')) {
+      return '1';
     }
 
     // Si el ciclo contiene "30", devolvemos "2"
-    if (cicloId.includes("30")) {
-      return "2";
+    if (cicloId.includes('30')) {
+      return '2';
     }
 
     // Por defecto, devolvemos el ciclo original
     console.warn(
-      `No se pudo determinar el ciclo para API a partir de: ${cicloId}`
+      `No se pudo determinar el ciclo para API a partir de: ${cicloId}`,
     );
     return cicloId;
   }; // Función para manejar la búsqueda/revisión
   const handleRevisarCalculo = async () => {
     if (!periodoFormateado) {
-      toast.error("No hay un periodo abierto disponible");
+      toast.error('No hay un periodo abierto disponible');
       return;
     }
 
     if (!cicloId) {
-      toast.error("Debe seleccionar un ciclo de facturación");
+      toast.error('Debe seleccionar un ciclo de facturación');
       return;
     }
 
@@ -163,28 +163,28 @@ export default function RevisarCalculoFacturaComponent({
 
       // Petición 1: Obtener encabezados
       const encabezadoResponse = await api.get(
-        "/calculo-prefactura-encabezado",
+        '/calculo-prefactura-encabezado',
         {
           params: requestParams,
-        }
+        },
       );
 
       // Los encabezados vienen directamente como array
       const encabezados = encabezadoResponse.data as CalculoPrefacturaDetalle[];
 
       if (!Array.isArray(encabezados)) {
-        throw new Error("La respuesta de encabezados no es un array válido");
+        throw new Error('La respuesta de encabezados no es un array válido');
       }
 
       if (encabezados.length === 0) {
         setData([]);
         toast.info(
-          "No se encontraron resultados para los criterios seleccionados"
+          'No se encontraron resultados para los criterios seleccionados',
         );
         return;
       }
 
-      const cargosResponse = await api.get("/calculo-prefactura-cargos", {
+      const cargosResponse = await api.get('/calculo-prefactura-cargos', {
         params: {
           cicloId: cicloParaAPI,
           periodo: periodoFormateado,
@@ -195,7 +195,7 @@ export default function RevisarCalculoFacturaComponent({
         cargosResponse.data as CalculoPrefacturaCargoResponse[];
 
       if (!Array.isArray(cargosData)) {
-        throw new Error("La respuesta de cargos no es un array válido");
+        throw new Error('La respuesta de cargos no es un array válido');
       }
 
       // Combinar encabezados con cargos
@@ -203,14 +203,14 @@ export default function RevisarCalculoFacturaComponent({
         (encabezado) => {
           // Buscar los cargos correspondientes a este contrato
           const cargosContrato = cargosData.find(
-            (cargo) => cargo.contratoId === encabezado.contratoId
+            (cargo) => cargo.contratoId === encabezado.contratoId,
           );
 
           // Calcular el total facturado sumando todos los subtotales de los cargos
           const totalFacturado =
             cargosContrato?.cargos.reduce(
               (suma, cargo) => suma + cargo.subtotal,
-              0
+              0,
             ) || 0;
 
           return {
@@ -218,25 +218,25 @@ export default function RevisarCalculoFacturaComponent({
             cargos: cargosContrato?.cargos || [],
             totalFacturado,
           };
-        }
+        },
       );
 
       setData(datosCombinados);
       toast.success(
-        `Se encontraron ${datosCombinados.length} registros con sus respectivos cargos`
+        `Se encontraron ${datosCombinados.length} registros con sus respectivos cargos`,
       );
     } catch (error: any) {
-      console.error("Error al revisar cálculo de factura:", error);
-      setError(`Error: ${error.message || "Error desconocido"}`);
+      console.error('Error al revisar cálculo de factura:', error);
+      setError(`Error: ${error.message || 'Error desconocido'}`);
 
       if (error.response) {
         toast.error(
           `Error ${error.response.status}: ${
-            error.response.data?.mensaje || "Error en la consulta"
-          }`
+            error.response.data?.mensaje || 'Error en la consulta'
+          }`,
         );
       } else if (error.request) {
-        toast.error("No se recibió respuesta del servidor");
+        toast.error('No se recibió respuesta del servidor');
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -247,12 +247,12 @@ export default function RevisarCalculoFacturaComponent({
 
   const handleLanzarCalculoFacturas = async () => {
     if (!periodoFormateado) {
-      toast.error("No hay un periodo abierto disponible");
+      toast.error('No hay un periodo abierto disponible');
       return;
     }
 
     if (!cicloId) {
-      toast.error("Debe seleccionar un ciclo de facturación");
+      toast.error('Debe seleccionar un ciclo de facturación');
       return;
     }
 
@@ -267,31 +267,31 @@ export default function RevisarCalculoFacturaComponent({
         periodoFacturable: periodoFormateado,
       };
 
-      const res = await api.post("lanzar-calculo-facturacion", requestBody);
+      const res = await api.post('lanzar-calculo-facturacion', requestBody);
 
       // Solo mostrar mensaje de confirmación sin recargar tabla
       toast.success(
         (res.data as { mensaje?: string })?.mensaje ||
-          "Proceso de cálculo iniciado correctamente",
+          'Proceso de cálculo iniciado correctamente',
         {
           description:
-            "El cálculo de facturación se está procesando en segundo plano",
+            'El cálculo de facturación se está procesando en segundo plano',
           duration: 4000,
-        }
+        },
       );
 
       return res;
     } catch (error: any) {
-      console.error("Error al lanzar cálculo de facturación:", error);
+      console.error('Error al lanzar cálculo de facturación:', error);
 
       if (error.response) {
         toast.error(
           `Error ${error.response.status}: ${
-            error.response.data?.mensaje || "Error al lanzar el cálculo"
-          }`
+            error.response.data?.mensaje || 'Error al lanzar el cálculo'
+          }`,
         );
       } else if (error.request) {
-        toast.error("No se recibió respuesta del servidor");
+        toast.error('No se recibió respuesta del servidor');
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -302,12 +302,12 @@ export default function RevisarCalculoFacturaComponent({
 
   const handleAceptarCalculo = async () => {
     if (!periodoFormateado) {
-      toast.error("No hay un periodo abierto disponible");
+      toast.error('No hay un periodo abierto disponible');
       return;
     }
 
     if (selectedContratos.length === 0) {
-      toast.error("Debe seleccionar al menos un contrato para aceptar");
+      toast.error('Debe seleccionar al menos un contrato para aceptar');
       return;
     }
 
@@ -326,7 +326,7 @@ export default function RevisarCalculoFacturaComponent({
             periodoId: periodoFormateado,
           };
 
-          await api.post("generar-detalle-factura", requestBody);
+          await api.post('generar-detalle-factura', requestBody);
           successCount++;
         } catch (error) {
           console.error(`Error procesando lecturaId ${lecturaId}:`, error);
@@ -338,12 +338,12 @@ export default function RevisarCalculoFacturaComponent({
       if (successCount > 0) {
         toast.success(
           `Se aceptaron ${successCount} cálculos correctamente${
-            errorCount > 0 ? ` (${errorCount} con errores)` : ""
-          }`,
+            errorCount > 0 ? ` (${errorCount} con errores)` : ''
+          }. Recuerde revisar la aplicación de facturación para realizar los cobros`,
           {
-            description: "Los cálculos aceptados se están procesando",
+            description: 'Los cálculos aceptados se están procesando',
             duration: 4000,
-          }
+          },
         );
       }
 
@@ -354,9 +354,9 @@ export default function RevisarCalculoFacturaComponent({
       // Limpiar selecciones después de procesar
       setSelectedContratos([]);
     } catch (error: any) {
-      console.error("Error general al aceptar cálculo de facturación:", error);
-      setError(`Error: ${error.message || "Error desconocido"}`);
-      toast.error("Error al procesar los cálculos seleccionados");
+      console.error('Error general al aceptar cálculo de facturación:', error);
+      setError(`Error: ${error.message || 'Error desconocido'}`);
+      toast.error('Error al procesar los cálculos seleccionados');
     } finally {
       setIsAcceptingCalculo(false);
     }
@@ -365,18 +365,18 @@ export default function RevisarCalculoFacturaComponent({
   // Función para actualizar los datos
   const handleRefreshData = async () => {
     if (!cicloId) {
-      toast.error("Selecciona un ciclo antes de actualizar");
+      toast.error('Selecciona un ciclo antes de actualizar');
       return;
     }
 
-    toast.info("Actualizando datos...");
+    toast.info('Actualizando datos...');
     await handleRevisarCalculo();
   };
 
   // Función para limpiar filtros
   const handleClearFilters = () => {
-    setCicloId("");
-    setSearchTerm("");
+    setCicloId('');
+    setSearchTerm('');
     setError(null);
     setData([]);
     setFilteredData([]);
@@ -400,7 +400,7 @@ export default function RevisarCalculoFacturaComponent({
               variant="outline"
               className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
             >
-              Periodo: {periodoAbierto[0].mes.toString().padStart(2, "0")}/
+              Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
               {periodoAbierto[0].anio}
             </Badge>
           )}
@@ -439,7 +439,7 @@ export default function RevisarCalculoFacturaComponent({
           <CollapsibleContent>
             <CardContent className="p-4 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {" "}
+                {' '}
                 {/* Periodo */}
                 <div className="space-y-2">
                   <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
@@ -455,7 +455,7 @@ export default function RevisarCalculoFacturaComponent({
                       </div>
                       <div>
                         <span className="font-semibold text-sky-800 dark:text-sky-200">
-                          {periodoAbierto[0].mes.toString().padStart(2, "0")}/
+                          {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                           {periodoAbierto[0].anio}
                         </span>
                         <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
@@ -478,7 +478,7 @@ export default function RevisarCalculoFacturaComponent({
                       </div>
                     </div>
                   )}
-                </div>{" "}
+                </div>{' '}
                 {/* Ciclo de facturación */}
                 <div className="space-y-2">
                   <Label
@@ -503,12 +503,12 @@ export default function RevisarCalculoFacturaComponent({
                         ciclosFacturacionActivos.length > 0 ? (
                           ciclosFacturacionActivos.map((ciclo) => {
                             // Determinar el valor correcto para el API (1 o 2)
-                            let valorCiclo = "1";
+                            let valorCiclo = '1';
                             if (
-                              ciclo.diaFacturacion === "30" ||
-                              ciclo.descripcion.includes("30")
+                              ciclo.diaFacturacion === '30' ||
+                              ciclo.descripcion.includes('30')
                             ) {
-                              valorCiclo = "2";
+                              valorCiclo = '2';
                             }
 
                             return (
@@ -556,7 +556,7 @@ export default function RevisarCalculoFacturaComponent({
                     </Select>
                   )}
                 </div>
-              </div>{" "}
+              </div>{' '}
               {/* Botones de acción */}
               <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-border/40 mt-4">
                 <Button
@@ -625,7 +625,7 @@ export default function RevisarCalculoFacturaComponent({
             </CardContent>
           </CollapsibleContent>
         </Collapsible>
-      </Card>{" "}
+      </Card>{' '}
       {/* Resultados de la búsqueda */}
       <Card className="shadow-sm border border-border/60">
         <CardHeader className="py-4 px-6 border-b border-border/60 bg-muted/30">
@@ -709,14 +709,14 @@ export default function RevisarCalculoFacturaComponent({
                     {filteredData.length}
                   </div>
                   <div className="text-xs text-sky-600 dark:text-sky-400 font-medium">
-                    {searchTerm ? "Contratos Filtrados" : "Total Contratos"}
+                    {searchTerm ? 'Contratos Filtrados' : 'Total Contratos'}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
                     {filteredData.reduce(
                       (sum, item) => sum + (item.cargos?.length || 0),
-                      0
+                      0,
                     )}
                   </div>
                   <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
@@ -725,15 +725,15 @@ export default function RevisarCalculoFacturaComponent({
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
-                    {new Intl.NumberFormat("es-CL", {
-                      style: "currency",
-                      currency: "CLP",
+                    {new Intl.NumberFormat('es-CL', {
+                      style: 'currency',
+                      currency: 'CLP',
                       minimumFractionDigits: 0,
                     }).format(
                       filteredData.reduce(
                         (sum, item) => sum + (item.totalFacturado || 0),
-                        0
-                      )
+                        0,
+                      ),
                     )}
                   </div>
                   <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">
@@ -745,9 +745,9 @@ export default function RevisarCalculoFacturaComponent({
                     {filteredData
                       .reduce(
                         (sum, item) => sum + (item.consumoPeriodo || 0),
-                        0
+                        0,
                       )
-                      .toLocaleString("es-CL")}
+                      .toLocaleString('es-CL')}
                   </div>
                   <div className="text-xs text-purple-600 dark:text-purple-400 font-medium">
                     Total Consumo m³
@@ -807,10 +807,10 @@ export default function RevisarCalculoFacturaComponent({
                     <FileTextIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                    {filteredData.length} registros{" "}
+                    {filteredData.length} registros{' '}
                     {searchTerm
                       ? `encontrados de ${data.length} total`
-                      : "encontrados"}
+                      : 'encontrados'}
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
@@ -826,9 +826,9 @@ export default function RevisarCalculoFacturaComponent({
                 columns={columns}
                 data={filteredData}
                 onSelectionChange={(selectedContratos) => {
-                  console.log("Contratos seleccionados:", selectedContratos);
+                  console.log('Contratos seleccionados:', selectedContratos);
                   setSelectedContratos(
-                    selectedContratos.map((contrato) => contrato.lecturaId)
+                    selectedContratos.map((contrato) => contrato.lecturaId),
                   );
                 }}
               />

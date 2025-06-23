@@ -1,13 +1,18 @@
-'use client';
-
 import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  type ColumnFiltersState,
+  type PaginationState,
+  type SortingState,
+  type VisibilityState,
+  type RowSelectionState,
 } from '@tanstack/react-table';
 import { Input } from '~/components/ui/input';
 import {
@@ -21,6 +26,7 @@ import {
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { AdvancedPagination } from './advanced-pagination';
+import { DataTablePagination } from './data-table-pagination';
 
 interface DataTableAdvancedProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,6 +37,8 @@ interface DataTableAdvancedProps<TData, TValue> {
   showSearch?: boolean;
   showPageSizeSelector?: boolean;
   showPageNumbers?: boolean;
+  onRowSelectionChange?: (selectedRows: TData[]) => void;
+  rowIdKey?: keyof TData;
 }
 
 export function DataTable<TData, TValue>({
@@ -42,26 +50,59 @@ export function DataTable<TData, TValue>({
   showSearch = true,
   showPageSizeSelector = true,
   showPageNumbers = true,
+  onRowSelectionChange,
+  rowIdKey,
 }: DataTableAdvancedProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: defaultPageSize,
+  });
 
   const table = useReactTable({
     data,
     columns,
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
+    enableRowSelection: true,
+    getRowId: rowIdKey ? (row) => String(row[rowIdKey]) : undefined,
+    onRowSelectionChange: (updater) => {
+      const newSelection =
+        typeof updater === 'function' ? updater(rowSelection) : updater;
+      setRowSelection(newSelection);
+
+      if (onRowSelectionChange) {
+        const selectedRows = Object.keys(newSelection)
+          .filter((key) => newSelection[key])
+          .map((key) => {
+            if (rowIdKey) {
+              return data.find((row) => String(row[rowIdKey]) === key) as TData;
+            }
+            return data[parseInt(key)] as TData;
+          })
+          .filter(Boolean);
+        onRowSelectionChange(selectedRows);
+      }
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    globalFilterFn: 'includesString',
-    state: {
-      globalFilter,
-    },
-    onGlobalFilterChange: setGlobalFilter,
-    initialState: {
-      pagination: {
-        pageSize: defaultPageSize,
-      },
-    },
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return (
@@ -104,6 +145,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   className="hover:bg-muted/50 transition-colors"
+                  data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -130,12 +172,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* Advanced Pagination */}
-      <AdvancedPagination
-        table={table}
-        pageSizeOptions={pageSizeOptions}
-        showPageSizeSelector={showPageSizeSelector}
-        showPageNumbers={showPageNumbers}
-      />
+      <DataTablePagination table={table} />
     </div>
   );
 }

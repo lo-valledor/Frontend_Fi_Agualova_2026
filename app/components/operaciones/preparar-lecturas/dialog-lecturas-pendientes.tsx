@@ -7,17 +7,17 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
+} from '~/components/ui/dialog';
+import { Button } from '~/components/ui/button';
 import {
   ClockIcon,
   Loader2,
   Info,
   AlertCircleIcon,
   RefreshCwIcon,
-} from "lucide-react";
-import { Badge } from "~/components/ui/badge";
-import { type ValidarSectoresPendientes } from "~/types/operaciones";
+} from 'lucide-react';
+import { Badge } from '~/components/ui/badge';
+import { type ValidarSectoresPendientes } from '~/types/operaciones';
 import {
   Table,
   TableHeader,
@@ -26,9 +26,8 @@ import {
   TableHead,
   TableCell,
   TableFooter,
-} from "~/components/ui/table";
-import { useEffect } from "react";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+} from '~/components/ui/table';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
 
 interface DialogLecturasPendientesProps {
   data: ValidarSectoresPendientes | undefined;
@@ -41,7 +40,6 @@ export default function DialogLecturasPendientes({
   isLoading,
   onRefresh,
 }: DialogLecturasPendientesProps) {
-
   // Función para renderizar el badge del estado
   const renderEstadoBadge = (estado: number) => {
     switch (estado) {

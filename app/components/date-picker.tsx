@@ -1,6 +1,4 @@
-"use client";
-
-import * as React from "react";
+import * as React from 'react';
 import {
   format,
   parseISO,
@@ -13,14 +11,14 @@ import {
   isToday,
   addMonths,
   subMonths,
-} from "date-fns";
-import { es } from "date-fns/locale";
+} from 'date-fns';
+import { es } from 'date-fns/locale';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface DatePickerProps {
   date?: Date | string;
@@ -32,8 +30,8 @@ interface DatePickerProps {
 export function DatePicker({
   date,
   setDate,
-  placeholder = "Seleccionar fecha",
-  className = "",
+  placeholder = 'Seleccionar fecha',
+  className = '',
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
@@ -48,7 +46,7 @@ export function DatePicker({
     try {
       let parsedDate = parseISO(date);
       if (!isValid(parsedDate)) {
-        const [day, month, year] = date.split("-");
+        const [day, month, year] = date.split('-');
         if (day && month && year) {
           const isoDate = `${year}-${month}-${day}`;
           parsedDate = parseISO(isoDate);
@@ -56,7 +54,7 @@ export function DatePicker({
       }
       return isValid(parsedDate) ? parsedDate : undefined;
     } catch (error) {
-      console.error("Error al parsear la fecha:", error);
+      console.error('Error al parsear la fecha:', error);
       return undefined;
     }
   }, [date]);
@@ -75,9 +73,9 @@ export function DatePicker({
     };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener('mousedown', handleClickOutside);
       return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen]);
 
@@ -87,7 +85,7 @@ export function DatePicker({
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
   // Obtener días de la semana para el header
-  const weekDays = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const weekDays = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
   // Calcular offset para el primer día del mes
   const startDayOfWeek = monthStart.getDay();
@@ -125,12 +123,12 @@ export function DatePicker({
           <span
             className={
               dateValue
-                ? "text-gray-900 dark:text-gray-100"
-                : "text-gray-500 dark:text-gray-400"
+                ? 'text-gray-900 dark:text-gray-100'
+                : 'text-gray-500 dark:text-gray-400'
             }
           >
             {dateValue && isValid(dateValue)
-              ? format(dateValue, "dd-MM-yyyy")
+              ? format(dateValue, 'dd-MM-yyyy')
               : placeholder}
           </span>
         </div>
@@ -152,7 +150,7 @@ export function DatePicker({
           className="absolute z-50 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 min-w-[280px]"
           style={{
             left: 0,
-            top: "100%",
+            top: '100%',
           }}
         >
           {/* Header con navegación */}
@@ -166,7 +164,7 @@ export function DatePicker({
             </button>
 
             <h2 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              {format(currentMonth, "MMMM yyyy", { locale: es })}
+              {format(currentMonth, 'MMMM yyyy', { locale: es })}
             </h2>
 
             <button
@@ -212,20 +210,20 @@ export function DatePicker({
                     p-2 text-sm rounded-md transition-colors duration-150 relative
                     ${
                       isSelected
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
                         : isCurrentMonth
-                        ? "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        : "text-gray-400 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+                          ? 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          : 'text-gray-400 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }
                     ${
                       isTodayDate && !isSelected
-                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold"
-                        : ""
+                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold'
+                        : ''
                     }
                     focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
                   `}
                 >
-                  {format(day, "d")}
+                  {format(day, 'd')}
                   {isTodayDate && !isSelected && (
                     <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 dark:bg-blue-400 rounded-full" />
                   )}

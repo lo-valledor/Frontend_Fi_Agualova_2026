@@ -6,8 +6,8 @@ import {
   getExpandedRowModel,
   useReactTable,
   type RowSelectionState,
-} from "@tanstack/react-table";
-import { useState } from "react";
+} from '@tanstack/react-table';
+import { useState } from 'react';
 
 import {
   Table,
@@ -16,11 +16,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
+} from '~/components/ui/table';
 import {
   type CalculoPrefacturaCompleto,
   type CalculoPrefacturaCargo,
-} from "~/types/operaciones";
+} from '~/types/operaciones';
 
 interface HierarchicalDataTableProps {
   columns: ColumnDef<CalculoPrefacturaCompleto>[];
@@ -33,7 +33,7 @@ export function HierarchicalDataTable({
   data,
   onSelectionChange,
 }: HierarchicalDataTableProps) {
-  const [expanded, setExpanded] = useState<ExpandedState>({});
+  const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const table = useReactTable({
@@ -46,7 +46,7 @@ export function HierarchicalDataTable({
     onExpandedChange: setExpanded,
     onRowSelectionChange: (updater) => {
       const newSelection =
-        typeof updater === "function" ? updater(rowSelection) : updater;
+        typeof updater === 'function' ? updater(rowSelection) : updater;
       setRowSelection(newSelection);
 
       // Notificar los contratos seleccionados al componente padre
@@ -65,7 +65,7 @@ export function HierarchicalDataTable({
   const renderCargoRow = (
     cargo: CalculoPrefacturaCargo,
     contratoIndex: number,
-    cargoIndex: number
+    cargoIndex: number,
   ) => (
     <TableRow
       key={`${contratoIndex}-cargo-${cargoIndex}`}
@@ -116,7 +116,7 @@ export function HierarchicalDataTable({
       {/* Cantidad - alineada con la columna de consumo */}
       <TableCell className="text-sm text-right font-medium">
         <span className="text-slate-700 dark:text-slate-300">
-          {cargo.cantidad?.toLocaleString("es-CL")}
+          {cargo.cantidad?.toLocaleString('es-CL')}
         </span>
       </TableCell>
 
@@ -129,17 +129,17 @@ export function HierarchicalDataTable({
 
       {/* Precio Unitario - alineada con Total Facturado */}
       <TableCell className="text-sm text-right font-medium text-emerald-700 dark:text-emerald-300">
-        {new Intl.NumberFormat("es-CL", {
-          style: "currency",
-          currency: "CLP",
+        {new Intl.NumberFormat('es-CL', {
+          style: 'currency',
+          currency: 'CLP',
         }).format(cargo.precioUnitario || 0)}
       </TableCell>
 
       {/* Subtotal - alineada con Total a Pagar */}
       <TableCell className="text-sm text-right font-semibold text-sky-700 dark:text-sky-300">
-        {new Intl.NumberFormat("es-CL", {
-          style: "currency",
-          currency: "CLP",
+        {new Intl.NumberFormat('es-CL', {
+          style: 'currency',
+          currency: 'CLP',
         }).format(cargo.subtotal || 0)}
       </TableCell>
     </TableRow>
@@ -163,7 +163,7 @@ export function HierarchicalDataTable({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 );
@@ -177,22 +177,22 @@ export function HierarchicalDataTable({
               <>
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                   className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-border/40"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3">
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
-                </TableRow>{" "}
+                </TableRow>{' '}
                 {row.getIsExpanded() && row.original.cargos && (
                   <>
                     {/* Encabezado de cargos */}
-                    <TableRow className="bg-sky-100/50 dark:bg-sky-900/20 border-l-4 border-l-sky-500 dark:border-l-sky-400">
+                    <TableRow className="bg-sky-100/50 dark:bg-sky-900/20 border-l-4 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20">
                       <TableCell></TableCell>
                       {/* Sector - vacío */}
                       <TableCell></TableCell>
@@ -235,7 +235,7 @@ export function HierarchicalDataTable({
                     </TableRow>
                     {/* Filas de cargos */}
                     {row.original.cargos.map((cargo, cargoIndex) =>
-                      renderCargoRow(cargo, index, cargoIndex)
+                      renderCargoRow(cargo, index, cargoIndex),
                     )}
                     {/* Separador después de los cargos */}
                     <TableRow className="h-2">

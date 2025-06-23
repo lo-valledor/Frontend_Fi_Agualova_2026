@@ -1,4 +1,3 @@
-'use client';
 import React, { useState, useEffect } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
 import type { GetCargoTipoContrato } from '~/types/administracion';

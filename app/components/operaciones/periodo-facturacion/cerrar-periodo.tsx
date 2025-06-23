@@ -1,31 +1,34 @@
-import { XCircle, Loader2, AlertCircle } from "lucide-react";
-import React, { useState } from "react";
-import { toast } from "sonner";
+import { XCircle, Loader2, AlertCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
 import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogFooter,
   AlertDialogTrigger,
-} from "~/components/ui/alert-dialog";
+} from '~/components/ui/alert-dialog';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogDescription,
-} from "~/components/ui/alert-dialog";
-import { Button } from "~/components/ui/button";
-import api from "~/lib/api";
-import { useNavigate } from "react-router";
+} from '~/components/ui/alert-dialog';
+import { Button } from '~/components/ui/button';
+import api from '~/lib/api';
+import { useNavigate } from 'react-router';
+import { cn } from '~/lib/utils';
 
 interface CerrarPeriodoProps {
   periodoId: string;
   onSuccess?: () => void;
+  className?: string;
 }
 
 export default function CerrarPeriodo({
   periodoId,
   onSuccess,
+  className,
 }: CerrarPeriodoProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,17 +38,17 @@ export default function CerrarPeriodo({
     setIsLoading(true);
     try {
       const response = await api.post(
-        "/cerrar-periodo",
+        '/cerrar-periodo',
         JSON.stringify(periodoId),
         {
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
-        }
+        },
       );
 
       if (response.status === 200) {
-        toast.success("Periodo cerrado correctamente");
+        toast.success('Periodo cerrado correctamente');
         setIsOpen(false);
 
         // Llamar a onSuccess si existe
@@ -56,10 +59,10 @@ export default function CerrarPeriodo({
           navigate(0);
         }
       } else {
-        toast.error("Error al cerrar el periodo");
+        toast.error('Error al cerrar el periodo');
       }
     } catch (error) {
-      toast.error("Error al cerrar el periodo");
+      toast.error('Error al cerrar el periodo');
     } finally {
       setIsLoading(false);
     }
@@ -71,10 +74,13 @@ export default function CerrarPeriodo({
         <Button
           variant="outline"
           size="sm"
-          className="bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30 gap-1.5 w-full"
+          className={cn(
+            'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30 gap-1.5 w-full',
+            className,
+          )}
         >
           <XCircle className="h-4 w-4" />
-          Cerrar
+          Cerrar Periodo
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

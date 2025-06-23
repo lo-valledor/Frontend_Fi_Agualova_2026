@@ -1,4 +1,3 @@
-'use client';
 import type { ColumnDef } from '@tanstack/react-table';
 import type { GetMedidores } from '~/types/administracion';
 import { Button } from '~/components/ui/button';

@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Badge } from "~/components/ui/badge";
+import React, { useEffect, useMemo, useState } from 'react';
+import { Badge } from '~/components/ui/badge';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
-import { useOperaciones } from "~/hooks/use-operaciones";
+} from '~/components/ui/card';
+import { useOperaciones } from '~/hooks/use-operaciones';
 import {
   type EstadoCierreLecturas,
   type PeriodoAbierto,
-} from "~/types/operaciones";
+} from '~/types/operaciones';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+} from '~/components/ui/collapsible';
 import {
   AlertCircleIcon,
   CalendarIcon,
@@ -27,21 +27,23 @@ import {
   CheckCircleIcon,
   ClockIcon,
   FileTextIcon,
-} from "lucide-react";
-import { Skeleton } from "~/components/ui/skeleton";
-import { Label } from "~/components/ui/label";
+  CircleX,
+} from 'lucide-react';
+import { Skeleton } from '~/components/ui/skeleton';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { Button } from "~/components/ui/button";
-import { toast } from "sonner";
-import api from "~/lib/api";
-import { DataTable } from "../../data-table/data-table";
-import { columns } from "./columns";
+} from '~/components/ui/select';
+import { Button } from '~/components/ui/button';
+import { toast } from 'sonner';
+import api from '~/lib/api';
+import { DataTable } from '../../data-table/data-table';
+import { columns } from './columns';
+import AlertCerrarLecturas from './alert-cerrar-lecturas';
 
 export default function CerrarLecturasComponent({
   periodoAbierto,
@@ -51,10 +53,12 @@ export default function CerrarLecturasComponent({
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cicloSeleccionado, setCicloSeleccionado] = useState<string>("");
+  const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
   const [estadoCierreLecturas, setEstadoCierreLecturas] = useState<
     EstadoCierreLecturas[]
   >([]);
+  const [selectedRows, setSelectedRows] = useState<EstadoCierreLecturas[]>([]);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const { fetchPeriodoAbierto, fetchCiclosFacturacion, loadingState } =
     useOperaciones();
 
@@ -64,9 +68,9 @@ export default function CerrarLecturasComponent({
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
       const { mes, anio } = periodoAbierto[0];
-      return `${mes.toString().padStart(2, "0")}${anio.toString()}`;
+      return `${mes.toString().padStart(2, '0')}${anio.toString()}`;
     }
-    return "";
+    return '';
   }, [periodoAbierto]);
 
   useEffect(() => {
@@ -76,24 +80,25 @@ export default function CerrarLecturasComponent({
 
   const handleSearch = async () => {
     if (!periodoFormateado) {
-      toast.error("No hay un periodo abierto disponible");
+      toast.error('No hay un periodo abierto disponible');
       return;
     }
 
     if (!cicloSeleccionado) {
-      toast.error("Debe seleccionar un ciclo de facturación");
+      toast.error('Debe seleccionar un ciclo de facturación');
       return;
     }
 
     try {
       setIsLoading(true);
       setError(null);
+      setSelectedRows([]); // Limpiar selección en nueva búsqueda
 
       const params = new URLSearchParams();
-      params.append("cicloFacturable", cicloSeleccionado);
-      params.append("periodo", periodoFormateado);
+      params.append('cicloFacturable', cicloSeleccionado);
+      params.append('periodo', periodoFormateado);
 
-      const response = await api.get("/estado-cierre-lecturas", {
+      const response = await api.get('/estado-cierre-lecturas', {
         params,
       });
 
@@ -102,27 +107,27 @@ export default function CerrarLecturasComponent({
         setEstadoCierreLecturas(data);
         if (data.length === 0) {
           toast.info(
-            "No se encontraron resultados para los criterios seleccionados"
+            'No se encontraron resultados para los criterios seleccionados',
           );
         } else {
           toast.success(`Se encontraron ${data.length} registros`);
         }
       } else {
-        setError("Error al buscar lecturas");
-        toast.error("Error al buscar lecturas");
+        setError('Error al buscar lecturas');
+        toast.error('Error al buscar lecturas');
       }
     } catch (error: any) {
-      console.error("Error al buscar lecturas:", error);
-      setError(`Error: ${error.message || "Error desconocido"}`);
+      console.error('Error al buscar lecturas:', error);
+      setError(`Error: ${error.message || 'Error desconocido'}`);
 
       if (error.response) {
         toast.error(
           `Error ${error.response.status}: ${
-            error.response.data?.mensaje || "Error en la consulta"
-          }`
+            error.response.data?.mensaje || 'Error en la consulta'
+          }`,
         );
       } else if (error.request) {
-        toast.error("No se recibió respuesta del servidor");
+        toast.error('No se recibió respuesta del servidor');
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -132,10 +137,11 @@ export default function CerrarLecturasComponent({
   };
 
   const handleClearFilters = () => {
-    setCicloSeleccionado("");
+    setCicloSeleccionado('');
     setEstadoCierreLecturas([]);
+    setSelectedRows([]);
     setError(null);
-    toast.success("Filtros limpiados");
+    toast.success('Filtros limpiados');
   };
 
   // Función para manejar la actualización después de cerrar lecturas
@@ -143,6 +149,14 @@ export default function CerrarLecturasComponent({
     // Volvemos a buscar para actualizar la lista
     if (cicloSeleccionado && periodoFormateado) {
       handleSearch();
+    }
+  };
+
+  const handleOpenAlert = () => {
+    if (selectedRows.length > 0) {
+      setIsAlertOpen(true);
+    } else {
+      toast.info('Debe seleccionar al menos un nicho para cerrar.');
     }
   };
 
@@ -164,7 +178,7 @@ export default function CerrarLecturasComponent({
               variant="outline"
               className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
             >
-              Periodo: {periodoAbierto[0].mes.toString().padStart(2, "0")}/
+              Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
               {periodoAbierto[0].anio}
             </Badge>
           )}
@@ -219,7 +233,7 @@ export default function CerrarLecturasComponent({
                       </div>
                       <div>
                         <span className="font-semibold text-sky-800 dark:text-sky-200">
-                          {periodoAbierto[0].mes.toString().padStart(2, "0")}/
+                          {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                           {periodoAbierto[0].anio}
                         </span>
                         <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
@@ -310,7 +324,7 @@ export default function CerrarLecturasComponent({
                   className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
                 >
                   <SearchIcon className="h-4 w-4" />
-                  {isLoading ? "Buscando..." : "Buscar Lecturas"}
+                  {isLoading ? 'Buscando...' : 'Buscar Lecturas'}
                 </Button>
               </div>
             </CardContent>
@@ -332,7 +346,7 @@ export default function CerrarLecturasComponent({
               <CardDescription className="text-sm">
                 {estadoCierreLecturas.length > 0
                   ? `${estadoCierreLecturas.length} lecturas disponibles para cierre`
-                  : "No hay lecturas disponibles para cierre"}
+                  : 'No hay lecturas disponibles para cierre'}
               </CardDescription>
             </div>
           </div>
@@ -402,26 +416,44 @@ export default function CerrarLecturasComponent({
                     <CheckCircleIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                    {estadoCierreLecturas.length} lecturas encontradas
+                    {estadoCierreLecturas.length} registros encontrados
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <ClockIcon className="h-4 w-4" />
-                  <span>Total de registros: {estadoCierreLecturas.length}</span>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleOpenAlert}
+                    disabled={selectedRows.length === 0}
+                    className="gap-2"
+                  >
+                    <CircleX className="h-4 w-4" />
+                    Cerrar Lecturas ({selectedRows.length})
+                  </Button>
                 </div>
               </div>
               <DataTable
-                columns={columns({
-                  onCerrarLecturaSuccess: handleLecturaCerrada,
-                  cicloFact: cicloSeleccionado,
-                  periodo: periodoFormateado,
-                })}
+                columns={columns}
                 data={estadoCierreLecturas}
+                onRowSelectionChange={(selected) => {
+                  setSelectedRows(selected);
+                }}
+                rowIdKey="nichoId"
               />
             </div>
           )}
         </CardContent>
       </Card>
+      {isAlertOpen && (
+        <AlertCerrarLecturas
+          isOpen={isAlertOpen}
+          onOpenChange={setIsAlertOpen}
+          selectedRows={selectedRows}
+          cicloFact={cicloSeleccionado}
+          periodo={periodoFormateado}
+          onSuccess={handleLecturaCerrada}
+        />
+      )}
     </div>
   );
 }
