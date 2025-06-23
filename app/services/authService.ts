@@ -19,7 +19,7 @@ export const authService = {
         '/login',
         credentials,
       )
-      localStorage.setItem('token', response.data.token)
+      sessionStorage.setItem('token', response.data.token)
       toast.success('Inicio de sesión exitoso')
       return response.data.token
     } catch (error) {
@@ -39,7 +39,7 @@ export const authService = {
   logout: async (): Promise<void> => {
     try {
       await axiosInstance.post('/logout')
-      localStorage.removeItem('token')
+      sessionStorage.removeItem('token')
       toast.success('Cierre de sesión exitoso')
       // No podemos usar navigate aquí, la redirección debe hacerse en el componente
     } catch (error) {

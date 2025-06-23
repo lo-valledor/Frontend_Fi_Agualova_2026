@@ -1,8 +1,8 @@
-import { Navigate, Outlet, useLocation } from "react-router";
-import { useAuth } from "~/context/AuthContext";
-import MoonLoader from "react-spinners/MoonLoader";
+import { Navigate, Outlet, useLocation } from 'react-router';
+import { useAuth } from '~/context/AuthContext';
+import MoonLoader from 'react-spinners/MoonLoader';
 
-export const ProtectedRoute = () => {
+const ProtectedRoute = () => {
   const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
@@ -21,3 +21,5 @@ export const ProtectedRoute = () => {
 
   return <Outlet />;
 };
+
+export default ProtectedRoute;

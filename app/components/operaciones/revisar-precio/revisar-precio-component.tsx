@@ -1,16 +1,16 @@
-import React, { useState, useMemo } from "react";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import api from "~/lib/api";
+import React, { useState, useMemo } from 'react';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
+import api from '~/lib/api';
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardTitle,
-} from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
+} from '~/components/ui/card';
+import { Badge } from '~/components/ui/badge';
 import {
   LockIcon,
   KeyIcon,
@@ -22,31 +22,31 @@ import {
   ClockIcon,
   ChevronDown,
   ChevronUp,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { toast } from "sonner";
+} from '~/components/ui/select';
+import { toast } from 'sonner';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+} from '~/components/ui/collapsible';
 import type {
   RevisarPrecioUno,
   RevisarPrecioDos,
   ValidacionUsuarioResponse,
   PeriodoAbierto,
-} from "~/types/operaciones";
-import { Skeleton } from "~/components/ui/skeleton";
-import { columnsEnel } from "./columns-enel";
-import { DataTable } from "./data-table";
-import { columnsEnerlova } from "./columns-enerlova";
-import DialogModificarPrecio from "./dialog-modificar-precio";
+} from '~/types/operaciones';
+import { Skeleton } from '~/components/ui/skeleton';
+import { columnsEnel } from './columns-enel';
+import { DataTable } from './data-table';
+import { columnsEnerlova } from './columns-enerlova';
+import DialogModificarPrecio from './dialog-modificar-precio';
 
 interface RevisarPrecioComponentProps {
   dataPeriodoAbierto: PeriodoAbierto[];
@@ -70,11 +70,11 @@ export default function RevisarPrecioComponent({
   error,
 }: RevisarPrecioComponentProps) {
   // Estados UI
-  const [contrasena, setContrasena] = useState<string>("");
+  const [contrasena, setContrasena] = useState<string>('');
   const [isLoadingCiclo, setIsLoadingCiclo] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [userData, setUserData] = useState<ValidacionUsuarioResponse | null>(
-    null
+    null,
   );
 
   // Estados para los paneles colapsables
@@ -85,7 +85,7 @@ export default function RevisarPrecioComponent({
   // Estados para las filas seleccionadas
   const [selectedEnelRows, setSelectedEnelRows] = useState<string[]>([]);
   const [selectedEnerlovaRows, setSelectedEnerlovaRows] = useState<string[]>(
-    []
+    [],
   );
   const [isConfirming, setIsConfirming] = useState(false);
 
@@ -107,40 +107,40 @@ export default function RevisarPrecioComponent({
 
       const config = {
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${sessionStorage.getItem('token')}`,
         },
       };
 
       const response = await api.post<ValidacionUsuarioResponse>(
-        "/validar-usuario-modificacion",
+        '/validar-usuario-modificacion',
         data,
-        config
+        config,
       );
 
       if (response.data) {
-        toast.success("Usuario validado correctamente");
+        toast.success('Usuario validado correctamente');
         setIsAuthorized(true);
         setUserData(response.data as ValidacionUsuarioResponse);
       } else {
-        toast.error("Respuesta inválida del servidor");
+        toast.error('Respuesta inválida del servidor');
       }
     } catch (error: any) {
-      console.error("Error al validar usuario:", error);
+      console.error('Error al validar usuario:', error);
 
       if (error.response?.status === 401) {
-        toast.error("Usuario de la sesión no disponible.");
+        toast.error('Usuario de la sesión no disponible.');
         return;
       }
 
       if (error.response) {
         toast.error(
           `Error ${error.response.status}: ${
-            error.response.data?.mensaje || "Error en la validación"
-          }`
+            error.response.data?.mensaje || 'Error en la validación'
+          }`,
         );
       } else if (error.request) {
-        toast.error("No se recibió respuesta del servidor");
+        toast.error('No se recibió respuesta del servidor');
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -149,12 +149,12 @@ export default function RevisarPrecioComponent({
 
   const confirmarCambios = async () => {
     if (!userData) {
-      toast.error("No se pudo obtener información del usuario");
+      toast.error('No se pudo obtener información del usuario');
       return;
     }
 
     if (selectedEnelRows.length === 0 && selectedEnerlovaRows.length === 0) {
-      toast.info("Debes seleccionar al menos un registro para confirmar");
+      toast.info('Debes seleccionar al menos un registro para confirmar');
       return;
     }
 
@@ -165,16 +165,16 @@ export default function RevisarPrecioComponent({
       const confirmacionesEnel = dataConsultarPreciosUno.filter(
         (item) =>
           selectedEnelRows.includes(item.codigo) &&
-          item.indice !== "" &&
-          item.confirmacion !== "Confirmado"
+          item.indice !== '' &&
+          item.confirmacion !== 'Confirmado',
       );
 
       // Confirmaciones de la tabla Enerlova
       const confirmacionesEnerlova = dataConsultarPreciosDos.filter(
         (item) =>
           selectedEnerlovaRows.includes(item.codigo) &&
-          item.indice !== "" &&
-          item.confirmacion !== "Confirmado"
+          item.indice !== '' &&
+          item.confirmacion !== 'Confirmado',
       );
 
       // Procesar todas las confirmaciones
@@ -185,7 +185,7 @@ export default function RevisarPrecioComponent({
       for (const item of confirmacionesEnel) {
         try {
           const response = await api.post(
-            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
+            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`,
           );
 
           if (response.status === 200) {
@@ -193,7 +193,7 @@ export default function RevisarPrecioComponent({
           } else {
             confirmacionesFallidas++;
             console.warn(
-              `Error al confirmar: ${item.codigo}, status: ${response.status}`
+              `Error al confirmar: ${item.codigo}, status: ${response.status}`,
             );
           }
         } catch (error) {
@@ -206,7 +206,7 @@ export default function RevisarPrecioComponent({
       for (const item of confirmacionesEnerlova) {
         try {
           const response = await api.post(
-            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
+            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`,
           );
 
           if (response.status === 200) {
@@ -214,7 +214,7 @@ export default function RevisarPrecioComponent({
           } else {
             confirmacionesFallidas++;
             console.warn(
-              `Error al confirmar: ${item.codigo}, status: ${response.status}`
+              `Error al confirmar: ${item.codigo}, status: ${response.status}`,
             );
           }
         } catch (error) {
@@ -230,23 +230,23 @@ export default function RevisarPrecioComponent({
         setSelectedEnerlovaRows([]);
 
         toast.success(
-          `Se han confirmado ${confirmacionesExitosas} registros correctamente`
+          `Se han confirmado ${confirmacionesExitosas} registros correctamente`,
         );
       } else if (confirmacionesExitosas === 0 && confirmacionesFallidas === 0) {
-        toast.info("No había registros pendientes para confirmar");
+        toast.info('No había registros pendientes para confirmar');
       }
 
       if (confirmacionesFallidas > 0) {
         console.warn(
-          `Total de confirmaciones fallidas: ${confirmacionesFallidas}`
+          `Total de confirmaciones fallidas: ${confirmacionesFallidas}`,
         );
         toast.error(
-          `No se pudieron confirmar ${confirmacionesFallidas} registros`
+          `No se pudieron confirmar ${confirmacionesFallidas} registros`,
         );
       }
     } catch (error) {
-      console.error("Error al confirmar cambios:", error);
-      toast.error("Error al confirmar cambios");
+      console.error('Error al confirmar cambios:', error);
+      toast.error('Error al confirmar cambios');
     } finally {
       setIsConfirming(false);
     }
@@ -257,8 +257,8 @@ export default function RevisarPrecioComponent({
       setIsLoadingCiclo(true);
       await onCicloChange(nuevoCiclo);
     } catch (error) {
-      console.error("Error al cambiar ciclo:", error);
-      toast.error("Error al cambiar el ciclo");
+      console.error('Error al cambiar ciclo:', error);
+      toast.error('Error al cambiar el ciclo');
     } finally {
       setIsLoadingCiclo(false);
     }
@@ -273,17 +273,17 @@ export default function RevisarPrecioComponent({
   // Configurar columnas con las propiedades necesarias
   const configuredColumnsEnel = useMemo(() => {
     return columnsEnel.map((col) => {
-      if (col.id === "acciones") {
+      if (col.id === 'acciones') {
         return {
           ...col,
           cell: ({ row }: { row: any }) => {
             return (
               <div className="text-center">
-                {row.original.confirmacion === "Confirmado" ? (
+                {row.original.confirmacion === 'Confirmado' ? (
                   <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                     Confirmado
                   </Badge>
-                ) : row.original.indice === "" ? (
+                ) : row.original.indice === '' ? (
                   <Badge className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
                     Inhabilitado
                   </Badge>
@@ -309,13 +309,13 @@ export default function RevisarPrecioComponent({
 
   const configuredColumnsEnerlova = useMemo(() => {
     return columnsEnerlova.map((col) => {
-      if (col.id === "acciones") {
+      if (col.id === 'acciones') {
         return {
           ...col,
           cell: ({ row }: { row: any }) => {
             return (
               <div className="text-center">
-                {row.original.confirmacion === "Confirmado" ? (
+                {row.original.confirmacion === 'Confirmado' ? (
                   <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                     Confirmado
                   </Badge>
@@ -418,7 +418,7 @@ export default function RevisarPrecioComponent({
                     size="sm"
                   >
                     <CheckCircleIcon className="h-4 w-4" />
-                    {isLoading ? "Validando..." : "Permitir Modificación"}
+                    {isLoading ? 'Validando...' : 'Permitir Modificación'}
                   </Button>
                   <Button
                     variant="destructive"
@@ -433,7 +433,7 @@ export default function RevisarPrecioComponent({
                     className="gap-2"
                   >
                     <AlertCircleIcon className="h-4 w-4" />
-                    {isConfirming ? "Procesando..." : "Confirmar"}
+                    {isConfirming ? 'Procesando...' : 'Confirmar'}
                   </Button>
                 </div>
               </div>
@@ -504,7 +504,7 @@ export default function RevisarPrecioComponent({
                     <span className="font-medium">
                       {dataPeriodoAbierto && dataPeriodoAbierto.length > 0
                         ? dataPeriodoAbierto[0].descripcion
-                        : "No hay periodo activo"}
+                        : 'No hay periodo activo'}
                     </span>
                   )}
                 </div>
@@ -566,7 +566,7 @@ export default function RevisarPrecioComponent({
                   <CalendarIcon className="h-3.5 w-3.5" />
                   <span className="font-medium">
                     {dataPeriodoAbierto[0]?.descripcion ||
-                      "No hay periodo activo"}
+                      'No hay periodo activo'}
                   </span>
                 </div>
                 <Button

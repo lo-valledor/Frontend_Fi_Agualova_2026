@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 // Interceptor para añadir el token a las peticiones
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         // Obtener el token actual para enviarlo en la petición de refresh
-        const currentToken = localStorage.getItem("token");
+        const currentToken = sessionStorage.getItem("token");
 
         if (!currentToken) {
           throw new Error("No hay token disponible");
@@ -43,14 +43,14 @@ axiosInstance.interceptors.response.use(
 
         // Intentar refrescar el token
         const newToken = await authService.refreshToken();
-        localStorage.setItem("token", newToken);
+        sessionStorage.setItem("token", newToken);
 
         // Actualizar el token en la petición original y reintentarla
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // Si no se puede refrescar el token, redirigir a la página de sesión expirada
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         window.location.href = "/session-expired";
         return Promise.reject(refreshError);
       }
@@ -63,7 +63,7 @@ axiosInstance.interceptors.response.use(
       typeof error.response.data === "string" &&
       error.response.data.includes("cerrado sesión")
     ) {
-      localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       window.location.href = "/session-expired";
       return Promise.reject(
         new Error(
