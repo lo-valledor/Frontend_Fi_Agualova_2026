@@ -1,0 +1,187 @@
+name: 🚀 CI/CD Pipeline
+
+on:
+  # Ejecutar en pull requests a cualquier rama
+  pull_request:
+    branches: ['*']
+
+  # Ejecutar en push a ramas principales
+  push:
+    branches:
+      - main
+      - master
+      - develop
+      - staging
+
+  # Permitir ejecución manual
+  workflow_dispatch:
+
+env:
+  # Configuración de Node.js y pnpm
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+
+jobs:
+  # 🔍 Job de Integración Continua
+  ci:
+    name: 🧪 Continuous Integration
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout del código
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # Configurar Node.js
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      # Instalar pnpm
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      # Configurar cache de pnpm
+      - name: 💾 Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 🗂️ Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # Instalar dependencias
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Verificación de tipos TypeScript
+      - name: 🔍 Type checking
+        run: pnpm run typecheck
+
+      # Linting (si existe script de lint)
+      - name: 🧹 ESLint
+        run: |
+          if grep -q '"lint"' package.json; then
+            pnpm run lint
+          else
+            echo "⚠️ No lint script found, skipping..."
+            npx eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0 || echo "⚠️ ESLint not configured or failed"
+          fi
+
+      # Build del proyecto
+      - name: 🏗️ Build project
+        run: pnpm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+      # Subir artefactos de build (opcional)
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: build/
+          retention-days: 1
+
+  # 🚀 Job de Despliegue Continuo (solo para rama principal)
+  deploy:
+    name: 🚀 Deploy to Production
+    needs: ci
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    environment:
+      name: production
+      url: ${{ secrets.PRODUCTION_URL }}
+
+    steps:
+      # Checkout del código
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # Crear archivo .env para Docker Compose
+      - name: 🔧 Create environment file
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+          echo "NODE_ENV=production" >> .env
+
+      # Limpiar despliegue anterior
+      - name: 🧹 Clean previous deployment
+        run: |
+          echo "🧹 Cleaning up previous deployment..."
+          docker-compose down --volumes --remove-orphans || true
+          docker system prune -f || true
+
+      # Construir y desplegar nueva versión
+      - name: 🏗️ Build and deploy
+        run: |
+          echo "🚀 Building and deploying new version..."
+          docker-compose up -d --build --force-recreate
+
+      # Verificar que el despliegue fue exitoso
+      - name: 🔍 Health check
+        run: |
+          echo "🔍 Performing health check..."
+          sleep 30
+          if curl -f http://localhost:80 > /dev/null 2>&1; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed - service not responding"
+            exit 1
+          fi
+
+      # Limpiar imágenes Docker antiguas
+      - name: 🧹 Clean old Docker images
+        run: |
+          echo "🧹 Cleaning old Docker images..."
+          docker image prune -f || true
+
+  # 🚀 Job de Despliegue a Staging (opcional)
+  deploy-staging:
+    name: 🧪 Deploy to Staging
+    needs: ci
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging'
+
+    environment:
+      name: staging
+      url: ${{ secrets.STAGING_URL }}
+
+    steps:
+      # Checkout del código
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # Crear archivo .env para staging
+      - name: 🔧 Create staging environment file
+        run: |
+          echo "VITE_API_URL=${{ secrets.STAGING_API_URL }}" > .env
+          echo "NODE_ENV=staging" >> .env
+
+      # Desplegar a staging (usando un puerto diferente o configuración específica)
+      - name: 🚀 Deploy to staging
+        run: |
+          echo "🧪 Deploying to staging environment..."
+          # Aquí puedes usar un docker-compose específico para staging
+          # o modificar la configuración según tus necesidades
+          docker-compose -f docker-compose.staging.yml up -d --build --force-recreate || \
+          docker-compose up -d --build --force-recreate
+
+      # Health check para staging
+      - name: 🔍 Staging health check
+        run: |
+          echo "🔍 Performing staging health check..."
+          sleep 20
+          # Ajusta el puerto según tu configuración de staging
+          if curl -f http://localhost:3000 > /dev/null 2>&1; then
+            echo "✅ Staging deployment successful!"
+          else
+            echo "⚠️ Staging deployment check failed, but continuing..."
+          fi

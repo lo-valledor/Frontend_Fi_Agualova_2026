@@ -48,6 +48,7 @@ export type Empalme = {
 /* Marca */
 // buscarMarca, obtenerMarca{id}, crearMarcaM, modificarMarca
 export type Marca = {
+  id?: number;
   codigo: string;
   nombre: string;
 }
@@ -94,7 +95,7 @@ export type Tarifas = {
 export type TiposContrato = {
   id: number;
   nombre: string;
-  estado: string;
+  estado: boolean;
 }
 
 /* Zonas */

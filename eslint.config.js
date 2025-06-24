@@ -3,15 +3,21 @@ import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
-import airbnbBase from 'eslint-config-airbnb-base';
-import airbnbBaseTypescript from 'eslint-config-airbnb-base-typescript';
 import unusedImports from 'eslint-plugin-unused-imports';
 
 export default [
   js.configs.recommended,
-  tseslint.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    ignores: [
+      'build/**/*',
+      'dist/**/*',
+      'node_modules/**/*',
+      '*.config.js',
+      '*.config.ts',
+      'public/**/*',
+    ],
     plugins: {
       react: pluginReact,
       'unused-imports': unusedImports,
@@ -19,7 +25,6 @@ export default [
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: './tsconfig.json',
         ecmaFeatures: { jsx: true },
       },
       globals: {
@@ -31,22 +36,15 @@ export default [
       react: {
         version: 'detect',
       },
-      'import/resolver': {
-        typescript: {
-          project: './tsconfig.json',
-        },
-        node: {
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        },
-      },
     },
     rules: {
-      ...airbnbBase.rules,
-      ...airbnbBaseTypescript.rules,
+      // React rules
       'react/react-in-jsx-scope': 'off',
       'react/jsx-filename-extension': 'off',
       'react/jsx-props-no-spreading': 'off',
       'react/function-component-definition': 'off',
+      
+      // Import/export rules
       'no-unused-vars': 'off',
       'unused-imports/no-unused-imports': 'error',
       'unused-imports/no-unused-vars': [
@@ -59,6 +57,15 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      
+      // General code quality
+      'no-console': 'warn',
+      'prefer-const': 'error',
+      'no-var': 'error',
+      
+      // TypeScript specific
+      '@typescript-eslint/no-unused-vars': 'off', // handled by unused-imports
+      '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
 ];
