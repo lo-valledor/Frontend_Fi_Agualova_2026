@@ -57,6 +57,8 @@ interface RevisarPrecioComponentProps {
   onCicloChange: (ciclo: string) => Promise<void>;
   isLoading: boolean;
   error: string | null;
+  onRecargarPrecios: () => Promise<void>;
+  isLoadingPrecios: boolean;
 }
 
 export default function RevisarPrecioComponent({
@@ -68,6 +70,8 @@ export default function RevisarPrecioComponent({
   onCicloChange,
   isLoading,
   error,
+  onRecargarPrecios,
+  isLoadingPrecios,
 }: RevisarPrecioComponentProps) {
   // Estados UI
   const [contrasena, setContrasena] = useState<string>('');
@@ -229,6 +233,9 @@ export default function RevisarPrecioComponent({
         setSelectedEnelRows([]);
         setSelectedEnerlovaRows([]);
 
+        // Recargar precios para mostrar los cambios
+        await onRecargarPrecios();
+
         toast.success(
           `Se han confirmado ${confirmacionesExitosas} registros correctamente`,
         );
@@ -293,9 +300,7 @@ export default function RevisarPrecioComponent({
                     indice={Number(row.original.indice)}
                     descripcion={row.original.descripcion}
                     valorActual={row.original.valor}
-                    onSuccess={() => {
-                      // La actualización se maneja en el componente padre
-                    }}
+                    onSuccess={onRecargarPrecios}
                   />
                 )}
               </div>
@@ -305,7 +310,7 @@ export default function RevisarPrecioComponent({
       }
       return col;
     });
-  }, [isAuthorized]);
+  }, [isAuthorized, onRecargarPrecios]);
 
   const configuredColumnsEnerlova = useMemo(() => {
     return columnsEnerlova.map((col) => {
@@ -325,9 +330,7 @@ export default function RevisarPrecioComponent({
                     indice={Number(row.original.indice)}
                     descripcion={row.original.descripcion}
                     valorActual={row.original.valor}
-                    onSuccess={() => {
-                      // La actualización se maneja en el componente padre
-                    }}
+                    onSuccess={onRecargarPrecios}
                   />
                 )}
               </div>
@@ -337,7 +340,7 @@ export default function RevisarPrecioComponent({
       }
       return col;
     });
-  }, [isAuthorized]);
+  }, [isAuthorized, onRecargarPrecios]);
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
@@ -536,6 +539,7 @@ export default function RevisarPrecioComponent({
                 enableSelection={isAuthorized}
                 selectedRowIds={selectedEnelRows}
                 onRowSelectionChange={setSelectedEnelRows}
+                isLoading={isLoadingPrecios}
               />
             </CardContent>
           </CollapsibleContent>
@@ -640,6 +644,7 @@ export default function RevisarPrecioComponent({
                 enableSelection={isAuthorized}
                 selectedRowIds={selectedEnerlovaRows}
                 onRowSelectionChange={setSelectedEnerlovaRows}
+                isLoading={isLoadingPrecios}
               />
             </CardContent>
           </CollapsibleContent>

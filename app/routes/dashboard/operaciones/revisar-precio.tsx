@@ -1,7 +1,7 @@
 /* eslint-disable no-empty-pattern */
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import RevisarPrecioComponent from '~/components/operaciones/revisar-precio/revisar-precio-component';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import type { Route } from './+types/revisar-precio';
 import api from '~/lib/api';
 import type {
@@ -80,14 +80,19 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
   const {
     dataPeriodoAbierto,
-    dataConsultarPreciosUno,
-    dataConsultarPreciosDos,
+    dataConsultarPreciosUno: initialPreciosUno,
+    dataConsultarPreciosDos: initialPreciosDos,
     ciclosFacturacion,
     dia,
     error,
   } = loaderData;
 
-  const [isLoading] = useState(false);
+  // Estado local para los datos de precios (permitirá actualizaciones reactivas)
+  const [dataConsultarPreciosUno, setDataConsultarPreciosUno] =
+    useState<RevisarPrecioUno[]>(initialPreciosUno);
+  const [dataConsultarPreciosDos, setDataConsultarPreciosDos] =
+    useState<RevisarPrecioDos[]>(initialPreciosDos);
+  const [isLoadingPrecios, setIsLoadingPrecios] = useState(false);
   const [cicloSeleccionado, setCicloSeleccionado] = useState(dia);
 
   const pageBreadcrumbs = [
@@ -95,9 +100,45 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
     { label: 'Revisar Precio' },
   ];
 
+  // Función para recargar solo los datos de precios
+  const recargarPrecios = useCallback(
+    async (nuevoCiclo?: string) => {
+      if (!dataPeriodoAbierto || dataPeriodoAbierto.length === 0) {
+        return;
+      }
+
+      setIsLoadingPrecios(true);
+      try {
+        const mes = dataPeriodoAbierto[0].mes;
+        const anio = dataPeriodoAbierto[0].anio;
+        const ciclo = nuevoCiclo || cicloSeleccionado;
+
+        // Cargar datos de precios
+        const [resConsultarPreciosUno, resConsultarPreciosDos] =
+          await Promise.all([
+            api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
+            api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${ciclo}`),
+          ]);
+
+        setDataConsultarPreciosUno(
+          resConsultarPreciosUno.data as RevisarPrecioUno[],
+        );
+        setDataConsultarPreciosDos(
+          resConsultarPreciosDos.data as RevisarPrecioDos[],
+        );
+      } catch (error) {
+        console.error('Error al recargar precios:', error);
+      } finally {
+        setIsLoadingPrecios(false);
+      }
+    },
+    [dataPeriodoAbierto, cicloSeleccionado],
+  );
+
   const handleCicloChange = async (nuevoCiclo: string) => {
     setCicloSeleccionado(nuevoCiclo);
-    // La actualización de datos se manejará en el componente hijo
+    // Recargar precios con el nuevo ciclo
+    await recargarPrecios(nuevoCiclo);
   };
 
   return (
@@ -110,8 +151,10 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
         ciclosFacturacion={ciclosFacturacion}
         cicloSeleccionado={cicloSeleccionado}
         onCicloChange={handleCicloChange}
-        isLoading={isLoading}
+        isLoading={false}
         error={error}
+        onRecargarPrecios={recargarPrecios}
+        isLoadingPrecios={isLoadingPrecios}
       />
     </div>
   );

@@ -39,7 +39,6 @@ import {
   type ConsultarSectores,
 } from '~/types/operaciones';
 import { toast } from 'sonner';
-import api from '~/lib/api';
 import { useOperaciones } from '~/hooks/use-operaciones';
 import TablaAsignacionSectores from './tabla-asignacion-sectores';
 import DialogLecturasPendientes from './dialog-lecturas-pendientes';
@@ -49,17 +48,26 @@ export default function PrepararLecturasComponent({
   lecturasPendientes,
   sectores,
   opcionesPreparar,
+  asignacionSectores,
+  setAsignacionSectores,
+  isLoadingAsignacion,
+  onRecargarAsignacionSectores,
 }: {
   periodoAbierto: PeriodoAbierto[];
   lecturasPendientes: ValidarSectoresPendientes | null;
   sectores: ConsultarSectores[];
   opcionesPreparar: OpcionesPrepararLecturas[];
+  asignacionSectores: ConsultarAsignacionSectores[];
+  setAsignacionSectores: React.Dispatch<
+    React.SetStateAction<ConsultarAsignacionSectores[]>
+  >;
+  isLoadingAsignacion: boolean;
+  onRecargarAsignacionSectores: (
+    cicloFacturable: string,
+    periodo: string,
+  ) => Promise<void>;
 }) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [asignacionSectores, setAsignacionSectores] = useState<
-    ConsultarAsignacionSectores[]
-  >([]);
   const [error, setError] = useState<string | null>(null);
   const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
 
@@ -139,32 +147,21 @@ export default function PrepararLecturasComponent({
     } */
 
     try {
-      setIsLoading(true);
       setError(null);
 
       // Obtenemos el valor del ciclo para la API
       const cicloParaAPI = obtenerCicloParaAPI(cicloSeleccionado);
 
-      const params = new URLSearchParams();
-      params.append('cicloFacturable', cicloParaAPI);
-      params.append('periodo', periodoFormateado);
+      // Usar la función de recarga del componente padre
+      await onRecargarAsignacionSectores(cicloParaAPI, periodoFormateado);
 
-      const response = await api.get('/consultar-asignacion-sectores', {
-        params,
-      });
-
-      if (response.data && Array.isArray(response.data)) {
-        setAsignacionSectores(response.data as ConsultarAsignacionSectores[]);
-        if (response.data.length === 0) {
-          toast.info(
-            'No se encontraron resultados para los criterios seleccionados',
-          );
-        } else {
-          toast.success(`Se encontraron ${response.data.length} sectores`);
-        }
+      // Mostrar mensaje de éxito basado en los resultados
+      if (asignacionSectores.length === 0) {
+        toast.info(
+          'No se encontraron resultados para los criterios seleccionados',
+        );
       } else {
-        setAsignacionSectores([]);
-        toast.info('No se encontraron sectores para preparar lecturas');
+        toast.success(`Se encontraron ${asignacionSectores.length} sectores`);
       }
     } catch (error: any) {
       console.error('Error al buscar sectores:', error);
@@ -181,8 +178,6 @@ export default function PrepararLecturasComponent({
       } else {
         toast.error(`Error: ${error.message}`);
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -346,7 +341,7 @@ export default function PrepararLecturasComponent({
                 <Button
                   onClick={handleClearFilters}
                   variant="outline"
-                  disabled={isLoading}
+                  disabled={isLoadingAsignacion}
                   className="gap-2 hover:bg-muted/50"
                 >
                   <Eraser className="h-4 w-4" />
@@ -355,12 +350,14 @@ export default function PrepararLecturasComponent({
                 <Button
                   onClick={handleSearch}
                   disabled={
-                    isLoading || !cicloSeleccionado || !periodoFormateado
+                    isLoadingAsignacion ||
+                    !cicloSeleccionado ||
+                    !periodoFormateado
                   }
                   className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
                 >
                   <SearchIcon className="h-4 w-4" />
-                  {isLoading ? 'Buscando...' : 'Buscar Sectores'}
+                  {isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}
                 </Button>
               </div>
             </CardContent>
@@ -388,7 +385,7 @@ export default function PrepararLecturasComponent({
           </div>
         </CardHeader>
         <CardContent className="p-6 text-sm">
-          {isLoading ? (
+          {isLoadingAsignacion ? (
             <div className="flex justify-center items-center h-40">
               <div className="flex flex-col items-center gap-4">
                 <div className="relative">
@@ -458,11 +455,17 @@ export default function PrepararLecturasComponent({
               </div>
               <TablaAsignacionSectores
                 data={asignacionSectores}
-                isLoading={isLoading}
+                isLoading={isLoadingAsignacion}
                 isAuthorized={true}
                 sectores={sectores}
                 periodo={periodoFormateado}
                 cicloFacturable={obtenerCicloParaAPI(cicloSeleccionado)}
+                onRecargarDatos={() =>
+                  onRecargarAsignacionSectores(
+                    obtenerCicloParaAPI(cicloSeleccionado),
+                    periodoFormateado,
+                  )
+                }
               />
             </div>
           )}

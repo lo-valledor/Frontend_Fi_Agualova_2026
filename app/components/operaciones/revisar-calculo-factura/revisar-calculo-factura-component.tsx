@@ -99,7 +99,6 @@ export default function RevisarCalculoFacturaComponent({
         setTimerCountdown((prev) => {
           if (prev <= 1) {
             setTimerActive(false);
-            setIsCalculoPreparado(false);
             setPreparacionTimestamp(null);
             toast.warning(
               'Tiempo de espera expirado. Debe preparar el cálculo nuevamente.',

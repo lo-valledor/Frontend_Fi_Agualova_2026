@@ -1,4 +1,4 @@
-import { Checkbox } from "~/components/ui/checkbox";
+import { Checkbox } from '~/components/ui/checkbox';
 import {
   Table,
   TableRow,
@@ -6,37 +6,38 @@ import {
   TableHeader,
   TableBody,
   TableHead,
-} from "~/components/ui/table";
+} from '~/components/ui/table';
 import {
   type ConsultarSectores,
   type TablaAsignacionSectoresProps,
   type ConsultarAsignacionSectores,
-} from "~/types/operaciones";
+} from '~/types/operaciones';
 import {
   Info,
   Loader2,
   CheckCircle2,
   ClipboardListIcon,
   AlertCircle,
-} from "lucide-react";
-import React, { useMemo, useState } from "react";
-import { Badge } from "~/components/ui/badge";
-import { ScrollArea } from "~/components/ui/scroll-area";
+} from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Badge } from '~/components/ui/badge';
+import { ScrollArea } from '~/components/ui/scroll-area';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "~/components/ui/tooltip";
-import { Button } from "~/components/ui/button";
-import api from "~/lib/api";
-import { toast } from "sonner";
+} from '~/components/ui/tooltip';
+import { Button } from '~/components/ui/button';
+import api from '~/lib/api';
+import { toast } from 'sonner';
 
 interface TablaAsignacionSectoresWithDescriptionProps
   extends TablaAsignacionSectoresProps {
   sectores: ConsultarSectores[];
   periodo?: string;
   cicloFacturable?: string;
+  onRecargarDatos?: () => Promise<void>;
 }
 
 // Interfaz para el objeto de solicitud
@@ -60,8 +61,9 @@ export default function TablaAsignacionSectores({
   isLoading,
   isAuthorized,
   sectores = [],
-  periodo = "",
-  cicloFacturable = "",
+  periodo = '',
+  cicloFacturable = '',
+  onRecargarDatos,
 }: TablaAsignacionSectoresWithDescriptionProps) {
   // Estados
   const [selectedNichos, setSelectedNichos] = useState<NichoSeleccionado[]>([]);
@@ -78,7 +80,7 @@ export default function TablaAsignacionSectores({
     setSelectedNichos((prev) => {
       // Verificamos si ya existe este nicho en la selección
       const existingIndex = prev.findIndex(
-        (nicho) => nicho.nichoId === item.nichoId
+        (nicho) => nicho.nichoId === item.nichoId,
       );
 
       if (existingIndex >= 0) {
@@ -124,12 +126,12 @@ export default function TablaAsignacionSectores({
   // Función para preparar lecturas de los nichos seleccionados
   const prepararLecturas = async () => {
     if (selectedNichos.length === 0) {
-      toast.error("Debe seleccionar al menos un nicho");
+      toast.error('Debe seleccionar al menos un nicho');
       return;
     }
 
     if (!periodo || !cicloFacturable) {
-      toast.error("Faltan datos de periodo o ciclo");
+      toast.error('Faltan datos de periodo o ciclo');
       return;
     }
 
@@ -157,51 +159,51 @@ export default function TablaAsignacionSectores({
         try {
           // Realizamos la petición a la API
           const response = await api.post(
-            "/generar-proceso-lecturas",
-            requestData
+            '/generar-proceso-lecturas',
+            requestData,
           );
 
           // Verificamos si la respuesta fue exitosa
           if (response.status >= 200 && response.status < 300) {
             results.success++;
             results.messages.push(
-              `Nicho ${nicho.nichoId} (${nicho.descripcion}) procesado correctamente`
+              `Nicho ${nicho.nichoId} (${nicho.descripcion}) procesado correctamente`,
             );
           } else {
             results.errors++;
             // Usamos una forma segura de acceder a la respuesta
-            let errorMessage = "Sin detalles";
-            if (response.data && typeof response.data === "object") {
+            let errorMessage = 'Sin detalles';
+            if (response.data && typeof response.data === 'object') {
               errorMessage =
                 (response.data as any).mensaje ||
-                "Sin detalles en la respuesta";
+                'Sin detalles en la respuesta';
             }
             results.messages.push(
-              `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`
+              `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`,
             );
           }
         } catch (error: any) {
           results.errors++;
-          let errorMessage = "Error desconocido";
+          let errorMessage = 'Error desconocido';
 
-          if (error.response && typeof error.response === "object") {
+          if (error.response && typeof error.response === 'object') {
             if (
               error.response.data &&
-              typeof error.response.data === "object"
+              typeof error.response.data === 'object'
             ) {
               errorMessage =
                 (error.response.data as any).mensaje ||
                 error.message ||
-                "Error en la respuesta";
+                'Error en la respuesta';
             } else {
-              errorMessage = error.message || "Error en la solicitud";
+              errorMessage = error.message || 'Error en la solicitud';
             }
           } else {
-            errorMessage = error.message || "Error al procesar la solicitud";
+            errorMessage = error.message || 'Error al procesar la solicitud';
           }
 
           results.messages.push(
-            `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`
+            `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`,
           );
         }
       }
@@ -214,11 +216,11 @@ export default function TablaAsignacionSectores({
         toast.success(`${results.success} nichos procesados correctamente`);
       } else if (results.success === 0) {
         toast.error(
-          `No se pudo procesar ningún nicho. ${results.errors} errores.`
+          `No se pudo procesar ningún nicho. ${results.errors} errores.`,
         );
       } else {
         toast.warning(
-          `${results.success} nichos procesados. ${results.errors} con errores.`
+          `${results.success} nichos procesados. ${results.errors} con errores.`,
         );
       }
 
@@ -227,10 +229,15 @@ export default function TablaAsignacionSectores({
         setSelectedNichos([]);
         setSelectAll(false);
       }
+
+      // Recargamos datos después de procesar las lecturas
+      if (onRecargarDatos) {
+        await onRecargarDatos();
+      }
     } catch (error: any) {
-      console.error("Error al preparar lecturas:", error);
+      console.error('Error al preparar lecturas:', error);
       toast.error(
-        `Error al preparar lecturas: ${error.message || "Error desconocido"}`
+        `Error al preparar lecturas: ${error.message || 'Error desconocido'}`,
       );
     } finally {
       setIsSubmitting(false);
@@ -283,7 +290,7 @@ export default function TablaAsignacionSectores({
               ) : (
                 <ClipboardListIcon className="h-4 w-4" />
               )}
-              {isSubmitting ? "Procesando..." : "Preparar Lecturas"}
+              {isSubmitting ? 'Procesando...' : 'Preparar Lecturas'}
             </Button>
           </div>
         </div>
@@ -294,10 +301,10 @@ export default function TablaAsignacionSectores({
         <div
           className={`rounded-md p-3 mb-3 ${
             submitResults.errors === 0
-              ? "bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800"
+              ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
               : submitResults.success === 0
-              ? "bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
-              : "bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800"
+                ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                : 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'
           }`}
         >
           <div className="flex gap-2 items-start mb-2">
@@ -312,10 +319,10 @@ export default function TablaAsignacionSectores({
               <p
                 className={`font-medium ${
                   submitResults.errors === 0
-                    ? "text-green-700 dark:text-green-300"
+                    ? 'text-green-700 dark:text-green-300'
                     : submitResults.success === 0
-                    ? "text-red-700 dark:text-red-300"
-                    : "text-amber-700 dark:text-amber-300"
+                      ? 'text-red-700 dark:text-red-300'
+                      : 'text-amber-700 dark:text-amber-300'
                 }`}
               >
                 Resultados del proceso
@@ -391,8 +398,8 @@ export default function TablaAsignacionSectores({
                     key={index}
                     className={
                       isNichoSelected(item.nichoId)
-                        ? "bg-sky-50/50 dark:bg-sky-900/10 hover:bg-sky-50/70 dark:hover:bg-sky-900/20"
-                        : "hover:bg-muted/30"
+                        ? 'bg-sky-50/50 dark:bg-sky-900/10 hover:bg-sky-50/70 dark:hover:bg-sky-900/20'
+                        : 'hover:bg-muted/30'
                     }
                   >
                     <TableCell>

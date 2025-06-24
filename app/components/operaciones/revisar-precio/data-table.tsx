@@ -7,7 +7,7 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   type PaginationState,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -16,9 +16,10 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/components/ui/table";
-import { DataTablePagination } from "~/components/data-table/data-table-pagination";
-import { useState } from "react";
+} from '~/components/ui/table';
+import { DataTablePagination } from '~/components/data-table/data-table-pagination';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -27,6 +28,7 @@ interface DataTableProps<TData, TValue> {
   selectedRowIds?: string[];
   rowId?: keyof TData;
   enableSelection?: boolean;
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -34,8 +36,9 @@ export function DataTable<TData, TValue>({
   data,
   onRowSelectionChange,
   selectedRowIds = [],
-  rowId = "codigo" as keyof TData,
+  rowId = 'codigo' as keyof TData,
   enableSelection = false,
+  isLoading = false,
 }: DataTableProps<TData, TValue>) {
   // Configuración para la paginación
   const [pagination, setPagination] = useState<PaginationState>({
@@ -96,7 +99,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -105,17 +108,31 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <div className="flex justify-center items-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-sky-600 dark:text-sky-400" />
+                    <span className="ml-2 text-muted-foreground">
+                      Actualizando datos...
+                    </span>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

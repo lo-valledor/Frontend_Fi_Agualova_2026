@@ -8,11 +8,7 @@ import {
   CardTitle,
   CardHeader,
 } from '~/components/ui/card';
-import {
-  PlusCircleIcon,
-  AlertTriangle,
-  CheckCircle,
-} from 'lucide-react';
+import { PlusCircleIcon, AlertTriangle, CheckCircle } from 'lucide-react';
 import DialogNuevoPeriodo from './dialog-nuevo-periodo';
 import type { Anio, Periodos } from '~/types/operaciones';
 import { DataTable } from '~/components/data-table/data-table';
@@ -24,6 +20,7 @@ import {
 } from '~/components/ui/tooltip';
 import CerrarPeriodo from './cerrar-periodo';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import api from '~/lib/api';
 
 export default function AbrirPeriodoFacturacion({
   years,
@@ -33,6 +30,13 @@ export default function AbrirPeriodoFacturacion({
   periodos: Periodos[];
 }) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
+  const [periodosData, setPeriodosData] = useState(periodos);
+
+  //Se ejecuta cuando se crea un nuevo periodo
+  const fetchPeriodos = async () => {
+    const res = await api.get('/consulta-periodo');
+    setPeriodosData(res.data as Periodos[]);
+  };
 
   const periodoAbierto = useMemo(() => {
     return periodos.find((periodo) => periodo.epf_descripcion === 'Abierto');
@@ -134,6 +138,7 @@ export default function AbrirPeriodoFacturacion({
         onOpenChange={setIsOpenDialog}
         onPeriodoCreated={() => {
           setIsOpenDialog(false);
+          fetchPeriodos();
         }}
         years={years}
       />
