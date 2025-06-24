@@ -1,13 +1,30 @@
-name: Deploy Frontend to Production
+# ⚠️ DEPRECADO: Este workflow ha sido reemplazado por ci-cd.yml
+# Mantenerlo solo como referencia o eliminar después de confirmar que ci-cd.yml funciona correctamente
+
+name: 🔄 Deploy Frontend to Production (Legacy)
 
 on:
-  push:
-    branches:
-      - master # O 'main', según tu rama principal
+  # Deshabilitado para evitar conflictos con el nuevo workflow
+  # push:
+  #   branches:
+  #     - master # O 'main', según tu rama principal
+
+  # Solo permitir ejecución manual para casos de emergencia
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Entorno de despliegue'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 jobs:
-  build-and-deploy:
+  legacy-deploy:
     runs-on: self-hosted
+    if: github.event_name == 'workflow_dispatch'
 
     steps:
       # 1. Descarga el código del repositorio
@@ -18,16 +35,17 @@ jobs:
       - name: Create Compose .env file
         run: |
           echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
+          echo "NODE_ENV=${{ github.event.inputs.environment }}" >> .env
 
       # 3. Limpieza del despliegue anterior (Paso Clave)
       # Detiene y elimina contenedores, redes y volúmenes del despliegue anterior.
       # Esto garantiza un estado 100% limpio.
       - name: Tear Down Previous Deployment
-        run: docker-compose down --volumes
+        run: docker-compose down --volumes --remove-orphans
 
       # 4. Construir y ejecutar el nuevo despliegue
       # 'up' levanta los servicios definidos en docker-compose.yml
       # '-d' (detached) lo ejecuta en segundo plano
       # '--build' fuerza la reconstrucción de la imagen con el nuevo código
       - name: Build and Deploy New Version
-        run: docker-compose up -d --build
+        run: docker-compose up -d --build --force-recreate
