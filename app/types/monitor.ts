@@ -154,7 +154,7 @@ export interface NichoBusqueda {
 }
 
 export interface ResultadoBusqueda {
-  filas: any;
+  filas: Fila[];
   nichos: NichoBusqueda[];
 }
 
@@ -183,7 +183,7 @@ export interface FormDataBT43 {
 }
 
 export interface MedidorCard {
-  claveHtml(claveHtml: any): unknown;
+  claveHtml(claveHtml: string): unknown;
   medidor: Medidor;
   onRefresh: () => void;
 }

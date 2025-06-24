@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/conceptos';
 import api from '~/lib/api';
@@ -27,7 +28,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: Conceptos[] }).data)
     ) {
       conceptos = (response.data as { data: Conceptos[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -39,7 +40,10 @@ export async function clientLoader() {
       resComboAsociadoConceptos.data &&
       typeof resComboAsociadoConceptos.data === 'object' &&
       'data' in resComboAsociadoConceptos.data &&
-      Array.isArray((resComboAsociadoConceptos.data as any).data)
+      Array.isArray(
+        (resComboAsociadoConceptos.data as { data: ComboAsociadoConceptos[] })
+          .data,
+      )
     ) {
       comboAsociadoConceptos = (
         resComboAsociadoConceptos.data as { data: ComboAsociadoConceptos[] }
@@ -49,8 +53,7 @@ export async function clientLoader() {
     }
 
     return { conceptos, comboAsociadoConceptos };
-  } catch (error) {
-    console.error('Error al cargar conceptos:', error);
+  } catch (_error) {
     throw new Response('Error al cargar los conceptos', { status: 500 });
   }
 }

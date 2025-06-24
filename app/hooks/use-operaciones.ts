@@ -104,8 +104,8 @@ export function useOperaciones() {
       const response = await api.get("/consulta-año");
       setConsultaAnio(response.data as Anio[]);
       return response.data;
-    } catch (error: any) {
-      setError("anio", error);
+    } catch (error) {
+      setError("anio", error as Error);
       throw error;
     } finally {
       setLoading("anio", false);
@@ -121,8 +121,8 @@ export function useOperaciones() {
       const response = await api.get("/consulta-precio-pago-tabla");
       setConsultaPrecioPagoTabla(response.data as PreciosCargoEnerlova[]);
       return response.data;
-    } catch (error: any) {
-      setError("preciosPago", error);
+    } catch (error) {
+      setError("preciosPago", error as Error);
       throw error;
     } finally {
       setLoading("preciosPago", false);
@@ -138,8 +138,8 @@ export function useOperaciones() {
       const response = await api.get("/ConsultarPeriodoAbierto");
       setConsultarPeriodoAbierto(response.data as PeriodoAbierto[]);
       return response.data;
-    } catch (error: any) {
-      setError("periodoAbierto", error);
+    } catch (error) {
+      setError("periodoAbierto", error as Error);
       throw error;
     } finally {
       setLoading("periodoAbierto", false);
@@ -155,8 +155,8 @@ export function useOperaciones() {
       const response = await api.get("/ciclos-facturacion-activos");
       setCiclosFacturacionActivos(response.data as Ciclo[]);
       return response.data;
-    } catch (error: any) {
-      setError("ciclos", error);
+    } catch (error) {
+      setError("ciclos", error as Error);
       throw error;
     } finally {
       setLoading("ciclos", false);
@@ -172,8 +172,8 @@ export function useOperaciones() {
       const response = await api.get("/consulta-periodo");
       setPeriodosFacturacion(response.data as Periodos[]);
       return response.data;
-    } catch (error: any) {
-      setError("periodos", error);
+    } catch (error) {
+      setError("periodos", error as Error);
       throw error;
     } finally {
       setLoading("periodos", false);
@@ -195,8 +195,8 @@ export function useOperaciones() {
           params,
         });
         return response.data;
-      } catch (error: any) {
-        setError("preciosPago", error);
+      } catch (error) {
+        setError("preciosPago", error as Error);
         throw error;
       } finally {
         setLoading("preciosPago", false);
@@ -213,8 +213,8 @@ export function useOperaciones() {
       const response = await api.get("/consultar-sectores");
       setConsultarSectores(response.data as ConsultarSectores[]);
       return response.data;
-    } catch (error: any) {
-      setError("consultarSectores", error);
+    } catch (error) {
+      setError("consultarSectores", error as Error);
       throw error;
     } finally {
       setLoading("consultarSectores", false);
@@ -229,9 +229,8 @@ export function useOperaciones() {
       const response = await api.get("/validar-lecturas-pendientes");
       setLecturasPendientes(response.data as ValidarSectoresPendientes);
       return response.data;
-    } catch (error: any) {
-      console.error("Error en fetchLecturasPendientes:", error);
-      setError("lecturasPendientes", error);
+    } catch (error: unknown) {
+      setError("lecturasPendientes", error as Error);
       throw error;
     } finally {
       setLoading("lecturasPendientes", false);
@@ -248,8 +247,8 @@ export function useOperaciones() {
         response.data as ConsultaPeriodosFacturacion[]
       );
       return response.data;
-    } catch (error: any) {
-      setError("consultaPeriodosFacturacion", error);
+    } catch (error) {
+      setError("consultaPeriodosFacturacion", error as Error);
       throw error;
     } finally {
       setLoading("consultaPeriodosFacturacion", false);
@@ -272,8 +271,8 @@ export function useOperaciones() {
         fetchLecturasPendientes(),
         fetchConsultaPeriodosFacturacion(),
       ]);
-    } catch (error: any) {
-      setError("global", error);
+      } catch (error) {
+      setError("global", error as Error);
     } finally {
       setLoading("global", false);
     }

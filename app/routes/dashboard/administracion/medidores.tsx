@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import MedidoresComponent from '~/components/administracion/medidores/medidores-component';
 import type { Route } from './+types/medidores';

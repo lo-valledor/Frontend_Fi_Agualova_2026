@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Table,
   TableHeader,
@@ -7,9 +7,8 @@ import {
   TableBody,
   TableCell,
 } from "../../ui/table";
-import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
-import { PencilIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Checkbox } from "~/components/ui/checkbox";
 import type { TablaValoresEnelProps } from "~/types/operaciones";
 import api from "~/lib/api";

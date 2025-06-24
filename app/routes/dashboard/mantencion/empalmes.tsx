@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/empalmes';
 import EmpalmesComponent from '~/components/mantencion/empalmes/empalmes-component';
@@ -23,7 +24,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: Empalme[] }).data)
     ) {
       empalmes = (response.data as { data: Empalme[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -31,8 +32,7 @@ export async function clientLoader() {
     }
 
     return { empalmes };
-  } catch (error) {
-    console.error('Error al cargar empalmes:', error);
+  } catch (_error) {
     throw new Response('Error al cargar los empalmes', { status: 500 });
   }
 }

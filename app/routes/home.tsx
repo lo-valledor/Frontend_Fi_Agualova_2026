@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import { AutoRedirect } from '~/components/auth/auto-redirect';
 import type { Route } from './+types/home';
 

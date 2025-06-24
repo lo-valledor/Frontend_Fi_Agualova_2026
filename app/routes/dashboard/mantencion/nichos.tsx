@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/nichos';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
@@ -23,7 +24,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: Nicho[] }).data)
     ) {
       nichos = (response.data as { data: Nicho[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -31,8 +32,7 @@ export async function clientLoader() {
     }
 
     return { nichos };
-  } catch (error) {
-    console.error('Error al cargar nichos:', error);
+  } catch (_error) {
     throw new Response('Error al cargar los nichos', { status: 500 });
   }
 }

@@ -1,15 +1,9 @@
-import { EyeIcon, InfoIcon, Loader2, Calendar } from "lucide-react";
+import { EyeIcon, InfoIcon, Loader2 } from "lucide-react";
 import React, { useEffect, useState, useMemo } from "react";
 import { Button } from "~/components/ui/button";
 import { ScrollArea } from "~/components/ui/scroll-area";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableCell,
-  TableBody,
-} from "~/components/ui/table";
+
+
 import api from "~/lib/api";
 import { toast } from "sonner";
 import type { DetallepreciosCargoEnerlova } from "~/types/operaciones";

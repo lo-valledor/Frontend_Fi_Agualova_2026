@@ -4,7 +4,6 @@ import { DataTableColumnHeader } from '~/components/data-table/data-table-column
 import { PencilIcon, RotateCcw, Check, CreditCard } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
-import { cn } from '~/lib/utils';
 import { Dialog, DialogTrigger } from '~/components/ui/dialog';
 
 // Tipo para las props que se pasan a la función de columnas

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Download, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
@@ -125,8 +126,6 @@ export default function AcometidaComponent({
 
       toast.success(`Archivo exportado: ${fileName}`);
     } catch (error: any) {
-      console.error('Error al exportar Excel:', error);
-
       // Manejo más específico de errores
       if (error.code === 'ECONNABORTED') {
         toast.error('La exportación tardó demasiado. Intente nuevamente.');
@@ -157,8 +156,7 @@ export default function AcometidaComponent({
         });
       }
       handleSuccess();
-    } catch (error) {
-      console.error('Error al guardar acometida:', error);
+    } catch (_error: any) {
       toast.error('Ha ocurrido un error al guardar la acometida');
     }
   };

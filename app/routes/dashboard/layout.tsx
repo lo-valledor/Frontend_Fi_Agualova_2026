@@ -4,11 +4,8 @@ import { SidebarInset } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/sidebar/app-sidebar';
 import { SidebarProvider } from '~/components/ui/sidebar';
 import { Outlet } from 'react-router';
-import { useDebugInfo } from '~/hooks/use-debug-info';
 
 const DashboardLayout = () => {
-  const debugInfo = useDebugInfo();
-
   return (
     <SidebarProvider>
       <AppSidebar variant="inset" />

@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import AcometidaComponent from '~/components/administracion/acometida/acometida-component';
 import api from '~/lib/api';
@@ -36,7 +36,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     resAcometidas.data &&
     typeof resAcometidas.data === 'object' &&
     'data' in resAcometidas.data &&
-    Array.isArray((resAcometidas.data as any).data)
+    Array.isArray((resAcometidas.data as { data: Acometida[] }).data)
   ) {
     acometidas = (resAcometidas.data as { data: Acometida[] }).data;
   } else if (Array.isArray(resAcometidas.data)) {
@@ -47,7 +47,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     resComboEmpalmes.data &&
     typeof resComboEmpalmes.data === 'object' &&
     'data' in resComboEmpalmes.data &&
-    Array.isArray((resComboEmpalmes.data as any).data)
+    Array.isArray((resComboEmpalmes.data as { data: ComboEmpalmes[] }).data)
   ) {
     comboEmpalmes = (resComboEmpalmes.data as { data: ComboEmpalmes[] }).data;
   } else if (Array.isArray(resComboEmpalmes.data)) {
@@ -58,7 +58,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     resComboNichos.data &&
     typeof resComboNichos.data === 'object' &&
     'data' in resComboNichos.data &&
-    Array.isArray((resComboNichos.data as any).data)
+    Array.isArray((resComboNichos.data as { data: ComboNichos[] }).data)
   ) {
     comboNichos = (resComboNichos.data as { data: ComboNichos[] }).data;
   } else if (Array.isArray(resComboNichos.data)) {
@@ -69,7 +69,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     resComboSectores.data &&
     typeof resComboSectores.data === 'object' &&
     'data' in resComboSectores.data &&
-    Array.isArray((resComboSectores.data as any).data)
+    Array.isArray((resComboSectores.data as { data: ComboSectores[] }).data)
   ) {
     comboSectores = (resComboSectores.data as { data: ComboSectores[] }).data;
   } else if (Array.isArray(resComboSectores.data)) {
@@ -80,7 +80,9 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     resContratosDisponibles.data &&
     typeof resContratosDisponibles.data === 'object' &&
     'data' in resContratosDisponibles.data &&
-    Array.isArray((resContratosDisponibles.data as any).data)
+    Array.isArray(
+      (resContratosDisponibles.data as { data: ContratosDisponibles[] }).data,
+    )
   ) {
     contratosDisponibles = (
       resContratosDisponibles.data as { data: ContratosDisponibles[] }

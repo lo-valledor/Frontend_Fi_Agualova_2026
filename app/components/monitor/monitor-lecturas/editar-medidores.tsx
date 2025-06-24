@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import type { MedidorNichoItem } from '~/types/monitor';
 import { ReaperturaForm } from './form-sections/reapertura-form';
 import { BT1BT2Form } from './form-sections/bt1-bt2-form';

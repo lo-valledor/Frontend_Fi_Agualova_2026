@@ -1,68 +1,68 @@
-// eslint-disable no-empty-pattern
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import PreciosCargoComponent from "~/components/operaciones/precios-cargo/precios-cargo-component";
-import React, { useState } from "react";
-import type { Route } from "./+types/precios-cargo";
-import api from "~/lib/api";
+/* eslint-disable no-empty-pattern */
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import PreciosCargoComponent from '~/components/operaciones/precios-cargo/precios-cargo-component';
+import React, { useState } from 'react';
+import type { Route } from './+types/precios-cargo';
+import api from '~/lib/api';
 import type {
   PreciosCargoEnel,
   PreciosCargoEnerlova,
-} from "~/types/operaciones";
+} from '~/types/operaciones';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
+} from '~/components/ui/collapsible';
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
-} from "~/components/ui/card";
+} from '~/components/ui/card';
 import {
   CalendarIcon,
   ChevronDown,
   ChevronUp,
   SearchIcon,
   Eraser,
-} from "lucide-react";
-import { Button } from "~/components/ui/button";
-import { SelectContent, SelectItem } from "~/components/ui/select";
-import { Select, SelectTrigger, SelectValue } from "~/components/ui/select";
-import { Label } from "~/components/ui/label";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { Button } from '~/components/ui/button';
+import { SelectContent, SelectItem } from '~/components/ui/select';
+import { Select, SelectTrigger, SelectValue } from '~/components/ui/select';
+import { Label } from '~/components/ui/label';
+import { toast } from 'sonner';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Enerlova | Precios de Cargo" },
-    { name: "description", content: "Precios de Cargo" },
+    { title: 'Enerlova | Precios de Cargo' },
+    { name: 'description', content: 'Precios de Cargo' },
   ];
 }
 
 const currentDate = new Date();
-const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
 const currentYear = currentDate.getFullYear().toString();
 
 const months = [
-  { value: "01", label: "Enero" },
-  { value: "02", label: "Febrero" },
-  { value: "03", label: "Marzo" },
-  { value: "04", label: "Abril" },
-  { value: "05", label: "Mayo" },
-  { value: "06", label: "Junio" },
-  { value: "07", label: "Julio" },
-  { value: "08", label: "Agosto" },
-  { value: "09", label: "Septiembre" },
-  { value: "10", label: "Octubre" },
-  { value: "11", label: "Noviembre" },
-  { value: "12", label: "Diciembre" },
+  { value: '01', label: 'Enero' },
+  { value: '02', label: 'Febrero' },
+  { value: '03', label: 'Marzo' },
+  { value: '04', label: 'Abril' },
+  { value: '05', label: 'Mayo' },
+  { value: '06', label: 'Junio' },
+  { value: '07', label: 'Julio' },
+  { value: '08', label: 'Agosto' },
+  { value: '09', label: 'Septiembre' },
+  { value: '10', label: 'Octubre' },
+  { value: '11', label: 'Noviembre' },
+  { value: '12', label: 'Diciembre' },
 ];
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   try {
     const url = new URL(request.url);
-    const mes = url.searchParams.get("mes") || currentMonth;
-    const anio = url.searchParams.get("anio") || currentYear;
+    const mes = url.searchParams.get('mes') || currentMonth;
+    const anio = url.searchParams.get('anio') || currentYear;
 
     // Carga paralela de datos
     const [resTablaEnel, resTablaEnerlova] = await Promise.all([
@@ -77,14 +77,13 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
       anio,
       error: null,
     };
-  } catch (error) {
-    console.error("Error en clientLoader:", error);
+  } catch (_error) {
     return {
       tablaEnel: [],
       tablaEnerlova: [],
       mes: currentMonth,
       anio: currentYear,
-      error: "Error al cargar los datos",
+      error: 'Error al cargar los datos',
     };
   }
 }
@@ -95,11 +94,11 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
   const [anio, setAnio] = useState(loaderData.anio);
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [dataEnel, setDataEnel] = useState(loaderData.tablaEnel);
-  const [dataEnerlova, setDataEnerlova] = useState(loaderData.tablaEnerlova);
+  const [dataEnerlova] = useState(loaderData.tablaEnerlova);
 
   const pageBreadcrumbs = [
-    { label: "Operaciones" },
-    { label: "Precios de Cargo" },
+    { label: 'Operaciones' },
+    { label: 'Precios de Cargo' },
   ];
 
   const handleSearch = async () => {
@@ -109,12 +108,11 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
         mes,
         año: anio,
       });
-      const response = await api.get("/consulta-precio-pago", { params });
+      const response = await api.get('/consulta-precio-pago', { params });
       setDataEnel(response.data as PreciosCargoEnel[]);
-      toast.success("Búsqueda completada");
-    } catch (error) {
-      console.error("Error al buscar precios de cargo:", error);
-      toast.error("Error al buscar precios de cargo");
+      toast.success('Búsqueda completada');
+    } catch (_error) {
+      toast.error('Error al buscar precios de cargo');
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +122,7 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
     setMes(currentMonth);
     setAnio(currentYear);
     handleSearch();
-    toast.success("Filtros reiniciados");
+    toast.success('Filtros reiniciados');
   };
 
   return (
@@ -248,7 +246,7 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
                   className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
                 >
                   <SearchIcon className="h-4 w-4" />
-                  {isLoading ? "Buscando..." : "Buscar"}
+                  {isLoading ? 'Buscando...' : 'Buscar'}
                 </Button>
               </div>
             </CardContent>

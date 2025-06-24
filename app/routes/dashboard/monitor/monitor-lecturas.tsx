@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/monitor-lecturas';
 import MonitorLecturasComponent from '~/components/monitor/monitor-lecturas-component';
@@ -47,9 +47,7 @@ export async function clientLoader() {
       activePeriodoId,
       error: null,
     };
-  } catch (error: any) {
-    console.error('Error al cargar datos del monitor:', error);
-
+  } catch (error) {
     // Retornar datos vacíos con error para que el componente pueda manejar el error
     return {
       periodos: [],

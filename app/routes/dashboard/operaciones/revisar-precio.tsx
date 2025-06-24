@@ -1,31 +1,31 @@
-// eslint-disable no-empty-pattern
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import RevisarPrecioComponent from "~/components/operaciones/revisar-precio/revisar-precio-component";
-import React, { useState } from "react";
-import type { Route } from "./+types/revisar-precio";
-import api from "~/lib/api";
+/* eslint-disable no-empty-pattern */
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import RevisarPrecioComponent from '~/components/operaciones/revisar-precio/revisar-precio-component';
+import React, { useState } from 'react';
+import type { Route } from './+types/revisar-precio';
+import api from '~/lib/api';
 import type {
   PeriodoAbierto,
   RevisarPrecioUno,
   RevisarPrecioDos,
-} from "~/types/operaciones";
+} from '~/types/operaciones';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Enerlova | Revisar Precio" },
-    { name: "description", content: "Revisar Precio" },
+    { title: 'Enerlova | Revisar Precio' },
+    { name: 'description', content: 'Revisar Precio' },
   ];
 }
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   try {
     const url = new URL(request.url);
-    const dia = url.searchParams.get("dia") || "15"; // Por defecto ciclo 15
+    const dia = url.searchParams.get('dia') || '15'; // Por defecto ciclo 15
 
     // Carga paralela de datos
     const [periodoAbierto, ciclosFacturacion] = await Promise.all([
-      api.get("/ConsultarPeriodoAbierto"),
-      api.get("/ciclos-facturacion-activos"),
+      api.get('/ConsultarPeriodoAbierto'),
+      api.get('/ciclos-facturacion-activos'),
     ]);
 
     const dataPeriodoAbierto = periodoAbierto.data as PeriodoAbierto[];
@@ -41,7 +41,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
         dataConsultarPreciosDos: [],
         ciclosFacturacion: [],
         dia,
-        error: "No hay periodo abierto",
+        error: 'No hay periodo abierto',
       };
     }
 
@@ -65,15 +65,14 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
       dia,
       error: null,
     };
-  } catch (error) {
-    console.error("Error en clientLoader:", error);
+  } catch (_error) {
     return {
       dataPeriodoAbierto: [],
       dataConsultarPreciosUno: [],
       dataConsultarPreciosDos: [],
       ciclosFacturacion: [],
-      dia: "15",
-      error: "Error al cargar los datos",
+      dia: '15',
+      error: 'Error al cargar los datos',
     };
   }
 }
@@ -88,12 +87,12 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
     error,
   } = loaderData;
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [cicloSeleccionado, setCicloSeleccionado] = useState(dia);
 
   const pageBreadcrumbs = [
-    { label: "Operaciones" },
-    { label: "Revisar Precio" },
+    { label: 'Operaciones' },
+    { label: 'Revisar Precio' },
   ];
 
   const handleCicloChange = async (nuevoCiclo: string) => {

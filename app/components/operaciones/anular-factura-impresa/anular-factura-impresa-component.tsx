@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import {
-  FileX,
   RotateCcw,
   X,
   AlertCircle,

@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/zonas';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
@@ -23,7 +24,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: Zonas[] }).data)
     ) {
       zonas = (response.data as { data: Zonas[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -31,8 +32,7 @@ export async function clientLoader() {
     }
 
     return { zonas };
-  } catch (error) {
-    console.error('Error al cargar zonas:', error);
+  } catch {
     throw new Response('Error al cargar las zonas', { status: 500 });
   }
 }

@@ -34,7 +34,6 @@ import {
   ChevronRight,
   RefreshCw,
 } from 'lucide-react';
-import { Skeleton } from '~/components/ui/skeleton';
 import { toast } from 'sonner';
 import api from '~/lib/api';
 import { HierarchicalDataTable } from './hierarchical-data-table';

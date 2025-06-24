@@ -10,12 +10,9 @@ import {
   ChevronUp,
   ChevronDown,
   Download,
-  FileText,
-  Upload,
 } from "lucide-react";
 import { Label } from "~/components/ui/label";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import {
   Collapsible,
   CollapsibleContent,

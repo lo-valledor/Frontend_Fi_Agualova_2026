@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/usuarios';
 import UsuariosComponent from '~/components/administracion/usuarios/usuarios-component';

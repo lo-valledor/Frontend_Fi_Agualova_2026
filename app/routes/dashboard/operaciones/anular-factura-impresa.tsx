@@ -1,20 +1,20 @@
-// eslint-disable no-empty-pattern
-import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import AnularFacturaImpresaComponent from "~/components/operaciones/anular-factura-impresa/anular-factura-impresa-component";
-import React from "react";
-import type { Route } from "./+types/anular-factura-impresa";
+/* eslint-disable no-empty-pattern */
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import AnularFacturaImpresaComponent from '~/components/operaciones/anular-factura-impresa/anular-factura-impresa-component';
+import React from 'react';
+import type { Route } from './+types/anular-factura-impresa';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Enerlova | Anular Factura Impresa" },
-    { name: "description", content: "Anular Factura Impresa" },
+    { title: 'Enerlova | Anular Factura Impresa' },
+    { name: 'description', content: 'Anular Factura Impresa' },
   ];
 }
 
 export default function AnularFacturaImpresa() {
   const pageBreadcrumbs = [
-    { label: "Operaciones" },
-    { label: "Anular Factura Impresa" },
+    { label: 'Operaciones' },
+    { label: 'Anular Factura Impresa' },
   ];
 
   return (

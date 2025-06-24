@@ -25,7 +25,6 @@ import {
 } from '~/components/ui/table';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
-import { AdvancedPagination } from './advanced-pagination';
 import { DataTablePagination } from './data-table-pagination';
 
 interface DataTableAdvancedProps<TData, TValue> {

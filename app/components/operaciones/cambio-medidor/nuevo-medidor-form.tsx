@@ -10,7 +10,6 @@ import {
   CollapsibleTrigger,
 } from "~/components/ui/collapsible";
 import {
-  type MedidorNuevo,
   type NuevoMedidorFormProps,
 } from "~/types/operaciones";
 

@@ -1,16 +1,16 @@
-// eslint-disable no-empty-pattern
-import { LoginForm } from "~/components/auth/login-form";
-import { useAuth } from "~/context/AuthContext";
-import { Navigate } from "react-router";
-import { Bolt } from "lucide-react";
-import { useEffect, useState } from "react";
-import { ThemeProvider } from "~/components/theme-provider";
-import type { Route } from "./+types/login";
+/* eslint-disable no-empty-pattern */
+import { LoginForm } from '~/components/auth/login-form';
+import { useAuth } from '~/context/AuthContext';
+import { Navigate } from 'react-router';
+import { Bolt } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ThemeProvider } from '~/components/theme-provider';
+import type { Route } from './+types/login';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Enerlova | Login" },
-    { name: "description", content: "Enerlova | Login" },
+    { title: 'Enerlova | Login' },
+    { name: 'description', content: 'Enerlova | Login' },
   ];
 }
 
@@ -52,7 +52,7 @@ const Login = () => {
         {/* Company logo for larger screens */}
         <div
           className={`hidden lg:block absolute top-8 left-8 transform transition-all duration-1000 ease-out ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
         >
           <div className="flex items-center gap-2">
@@ -70,7 +70,7 @@ const Login = () => {
           {/* Footer */}
           <div
             className={`mt-6 text-center text-white/80 text-xs transform transition-all duration-1000 ease-out ${
-              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
             © {new Date().getFullYear()} Enerlova. Todos los derechos
