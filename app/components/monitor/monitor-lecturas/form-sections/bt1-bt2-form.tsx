@@ -1,234 +1,228 @@
-import React, { useState, useCallback, useMemo } from 'react'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { Alert, AlertDescription } from '~/components/ui/alert'
-import {
-  AlertCircle,
-  Gauge,
-  Calculator,
-  Loader2,
-  Check,
-} from 'lucide-react'
-import { toast } from 'sonner'
-import type { FormDataBT1y2, MedidorNichoItem } from '~/types/monitor'
-import { ConfirmationDialog } from '../dialogs/confirmation-dialog'
-import api from '~/lib/api'
+import React, { useState, useCallback, useMemo } from 'react';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { AlertCircle, Gauge, Calculator, Loader2, Check } from 'lucide-react';
+import { toast } from 'sonner';
+import type { FormDataBT1y2, MedidorNichoItem } from '~/types/monitor';
+import { ConfirmationDialog } from '../dialogs/confirmation-dialog';
+import api from '~/lib/api';
 
 interface BT1BT2FormProps {
-  result: MedidorNichoItem
-  onSuccess?: () => void
+  result: MedidorNichoItem;
+  onSuccess?: () => void;
 }
 
 export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   // Valores fijos del medidor
-  const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos])
+  const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
   const valorAnterior = useMemo(
     () => result.LM_ValorUltimaLectura,
     [result.LM_ValorUltimaLectura],
-  )
+  );
   const constante = useMemo(
     () => result.ME_ConstanteMultiplicar,
     [result.ME_ConstanteMultiplicar],
-  )
+  );
 
   // Estado del formulario
-  const [inputValue, setInputValue] = useState('')
-  const [consumoCalculado, setConsumoCalculado] = useState('')
+  const [inputValue, setInputValue] = useState('');
+  const [consumoCalculado, setConsumoCalculado] = useState('');
   const [tipoLectura, setTipoLectura] = useState<
     'menor' | 'igual' | 'mayor' | null
-  >(null)
-  const [selectedClave, setSelectedClave] = useState('0')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isValidated, setIsValidated] = useState(false)
+  >(null);
+  const [selectedClave, setSelectedClave] = useState('0');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isValidated, setIsValidated] = useState(false);
 
   // Diálogos
-  const [showMenorDialog, setShowMenorDialog] = useState(false)
-  const [showIgualDialog, setShowIgualDialog] = useState(false)
-  const [showMayorDialog, setShowMayorDialog] = useState(false)
+  const [showMenorDialog, setShowMenorDialog] = useState(false);
+  const [showIgualDialog, setShowIgualDialog] = useState(false);
+  const [showMayorDialog, setShowMayorDialog] = useState(false);
 
   // Función estable para calcular el consumo
   const calcularConsumo = useCallback(
     (value: string) => {
       if (!value || isNaN(Number(value))) {
-        return { consumo: '', tipo: null, vlecturadigitos: 0 }
+        return { consumo: '', tipo: null, vlecturadigitos: 0 };
       }
 
-      const valorActual = parseInt(value)
-      let vlecturadigitos = valorActual
-      let tipo: 'menor' | 'igual' | 'mayor' | null = null
+      const valorActual = parseInt(value);
+      let vlecturadigitos = valorActual;
+      let tipo: 'menor' | 'igual' | 'mayor' | null = null;
 
       if (valorActual < valorAnterior) {
-        tipo = 'menor'
+        tipo = 'menor';
         switch (digito) {
           case 1:
-            vlecturadigitos = valorActual
-            break
+            vlecturadigitos = valorActual;
+            break;
           case 4:
-            vlecturadigitos = valorActual + 10000
-            break
+            vlecturadigitos = valorActual + 10000;
+            break;
           case 5:
-            vlecturadigitos = valorActual + 100000
-            break
+            vlecturadigitos = valorActual + 100000;
+            break;
           case 6:
-            vlecturadigitos = valorActual + 1000000
-            break
+            vlecturadigitos = valorActual + 1000000;
+            break;
           case 7:
-            vlecturadigitos = valorActual + 10000000
-            break
+            vlecturadigitos = valorActual + 10000000;
+            break;
           case 8:
-            vlecturadigitos = valorActual + 100000000
-            break
+            vlecturadigitos = valorActual + 100000000;
+            break;
           case 10:
-            vlecturadigitos = valorActual + 10000000000
-            break
+            vlecturadigitos = valorActual + 10000000000;
+            break;
         }
       } else if (valorActual === valorAnterior) {
-        tipo = 'igual'
-        vlecturadigitos = valorActual
+        tipo = 'igual';
+        vlecturadigitos = valorActual;
       } else {
-        tipo = 'mayor'
-        vlecturadigitos = valorActual
+        tipo = 'mayor';
+        vlecturadigitos = valorActual;
       }
 
       const consumo =
         tipo === 'menor'
           ? (vlecturadigitos - valorAnterior) * constante
-          : (valorActual - valorAnterior) * constante
+          : (valorActual - valorAnterior) * constante;
 
       return {
         consumo: consumo.toString(),
         tipo,
         vlecturadigitos,
-      }
+      };
     },
     [digito, valorAnterior, constante],
-  )
+  );
 
   // Actualizar el consumo cuando cambia el input
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value
-      setInputValue(value)
+      const value = e.target.value;
+      setInputValue(value);
 
       if (value && !isNaN(Number(value))) {
-        const resultado = calcularConsumo(value)
-        setConsumoCalculado(resultado.consumo)
-        setTipoLectura(resultado.tipo)
-        setIsValidated(false) // Resetear validación cuando cambia el input
+        const resultado = calcularConsumo(value);
+        setConsumoCalculado(resultado.consumo);
+        setTipoLectura(resultado.tipo);
+        setIsValidated(false); // Resetear validación cuando cambia el input
       } else {
-        setConsumoCalculado('')
-        setTipoLectura(null)
-        setIsValidated(false)
+        setConsumoCalculado('');
+        setTipoLectura(null);
+        setIsValidated(false);
       }
     },
     [calcularConsumo],
-  )
+  );
 
   // Validar la lectura
   const validarLectura = useCallback(() => {
     if (!inputValue || isNaN(Number(inputValue))) {
-      toast.info('Por favor ingrese un valor numérico válido')
-      return
+      toast.info('Por favor ingrese un valor numérico válido');
+      return;
     }
 
     if (tipoLectura === 'menor') {
-      setShowMenorDialog(true)
+      setShowMenorDialog(true);
     } else if (tipoLectura === 'igual') {
-      setShowIgualDialog(true)
+      setShowIgualDialog(true);
     } else if (tipoLectura === 'mayor') {
-      setShowMayorDialog(true)
+      setShowMayorDialog(true);
     } else {
-      toast.info('Por favor ingrese un valor válido')
+      toast.info('Por favor ingrese un valor válido');
     }
-  }, [inputValue, tipoLectura])
+  }, [inputValue, tipoLectura]);
 
   // Preparar datos para enviar
   const prepararDatosFormulario = useCallback(() => {
-    if (!inputValue || !consumoCalculado) return null
+    if (!inputValue || !consumoCalculado) return null;
 
     const data: FormDataBT1y2 = {
       lmid: result.LM_ID.toString(),
       vactual: inputValue,
       consumo: consumoCalculado,
       claid: '',
-    }
+    };
 
     if (tipoLectura === 'mayor') {
-      data.claid = '23'
+      data.claid = '23';
     } else if (selectedClave !== '0') {
-      data.claid = selectedClave
+      data.claid = selectedClave;
     } else {
-      return null
+      return null;
     }
 
-    return data
-  }, [inputValue, consumoCalculado, result.LM_ID, tipoLectura, selectedClave])
+    return data;
+  }, [inputValue, consumoCalculado, result.LM_ID, tipoLectura, selectedClave]);
 
   // Confirmar tipo de lectura y registrar la clave seleccionada
   const handleConfirmLectura = useCallback(
     (tipo: 'menor' | 'igual') => {
       if (selectedClave === '0') {
-        toast.info('Debe seleccionar una clave')
-        return
+        toast.info('Debe seleccionar una clave');
+        return;
       }
 
       // Cerrar el diálogo correspondiente
       if (tipo === 'menor') {
-        setShowMenorDialog(false)
+        setShowMenorDialog(false);
       } else if (tipo === 'igual') {
-        setShowIgualDialog(false)
+        setShowIgualDialog(false);
       }
 
       // Marcar como validado
-      setIsValidated(true)
-      toast.success('Lectura validada correctamente')
+      setIsValidated(true);
+      toast.success('Lectura validada correctamente');
     },
     [selectedClave],
-  )
+  );
 
   // Confirmar lectura mayor
   const handleConfirmMayor = useCallback(() => {
-    setShowMayorDialog(false)
-    setIsValidated(true)
-    toast.success('Lectura validada correctamente')
-  }, [])
+    setShowMayorDialog(false);
+    setIsValidated(true);
+    toast.success('Lectura validada correctamente');
+  }, []);
 
   // Guardar la lectura
   const guardarLectura = useCallback(async () => {
-    const data = prepararDatosFormulario()
+    const data = prepararDatosFormulario();
 
     if (!data) {
       toast.error(
         'No se pueden guardar los datos. Por favor valide la lectura primero.',
-      )
-      return
+      );
+      return;
     }
 
     try {
-      setIsSubmitting(true)
-      const response = await api.put('/actualizar-lectura-bt-1-bt-2', data)
+      setIsSubmitting(true);
+      const response = await api.put('/actualizar-lectura-bt-1-bt-2', data);
 
       if (response.status === 200) {
-        toast.success('Lectura actualizada correctamente')
+        toast.success('Lectura actualizada correctamente');
         if (onSuccess) {
-          onSuccess()
+          onSuccess();
         }
       } else {
-        toast.error('Error al actualizar la lectura')
+        toast.error('Error al actualizar la lectura');
       }
     } catch (error: any) {
-      console.error('Error al enviar los datos:', error)
+      console.error('Error al enviar los datos:', error);
       toast.error(
         `Error al conectar con el servidor: ${
           error.message || 'Error desconocido'
         }`,
-      )
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }, [prepararDatosFormulario, onSuccess])
+  }, [prepararDatosFormulario, onSuccess]);
 
   const clavesMenorOptions = useMemo(
     () => [
@@ -237,7 +231,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' },
     ],
     [],
-  )
+  );
 
   const clavesIgualOptions = useMemo(
     () => [
@@ -248,22 +242,31 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' },
     ],
     [],
-  )
+  );
 
   return (
-    <div className="p-4 space-y-4">
-      <Card className="border-border/40 shadow-sm">
-        <CardHeader className="p-4 pb-2 bg-muted/40 border-b border-border/40">
-          <CardTitle className="text-base font-medium text-sky-800 dark:text-sky-200 flex items-center gap-1.5">
-            <Gauge className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-            Datos de Lectura y Consumo BT-1/BT-2
+    <div className="p-6 space-y-6">
+      <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
+            <div className="p-2 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+              <Gauge className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold">
+                Datos de Lectura y Consumo
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+                Formulario para medidores BT-1 y BT-2
+              </p>
+            </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Gauge className="h-3.5 w-3.5" />
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                <Gauge className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 Lectura Actual
               </Label>
               <Input
@@ -271,70 +274,76 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
                 placeholder={valorAnterior.toString()}
                 value={inputValue}
                 onChange={handleInputChange}
-                className="bg-background border-border/70 text-sm"
+                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Calculator className="h-3.5 w-3.5" />
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                <Calculator className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 Consumo Calculado
               </Label>
-              <div className="h-10 px-3 flex items-center bg-muted/30 border border-border/70 rounded-md text-sm font-mono">
+              <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoCalculado || '0'}
               </div>
             </div>
-            <div className="flex items-center justify-center">
+
+            <div className="flex items-end">
               <Button
                 variant="outline"
                 onClick={validarLectura}
                 disabled={!inputValue || isSubmitting || isValidated}
-                className="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                className="w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
               >
-                <Check className="h-4 w-4" />
-                Validar
+                {isValidated ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Validado
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Validar
+                  </>
+                )}
               </Button>
             </div>
           </div>
 
+          {/* Alertas */}
           {Number(consumoCalculado) < 0 && (
-            <Alert variant="destructive" className="py-2">
+            <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+              <AlertDescription>
                 El consumo es negativo, por favor verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {Number(consumoCalculado) === 0 && inputValue && (
-            <Alert
-              variant="default"
-              className="py-2 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300"
-            >
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
+              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="text-amber-700 dark:text-amber-300">
                 El consumo es cero, verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {isValidated && (
-            <Alert
-              variant="default"
-              className="py-2 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
-            >
-              <Check className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
+              <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <AlertDescription className="text-green-700 dark:text-green-300">
                 Lectura validada correctamente, puede proceder a guardar.
               </AlertDescription>
             </Alert>
           )}
 
-          <div className="flex justify-end gap-2 mt-4">
+          {/* Botón Guardar */}
+          <div className="flex justify-end pt-4">
             <Button
               onClick={guardarLectura}
               disabled={!isValidated || isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-8"
             >
               {isSubmitting ? (
                 <>
@@ -392,5 +401,5 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
         isSubmitting={isSubmitting}
       />
     </div>
-  )
+  );
 }
