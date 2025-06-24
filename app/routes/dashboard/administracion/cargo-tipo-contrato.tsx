@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import CargoTipoContratoComponent from '~/components/administracion/cargo-tipo-contrato/cargo-tipo-contrato-component';
 import type { Route } from './+types/cargo-tipo-contrato';
@@ -20,7 +20,9 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   };
 }
 
-export default function CargoTipoContrato({ loaderData }: Route.ComponentProps) {
+export default function CargoTipoContrato({
+  loaderData,
+}: Route.ComponentProps) {
   const { cargoTipoContrato } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },

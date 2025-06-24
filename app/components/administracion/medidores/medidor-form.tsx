@@ -11,7 +11,6 @@ import {
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import { toast } from 'sonner';
 import { Gauge } from 'lucide-react';
 import type {
   GetMedidores,
@@ -19,7 +18,7 @@ import type {
   ActualizarMedidorProps,
 } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
-import Select, { type StylesConfig, type SingleValue } from 'react-select';
+import Select, { type StylesConfig } from 'react-select';
 import { useTheme } from '~/components/theme-provider';
 
 interface OptionType {

@@ -1,15 +1,15 @@
-// eslint-disable no-empty-pattern
-import { SectionCards } from "~/components/dashboard/site-cards";
-import { ChartAreaInteractive } from "~/components/dashboard/chart-area-interactive";
+/* eslint-disable no-empty-pattern */
+import { SectionCards } from '~/components/dashboard/site-cards';
+import { ChartAreaInteractive } from '~/components/dashboard/chart-area-interactive';
 
-import data from "./data.json";
-import { DataTable } from "~/components/dashboard/data-table";
-import type { Route } from "./+types/dashboard";
+import data from './data.json';
+import { DataTable } from '~/components/dashboard/data-table';
+import type { Route } from './+types/dashboard';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Enerlova | Inicio" },
-    { name: "description", content: "Dashboard" },
+    { title: 'Enerlova | Inicio' },
+    { name: 'description', content: 'Dashboard' },
   ];
 }
 

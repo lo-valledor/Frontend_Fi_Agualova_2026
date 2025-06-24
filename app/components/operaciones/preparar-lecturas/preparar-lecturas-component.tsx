@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -42,7 +42,6 @@ import { toast } from 'sonner';
 import api from '~/lib/api';
 import { useOperaciones } from '~/hooks/use-operaciones';
 import TablaAsignacionSectores from './tabla-asignacion-sectores';
-import { Skeleton } from '~/components/ui/skeleton';
 import DialogLecturasPendientes from './dialog-lecturas-pendientes';
 
 export default function PrepararLecturasComponent({

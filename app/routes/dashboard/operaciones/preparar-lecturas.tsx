@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PrepararLecturasComponent from '~/components/operaciones/preparar-lecturas/preparar-lecturas-component';
 import type { Route } from './+types/preparar-lecturas';
@@ -33,8 +33,7 @@ export async function clientLoader() {
       sectores: sectores.data as ConsultarSectores[],
       opcionesPreparar: opcionesPreparar.data as OpcionesPrepararLecturas[],
     };
-  } catch (error) {
-    console.error('Error en clientLoader:', error);
+  } catch (_error) {
     return {
       periodoAbierto: null,
       lecturasPendientes: null,

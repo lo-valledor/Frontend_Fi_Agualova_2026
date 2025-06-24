@@ -1,23 +1,23 @@
-// eslint-disable no-empty-pattern
-import React from "react";
-import type { Route } from "./+types/exportar-lecturas";
-import ExportarLecturasComponent from "~/components/monitor/exportar-lecturas-component";
-import api from "~/lib/api";
-import type { Periodo, Sector } from "~/types/monitor";
+/* eslint-disable no-empty-pattern */
+import React from 'react';
+import type { Route } from './+types/exportar-lecturas';
+import ExportarLecturasComponent from '~/components/monitor/exportar-lecturas-component';
+import api from '~/lib/api';
+import type { Periodo, Sector } from '~/types/monitor';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Enerlova | Exportar Lecturas" },
-    { name: "description", content: "Exportar lecturas de medidores" },
+    { title: 'Enerlova | Exportar Lecturas' },
+    { name: 'description', content: 'Exportar lecturas de medidores' },
   ];
 }
 
-export async function clientLoader({ request }: Route.ClientLoaderArgs) {
+export async function clientLoader({}: Route.ClientLoaderArgs) {
   try {
     // Carga paralela de datos iniciales necesarios
     const [periodosRes, sectoresRes] = await Promise.all([
-      api.get<Periodo[]>("/Periodos"),
-      api.get<Sector[]>("/Sectores"),
+      api.get<Periodo[]>('/Periodos'),
+      api.get<Sector[]>('/Sectores'),
     ]);
 
     const periodosData = Array.isArray(periodosRes.data)
@@ -31,7 +31,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     let activePeriodoId: number | null = null;
     if (periodosData && periodosData.length > 0) {
       const activePeriodo = periodosData.find(
-        (periodo: Periodo) => periodo.EstadoPeriodo === 2
+        (periodo: Periodo) => periodo.EstadoPeriodo === 2,
       );
       if (activePeriodo) {
         activePeriodoId = Number(activePeriodo.IdPeriodo);
@@ -44,9 +44,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
       activePeriodoId,
       error: null,
     };
-  } catch (error: any) {
-    console.error("Error al cargar datos del monitor:", error);
-
+  } catch (error) {
     // Retornar datos vacíos con error para que el componente pueda manejar el error
     return {
       periodos: [],

@@ -9,7 +9,6 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     ignores: [
       'build/**/*',
       'dist/**/*',
@@ -17,7 +16,11 @@ export default [
       '*.config.js',
       '*.config.ts',
       'public/**/*',
+      '.react-router/**/*', // Ahora esto será ignorado globalmente
     ],
+  },
+  {
+    files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     plugins: {
       react: pluginReact,
       'unused-imports': unusedImports,

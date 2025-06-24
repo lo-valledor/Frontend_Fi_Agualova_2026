@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 // eslint-disable no-empty-pattern
 import React from 'react';
 import ContratosComponent from '~/components/administracion/contratos/contratos-component';

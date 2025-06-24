@@ -1,6 +1,5 @@
 import { type Periodos } from '~/types/operaciones';
 import { type ColumnDef } from '@tanstack/react-table';
-import CerrarPeriodo from './cerrar-periodo';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
 import { cn } from '~/lib/utils';

@@ -20,7 +20,6 @@ import {
   ArrowRight,
   ArrowLeft,
   RefreshCw,
-  InfoIcon,
 } from "lucide-react";
 import api from "~/lib/api";
 import {
@@ -35,14 +34,8 @@ import AntiguoMedidorForm from "./antiguo-medidor-form";
 import DetalleMedidorAntiguoComponent from "./detalle-medidor-antiguo";
 import NuevoMedidorForm from "./nuevo-medidor-form";
 import DetalleMedidorNuevoComponent from "./detalle-medidor-nuevo";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
+
+
 
 export default function CambioMedidorComponent() {
   const { user } = useAuth();

@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/claves';
 import api from '~/lib/api';
@@ -23,7 +24,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: Claves[] }).data)
     ) {
       claves = (response.data as { data: Claves[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -31,8 +32,7 @@ export async function clientLoader() {
     }
 
     return { claves };
-  } catch (error) {
-    console.error('Error al cargar claves:', error);
+  } catch (_error) {
     throw new Response('Error al cargar las claves', { status: 500 });
   }
 }

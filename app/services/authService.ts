@@ -30,13 +30,11 @@ export const authService = {
       toast.success('Inicio de sesión exitoso')
       return response.data.token
     } catch (error) {
-      console.error('Error en authService.login:', error);
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {
           toast.error('Usuario o contraseña incorrectos')
           throw new Error('Usuario o contraseña incorrectos')
         }
-        console.error('Error response:', error.response?.data);
         throw new Error(
           error.response?.data || 'Error al intentar iniciar sesión',
         )
@@ -51,9 +49,8 @@ export const authService = {
       sessionStorage.removeItem('token')
       toast.success('Cierre de sesión exitoso')
       // No podemos usar navigate aquí, la redirección debe hacerse en el componente
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al cerrar sesión')
-      console.error('Error al cerrar sesión:', error)
     }
   },
 
@@ -63,10 +60,7 @@ export const authService = {
         '/refresh-token',
       )
       return response.data.token
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error('Error al refrescar el token:', error.response?.data)
-      }
+    } catch (_error) {
       throw new Error('Error al refrescar el token')
     }
   },

@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CiclosFacturacionComponent from '~/components/mantencion/ciclos-facturacion/ciclos-facturacion-component';
@@ -26,7 +27,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: CiclosFacturacion[] }).data)
     ) {
       ciclosFacturacion = (response.data as { data: CiclosFacturacion[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -34,8 +35,7 @@ export async function clientLoader() {
     }
 
     return { ciclosFacturacion };
-  } catch (error) {
-    console.error('Error al cargar ciclos de facturación:', error);
+  } catch (_error) {
     throw new Response('Error al cargar los ciclos de facturación', {
       status: 500,
     });

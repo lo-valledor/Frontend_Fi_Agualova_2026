@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Badge } from '~/components/ui/badge';
 import {
   Card,
@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
-import { useOperaciones } from '~/hooks/use-operaciones';
 import {
   type EstadoCierreLecturas,
   type PeriodoAbierto,
@@ -26,11 +25,9 @@ import {
   Eraser,
   SearchIcon,
   CheckCircleIcon,
-  ClockIcon,
   FileTextIcon,
   CircleX,
 } from 'lucide-react';
-import { Skeleton } from '~/components/ui/skeleton';
 import { Label } from '~/components/ui/label';
 import {
   Select,

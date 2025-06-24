@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import CondicionesContratoComponent from '~/components/administracion/condiciones-contrato/condiciones-contrato-component';
 import type { Route } from './+types/condiciones-contrato';
@@ -27,7 +27,9 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     resCondicionesContrato.data &&
     typeof resCondicionesContrato.data === 'object' &&
     'data' in resCondicionesContrato.data &&
-    Array.isArray((resCondicionesContrato.data as any).data)
+    Array.isArray(
+      (resCondicionesContrato.data as { data: GetCondicionesContrato[] }).data,
+    )
   ) {
     condicionesContrato = (
       resCondicionesContrato.data as { data: GetCondicionesContrato[] }
@@ -40,7 +42,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     resConceptos.data &&
     typeof resConceptos.data === 'object' &&
     'data' in resConceptos.data &&
-    Array.isArray((resConceptos.data as any).data)
+    Array.isArray((resConceptos.data as { data: Conceptos[] }).data)
   ) {
     conceptos = (resConceptos.data as { data: Conceptos[] }).data;
   } else if (Array.isArray(resConceptos.data)) {

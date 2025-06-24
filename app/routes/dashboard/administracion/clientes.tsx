@@ -1,4 +1,5 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/clientes';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
@@ -62,8 +63,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
     }
 
     return { clientes, giros, regiones };
-  } catch (error) {
-    console.error('Error al cargar clientes:', error);
+  } catch (_error) {
     throw new Response('Error al cargar los clientes', { status: 500 });
   }
 }

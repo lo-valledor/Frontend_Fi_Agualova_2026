@@ -66,7 +66,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
   {
     header: "Acciones",
     cell: ({ row }) => {
-      const periodo = row.original;
+      // const periodo = row.original;  
       return (
         <div className="flex gap-2">
           {/* {periodo.epf_descripcion === "Abierto" ? (

@@ -11,8 +11,6 @@ import {
 import {
   PlusCircleIcon,
   AlertTriangle,
-  FileX2,
-  Bell,
   CheckCircle,
 } from 'lucide-react';
 import DialogNuevoPeriodo from './dialog-nuevo-periodo';

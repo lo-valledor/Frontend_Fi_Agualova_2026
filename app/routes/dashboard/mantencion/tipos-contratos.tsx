@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/tipos-contratos';
 import TiposContratosComponent from '~/components/mantencion/tipos-contratos/tipos-contratos-component';
@@ -23,7 +24,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: TiposContrato[] }).data)
     ) {
       tiposContratos = (response.data as { data: TiposContrato[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -31,8 +32,7 @@ export async function clientLoader() {
     }
 
     return { tiposContratos };
-  } catch (error) {
-    console.error('Error al cargar tipos de contratos:', error);
+  } catch {
     throw new Response('Error al cargar los tipos de contratos', {
       status: 500,
     });

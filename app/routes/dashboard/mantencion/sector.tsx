@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/sector';
 import api from '~/lib/api';
@@ -23,7 +24,7 @@ export async function clientLoader() {
       response.data &&
       typeof response.data === 'object' &&
       'data' in response.data &&
-      Array.isArray((response.data as any).data)
+      Array.isArray((response.data as { data: Sectores[] }).data)
     ) {
       sectores = (response.data as { data: Sectores[] }).data;
     } else if (Array.isArray(response.data)) {
@@ -31,8 +32,7 @@ export async function clientLoader() {
     }
 
     return { sectores };
-  } catch (error) {
-    console.error('Error al cargar sectores:', error);
+  } catch (_error) {
     throw new Response('Error al cargar los sectores', { status: 500 });
   }
 }

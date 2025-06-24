@@ -13,9 +13,6 @@ import {
   MoreHorizontal,
   Edit,
   Eye,
-  FileText,
-  DollarSign,
-  Percent,
   Loader2,
 } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';

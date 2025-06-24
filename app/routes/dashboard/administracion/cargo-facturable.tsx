@@ -1,4 +1,4 @@
-// eslint-disable no-empty-pattern
+/* eslint-disable no-empty-pattern */
 import React from 'react';
 import CargoFacturableComponent from '~/components/administracion/cargo-facturable/cargo-facturable-component';
 import type { Route } from './+types/cargo-facturable';
@@ -39,7 +39,6 @@ export default function CargoFacturable({ loaderData }: Route.ComponentProps) {
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <CargoFacturableComponent
-        // @ts-ignore
         cargos={loaderData.cargos as BuscarCargoFacturable[]}
         conceptos={loaderData.conceptos as GeCombosConceptos[]}
         tarifas={loaderData.tarifas as GetCombosTarifas[]}

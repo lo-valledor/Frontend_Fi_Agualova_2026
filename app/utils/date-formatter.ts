@@ -4,13 +4,14 @@ import { format } from "date-fns";
  * Formatea una fecha a formato DD-MM-YYYY
  */
 export function formatToDate(dateString: string | null): string {
-  if (!dateString) return "-";
+  if (!dateString) return '-';
 
   try {
-    return format(new Date(dateString), "dd-MM-yyyy");
+    return format(new Date(dateString), 'dd-MM-yyyy');
   } catch (error) {
     // Intentar extraer la fecha si es un string en formato ISO
-    console.error("Error al formatear la fecha:", error);
+    // eslint-disable-next-line no-console
+    console.error('Error al formatear la fecha:', error);
     return String(dateString).split("T")[0] || "-";
   }
 }
@@ -19,14 +20,15 @@ export function formatToDate(dateString: string | null): string {
  * Formatea una fecha a formato HH:mm:ss
  */
 export function formatToTime(dateString: string | null): string {
-  if (!dateString) return "-";
+  if (!dateString) return '-';
 
   try {
-    return format(new Date(dateString), "HH:mm:ss");
+    return format(new Date(dateString), 'HH:mm:ss');
   } catch (error) {
     // Intentar extraer la hora si es un string en formato ISO
-    console.error("Error al formatear la hora:", error);
-    return String(dateString).split("T")[1]?.split(".")[0] || "-";
+    // eslint-disable-next-line no-console
+    console.error('Error al formatear la hora:', error);
+    return String(dateString).split('T')[1]?.split('.')[0] || '-';
   }
 }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '~/lib/api';
-import { FileText, RotateCcw, Loader2, Gauge, Settings } from 'lucide-react';
+import { RotateCcw, Loader2, Gauge, Settings } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
 import {
   Dialog,

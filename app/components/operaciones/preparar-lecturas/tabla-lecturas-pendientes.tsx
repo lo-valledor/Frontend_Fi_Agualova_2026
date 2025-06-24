@@ -10,7 +10,6 @@ import {
   TableCell,
   TableFooter,
 } from "~/components/ui/table";
-import { useEffect } from "react";
 import { Badge } from "~/components/ui/badge";
 
 /**

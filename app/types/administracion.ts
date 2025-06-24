@@ -381,9 +381,6 @@ export interface MedidorSubempalmeProps {
   codigoAcometida: string;
 }
 
-export interface GetMedidorByCodigo {
-
-}
 
 export interface GetMedidorByLecturas {
   cantidadLecturas: string;

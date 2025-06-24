@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import Select, { type StylesConfig, type SingleValue } from 'react-select';
+import Select, { type StylesConfig } from 'react-select';
 import { toast } from 'sonner';
 import { useTheme } from '~/components/theme-provider';
 import {
@@ -132,7 +132,7 @@ export function AcometidaForm({
   }));
 
   const contratoOptions: ContratoSelectOption[] = useMemo(() => {
-    let opciones = contratosDisponibles.map((contrato) => ({
+    const opciones = contratosDisponibles.map((contrato) => ({
       value: contrato.contratoId,
       label: `${contrato.contratoId} - ${contrato.clienteNombre} ${contrato.clienteApellidos}`,
       data: contrato,
