@@ -90,16 +90,12 @@ jobs:
           path: build/
           retention-days: 1
 
-  # 🚀 Job de Despliegue Continuo (solo para rama principal)
+    # 🚀 Job de Despliegue Continuo (solo para rama principal)
   deploy:
     name: 🚀 Deploy to Production
     needs: ci
     runs-on: self-hosted
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-
-    environment:
-      name: production
-      url: ${{ secrets.PRODUCTION_URL }}
 
     steps:
       # Checkout del código
@@ -149,10 +145,6 @@ jobs:
     needs: ci
     runs-on: self-hosted
     if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging'
-
-    environment:
-      name: staging
-      url: ${{ secrets.STAGING_URL }}
 
     steps:
       # Checkout del código
