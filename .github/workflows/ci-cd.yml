@@ -125,13 +125,34 @@ jobs:
       - name: 🔍 Health check
         run: |
           echo "🔍 Performing health check..."
-          sleep 30
-          if curl -f http://localhost:80 > /dev/null 2>&1; then
-            echo "✅ Deployment successful!"
-          else
-            echo "❌ Deployment failed - service not responding"
-            exit 1
-          fi
+          echo "⏳ Waiting for service to start..."
+
+          # Esperar y hacer múltiples intentos
+          for i in {1..15}; do
+            echo "🔄 Attempt $i/15..."
+            if curl -f http://localhost:8080 > /dev/null 2>&1; then
+              echo "✅ Deployment successful! Service is responding on port 8080"
+              echo "🌐 Application URL: http://localhost:8080"
+              break
+            else
+              echo "⏳ Service not ready yet, waiting 15 seconds..."
+              sleep 15
+            fi
+            
+            # Si es el último intento y falló
+            if [ $i -eq 15 ]; then
+              echo "❌ Deployment failed - service not responding after 15 attempts"
+              echo "🔍 Checking Docker container status..."
+              docker-compose ps
+              echo "📋 Checking container logs..."
+              docker-compose logs --tail=50
+              echo "🔧 Checking if port 8080 is in use..."
+              netstat -tlnp | grep :8080 || echo "Port 8080 not in use"
+              echo "🐳 Checking Docker containers..."
+              docker ps -a
+              exit 1
+            fi
+          done
 
       # Limpiar imágenes Docker antiguas
       - name: 🧹 Clean old Docker images
