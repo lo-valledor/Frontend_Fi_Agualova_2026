@@ -1,74 +1,77 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
-import { Alert, AlertDescription } from '~/components/ui/alert'
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Alert, AlertDescription } from '~/components/ui/alert';
 import {
   AlertCircle,
   Gauge,
   Calculator,
   Loader2,
   Activity,
-  BarChart,
   Zap,
   BarChart2,
   CalendarIcon,
   Clock,
   Check,
-} from 'lucide-react'
-import { toast } from 'sonner'
-import type { FormDataBT43, MedidorNichoItem } from '~/types/monitor'
-import { ConfirmationDialog } from '../dialogs/confirmation-dialog'
-import api from '~/lib/api'
+} from 'lucide-react';
+import { toast } from 'sonner';
+import type { FormDataBT43, MedidorNichoItem } from '~/types/monitor';
+import { ConfirmationDialog } from '../dialogs/confirmation-dialog';
+import api from '~/lib/api';
 
 interface BT43FormProps {
-  result: MedidorNichoItem
-  onSuccess?: () => void
+  result: MedidorNichoItem;
+  onSuccess?: () => void;
 }
 
 export function BT43Form({ result, onSuccess }: BT43FormProps) {
   // Valores fijos del medidor
-  const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos])
+  const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
   const valorActivaAnterior = useMemo(
     () => result.LM_ValorUltimaLectura,
     [result.LM_ValorUltimaLectura],
-  )
+  );
   const valorReactivaAnterior = useMemo(
     () => parseInt(result.LMC_ValorUltimaLectEnergiaReactiva1),
     [result.LMC_ValorUltimaLectEnergiaReactiva1],
-  )
+  );
+  const consumoAnterior = useMemo(
+    () => parseInt(result.LM_ConsumoMesAnterior),
+    [result.LM_ConsumoMesAnterior],
+  );
   const constante = useMemo(
     () => result.ME_ConstanteMultiplicar,
     [result.ME_ConstanteMultiplicar],
-  )
+  );
 
   // Estado del formulario principal
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Estados para energía activa
-  const [inputActivaValue, setInputActivaValue] = useState('')
-  const [consumoActivaCalculado, setConsumoActivaCalculado] = useState('')
+  const [inputActivaValue, setInputActivaValue] = useState('');
+  const [consumoActivaCalculado, setConsumoActivaCalculado] = useState('');
   const [tipoLecturaActiva, setTipoLecturaActiva] = useState<
     'menor' | 'igual' | 'mayor' | null
-  >(null)
-  const [selectedClaveActiva, setSelectedClaveActiva] = useState('0')
-  const [isActivaValidated, setIsActivaValidated] = useState(false)
-  const [showMenorActivaDialog, setShowMenorActivaDialog] = useState(false)
-  const [showIgualActivaDialog, setShowIgualActivaDialog] = useState(false)
-  const [showMayorActivaDialog, setShowMayorActivaDialog] = useState(false)
+  >(null);
+  const [selectedClaveActiva, setSelectedClaveActiva] = useState('0');
+  const [isActivaValidated, setIsActivaValidated] = useState(false);
+  const [showMenorActivaDialog, setShowMenorActivaDialog] = useState(false);
+  const [showIgualActivaDialog, setShowIgualActivaDialog] = useState(false);
+  const [showMayorActivaDialog, setShowMayorActivaDialog] = useState(false);
 
   // Estados para energía reactiva
-  const [inputReactivaValue, setInputReactivaValue] = useState('')
-  const [consumoReactivaCalculado, setConsumoReactivaCalculado] = useState('')
+  const [inputReactivaValue, setInputReactivaValue] = useState('');
+  const [consumoReactivaCalculado, setConsumoReactivaCalculado] = useState('');
   const [tipoLecturaReactiva, setTipoLecturaReactiva] = useState<
     'menor' | 'igual' | 'mayor' | null
-  >(null)
-  const [selectedClaveReactiva, setSelectedClaveReactiva] = useState('0')
-  const [isReactivaValidated, setIsReactivaValidated] = useState(false)
-  const [showMenorReactivaDialog, setShowMenorReactivaDialog] = useState(false)
-  const [showIgualReactivaDialog, setShowIgualReactivaDialog] = useState(false)
-  const [showMayorReactivaDialog, setShowMayorReactivaDialog] = useState(false)
+  >(null);
+  const [selectedClaveReactiva, setSelectedClaveReactiva] = useState('0');
+  const [isReactivaValidated, setIsReactivaValidated] = useState(false);
+  const [showMenorReactivaDialog, setShowMenorReactivaDialog] = useState(false);
+  const [showIgualReactivaDialog, setShowIgualReactivaDialog] = useState(false);
+  const [showMayorReactivaDialog, setShowMayorReactivaDialog] = useState(false);
 
   // Estados para demandas
   const [demandaData, setDemandaData] = useState({
@@ -78,11 +81,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     ds: 0,
     dsFecha: '',
     dsHora: '',
-  })
+  });
 
   // Establecer fechas y horas por defecto al iniciar
   useEffect(() => {
-
     setDemandaData({
       dp: 0,
       dpFecha: '',
@@ -90,164 +92,230 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       ds: 0,
       dsFecha: '',
       dsHora: '',
-    })
-  }, [])
+    });
+  }, []);
 
   // Calcular consumo de energía activa (función estable)
   const calcularConsumoActiva = useCallback(
     (value: string) => {
       if (!value || isNaN(Number(value))) {
-        return { consumo: '', tipo: null, vlecturadigitos: 0 }
+        return { consumo: '', tipo: null, vlecturadigitos: 0 };
       }
 
-      const valorActual = parseInt(value)
-      let vlecturadigitos = valorActual
-      let tipo: 'menor' | 'igual' | 'mayor' | null = null
+      const valorActual = parseInt(value);
+      let vlecturadigitos = valorActual;
+      let tipo: 'menor' | 'igual' | 'mayor' | null = null;
 
       if (valorActual < valorActivaAnterior) {
-        tipo = 'menor'
+        tipo = 'menor';
         switch (digito) {
           case 1:
-            vlecturadigitos = valorActual
-            break
+            vlecturadigitos = valorActual;
+            break;
           case 4:
-            vlecturadigitos = valorActual + 10000
-            break
+            vlecturadigitos = valorActual + 10000;
+            break;
           case 5:
-            vlecturadigitos = valorActual + 100000
-            break
+            vlecturadigitos = valorActual + 100000;
+            break;
           case 6:
-            vlecturadigitos = valorActual + 1000000
-            break
+            vlecturadigitos = valorActual + 1000000;
+            break;
           case 7:
-            vlecturadigitos = valorActual + 10000000
-            break
+            vlecturadigitos = valorActual + 10000000;
+            break;
           case 8:
-            vlecturadigitos = valorActual + 100000000
-            break
+            vlecturadigitos = valorActual + 100000000;
+            break;
           case 10:
-            vlecturadigitos = valorActual + 10000000000
-            break
+            vlecturadigitos = valorActual + 10000000000;
+            break;
         }
       } else if (valorActual === valorActivaAnterior) {
-        tipo = 'igual'
-        vlecturadigitos = valorActual
+        tipo = 'igual';
+        vlecturadigitos = valorActual;
       } else {
-        tipo = 'mayor'
-        vlecturadigitos = valorActual
+        tipo = 'mayor';
+        vlecturadigitos = valorActual;
       }
 
       const consumo =
         tipo === 'menor'
           ? (vlecturadigitos - valorActivaAnterior) * constante
-          : (valorActual - valorActivaAnterior) * constante
+          : (valorActual - valorActivaAnterior) * constante;
 
       return {
         consumo: consumo.toString(),
         tipo,
         vlecturadigitos,
-      }
+      };
     },
     [digito, valorActivaAnterior, constante],
-  )
+  );
 
   // Calcular consumo de energía reactiva (función estable)
   const calcularConsumoReactiva = useCallback(
     (value: string) => {
       if (!value || isNaN(Number(value))) {
-        return { consumo: '', tipo: null, vlecturadigitos: 0 }
+        return { consumo: '', tipo: null, vlecturadigitos: 0 };
       }
 
-      const valorActual = parseInt(value)
-      let vlecturadigitos = valorActual
-      let tipo: 'menor' | 'igual' | 'mayor' | null = null
+      const valorActual = parseInt(value);
+      let vlecturadigitos = valorActual;
+      let tipo: 'menor' | 'igual' | 'mayor' | null = null;
 
       if (valorActual < valorReactivaAnterior) {
-        tipo = 'menor'
+        tipo = 'menor';
         switch (digito) {
           case 1:
-            vlecturadigitos = valorActual
-            break
+            vlecturadigitos = valorActual;
+            break;
           case 4:
-            vlecturadigitos = valorActual + 10000
-            break
+            vlecturadigitos = valorActual + 10000;
+            break;
           case 5:
-            vlecturadigitos = valorActual + 100000
-            break
+            vlecturadigitos = valorActual + 100000;
+            break;
           case 6:
-            vlecturadigitos = valorActual + 1000000
-            break
+            vlecturadigitos = valorActual + 1000000;
+            break;
           case 7:
-            vlecturadigitos = valorActual + 10000000
-            break
+            vlecturadigitos = valorActual + 10000000;
+            break;
           case 8:
-            vlecturadigitos = valorActual + 100000000
-            break
+            vlecturadigitos = valorActual + 100000000;
+            break;
           case 10:
-            vlecturadigitos = valorActual + 10000000000
-            break
+            vlecturadigitos = valorActual + 10000000000;
+            break;
         }
       } else if (valorActual === valorReactivaAnterior) {
-        tipo = 'igual'
-        vlecturadigitos = valorActual
+        tipo = 'igual';
+        vlecturadigitos = valorActual;
       } else {
-        tipo = 'mayor'
-        vlecturadigitos = valorActual
+        tipo = 'mayor';
+        vlecturadigitos = valorActual;
       }
 
       const consumo =
         tipo === 'menor'
           ? (vlecturadigitos - valorReactivaAnterior) * constante
-          : (valorActual - valorReactivaAnterior) * constante
+          : (valorActual - valorReactivaAnterior) * constante;
 
       return {
         consumo: consumo.toString(),
         tipo,
         vlecturadigitos,
-      }
+      };
     },
     [digito, valorReactivaAnterior, constante],
-  )
+  );
+
+  // Validar que la lectura no exceda el número de dígitos del medidor
+  const validarDigitos = useCallback(
+    (value: string) => {
+      if (!value || isNaN(Number(value))) return false;
+
+      const valorNumerico = parseInt(value);
+      const maxValue = Math.pow(10, digito) - 1; // 10^digitos - 1
+
+      return valorNumerico <= maxValue;
+    },
+    [digito],
+  );
+
+  // Calcular el máximo valor permitido para mostrar al usuario
+  const maxValuePermitido = useMemo(() => {
+    return Math.pow(10, digito) - 1;
+  }, [digito]);
 
   // Actualizar el consumo cuando cambia el input de energía activa
   const handleActivaInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value
-      setInputActivaValue(value)
+      const value = e.target.value;
+
+      // Si el valor está vacío, permitir
+      if (value === '') {
+        setInputActivaValue(value);
+        setConsumoActivaCalculado('');
+        setTipoLecturaActiva(null);
+        setIsActivaValidated(false);
+        return;
+      }
+
+      // Validar que sea numérico
+      if (isNaN(Number(value))) {
+        toast.error('Solo se permiten valores numéricos en Energía Activa');
+        return;
+      }
+
+      // Validar número de dígitos
+      if (!validarDigitos(value)) {
+        toast.error(
+          `La lectura de Energía Activa no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
+        );
+        return;
+      }
+
+      setInputActivaValue(value);
 
       if (value && !isNaN(Number(value))) {
-        const resultado = calcularConsumoActiva(value)
-        setConsumoActivaCalculado(resultado.consumo)
-        setTipoLecturaActiva(resultado.tipo)
-        setIsActivaValidated(false) // Resetear validación cuando cambia el input
+        const resultado = calcularConsumoActiva(value);
+        setConsumoActivaCalculado(resultado.consumo);
+        setTipoLecturaActiva(resultado.tipo);
+        setIsActivaValidated(false); // Resetear validación cuando cambia el input
       } else {
-        setConsumoActivaCalculado('')
-        setTipoLecturaActiva(null)
-        setIsActivaValidated(false)
+        setConsumoActivaCalculado('');
+        setTipoLecturaActiva(null);
+        setIsActivaValidated(false);
       }
     },
-    [calcularConsumoActiva],
-  )
+    [calcularConsumoActiva, validarDigitos, maxValuePermitido, digito],
+  );
 
   // Actualizar el consumo cuando cambia el input de energía reactiva
   const handleReactivaInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value
-      setInputReactivaValue(value)
+      const value = e.target.value;
+
+      // Si el valor está vacío, permitir
+      if (value === '') {
+        setInputReactivaValue(value);
+        setConsumoReactivaCalculado('');
+        setTipoLecturaReactiva(null);
+        setIsReactivaValidated(false);
+        return;
+      }
+
+      // Validar que sea numérico
+      if (isNaN(Number(value))) {
+        toast.error('Solo se permiten valores numéricos en Energía Reactiva');
+        return;
+      }
+
+      // Validar número de dígitos
+      if (!validarDigitos(value)) {
+        toast.error(
+          `La lectura de Energía Reactiva no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
+        );
+        return;
+      }
+
+      setInputReactivaValue(value);
 
       if (value && !isNaN(Number(value))) {
-        const resultado = calcularConsumoReactiva(value)
-        setConsumoReactivaCalculado(resultado.consumo)
-        setTipoLecturaReactiva(resultado.tipo)
-        setIsReactivaValidated(false) // Resetear validación cuando cambia el input
+        const resultado = calcularConsumoReactiva(value);
+        setConsumoReactivaCalculado(resultado.consumo);
+        setTipoLecturaReactiva(resultado.tipo);
+        setIsReactivaValidated(false); // Resetear validación cuando cambia el input
       } else {
-        setConsumoReactivaCalculado('')
-        setTipoLecturaReactiva(null)
-        setIsReactivaValidated(false)
+        setConsumoReactivaCalculado('');
+        setTipoLecturaReactiva(null);
+        setIsReactivaValidated(false);
       }
     },
-    [calcularConsumoReactiva],
-  )
+    [calcularConsumoReactiva, validarDigitos, maxValuePermitido, digito],
+  );
 
   // Actualizar datos de demanda
   const handleDemandaChange = useCallback(
@@ -255,96 +323,124 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       setDemandaData((prev) => ({
         ...prev,
         [field]: value,
-      }))
+      }));
     },
     [],
-  )
+  );
 
   // Validar la lectura de energía activa
   const validarLecturaActiva = useCallback(() => {
     if (!inputActivaValue || isNaN(Number(inputActivaValue))) {
-      toast.info(
+      toast.error(
         'Por favor ingrese un valor numérico válido para Energía Activa',
-      )
-      return
+      );
+      return;
+    }
+
+    // Validar dígitos una vez más antes de continuar
+    if (!validarDigitos(inputActivaValue)) {
+      toast.error(
+        `La lectura de Energía Activa no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
+      );
+      return;
     }
 
     if (tipoLecturaActiva === 'menor') {
-      setShowMenorActivaDialog(true)
+      setShowMenorActivaDialog(true);
     } else if (tipoLecturaActiva === 'igual') {
-      setShowIgualActivaDialog(true)
+      setShowIgualActivaDialog(true);
     } else if (tipoLecturaActiva === 'mayor') {
-      setShowMayorActivaDialog(true)
+      setShowMayorActivaDialog(true);
     } else {
-      toast.info('Por favor ingrese un valor válido')
+      toast.error('Por favor ingrese un valor válido');
     }
-  }, [inputActivaValue, tipoLecturaActiva])
+  }, [
+    inputActivaValue,
+    tipoLecturaActiva,
+    validarDigitos,
+    maxValuePermitido,
+    digito,
+  ]);
 
   // Validar la lectura de energía reactiva
   const validarLecturaReactiva = useCallback(() => {
     if (!inputReactivaValue || isNaN(Number(inputReactivaValue))) {
-      toast.info(
+      toast.error(
         'Por favor ingrese un valor numérico válido para Energía Reactiva',
-      )
-      return
+      );
+      return;
+    }
+
+    // Validar dígitos una vez más antes de continuar
+    if (!validarDigitos(inputReactivaValue)) {
+      toast.error(
+        `La lectura de Energía Reactiva no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
+      );
+      return;
     }
 
     if (tipoLecturaReactiva === 'menor') {
-      setShowMenorReactivaDialog(true)
+      setShowMenorReactivaDialog(true);
     } else if (tipoLecturaReactiva === 'igual') {
-      setShowIgualReactivaDialog(true)
+      setShowIgualReactivaDialog(true);
     } else if (tipoLecturaReactiva === 'mayor') {
-      setShowMayorReactivaDialog(true)
+      setShowMayorReactivaDialog(true);
     } else {
-      toast.info('Por favor ingrese un valor válido')
+      toast.error('Por favor ingrese un valor válido');
     }
-  }, [inputReactivaValue, tipoLecturaReactiva])
+  }, [
+    inputReactivaValue,
+    tipoLecturaReactiva,
+    validarDigitos,
+    maxValuePermitido,
+    digito,
+  ]);
 
   // Confirmar tipo de lectura activa y registrar la clave seleccionada
   const handleConfirmLecturaActiva = useCallback(() => {
     if (selectedClaveActiva === '0') {
-      toast.info('Debe seleccionar una clave para Energía Activa')
-      return
+      toast.info('Debe seleccionar una clave para Energía Activa');
+      return;
     }
 
     // Cerrar diálogos
-    setShowMenorActivaDialog(false)
-    setShowIgualActivaDialog(false)
+    setShowMenorActivaDialog(false);
+    setShowIgualActivaDialog(false);
 
     // Marcar como validado
-    setIsActivaValidated(true)
-    toast.success('Lectura de Energía Activa validada correctamente')
-  }, [selectedClaveActiva])
+    setIsActivaValidated(true);
+    toast.success('Lectura de Energía Activa validada correctamente');
+  }, [selectedClaveActiva]);
 
   // Confirmar lectura mayor activa
   const handleConfirmMayorActiva = useCallback(() => {
-    setShowMayorActivaDialog(false)
-    setIsActivaValidated(true)
-    toast.success('Lectura de Energía Activa validada correctamente')
-  }, [])
+    setShowMayorActivaDialog(false);
+    setIsActivaValidated(true);
+    toast.success('Lectura de Energía Activa validada correctamente');
+  }, []);
 
   // Confirmar tipo de lectura reactiva y registrar la clave seleccionada
   const handleConfirmLecturaReactiva = useCallback(() => {
     if (selectedClaveReactiva === '0') {
-      toast.info('Debe seleccionar una clave para Energía Reactiva')
-      return
+      toast.info('Debe seleccionar una clave para Energía Reactiva');
+      return;
     }
 
     // Cerrar diálogos
-    setShowMenorReactivaDialog(false)
-    setShowIgualReactivaDialog(false)
+    setShowMenorReactivaDialog(false);
+    setShowIgualReactivaDialog(false);
 
     // Marcar como validado
-    setIsReactivaValidated(true)
-    toast.success('Lectura de Energía Reactiva validada correctamente')
-  }, [selectedClaveReactiva])
+    setIsReactivaValidated(true);
+    toast.success('Lectura de Energía Reactiva validada correctamente');
+  }, [selectedClaveReactiva]);
 
   // Confirmar lectura mayor reactiva
   const handleConfirmMayorReactiva = useCallback(() => {
-    setShowMayorReactivaDialog(false)
-    setIsReactivaValidated(true)
-    toast.success('Lectura de Energía Reactiva validada correctamente')
-  }, [])
+    setShowMayorReactivaDialog(false);
+    setIsReactivaValidated(true);
+    toast.success('Lectura de Energía Reactiva validada correctamente');
+  }, []);
 
   // Preparar datos para enviar
   const prepararDatosFormulario = useCallback(() => {
@@ -356,24 +452,24 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       !demandaData.dp ||
       !demandaData.ds
     )
-      return null
+      return null;
 
-    let claveActivaId = ''
+    let claveActivaId = '';
     if (tipoLecturaActiva === 'mayor') {
-      claveActivaId = '23'
+      claveActivaId = '23';
     } else if (selectedClaveActiva !== '0') {
-      claveActivaId = selectedClaveActiva
+      claveActivaId = selectedClaveActiva;
     } else {
-      return null
+      return null;
     }
 
-    let claveReactivaId = ''
+    let claveReactivaId = '';
     if (tipoLecturaReactiva === 'mayor') {
-      claveReactivaId = '23'
+      claveReactivaId = '23';
     } else if (selectedClaveReactiva !== '0') {
-      claveReactivaId = selectedClaveReactiva
+      claveReactivaId = selectedClaveReactiva;
     } else {
-      return null
+      return null;
     }
 
     const data: FormDataBT43 = {
@@ -390,9 +486,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       ds: demandaData.ds,
       dsFecha: demandaData.dsFecha,
       dsHora: demandaData.dsHora,
-    }
+    };
 
-    return data
+    return data;
   }, [
     inputActivaValue,
     consumoActivaCalculado,
@@ -404,18 +500,18 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     selectedClaveReactiva,
     demandaData,
     result.LM_ID,
-  ])
+  ]);
 
   // Guardar la lectura
   const guardarLectura = useCallback(async () => {
     if (!isActivaValidated) {
-      toast.error('Por favor valide la lectura de Energía Activa primero')
-      return
+      toast.error('Por favor valide la lectura de Energía Activa primero');
+      return;
     }
 
     if (!isReactivaValidated) {
-      toast.error('Por favor valide la lectura de Energía Reactiva primero')
-      return
+      toast.error('Por favor valide la lectura de Energía Reactiva primero');
+      return;
     }
 
     if (
@@ -426,39 +522,39 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       !demandaData.dsFecha ||
       !demandaData.dsHora
     ) {
-      toast.error('Por favor complete todos los datos de Demanda')
-      return
+      toast.error('Por favor complete todos los datos de Demanda');
+      return;
     }
 
-    const data = prepararDatosFormulario()
+    const data = prepararDatosFormulario();
 
     if (!data) {
       toast.error(
         'No se pueden guardar los datos. Por favor complete y valide todos los campos.',
-      )
-      return
+      );
+      return;
     }
 
     try {
-      setIsSubmitting(true)
-      const response = await api.put('/actualizar-lectura-bt-4-3', data)
+      setIsSubmitting(true);
+      const response = await api.put('/actualizar-lectura-bt-4-3', data);
       if (response.status === 200) {
-        toast.success('Lectura BT-4.3 actualizada correctamente')
+        toast.success('Lectura BT-4.3 actualizada correctamente');
         if (onSuccess) {
-          onSuccess()
+          onSuccess();
         }
       } else {
-        toast.error('Error al actualizar la lectura BT-4.3')
+        toast.error('Error al actualizar la lectura BT-4.3');
       }
     } catch (error: any) {
-      console.error('Error al enviar los datos BT-4.3:', error)
+      console.error('Error al enviar los datos BT-4.3:', error);
       toast.error(
         `Error al conectar con el servidor: ${
           error.message || 'Error desconocido'
         }`,
-      )
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
   }, [
     isActivaValidated,
@@ -466,7 +562,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     demandaData,
     prepararDatosFormulario,
     onSuccess,
-  ])
+  ]);
 
   const clavesOptions = useMemo(
     () => [
@@ -475,7 +571,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' },
     ],
     [],
-  )
+  );
 
   const clavesIgualOptions = useMemo(
     () => [
@@ -486,22 +582,30 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' },
     ],
     [],
-  )
+  );
 
   return (
-    <div className="p-4 space-y-4">
-      <Card className="border-border/40 shadow-sm">
-        <CardHeader className="p-4 pb-2 bg-muted/40 border-b border-border/40">
-          <CardTitle className="text-base font-medium text-sky-800 dark:text-sky-200 flex items-center gap-1.5">
-            <Activity className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-            Energía Activa
+    <div className="p-6 space-y-6">
+      {/* Energía Activa */}
+      <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
+            <div className="p-2 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+              <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold">Energía Activa</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+                Lectura y validación del consumo activo
+              </p>
+            </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Gauge className="h-3.5 w-3.5" />
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                <Gauge className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 Lectura Actual
               </Label>
               <Input
@@ -509,39 +613,59 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 placeholder={valorActivaAnterior.toString()}
                 value={inputActivaValue}
                 onChange={handleActivaInputChange}
-                className="bg-background border-border/70 text-sm"
+                max={maxValuePermitido}
+                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
               />
+              <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                <span>⚠️</span>
+                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
+                dígitos)
+              </small>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Calculator className="h-3.5 w-3.5" />
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                <Calculator className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 Consumo Calculado
               </Label>
-              <div className="h-10 px-3 flex items-center bg-muted/30 border border-border/70 rounded-md text-sm font-mono">
+              <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoActivaCalculado || '0'}
               </div>
+              <small className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                <span>📊</span>
+                Consumo anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
+              </small>
             </div>
 
-            <div className="flex items-center justify-center">
+            <div className="flex items-end">
               <Button
                 variant="outline"
                 onClick={validarLecturaActiva}
                 disabled={
                   !inputActivaValue || isSubmitting || isActivaValidated
                 }
-                className="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                className="w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
               >
-                <Check className="h-4 w-4" />
-                Validar
+                {isActivaValidated ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Validado
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Validar
+                  </>
+                )}
               </Button>
             </div>
           </div>
 
+          {/* Alertas para Energía Activa */}
           {Number(consumoActivaCalculado) < 0 && (
-            <Alert variant="destructive" className="py-2">
+            <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+              <AlertDescription>
                 El consumo de energía activa es negativo, por favor verifique la
                 lectura.
               </AlertDescription>
@@ -549,24 +673,18 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           )}
 
           {Number(consumoActivaCalculado) === 0 && inputActivaValue && (
-            <Alert
-              variant="default"
-              className="py-2 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300"
-            >
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
+              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="text-amber-700 dark:text-amber-300">
                 El consumo de energía activa es cero, verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {isActivaValidated && (
-            <Alert
-              variant="default"
-              className="py-2 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
-            >
-              <Check className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
+              <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <AlertDescription className="text-green-700 dark:text-green-300">
                 Lectura de energía activa validada correctamente.
               </AlertDescription>
             </Alert>
@@ -574,18 +692,26 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-border/40 shadow-sm">
-        <CardHeader className="p-4 pb-2 bg-muted/40 border-b border-border/40">
-          <CardTitle className="text-base font-medium text-sky-800 dark:text-sky-200 flex items-center gap-1.5">
-            <BarChart className="h-4 w-4 text-green-600 dark:text-green-400" />
-            Energía Reactiva
+      {/* Energía Reactiva */}
+      <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
+            <div className="p-2 bg-emerald-50 dark:bg-emerald-950/50 rounded-lg">
+              <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold">Energía Reactiva</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+                Lectura y validación del consumo reactivo
+              </p>
+            </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Gauge className="h-3.5 w-3.5" />
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                <Gauge className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 Lectura Actual
               </Label>
               <Input
@@ -593,39 +719,59 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 placeholder={valorReactivaAnterior.toString()}
                 value={inputReactivaValue}
                 onChange={handleReactivaInputChange}
-                className="bg-background border-border/70 text-sm"
+                max={maxValuePermitido}
+                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
               />
+              <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                <span>⚠️</span>
+                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
+                dígitos)
+              </small>
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Calculator className="h-3.5 w-3.5" />
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                <Calculator className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                 Consumo Calculado
               </Label>
-              <div className="h-10 px-3 flex items-center bg-muted/30 border border-border/70 rounded-md text-sm font-mono">
+              <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoReactivaCalculado || '0'}
               </div>
+              <small className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                <span>📊</span>
+                Consumo anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
+              </small>
             </div>
 
-            <div className="flex items-center justify-center">
+            <div className="flex items-end">
               <Button
                 variant="outline"
                 onClick={validarLecturaReactiva}
                 disabled={
                   !inputReactivaValue || isSubmitting || isReactivaValidated
                 }
-                className="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/50"
+                className="w-full border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
               >
-                <Check className="h-4 w-4" />
-                Validar
+                {isReactivaValidated ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Validado
+                  </>
+                ) : (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Validar
+                  </>
+                )}
               </Button>
             </div>
           </div>
 
+          {/* Alertas para Energía Reactiva */}
           {Number(consumoReactivaCalculado) < 0 && (
-            <Alert variant="destructive" className="py-2">
+            <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+              <AlertDescription>
                 El consumo de energía reactiva es negativo, por favor verifique
                 la lectura.
               </AlertDescription>
@@ -633,24 +779,18 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           )}
 
           {Number(consumoReactivaCalculado) === 0 && inputReactivaValue && (
-            <Alert
-              variant="default"
-              className="py-2 bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300"
-            >
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
+              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="text-amber-700 dark:text-amber-300">
                 El consumo de energía reactiva es cero, verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {isReactivaValidated && (
-            <Alert
-              variant="default"
-              className="py-2 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300"
-            >
-              <Check className="h-4 w-4" />
-              <AlertDescription className="text-sm">
+            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
+              <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <AlertDescription className="text-green-700 dark:text-green-300">
                 Lectura de energía reactiva validada correctamente.
               </AlertDescription>
             </Alert>
@@ -658,121 +798,153 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-border/40 shadow-sm">
-        <CardHeader className="p-4 pb-2 bg-muted/40 border-b border-border/40">
-          <CardTitle className="text-base font-medium text-sky-800 dark:text-sky-200 flex items-center gap-1.5">
-            <Zap className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            Datos de Demanda
+      {/* Datos de Demanda */}
+      <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
+            <div className="p-2 bg-amber-50 dark:bg-amber-950/50 rounded-lg">
+              <BarChart2 className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold">Datos de Demanda</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+                Configuración de demandas punta y suministrada
+              </p>
+            </div>
           </CardTitle>
-          {!isActivaValidated && !isReactivaValidated && (
-            <CardDescription className="text-sm mt-2">
-              <Alert variant="destructive" className="py-2">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription className="text-sm">
-                  Los datos de demanda se habilitarán una vez validadas las lecturas de energía activa y reactiva.
-                </AlertDescription>
-              </Alert>
-            </CardDescription>
-          )}
+          {!isActivaValidated || !isReactivaValidated ? (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Los datos de demanda se habilitarán una vez validadas las
+                lecturas de energía activa y reactiva.
+              </AlertDescription>
+            </Alert>
+          ) : null}
         </CardHeader>
-        <CardContent className="p-4 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <BarChart2 className="h-3.5 w-3.5" />
+        <CardContent className="space-y-6">
+          {/* Demanda Punta */}
+          <div className="p-4 bg-blue-50/30 dark:bg-blue-950/20 rounded-xl border border-blue-200/30 dark:border-blue-800/30">
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-sm font-semibold text-blue-800 dark:text-blue-200">
                 Demanda Punta
-              </Label>
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="Demanda Punta"
-                value={demandaData.dp.toString()}
-                onChange={(e) =>
-                  handleDemandaChange('dp', parseFloat(e.target.value) || 0)
-                }
-                disabled={!isActivaValidated || !isReactivaValidated}
-              />
-              
+              </span>
             </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <CalendarIcon className="h-3.5 w-3.5" />
-                Fecha
-              </Label>
-              <Input
-                type="date"
-                value={demandaData.dpFecha || ''}
-                onChange={(e) => handleDemandaChange('dpFecha', e.target.value)}
-                className="bg-background border-border/70 text-sm"
-                disabled={!isActivaValidated || !isReactivaValidated}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                  Valor (kW)
+                </Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={demandaData.dp.toString()}
+                  onChange={(e) =>
+                    handleDemandaChange('dp', parseFloat(e.target.value) || 0)
+                  }
+                  disabled={!isActivaValidated || !isReactivaValidated}
+                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono"
                 />
-            </div>
+              </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                Hora
-              </Label>
-              <Input
-                type="time"
-                value={demandaData.dpHora || ''}
-                onChange={(e) => handleDemandaChange('dpHora', e.target.value)}
-                className="bg-background border-border/70 text-sm"
-                disabled={!isActivaValidated || !isReactivaValidated}
-              />
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                  <CalendarIcon className="h-3.5 w-3.5" />
+                  Fecha
+                </Label>
+                <Input
+                  type="date"
+                  value={demandaData.dpFecha || ''}
+                  onChange={(e) =>
+                    handleDemandaChange('dpFecha', e.target.value)
+                  }
+                  disabled={!isActivaValidated || !isReactivaValidated}
+                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5" />
+                  Hora
+                </Label>
+                <Input
+                  type="time"
+                  value={demandaData.dpHora || ''}
+                  onChange={(e) =>
+                    handleDemandaChange('dpHora', e.target.value)
+                  }
+                  disabled={!isActivaValidated || !isReactivaValidated}
+                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <BarChart2 className="h-3.5 w-3.5" />
+          {/* Demanda Suministrada */}
+          <div className="p-4 bg-emerald-50/30 dark:bg-emerald-950/20 rounded-xl border border-emerald-200/30 dark:border-emerald-800/30">
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
                 Demanda Suministrada
-              </Label>
-              <Input
-                type="number"
-                step="0.01"
-                placeholder="Demanda Suministrada"
-                value={demandaData.ds.toString()}
-                onChange={(e) =>
-                  handleDemandaChange('ds', parseFloat(e.target.value) || 0)
-                }
-                className="bg-background border-border/70 text-sm"
-                disabled={!isActivaValidated || !isReactivaValidated} 
-              />
+              </span>
             </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                  Valor (kW)
+                </Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={demandaData.ds.toString()}
+                  onChange={(e) =>
+                    handleDemandaChange('ds', parseFloat(e.target.value) || 0)
+                  }
+                  disabled={!isActivaValidated || !isReactivaValidated}
+                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono"
+                />
+              </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <CalendarIcon className="h-3.5 w-3.5" />
-                Fecha
-              </Label>
-              <Input
-                type="date"
-                value={demandaData.dsFecha || ''}
-                onChange={(e) => handleDemandaChange('dsFecha', e.target.value)}
-                className="bg-background border-border/70 text-sm"
-                disabled={!isActivaValidated || !isReactivaValidated}
-              />
-            </div>
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                  <CalendarIcon className="h-3.5 w-3.5" />
+                  Fecha
+                </Label>
+                <Input
+                  type="date"
+                  value={demandaData.dsFecha || ''}
+                  onChange={(e) =>
+                    handleDemandaChange('dsFecha', e.target.value)
+                  }
+                  disabled={!isActivaValidated || !isReactivaValidated}
+                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800"
+                />
+              </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5" />
-                Hora
-              </Label>
-              <Input
-                type="time"
-                value={demandaData.dsHora || ''}
-                onChange={(e) => handleDemandaChange('dsHora', e.target.value)}
-                className="bg-background border-border/70 text-sm"
-                disabled={!isActivaValidated || !isReactivaValidated}
-              />
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+                  <Clock className="h-3.5 w-3.5" />
+                  Hora
+                </Label>
+                <Input
+                  type="time"
+                  value={demandaData.dsHora || ''}
+                  onChange={(e) =>
+                    handleDemandaChange('dsHora', e.target.value)
+                  }
+                  disabled={!isActivaValidated || !isReactivaValidated}
+                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-end mt-4">
+          {/* Botón Guardar */}
+          <div className="flex justify-end pt-4">
             <Button
               onClick={guardarLectura}
               disabled={
@@ -786,7 +958,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 !demandaData.dsHora ||
                 isSubmitting
               }
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-8"
             >
               {isSubmitting ? (
                 <>
@@ -886,5 +1058,5 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         isSubmitting={isSubmitting}
       />
     </div>
-  )
+  );
 }

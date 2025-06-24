@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   type PaginationState,
+  type RowSelectionState,
 } from '@tanstack/react-table';
 
 import {
@@ -18,7 +19,7 @@ import {
   TableRow,
 } from '~/components/ui/table';
 import { DataTablePagination } from '~/components/data-table/data-table-pagination';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
@@ -46,16 +47,19 @@ export function DataTable<TData, TValue>({
     pageSize: 10,
   });
 
-  // Función para obtener las filas seleccionadas actualmente
-  const getSelectedRows = () => {
-    if (!enableSelection || !selectedRowIds || !rowId) return {};
+  // Estado interno para la selección de filas
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-    const selectedRows: Record<string, boolean> = {};
+  // Sincronizar el estado interno con los IDs seleccionados externos
+  useEffect(() => {
+    if (!enableSelection || !selectedRowIds || !rowId) return;
+
+    const newRowSelection: RowSelectionState = {};
     selectedRowIds.forEach((id) => {
-      selectedRows[id] = true;
+      newRowSelection[id] = true;
     });
-    return selectedRows;
-  };
+    setRowSelection(newRowSelection);
+  }, [selectedRowIds, enableSelection, rowId]);
 
   const table = useReactTable({
     data,
@@ -64,20 +68,26 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onRowSelectionChange: enableSelection
-      ? (_updater) => {
-          if (onRowSelectionChange) {
-            const selectedRowsState = table.getState().rowSelection;
-            const selectedRowIds = Object.entries(selectedRowsState)
-              .filter(([_, selected]) => selected)
-              .map(([rowId, _]) => rowId);
-            onRowSelectionChange(selectedRowIds);
-          }
-        }
-      : undefined,
+    onRowSelectionChange: (updater) => {
+      if (!enableSelection) return;
+
+      // Aplicar la actualización al estado interno
+      const newRowSelection =
+        typeof updater === 'function' ? updater(rowSelection) : updater;
+
+      setRowSelection(newRowSelection);
+
+      // Notificar al componente padre
+      if (onRowSelectionChange) {
+        const selectedRowIds = Object.entries(newRowSelection)
+          .filter(([_, selected]) => selected)
+          .map(([rowId, _]) => rowId);
+        onRowSelectionChange(selectedRowIds);
+      }
+    },
     state: {
       pagination,
-      rowSelection: getSelectedRows(),
+      rowSelection,
     },
     onPaginationChange: setPagination,
     enableRowSelection: enableSelection,

@@ -1,101 +1,171 @@
-import { type RevisarPrecioDos } from "~/types/operaciones";
-import { type ColumnDef } from "@tanstack/react-table";
-import { Badge } from "~/components/ui/badge";
-import { Checkbox } from "~/components/ui/checkbox";
-import DialogModificarPrecio from "./dialog-modificar-precio";
+import type { ColumnDef } from '@tanstack/react-table';
+import { Badge } from '~/components/ui/badge';
+import { Checkbox } from '~/components/ui/checkbox';
+import DialogModificarPrecio from './dialog-modificar-precio';
+import type { RevisarPrecioDos } from '~/types/operaciones';
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { CheckCircle, AlertTriangle } from 'lucide-react';
 
 export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Seleccionar todo"
-        className="translate-y-[2px]"
-      />
+      <div className="flex items-center justify-center">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Seleccionar todo"
+          className="translate-y-[2px]"
+        />
+      </div>
     ),
     cell: ({ row }) => {
       return (
-        <div className="text-center">
+        <div className="flex items-center justify-center">
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Seleccionar fila"
             className="translate-y-[2px]"
-            disabled={row.original.confirmacion === "Confirmado"}
+            disabled={row.original.confirmacion === 'Confirmado'}
           />
         </div>
       );
     },
     enableSorting: false,
     enableHiding: false,
+    size: 50,
   },
   {
-    accessorKey: "codigo",
-    header: "Código",
-    cell: ({ row }) => {
-      return <div className="text-center">{row.original.codigo}</div>;
-    },
+    accessorKey: 'codigo',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Código"
+        className="text-emerald-700 dark:text-emerald-300 font-semibold"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400">
+        {row.getValue('codigo')}
+      </div>
+    ),
+    size: 120,
   },
   {
-    accessorKey: "codigoEner",
-    header: "Código Energía",
-    cell: ({ row }) => {
-      return <div className="text-center">{row.original.codigoEner}</div>;
-    },
+    accessorKey: 'codigoEner',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Código Energía"
+        className="text-blue-700 dark:text-blue-300 font-semibold"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="font-mono text-sm text-blue-600 dark:text-blue-400">
+        {row.getValue('codigoEner')}
+      </div>
+    ),
+    size: 140,
   },
   {
-    accessorKey: "descripcion",
-    header: "Descripción",
-    cell: ({ row }) => {
-      return <div className="text-center">{row.original.descripcion}</div>;
-    },
+    accessorKey: 'descripcion',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Descripción"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="text-sm text-slate-900 dark:text-slate-100 max-w-sm">
+        {row.getValue('descripcion')}
+      </div>
+    ),
+    size: 300,
   },
   {
-    accessorKey: "valor",
-    header: "Valor",
+    accessorKey: 'valor',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Valor"
+        className="text-green-700 dark:text-green-300 font-semibold"
+      />
+    ),
     cell: ({ row }) => {
+      const value = row.getValue('valor') as string;
+
+      // Formatear número con separador de miles
+      const formatValue = (val: string) => {
+        const number = parseFloat(val.replace(',', '.'));
+        return isNaN(number)
+          ? val
+          : number.toLocaleString('es-CL', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      };
+
       return (
-        <div className="text-center font-medium text-sky-700 dark:text-sky-300">
-          {row.original.valor}
+        <div className="text-sm font-mono font-medium text-green-600 dark:text-green-400">
+          {formatValue(value)}
         </div>
       );
     },
+    size: 120,
   },
   {
-    accessorKey: "confirmacion",
-    header: "Estado",
+    accessorKey: 'confirmacion',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Estado"
+        className="text-slate-700 dark:text-slate-300 font-semibold"
+      />
+    ),
     cell: ({ row }) => {
+      const confirmacion = row.getValue('confirmacion') as string;
+
       return (
-        <div className="text-center">
-          {row.original.confirmacion === "Confirmado" ? (
-            <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+        <div className="flex items-center justify-center">
+          {confirmacion === 'Confirmado' ? (
+            <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+              <CheckCircle className="w-3 h-3" />
               Confirmado
             </Badge>
           ) : (
             <Badge
               variant="outline"
-              className="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800"
+              className="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 flex items-center gap-1"
             >
+              <AlertTriangle className="w-3 h-3" />
               Pendiente
             </Badge>
           )}
         </div>
       );
     },
+    size: 130,
   },
   {
-    id: "acciones",
-    header: "Modificar",
+    id: 'acciones',
+    header: () => (
+      <div className="text-center text-slate-700 dark:text-slate-300 font-semibold">
+        Acciones
+      </div>
+    ),
     cell: ({ row }) => {
+      const confirmacion = row.getValue('confirmacion') as string;
+
       return (
-        <div className="text-center">
-          {row.original.confirmacion === "Confirmado" ? (
-            <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+        <div className="flex items-center justify-center">
+          {confirmacion === 'Confirmado' ? (
+            <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
+              <CheckCircle className="w-3 h-3" />
               Confirmado
             </Badge>
           ) : (
@@ -110,5 +180,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
         </div>
       );
     },
+    enableSorting: false,
+    size: 120,
   },
 ];

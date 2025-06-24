@@ -117,32 +117,40 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
   }
 
   return (
-    <div className="p-4 space-y-4">
-      <Alert
-        variant="default"
-        className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300"
-      >
-        <AlertCircle className="h-4 w-4 mb-1 mr-2" />
-        <AlertDescription className="text-sm">
+    <div className="p-6 space-y-6">
+      {/* Alerta informativa */}
+      <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
+        <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+        <AlertDescription className="text-amber-700 dark:text-amber-300">
           Esta medición ya ha sido cerrada. Para reabrirla, debe seleccionar un
           motivo de reapertura y proporcionar una descripción detallada.
         </AlertDescription>
       </Alert>
-      <Card className="border-border/40 shadow-sm">
-        <CardHeader className="p-4 pb-2 bg-muted/40 border-b border-border/40">
-          <CardTitle className="text-base font-medium text-sky-800 dark:text-sky-200 flex items-center gap-1.5">
-            <Key className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-            Reapertura de Medición
+
+      {/* Card principal */}
+      <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
+            <div className="p-2 bg-orange-50 dark:bg-orange-950/50 rounded-lg">
+              <RotateCcw className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold">Reapertura de Medición</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+                Seleccione motivo y proporcione descripción
+              </p>
+            </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-4 space-y-4">
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <Key className="h-3.5 w-3.5" />
+        <CardContent className="space-y-6">
+          {/* Motivo de reapertura */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+              <Key className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               Motivo de reapertura
             </Label>
             <Select value={selectedClave} onValueChange={setSelectedClave}>
-              <SelectTrigger className="bg-background border-border/70">
+              <SelectTrigger className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800">
                 <SelectValue placeholder="Seleccione un motivo" />
               </SelectTrigger>
               <SelectContent>
@@ -155,35 +163,47 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <FileText className="h-3.5 w-3.5" />
+
+          {/* Descripción detallada */}
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
+              <FileText className="h-4 w-4 text-orange-600 dark:text-orange-400" />
               Descripción detallada
             </Label>
             <Textarea
               placeholder="Explique con detalle por qué necesita reaperturar esta medición (mínimo 10 caracteres)."
               value={descripcionReapertura}
               onChange={(e) => setDescripcionReapertura(e.target.value)}
-              className="bg-background border-border/70 min-h-24 resize-none text-sm"
+              className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 min-h-24 resize-none"
             />
+            <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
+              <span>Mínimo 10 caracteres</span>
+              <span className={descripcionReapertura.length < 10 ? 'text-red-500' : 'text-green-600'}>
+                {descripcionReapertura.length}/10
+              </span>
+            </div>
           </div>
-          <Button
-            onClick={handleReaperturaMedicion}
-            disabled={isSubmitting}
-            className="w-full gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-sm"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Procesando...
-              </>
-            ) : (
-              <>
-                <RotateCcw className="h-4 w-4" />
-                Reabrir Medición
-              </>
-            )}
-          </Button>
+
+          {/* Botón de acción */}
+          <div className="pt-4">
+            <Button
+              onClick={handleReaperturaMedicion}
+              disabled={isSubmitting}
+              className="w-full bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Procesando...
+                </>
+              ) : (
+                <>
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reabrir Medición
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -1,20 +1,20 @@
-import React from "react";
+import React from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
-} from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import { CalendarCheck, ChevronUp, ChevronDown } from "lucide-react";
+} from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
+import { ChevronUp, ChevronDown, Archive } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
-import { type DetalleMedidorAntiguoProps } from "~/types/operaciones";
+} from '~/components/ui/collapsible';
+import { type DetalleMedidorAntiguoProps } from '~/types/operaciones';
 
 export default function DetalleMedidorAntiguo({
   detalleMedidorAntiguo,
@@ -22,19 +22,19 @@ export default function DetalleMedidorAntiguo({
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
-    <Card className="shadow-sm border border-border/60 overflow-hidden">
+    <Card className="rounded-xl border border-amber-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-amber-800/40 dark:bg-gray-900/50 overflow-hidden">
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
         <CollapsibleTrigger asChild>
-          <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
+          <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-amber-50/50 border-b border-amber-200/40 dark:hover:bg-amber-900/20 dark:border-amber-800/40">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-amber-100/80 dark:bg-amber-900/30 rounded-lg shadow-sm">
-                <CalendarCheck className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm">
+                <Archive className="h-4 w-4" />
               </div>
               <div>
-                <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
+                <CardTitle className="text-lg font-semibold text-amber-900 dark:text-amber-100">
                   Detalle Antiguo Medidor
                 </CardTitle>
-                <CardDescription className="text-sm">
+                <CardDescription className="text-sm text-amber-700 dark:text-amber-300">
                   Información del medidor actual
                 </CardDescription>
               </div>
@@ -42,12 +42,12 @@ export default function DetalleMedidorAntiguo({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-full hover:bg-muted"
+              className="h-8 w-8 rounded-full hover:bg-amber-100 dark:hover:bg-amber-900/50"
             >
               {isOpen ? (
-                <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                <ChevronUp className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               ) : (
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                <ChevronDown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               )}
               <span className="sr-only">Abrir/Cerrar panel</span>
             </Button>
@@ -61,7 +61,7 @@ export default function DetalleMedidorAntiguo({
                 <div className="space-y-2">
                   <Label
                     htmlFor="acometida-detalle"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Acometida
                   </Label>
@@ -70,13 +70,13 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.acometidaDetalle}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label
                     htmlFor="constante"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Constante
                   </Label>
@@ -85,13 +85,13 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.constante}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label
                     htmlFor="marca"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Marca
                   </Label>
@@ -100,13 +100,13 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.marca}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label
                     htmlFor="ultima-lectura"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Última Lectura
                   </Label>
@@ -115,7 +115,7 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.ultimaLectura}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
               </div>
@@ -124,7 +124,7 @@ export default function DetalleMedidorAntiguo({
                 <div className="space-y-2">
                   <Label
                     htmlFor="numero-medidor"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Número de Medidor
                   </Label>
@@ -133,13 +133,13 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.numeroMedidor}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label
                     htmlFor="tipo"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Tipo
                   </Label>
@@ -148,13 +148,13 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.tipo}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label
                     htmlFor="modelo"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Modelo
                   </Label>
@@ -163,13 +163,13 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.modelo}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
                 <div className="space-y-2">
                   <Label
                     htmlFor="lectura-actual"
-                    className="text-sm text-muted-foreground"
+                    className="text-sm text-amber-800 dark:text-amber-200 font-medium"
                   >
                     Lectura Actual
                   </Label>
@@ -178,7 +178,7 @@ export default function DetalleMedidorAntiguo({
                     placeholder=""
                     value={detalleMedidorAntiguo.lecturaActual}
                     readOnly
-                    className="h-9 bg-muted/40"
+                    className="h-9 bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800"
                   />
                 </div>
               </div>

@@ -1,6 +1,6 @@
-import api from "~/lib/api";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { Button } from "~/components/ui/button";
+import api from '~/lib/api';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
 import {
   Table,
   TableHead,
@@ -8,11 +8,10 @@ import {
   TableRow,
   TableBody,
   TableCell,
-} from "~/components/ui/table";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import DetalleLecturaBT43 from "./detalle-lectura-bt43";
-import { format } from "date-fns";
+} from '~/components/ui/table';
+
+import DetalleLecturaBT43 from './detalle-lectura-bt43';
+import { format } from 'date-fns';
 import {
   AlertCircle,
   Info,
@@ -20,20 +19,21 @@ import {
   Gauge,
   History,
   Key,
+  TrendingUp,
   BarChart3,
   Table2,
   PlugIcon,
   IdCard,
-} from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { toast } from "sonner";
-import { ScrollArea } from "~/components/ui/scroll-area";
+} from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { toast } from 'sonner';
+import { ScrollArea } from '~/components/ui/scroll-area';
 import type {
   EtapaUno,
   EtapaDos,
   EtapaTres,
   EtapaCuatro,
-} from "~/types/monitor";
+} from '~/types/monitor';
 import {
   XAxis,
   YAxis,
@@ -42,19 +42,21 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-} from "recharts";
-import { ChartContainer, ChartTooltipContent } from "~/components/ui/chart";
-import { Badge } from "~/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { chartConfig } from "~/components/chart-config";
-import { useEffect, useState } from "react";
+  LineChart,
+  Line,
+} from 'recharts';
+import { ChartContainer, ChartTooltipContent } from '~/components/ui/chart';
+import { Badge } from '~/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { chartConfig } from '~/components/chart-config';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "~/components/ui/dialog";
+} from '~/components/ui/dialog';
 
 export default function DetallesMedidor({
   lecturaId,
@@ -71,8 +73,8 @@ export default function DetallesMedidor({
   const [etapa3Data, setEtapa3Data] = useState<EtapaTres[]>([]);
   const [etapa4Data, setEtapa4Data] = useState<EtapaCuatro[]>([]);
   const [periodoSeleccionado, setPeriodoSeleccionado] = useState<
-    "todo" | "6meses" | "3meses"
-  >("todo");
+    'todo' | '6meses' | '3meses'
+  >('todo');
 
   const fetchAllEtapas = async () => {
     setIsLoading(true);
@@ -88,8 +90,8 @@ export default function DetallesMedidor({
             idLec: lecturaId.toString(),
             etapa: etapa.toString(),
           });
-          return api.get("/datos-basicos-medidor", { params });
-        })
+          return api.get('/datos-basicos-medidor', { params });
+        }),
       );
 
       // Procesar los resultados de cada etapa
@@ -98,7 +100,7 @@ export default function DetallesMedidor({
       results.forEach((result, index) => {
         const etapa = index + 1;
 
-        if (result.status === "fulfilled") {
+        if (result.status === 'fulfilled') {
           // La etapa se completó correctamente
           switch (etapa) {
             case 1:
@@ -124,9 +126,8 @@ export default function DetallesMedidor({
               result.reason.response.data ||
               `No hay datos disponibles para la etapa ${etapa}`;
           } else {
-            newEtapaErrors[
-              etapa
-            ] = `Error al cargar datos de la etapa ${etapa}`;
+            newEtapaErrors[etapa] =
+              `Error al cargar datos de la etapa ${etapa}`;
           }
 
           // Inicializar con array vacío para evitar errores
@@ -151,13 +152,13 @@ export default function DetallesMedidor({
 
       // Si todas las etapas fallaron, establecer un error general
       if (Object.keys(newEtapaErrors).length === 4) {
-        toast.error("No se pudieron cargar los datos del medidor");
-        setError("No se pudieron cargar los datos del medidor");
+        toast.error('No se pudieron cargar los datos del medidor');
+        setError('No se pudieron cargar los datos del medidor');
       }
     } catch (error) {
-      console.error("Error general al obtener datos:", error);
-      toast.error("Error al obtener los datos del medidor");
-      setError("Error al obtener los datos del medidor");
+      console.error('Error general al obtener datos:', error);
+      toast.error('Error al obtener los datos del medidor');
+      setError('Error al obtener los datos del medidor');
     } finally {
       setIsLoading(false);
     }
@@ -165,43 +166,22 @@ export default function DetallesMedidor({
 
   const handleAceptarLectura = async () => {
     try {
-      const response = await api.post("/aceptar-lectura-medidor", {
+      const response = await api.post('/aceptar-lectura-medidor', {
         idLectura: lecturaId,
       });
       if (response.status === 200) {
-        toast.success("Lectura aceptada correctamente");
+        toast.success('Lectura aceptada correctamente');
         fetchAllEtapas();
         // Llamar al callback onSuccess si existe
         if (onSuccess) {
           onSuccess();
         }
       } else {
-        toast.error("Error al aceptar la lectura");
+        toast.error('Error al aceptar la lectura');
       }
     } catch (error) {
-      console.error("Error al aceptar la lectura:", error);
-      toast.error("Error al aceptar la lectura");
-    }
-  };
-
-  const handleCopiarUltimaLectura = async () => {
-    try {
-      const response = await api.post("/copiar-ultima-lectura", {
-        idLectura: lecturaId,
-      });
-      if (response.status === 200) {
-        toast.success("Lectura copiada correctamente");
-        fetchAllEtapas();
-        // Llamar al callback onSuccess si existe
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
-        toast.error("Error al copiar la última lectura");
-      }
-    } catch (error) {
-      console.error("Error al copiar la última lectura:", error);
-      toast.error("Error al copiar la última lectura");
+      console.error('Error al aceptar la lectura:', error); // eslint-disable-line no-console
+      toast.error('Error al aceptar la lectura');
     }
   };
 
@@ -224,25 +204,25 @@ export default function DetallesMedidor({
   // Función para obtener el nombre del mes basado en su número
   const getMonthName = (monthNumber: number): string => {
     const months = [
-      "Enero",
-      "Febrero",
-      "Marzo",
-      "Abril",
-      "Mayo",
-      "Junio",
-      "Julio",
-      "Agosto",
-      "Septiembre",
-      "Octubre",
-      "Noviembre",
-      "Diciembre",
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
     ];
     return months[monthNumber - 1];
   };
 
   // Función para filtrar datos según el período seleccionado
   const getDatosFiltrados = (data: EtapaCuatro[]) => {
-    if (periodoSeleccionado === "todo") {
+    if (periodoSeleccionado === 'todo') {
       return data;
     }
 
@@ -251,18 +231,18 @@ export default function DetallesMedidor({
       const fechaA = new Date(
         getYear(a.LM_Periodo),
         getMonthNumber(a.LM_Periodo) - 1,
-        1
+        1,
       );
       const fechaB = new Date(
         getYear(b.LM_Periodo),
         getMonthNumber(b.LM_Periodo) - 1,
-        1
+        1,
       );
       return fechaB.getTime() - fechaA.getTime();
     });
 
     // Tomar los primeros N meses según el período seleccionado
-    const mesesAMostrar = periodoSeleccionado === "6meses" ? 6 : 3;
+    const mesesAMostrar = periodoSeleccionado === '6meses' ? 6 : 3;
     return datosOrdenados.slice(0, mesesAMostrar);
   };
 
@@ -272,18 +252,21 @@ export default function DetallesMedidor({
     const datosFiltrados = getDatosFiltrados(data);
 
     // Agrupar datos por mes
-    const groupedByMonth = datosFiltrados.reduce((acc, item) => {
-      const month = getMonthNumber(item.LM_Periodo);
-      const year = getYear(item.LM_Periodo);
-      const monthName = getMonthName(month);
+    const groupedByMonth = datosFiltrados.reduce(
+      (acc, item) => {
+        const month = getMonthNumber(item.LM_Periodo);
+        const year = getYear(item.LM_Periodo);
+        const monthName = getMonthName(month);
 
-      if (!acc[monthName]) {
-        acc[monthName] = {};
-      }
+        if (!acc[monthName]) {
+          acc[monthName] = {};
+        }
 
-      acc[monthName][year] = item.LM_ConsumoPeriodo;
-      return acc;
-    }, {} as Record<string, Record<number, number>>);
+        acc[monthName][year] = item.LM_ConsumoPeriodo;
+        return acc;
+      },
+      {} as Record<string, Record<number, number>>,
+    );
 
     // Convertir a formato para el gráfico
     const yearsInData = [
@@ -328,9 +311,9 @@ export default function DetallesMedidor({
 
   if (isLoading) {
     return (
-      <div className="w-full flex justify-center items-center p-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600 dark:border-slate-400 mx-auto mb-2"></div>
+      <div className="w-full flex justify-center items-center p-8">
+        <div className="text-center space-y-3">
+          <div className="w-8 h-8 border-2 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin mx-auto"></div>
           <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
             Cargando datos del medidor...
           </p>
@@ -352,119 +335,123 @@ export default function DetallesMedidor({
   return (
     <ScrollArea className="overflow-y-auto">
       <div className="space-y-4 p-4">
-        {/* Sección Medidor */}
-        <Card className="border-slate-100 dark:border-slate-800 shadow-lg dark:shadow-slate-900/10">
-          <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-900/50 dark:to-slate-800/30 pb-3">
-            <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
-              <div className="p-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                <Gauge className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+        {/* Sección Medidor - Diseño Moderno */}
+        <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
+              <div className="p-2 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+                <Gauge className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               Información del Medidor
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent>
             {etapaErrors[1] ? (
-              <Alert variant="destructive" className="mb-3">
+              <Alert variant="destructive" className="mb-4">
                 <Info className="h-4 w-4" />
                 <AlertDescription>{etapaErrors[1]}</AlertDescription>
               </Alert>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-slate-900 dark:text-slate-100 text-sm font-medium flex items-center gap-2">
-                    <IdCard className="h-4 w-4 text-slate-700 dark:text-slate-400" />
-                    Medidor
-                  </Label>
-                  <Input
-                    type="text"
-                    className="bg-slate-50/50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-medium text-slate-900 dark:text-slate-100 text-sm"
-                    value={etapa1Data[0]?.ME_NSerie || ""}
-                    readOnly
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-slate-900 dark:text-slate-100 text-sm font-medium flex items-center gap-2">
-                    <Zap className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
-                    Tipo
-                  </Label>
-                  <Input
-                    type="text"
-                    className="bg-slate-50/50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-medium text-slate-900 dark:text-slate-100 text-sm"
-                    value={etapa1Data[0]?.TM_Descripcion || ""}
-                    readOnly
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-slate-900 dark:text-slate-100 text-sm font-medium flex items-center gap-2">
-                    <Key className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
-                    Tarifa
-                  </Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="text"
-                      className="bg-slate-50/50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-medium text-slate-900 dark:text-slate-100 text-sm"
-                      readOnly
-                      value={etapa1Data[0]?.TF_Codigo || ""}
-                    />
-                    {etapa1Data &&
-                      etapa1Data.length > 0 &&
-                      etapa1Data[0].TF_Codigo === "BT-4.3" && (
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="default" size="sm">
-                              Ver Detalle
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="min-w-[950px] max-h-[90vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>
-                                <div className="flex items-center gap-2">
-                                  <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-600 to-slate-600 dark:from-slate-400 dark:to-slate-300 bg-clip-text text-transparent">
-                                    Detalle Lectura BT-4.3
-                                  </h1>
-                                  <Badge
-                                    variant="outline"
-                                    className="bg-slate-50 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 font-medium ml-2"
-                                  >
-                                    ID: {lecturaId}
-                                  </Badge>
-                                </div>
-                              </DialogTitle>
-                            </DialogHeader>
-                            <ScrollArea className="h-screen overflow-y-auto">
-                              <DetalleLecturaBT43
-                                lecturaId={lecturaId}
-                                etapa1={etapa1Data}
-                              />
-                            </ScrollArea>
-                          </DialogContent>
-                        </Dialog>
-                      )}
+                {/* Medidor */}
+                <div className="group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
+                  <div className="flex items-center gap-3 mb-2">
+                    <IdCard className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                      Medidor
+                    </span>
                   </div>
+                  <p className="font-mono text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {etapa1Data[0]?.ME_NSerie || '-'}
+                  </p>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-slate-900 dark:text-slate-100 text-sm font-medium flex items-center gap-2">
-                    <Gauge className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
-                    Constante
-                  </Label>
-                  <Input
-                    type="text"
-                    className="bg-slate-50/50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-medium text-slate-900 dark:text-slate-100 text-sm"
-                    value={etapa1Data[0]?.ME_ConstanteMultiplicar || ""}
-                    readOnly
-                  />
+
+                {/* Tipo */}
+                <div className="group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Zap className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                      Tipo
+                    </span>
+                  </div>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {etapa1Data[0]?.TM_Descripcion || '-'}
+                  </p>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-slate-900 dark:text-slate-100 text-sm font-medium flex items-center gap-2">
-                    <PlugIcon className="h-4 w-4 text-slate-700 dark:text-slate-400" />
-                    Subempalme
-                  </Label>
-                  <Input
-                    type="text"
-                    className="bg-slate-50/50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-medium text-slate-900 dark:text-slate-100 text-sm"
-                    value={etapa1Data[0]?.SE_Codigo || ""}
-                    readOnly
-                  />
+
+                {/* Tarifa */}
+                <div className="group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <Key className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                        Tarifa
+                      </span>
+                    </div>
+                    {etapa1Data?.[0]?.TF_Codigo === 'BT-4.3' && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                          >
+                            <TrendingUp className="h-3 w-3 mr-1" />
+                            Detalle
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="min-w-[950px] max-h-[90vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>
+                              <div className="flex items-center gap-3">
+                                <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                                  Detalle Lectura BT-4.3
+                                </h1>
+                                <Badge variant="outline" className="font-mono">
+                                  ID: {lecturaId}
+                                </Badge>
+                              </div>
+                            </DialogTitle>
+                          </DialogHeader>
+                          <ScrollArea className="h-screen overflow-y-auto">
+                            <DetalleLecturaBT43
+                              lecturaId={lecturaId}
+                              etapa1={etapa1Data}
+                            />
+                          </ScrollArea>
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                  </div>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {etapa1Data[0]?.TF_Codigo || '-'}
+                  </p>
+                </div>
+
+                {/* Constante */}
+                <div className="group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Gauge className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                      Constante
+                    </span>
+                  </div>
+                  <p className="font-mono text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {etapa1Data[0]?.ME_ConstanteMultiplicar || '-'}
+                  </p>
+                </div>
+
+                {/* Subempalme */}
+                <div className="group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors">
+                  <div className="flex items-center gap-3 mb-2">
+                    <PlugIcon className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
+                      Subempalme
+                    </span>
+                  </div>
+                  <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    {etapa1Data[0]?.SE_Codigo || '-'}
+                  </p>
                 </div>
               </div>
             )}
@@ -503,90 +490,108 @@ export default function DetallesMedidor({
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="grafica">
-                  <div className="rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
-                    <div className="p-4 border-b border-slate-100 dark:border-slate-800">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="bg-white dark:bg-slate-950/50 rounded-2xl border border-slate-200/50 dark:border-slate-800/30 overflow-hidden">
+                    <div className="p-6 border-b border-slate-100 dark:border-slate-800/30">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
-                          <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                            Histórico de Consumos
+                          <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                            Evolución de Consumo
                           </h3>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Evolución del consumo a lo largo del tiempo
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                            Tendencia del consumo energético a lo largo del
+                            tiempo
                           </p>
                         </div>
-                        <div className="w-full sm:w-auto">
+                        <div className="flex gap-2">
                           <Tabs
                             defaultValue="todo"
                             value={periodoSeleccionado}
                             onValueChange={(value) =>
                               setPeriodoSeleccionado(
-                                value as "todo" | "6meses" | "3meses"
+                                value as 'todo' | '6meses' | '3meses',
                               )
                             }
-                            className="w-full"
                           >
-                            <TabsList className="grid grid-cols-3 w-full">
-                              <TabsTrigger value="todo">Todo</TabsTrigger>
-                              <TabsTrigger value="6meses">6 Meses</TabsTrigger>
-                              <TabsTrigger value="3meses">3 Meses</TabsTrigger>
+                            <TabsList className="bg-slate-100 dark:bg-slate-800/50">
+                              <TabsTrigger value="todo" className="text-xs">
+                                Todo
+                              </TabsTrigger>
+                              <TabsTrigger value="6meses" className="text-xs">
+                                6M
+                              </TabsTrigger>
+                              <TabsTrigger value="3meses" className="text-xs">
+                                3M
+                              </TabsTrigger>
                             </TabsList>
                           </Tabs>
                         </div>
                       </div>
                     </div>
-                    <ChartContainer
-                      config={chartConfig}
-                      className="min-h-[300px] w-full p-4 rounded-lg"
-                    >
-                      <BarChart
-                        data={[...getDatosFiltrados(etapa4Data)].reverse()}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 50 }}
+                    <div className="p-6">
+                      <ChartContainer
+                        config={chartConfig}
+                        className="min-h-[320px] w-full"
                       >
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          vertical={false}
-                          className="stroke-slate-100 dark:stroke-slate-800/50"
-                        />
-                        <XAxis
-                          dataKey="LM_Periodo"
-                          tickLine={false}
-                          tickMargin={12}
-                          axisLine={false}
-                          tick={{
-                            fill: "var(--color-detallesMedidor)",
-                            fontSize: 12,
-                          }}
-                        />
-                        <YAxis
-                          tickLine={false}
-                          axisLine={false}
-                          tickMargin={8}
-                          tick={{
-                            fill: "var(--color-detallesMedidor)",
-                            fontSize: 12,
-                          }}
-                        />
-                        <Tooltip
-                          content={
-                            <ChartTooltipContent
-                              labelFormatter={(value) => `Periodo: ${value}`}
-                            />
-                          }
-                        />
-                        <Legend
-                          verticalAlign="top"
-                          height={36}
-                          wrapperStyle={{ paddingBottom: "10px" }}
-                        />
-                        <Bar
-                          name="Consumo"
-                          dataKey="LM_ConsumoPeriodo"
-                          fill="var(--color-detallesMedidor)"
-                          radius={[4, 4, 0, 0]}
-                          barSize={30}
-                        />
-                      </BarChart>
-                    </ChartContainer>
+                        <LineChart
+                          data={[...getDatosFiltrados(etapa4Data)].reverse()}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                        >
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            className="stroke-slate-200/50 dark:stroke-slate-700/30"
+                          />
+                          <XAxis
+                            dataKey="LM_Periodo"
+                            tickLine={false}
+                            tickMargin={12}
+                            axisLine={false}
+                            tick={{
+                              fill: 'var(--color-detallesMedidor)',
+                              fontSize: 11,
+                            }}
+                          />
+                          <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            tick={{
+                              fill: 'var(--color-detallesMedidor)',
+                              fontSize: 11,
+                            }}
+                          />
+                          <Tooltip
+                            content={
+                              <ChartTooltipContent
+                                labelFormatter={(value) => `Periodo: ${value}`}
+                                formatter={(value) => [
+                                  `${value} kWh`,
+                                  'Consumo',
+                                ]}
+                              />
+                            }
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="LM_ConsumoPeriodo"
+                            stroke="var(--color-detallesMedidor)"
+                            strokeWidth={3}
+                            dot={{
+                              fill: 'var(--color-detallesMedidor)',
+                              strokeWidth: 2,
+                              stroke: '#fff',
+                              r: 4,
+                            }}
+                            activeDot={{
+                              r: 6,
+                              fill: 'var(--color-detallesMedidor)',
+                              stroke: '#fff',
+                              strokeWidth: 2,
+                            }}
+                          />
+                        </LineChart>
+                      </ChartContainer>
+                    </div>
                   </div>
                 </TabsContent>
                 <TabsContent value="tabla">
@@ -607,7 +612,7 @@ export default function DetallesMedidor({
                             value={periodoSeleccionado}
                             onValueChange={(value) =>
                               setPeriodoSeleccionado(
-                                value as "todo" | "6meses" | "3meses"
+                                value as 'todo' | '6meses' | '3meses',
                               )
                             }
                             className="w-full"
@@ -649,25 +654,25 @@ export default function DetallesMedidor({
                             </TableCell>
                             <TableCell className="text-slate-700 dark:text-slate-300">
                               {new Date(
-                                item.LM_FechaLectura
-                              ).toLocaleDateString("es-CL", {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                                hour: "2-digit",
-                                minute: "2-digit",
+                                item.LM_FechaLectura,
+                              ).toLocaleDateString('es-CL', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
                               })}
                             </TableCell>
                             <TableCell className="text-right font-medium text-slate-900 dark:text-slate-200">
                               {item.LM_ValorLecturaActual?.toLocaleString(
-                                "es-CL"
-                              ) || ""}
+                                'es-CL',
+                              ) || ''}
                             </TableCell>
                             <TableCell className="text-right">
                               <span className="inline-flex items-center gap-1 font-medium text-slate-900 dark:text-slate-200">
                                 {item.LM_ConsumoPeriodo?.toLocaleString(
-                                  "es-CL"
-                                ) || "0"}
+                                  'es-CL',
+                                ) || '0'}
                                 <span className="text-xs text-slate-500 dark:text-slate-400">
                                   kWh
                                 </span>
@@ -722,7 +727,7 @@ export default function DetallesMedidor({
                   {getMensualComparisonData(etapa4Data).filter(
                     (item) =>
                       item.consumoActual !== null &&
-                      item.consumoAnterior !== null
+                      item.consumoAnterior !== null,
                   ).length === 0 ? (
                     <div className="p-6 text-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 rounded-lg">
                       No hay lectura ingresada en el mes actual de comparación
@@ -738,7 +743,7 @@ export default function DetallesMedidor({
                             data={getMensualComparisonData(etapa4Data).filter(
                               (item) =>
                                 item.consumoActual !== null &&
-                                item.consumoAnterior !== null
+                                item.consumoAnterior !== null,
                             )}
                             margin={{
                               top: 20,
@@ -758,7 +763,7 @@ export default function DetallesMedidor({
                               tickMargin={12}
                               axisLine={false}
                               tick={{
-                                fill: "var(--color-detallesMedidor)",
+                                fill: 'var(--color-detallesMedidor)',
                                 fontSize: 12,
                               }}
                             />
@@ -767,7 +772,7 @@ export default function DetallesMedidor({
                               axisLine={false}
                               tickMargin={8}
                               tick={{
-                                fill: "var(--color-detallesMedidor)",
+                                fill: 'var(--color-detallesMedidor)',
                                 fontSize: 12,
                               }}
                             />
@@ -781,7 +786,7 @@ export default function DetallesMedidor({
                             <Legend
                               verticalAlign="top"
                               height={36}
-                              wrapperStyle={{ paddingBottom: "10px" }}
+                              wrapperStyle={{ paddingBottom: '10px' }}
                             />
                             <Bar
                               name="Año Actual"
@@ -835,7 +840,7 @@ export default function DetallesMedidor({
                                   </TableCell>
                                   <TableCell className="text-right font-medium text-blue-600 dark:text-blue-400">
                                     {item.consumoActual?.toLocaleString(
-                                      "es-CL"
+                                      'es-CL',
                                     )}
                                     <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
                                       kWh
@@ -843,7 +848,7 @@ export default function DetallesMedidor({
                                   </TableCell>
                                   <TableCell className="text-right font-medium text-orange-600 dark:text-orange-400">
                                     {item.consumoAnterior?.toLocaleString(
-                                      "es-CL"
+                                      'es-CL',
                                     )}
                                     <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
                                       kWh
@@ -854,19 +859,19 @@ export default function DetallesMedidor({
                                       className={`${
                                         item.diferencia != null &&
                                         item.diferencia > 0
-                                          ? "text-red-600 dark:text-red-400"
+                                          ? 'text-red-600 dark:text-red-400'
                                           : item.diferencia != null &&
-                                            item.diferencia < 0
-                                          ? "text-green-600 dark:text-green-400"
-                                          : "text-slate-600 dark:text-slate-400"
+                                              item.diferencia < 0
+                                            ? 'text-green-600 dark:text-green-400'
+                                            : 'text-slate-600 dark:text-slate-400'
                                       }`}
                                     >
                                       {(item.diferencia != null &&
                                       item.diferencia > 0
-                                        ? "+"
-                                        : "") +
+                                        ? '+'
+                                        : '') +
                                         item.diferencia?.toLocaleString(
-                                          "es-CL"
+                                          'es-CL',
                                         )}
                                       <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
                                         kWh
@@ -878,19 +883,19 @@ export default function DetallesMedidor({
                                       className={`${
                                         item.variacionPorcentaje != null &&
                                         item.variacionPorcentaje > 0
-                                          ? "text-red-600 dark:text-red-400"
+                                          ? 'text-red-600 dark:text-red-400'
                                           : item.variacionPorcentaje != null &&
-                                            item.variacionPorcentaje < 0
-                                          ? "text-green-600 dark:text-green-400"
-                                          : "text-slate-600 dark:text-slate-400"
+                                              item.variacionPorcentaje < 0
+                                            ? 'text-green-600 dark:text-green-400'
+                                            : 'text-slate-600 dark:text-slate-400'
                                       }`}
                                     >
                                       {(item.variacionPorcentaje != null &&
                                       item.variacionPorcentaje > 0
-                                        ? "+"
-                                        : "") +
+                                        ? '+'
+                                        : '') +
                                         item.variacionPorcentaje?.toFixed(2) +
-                                        "%"}
+                                        '%'}
                                     </span>
                                   </TableCell>
                                 </TableRow>
@@ -960,8 +965,8 @@ export default function DetallesMedidor({
                           <TableCell className="text-slate-800 dark:text-slate-200 text-sm">
                             {format(
                               new Date(item.CLL_Fecha),
-                              "dd-MM-yyyy HH:mm:ss"
-                            ) || ""}
+                              'dd-MM-yyyy HH:mm:ss',
+                            ) || ''}
                           </TableCell>
                         </TableRow>
                       ))
@@ -993,7 +998,7 @@ export default function DetallesMedidor({
                   onClick={handleAceptarLectura}
                   className="min-w-[150px] bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500"
                   disabled={
-                    etapa3Data.length > 0 && etapa3Data[0].CLA_Codigo === "LEOK"
+                    etapa3Data.length > 0 && etapa3Data[0].CLA_Codigo === 'LEOK'
                   }
                 >
                   Aceptar Lectura con Clave Crítica

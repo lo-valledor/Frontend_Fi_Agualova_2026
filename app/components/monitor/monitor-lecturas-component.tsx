@@ -1,22 +1,18 @@
 import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import {
   Calendar,
   Eraser,
   Filter,
   Search,
-  MapPin, // Icon for Sector
-  ListFilter, // Icon for Criterio
-  KeyRound, // Icon for Clave
+  MapPin,
+  KeyRound,
   Hash,
   ChevronUp,
-  ChevronDown, // Icon for Medidor
+  ChevronDown,
+  ListFilter,
+  Settings2,
+  Info,
 } from 'lucide-react';
 import React, { Suspense, useEffect, useState } from 'react';
 import { type Sector, type Periodo, type Clave } from '~/types/monitor';
@@ -35,12 +31,7 @@ import { Input } from '~/components/ui/input';
 import { DatePicker } from '~/components/date-picker';
 import ResultadosBusqueda from '~/components/monitor/monitor-lecturas/resultados-busqueda';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '~/components/ui/collapsible';
-import { Separator } from '~/components/ui/separator';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { cn } from '~/lib/utils';
 import { toast } from 'sonner';
 import {
@@ -48,6 +39,14 @@ import {
   validateSearchParams,
   getDefaultDates,
 } from '~/hooks/use-monitor';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '../ui/dialog';
 
 interface MonitorLecturasComponentProps {
   periodos: Periodo[];
@@ -61,7 +60,6 @@ const MonitorLecturasComponent = ({
   periodos,
   sectores,
   claves,
-  activePeriodoId,
   error,
 }: MonitorLecturasComponentProps) => {
   const pageBreadcrumbs = [
@@ -81,7 +79,7 @@ const MonitorLecturasComponent = ({
   // Estados de UI
   const [shouldSearch, setShouldSearch] = useState(false);
   const [searchTrigger, setSearchTrigger] = useState(0);
-  const [isFiltersOpen, setIsFiltersOpen] = useState(true);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Establecer valores por defecto del período y fechas usando funciones utilitarias
   useEffect(() => {
@@ -135,6 +133,7 @@ const MonitorLecturasComponent = ({
 
     setShouldSearch(true);
     setSearchTrigger((prev) => prev + 1);
+    setIsFiltersOpen(false); // Colapsar filtros después de buscar
   };
 
   // Manejo de errores
@@ -154,337 +153,349 @@ const MonitorLecturasComponent = ({
   }
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      <BreadcrumbSetter items={pageBreadcrumbs} />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+      <div className="container mx-auto p-2 space-y-3">
+        <BreadcrumbSetter items={pageBreadcrumbs} />
 
-      {/* Page Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-          Monitor de Lecturas
-        </h1>
-        <p className="text-muted-foreground">
-          Seleccione un sector y aplique filtros para visualizar las lecturas de
-          medidores.
-        </p>
-      </div>
-
-      {/* Sector Selection Card */}
-      <Card className="shadow-sm border border-border/60">
-        <CardHeader className="border-b border-border/60">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-background rounded-lg border shadow-sm">
-              <MapPin className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-            </div>
-            <div>
-              <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                Seleccionar Sector
-              </CardTitle>
-              <CardDescription className="text-sm">
-                Elija el área geográfica para iniciar el monitoreo.
-              </CardDescription>
+        {/* Modern Header */}
+        <div className="flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex-1">
+            <div className="items-center gap-3 grid grid-cols-2 mb-2">
+              <div className="col-span-1">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 dark:from-blue-100 dark:to-sky-100 bg-clip-text text-transparent">
+                  Monitor de Lecturas
+                </h1>
+              </div>
+              <div className="flex items-center gap-3 justify-end w-full">
+                <Dialog>
+                  <DialogTrigger>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                    >
+                      <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                      <span className="text-yellow-600 text-sm">
+                        Información
+                      </span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Información</DialogTitle>
+                      <DialogDescription>
+                        Selecciona un sector y configura tus filtros para
+                        monitorear las lecturas de medidores en tiempo real
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="p-4 md:p-6">
-          {sectores && sectores.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {sectores.map((sector) => (
-                <Button
-                  key={sector.sectorId}
-                  variant={
-                    selectedSector?.sectorId === sector.sectorId
-                      ? 'default'
-                      : 'outline'
-                  }
-                  onClick={() => setSelectedSector(sector)}
-                  size="sm"
-                  className={cn(
-                    'transition-all duration-150',
-                    selectedSector?.sectorId === sector.sectorId
-                      ? 'bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
-                      : 'dark:text-sky-300 border-border/70 hover:bg-muted/50',
-                  )}
-                >
-                  {sector.descripcion}
-                </Button>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground italic">
-              No hay sectores disponibles para seleccionar.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Filters Card (Collapsible) */}
-      <Card className="shadow-sm border border-border/60">
-        <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-          <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-background rounded-lg border shadow-sm">
-                  <Filter className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+        {/* Main Control Panel */}
+        <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm mt-4">
+          <CardContent className="p-4 space-y-4">
+            {/* Sector Selection - Clean Grid */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                    Filtros de Búsqueda
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    Ajuste los parámetros para refinar los resultados.
-                  </CardDescription>
+                  <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100">
+                    Sector de Monitoreo
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Selecciona el área geográfica a monitorear
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsFiltersOpen(!isFiltersOpen);
-                  }}
-                >
-                  {isFiltersOpen ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                  )}
-                  <span className="sr-only">Abrir/Cerrar filtros</span>
-                </Button>
-              </div>
-            </div>
-          </CollapsibleTrigger>
 
-          <CollapsibleContent>
-            <CardContent className="p-4 md:p-6 pt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-5">
-                {/* Periodo */}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="periodo-select"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
-                  >
-                    <Calendar className="h-3.5 w-3.5" /> Periodo
-                  </Label>
-                  {periodos && periodos.length > 0 ? (
-                    <Select
-                      value={selectedPeriodo?.IdPeriodo || ''}
-                      onValueChange={(value) => {
-                        const periodo = periodos.find(
-                          (p) => p.IdPeriodo === value,
-                        );
-                        setSelectedPeriodo(periodo || null);
-                      }}
-                    >
-                      <SelectTrigger
-                        id="periodo-select"
-                        className="w-full bg-background border-border/70"
-                      >
-                        <SelectValue placeholder="Seleccione periodo..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodos?.map((periodo) => (
-                          <SelectItem
-                            key={periodo.IdPeriodo}
-                            value={String(periodo.IdPeriodo)}
-                          >
-                            {periodo.DescripcionPeriodo}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="h-9 w-full animate-pulse bg-muted rounded-md"></div>
-                  )}
-                </div>
-
-                {/* Clave */}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="clave-select"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
-                  >
-                    <KeyRound className="h-3.5 w-3.5" /> Clave (Opcional)
-                  </Label>
-                  {claves && claves.length > 0 ? (
-                    <Select
-                      value={selectedClave?.IdClave.toString() || 'ALL'}
-                      onValueChange={(value) => {
-                        if (value === 'ALL') {
-                          setSelectedClave(null);
-                        } else {
-                          const clave = claves?.find(
-                            (c) => c.IdClave === parseInt(value),
-                          );
-                          setSelectedClave(clave || null);
-                        }
-                      }}
-                    >
-                      <SelectTrigger
-                        id="clave-select"
-                        className="w-full bg-background border-border/70"
-                      >
-                        <SelectValue placeholder="Todas las claves..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ALL">Todas las claves</SelectItem>
-                        {claves?.map((clave) => (
-                          <SelectItem
-                            key={clave.IdClave}
-                            value={String(clave.IdClave)}
-                          >
-                            {clave.DescripcionClave} ({clave.IdClave})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <div className="h-9 w-full animate-pulse bg-muted rounded-md"></div>
-                  )}
-                </div>
-
-                {/* Medidor */}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="medidor-input"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
-                  >
-                    <Hash className="h-3.5 w-3.5" /> Medidor (Opcional)
-                  </Label>
-                  <Input
-                    type="text"
-                    id="medidor-input"
-                    placeholder="Número de serie..."
-                    value={medidor}
-                    onChange={(e) => setMedidor(e.target.value)}
-                    className="bg-background border-border/70"
-                  />
-                </div>
-
-                {/* Criterio (Estado) */}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="criterio-select"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
-                  >
-                    <ListFilter className="h-3.5 w-3.5" /> Criterio (Opcional)
-                  </Label>
-                  <Select
-                    value={selectedEstado?.toString()}
-                    onValueChange={(value) => setSelectedEstado(Number(value))}
-                  >
-                    <SelectTrigger
-                      id="criterio-select"
-                      className="w-full bg-background border-border/70"
-                    >
-                      <SelectValue placeholder="Seleccione criterio..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="0">Todos los criterios</SelectItem>
-                      <SelectItem value="1">Sin Lectura</SelectItem>
-                      <SelectItem value="2">Lectura Normal</SelectItem>
-                      <SelectItem value="3">Clave Informativa</SelectItem>
-                      <SelectItem value="4">Clave Relevante</SelectItem>
-                      <SelectItem value="5">Clave Crítica</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Fecha Inicio (Read Only) */}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="fecha-inicio-lectura"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
-                  >
-                    <Calendar className="h-3.5 w-3.5" /> Fecha Inicio (Periodo)
-                  </Label>
-                  <Input
-                    type="text"
-                    id="fecha-inicio-lectura"
-                    value={fechaInicio || 'Seleccione periodo'}
-                    readOnly
-                    className="bg-muted/50 border-border/70 text-muted-foreground"
-                  />
-                </div>
-
-                {/* Fecha Fin */}
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="fecha-fin-lectura"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
-                  >
-                    <Calendar className="h-3.5 w-3.5" /> Fecha Fin
-                  </Label>
-                  <DatePicker
-                    date={
-                      fechaFin ? new Date(fechaFin + 'T00:00:00') : undefined
-                    }
-                    setDate={(date) => {
-                      if (date) {
-                        setFechaFin(date.toISOString().split('T')[0]);
-                      } else {
-                        setFechaFin('');
+              {sectores && sectores.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+                  {sectores.map((sector) => (
+                    <Button
+                      key={sector.sectorId}
+                      variant={
+                        selectedSector?.sectorId === sector.sectorId
+                          ? 'default'
+                          : 'outline'
                       }
-                    }}
-                  />
+                      onClick={() => setSelectedSector(sector)}
+                      className={cn(
+                        'h-auto p-3 transition-all duration-200 hover:scale-105',
+                        selectedSector?.sectorId === sector.sectorId
+                          ? 'bg-gradient-to-r from-blue-500 to-sky-600 text-white shadow-lg border-0'
+                          : 'hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-700 dark:text-slate-300',
+                      )}
+                    >
+                      <div className="text-center">
+                        <div className="font-semibold text-xs">
+                          {sector.descripcion}
+                        </div>
+                      </div>
+                    </Button>
+                  ))}
                 </div>
-              </div>
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <Settings2 className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No hay sectores disponibles</p>
+                </div>
+              )}
+            </div>
 
-              {/* Action Buttons */}
-              <div className="mt-6 flex justify-end gap-2">
+            {/* Search Action */}
+            <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t">
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
-                  onClick={handleLimpiezaFiltros}
-                  className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
                   size="sm"
+                  onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                  className="text-muted-foreground hover:text-foreground"
                 >
-                  <Eraser className="h-4 w-4" />
-                  Limpiar Filtros
+                  <Filter className="w-4 h-4 mr-1" />
+                  <span className="text-sm">Filtros Avanzados</span>
+                  {isFiltersOpen ? (
+                    <ChevronUp className="w-4 h-4 ml-1" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 ml-1" />
+                  )}
                 </Button>
-                <Button
-                  variant="default"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSearch();
-                  }}
-                  size="sm"
-                  className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
-                  disabled={!selectedSector || !selectedPeriodo}
-                >
-                  <Search className="h-4 w-4" />
-                  Buscar
-                </Button>
+
+                {(selectedClave || medidor || selectedEstado > 0) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleLimpiezaFiltros}
+                    className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                  >
+                    <Eraser className="w-4 h-4 mr-1" />
+                    <span className="text-sm">Limpiar</span>
+                  </Button>
+                )}
               </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
 
-      {/* Separator */}
-      {shouldSearch && <Separator className="my-6" />}
+              <Button
+                onClick={handleSearch}
+                disabled={!selectedSector || !selectedPeriodo}
+                className="bg-gradient-to-r from-blue-500 to-sky-600 hover:from-blue-600 hover:to-sky-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <Search className="w-4 h-4 mr-2" />
+                <span className="text-sm">
+                  {shouldSearch ? 'Buscar Nuevamente' : 'Iniciar Monitoreo'}
+                </span>
+              </Button>
+            </div>
 
-      {/* Results Section */}
-      {shouldSearch && (
-        <Suspense
-          fallback={
-            <Card className="shadow-sm p-8 border border-border/60">
-              <LoadingSpinner message="Cargando resultados..." />
-            </Card>
-          }
-        >
-          <ResultadosBusqueda
-            sector={selectedSector?.sectorId || ''}
-            periodo={selectedPeriodo?.IdPeriodo || ''}
-            stfechaini={fechaInicio}
-            stfechafin={fechaFin}
-            tipoclave={selectedEstado.toString()}
-            medidor={medidor}
-            clave={selectedClave?.IdClave.toString() || ''}
-            triggerSearch={searchTrigger}
-          />
-        </Suspense>
-      )}
+            {/* Advanced Filters - Collapsible */}
+            <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+              <CollapsibleContent>
+                <div className="border-t pt-4 space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                    {/* Periodo */}
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                        Periodo
+                      </Label>
+                      {periodos && periodos.length > 0 ? (
+                        <Select
+                          value={selectedPeriodo?.IdPeriodo || ''}
+                          onValueChange={(value) => {
+                            const periodo = periodos.find(
+                              (p) => p.IdPeriodo === value,
+                            );
+                            setSelectedPeriodo(periodo || null);
+                          }}
+                        >
+                          <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                            <SelectValue placeholder="Seleccionar periodo..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {periodos?.map((periodo) => (
+                              <SelectItem
+                                key={periodo.IdPeriodo}
+                                value={String(periodo.IdPeriodo)}
+                                className="truncate"
+                              >
+                                {periodo.DescripcionPeriodo}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <div className="h-10 w-full bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
+                      )}
+                    </div>
+
+                    {/* Clave */}
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <KeyRound className="w-3 h-3 text-amber-500 flex-shrink-0" />
+                        Clave
+                      </Label>
+                      {claves && claves.length > 0 ? (
+                        <Select
+                          value={selectedClave?.IdClave.toString() || 'ALL'}
+                          onValueChange={(value) => {
+                            if (value === 'ALL') {
+                              setSelectedClave(null);
+                            } else {
+                              const clave = claves?.find(
+                                (c) => c.IdClave === parseInt(value),
+                              );
+                              setSelectedClave(clave || null);
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                            <SelectValue placeholder="Todas las claves..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ALL" className="truncate">
+                              Todas las claves
+                            </SelectItem>
+                            {claves?.map((clave) => (
+                              <SelectItem
+                                key={clave.IdClave}
+                                value={String(clave.IdClave)}
+                                className="truncate"
+                              >
+                                {clave.DescripcionClave}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <div className="h-10 w-full bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
+                      )}
+                    </div>
+
+                    {/* Estado */}
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <ListFilter className="w-3 h-3 text-purple-500 flex-shrink-0" />
+                        Estado
+                      </Label>
+                      <Select
+                        value={selectedEstado?.toString()}
+                        onValueChange={(value) =>
+                          setSelectedEstado(Number(value))
+                        }
+                      >
+                        <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                          <SelectValue placeholder="Filtrar por estado..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="0" className="truncate">
+                            Todos los estados
+                          </SelectItem>
+                          <SelectItem value="1" className="truncate">
+                            Sin Lectura
+                          </SelectItem>
+                          <SelectItem value="2" className="truncate">
+                            Lectura Normal
+                          </SelectItem>
+                          <SelectItem value="3" className="truncate">
+                            Clave Informativa
+                          </SelectItem>
+                          <SelectItem value="4" className="truncate">
+                            Clave Relevante
+                          </SelectItem>
+                          <SelectItem value="5" className="truncate">
+                            Clave Crítica
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Medidor */}
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Hash className="w-3 h-3 text-green-500 flex-shrink-0" />
+                        Número de Serie
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder="Buscar medidor específico..."
+                        value={medidor}
+                        onChange={(e) => setMedidor(e.target.value)}
+                        className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      />
+                    </div>
+
+                    {/* Fecha Inicio */}
+                    <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                        Fecha Inicio
+                      </Label>
+                      <Input
+                        type="text"
+                        value={fechaInicio || 'Definida por período'}
+                        readOnly
+                        className="w-full bg-slate-50 dark:bg-slate-800 text-muted-foreground cursor-not-allowed truncate"
+                      />
+                    </div>
+
+                    {/* Fecha Fin */}
+                    <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                        Fecha Fin
+                      </Label>
+                      <div className="w-full">
+                        <DatePicker
+                          date={
+                            fechaFin
+                              ? new Date(fechaFin + 'T00:00:00')
+                              : undefined
+                          }
+                          setDate={(date) => {
+                            if (date) {
+                              setFechaFin(date.toISOString().split('T')[0]);
+                            } else {
+                              setFechaFin('');
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </CardContent>
+        </Card>
+
+        {/* Results Section */}
+        {shouldSearch && (
+          <Suspense
+            fallback={
+              <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <LoadingSpinner message="Cargando resultados del monitoreo..." />
+                </CardContent>
+              </Card>
+            }
+          >
+            <ResultadosBusqueda
+              sector={selectedSector?.sectorId || ''}
+              periodo={selectedPeriodo?.IdPeriodo || ''}
+              stfechaini={fechaInicio}
+              stfechafin={fechaFin}
+              tipoclave={selectedEstado.toString()}
+              medidor={medidor}
+              clave={selectedClave?.IdClave.toString() || ''}
+              triggerSearch={searchTrigger}
+            />
+          </Suspense>
+        )}
+      </div>
     </div>
   );
 };

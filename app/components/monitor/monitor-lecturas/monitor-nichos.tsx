@@ -103,8 +103,13 @@ export default function MonitorNichos({
 
     setHighlightTimeout(timer);
 
-    // Actualizar los datos
+    // Actualizar los datos locales
     searchResults();
+
+    // Notificar al componente padre que hubo una actualización exitosa
+    if (onSuccess) {
+      onSuccess();
+    }
   };
 
   const handleRefresh = () => {

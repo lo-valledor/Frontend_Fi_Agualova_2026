@@ -38,6 +38,7 @@ interface DataTableAdvancedProps<TData, TValue> {
   showPageNumbers?: boolean;
   onRowSelectionChange?: (selectedRows: TData[]) => void;
   rowIdKey?: keyof TData;
+  initialSorting?: SortingState;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,12 +52,13 @@ export function DataTable<TData, TValue>({
   showPageNumbers = true,
   onRowSelectionChange,
   rowIdKey,
+  initialSorting = [],
 }: DataTableAdvancedProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: defaultPageSize,

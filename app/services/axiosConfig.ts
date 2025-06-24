@@ -45,12 +45,31 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Lista de rutas donde un 401 es esperado y no debe activar el refresh automático
+    // Estas rutas pueden devolver 401 por contraseñas incorrectas o falta de permisos específicos
+    // y NO significan que la sesión haya expirado
+    const routesWithExpected401 = [
+      'validar-usuario-modificacion',    // Validación de contraseña para modificaciones
+      'modificar-precio-cargo-correccion', // Modificación de precios (puede fallar por permisos)
+      'ConfirmarPrecio',                 // Confirmación de precios (puede fallar por permisos)
+      'modificar-precio',                // Modificación general de precios
+      'cambiar-contrasena',              // Cambio de contraseña (puede fallar por contraseña actual incorrecta)
+      'validar-permisos'                 // Validación de permisos específicos
+    ];
+
+    // Verificar si la URL contiene alguna de las rutas excluidas
+    const isExpected401 = routesWithExpected401.some(route => 
+      originalRequest.url?.includes(route)
+    );
+
     // Si el error es 401 (Unauthorized) y no es una petición de refresh token o login
+    // Y NO está en la lista de rutas con 401 esperado
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
       !originalRequest.url.includes("refresh-token") &&
-      !originalRequest.url.includes("login")
+      !originalRequest.url.includes("login") &&
+      !isExpected401
     ) {
       originalRequest._retry = true;
 
@@ -93,6 +112,8 @@ axiosInstance.interceptors.response.use(
       );
     }
 
+    // Para todos los demás errores (incluyendo 401 en rutas excluidas), 
+    // permitir que el código del componente los maneje
     return Promise.reject(error);
   }
 );

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
 import React, { useState, useMemo } from 'react';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
@@ -12,16 +14,18 @@ import {
 } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 import {
-  LockIcon,
   KeyIcon,
   CheckCircleIcon,
   AlertCircleIcon,
-  DollarSignIcon,
+  ChevronDown,
+  ChevronUp,
+  Shield,
+  Users,
+  Building2,
   CalendarIcon,
   BarChartIcon,
   ClockIcon,
-  ChevronDown,
-  ChevronUp,
+  Info,
 } from 'lucide-react';
 import {
   Select,
@@ -31,28 +35,34 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { toast } from 'sonner';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '~/components/ui/collapsible';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import type {
   RevisarPrecioUno,
   RevisarPrecioDos,
   ValidacionUsuarioResponse,
   PeriodoAbierto,
+  Ciclo,
 } from '~/types/operaciones';
 import { Skeleton } from '~/components/ui/skeleton';
 import { columnsEnel } from './columns-enel';
 import { DataTable } from './data-table';
 import { columnsEnerlova } from './columns-enerlova';
 import DialogModificarPrecio from './dialog-modificar-precio';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '~/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 interface RevisarPrecioComponentProps {
   dataPeriodoAbierto: PeriodoAbierto[];
   dataConsultarPreciosUno: RevisarPrecioUno[];
   dataConsultarPreciosDos: RevisarPrecioDos[];
-  ciclosFacturacion: any[];
+  ciclosFacturacion: Ciclo[];
   cicloSeleccionado: string;
   onCicloChange: (ciclo: string) => Promise<void>;
   isLoading: boolean;
@@ -75,7 +85,7 @@ export default function RevisarPrecioComponent({
 }: RevisarPrecioComponentProps) {
   // Estados UI
   const [contrasena, setContrasena] = useState<string>('');
-  const [isLoadingCiclo, setIsLoadingCiclo] = useState(false);
+  const [_isLoadingCiclo] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [userData, setUserData] = useState<ValidacionUsuarioResponse | null>(
     null,
@@ -83,8 +93,6 @@ export default function RevisarPrecioComponent({
 
   // Estados para los paneles colapsables
   const [isValidacionOpen, setIsValidacionOpen] = useState(true);
-  const [isEnelOpen, setIsEnelOpen] = useState(true);
-  const [isCicloOpen, setIsCicloOpen] = useState(true);
 
   // Estados para las filas seleccionadas
   const [selectedEnelRows, setSelectedEnelRows] = useState<string[]>([]);
@@ -132,19 +140,48 @@ export default function RevisarPrecioComponent({
     } catch (error: any) {
       console.error('Error al validar usuario:', error);
 
+      // Manejo específico de errores de validación vs errores de sesión
       if (error.response?.status === 401) {
-        toast.error('Usuario de la sesión no disponible.');
+        // Verificar si es un error de contraseña incorrecta vs sesión expirada
+        const errorMessage =
+          error.response.data?.mensaje || error.response.data?.message || '';
+
+        if (
+          errorMessage.toLowerCase().includes('contraseña') ||
+          errorMessage.toLowerCase().includes('password') ||
+          errorMessage.toLowerCase().includes('clave') ||
+          errorMessage.toLowerCase().includes('credenciales')
+        ) {
+          // Error de contraseña incorrecta - NO cerrar sesión
+          toast.error('Credenciales de usuario incorrectas');
+        } else {
+          // Error de sesión expirada
+          toast.error('Sesión expirada. Serás redirigido al login.');
+          // Aquí podrías redirigir al login si es necesario
+        }
+        return;
+      }
+
+      if (error.response?.status === 400) {
+        toast.error('Credenciales de usuario incorrectas');
+        return;
+      }
+
+      if (error.response?.status === 403) {
+        toast.error('No tienes permisos para realizar esta acción.');
         return;
       }
 
       if (error.response) {
-        toast.error(
-          `Error ${error.response.status}: ${
-            error.response.data?.mensaje || 'Error en la validación'
-          }`,
-        );
+        const errorMessage =
+          error.response.data?.mensaje ||
+          error.response.data?.message ||
+          'Error en la validación';
+        toast.error(`Error ${error.response.status}: ${errorMessage}`);
       } else if (error.request) {
-        toast.error('No se recibió respuesta del servidor');
+        toast.error(
+          'No se recibió respuesta del servidor. Verifica tu conexión.',
+        );
       } else {
         toast.error(`Error: ${error.message}`);
       }
@@ -200,8 +237,38 @@ export default function RevisarPrecioComponent({
               `Error al confirmar: ${item.codigo}, status: ${response.status}`,
             );
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error(`Error al confirmar precio ${item.codigo}:`, error);
+
+          // Manejo específico de errores de autorización
+          if (error.response?.status === 401) {
+            const errorMessage =
+              error.response.data?.mensaje ||
+              error.response.data?.message ||
+              '';
+
+            if (
+              errorMessage.toLowerCase().includes('contraseña') ||
+              errorMessage.toLowerCase().includes('password') ||
+              errorMessage.toLowerCase().includes('clave') ||
+              errorMessage.toLowerCase().includes('credenciales') ||
+              errorMessage.toLowerCase().includes('autorización') ||
+              errorMessage.toLowerCase().includes('permisos')
+            ) {
+              // Error de autorización específico - continuar con otros registros
+              console.warn(
+                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`,
+              );
+            } else {
+              // Error de sesión expirada - detener proceso
+              toast.error(
+                'Sesión expirada durante el proceso. Reinicia la página.',
+              );
+              setIsConfirming(false);
+              return;
+            }
+          }
+
           confirmacionesFallidas++;
         }
       }
@@ -221,8 +288,38 @@ export default function RevisarPrecioComponent({
               `Error al confirmar: ${item.codigo}, status: ${response.status}`,
             );
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error(`Error al confirmar precio ${item.codigo}:`, error);
+
+          // Manejo específico de errores de autorización
+          if (error.response?.status === 401) {
+            const errorMessage =
+              error.response.data?.mensaje ||
+              error.response.data?.message ||
+              '';
+
+            if (
+              errorMessage.toLowerCase().includes('contraseña') ||
+              errorMessage.toLowerCase().includes('password') ||
+              errorMessage.toLowerCase().includes('clave') ||
+              errorMessage.toLowerCase().includes('credenciales') ||
+              errorMessage.toLowerCase().includes('autorización') ||
+              errorMessage.toLowerCase().includes('permisos')
+            ) {
+              // Error de autorización específico - continuar con otros registros
+              console.warn(
+                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`,
+              );
+            } else {
+              // Error de sesión expirada - detener proceso
+              toast.error(
+                'Sesión expirada durante el proceso. Reinicia la página.',
+              );
+              setIsConfirming(false);
+              return;
+            }
+          }
+
           confirmacionesFallidas++;
         }
       }
@@ -261,18 +358,17 @@ export default function RevisarPrecioComponent({
 
   const handleCicloChange = async (nuevoCiclo: string) => {
     try {
-      setIsLoadingCiclo(true);
+      // setIsLoadingCiclo(true);
       await onCicloChange(nuevoCiclo);
-    } catch (error) {
-      console.error('Error al cambiar ciclo:', error);
+    } catch (_error) {
       toast.error('Error al cambiar el ciclo');
     } finally {
-      setIsLoadingCiclo(false);
+      //    setIsLoadingCiclo(false);
     }
   };
 
   // Función para verificar si el ciclo seleccionado es válido para el mes actual
-  const esCicloValido = () => {
+  const _esCicloValido = () => {
     if (!dataPeriodoAbierto || dataPeriodoAbierto.length === 0) return true;
     return true; // Ya no hay restricciones para febrero
   };
@@ -342,314 +438,335 @@ export default function RevisarPrecioComponent({
     });
   }, [isAuthorized, onRecargarPrecios]);
 
-  return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      {/* Page Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-          Revisar Precio
-        </h1>
-        <p className="text-muted-foreground">
-          Validación y revisión de precios para el periodo activo
-        </p>
+  // Mostrar error si existe
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+        <div className="container mx-auto p-2 space-y-3">
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
+              <AlertCircleIcon className="w-8 h-8 text-red-600 dark:text-red-400" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+              Error al cargar datos
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400">{error}</p>
+          </div>
+        </div>
       </div>
+    );
+  }
 
-      {/* Validación de Usuario */}
-      <Card className="shadow-sm border border-border/60">
-        <Collapsible open={isValidacionOpen} onOpenChange={setIsValidacionOpen}>
-          <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-background rounded-lg border shadow-sm">
-                  <LockIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+      <div className="container mx-auto p-2 space-y-3">
+        {/* Header modernizado */}
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
+              Revisar Precio
+            </h1>
+          </div>
+          <div className="flex items-center gap-3 justify-end w-full">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                >
+                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                  <span className="text-yellow-600 text-sm">Información</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Información</DialogTitle>
+                  <DialogDescription>
+                    Validación y revisión de precios para el período activo
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+
+        {/* Validación de Usuario */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <Collapsible
+            open={isValidacionOpen}
+            onOpenChange={setIsValidacionOpen}
+          >
+            <div
+              className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+              onClick={() => setIsValidacionOpen(!isValidacionOpen)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
+                  <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
                     Validación de Usuario
                   </CardTitle>
-                  <CardDescription className="text-sm">
-                    Ingresa tu contraseña para permitir modificaciones
+                  <CardDescription className="text-slate-600 dark:text-slate-400">
+                    Autorización para realizar modificaciones de precios
                   </CardDescription>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsValidacionOpen(!isValidacionOpen);
-                }}
-              >
-                {isValidacionOpen ? (
-                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                )}
-                <span className="sr-only">Abrir/Cerrar validación</span>
-              </Button>
-            </div>
-          </CollapsibleTrigger>
-
-          <CollapsibleContent>
-            <CardContent className="p-4 md:p-6 pt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-                <div className="space-y-1.5">
-                  <Label
-                    htmlFor="password"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
+              <div className="flex items-center gap-3">
+                {isAuthorized && (
+                  <Badge
+                    variant="outline"
+                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
                   >
-                    <KeyIcon className="h-3.5 w-3.5" /> Contraseña
-                  </Label>
-                  <div className="relative">
+                    ✓ Autorizado
+                  </Badge>
+                )}
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  {isValidacionOpen ? (
+                    <ChevronUp className="h-5 w-5 text-slate-500" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-slate-500" />
+                  )}
+                </Button>
+              </div>
+            </div>
+
+            <CollapsibleContent>
+              <CardContent className="px-6 pb-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                  <div className="space-y-2 w-full md:col-span-2">
+                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <KeyIcon className="w-4 h-4" />
+                      Contraseña de autorización
+                    </Label>
                     <Input
-                      id="password"
                       type="password"
                       value={contrasena}
                       onChange={handleContrasenaChange}
-                      className="bg-background border-border/70 pl-10"
+                      className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                       placeholder="Ingresa tu contraseña"
                     />
-                    <KeyIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex gap-3 w-full">
+                    <Button
+                      onClick={validarUsuario}
+                      disabled={isLoading || !contrasena}
+                      className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white flex-1"
+                    >
+                      <CheckCircleIcon className="w-4 h-4 mr-2" />
+                      {isLoading ? 'Validando...' : 'Autorizar'}
+                    </Button>
                   </div>
                 </div>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={validarUsuario}
-                    disabled={isLoading || !contrasena}
-                    className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
-                    size="sm"
-                  >
-                    <CheckCircleIcon className="h-4 w-4" />
-                    {isLoading ? 'Validando...' : 'Permitir Modificación'}
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={confirmarCambios}
-                    disabled={
-                      isConfirming ||
-                      !isAuthorized ||
-                      (selectedEnelRows.length === 0 &&
-                        selectedEnerlovaRows.length === 0)
-                    }
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <AlertCircleIcon className="h-4 w-4" />
-                    {isConfirming ? 'Procesando...' : 'Confirmar'}
-                  </Button>
-                </div>
-              </div>
 
-              {/* Resumen de selección */}
-              {isAuthorized &&
-                (selectedEnelRows.length > 0 ||
-                  selectedEnerlovaRows.length > 0) && (
-                  <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md">
-                    <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
-                      Resumen de selección:
-                    </p>
-                    <div className="text-xs text-amber-700 dark:text-amber-400 mt-1">
-                      {selectedEnelRows.length > 0 && (
-                        <p>
-                          - {selectedEnelRows.length} registros seleccionados en
-                          Valores Compañía de Electricidad
+                {/* Resumen de selección y botón confirmar */}
+                {isAuthorized && (
+                  <div className="border-t pt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                          Confirmación de Cambios
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          Registros seleccionados:{' '}
+                          {selectedEnelRows.length +
+                            selectedEnerlovaRows.length}
                         </p>
-                      )}
-                      {selectedEnerlovaRows.length > 0 && (
-                        <p>
-                          - {selectedEnerlovaRows.length} registros
-                          seleccionados en Precios por Ciclo de Facturación
-                        </p>
-                      )}
+                      </div>
+                      <Button
+                        onClick={confirmarCambios}
+                        disabled={
+                          isConfirming ||
+                          !isAuthorized ||
+                          (selectedEnelRows.length === 0 &&
+                            selectedEnerlovaRows.length === 0)
+                        }
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+                      >
+                        <AlertCircleIcon className="w-4 h-4 mr-2" />
+                        {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
+                      </Button>
                     </div>
+
+                    {/* Detalle de selección */}
+                    {(selectedEnelRows.length > 0 ||
+                      selectedEnerlovaRows.length > 0) && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                            Resumen de selección:
+                          </span>
+                        </div>
+                        <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                          {selectedEnelRows.length > 0 && (
+                            <p>
+                              • {selectedEnelRows.length} registros en Valores
+                              Compañía de Electricidad
+                            </p>
+                          )}
+                          {selectedEnerlovaRows.length > 0 && (
+                            <p>
+                              • {selectedEnerlovaRows.length} registros en
+                              Precios por Ciclo de Facturación
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-            </CardContent>
-            {isAuthorized && userData && (
-              <CardFooter className="bg-emerald-50 dark:bg-emerald-900/20 border-t border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 py-3 px-6 flex flex-col items-start gap-1">
-                <div className="flex items-center gap-2">
-                  <CheckCircleIcon className="h-4 w-4" />
-                  <span className="text-sm font-medium">
-                    {userData.mensaje} - Puede modificar valores pendientes
-                  </span>
-                </div>
-              </CardFooter>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
+              </CardContent>
 
-      {/* Valores Compañía de Electricidad */}
-      <Card className="shadow-sm border border-border/60">
-        <Collapsible open={isEnelOpen} onOpenChange={setIsEnelOpen}>
-          <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-lg shadow-sm">
-                  <DollarSignIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                    Valores Compañía de Electricidad
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    Revisión de precios para el periodo activo
-                  </CardDescription>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="px-3 py-1.5 bg-muted/50 text-muted-foreground text-sm rounded-md flex items-center gap-2 border border-border/60">
-                  <CalendarIcon className="h-3.5 w-3.5" />
-                  {isPeriodoLoading ? (
-                    <Skeleton className="h-5 w-28" />
-                  ) : (
-                    <span className="font-medium">
-                      {dataPeriodoAbierto && dataPeriodoAbierto.length > 0
-                        ? dataPeriodoAbierto[0].descripcion
-                        : 'No hay periodo activo'}
+              {/* Footer de autorización */}
+              {isAuthorized && userData && (
+                <CardFooter className="bg-emerald-50 dark:bg-emerald-900/20 border-t border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 py-4 px-6">
+                  <div className="flex items-center gap-2">
+                    <CheckCircleIcon className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      {userData.mensaje} - Puede modificar valores pendientes
                     </span>
-                  )}
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsEnelOpen(!isEnelOpen);
-                  }}
+                  </div>
+                </CardFooter>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>
+
+        {/* Tablas de Precios con Tabs */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <Tabs defaultValue="enel" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger
+                  value="enel"
+                  className="flex items-center gap-2 data-[state=active]:bg-rose-500 data-[state=active]:text-white"
                 >
-                  {isEnelOpen ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                  )}
-                  <span className="sr-only">Abrir/Cerrar tabla</span>
-                </Button>
-              </div>
-            </div>
-          </CollapsibleTrigger>
-
-          <CollapsibleContent>
-            <CardContent className="p-4 md:p-6">
-              <DataTable
-                columns={configuredColumnsEnel}
-                data={dataConsultarPreciosUno}
-                enableSelection={isAuthorized}
-                selectedRowIds={selectedEnelRows}
-                onRowSelectionChange={setSelectedEnelRows}
-                isLoading={isLoadingPrecios}
-              />
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
-
-      {/* Precios por Ciclo de Facturación */}
-      <Card className="shadow-sm border border-border/60">
-        <Collapsible open={isCicloOpen} onOpenChange={setIsCicloOpen}>
-          <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg shadow-sm">
-                  <BarChartIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                    Precios por Ciclo de Facturación
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    Consulta los precios de ENERLOVA según el ciclo de
-                    facturación
-                  </CardDescription>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="px-3 py-1.5 bg-muted/50 text-muted-foreground text-sm rounded-md flex items-center gap-2 border border-border/60">
-                  <CalendarIcon className="h-3.5 w-3.5" />
-                  <span className="font-medium">
-                    {dataPeriodoAbierto[0]?.descripcion ||
-                      'No hay periodo activo'}
-                  </span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsCicloOpen(!isCicloOpen);
-                  }}
+                  <Building2 className="w-4 h-4" />
+                  Valores Enel
+                </TabsTrigger>
+                <TabsTrigger
+                  value="enerlova"
+                  className="flex items-center gap-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
                 >
-                  {isCicloOpen ? (
-                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                  )}
-                  <span className="sr-only">Abrir/Cerrar ciclo</span>
-                </Button>
-              </div>
-            </div>
-          </CollapsibleTrigger>
+                  <BarChartIcon className="w-4 h-4" />
+                  Precios Enerlova
+                </TabsTrigger>
+              </TabsList>
 
-          <CollapsibleContent>
-            <CardContent className="p-4 md:p-6 space-y-6">
-              <div className="flex flex-col md:flex-row gap-4 items-end">
-                <div className="space-y-1.5 grow">
-                  <Label
-                    htmlFor="ciclo"
-                    className="text-xs font-medium text-muted-foreground flex items-center gap-1.5"
+              <TabsContent value="enel" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      Valores Compañía de Electricidad
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Revisión de precios para el período activo
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
                   >
-                    <ClockIcon className="h-3.5 w-3.5" /> Ciclo de Facturación
-                  </Label>
-                  {isCiclosLoading ? (
-                    <Skeleton className="h-10 w-full" />
-                  ) : (
-                    <Select
-                      value={cicloSeleccionado}
-                      onValueChange={handleCicloChange}
-                      disabled={isPeriodoLoading}
-                    >
-                      <SelectTrigger
-                        id="ciclo"
-                        className="bg-background border-border/70"
-                      >
-                        <SelectValue placeholder="Selecciona un ciclo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
-                          ciclosFacturacion.map((ciclo) => (
-                            <SelectItem
-                              key={ciclo.diaFacturacion}
-                              value={ciclo.diaFacturacion}
-                            >
-                              {ciclo.descripcion}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <>
-                            <SelectItem value="15">Ciclo día 15</SelectItem>
-                            <SelectItem value="30">Ciclo día 30</SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  )}
+                    <CalendarIcon className="w-3 h-3 mr-1" />
+                    {isPeriodoLoading ? (
+                      <Skeleton className="h-4 w-20" />
+                    ) : dataPeriodoAbierto && dataPeriodoAbierto.length > 0 ? (
+                      dataPeriodoAbierto[0].descripcion
+                    ) : (
+                      'Sin período'
+                    )}
+                  </Badge>
                 </div>
-              </div>
-              <DataTable
-                columns={configuredColumnsEnerlova}
-                data={dataConsultarPreciosDos}
-                enableSelection={isAuthorized}
-                selectedRowIds={selectedEnerlovaRows}
-                onRowSelectionChange={setSelectedEnerlovaRows}
-                isLoading={isLoadingPrecios}
-              />
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                  <DataTable
+                    columns={configuredColumnsEnel}
+                    data={dataConsultarPreciosUno}
+                    enableSelection={isAuthorized}
+                    selectedRowIds={selectedEnelRows}
+                    onRowSelectionChange={setSelectedEnelRows}
+                    isLoading={isLoadingPrecios}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="enerlova" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      Precios por Ciclo de Facturación
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Precios de ENERLOVA según ciclo de facturación
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                  >
+                    <ClockIcon className="w-3 h-3 mr-1" />
+                    Ciclo {cicloSeleccionado}
+                  </Badge>
+                </div>
+
+                {/* Selector de ciclo */}
+                <div className="flex flex-col md:flex-row gap-4 items-end">
+                  <div className="space-y-2 flex-1">
+                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <ClockIcon className="w-4 h-4" />
+                      Ciclo de Facturación
+                    </Label>
+                    {isCiclosLoading ? (
+                      <Skeleton className="h-10 w-full" />
+                    ) : (
+                      <Select
+                        value={cicloSeleccionado}
+                        onValueChange={handleCicloChange}
+                        disabled={isPeriodoLoading}
+                      >
+                        <SelectTrigger className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                          <SelectValue placeholder="Selecciona un ciclo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
+                            ciclosFacturacion.map((ciclo) => (
+                              <SelectItem
+                                key={ciclo.diaFacturacion}
+                                value={ciclo.diaFacturacion}
+                              >
+                                {ciclo.descripcion}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <>
+                              <SelectItem value="15">Ciclo día 15</SelectItem>
+                              <SelectItem value="30">Ciclo día 30</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                </div>
+
+                {/* Tabla de precios Enerlova */}
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                  <DataTable
+                    columns={configuredColumnsEnerlova}
+                    data={dataConsultarPreciosDos}
+                    enableSelection={isAuthorized}
+                    selectedRowIds={selectedEnerlovaRows}
+                    onRowSelectionChange={setSelectedEnerlovaRows}
+                    isLoading={isLoadingPrecios}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

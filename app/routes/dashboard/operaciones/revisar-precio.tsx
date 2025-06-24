@@ -126,8 +126,6 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
         setDataConsultarPreciosDos(
           resConsultarPreciosDos.data as RevisarPrecioDos[],
         );
-      } catch (error) {
-        console.error('Error al recargar precios:', error);
       } finally {
         setIsLoadingPrecios(false);
       }

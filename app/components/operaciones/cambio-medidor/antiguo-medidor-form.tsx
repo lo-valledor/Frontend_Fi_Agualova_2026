@@ -1,14 +1,14 @@
-import React from "react";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { Button } from "~/components/ui/button";
-import { Search, X, ChevronDown } from "lucide-react";
+import React from 'react';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
+import { Search, X, ChevronDown, Gauge } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
-import { type AntiguoMedidorFormProps } from "~/types/operaciones";
+} from '~/components/ui/collapsible';
+import { type AntiguoMedidorFormProps } from '~/types/operaciones';
 
 export default function AntiguoMedidorForm({
   medidorAntiguo,
@@ -20,22 +20,28 @@ export default function AntiguoMedidorForm({
   return (
     <Collapsible
       defaultOpen
-      className="rounded-lg border border-border/40 bg-card shadow-sm"
+      className="rounded-xl border border-purple-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-purple-800/40 dark:bg-gray-900/50"
     >
       <CollapsibleTrigger className="flex w-full items-center justify-between px-6 py-4">
-        <div className="flex items-center gap-2">
-          <span className="font-medium text-primary">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm">
+            <Gauge className="h-4 w-4" />
+          </div>
+          <span className="font-semibold text-purple-900 dark:text-purple-100">
             Búsqueda de Medidor Antiguo
           </span>
         </div>
-        <ChevronDown className="h-5 w-5 text-muted-foreground transition-all ui-open:rotate-180" />
+        <ChevronDown className="h-5 w-5 text-purple-600 transition-all ui-open:rotate-180 dark:text-purple-400" />
       </CollapsibleTrigger>
 
       <CollapsibleContent>
         <div className="px-6 pb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="acometida" className="text-sm font-medium">
+              <Label
+                htmlFor="acometida"
+                className="text-sm font-medium text-purple-800 dark:text-purple-200"
+              >
                 Acometida
               </Label>
               <div className="flex">
@@ -43,7 +49,7 @@ export default function AntiguoMedidorForm({
                   id="acometida"
                   type="text"
                   placeholder="Ingrese el código de acometida"
-                  className="rounded-r-none focus-visible:ring-1"
+                  className="rounded-r-none focus-visible:ring-1 border-purple-200 focus-visible:ring-purple-500 dark:border-purple-800"
                   value={medidorAntiguo.acometida}
                   onChange={onMedidorChange}
                 />
@@ -53,16 +59,16 @@ export default function AntiguoMedidorForm({
                   size="icon"
                   onClick={() => {
                     const inputElement = document.getElementById(
-                      "acometida"
+                      'acometida',
                     ) as HTMLInputElement;
                     if (inputElement) {
-                      inputElement.value = "";
+                      inputElement.value = '';
                       onMedidorChange({
-                        target: { id: "acometida", value: "" },
+                        target: { id: 'acometida', value: '' },
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
                   }}
-                  className="rounded-l-none border-l-0"
+                  className="rounded-l-none border-l-0 border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/50"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -70,7 +76,10 @@ export default function AntiguoMedidorForm({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="numeroSerie" className="text-sm font-medium">
+              <Label
+                htmlFor="numeroSerie"
+                className="text-sm font-medium text-purple-800 dark:text-purple-200"
+              >
                 Número de Serie
               </Label>
               <div className="flex">
@@ -78,7 +87,7 @@ export default function AntiguoMedidorForm({
                   id="numeroSerie"
                   type="text"
                   placeholder="Ingrese el número de serie"
-                  className="rounded-r-none focus-visible:ring-1"
+                  className="rounded-r-none focus-visible:ring-1 border-purple-200 focus-visible:ring-purple-500 dark:border-purple-800"
                   value={medidorAntiguo.numeroSerie}
                   onChange={onMedidorChange}
                 />
@@ -88,16 +97,16 @@ export default function AntiguoMedidorForm({
                   size="icon"
                   onClick={() => {
                     const inputElement = document.getElementById(
-                      "numeroSerie"
+                      'numeroSerie',
                     ) as HTMLInputElement;
                     if (inputElement) {
-                      inputElement.value = "";
+                      inputElement.value = '';
                       onMedidorChange({
-                        target: { id: "numeroSerie", value: "" },
+                        target: { id: 'numeroSerie', value: '' },
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
                   }}
-                  className="rounded-l-none border-l-0"
+                  className="rounded-l-none border-l-0 border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/50"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -110,7 +119,7 @@ export default function AntiguoMedidorForm({
               type="button"
               onClick={onBuscar}
               disabled={isLoading}
-              className="h-9 space-x-1.5"
+              className="h-9 space-x-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-sm"
             >
               <Search className="h-4 w-4" />
               <span>Buscar</span>
@@ -121,7 +130,7 @@ export default function AntiguoMedidorForm({
               variant="outline"
               onClick={onLimpiar}
               disabled={isLoading}
-              className="h-9 space-x-1.5 border-muted-foreground/20"
+              className="h-9 space-x-1.5 border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/50"
             >
               <X className="h-4 w-4" />
               <span>Limpiar</span>
