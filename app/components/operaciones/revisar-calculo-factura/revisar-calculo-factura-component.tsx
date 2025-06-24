@@ -33,6 +33,8 @@ import {
   SettingsIcon,
   ChevronRight,
   RefreshCw,
+  Clock,
+  CheckCircle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '~/lib/api';
@@ -66,6 +68,14 @@ export default function RevisarCalculoFacturaComponent({
   const [data, setData] = useState<CalculoPrefacturaCompleto[]>([]);
   const [selectedContratos, setSelectedContratos] = useState<number[]>([]);
 
+  // Estados para el timer de preparación
+  const [isCalculoPreparado, setIsCalculoPreparado] = useState(false);
+  const [timerCountdown, setTimerCountdown] = useState(0);
+  const [timerActive, setTimerActive] = useState(false);
+  const [preparacionTimestamp, setPreparacionTimestamp] = useState<
+    number | null
+  >(null);
+
   // Obtención de datos del hook useOperaciones
   const { fetchCiclosFacturacion, ciclosFacturacionActivos } = useOperaciones();
 
@@ -79,6 +89,34 @@ export default function RevisarCalculoFacturaComponent({
     }
     return '';
   }, [periodoAbierto]);
+
+  // Timer effect para controlar el countdown
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (timerActive && timerCountdown > 0) {
+      interval = setInterval(() => {
+        setTimerCountdown((prev) => {
+          if (prev <= 1) {
+            setTimerActive(false);
+            setIsCalculoPreparado(false);
+            setPreparacionTimestamp(null);
+            toast.warning(
+              'Tiempo de espera expirado. Debe preparar el cálculo nuevamente.',
+            );
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [timerActive, timerCountdown]);
 
   // Cargar datos iniciales
   useEffect(() => {
@@ -127,7 +165,27 @@ export default function RevisarCalculoFacturaComponent({
       `No se pudo determinar el ciclo para API a partir de: ${cicloId}`,
     );
     return cicloId;
-  }; // Función para manejar la búsqueda/revisión
+  };
+
+  // Función para iniciar el timer de preparación
+  const iniciarTimerPreparacion = () => {
+    const tiempoEspera = Math.floor(Math.random() * 11) + 10; // 10-20 segundos
+    setTimerCountdown(tiempoEspera);
+    setTimerActive(true);
+    setIsCalculoPreparado(true);
+    setPreparacionTimestamp(Date.now());
+
+    toast.success(
+      `Cálculo preparado. Puede ver los resultados en ${tiempoEspera} segundos.`,
+      {
+        description:
+          'Espere el tiempo indicado antes de hacer clic en "Ver Cálculo Facturas"',
+        duration: 4000,
+      },
+    );
+  };
+
+  // Función para manejar la búsqueda/revisión
   const handleRevisarCalculo = async () => {
     if (!periodoFormateado) {
       toast.error('No hay un periodo abierto disponible');
@@ -136,6 +194,20 @@ export default function RevisarCalculoFacturaComponent({
 
     if (!cicloId) {
       toast.error('Debe seleccionar un ciclo de facturación');
+      return;
+    }
+
+    if (!isCalculoPreparado) {
+      toast.error(
+        'Debe preparar el cálculo primero antes de ver los resultados',
+      );
+      return;
+    }
+
+    if (timerActive && timerCountdown > 0) {
+      toast.error(
+        `Debe esperar ${timerCountdown} segundos antes de ver los resultados`,
+      );
       return;
     }
 
@@ -170,7 +242,7 @@ export default function RevisarCalculoFacturaComponent({
       if (encabezados.length === 0) {
         setData([]);
         toast.info(
-          'No se encontraron resultados para los criterios seleccionados',
+          'No se encontraron prefacturas para el ciclo y periodo elegidos',
         );
         return;
       }
@@ -218,18 +290,34 @@ export default function RevisarCalculoFacturaComponent({
       );
     } catch (error: any) {
       console.error('Error al revisar cálculo de factura:', error);
-      setError(`Error: ${error.message || 'Error desconocido'}`);
 
-      if (error.response) {
-        toast.error(
-          `Error ${error.response.status}: ${
-            error.response.data?.mensaje || 'Error en la consulta'
-          }`,
+      // Manejo específico para error 404
+      if (error.response && error.response.status === 404) {
+        setError(
+          'No se han encontrado prefacturas para el ciclo y periodo elegidos',
         );
-      } else if (error.request) {
-        toast.error('No se recibió respuesta del servidor');
+        setData([]);
+        toast.error(
+          'No se han encontrado prefacturas para el ciclo y periodo elegidos',
+          {
+            description: 'Verifique que el ciclo y periodo sean correctos',
+            duration: 5000,
+          },
+        );
       } else {
-        toast.error(`Error: ${error.message}`);
+        setError(`Error: ${error.message || 'Error desconocido'}`);
+
+        if (error.response) {
+          toast.error(
+            `Error ${error.response.status}: ${
+              error.response.data?.mensaje || 'Error en la consulta'
+            }`,
+          );
+        } else if (error.request) {
+          toast.error('No se recibió respuesta del servidor');
+        } else {
+          toast.error(`Error: ${error.message}`);
+        }
       }
     } finally {
       setIsLoading(false);
@@ -260,16 +348,8 @@ export default function RevisarCalculoFacturaComponent({
 
       const res = await api.post('lanzar-calculo-facturacion', requestBody);
 
-      // Solo mostrar mensaje de confirmación sin recargar tabla
-      toast.success(
-        (res.data as { mensaje?: string })?.mensaje ||
-          'Proceso de cálculo iniciado correctamente',
-        {
-          description:
-            'El cálculo de facturación se está procesando en segundo plano',
-          duration: 4000,
-        },
-      );
+      // Iniciar el timer después de preparar el cálculo
+      iniciarTimerPreparacion();
 
       return res;
     } catch (error: any) {
@@ -360,6 +440,11 @@ export default function RevisarCalculoFacturaComponent({
       return;
     }
 
+    if (!isCalculoPreparado) {
+      toast.error('Debe preparar el cálculo primero');
+      return;
+    }
+
     toast.info('Actualizando datos...');
     await handleRevisarCalculo();
   };
@@ -371,6 +456,10 @@ export default function RevisarCalculoFacturaComponent({
     setError(null);
     setData([]);
     setFilteredData([]);
+    setIsCalculoPreparado(false);
+    setTimerActive(false);
+    setTimerCountdown(0);
+    setPreparacionTimestamp(null);
   };
 
   return (
@@ -397,6 +486,57 @@ export default function RevisarCalculoFacturaComponent({
           )}
         </div>
       </div>
+      {/* Indicador de estado del timer */}
+      {timerActive && (
+        <Card className="shadow-sm border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-amber-100 dark:bg-amber-800/50 rounded-lg">
+                  <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-amber-800 dark:text-amber-200">
+                    Cálculo en preparación
+                  </h4>
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    Espere {timerCountdown} segundos antes de ver los resultados
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                  {timerCountdown}s
+                </div>
+                <div className="text-xs text-amber-600 dark:text-amber-400">
+                  Tiempo restante
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {/* Indicador de cálculo preparado */}
+      {isCalculoPreparado && !timerActive && (
+        <Card className="shadow-sm border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-emerald-800 dark:text-emerald-200">
+                  Cálculo preparado
+                </h4>
+                <p className="text-sm text-emerald-600 dark:text-emerald-400">
+                  Ya puede hacer clic en "Ver Cálculo Facturas" para ver los
+                  resultados
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       {/* Sección principal con filtros */}
       <Card className="shadow-sm border border-border/60">
         <Collapsible
@@ -553,29 +693,45 @@ export default function RevisarCalculoFacturaComponent({
                 <Button
                   onClick={handleRefreshData}
                   variant="outline"
-                  disabled={isLoading || !cicloId}
+                  disabled={
+                    isLoading || !cicloId || !isCalculoPreparado || timerActive
+                  }
                   className="gap-2 hover:bg-muted/50"
                 >
                   <RefreshCw className="h-4 w-4" />
                   Actualizar
                 </Button>
                 <Button
-                  onClick={handleRevisarCalculo}
-                  disabled={isLoading || !cicloId}
-                  className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
-                >
-                  <SearchIcon className="h-4 w-4" />
-                  Preparar Cálculo
-                </Button>
-                <Button
                   onClick={handleLanzarCalculoFacturas}
-                  disabled={isLaunchingCalculo || !cicloId}
-                  className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                  disabled={isLoading || !cicloId || timerActive}
+                  className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
                 >
                   {isLaunchingCalculo ? (
                     <>
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Lanzando...
+                      Preparando...
+                    </>
+                  ) : (
+                    <>
+                      <SearchIcon className="h-4 w-4" />
+                      Preparar Cálculo
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={handleRevisarCalculo}
+                  disabled={
+                    isLaunchingCalculo ||
+                    !cicloId ||
+                    !isCalculoPreparado ||
+                    timerActive
+                  }
+                  className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Cargando...
                     </>
                   ) : (
                     <>
@@ -651,11 +807,16 @@ export default function RevisarCalculoFacturaComponent({
                 </div>
                 <div className="flex-1">
                   <h4 className="font-semibold text-rose-800 dark:text-rose-200">
-                    Error al cargar los datos
+                    {error.includes('No se han encontrado prefacturas')
+                      ? 'No se encontraron prefacturas'
+                      : 'Error al cargar los datos'}
                   </h4>
-                  <p className="mt-2 text-rose-700 dark:text-rose-300 text-sm leading-relaxed">
-                    {error}
+                  <p className="text-sm text-rose-600 dark:text-rose-400 mt-1">
+                    {error.includes('No se han encontrado prefacturas')
+                      ? 'No se han encontrado prefacturas para el ciclo y periodo elegidos. Verifique que el ciclo y periodo sean correctos.'
+                      : 'Los datos no han sido cargados completamente. Recuerde que debe hacer clic en Preparar Cálculo Factura y luego en Ver Cálculo Facturas'}
                   </p>
+
                   <Button
                     onClick={() => setError(null)}
                     variant="outline"
