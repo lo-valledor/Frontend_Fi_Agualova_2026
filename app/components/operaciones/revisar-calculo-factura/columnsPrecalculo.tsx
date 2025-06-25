@@ -70,7 +70,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 50,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <MapPin className="w-4 h-4 text-blue-500" />
         <span>Sector</span>
@@ -93,7 +93,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 80,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <FileText className="w-4 h-4 text-purple-500" />
         <span>Contrato</span>
@@ -111,7 +111,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 100,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Tag className="w-4 h-4 text-emerald-500" />
         <span>Tarifa</span>
@@ -133,7 +133,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 80,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <CreditCard className="w-4 h-4 text-slate-500" />
         <span>RUT Cliente</span>
@@ -147,7 +147,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 120,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <User className="w-4 h-4 text-indigo-500" />
         <span>Nombre Cliente</span>
@@ -168,7 +168,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 200,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Hash className="w-4 h-4 text-blue-500" />
         <span>Local</span>
@@ -189,7 +189,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 80,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <MapPinned className="w-4 h-4 text-orange-500" />
         <span>Dirección</span>
@@ -210,7 +210,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 200,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Building className="w-4 h-4 text-green-500" />
         <span>Comuna</span>
@@ -228,7 +228,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 120,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Package className="w-4 h-4 text-gray-500" />
         <span>N° Serie</span>
@@ -246,7 +246,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 100,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Calendar className="w-4 h-4 text-amber-500" />
         <span>Fecha Lectura</span>
@@ -266,7 +266,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 120,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Gauge className="w-4 h-4 text-teal-500" />
         <span>Consumo</span>
@@ -287,7 +287,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 100,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Hash className="w-4 h-4 text-slate-500" />
         <span>Lectura ID</span>
@@ -305,7 +305,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 90,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <Receipt className="w-4 h-4 text-emerald-500" />
         <span>Total Facturado</span>
@@ -328,7 +328,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     size: 130,
   },
   {
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <DollarSign className="w-4 h-4 text-indigo-500" />
         <span>Total a Pagar</span>
@@ -336,7 +336,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'totalAPagar',
     cell: ({ row }) => {
-      const total = row.getValue('totalAPagar') as number;
+      // const total = row.getValue('totalAPagar') as number;
       const totalFacturado = row.getValue('totalFacturado') as number;
 
       return (

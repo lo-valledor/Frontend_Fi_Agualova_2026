@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox } from '~/components/ui/checkbox';
 import {
   Table,
@@ -16,7 +17,6 @@ import {
   Info,
   Loader2,
   CheckCircle2,
-  ClipboardListIcon,
   AlertCircle,
   PlayIcon,
   ServerIcon,
@@ -64,7 +64,6 @@ interface NichoSeleccionado {
 export default function TablaAsignacionSectores({
   data,
   isLoading,
-  isAuthorized,
   sectores = [],
   periodo = '',
   cicloFacturable = '',
@@ -226,7 +225,6 @@ export default function TablaAsignacionSectores({
         await onRecargarDatos();
       }
     } catch (error: any) {
-      console.error('Error al preparar lecturas:', error);
       toast.error(
         `Error al preparar lecturas: ${error.message || 'Error desconocido'}`,
       );

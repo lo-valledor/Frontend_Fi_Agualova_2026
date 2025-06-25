@@ -1,4 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
+import React, { useState, useMemo } from 'react';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
@@ -12,20 +14,18 @@ import {
 } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 import {
-  LockIcon,
   KeyIcon,
   CheckCircleIcon,
   AlertCircleIcon,
-  DollarSignIcon,
-  CalendarIcon,
-  BarChartIcon,
-  ClockIcon,
   ChevronDown,
   ChevronUp,
-  Building2,
   TrendingUp,
   Shield,
   Users,
+  Building2,
+  CalendarIcon,
+  BarChartIcon,
+  ClockIcon,
 } from 'lucide-react';
 import {
   Select,
@@ -35,16 +35,13 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { toast } from 'sonner';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '~/components/ui/collapsible';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import type {
   RevisarPrecioUno,
   RevisarPrecioDos,
   ValidacionUsuarioResponse,
   PeriodoAbierto,
+  Ciclo,
 } from '~/types/operaciones';
 import { Skeleton } from '~/components/ui/skeleton';
 import { columnsEnel } from './columns-enel';
@@ -56,7 +53,7 @@ interface RevisarPrecioComponentProps {
   dataPeriodoAbierto: PeriodoAbierto[];
   dataConsultarPreciosUno: RevisarPrecioUno[];
   dataConsultarPreciosDos: RevisarPrecioDos[];
-  ciclosFacturacion: any[];
+  ciclosFacturacion: Ciclo[];
   cicloSeleccionado: string;
   onCicloChange: (ciclo: string) => Promise<void>;
   isLoading: boolean;
@@ -79,7 +76,7 @@ export default function RevisarPrecioComponent({
 }: RevisarPrecioComponentProps) {
   // Estados UI
   const [contrasena, setContrasena] = useState<string>('');
-  const [isLoadingCiclo, setIsLoadingCiclo] = useState(false);
+  const [_isLoadingCiclo] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [userData, setUserData] = useState<ValidacionUsuarioResponse | null>(
     null,
@@ -354,18 +351,17 @@ export default function RevisarPrecioComponent({
 
   const handleCicloChange = async (nuevoCiclo: string) => {
     try {
-      setIsLoadingCiclo(true);
+      // setIsLoadingCiclo(true);
       await onCicloChange(nuevoCiclo);
-    } catch (error) {
-      console.error('Error al cambiar ciclo:', error);
+    } catch (_error) {
       toast.error('Error al cambiar el ciclo');
     } finally {
-      setIsLoadingCiclo(false);
+      //    setIsLoadingCiclo(false);
     }
   };
 
   // Función para verificar si el ciclo seleccionado es válido para el mes actual
-  const esCicloValido = () => {
+  const _esCicloValido = () => {
     if (!dataPeriodoAbierto || dataPeriodoAbierto.length === 0) return true;
     return true; // Ya no hay restricciones para febrero
   };

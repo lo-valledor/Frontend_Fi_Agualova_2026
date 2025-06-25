@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 import { useAuth } from '~/context/AuthContext';
@@ -186,8 +187,7 @@ export default function CambioMedidorComponent() {
           setCurrentStep(2);
         }
       }
-    } catch (error) {
-      console.error('Error al buscar medidor antiguo:', error);
+    } catch (_error) {
       toast.error('No se pudo obtener la información del medidor');
     } finally {
       setIsLoading(false);
@@ -238,8 +238,7 @@ export default function CambioMedidorComponent() {
         // Avanzar al siguiente paso si se encontró el medidor
         setCurrentStep(3);
       }
-    } catch (error) {
-      console.error('Error al buscar medidor nuevo:', error);
+    } catch (_error) {
       toast.error('No se pudo obtener la información del nuevo medidor');
     } finally {
       setIsLoading(false);
@@ -333,7 +332,6 @@ export default function CambioMedidorComponent() {
         throw new Error('Error al registrar el cambio de medidor');
       }
     } catch (error: any) {
-      console.error('Error al registrar cambio de medidor:', error);
 
       let errorMessage = 'No se pudo registrar el cambio de medidor';
 

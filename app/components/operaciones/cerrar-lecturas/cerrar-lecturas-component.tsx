@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useMemo, useState } from 'react';
 import { Badge } from '~/components/ui/badge';
 import {
@@ -107,7 +108,6 @@ export default function CerrarLecturasComponent({
         toast.error('Error al buscar lecturas');
       }
     } catch (error: any) {
-      console.error('Error al buscar lecturas:', error);
       setError(`Error: ${error.message || 'Error desconocido'}`);
 
       if (error.response) {

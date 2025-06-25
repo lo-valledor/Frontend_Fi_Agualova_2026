@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from 'react';
 import {
   Card,
@@ -90,7 +91,6 @@ export default function PrepararLecturasComponent({
     );
 
     if (!opcionSeleccionada) {
-      console.warn(`No se encontró la opción con ID ${idCiclo}`);
       return idCiclo;
     }
 
@@ -107,9 +107,6 @@ export default function PrepararLecturasComponent({
       return '2';
     }
 
-    console.warn(
-      `No se pudo determinar el ciclo para API a partir de: ${descripcion}`,
-    );
     return opcionSeleccionada.id.toString();
   };
 
@@ -138,7 +135,6 @@ export default function PrepararLecturasComponent({
         toast.success(`Se encontraron ${asignacionSectores.length} sectores`);
       }
     } catch (error: any) {
-      console.error('Error al buscar sectores:', error);
       setError(`Error: ${error.message || 'Error desconocido'}`);
 
       if (error.response) {
