@@ -1,158 +1,66 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import type { ConsultarMantenedorRevisionCorte } from '~/types/operaciones';
-import {
-  Hash,
-  Code,
-  Package,
-  CreditCard,
-  User,
-  MapPin,
-  Building,
-  Activity,
-  FileText,
-  DollarSign,
-} from 'lucide-react';
 
 export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
   {
     accessorKey: 'ctId',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <Hash className="h-3.5 w-3.5 text-slate-600" />
-            <span>ID</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="ID" />
     ),
   },
   {
     accessorKey: 'seCodigo',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <Code className="h-3.5 w-3.5 text-blue-600" />
-            <span>Código</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="Código" />
     ),
   },
   {
     accessorKey: 'meNSerie',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <Package className="h-3.5 w-3.5 text-purple-600" />
-            <span>N° Serie</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="N° Serie" />
     ),
   },
   {
     accessorKey: 'clRut',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <CreditCard className="h-3.5 w-3.5 text-slate-600" />
-            <span>RUT</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="RUT" />
     ),
   },
   {
     accessorKey: 'clRazonSocialCompleto',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <User className="h-3.5 w-3.5 text-indigo-600" />
-            <span>Razón Social</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="Razón Social" />
     ),
   },
   {
     accessorKey: 'niDescripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <MapPin className="h-3.5 w-3.5 text-orange-600" />
-            <span>Descripción</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="Descripción" />
     ),
   },
   {
     accessorKey: 'secDescripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <Building className="h-3.5 w-3.5 text-green-600" />
-            <span>Sección</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="Sección" />
     ),
   },
   {
     accessorKey: 'reEstado',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <Activity className="h-3.5 w-3.5 text-rose-600" />
-            <span>Estado</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
   },
   {
     accessorKey: 'reCantDocumentos',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <FileText className="h-3.5 w-3.5 text-teal-600" />
-            <span>Cantidad de Documentos</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="Cantidad de Documentos" />
     ),
   },
   {
     accessorKey: 'reDeudaTotal',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={
-          <div className="flex items-center gap-1.5">
-            <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
-            <span>Deuda Total</span>
-          </div>
-        }
-      />
+      <DataTableColumnHeader column={column} title="Deuda Total" />
     ),
   },
   {

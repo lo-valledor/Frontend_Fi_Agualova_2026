@@ -11,7 +11,7 @@ import {
   User,
   CreditCard,
   Hash,
-  MapPointed,
+  MapPinned,
   Building,
   Package,
   Calendar,
@@ -191,7 +191,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
   {
     header: ({ column }) => (
       <div className="flex items-center gap-2 font-semibold">
-        <MapPointed className="w-4 h-4 text-orange-500" />
+        <MapPinned className="w-4 h-4 text-orange-500" />
         <span>Dirección</span>
       </div>
     ),

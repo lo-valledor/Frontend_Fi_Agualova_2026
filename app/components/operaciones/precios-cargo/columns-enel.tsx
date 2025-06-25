@@ -3,7 +3,6 @@ import { Badge } from '~/components/ui/badge';
 import DialogAgregarPrecios from './dialog-agregar-precios';
 import type { PreciosCargoEnel } from '~/types/operaciones';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import { ArrowUpDown, TrendingUp, TrendingDown } from 'lucide-react';
 
 export const columns = (
   mes: string,
@@ -63,12 +62,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <TrendingDown className="w-4 h-4 text-orange-500" />
-            <span>Valor Anterior 1</span>
-          </div>
-        }
+        title="Valor Anterior 1"
         className="text-orange-700 dark:text-orange-300 font-semibold"
       />
     ),
@@ -84,12 +78,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <TrendingDown className="w-4 h-4 text-orange-500" />
-            <span>Valor Anterior 2</span>
-          </div>
-        }
+        title="Valor Anterior 2"
         className="text-orange-700 dark:text-orange-300 font-semibold"
       />
     ),
@@ -105,12 +94,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <TrendingDown className="w-4 h-4 text-orange-500" />
-            <span>Valor Anterior 3</span>
-          </div>
-        }
+        title="Valor Anterior 3"
         className="text-orange-700 dark:text-orange-300 font-semibold"
       />
     ),
@@ -126,12 +110,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-green-500" />
-            <span>Valor Actual 1</span>
-          </div>
-        }
+        title="Valor Actual 1"
         className="text-green-700 dark:text-green-300 font-semibold"
       />
     ),
@@ -157,12 +136,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-green-500" />
-            <span>Valor Actual 2</span>
-          </div>
-        }
+        title="Valor Actual 2"
         className="text-green-700 dark:text-green-300 font-semibold"
       />
     ),
@@ -188,12 +162,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-green-500" />
-            <span>Valor Actual 3</span>
-          </div>
-        }
+        title="Valor Actual 3"
         className="text-green-700 dark:text-green-300 font-semibold"
       />
     ),
