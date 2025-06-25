@@ -4,14 +4,7 @@ import { Checkbox } from '~/components/ui/checkbox';
 import DialogModificarPrecio from './dialog-modificar-precio';
 import type { RevisarPrecioDos } from '~/types/operaciones';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import {
-  Hash,
-  Code,
-  FileText,
-  DollarSign,
-  CheckCircle,
-  AlertTriangle,
-} from 'lucide-react';
+import { CheckCircle, AlertTriangle } from 'lucide-react';
 
 export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
   {
@@ -51,12 +44,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <Hash className="w-4 h-4 text-emerald-500" />
-            <span>Código</span>
-          </div>
-        }
+        title="Código"
         className="text-emerald-700 dark:text-emerald-300 font-semibold"
       />
     ),
@@ -72,12 +60,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <Code className="w-4 h-4 text-blue-500" />
-            <span>Código Energía</span>
-          </div>
-        }
+        title="Código Energía"
         className="text-blue-700 dark:text-blue-300 font-semibold"
       />
     ),
@@ -93,12 +76,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-slate-500" />
-            <span>Descripción</span>
-          </div>
-        }
+        title="Descripción"
         className="text-slate-700 dark:text-slate-300 font-semibold"
       />
     ),
@@ -114,12 +92,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-green-500" />
-            <span>Valor</span>
-          </div>
-        }
+        title="Valor"
         className="text-green-700 dark:text-green-300 font-semibold"
       />
     ),

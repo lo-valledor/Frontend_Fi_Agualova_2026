@@ -4,15 +4,7 @@ import { Checkbox } from '~/components/ui/checkbox';
 import DialogModificarPrecio from './dialog-modificar-precio';
 import type { RevisarPrecioUno } from '~/types/operaciones';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import {
-  Hash,
-  Code,
-  FileText,
-  DollarSign,
-  CheckCircle,
-  AlertTriangle,
-  Ban,
-} from 'lucide-react';
+import { CheckCircle, AlertTriangle, Ban } from 'lucide-react';
 
 export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
   {
@@ -55,12 +47,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <Hash className="w-4 h-4 text-blue-500" />
-            <span>Código</span>
-          </div>
-        }
+        title="Código"
         className="text-blue-700 dark:text-blue-300 font-semibold"
       />
     ),
@@ -76,12 +63,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <Code className="w-4 h-4 text-purple-500" />
-            <span>Código Energía</span>
-          </div>
-        }
+        title="Código Energía"
         className="text-purple-700 dark:text-purple-300 font-semibold"
       />
     ),
@@ -97,12 +79,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-slate-500" />
-            <span>Descripción</span>
-          </div>
-        }
+        title="Descripción"
         className="text-slate-700 dark:text-slate-300 font-semibold"
       />
     ),
@@ -118,12 +95,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title={
-          <div className="flex items-center gap-2">
-            <DollarSign className="w-4 h-4 text-green-500" />
-            <span>Valor</span>
-          </div>
-        }
+        title="Valor"
         className="text-green-700 dark:text-green-300 font-semibold"
       />
     ),
