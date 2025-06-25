@@ -54,7 +54,7 @@ export function DataTablePrecios<TData, TValue>({
   columnGroups = [],
 }: DataTablePreciosProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [rowSelection] = useState<RowSelectionState>({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -212,7 +212,7 @@ export function DataTablePrecios<TData, TValue>({
       </div>
 
       {/* Pagination */}
-      <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} />
+      <DataTablePagination table={table} />
     </div>
   );
 }
