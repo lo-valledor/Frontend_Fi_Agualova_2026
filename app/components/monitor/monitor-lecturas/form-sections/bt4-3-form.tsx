@@ -37,6 +37,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     () => parseInt(result.LMC_ValorUltimaLectEnergiaReactiva1),
     [result.LMC_ValorUltimaLectEnergiaReactiva1],
   );
+  const consumoAnterior = useMemo(
+    () => parseInt(result.LM_ConsumoMesAnterior),
+    [result.LM_ConsumoMesAnterior],
+  );
   const constante = useMemo(
     () => result.ME_ConstanteMultiplicar,
     [result.ME_ConstanteMultiplicar],
@@ -207,10 +211,52 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     [digito, valorReactivaAnterior, constante],
   );
 
+  // Validar que la lectura no exceda el número de dígitos del medidor
+  const validarDigitos = useCallback(
+    (value: string) => {
+      if (!value || isNaN(Number(value))) return false;
+
+      const valorNumerico = parseInt(value);
+      const maxValue = Math.pow(10, digito) - 1; // 10^digitos - 1
+
+      return valorNumerico <= maxValue;
+    },
+    [digito],
+  );
+
+  // Calcular el máximo valor permitido para mostrar al usuario
+  const maxValuePermitido = useMemo(() => {
+    return Math.pow(10, digito) - 1;
+  }, [digito]);
+
   // Actualizar el consumo cuando cambia el input de energía activa
   const handleActivaInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
+
+      // Si el valor está vacío, permitir
+      if (value === '') {
+        setInputActivaValue(value);
+        setConsumoActivaCalculado('');
+        setTipoLecturaActiva(null);
+        setIsActivaValidated(false);
+        return;
+      }
+
+      // Validar que sea numérico
+      if (isNaN(Number(value))) {
+        toast.error('Solo se permiten valores numéricos en Energía Activa');
+        return;
+      }
+
+      // Validar número de dígitos
+      if (!validarDigitos(value)) {
+        toast.error(
+          `La lectura de Energía Activa no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
+        );
+        return;
+      }
+
       setInputActivaValue(value);
 
       if (value && !isNaN(Number(value))) {
@@ -224,13 +270,37 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         setIsActivaValidated(false);
       }
     },
-    [calcularConsumoActiva],
+    [calcularConsumoActiva, validarDigitos, maxValuePermitido, digito],
   );
 
   // Actualizar el consumo cuando cambia el input de energía reactiva
   const handleReactivaInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
+
+      // Si el valor está vacío, permitir
+      if (value === '') {
+        setInputReactivaValue(value);
+        setConsumoReactivaCalculado('');
+        setTipoLecturaReactiva(null);
+        setIsReactivaValidated(false);
+        return;
+      }
+
+      // Validar que sea numérico
+      if (isNaN(Number(value))) {
+        toast.error('Solo se permiten valores numéricos en Energía Reactiva');
+        return;
+      }
+
+      // Validar número de dígitos
+      if (!validarDigitos(value)) {
+        toast.error(
+          `La lectura de Energía Reactiva no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
+        );
+        return;
+      }
+
       setInputReactivaValue(value);
 
       if (value && !isNaN(Number(value))) {
@@ -244,7 +314,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         setIsReactivaValidated(false);
       }
     },
-    [calcularConsumoReactiva],
+    [calcularConsumoReactiva, validarDigitos, maxValuePermitido, digito],
   );
 
   // Actualizar datos de demanda
@@ -261,8 +331,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   // Validar la lectura de energía activa
   const validarLecturaActiva = useCallback(() => {
     if (!inputActivaValue || isNaN(Number(inputActivaValue))) {
-      toast.info(
+      toast.error(
         'Por favor ingrese un valor numérico válido para Energía Activa',
+      );
+      return;
+    }
+
+    // Validar dígitos una vez más antes de continuar
+    if (!validarDigitos(inputActivaValue)) {
+      toast.error(
+        `La lectura de Energía Activa no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
       );
       return;
     }
@@ -274,15 +352,29 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     } else if (tipoLecturaActiva === 'mayor') {
       setShowMayorActivaDialog(true);
     } else {
-      toast.info('Por favor ingrese un valor válido');
+      toast.error('Por favor ingrese un valor válido');
     }
-  }, [inputActivaValue, tipoLecturaActiva]);
+  }, [
+    inputActivaValue,
+    tipoLecturaActiva,
+    validarDigitos,
+    maxValuePermitido,
+    digito,
+  ]);
 
   // Validar la lectura de energía reactiva
   const validarLecturaReactiva = useCallback(() => {
     if (!inputReactivaValue || isNaN(Number(inputReactivaValue))) {
-      toast.info(
+      toast.error(
         'Por favor ingrese un valor numérico válido para Energía Reactiva',
+      );
+      return;
+    }
+
+    // Validar dígitos una vez más antes de continuar
+    if (!validarDigitos(inputReactivaValue)) {
+      toast.error(
+        `La lectura de Energía Reactiva no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`,
       );
       return;
     }
@@ -294,9 +386,15 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     } else if (tipoLecturaReactiva === 'mayor') {
       setShowMayorReactivaDialog(true);
     } else {
-      toast.info('Por favor ingrese un valor válido');
+      toast.error('Por favor ingrese un valor válido');
     }
-  }, [inputReactivaValue, tipoLecturaReactiva]);
+  }, [
+    inputReactivaValue,
+    tipoLecturaReactiva,
+    validarDigitos,
+    maxValuePermitido,
+    digito,
+  ]);
 
   // Confirmar tipo de lectura activa y registrar la clave seleccionada
   const handleConfirmLecturaActiva = useCallback(() => {
@@ -515,8 +613,14 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 placeholder={valorActivaAnterior.toString()}
                 value={inputActivaValue}
                 onChange={handleActivaInputChange}
+                max={maxValuePermitido}
                 className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
               />
+              <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                <span>⚠️</span>
+                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
+                dígitos)
+              </small>
             </div>
 
             <div className="space-y-2">
@@ -527,6 +631,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoActivaCalculado || '0'}
               </div>
+              <small className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                <span>📊</span>
+                Consumo anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
+              </small>
             </div>
 
             <div className="flex items-end">
@@ -611,8 +719,14 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 placeholder={valorReactivaAnterior.toString()}
                 value={inputReactivaValue}
                 onChange={handleReactivaInputChange}
+                max={maxValuePermitido}
                 className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
               />
+              <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                <span>⚠️</span>
+                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
+                dígitos)
+              </small>
             </div>
 
             <div className="space-y-2">
@@ -623,6 +737,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoReactivaCalculado || '0'}
               </div>
+              <small className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                <span>📊</span>
+                Consumo anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
+              </small>
             </div>
 
             <div className="flex items-end">

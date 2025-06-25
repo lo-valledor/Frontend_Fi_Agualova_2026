@@ -35,6 +35,9 @@ import {
   RefreshCw,
   Clock,
   CheckCircle,
+  Calculator,
+  FileSpreadsheet,
+  TrendingUp,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '~/lib/api';
@@ -462,521 +465,547 @@ export default function RevisarCalculoFacturaComponent({
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Encabezado con título, descripción e información */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border/40">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-50">
-            Revisar Cálculo Factura
-          </h1>
-          <p className="text-muted-foreground">
-            Revisa y verifica los cálculos de facturación para los clientes
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-950 dark:to-purple-950/30">
+      <div className="container mx-auto p-4 space-y-6">
+        {/* Modern Header */}
+        <div className="flex items-center gap-4 py-6 border-b border-slate-200 dark:border-slate-700">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl">
+            <Calculator className="w-6 h-6 text-white" />
+          </div>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-100 dark:to-indigo-100 bg-clip-text text-transparent">
+              Revisar Cálculo Factura
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Revisa y verifica los cálculos de facturación para los clientes
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {periodoAbierto && periodoAbierto.length > 0 && (
+              <Badge
+                variant="outline"
+                className="bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800"
+              >
+                <div className="flex items-center gap-2">
+                  <CalendarIcon className="h-3 w-3 mr-1" />
+                  Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
+                  {periodoAbierto[0].anio}
+                </div>
+              </Badge>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {periodoAbierto && periodoAbierto.length > 0 && (
-            <Badge
-              variant="outline"
-              className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
-            >
-              Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
-              {periodoAbierto[0].anio}
-            </Badge>
-          )}
-        </div>
-      </div>
-      {/* Indicador de estado del timer */}
-      {timerActive && (
-        <Card className="shadow-sm border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-amber-100 dark:bg-amber-800/50 rounded-lg">
-                  <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+        {/* Indicador de estado del timer */}
+        {timerActive && (
+          <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-amber-200 dark:border-amber-800">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-semibold text-amber-800 dark:text-amber-200">
+                      Cálculo en preparación
+                    </h4>
+                    <p className="text-amber-600 dark:text-amber-400">
+                      Espere {timerCountdown} segundos antes de ver los
+                      resultados
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-amber-700 dark:text-amber-300">
+                    {timerCountdown}s
+                  </div>
+                  <div className="text-sm text-amber-600 dark:text-amber-400">
+                    Tiempo restante
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        {/* Indicador de cálculo preparado */}
+        {isCalculoPreparado && !timerActive && (
+          <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-emerald-200 dark:border-emerald-800">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-amber-800 dark:text-amber-200">
-                    Cálculo en preparación
+                  <h4 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200">
+                    Cálculo preparado
                   </h4>
-                  <p className="text-sm text-amber-600 dark:text-amber-400">
-                    Espere {timerCountdown} segundos antes de ver los resultados
+                  <p className="text-emerald-600 dark:text-emerald-400">
+                    Ya puede hacer clic en "Ver Cálculo Facturas" para ver los
+                    resultados
                   </p>
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
-                  {timerCountdown}s
+            </CardContent>
+          </Card>
+        )}
+        {/* Sección principal con filtros */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <Collapsible
+            open={isFiltersOpen}
+            onOpenChange={setIsFiltersOpen}
+            className="w-full"
+          >
+            <CollapsibleTrigger asChild>
+              <div className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                    <FileSpreadsheet className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
+                      Listado de Precalculos
+                    </CardTitle>
+                    <CardDescription className="text-slate-600 dark:text-slate-400">
+                      Revisa los precalculos de facturación
+                    </CardDescription>
+                  </div>
                 </div>
-                <div className="text-xs text-amber-600 dark:text-amber-400">
-                  Tiempo restante
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      {/* Indicador de cálculo preparado */}
-      {isCalculoPreparado && !timerActive && (
-        <Card className="shadow-sm border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg">
-                <CheckCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-emerald-800 dark:text-emerald-200">
-                  Cálculo preparado
-                </h4>
-                <p className="text-sm text-emerald-600 dark:text-emerald-400">
-                  Ya puede hacer clic en "Ver Cálculo Facturas" para ver los
-                  resultados
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      {/* Sección principal con filtros */}
-      <Card className="shadow-sm border border-border/60">
-        <Collapsible
-          open={isFiltersOpen}
-          onOpenChange={setIsFiltersOpen}
-          className="w-full"
-        >
-          <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-sm">
-                  <SearchIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                    Listado de Precalculos
-                  </CardTitle>
-                  <CardDescription className="text-sm">
-                    Revisa los precalculos de facturación
-                  </CardDescription>
-                </div>
-              </div>
-              {isFiltersOpen ? (
-                <ChevronUp className="h-5 w-5 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
-              )}
-            </div>
-          </CollapsibleTrigger>
-
-          <CollapsibleContent>
-            <CardContent className="p-4 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {' '}
-                {/* Periodo */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                    Periodo actual
-                  </Label>
-                  {periodoAbierto && periodoAbierto.length > 0 ? (
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
-                      <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
-                        <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                      </div>
-                      <div>
-                        <span className="font-semibold text-sky-800 dark:text-sky-200">
-                          {periodoAbierto[0].mes.toString().padStart(2, '0')}/
-                          {periodoAbierto[0].anio}
-                        </span>
-                        <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
-                          Periodo activo para facturación
-                        </p>
-                      </div>
-                    </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  {isFiltersOpen ? (
+                    <ChevronUp className="h-5 w-5 text-slate-500" />
                   ) : (
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 shadow-sm">
-                      <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
-                        <AlertCircleIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                      </div>
-                      <div>
-                        <span className="font-medium text-amber-800 dark:text-amber-200">
-                          No hay periodo abierto
-                        </span>
-                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
-                          Contacta al administrador
-                        </p>
-                      </div>
-                    </div>
+                    <ChevronDown className="h-5 w-5 text-slate-500" />
                   )}
-                </div>{' '}
-                {/* Ciclo de facturación */}
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="ciclo"
-                    className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
-                  >
-                    <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                    Ciclo de facturación
-                  </Label>
+                </Button>
+              </div>
+            </CollapsibleTrigger>
 
-                  <Select value={cicloId} onValueChange={setCicloId}>
-                    <SelectTrigger
-                      id="ciclo"
-                      className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+            <CollapsibleContent>
+              <CardContent className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {' '}
+                  {/* Periodo */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      Periodo actual
+                    </Label>
+                    {periodoAbierto && periodoAbierto.length > 0 ? (
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
+                        <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
+                          <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-sky-800 dark:text-sky-200">
+                            {periodoAbierto[0].mes.toString().padStart(2, '0')}/
+                            {periodoAbierto[0].anio}
+                          </span>
+                          <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
+                            Periodo activo para facturación
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 shadow-sm">
+                        <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
+                          <AlertCircleIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <span className="font-medium text-amber-800 dark:text-amber-200">
+                            No hay periodo abierto
+                          </span>
+                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                            Contacta al administrador
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>{' '}
+                  {/* Ciclo de facturación */}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="ciclo"
+                      className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
                     >
-                      <SelectValue placeholder="Selecciona un ciclo de facturación" />
-                    </SelectTrigger>
-                    <SelectContent className="border-border/60">
-                      {ciclosFacturacionActivos &&
-                      ciclosFacturacionActivos.length > 0 ? (
-                        ciclosFacturacionActivos.map((ciclo) => {
-                          // Determinar el valor correcto para el API (1 o 2)
-                          let valorCiclo = '1';
-                          if (
-                            ciclo.diaFacturacion === '30' ||
-                            ciclo.descripcion.includes('30')
-                          ) {
-                            valorCiclo = '2';
-                          }
+                      <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      Ciclo de facturación
+                    </Label>
 
-                          return (
+                    <Select value={cicloId} onValueChange={setCicloId}>
+                      <SelectTrigger
+                        id="ciclo"
+                        className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                      >
+                        <SelectValue placeholder="Selecciona un ciclo de facturación" />
+                      </SelectTrigger>
+                      <SelectContent className="border-border/60">
+                        {ciclosFacturacionActivos &&
+                        ciclosFacturacionActivos.length > 0 ? (
+                          ciclosFacturacionActivos.map((ciclo) => {
+                            // Determinar el valor correcto para el API (1 o 2)
+                            let valorCiclo = '1';
+                            if (
+                              ciclo.diaFacturacion === '30' ||
+                              ciclo.descripcion.includes('30')
+                            ) {
+                              valorCiclo = '2';
+                            }
+
+                            return (
+                              <SelectItem
+                                key={ciclo.diaFacturacion}
+                                value={valorCiclo}
+                                className="hover:bg-sky-50 dark:hover:bg-sky-900/20 focus:bg-sky-50 dark:focus:bg-sky-900/20"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                                  <span className="font-medium">
+                                    {ciclo.descripcion}
+                                  </span>
+                                </div>
+                              </SelectItem>
+                            );
+                          })
+                        ) : (
+                          <>
                             <SelectItem
-                              key={ciclo.diaFacturacion}
-                              value={valorCiclo}
-                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20 focus:bg-sky-50 dark:focus:bg-sky-900/20"
+                              value="1"
+                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
                             >
                               <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-sky-500"></div>
                                 <span className="font-medium">
-                                  {ciclo.descripcion}
+                                  Ciclo día 15
                                 </span>
                               </div>
                             </SelectItem>
-                          );
-                        })
+                            <SelectItem
+                              value="2"
+                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                            >
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                                <span className="font-medium">
+                                  Ciclo día 30
+                                </span>
+                              </div>
+                            </SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>{' '}
+                {/* Botones de acción */}
+                <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-6 border-t">
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={handleClearFilters}
+                      variant="ghost"
+                      size="sm"
+                      disabled={isLoading}
+                      className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                    >
+                      <Eraser className="h-4 w-4 mr-2" />
+                      Limpiar
+                    </Button>
+                    <Button
+                      onClick={handleRefreshData}
+                      variant="ghost"
+                      size="sm"
+                      disabled={
+                        isLoading ||
+                        !cicloId ||
+                        !isCalculoPreparado ||
+                        timerActive
+                      }
+                      className="text-slate-600 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-950/20"
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Actualizar
+                    </Button>
+                  </div>
+                  <div className="flex gap-3">
+                    <Button
+                      onClick={handleLanzarCalculoFacturas}
+                      disabled={isLoading || !cicloId || timerActive}
+                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      {isLaunchingCalculo ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                          Preparando...
+                        </>
                       ) : (
                         <>
-                          <SelectItem
-                            value="1"
-                            className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                              <span className="font-medium">Ciclo día 15</span>
-                            </div>
-                          </SelectItem>
-                          <SelectItem
-                            value="2"
-                            className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                              <span className="font-medium">Ciclo día 30</span>
-                            </div>
-                          </SelectItem>
+                          <SearchIcon className="h-4 w-4 mr-2" />
+                          Preparar Cálculo
                         </>
                       )}
-                    </SelectContent>
-                  </Select>
+                    </Button>
+                    <Button
+                      onClick={handleRevisarCalculo}
+                      disabled={
+                        isLaunchingCalculo ||
+                        !cicloId ||
+                        !isCalculoPreparado ||
+                        timerActive
+                      }
+                      className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                          Cargando...
+                        </>
+                      ) : (
+                        <>
+                          <FileTextIcon className="h-4 w-4 mr-2" />
+                          Ver Cálculo Facturas
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={handleAceptarCalculo}
+                      disabled={
+                        isAcceptingCalculo || selectedContratos.length === 0
+                      }
+                      className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      {isAcceptingCalculo ? (
+                        <>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                          Aceptando...
+                        </>
+                      ) : (
+                        <>
+                          <SettingsIcon className="h-4 w-4 mr-2" />
+                          Aceptar Cálculo ({selectedContratos.length})
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
-              </div>{' '}
-              {/* Botones de acción */}
-              <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-border/40 mt-4">
-                <Button
-                  onClick={handleClearFilters}
-                  variant="outline"
-                  disabled={isLoading}
-                  className="gap-2 hover:bg-muted/50"
-                >
-                  <Eraser className="h-4 w-4" />
-                  Limpiar
-                </Button>
-                <Button
-                  onClick={handleRefreshData}
-                  variant="outline"
-                  disabled={
-                    isLoading || !cicloId || !isCalculoPreparado || timerActive
-                  }
-                  className="gap-2 hover:bg-muted/50"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Actualizar
-                </Button>
-                <Button
-                  onClick={handleLanzarCalculoFacturas}
-                  disabled={isLoading || !cicloId || timerActive}
-                  className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
-                >
-                  {isLaunchingCalculo ? (
-                    <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Preparando...
-                    </>
-                  ) : (
-                    <>
-                      <SearchIcon className="h-4 w-4" />
-                      Preparar Cálculo
-                    </>
-                  )}
-                </Button>
-                <Button
-                  onClick={handleRevisarCalculo}
-                  disabled={
-                    isLaunchingCalculo ||
-                    !cicloId ||
-                    !isCalculoPreparado ||
-                    timerActive
-                  }
-                  className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white disabled:opacity-50"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Cargando...
-                    </>
-                  ) : (
-                    <>
-                      <FileTextIcon className="h-4 w-4" />
-                      Ver Cálculo Facturas
-                    </>
-                  )}
-                </Button>
-                <Button
-                  onClick={handleAceptarCalculo}
-                  disabled={
-                    isAcceptingCalculo || selectedContratos.length === 0
-                  }
-                  className="gap-2 bg-amber-600 hover:bg-amber-700 text-white disabled:opacity-50"
-                >
-                  {isAcceptingCalculo ? (
-                    <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      Aceptando...
-                    </>
-                  ) : (
-                    <>
-                      <SettingsIcon className="h-4 w-4" />
-                      Aceptar Cálculo ({selectedContratos.length})
-                    </>
-                  )}
-                </Button>
+              </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>{' '}
+        {/* Resultados de la búsqueda */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
               </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>{' '}
-      {/* Resultados de la búsqueda */}
-      <Card className="shadow-sm border border-border/60">
-        <CardHeader className="py-4 px-6 border-b border-border/60 bg-muted/30">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-sm">
-              <FileTextIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+              <div>
+                <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
+                  Resultados de la búsqueda
+                </CardTitle>
+                <CardDescription className="text-slate-600 dark:text-slate-400">
+                  Listado de contratos y sus cálculos de facturación
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200">
-                Resultados de la búsqueda
-              </CardTitle>
-              <CardDescription className="text-sm">
-                Listado de contratos y sus cálculos de facturación
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="p-6 text-sm">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-40">
-              <div className="flex flex-col items-center gap-4">
+          </CardHeader>
+          <CardContent className="px-6 pb-6">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-40">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800"></div>
+                    <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin"></div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sky-700 dark:text-sky-300 font-medium">
+                      Cargando resultados...
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Por favor espere mientras procesamos su consulta
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm">
+                    <AlertCircleIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-rose-800 dark:text-rose-200">
+                      {error.includes('No se han encontrado prefacturas')
+                        ? 'No se encontraron prefacturas'
+                        : 'Error al cargar los datos'}
+                    </h4>
+                    <p className="text-sm text-rose-600 dark:text-rose-400 mt-1">
+                      {error.includes('No se han encontrado prefacturas')
+                        ? 'No se han encontrado prefacturas para el ciclo y periodo elegidos. Verifique que el ciclo y periodo sean correctos.'
+                        : 'Los datos no han sido cargados completamente. Recuerde que debe hacer clic en Preparar Cálculo Factura y luego en Ver Cálculo Facturas'}
+                    </p>
+
+                    <Button
+                      onClick={() => setError(null)}
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20"
+                    >
+                      Cerrar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ) : data.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground">
+                <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full">
+                  <SearchIcon className="h-8 w-8 text-sky-500 dark:text-sky-400" />
+                </div>
+                <div className="text-center">
+                  <p className="font-medium text-slate-700 dark:text-slate-300">
+                    Realizar consulta de precálculos
+                  </p>
+                  <p className="text-sm mt-1">
+                    Selecciona un ciclo y haz clic en "Preparar Cálculo" para
+                    ver los resultados
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Estadísticas resumidas */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/30 dark:to-blue-900/30 rounded-lg border border-sky-200 dark:border-sky-800">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-sky-700 dark:text-sky-300">
+                      {filteredData.length}
+                    </div>
+                    <div className="text-xs text-sky-600 dark:text-sky-400 font-medium">
+                      {searchTerm ? 'Contratos Filtrados' : 'Total Contratos'}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                      {filteredData.reduce(
+                        (sum, item) => sum + (item.cargos?.length || 0),
+                        0,
+                      )}
+                    </div>
+                    <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                      Total Cargos
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                      {new Intl.NumberFormat('es-CL', {
+                        style: 'currency',
+                        currency: 'CLP',
+                        minimumFractionDigits: 0,
+                      }).format(
+                        filteredData.reduce(
+                          (sum, item) => sum + (item.totalFacturado || 0),
+                          0,
+                        ),
+                      )}
+                    </div>
+                    <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                      Total Facturado
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                      {filteredData
+                        .reduce(
+                          (sum, item) => sum + (item.consumoPeriodo || 0),
+                          0,
+                        )
+                        .toLocaleString('es-CL')}
+                    </div>
+                    <div className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                      Total Consumo m³
+                    </div>
+                  </div>
+                </div>
+
+                {/* Barra de búsqueda */}
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800"></div>
-                  <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin"></div>
+                  <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="🔍 Buscar por contrato, nombre, RUT, dirección..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                  />
+                  {searchTerm && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
+                      {filteredData.length} de {data.length}
+                    </div>
+                  )}
                 </div>
-                <div className="text-center">
-                  <p className="text-sky-700 dark:text-sky-300 font-medium">
-                    Cargando resultados...
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Por favor espere mientras procesamos su consulta
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm">
-                  <AlertCircleIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-rose-800 dark:text-rose-200">
-                    {error.includes('No se han encontrado prefacturas')
-                      ? 'No se encontraron prefacturas'
-                      : 'Error al cargar los datos'}
-                  </h4>
-                  <p className="text-sm text-rose-600 dark:text-rose-400 mt-1">
-                    {error.includes('No se han encontrado prefacturas')
-                      ? 'No se han encontrado prefacturas para el ciclo y periodo elegidos. Verifique que el ciclo y periodo sean correctos.'
-                      : 'Los datos no han sido cargados completamente. Recuerde que debe hacer clic en Preparar Cálculo Factura y luego en Ver Cálculo Facturas'}
-                  </p>
 
-                  <Button
-                    onClick={() => setError(null)}
-                    variant="outline"
-                    size="sm"
-                    className="mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20"
-                  >
-                    Cerrar
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : data.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground">
-              <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full">
-                <SearchIcon className="h-8 w-8 text-sky-500 dark:text-sky-400" />
-              </div>
-              <div className="text-center">
-                <p className="font-medium text-slate-700 dark:text-slate-300">
-                  Realizar consulta de precálculos
-                </p>
-                <p className="text-sm mt-1">
-                  Selecciona un ciclo y haz clic en "Preparar Cálculo" para ver
-                  los resultados
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Estadísticas resumidas */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/30 dark:to-blue-900/30 rounded-lg border border-sky-200 dark:border-sky-800">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-sky-700 dark:text-sky-300">
-                    {filteredData.length}
-                  </div>
-                  <div className="text-xs text-sky-600 dark:text-sky-400 font-medium">
-                    {searchTerm ? 'Contratos Filtrados' : 'Total Contratos'}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
-                    {filteredData.reduce(
-                      (sum, item) => sum + (item.cargos?.length || 0),
-                      0,
-                    )}
-                  </div>
-                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-                    Total Cargos
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
-                    {new Intl.NumberFormat('es-CL', {
-                      style: 'currency',
-                      currency: 'CLP',
-                      minimumFractionDigits: 0,
-                    }).format(
-                      filteredData.reduce(
-                        (sum, item) => sum + (item.totalFacturado || 0),
-                        0,
-                      ),
-                    )}
-                  </div>
-                  <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                    Total Facturado
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
-                    {filteredData
-                      .reduce(
-                        (sum, item) => sum + (item.consumoPeriodo || 0),
-                        0,
-                      )
-                      .toLocaleString('es-CL')}
-                  </div>
-                  <div className="text-xs text-purple-600 dark:text-purple-400 font-medium">
-                    Total Consumo m³
-                  </div>
-                </div>
-              </div>
-
-              {/* Barra de búsqueda */}
-              <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="text"
-                  placeholder="🔍 Buscar por contrato, nombre, RUT, dirección..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
-                />
-                {searchTerm && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
-                    {filteredData.length} de {data.length}
+                {/* Mostrar lecturaId seleccionados */}
+                {selectedContratos.length > 0 && (
+                  <div className="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
+                        <FileTextIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                      </div>
+                      <h4 className="font-semibold text-amber-800 dark:text-amber-200">
+                        Contratos Seleccionados ({selectedContratos.length})
+                      </h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedContratos.map((lecturaId) => (
+                        <Badge
+                          key={lecturaId}
+                          variant="outline"
+                          className="bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-700"
+                        >
+                          Lectura ID: {lecturaId}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                      💡 Estos son los IDs de lectura que has seleccionado en la
+                      tabla
+                    </p>
                   </div>
                 )}
-              </div>
 
-              {/* Mostrar lecturaId seleccionados */}
-              {selectedContratos.length > 0 && (
-                <div className="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
-                      <FileTextIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <div className="flex items-center justify-between pb-3 border-b">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
+                      <FileTextIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     </div>
-                    <h4 className="font-semibold text-amber-800 dark:text-amber-200">
-                      Contratos Seleccionados ({selectedContratos.length})
-                    </h4>
+                    <span className="font-medium text-emerald-700 dark:text-emerald-300">
+                      {filteredData.length} registros{' '}
+                      {searchTerm
+                        ? `encontrados de ${data.length} total`
+                        : 'encontrados'}
+                    </span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedContratos.map((lecturaId) => (
-                      <Badge
-                        key={lecturaId}
-                        variant="outline"
-                        className="bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-700"
-                      >
-                        Lectura ID: {lecturaId}
-                      </Badge>
-                    ))}
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <span>💡 Haz clic en</span>
+                      <ChevronRight className="h-3 w-3" />
+                      <span>para ver el detalle de cargos</span>
+                    </div>
                   </div>
-                  <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
-                    💡 Estos son los IDs de lectura que has seleccionado en la
-                    tabla
-                  </p>
                 </div>
-              )}
 
-              <div className="flex items-center justify-between pb-3 border-b border-border/40">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-                    <FileTextIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                  </div>
-                  <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                    {filteredData.length} registros{' '}
-                    {searchTerm
-                      ? `encontrados de ${data.length} total`
-                      : 'encontrados'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>💡 Haz clic en</span>
-                    <ChevronRight className="h-3 w-3" />
-                    <span>para ver el detalle de cargos</span>
-                  </div>
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                  <HierarchicalDataTable
+                    columns={columns}
+                    data={filteredData}
+                    onSelectionChange={(selectedContratos) => {
+                      setSelectedContratos(
+                        selectedContratos.map((contrato) => contrato.lecturaId),
+                      );
+                    }}
+                  />
                 </div>
               </div>
-
-              <HierarchicalDataTable
-                columns={columns}
-                data={filteredData}
-                onSelectionChange={(selectedContratos) => {
-                  setSelectedContratos(
-                    selectedContratos.map((contrato) => contrato.lecturaId),
-                  );
-                }}
-              />
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
