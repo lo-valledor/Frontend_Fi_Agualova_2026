@@ -34,7 +34,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
         {row.getValue('cd_codigoenerlova')}
       </div>
     ),
-    size: 150,
+    size: 120,
   },
   {
     header: ({ column }) => (
@@ -46,11 +46,11 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
     ),
     accessorKey: 'CD_Descripcion',
     cell: ({ row }) => (
-      <div className="text-sm text-slate-900 dark:text-slate-100 max-w-sm">
+      <div className="text-sm text-slate-900 dark:text-slate-100 max-w-lg">
         {row.getValue('CD_Descripcion')}
       </div>
     ),
-    size: 300,
+    size: 400,
   },
   {
     header: ({ column }) => (

@@ -28,6 +28,7 @@ import {
   CheckCircleIcon,
   FileTextIcon,
   CircleX,
+  Info,
 } from 'lucide-react';
 import { Label } from '~/components/ui/label';
 import {
@@ -43,6 +44,14 @@ import api from '~/lib/api';
 import { DataTable } from '../../data-table/data-table';
 import { columns } from './columns';
 import AlertCerrarLecturas from './alert-cerrar-lecturas';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '~/components/ui/dialog';
 
 export default function CerrarLecturasComponent({
   periodoAbierto,
@@ -151,324 +160,345 @@ export default function CerrarLecturasComponent({
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      {/* Header modernizado */}
-      <div className="flex items-center gap-4 border-b border-border/40 pb-3.5">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white shadow-sm">
-          <CircleX className="h-6 w-6" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-sky-50 dark:from-slate-950 dark:to-sky-950/30">
+      <div className="container mx-auto p-2 space-y-3">
+        {/* Header modernizado */}
+        <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-100 dark:to-blue-100 bg-clip-text text-transparent">
+              Cerrar Lecturas
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                >
+                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                  <span className="text-yellow-600 text-sm">Información</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Información</DialogTitle>
+                  <DialogDescription>
+                    Cierra las lecturas de los nichos y sectores para su
+                    facturación
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+            {periodoAbierto && periodoAbierto.length > 0 && (
+              <Badge
+                variant="outline"
+                className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
+              >
+                <CalendarIcon className="w-3 h-3 mr-1" />
+                Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
+                {periodoAbierto[0].anio}
+              </Badge>
+            )}
+          </div>
         </div>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Cerrar Lecturas
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            Cierra las lecturas de los nichos y sectores para su facturación
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {periodoAbierto && periodoAbierto.length > 0 && (
-            <Badge
-              variant="outline"
-              className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
-            >
-              <CalendarIcon className="w-3 h-3 mr-1" />
-              Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
-              {periodoAbierto[0].anio}
-            </Badge>
-          )}
-        </div>
-      </div>
 
-      {/* Sección principal con filtros */}
-      <Card className="rounded-xl border border-sky-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-sky-800/40 dark:bg-gray-900/50">
-        <Collapsible
-          open={isFiltersOpen}
-          onOpenChange={setIsFiltersOpen}
-          className="w-full"
-        >
-          <CollapsibleTrigger asChild>
-            <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-sky-50/50 rounded-t-xl dark:hover:bg-sky-900/20">
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white shadow-sm">
-                  <SearchIcon className="h-4 w-4" />
+        {/* Sección principal con filtros */}
+        <Card className="rounded-xl border border-sky-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-sky-800/40 dark:bg-gray-900/50">
+          <Collapsible
+            open={isFiltersOpen}
+            onOpenChange={setIsFiltersOpen}
+            className="w-full"
+          >
+            <CollapsibleTrigger asChild>
+              <div className="flex justify-between items-center p-4 cursor-pointer hover:bg-sky-50/50 rounded-t-xl dark:hover:bg-sky-900/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white shadow-sm">
+                    <SearchIcon className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg font-semibold text-sky-900 dark:text-sky-100">
+                      Criterios de Búsqueda
+                    </CardTitle>
+                    <CardDescription className="text-sm text-sky-700 dark:text-sky-300">
+                      Selecciona criterios para cerrar lecturas
+                    </CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className="text-lg font-semibold text-sky-900 dark:text-sky-100">
-                    Criterios de Búsqueda
-                  </CardTitle>
-                  <CardDescription className="text-sm text-sky-700 dark:text-sky-300">
-                    Selecciona criterios para cerrar lecturas
-                  </CardDescription>
-                </div>
+                {isFiltersOpen ? (
+                  <ChevronUp className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                )}
               </div>
-              {isFiltersOpen ? (
-                <ChevronUp className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-              )}
-            </div>
-          </CollapsibleTrigger>
+            </CollapsibleTrigger>
 
-          <CollapsibleContent>
-            <CardContent className="p-4 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Periodo */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                    Periodo actual
-                  </Label>
-                  {periodoAbierto && periodoAbierto.length > 0 ? (
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
-                      <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
-                        <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+            <CollapsibleContent>
+              <CardContent className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Periodo */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      Periodo actual
+                    </Label>
+                    {periodoAbierto && periodoAbierto.length > 0 ? (
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
+                        <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
+                          <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                        </div>
+                        <div>
+                          <span className="font-semibold text-sky-800 dark:text-sky-200">
+                            {periodoAbierto[0].mes.toString().padStart(2, '0')}/
+                            {periodoAbierto[0].anio}
+                          </span>
+                          <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
+                            Periodo activo para facturación
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <span className="font-semibold text-sky-800 dark:text-sky-200">
-                          {periodoAbierto[0].mes.toString().padStart(2, '0')}/
-                          {periodoAbierto[0].anio}
-                        </span>
-                        <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
-                          Periodo activo para facturación
-                        </p>
+                    ) : (
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 shadow-sm">
+                        <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
+                          <AlertCircleIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                          <span className="font-medium text-amber-800 dark:text-amber-200">
+                            No hay periodo abierto
+                          </span>
+                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                            Contacta al administrador
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 shadow-sm">
-                      <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
-                        <AlertCircleIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                      </div>
-                      <div>
-                        <span className="font-medium text-amber-800 dark:text-amber-200">
-                          No hay periodo abierto
-                        </span>
-                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
-                          Contacta al administrador
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
 
-                {/* Ciclo de facturación */}
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="ciclo"
-                    className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
-                  >
-                    <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-                    Ciclo de facturación
-                  </Label>
-                  <Select
-                    value={cicloSeleccionado}
-                    onValueChange={setCicloSeleccionado}
-                  >
-                    <SelectTrigger
-                      id="ciclo"
-                      className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                  {/* Ciclo de facturación */}
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="ciclo"
+                      className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
                     >
-                      <SelectValue placeholder="Selecciona un ciclo de facturación" />
-                    </SelectTrigger>
-                    <SelectContent className="border-border/60">
-                      {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
-                        ciclosFacturacion.map((ciclo) => {
-                          // Determinar el valor correcto para el API (1 o 2)
-                          let valorCiclo = '1';
-                          if (
-                            ciclo.diaFacturacion === '30' ||
-                            ciclo.descripcion.includes('30')
-                          ) {
-                            valorCiclo = '2';
-                          }
+                      <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      Ciclo de facturación
+                    </Label>
+                    <Select
+                      value={cicloSeleccionado}
+                      onValueChange={setCicloSeleccionado}
+                    >
+                      <SelectTrigger
+                        id="ciclo"
+                        className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                      >
+                        <SelectValue placeholder="Selecciona un ciclo de facturación" />
+                      </SelectTrigger>
+                      <SelectContent className="border-border/60">
+                        {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
+                          ciclosFacturacion.map((ciclo) => {
+                            // Determinar el valor correcto para el API (1 o 2)
+                            let valorCiclo = '1';
+                            if (
+                              ciclo.diaFacturacion === '30' ||
+                              ciclo.descripcion.includes('30')
+                            ) {
+                              valorCiclo = '2';
+                            }
 
-                          return (
+                            return (
+                              <SelectItem
+                                key={ciclo.diaFacturacion}
+                                value={valorCiclo}
+                                className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                                  <span className="font-medium">
+                                    {ciclo.descripcion}
+                                  </span>
+                                </div>
+                              </SelectItem>
+                            );
+                          })
+                        ) : (
+                          <>
                             <SelectItem
-                              key={ciclo.diaFacturacion}
-                              value={valorCiclo}
+                              value="1"
                               className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
                             >
                               <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-sky-500"></div>
                                 <span className="font-medium">
-                                  {ciclo.descripcion}
+                                  Ciclo día 15
                                 </span>
                               </div>
                             </SelectItem>
-                          );
-                        })
-                      ) : (
-                        <>
-                          <SelectItem
-                            value="1"
-                            className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                              <span className="font-medium">Ciclo día 15</span>
-                            </div>
-                          </SelectItem>
-                          <SelectItem
-                            value="2"
-                            className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full bg-sky-500"></div>
-                              <span className="font-medium">Ciclo día 30</span>
-                            </div>
-                          </SelectItem>
-                        </>
-                      )}
-                    </SelectContent>
-                  </Select>
+                            <SelectItem
+                              value="2"
+                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                            >
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                                <span className="font-medium">
+                                  Ciclo día 30
+                                </span>
+                              </div>
+                            </SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Botones de acción */}
+                <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-6 border-t">
+                  <Button
+                    onClick={handleClearFilters}
+                    variant="ghost"
+                    size="sm"
+                    disabled={isLoading}
+                    className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                  >
+                    <Eraser className="h-4 w-4 mr-2" />
+                    Limpiar
+                  </Button>
+                  <Button
+                    onClick={handleSearch}
+                    disabled={
+                      isLoading || !cicloSeleccionado || !periodoFormateado
+                    }
+                    className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <SearchIcon className="h-4 w-4 mr-2" />
+                    {isLoading ? 'Buscando...' : 'Buscar Lecturas'}
+                  </Button>
+                </div>
+              </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>
+
+        {/* Resultados de la búsqueda */}
+        <Card className="rounded-xl border border-emerald-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-emerald-800/40 dark:bg-gray-900/50">
+          <CardHeader className="pb-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border-b border-emerald-200/40 dark:border-emerald-800/40 rounded-t-xl">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm">
+                <CheckCircleIcon className="h-4 w-4" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">
+                  Estado de Cierre de Lecturas
+                </CardTitle>
+                <CardDescription className="text-sm text-emerald-700 dark:text-emerald-300">
+                  {estadoCierreLecturas.length > 0
+                    ? `${estadoCierreLecturas.length} lecturas disponibles para cierre`
+                    : 'No hay lecturas disponibles para cierre'}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="px-6 pb-6">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-40">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="relative">
+                    <div className="w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800"></div>
+                    <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin"></div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sky-700 dark:text-sky-300 font-medium">
+                      Buscando lecturas...
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Por favor espere mientras procesamos su consulta
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              {/* Botones de acción */}
-              <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-6 border-t">
-                <Button
-                  onClick={handleClearFilters}
-                  variant="ghost"
-                  size="sm"
-                  disabled={isLoading}
-                  className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
-                >
-                  <Eraser className="h-4 w-4 mr-2" />
-                  Limpiar
-                </Button>
-                <Button
-                  onClick={handleSearch}
-                  disabled={
-                    isLoading || !cicloSeleccionado || !periodoFormateado
-                  }
-                  className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <SearchIcon className="h-4 w-4 mr-2" />
-                  {isLoading ? 'Buscando...' : 'Buscar Lecturas'}
-                </Button>
+            ) : error ? (
+              <div className="p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm">
+                    <AlertCircleIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-rose-800 dark:text-rose-200">
+                      Error al cargar los datos
+                    </h4>
+                    <p className="mt-2 text-rose-700 dark:text-rose-300 text-sm leading-relaxed">
+                      {error}
+                    </p>
+                    <Button
+                      onClick={() => setError(null)}
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20"
+                    >
+                      Cerrar
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
-
-      {/* Resultados de la búsqueda */}
-      <Card className="rounded-xl border border-emerald-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-emerald-800/40 dark:bg-gray-900/50">
-        <CardHeader className="pb-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border-b border-emerald-200/40 dark:border-emerald-800/40 rounded-t-xl">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm">
-              <CheckCircleIcon className="h-4 w-4" />
-            </div>
-            <div>
-              <CardTitle className="text-lg font-semibold text-emerald-900 dark:text-emerald-100">
-                Estado de Cierre de Lecturas
-              </CardTitle>
-              <CardDescription className="text-sm text-emerald-700 dark:text-emerald-300">
-                {estadoCierreLecturas.length > 0
-                  ? `${estadoCierreLecturas.length} lecturas disponibles para cierre`
-                  : 'No hay lecturas disponibles para cierre'}
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="px-6 pb-6">
-          {isLoading ? (
-            <div className="flex justify-center items-center h-40">
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                  <div className="w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800"></div>
-                  <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin"></div>
+            ) : estadoCierreLecturas.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground">
+                <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full">
+                  <SearchIcon className="h-8 w-8 text-sky-500 dark:text-sky-400" />
                 </div>
                 <div className="text-center">
-                  <p className="text-sky-700 dark:text-sky-300 font-medium">
-                    Buscando lecturas...
+                  <p className="font-medium text-slate-700 dark:text-slate-300">
+                    Realizar consulta de lecturas
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Por favor espere mientras procesamos su consulta
+                  <p className="text-sm mt-1">
+                    Selecciona un ciclo y haz clic en "Buscar Lecturas" para ver
+                    los resultados
                   </p>
                 </div>
               </div>
-            </div>
-          ) : error ? (
-            <div className="p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm">
-                  <AlertCircleIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-rose-800 dark:text-rose-200">
-                    Error al cargar los datos
-                  </h4>
-                  <p className="mt-2 text-rose-700 dark:text-rose-300 text-sm leading-relaxed">
-                    {error}
-                  </p>
-                  <Button
-                    onClick={() => setError(null)}
-                    variant="outline"
-                    size="sm"
-                    className="mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20"
-                  >
-                    Cerrar
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : estadoCierreLecturas.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground">
-              <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full">
-                <SearchIcon className="h-8 w-8 text-sky-500 dark:text-sky-400" />
-              </div>
-              <div className="text-center">
-                <p className="font-medium text-slate-700 dark:text-slate-300">
-                  Realizar consulta de lecturas
-                </p>
-                <p className="text-sm mt-1">
-                  Selecciona un ciclo y haz clic en "Buscar Lecturas" para ver
-                  los resultados
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b">
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-                    <CheckCircleIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
+                      <CheckCircleIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <span className="font-medium text-emerald-700 dark:text-emerald-300">
+                      {estadoCierreLecturas.length} registros encontrados
+                    </span>
                   </div>
-                  <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                    {estadoCierreLecturas.length} registros encontrados
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleOpenAlert}
+                      disabled={selectedRows.length === 0}
+                      className="gap-2"
+                    >
+                      <CircleX className="h-4 w-4" />
+                      Cerrar Lecturas ({selectedRows.length})
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={handleOpenAlert}
-                    disabled={selectedRows.length === 0}
-                    className="gap-2"
-                  >
-                    <CircleX className="h-4 w-4" />
-                    Cerrar Lecturas ({selectedRows.length})
-                  </Button>
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                  <DataTable columns={columns} data={estadoCierreLecturas} />
                 </div>
               </div>
-              <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
-                <DataTable columns={columns} data={estadoCierreLecturas} />
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
 
-      {isAlertOpen && (
-        <AlertCerrarLecturas
-          isOpen={isAlertOpen}
-          onOpenChange={setIsAlertOpen}
-          selectedRows={selectedRows}
-          cicloFact={cicloSeleccionado}
-          periodo={periodoFormateado}
-          onSuccess={handleLecturaCerrada}
-        />
-      )}
+        {isAlertOpen && (
+          <AlertCerrarLecturas
+            isOpen={isAlertOpen}
+            onOpenChange={setIsAlertOpen}
+            selectedRows={selectedRows}
+            cicloFact={cicloSeleccionado}
+            periodo={periodoFormateado}
+            onSuccess={handleLecturaCerrada}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -117,6 +117,19 @@ export const columns = (
     cell: ({ row }) => {
       const value = row.getValue('valoractual') as string;
       const isNoValue = value === 'Sin Valor';
+
+      // Formatear número con separador de miles
+      const formatValue = (val: string) => {
+        if (isNoValue) return val;
+        const number = parseFloat(val.replace(',', '.'));
+        return isNaN(number)
+          ? val
+          : number.toLocaleString('es-CL', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      };
+
       return (
         <div
           className={`text-sm font-mono ${
@@ -125,7 +138,7 @@ export const columns = (
               : 'text-green-600 dark:text-green-400'
           }`}
         >
-          {value}
+          {formatValue(value)}
         </div>
       );
     },
@@ -143,6 +156,19 @@ export const columns = (
     cell: ({ row }) => {
       const value = row.getValue('valoractual2') as string;
       const isNoValue = value === 'Sin Valor';
+
+      // Formatear número con separador de miles
+      const formatValue = (val: string) => {
+        if (isNoValue) return val;
+        const number = parseFloat(val.replace(',', '.'));
+        return isNaN(number)
+          ? val
+          : number.toLocaleString('es-CL', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      };
+
       return (
         <div
           className={`text-sm font-mono ${
@@ -151,7 +177,7 @@ export const columns = (
               : 'text-green-600 dark:text-green-400'
           }`}
         >
-          {value}
+          {formatValue(value)}
         </div>
       );
     },
@@ -169,6 +195,19 @@ export const columns = (
     cell: ({ row }) => {
       const value = row.getValue('valoractual3') as string;
       const isNoValue = value === 'Sin Valor';
+
+      // Formatear número con separador de miles
+      const formatValue = (val: string) => {
+        if (isNoValue) return val;
+        const number = parseFloat(val.replace(',', '.'));
+        return isNaN(number)
+          ? val
+          : number.toLocaleString('es-CL', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      };
+
       return (
         <div
           className={`text-sm font-mono ${
@@ -177,7 +216,7 @@ export const columns = (
               : 'text-green-600 dark:text-green-400'
           }`}
         >
-          {value}
+          {formatValue(value)}
         </div>
       );
     },

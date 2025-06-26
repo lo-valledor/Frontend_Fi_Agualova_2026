@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { columns } from './columns-enerlova';
 import { Button } from '~/components/ui/button';
 import {
-  DollarSign,
   BarChart,
   ChevronUp,
   ChevronDown,
@@ -11,20 +10,16 @@ import {
   Eraser,
   TrendingUp,
   Building2,
+  Info,
 } from 'lucide-react';
 import { columns as columnsEnel } from './columns-enel';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 import type {
   PreciosCargoEnel,
   PreciosCargoEnerlova,
 } from '~/types/operaciones';
-import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+
 import { DataTablePrecios } from './data-table-precios';
 import {
   Select,
@@ -36,6 +31,16 @@ import {
 import { Label } from '~/components/ui/label';
 import { toast } from 'sonner';
 import api from '~/lib/api';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '~/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 
 interface PreciosCargoComponentProps {
   tablaEnel: PreciosCargoEnel[];
@@ -85,10 +90,6 @@ export default function PreciosCargoComponent({
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  // Estados para secciones colapsables
-  const [isEnelOpen, setIsEnelOpen] = useState(true);
-  const [isEnerlovaOpen, setIsEnerlovaOpen] = useState(true);
-
   // Manejo de búsqueda
   const handleSearch = async () => {
     try {
@@ -126,7 +127,7 @@ export default function PreciosCargoComponent({
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-green-50 dark:from-slate-950 dark:to-green-950/30">
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-2 space-y-3">
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
               <TrendingUp className="w-8 h-8 text-red-600 dark:text-red-400" />
@@ -142,206 +143,220 @@ export default function PreciosCargoComponent({
   }
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      {/* Header modernizado */}
-      <div className="flex items-center gap-4 border-b border-border/40 pb-3.5">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-sm">
-          <DollarSign className="h-6 w-6" />
-        </div>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Precios de Cargo
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            Gestiona los precios de cargo desde compañías de electricidad y
-            Enerlova
-          </p>
-        </div>
-      </div>
-
-      {/* Filtros */}
-      <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-        <CardContent className="p-6 space-y-6">
-          {/* Filtros principales */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-100">
-                  Período de Consulta
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Selecciona el período para consultar los precios de cargo
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Search className="w-4 h-4 mr-2" />
-                Filtros
-                {isFiltersOpen ? (
-                  <ChevronUp className="w-4 h-4 ml-2" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 ml-2" />
-                )}
-              </Button>
-            </div>
-
-            {/* Período seleccionado visible */}
-            <div className="flex items-center gap-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-green-600 dark:text-green-400" />
-                <span className="text-sm font-medium text-green-800 dark:text-green-300">
-                  Período actual:
-                </span>
-              </div>
-              <Badge
-                variant="outline"
-                className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700"
-              >
-                {months.find((m) => m.value === mes)?.label} {anio}
-              </Badge>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-green-50 dark:from-slate-950 dark:to-green-950/30">
+      <div className="container mx-auto p-2 space-y-3">
+        {/* Header modernizado */}
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-100 dark:to-sky-100 bg-clip-text text-transparent">
+              Precios de Cargo
+            </h1>
           </div>
-
-          {/* Filtros expandibles */}
-          <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-            <CollapsibleContent>
-              <div className="border-t pt-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Mes */}
-                  <div className="space-y-2 w-full">
-                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Mes
-                    </Label>
-                    <div className="w-full">
-                      <Select value={mes} onValueChange={setMes}>
-                        <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                          <SelectValue placeholder="Selecciona un mes" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {months.map((month) => (
-                            <SelectItem
-                              key={month.value}
-                              value={month.value}
-                              className="truncate"
-                            >
-                              {month.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Año */}
-                  <div className="space-y-2 w-full">
-                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Año
-                    </Label>
-                    <div className="w-full">
-                      <Select value={anio} onValueChange={setAnio}>
-                        <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                          <SelectValue placeholder="Selecciona un año" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {years.map((year) => (
-                            <SelectItem
-                              key={year.value}
-                              value={year.value}
-                              className="truncate"
-                            >
-                              {year.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Acciones */}
-                <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-4 border-t">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleClearFilters}
-                    className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
-                  >
-                    <Eraser className="w-4 h-4 mr-2" />
-                    Limpiar Filtros
-                  </Button>
-
-                  <Button
-                    onClick={handleSearch}
-                    disabled={isLoading}
-                    className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
-                  >
-                    {isLoading ? (
-                      <>
-                        <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                        Buscando...
-                      </>
-                    ) : (
-                      <>
-                        <Search className="w-4 h-4 mr-2" />
-                        Buscar Precios
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </CardContent>
-      </Card>
-
-      {/* Tablas de Precios */}
-      <div className="space-y-6">
-        {/* Precios de Cargo - Enel */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <Collapsible open={isEnelOpen} onOpenChange={setIsEnelOpen}>
-            <div
-              className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-              onClick={() => setIsEnelOpen(!isEnelOpen)}
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
-                    Precios de Cargo - Enel
-                  </CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400">
-                    Precios de cargo desde compañía de electricidad Enel
-                  </CardDescription>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Badge
+          <div className="flex items-center gap-3 justify-end w-full">
+            <Dialog>
+              <DialogTrigger>
+                <Button
                   variant="outline"
-                  className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
                 >
-                  {months.find((m) => m.value === mes)?.label} {anio}
-                </Badge>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  {isEnelOpen ? (
-                    <ChevronUp className="h-5 w-5 text-slate-500" />
+                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                  <span className="text-yellow-600 text-sm">Información</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Información</DialogTitle>
+                  <DialogDescription>
+                    Gestiona los precios de cargo desde compañías de
+                    electricidad y Enerlova
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+
+        {/* Filtros */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardContent className="p-6 space-y-6">
+            {/* Filtros principales */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-100">
+                    Período de Consulta
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Selecciona el período para consultar los precios de cargo
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Search className="w-4 h-4 mr-2" />
+                  Filtros
+                  {isFiltersOpen ? (
+                    <ChevronUp className="w-4 h-4 ml-2" />
                   ) : (
-                    <ChevronDown className="h-5 w-5 text-slate-500" />
+                    <ChevronDown className="w-4 h-4 ml-2" />
                   )}
                 </Button>
               </div>
+
+              {/* Período seleccionado visible */}
+              <div className="flex items-center gap-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-green-600 dark:text-green-400" />
+                  <span className="text-sm font-medium text-green-800 dark:text-green-300">
+                    Período actual:
+                  </span>
+                </div>
+                <Badge
+                  variant="outline"
+                  className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700"
+                >
+                  {months.find((m) => m.value === mes)?.label} {anio}
+                </Badge>
+              </div>
             </div>
 
-            <CollapsibleContent>
-              <CardContent className="px-6 pb-6">
+            {/* Filtros expandibles */}
+            <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+              <CollapsibleContent>
+                <div className="border-t pt-6 space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Mes */}
+                    <div className="space-y-2 w-full">
+                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Mes
+                      </Label>
+                      <div className="w-full">
+                        <Select value={mes} onValueChange={setMes}>
+                          <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                            <SelectValue placeholder="Selecciona un mes" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {months.map((month) => (
+                              <SelectItem
+                                key={month.value}
+                                value={month.value}
+                                className="truncate"
+                              >
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    {/* Año */}
+                    <div className="space-y-2 w-full">
+                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Año
+                      </Label>
+                      <div className="w-full">
+                        <Select value={anio} onValueChange={setAnio}>
+                          <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                            <SelectValue placeholder="Selecciona un año" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem
+                                key={year.value}
+                                value={year.value}
+                                className="truncate"
+                              >
+                                {year.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Acciones */}
+                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-4 border-t">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClearFilters}
+                      className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                    >
+                      <Eraser className="w-4 h-4 mr-2" />
+                      Limpiar Filtros
+                    </Button>
+
+                    <Button
+                      onClick={handleSearch}
+                      disabled={isLoading}
+                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                    >
+                      {isLoading ? (
+                        <>
+                          <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          Buscando...
+                        </>
+                      ) : (
+                        <>
+                          <Search className="w-4 h-4 mr-2" />
+                          Buscar Precios
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </CardContent>
+        </Card>
+
+        {/* Tablas de Precios con Tabs */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <Tabs defaultValue="enel" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger
+                  value="enel"
+                  className="flex items-center gap-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                >
+                  <Building2 className="w-4 h-4" />
+                  Precios Enel
+                </TabsTrigger>
+                <TabsTrigger
+                  value="enerlova"
+                  className="flex items-center gap-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
+                >
+                  <BarChart className="w-4 h-4" />
+                  Precios Enerlova
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="enel" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      Precios de Cargo - Enel
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Precios de cargo desde compañía de electricidad Enel
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                  >
+                    {months.find((m) => m.value === mes)?.label} {anio}
+                  </Badge>
+                </div>
                 <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
                   <DataTablePrecios
                     columns={columnsEnel(mes, anio, handleDataUpdate)}
@@ -386,50 +401,25 @@ export default function PreciosCargoComponent({
                     ]}
                   />
                 </div>
-              </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
-        </Card>
+              </TabsContent>
 
-        {/* Precios de Cargo - Enerlova */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <Collapsible open={isEnerlovaOpen} onOpenChange={setIsEnerlovaOpen}>
-            <div
-              className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-              onClick={() => setIsEnerlovaOpen(!isEnerlovaOpen)}
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
-                  <BarChart className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              <TabsContent value="enerlova" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      Precios de Cargo - Enerlova
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Precios de cargo desde Enerlova
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                  >
+                    Precios actuales
+                  </Badge>
                 </div>
-                <div>
-                  <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
-                    Precios de Cargo - Enerlova
-                  </CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400">
-                    Precios de cargo desde Enerlova
-                  </CardDescription>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Badge
-                  variant="outline"
-                  className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
-                >
-                  Precios actuales
-                </Badge>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  {isEnerlovaOpen ? (
-                    <ChevronUp className="h-5 w-5 text-slate-500" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-slate-500" />
-                  )}
-                </Button>
-              </div>
-            </div>
-
-            <CollapsibleContent>
-              <CardContent className="px-6 pb-6">
                 <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
                   <DataTablePrecios
                     columns={columns}
@@ -467,9 +457,9 @@ export default function PreciosCargoComponent({
                     ]}
                   />
                 </div>
-              </CardContent>
-            </CollapsibleContent>
-          </Collapsible>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
         </Card>
       </div>
     </div>

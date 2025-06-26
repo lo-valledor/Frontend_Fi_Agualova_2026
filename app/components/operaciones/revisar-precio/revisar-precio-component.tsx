@@ -19,13 +19,13 @@ import {
   AlertCircleIcon,
   ChevronDown,
   ChevronUp,
-  TrendingUp,
   Shield,
   Users,
   Building2,
   CalendarIcon,
   BarChartIcon,
   ClockIcon,
+  Info,
 } from 'lucide-react';
 import {
   Select,
@@ -48,6 +48,15 @@ import { columnsEnel } from './columns-enel';
 import { DataTable } from './data-table';
 import { columnsEnerlova } from './columns-enerlova';
 import DialogModificarPrecio from './dialog-modificar-precio';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '~/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 interface RevisarPrecioComponentProps {
   dataPeriodoAbierto: PeriodoAbierto[];
@@ -84,8 +93,6 @@ export default function RevisarPrecioComponent({
 
   // Estados para los paneles colapsables
   const [isValidacionOpen, setIsValidacionOpen] = useState(true);
-  const [isEnelOpen, setIsEnelOpen] = useState(true);
-  const [isCicloOpen, setIsCicloOpen] = useState(true);
 
   // Estados para las filas seleccionadas
   const [selectedEnelRows, setSelectedEnelRows] = useState<string[]>([]);
@@ -435,7 +442,7 @@ export default function RevisarPrecioComponent({
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
-        <div className="container mx-auto p-6">
+        <div className="container mx-auto p-2 space-y-3">
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
               <AlertCircleIcon className="w-8 h-8 text-red-600 dark:text-red-400" />
@@ -451,318 +458,315 @@ export default function RevisarPrecioComponent({
   }
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      {/* Header modernizado */}
-      <div className="flex items-center gap-4 border-b border-border/40 pb-3.5">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm">
-          <TrendingUp className="h-6 w-6" />
-        </div>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Revisar Precio
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            Validación y revisión de precios para el período activo
-          </p>
-        </div>
-      </div>
-
-      {/* Validación de Usuario */}
-      <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-        <Collapsible open={isValidacionOpen} onOpenChange={setIsValidacionOpen}>
-          <div
-            className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-            onClick={() => setIsValidacionOpen(!isValidacionOpen)}
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
-                  Validación de Usuario
-                </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400">
-                  Autorización para realizar modificaciones de precios
-                </CardDescription>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              {isAuthorized && (
-                <Badge
-                  variant="outline"
-                  className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
-                >
-                  ✓ Autorizado
-                </Badge>
-              )}
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                {isValidacionOpen ? (
-                  <ChevronUp className="h-5 w-5 text-slate-500" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-slate-500" />
-                )}
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+      <div className="container mx-auto p-2 space-y-3">
+        {/* Header modernizado */}
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
+              Revisar Precio
+            </h1>
           </div>
+          <div className="flex items-center gap-3 justify-end w-full">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                >
+                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                  <span className="text-yellow-600 text-sm">Información</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Información</DialogTitle>
+                  <DialogDescription>
+                    Validación y revisión de precios para el período activo
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
 
-          <CollapsibleContent>
-            <CardContent className="px-6 pb-6 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                <div className="space-y-2 w-full md:col-span-2">
-                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <KeyIcon className="w-4 h-4" />
-                    Contraseña de autorización
-                  </Label>
-                  <Input
-                    type="password"
-                    value={contrasena}
-                    onChange={handleContrasenaChange}
-                    className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                    placeholder="Ingresa tu contraseña"
-                  />
+        {/* Validación de Usuario */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <Collapsible
+            open={isValidacionOpen}
+            onOpenChange={setIsValidacionOpen}
+          >
+            <div
+              className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+              onClick={() => setIsValidacionOpen(!isValidacionOpen)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
+                  <Shield className="w-6 h-6 text-amber-600 dark:text-amber-400" />
                 </div>
-                <div className="flex gap-3 w-full">
-                  <Button
-                    onClick={validarUsuario}
-                    disabled={isLoading || !contrasena}
-                    className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white flex-1"
-                  >
-                    <CheckCircleIcon className="w-4 h-4 mr-2" />
-                    {isLoading ? 'Validando...' : 'Autorizar'}
-                  </Button>
+                <div>
+                  <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
+                    Validación de Usuario
+                  </CardTitle>
+                  <CardDescription className="text-slate-600 dark:text-slate-400">
+                    Autorización para realizar modificaciones de precios
+                  </CardDescription>
                 </div>
               </div>
+              <div className="flex items-center gap-3">
+                {isAuthorized && (
+                  <Badge
+                    variant="outline"
+                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                  >
+                    ✓ Autorizado
+                  </Badge>
+                )}
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  {isValidacionOpen ? (
+                    <ChevronUp className="h-5 w-5 text-slate-500" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-slate-500" />
+                  )}
+                </Button>
+              </div>
+            </div>
 
-              {/* Resumen de selección y botón confirmar */}
-              {isAuthorized && (
-                <div className="border-t pt-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <h3 className="font-medium text-slate-900 dark:text-slate-100">
-                        Confirmación de Cambios
-                      </h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        Registros seleccionados:{' '}
-                        {selectedEnelRows.length + selectedEnerlovaRows.length}
-                      </p>
-                    </div>
+            <CollapsibleContent>
+              <CardContent className="px-6 pb-6 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                  <div className="space-y-2 w-full md:col-span-2">
+                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <KeyIcon className="w-4 h-4" />
+                      Contraseña de autorización
+                    </Label>
+                    <Input
+                      type="password"
+                      value={contrasena}
+                      onChange={handleContrasenaChange}
+                      className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                      placeholder="Ingresa tu contraseña"
+                    />
+                  </div>
+                  <div className="flex gap-3 w-full">
                     <Button
-                      onClick={confirmarCambios}
-                      disabled={
-                        isConfirming ||
-                        !isAuthorized ||
-                        (selectedEnelRows.length === 0 &&
-                          selectedEnerlovaRows.length === 0)
-                      }
-                      className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+                      onClick={validarUsuario}
+                      disabled={isLoading || !contrasena}
+                      className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white flex-1"
                     >
-                      <AlertCircleIcon className="w-4 h-4 mr-2" />
-                      {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
+                      <CheckCircleIcon className="w-4 h-4 mr-2" />
+                      {isLoading ? 'Validando...' : 'Autorizar'}
                     </Button>
                   </div>
+                </div>
 
-                  {/* Detalle de selección */}
-                  {(selectedEnelRows.length > 0 ||
-                    selectedEnerlovaRows.length > 0) && (
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                          Resumen de selección:
-                        </span>
+                {/* Resumen de selección y botón confirmar */}
+                {isAuthorized && (
+                  <div className="border-t pt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                          Confirmación de Cambios
+                        </h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                          Registros seleccionados:{' '}
+                          {selectedEnelRows.length +
+                            selectedEnerlovaRows.length}
+                        </p>
                       </div>
-                      <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
-                        {selectedEnelRows.length > 0 && (
-                          <p>
-                            • {selectedEnelRows.length} registros en Valores
-                            Compañía de Electricidad
-                          </p>
-                        )}
-                        {selectedEnerlovaRows.length > 0 && (
-                          <p>
-                            • {selectedEnerlovaRows.length} registros en Precios
-                            por Ciclo de Facturación
-                          </p>
-                        )}
-                      </div>
+                      <Button
+                        onClick={confirmarCambios}
+                        disabled={
+                          isConfirming ||
+                          !isAuthorized ||
+                          (selectedEnelRows.length === 0 &&
+                            selectedEnerlovaRows.length === 0)
+                        }
+                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+                      >
+                        <AlertCircleIcon className="w-4 h-4 mr-2" />
+                        {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
+                      </Button>
                     </div>
-                  )}
-                </div>
+
+                    {/* Detalle de selección */}
+                    {(selectedEnelRows.length > 0 ||
+                      selectedEnerlovaRows.length > 0) && (
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                            Resumen de selección:
+                          </span>
+                        </div>
+                        <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                          {selectedEnelRows.length > 0 && (
+                            <p>
+                              • {selectedEnelRows.length} registros en Valores
+                              Compañía de Electricidad
+                            </p>
+                          )}
+                          {selectedEnerlovaRows.length > 0 && (
+                            <p>
+                              • {selectedEnerlovaRows.length} registros en
+                              Precios por Ciclo de Facturación
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+
+              {/* Footer de autorización */}
+              {isAuthorized && userData && (
+                <CardFooter className="bg-emerald-50 dark:bg-emerald-900/20 border-t border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 py-4 px-6">
+                  <div className="flex items-center gap-2">
+                    <CheckCircleIcon className="h-4 w-4" />
+                    <span className="text-sm font-medium">
+                      {userData.mensaje} - Puede modificar valores pendientes
+                    </span>
+                  </div>
+                </CardFooter>
               )}
-            </CardContent>
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>
 
-            {/* Footer de autorización */}
-            {isAuthorized && userData && (
-              <CardFooter className="bg-emerald-50 dark:bg-emerald-900/20 border-t border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 py-4 px-6">
-                <div className="flex items-center gap-2">
-                  <CheckCircleIcon className="h-4 w-4" />
-                  <span className="text-sm font-medium">
-                    {userData.mensaje} - Puede modificar valores pendientes
-                  </span>
+        {/* Tablas de Precios con Tabs */}
+        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <Tabs defaultValue="enel" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger
+                  value="enel"
+                  className="flex items-center gap-2 data-[state=active]:bg-rose-500 data-[state=active]:text-white"
+                >
+                  <Building2 className="w-4 h-4" />
+                  Valores Enel
+                </TabsTrigger>
+                <TabsTrigger
+                  value="enerlova"
+                  className="flex items-center gap-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
+                >
+                  <BarChartIcon className="w-4 h-4" />
+                  Precios Enerlova
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="enel" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      Valores Compañía de Electricidad
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Revisión de precios para el período activo
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
+                  >
+                    <CalendarIcon className="w-3 h-3 mr-1" />
+                    {isPeriodoLoading ? (
+                      <Skeleton className="h-4 w-20" />
+                    ) : dataPeriodoAbierto && dataPeriodoAbierto.length > 0 ? (
+                      dataPeriodoAbierto[0].descripcion
+                    ) : (
+                      'Sin período'
+                    )}
+                  </Badge>
                 </div>
-              </CardFooter>
-            )}
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
-
-      {/* Valores Compañía de Electricidad */}
-      <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-        <Collapsible open={isEnelOpen} onOpenChange={setIsEnelOpen}>
-          <div
-            className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-            onClick={() => setIsEnelOpen(!isEnelOpen)}
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-rose-100 dark:bg-rose-900/30 rounded-xl flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-rose-600 dark:text-rose-400" />
-              </div>
-              <div>
-                <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
-                  Valores Compañía de Electricidad
-                </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400">
-                  Revisión de precios para el período activo
-                </CardDescription>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Badge
-                variant="outline"
-                className="bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
-              >
-                <CalendarIcon className="w-3 h-3 mr-1" />
-                {isPeriodoLoading ? (
-                  <Skeleton className="h-4 w-20" />
-                ) : dataPeriodoAbierto && dataPeriodoAbierto.length > 0 ? (
-                  dataPeriodoAbierto[0].descripcion
-                ) : (
-                  'Sin período'
-                )}
-              </Badge>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                {isEnelOpen ? (
-                  <ChevronUp className="h-5 w-5 text-slate-500" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-slate-500" />
-                )}
-              </Button>
-            </div>
-          </div>
-
-          <CollapsibleContent>
-            <CardContent className="px-6 pb-6">
-              <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
-                <DataTable
-                  columns={configuredColumnsEnel}
-                  data={dataConsultarPreciosUno}
-                  enableSelection={isAuthorized}
-                  selectedRowIds={selectedEnelRows}
-                  onRowSelectionChange={setSelectedEnelRows}
-                  isLoading={isLoadingPrecios}
-                />
-              </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
-
-      {/* Precios por Ciclo de Facturación */}
-      <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-        <Collapsible open={isCicloOpen} onOpenChange={setIsCicloOpen}>
-          <div
-            className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
-            onClick={() => setIsCicloOpen(!isCicloOpen)}
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
-                <BarChartIcon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
-                  Precios por Ciclo de Facturación
-                </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400">
-                  Precios de ENERLOVA según ciclo de facturación
-                </CardDescription>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Badge
-                variant="outline"
-                className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
-              >
-                <ClockIcon className="w-3 h-3 mr-1" />
-                Ciclo {cicloSeleccionado}
-              </Badge>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                {isCicloOpen ? (
-                  <ChevronUp className="h-5 w-5 text-slate-500" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-slate-500" />
-                )}
-              </Button>
-            </div>
-          </div>
-
-          <CollapsibleContent>
-            <CardContent className="px-6 pb-6 space-y-6">
-              {/* Selector de ciclo */}
-              <div className="flex flex-col md:flex-row gap-4 items-end">
-                <div className="space-y-2 flex-1">
-                  <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <ClockIcon className="w-4 h-4" />
-                    Ciclo de Facturación
-                  </Label>
-                  {isCiclosLoading ? (
-                    <Skeleton className="h-10 w-full" />
-                  ) : (
-                    <Select
-                      value={cicloSeleccionado}
-                      onValueChange={handleCicloChange}
-                      disabled={isPeriodoLoading}
-                    >
-                      <SelectTrigger className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                        <SelectValue placeholder="Selecciona un ciclo" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
-                          ciclosFacturacion.map((ciclo) => (
-                            <SelectItem
-                              key={ciclo.diaFacturacion}
-                              value={ciclo.diaFacturacion}
-                            >
-                              {ciclo.descripcion}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <>
-                            <SelectItem value="15">Ciclo día 15</SelectItem>
-                            <SelectItem value="30">Ciclo día 30</SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  )}
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                  <DataTable
+                    columns={configuredColumnsEnel}
+                    data={dataConsultarPreciosUno}
+                    enableSelection={isAuthorized}
+                    selectedRowIds={selectedEnelRows}
+                    onRowSelectionChange={setSelectedEnelRows}
+                    isLoading={isLoadingPrecios}
+                  />
                 </div>
-              </div>
+              </TabsContent>
 
-              {/* Tabla de precios Enerlova */}
-              <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
-                <DataTable
-                  columns={configuredColumnsEnerlova}
-                  data={dataConsultarPreciosDos}
-                  enableSelection={isAuthorized}
-                  selectedRowIds={selectedEnerlovaRows}
-                  onRowSelectionChange={setSelectedEnerlovaRows}
-                  isLoading={isLoadingPrecios}
-                />
-              </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Collapsible>
-      </Card>
+              <TabsContent value="enerlova" className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                      Precios por Ciclo de Facturación
+                    </h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Precios de ENERLOVA según ciclo de facturación
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                  >
+                    <ClockIcon className="w-3 h-3 mr-1" />
+                    Ciclo {cicloSeleccionado}
+                  </Badge>
+                </div>
+
+                {/* Selector de ciclo */}
+                <div className="flex flex-col md:flex-row gap-4 items-end">
+                  <div className="space-y-2 flex-1">
+                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <ClockIcon className="w-4 h-4" />
+                      Ciclo de Facturación
+                    </Label>
+                    {isCiclosLoading ? (
+                      <Skeleton className="h-10 w-full" />
+                    ) : (
+                      <Select
+                        value={cicloSeleccionado}
+                        onValueChange={handleCicloChange}
+                        disabled={isPeriodoLoading}
+                      >
+                        <SelectTrigger className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                          <SelectValue placeholder="Selecciona un ciclo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
+                            ciclosFacturacion.map((ciclo) => (
+                              <SelectItem
+                                key={ciclo.diaFacturacion}
+                                value={ciclo.diaFacturacion}
+                              >
+                                {ciclo.descripcion}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <>
+                              <SelectItem value="15">Ciclo día 15</SelectItem>
+                              <SelectItem value="30">Ciclo día 30</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                </div>
+
+                {/* Tabla de precios Enerlova */}
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                  <DataTable
+                    columns={configuredColumnsEnerlova}
+                    data={dataConsultarPreciosDos}
+                    enableSelection={isAuthorized}
+                    selectedRowIds={selectedEnerlovaRows}
+                    onRowSelectionChange={setSelectedEnerlovaRows}
+                    isLoading={isLoadingPrecios}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -213,13 +213,13 @@ const MeterCard = ({
     <Card
       className={`overflow-hidden transition-all duration-300 hover:shadow-md border-l-4 ${status.borderColor}`}
     >
-      <CardContent className="p-4">
+      <CardContent className="p-2">
         <div className="flex justify-between items-start">
-          <div className="flex items-center gap-2">
-            <StatusIndicator status={status} size="md" />
+          <div className="flex items-center gap-1">
+            <StatusIndicator status={status} size="sm" />
             <div>
-              <div className="font-medium text-sm">{medidor.nSerie}</div>
-              <div className="text-xs text-muted-foreground">
+              <div className="font-medium text-xs">{medidor.nSerie}</div>
+              <div className="text-[10px] text-muted-foreground">
                 ID: {medidor.id}
               </div>
             </div>
@@ -227,8 +227,8 @@ const MeterCard = ({
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <Eye className="h-4 w-4" />
+              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                <Eye className="h-3 w-3" />
               </Button>
             </SheetTrigger>
             <SheetContent className="overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
@@ -259,38 +259,44 @@ const MeterCard = ({
           </Sheet>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+        <div className="mt-2 grid grid-cols-2 gap-1 text-xs">
           <div>
-            <div className="text-muted-foreground text-xs">Lectura</div>
-            <div className="font-semibold">{medidor.ultimaLectura || '-'}</div>
+            <div className="text-muted-foreground text-[10px]">Lectura</div>
+            <div className="font-semibold text-xs">
+              {medidor.ultimaLectura || '-'}
+            </div>
           </div>
           <div>
-            <div className="text-muted-foreground text-xs">Consumo</div>
-            <div className="font-semibold">{medidor.consumo || '0'}</div>
+            <div className="text-muted-foreground text-[10px]">Consumo</div>
+            <div className="font-semibold text-xs">
+              {medidor.consumo || '0'}
+            </div>
           </div>
           <div className="col-span-2">
-            <div className="font-semibold flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              {medidor.fechaLectura
-                ? new Date(medidor.fechaLectura).toLocaleString('es-CL', {
-                    dateStyle: 'short',
-                    timeStyle: 'short',
-                    hour12: false,
-                  })
-                : 'Sin registro'}
+            <div className="font-medium text-xs flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              <span className="truncate">
+                {medidor.fechaLectura
+                  ? new Date(medidor.fechaLectura).toLocaleString('es-CL', {
+                      dateStyle: 'short',
+                      timeStyle: 'short',
+                      hour12: false,
+                    })
+                  : 'Sin registro'}
+              </span>
             </div>
           </div>
         </div>
 
-        <Separator className="my-3" />
+        <Separator className="my-2" />
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-center">
           <Badge
             variant="outline"
-            className={`${status.borderColor} ${status.textColor}`}
+            className={`${status.borderColor} ${status.textColor} text-[10px] px-1 py-0`}
           >
             <span className="mr-1">{status.icon}</span>
-            {medidor.clave || status.label}
+            <span className="truncate">{medidor.clave || status.label}</span>
           </Badge>
         </div>
       </CardContent>
@@ -909,18 +915,18 @@ export default function ResultadosBusqueda({
 
               {/* Content for Selected Nicho */}
               {results.nichos[selectedNichoIndex] && (
-                <div className="space-y-6">
+                <div className="space-y-3">
                   {/* Nicho Header with Edit Button */}
-                  <div className="flex justify-between items-center p-6 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30 rounded-xl border">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-sky-100 dark:bg-sky-900/50 rounded-lg">
-                        <MapPin className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                  <div className="flex justify-between items-center p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30 rounded-lg border">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 bg-sky-100 dark:bg-sky-900/50 rounded-lg">
+                        <MapPin className="h-4 w-4 text-sky-600 dark:text-sky-400" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+                        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
                           {results.nichos[selectedNichoIndex].nombre}
                         </h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs text-muted-foreground">
                           {results.nichos[selectedNichoIndex].filas.length}{' '}
                           filas •{' '}
                           {results.nichos[selectedNichoIndex].filas.reduce(
@@ -1031,7 +1037,7 @@ export default function ResultadosBusqueda({
                   </div>
 
                   {/* Filas Container */}
-                  <div className="space-y-6">
+                  <div className="space-y-3">
                     {results.nichos[selectedNichoIndex].filas.map(
                       (fila: Fila, filaIndex: number) => {
                         // Get all problems in this fila for the badge
@@ -1063,16 +1069,16 @@ export default function ResultadosBusqueda({
                               }
                             >
                               <CollapsibleTrigger asChild>
-                                <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors">
-                                  <div className="flex items-center gap-3">
-                                    <div className="p-1.5 bg-muted rounded-md">
-                                      <Grid3X3 className="h-4 w-4 text-muted-foreground" />
+                                <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/50 transition-colors">
+                                  <div className="flex items-center gap-2">
+                                    <div className="p-1 bg-muted rounded-md">
+                                      <Grid3X3 className="h-3 w-3 text-muted-foreground" />
                                     </div>
                                     <div>
-                                      <h4 className="text-lg font-medium">
+                                      <h4 className="text-base font-medium">
                                         Fila {fila.numero}
                                       </h4>
-                                      <p className="text-sm text-muted-foreground">
+                                      <p className="text-xs text-muted-foreground">
                                         {fila.medidores.length} medidores
                                       </p>
                                     </div>
@@ -1101,7 +1107,7 @@ export default function ResultadosBusqueda({
                               </CollapsibleTrigger>
                               {/* Content based on view mode */}
                               <CollapsibleContent>
-                                <div className="p-4 pt-0">
+                                <div className="p-3 pt-0">
                                   {viewMode === 'detailed' ? (
                                     /* Vista de Lista Compacta */
                                     <div className="space-y-2">
@@ -1145,7 +1151,7 @@ export default function ResultadosBusqueda({
                                     </div>
                                   ) : (
                                     /* Vista de Tarjetas (default y compact) */
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-5 2xl:grid-cols-10 gap-4">
+                                    <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-10 gap-2">
                                       {fila.medidores.map(
                                         (medidor: Medidor) => {
                                           // For 'compact' view, only show problematic medidores

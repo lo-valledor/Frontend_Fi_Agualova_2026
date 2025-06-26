@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ListFilter,
   Settings2,
+  Info,
 } from 'lucide-react';
 import React, { Suspense, useEffect, useState } from 'react';
 import { type Sector, type Periodo, type Clave } from '~/types/monitor';
@@ -38,6 +39,14 @@ import {
   validateSearchParams,
   getDefaultDates,
 } from '~/hooks/use-monitor';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '../ui/dialog';
 
 interface MonitorLecturasComponentProps {
   periodos: Periodo[];
@@ -145,46 +154,68 @@ const MonitorLecturasComponent = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
-      <div className="container mx-auto p-4 space-y-6">
+      <div className="container mx-auto p-2 space-y-3">
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Modern Header */}
-        <div className="flex items-center gap-4 py-6 border-b border-slate-200 dark:border-slate-700">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-sky-600 rounded-2xl">
-            <Search className="w-6 h-6 text-white" />
-          </div>
+        <div className="flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700">
           <div className="flex-1">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 dark:from-blue-100 dark:to-sky-100 bg-clip-text text-transparent">
-              Monitor de Lecturas
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Selecciona un sector y configura tus filtros para monitorear las
-              lecturas de medidores en tiempo real
-            </p>
+            <div className="items-center gap-3 grid grid-cols-2 mb-2">
+              <div className="col-span-1">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 dark:from-blue-100 dark:to-sky-100 bg-clip-text text-transparent">
+                  Monitor de Lecturas
+                </h1>
+              </div>
+              <div className="flex items-center gap-3 justify-end w-full">
+                <Dialog>
+                  <DialogTrigger>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                    >
+                      <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                      <span className="text-yellow-600 text-sm">
+                        Información
+                      </span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Información</DialogTitle>
+                      <DialogDescription>
+                        Selecciona un sector y configura tus filtros para
+                        monitorear las lecturas de medidores en tiempo real
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Main Control Panel */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardContent className="p-6 space-y-6">
+        <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm mt-4">
+          <CardContent className="p-4 space-y-4">
             {/* Sector Selection - Clean Grid */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-100">
+                  <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100">
                     Sector de Monitoreo
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Selecciona el área geográfica a monitorear
                   </p>
                 </div>
               </div>
 
               {sectores && sectores.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
                   {sectores.map((sector) => (
                     <Button
                       key={sector.sectorId}
@@ -195,14 +226,14 @@ const MonitorLecturasComponent = ({
                       }
                       onClick={() => setSelectedSector(sector)}
                       className={cn(
-                        'h-auto p-4 transition-all duration-200 hover:scale-105',
+                        'h-auto p-3 transition-all duration-200 hover:scale-105',
                         selectedSector?.sectorId === sector.sectorId
                           ? 'bg-gradient-to-r from-blue-500 to-sky-600 text-white shadow-lg border-0'
                           : 'hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-700 dark:text-slate-300',
                       )}
                     >
                       <div className="text-center">
-                        <div className="font-semibold text-sm">
+                        <div className="font-semibold text-xs">
                           {sector.descripcion}
                         </div>
                       </div>
@@ -210,15 +241,15 @@ const MonitorLecturasComponent = ({
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Settings2 className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>No hay sectores disponibles</p>
+                <div className="text-center py-6 text-muted-foreground">
+                  <Settings2 className="w-10 h-10 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No hay sectores disponibles</p>
                 </div>
               )}
             </div>
 
             {/* Search Action */}
-            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-4 border-t">
+            <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t">
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
@@ -226,12 +257,12 @@ const MonitorLecturasComponent = ({
                   onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  <Filter className="w-4 h-4 mr-2" />
-                  Filtros Avanzados
+                  <Filter className="w-4 h-4 mr-1" />
+                  <span className="text-sm">Filtros Avanzados</span>
                   {isFiltersOpen ? (
-                    <ChevronUp className="w-4 h-4 ml-2" />
+                    <ChevronUp className="w-4 h-4 ml-1" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 ml-2" />
+                    <ChevronDown className="w-4 h-4 ml-1" />
                   )}
                 </Button>
 
@@ -242,8 +273,8 @@ const MonitorLecturasComponent = ({
                     onClick={handleLimpiezaFiltros}
                     className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
                   >
-                    <Eraser className="w-4 h-4 mr-2" />
-                    Limpiar
+                    <Eraser className="w-4 h-4 mr-1" />
+                    <span className="text-sm">Limpiar</span>
                   </Button>
                 )}
               </div>
@@ -251,22 +282,24 @@ const MonitorLecturasComponent = ({
               <Button
                 onClick={handleSearch}
                 disabled={!selectedSector || !selectedPeriodo}
-                className="bg-gradient-to-r from-blue-500 to-sky-600 hover:from-blue-600 hover:to-sky-700 text-white px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                className="bg-gradient-to-r from-blue-500 to-sky-600 hover:from-blue-600 hover:to-sky-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <Search className="w-4 h-4 mr-2" />
-                {shouldSearch ? 'Buscar Nuevamente' : 'Iniciar Monitoreo'}
+                <span className="text-sm">
+                  {shouldSearch ? 'Buscar Nuevamente' : 'Iniciar Monitoreo'}
+                </span>
               </Button>
             </div>
 
             {/* Advanced Filters - Collapsible */}
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleContent>
-                <div className="border-t pt-6 space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="border-t pt-4 space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                     {/* Periodo */}
-                    <div className="space-y-2 w-full">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
                         Periodo
                       </Label>
                       {periodos && periodos.length > 0 ? (
@@ -300,9 +333,9 @@ const MonitorLecturasComponent = ({
                     </div>
 
                     {/* Clave */}
-                    <div className="space-y-2 w-full">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <KeyRound className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <KeyRound className="w-3 h-3 text-amber-500 flex-shrink-0" />
                         Clave
                       </Label>
                       {claves && claves.length > 0 ? (
@@ -343,9 +376,9 @@ const MonitorLecturasComponent = ({
                     </div>
 
                     {/* Estado */}
-                    <div className="space-y-2 w-full">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <ListFilter className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <ListFilter className="w-3 h-3 text-purple-500 flex-shrink-0" />
                         Estado
                       </Label>
                       <Select
@@ -381,9 +414,9 @@ const MonitorLecturasComponent = ({
                     </div>
 
                     {/* Medidor */}
-                    <div className="space-y-2 w-full">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <Hash className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    <div className="space-y-1 w-full">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Hash className="w-3 h-3 text-green-500 flex-shrink-0" />
                         Número de Serie
                       </Label>
                       <Input
@@ -396,9 +429,9 @@ const MonitorLecturasComponent = ({
                     </div>
 
                     {/* Fecha Inicio */}
-                    <div className="space-y-2 w-full sm:col-span-2 lg:col-span-1">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
                         Fecha Inicio
                       </Label>
                       <Input
@@ -410,9 +443,9 @@ const MonitorLecturasComponent = ({
                     </div>
 
                     {/* Fecha Fin */}
-                    <div className="space-y-2 w-full sm:col-span-2 lg:col-span-1">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
+                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
                         Fecha Fin
                       </Label>
                       <div className="w-full">
@@ -443,8 +476,8 @@ const MonitorLecturasComponent = ({
         {shouldSearch && (
           <Suspense
             fallback={
-              <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-                <CardContent className="p-12">
+              <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+                <CardContent className="p-6">
                   <LoadingSpinner message="Cargando resultados del monitoreo..." />
                 </CardContent>
               </Card>

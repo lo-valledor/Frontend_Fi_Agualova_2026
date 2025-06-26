@@ -4,7 +4,7 @@ import React, {
   useState,
   useContext,
   type ReactNode,
-} from "react";
+} from 'react';
 
 // Reutiliza la interfaz que ya tienes en SiteHeader
 interface BreadcrumbItem {
@@ -18,7 +18,7 @@ interface BreadcrumbContextType {
 }
 
 const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const BreadcrumbProvider = ({ children }: { children: ReactNode }) => {
@@ -34,7 +34,7 @@ export const BreadcrumbProvider = ({ children }: { children: ReactNode }) => {
 export const useBreadcrumbs = (): BreadcrumbContextType => {
   const context = useContext(BreadcrumbContext);
   if (context === undefined) {
-    throw new Error("useBreadcrumbs must be used within a BreadcrumbProvider");
+    throw new Error('useBreadcrumbs must be used within a BreadcrumbProvider');
   }
   return context;
 };

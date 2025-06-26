@@ -96,11 +96,26 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
         className="text-green-700 dark:text-green-300 font-semibold"
       />
     ),
-    cell: ({ row }) => (
-      <div className="text-sm font-mono font-medium text-green-600 dark:text-green-400">
-        {row.getValue('valor')}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const value = row.getValue('valor') as string;
+
+      // Formatear número con separador de miles
+      const formatValue = (val: string) => {
+        const number = parseFloat(val.replace(',', '.'));
+        return isNaN(number)
+          ? val
+          : number.toLocaleString('es-CL', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      };
+
+      return (
+        <div className="text-sm font-mono font-medium text-green-600 dark:text-green-400">
+          {formatValue(value)}
+        </div>
+      );
+    },
     size: 120,
   },
   {

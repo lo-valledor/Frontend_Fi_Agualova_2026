@@ -38,6 +38,7 @@ import {
   Calculator,
   FileSpreadsheet,
   TrendingUp,
+  Info,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '~/lib/api';
@@ -50,6 +51,14 @@ import {
   type PeriodoAbierto,
 } from '~/types/operaciones';
 import { Input } from '~/components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '~/components/ui/dialog';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
@@ -466,31 +475,44 @@ export default function RevisarCalculoFacturaComponent({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-950 dark:to-purple-950/30">
-      <div className="container mx-auto p-4 space-y-6">
+      <div className="container mx-auto p-2 space-y-3">
         {/* Modern Header */}
-        <div className="flex items-center gap-4 py-6 border-b border-slate-200 dark:border-slate-700">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl">
-            <Calculator className="w-6 h-6 text-white" />
-          </div>
-          <div className="flex-1">
+        <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-100 dark:to-indigo-100 bg-clip-text text-transparent">
               Revisar Cálculo Factura
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Revisa y verifica los cálculos de facturación para los clientes
-            </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                >
+                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                  <span className="text-yellow-600 text-sm">Información</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Información</DialogTitle>
+                  <DialogDescription>
+                    Revisa y verifica los cálculos de facturación para los
+                    clientes
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
             {periodoAbierto && periodoAbierto.length > 0 && (
               <Badge
                 variant="outline"
                 className="bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800"
               >
-                <div className="flex items-center gap-2">
-                  <CalendarIcon className="h-3 w-3 mr-1" />
-                  Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
-                  {periodoAbierto[0].anio}
-                </div>
+                <CalendarIcon className="h-3 w-3 mr-1" />
+                Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
+                {periodoAbierto[0].anio}
               </Badge>
             )}
           </div>

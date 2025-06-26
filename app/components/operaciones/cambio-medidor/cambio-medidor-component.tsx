@@ -21,7 +21,7 @@ import {
   ArrowRight,
   ArrowLeft,
   RefreshCw,
-  Repeat,
+  Info,
 } from 'lucide-react';
 import api from '~/lib/api';
 import {
@@ -36,6 +36,14 @@ import AntiguoMedidorForm from './antiguo-medidor-form';
 import DetalleMedidorAntiguoComponent from './detalle-medidor-antiguo';
 import NuevoMedidorForm from './nuevo-medidor-form';
 import DetalleMedidorNuevoComponent from './detalle-medidor-nuevo';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '~/components/ui/dialog';
 
 export default function CambioMedidorComponent() {
   const { user } = useAuth();
@@ -332,7 +340,6 @@ export default function CambioMedidorComponent() {
         throw new Error('Error al registrar el cambio de medidor');
       }
     } catch (error: any) {
-
       let errorMessage = 'No se pudo registrar el cambio de medidor';
 
       if (error.response) {
@@ -719,115 +726,133 @@ export default function CambioMedidorComponent() {
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      {/* Header modernizado */}
-      <div className="flex items-center gap-4 border-b border-border/40 pb-3.5">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm">
-          <Repeat className="h-6 w-6" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-950 dark:to-purple-950/30">
+      <div className="container mx-auto p-2 space-y-3">
+        {/* Header modernizado */}
+        <div className="flex items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-100 dark:to-indigo-100 bg-clip-text text-transparent">
+              Cambio de Medidor
+            </h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                >
+                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                  <span className="text-yellow-600 text-sm">Información</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Información</DialogTitle>
+                  <DialogDescription>
+                    Gestión y reemplazo de medidores en el sistema
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Cambio de Medidor
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            Gestión y reemplazo de medidores en el sistema
-          </p>
-        </div>
-      </div>
 
-      {/* Stepper */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                currentStep >= 1
-                  ? 'bg-sky-600 text-white'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              {currentStep > 1 ? (
-                <CheckCircle2 className="h-5 w-5" />
-              ) : (
-                <span>1</span>
-              )}
+        {/* Stepper */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                  currentStep >= 1
+                    ? 'bg-sky-600 text-white'
+                    : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                {currentStep > 1 ? (
+                  <CheckCircle2 className="h-5 w-5" />
+                ) : (
+                  <span>1</span>
+                )}
+              </div>
+              <div className="ml-2 text-sm font-medium">Medidor Antiguo</div>
             </div>
-            <div className="ml-2 text-sm font-medium">Medidor Antiguo</div>
-          </div>
-          <div className="flex-1 h-0.5 mx-4 bg-muted">
-            <div
-              className="h-full bg-sky-600"
-              style={{
-                width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
-              }}
-            ></div>
-          </div>
-          <div className="flex items-center">
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                currentStep >= 2
-                  ? 'bg-amber-600 text-white'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              {currentStep > 2 ? (
-                <CheckCircle2 className="h-5 w-5" />
-              ) : (
-                <span>2</span>
-              )}
+            <div className="flex-1 h-0.5 mx-4 bg-muted">
+              <div
+                className="h-full bg-sky-600"
+                style={{
+                  width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
+                }}
+              ></div>
             </div>
-            <div className="ml-2 text-sm font-medium">Detalles Antiguo</div>
-          </div>
-          <div className="flex-1 h-0.5 mx-4 bg-muted">
-            <div
-              className="h-full bg-amber-600"
-              style={{
-                width: `${((currentStep - 2) / (totalSteps - 1)) * 100}%`,
-              }}
-            ></div>
-          </div>
-          <div className="flex items-center">
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                currentStep >= 3
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              {currentStep > 3 ? (
-                <CheckCircle2 className="h-5 w-5" />
-              ) : (
-                <span>3</span>
-              )}
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                  currentStep >= 2
+                    ? 'bg-amber-600 text-white'
+                    : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                {currentStep > 2 ? (
+                  <CheckCircle2 className="h-5 w-5" />
+                ) : (
+                  <span>2</span>
+                )}
+              </div>
+              <div className="ml-2 text-sm font-medium">Detalles Antiguo</div>
             </div>
-            <div className="ml-2 text-sm font-medium">Medidor Nuevo</div>
-          </div>
-          <div className="flex-1 h-0.5 mx-4 bg-muted">
-            <div
-              className="h-full bg-emerald-600"
-              style={{
-                width: `${((currentStep - 3) / (totalSteps - 1)) * 100}%`,
-              }}
-            ></div>
-          </div>
-          <div className="flex items-center">
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                currentStep >= 4
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              <span>4</span>
+            <div className="flex-1 h-0.5 mx-4 bg-muted">
+              <div
+                className="h-full bg-amber-600"
+                style={{
+                  width: `${((currentStep - 2) / (totalSteps - 1)) * 100}%`,
+                }}
+              ></div>
             </div>
-            <div className="ml-2 text-sm font-medium">Confirmar</div>
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                  currentStep >= 3
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                {currentStep > 3 ? (
+                  <CheckCircle2 className="h-5 w-5" />
+                ) : (
+                  <span>3</span>
+                )}
+              </div>
+              <div className="ml-2 text-sm font-medium">Medidor Nuevo</div>
+            </div>
+            <div className="flex-1 h-0.5 mx-4 bg-muted">
+              <div
+                className="h-full bg-emerald-600"
+                style={{
+                  width: `${((currentStep - 3) / (totalSteps - 1)) * 100}%`,
+                }}
+              ></div>
+            </div>
+            <div className="flex items-center">
+              <div
+                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                  currentStep >= 4
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                <span>4</span>
+              </div>
+              <div className="ml-2 text-sm font-medium">Confirmar</div>
+            </div>
           </div>
+          <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
         </div>
-        <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
-      </div>
 
-      {/* Contenido del paso actual */}
-      {renderStep()}
+        {/* Contenido del paso actual */}
+        {renderStep()}
+      </div>
     </div>
   );
 }
