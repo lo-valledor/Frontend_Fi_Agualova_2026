@@ -133,26 +133,26 @@ export interface ModificarContratoProps {
 }
 
 export interface ContratoFormData {
-  tipoContrato: string
-  tarifa: string
-  nombrePropietario: string
-  nombreCliente: string
-  local: string
-  fechaInicio: string
-  activo: boolean
-  fechaTermino: string
-  comunaEnvio: string
-  direccionEnvio: string
-  limiteInvierno: number
-  promedioAnual: string
-  cicloFacturacion: string
-  potenciaContratada: string
-  liberadoCorte: boolean
+  tipoContrato: string;
+  tarifa: string;
+  nombrePropietario: string;
+  nombreCliente: string;
+  local: string;
+  fechaInicio: string;
+  activo: boolean;
+  fechaTermino: string;
+  comunaEnvio: string;
+  direccionEnvio: string;
+  limiteInvierno: number;
+  promedioAnual: string;
+  cicloFacturacion: string;
+  potenciaContratada: string;
+  liberadoCorte: boolean;
 }
 
 export interface ActualizarPropietariosLocal {
-  "registrosAfectados": 0,
-  "mensaje": "Propietarios sincronizados correctamente."
+  registrosAfectados: 0;
+  mensaje: 'Propietarios sincronizados correctamente.';
 }
 
 export interface GetRegiones {
@@ -322,7 +322,6 @@ export interface GetCombosTarifas {
 }
 
 export interface GetCombosTiposMedidor {
-
   id: number;
   nombre: string;
 }
@@ -380,7 +379,6 @@ export interface MedidorSubempalmeProps {
   ubicacion: string;
   codigoAcometida: string;
 }
-
 
 export interface GetMedidorByLecturas {
   cantidadLecturas: string;
@@ -450,7 +448,6 @@ export interface GetCargoTipoContrato {
   estado: boolean;
   descripcion: string;
 }
-
 
 // Condiciones Contrato
 

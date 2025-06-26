@@ -14,6 +14,13 @@ export function meta({}: Route.MetaArgs) {
 
 export async function clientLoader() {
   try {
+    // Verificar si hay token antes de hacer peticiones
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.log('No token found in clientLoader, skipping API calls');
+      throw new Error('No authentication token found');
+    }
+
     // Cargar datos básicos del monitor directamente en el loader
     const [periodosRes, clavesRes, sectoresRes] = await Promise.all([
       api.get<Periodo[]>('/Periodos'),

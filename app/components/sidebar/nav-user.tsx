@@ -1,6 +1,6 @@
-import { ChevronsUpDown, LogOut } from "lucide-react";
-import { motion } from "motion/react";
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
+import { ChevronsUpDown, LogOut } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,15 +8,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
+} from '~/components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "~/components/ui/sidebar";
-import { useAuth } from "~/context/AuthContext";
-import { toast } from "sonner";
+} from '~/components/ui/sidebar';
+import { useAuth } from '~/context/AuthContext';
+import { toast } from 'sonner';
 
 interface NavUserProps {
   user: {
@@ -35,8 +35,8 @@ export function NavUser({ user }: NavUserProps) {
     try {
       await logout();
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      toast.error("Error al cerrar sesión");
+      console.error('Error al cerrar sesión:', error);
+      toast.error('Error al cerrar sesión');
     }
   };
 
@@ -47,7 +47,7 @@ export function NavUser({ user }: NavUserProps) {
           <DropdownMenuTrigger asChild>
             <motion.div
               whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
               className="w-full"
             >
               <SidebarMenuButton
@@ -75,7 +75,7 @@ export function NavUser({ user }: NavUserProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             align="end"
             sideOffset={8}
           >

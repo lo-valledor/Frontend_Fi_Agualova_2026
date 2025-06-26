@@ -20,7 +20,7 @@ interface ConceptosColumnsProps {
 
 export const createColumns = ({
   onEdit,
-  onDelete,     
+  onDelete,
 }: ConceptosColumnsProps): ColumnDef<Conceptos>[] => [
   {
     accessorKey: 'denominacion',

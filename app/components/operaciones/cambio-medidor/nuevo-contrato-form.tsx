@@ -1,20 +1,20 @@
-import React from "react";
+import React from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardTitle,
-} from "~/components/ui/card";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { Button } from "~/components/ui/button";
-import { FileText, ChevronUp, ChevronDown, ArrowUpSquare } from "lucide-react";
+} from '~/components/ui/card';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
+import { FileText, ChevronUp, ChevronDown, ArrowUpSquare } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "~/components/ui/collapsible";
-import { type NuevoContratoFormProps } from "~/types/operaciones";
+} from '~/components/ui/collapsible';
+import { type NuevoContratoFormProps } from '~/types/operaciones';
 
 export default function NuevoContratoForm({
   codigoContrato,

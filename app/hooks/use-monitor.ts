@@ -1,13 +1,13 @@
-import api from "~/lib/api";
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import api from '~/lib/api';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import type {
   Periodo,
   Sector,
   Clave,
   Lectura,
   MedidorNicho,
-} from "../types/monitor";
+} from '../types/monitor';
 
 export type { Periodo, Sector, Clave, Lectura, MedidorNicho };
 
@@ -27,14 +27,14 @@ export function useMonitor() {
       setError(null);
 
       const response = await api.get<Lectura[]>(
-        `/Lecturas?periodoId=${periodoId}&sectorId=${sectorId}`
+        `/Lecturas?periodoId=${periodoId}&sectorId=${sectorId}`,
       );
       const lecturasData = Array.isArray(response.data) ? response.data : [];
       setLecturas(lecturasData);
 
       return lecturasData;
     } catch (error: any) {
-      console.error("Error al cargar lecturas:", error);
+      console.error('Error al cargar lecturas:', error);
       setError(error instanceof Error ? error : new Error(String(error)));
 
       // Si el error es de autenticación, redirigir a login
@@ -57,14 +57,14 @@ export function useMonitor() {
       setError(null);
 
       const response = await api.get<MedidorNicho[]>(
-        `/Medidores?periodoId=${periodoId}&sectorId=${sectorId}`
+        `/Medidores?periodoId=${periodoId}&sectorId=${sectorId}`,
       );
       const medidoresData = Array.isArray(response.data) ? response.data : [];
       setMedidores(medidoresData);
 
       return medidoresData;
     } catch (error: any) {
-      console.error("Error al cargar medidores:", error);
+      console.error('Error al cargar medidores:', error);
       setError(error instanceof Error ? error : new Error(String(error)));
 
       if (
@@ -92,11 +92,11 @@ export function useMonitor() {
 
 // Funciones utilitarias para formateo de fechas (sin dependencias de estado)
 export const formatDateToYYYYMMDD = (dateString: string): string => {
-  if (!dateString) return "";
+  if (!dateString) return '';
 
   // Dividir la fecha en partes
-  const parts = dateString.split("-");
-  if (parts.length !== 3) return "";
+  const parts = dateString.split('-');
+  if (parts.length !== 3) return '';
 
   let year, month, day;
 
@@ -119,39 +119,39 @@ export const formatDateToYYYYMMDD = (dateString: string): string => {
 // Función utilitaria para encontrar el período activo
 export const findActivePeriod = (periodos: Periodo[]): Periodo | null => {
   if (!periodos || periodos.length === 0) return null;
-  
-  const activePeriodo = periodos.find(
-    (periodo) => periodo.EstadoPeriodo === 2
-  );
-  
+
+  const activePeriodo = periodos.find((periodo) => periodo.EstadoPeriodo === 2);
+
   return activePeriodo || periodos[0]; // Fallback al primero si no hay activo
 };
 
 // Función utilitaria para validar parámetros de búsqueda
 export const validateSearchParams = (
   sector: Sector | null,
-  periodo: Periodo | null
+  periodo: Periodo | null,
 ): { isValid: boolean; error?: string } => {
   if (!sector) {
-    return { isValid: false, error: "Por favor, seleccione un sector." };
+    return { isValid: false, error: 'Por favor, seleccione un sector.' };
   }
-  
+
   if (!periodo) {
-    return { isValid: false, error: "Por favor, seleccione un periodo." };
+    return { isValid: false, error: 'Por favor, seleccione un periodo.' };
   }
-  
+
   return { isValid: true };
 };
 
 // Función utilitaria para obtener fechas por defecto basadas en el período
-export const getDefaultDates = (periodo: Periodo | null): { 
-  fechaInicio: string; 
-  fechaFin: string; 
+export const getDefaultDates = (
+  periodo: Periodo | null,
+): {
+  fechaInicio: string;
+  fechaFin: string;
 } => {
-  const today = new Date().toISOString().split("T")[0];
-  
+  const today = new Date().toISOString().split('T')[0];
+
   return {
-    fechaInicio: periodo?.FechaInicio || "",
+    fechaInicio: periodo?.FechaInicio || '',
     fechaFin: today,
   };
 };

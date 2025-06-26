@@ -1,10 +1,10 @@
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
-import { Input } from "~/components/ui/input";
-import { Calendar, Loader2, Save, AlertCircle } from "lucide-react";
-import { toast } from "sonner";
-import api from "~/lib/api";
-import { useState, useCallback, useMemo } from "react";
+import { Button } from '~/components/ui/button';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import { Calendar, Loader2, Save, AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+import api from '~/lib/api';
+import { useState, useCallback, useMemo } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,8 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "~/components/ui/dialog";
-import { Alert, AlertDescription } from "~/components/ui/alert";
+} from '~/components/ui/dialog';
+import { Alert, AlertDescription } from '~/components/ui/alert';
 
 interface DialogNuevoValorEnerlovaProps {
   codigo: string;
@@ -59,12 +59,12 @@ export default function DialogNuevoValorEnerlova({
 
   // Función para formatear fecha YYYY-MM-DD a formato DD-MM-YYYY
   const formatearFechaADDMMYYYY = useCallback((fechaStr: string) => {
-    if (!fechaStr) return "";
+    if (!fechaStr) return '';
     // Si ya está en formato DD-MM-YYYY, lo devolvemos así
     if (/^\d{2}-\d{2}-\d{4}$/.test(fechaStr)) return fechaStr;
 
     // Si está en formato YYYY-MM-DD (formato HTML input date), lo convertimos
-    const partes = fechaStr.split("-");
+    const partes = fechaStr.split('-');
     if (partes.length === 3) {
       return `${partes[2]}-${partes[1]}-${partes[0]}`;
     }
@@ -77,15 +77,15 @@ export default function DialogNuevoValorEnerlova({
     const errors: string[] = [];
 
     if (!formValues.fecha_fin) {
-      errors.push("La fecha de fin es requerida");
+      errors.push('La fecha de fin es requerida');
     } else if (
       new Date(formValues.fecha_fin) <= new Date(formValues.fecha_inicio)
     ) {
-      errors.push("La fecha de fin debe ser posterior a la fecha de inicio");
+      errors.push('La fecha de fin debe ser posterior a la fecha de inicio');
     }
 
     if (!formValues.valor || formValues.valor <= 0) {
-      errors.push("El valor debe ser mayor que cero");
+      errors.push('El valor debe ser mayor que cero');
     }
 
     return errors;
@@ -99,7 +99,7 @@ export default function DialogNuevoValorEnerlova({
         [field]: value,
       }));
     },
-    []
+    [],
   );
 
   // Manejador para enviar el formulario
@@ -123,18 +123,18 @@ export default function DialogNuevoValorEnerlova({
       };
 
       const response = await api.post(
-        "/ingresa-precio-cargo-enerlova",
-        payload
+        '/ingresa-precio-cargo-enerlova',
+        payload,
       );
 
       if (response.status === 200) {
-        toast.success("Precios agregados correctamente");
+        toast.success('Precios agregados correctamente');
         setIsOpen(false);
         if (onSuccess) onSuccess();
       }
     } catch (error) {
-      console.error("Error al agregar precios:", error);
-      toast.error("Error al agregar los precios");
+      console.error('Error al agregar precios:', error);
+      toast.error('Error al agregar los precios');
     } finally {
       setIsLoading(false);
     }
@@ -216,7 +216,7 @@ export default function DialogNuevoValorEnerlova({
                 type="date"
                 id="fecha_fin"
                 value={formValues.fecha_fin}
-                onChange={(e) => handleInputChange("fecha_fin", e.target.value)}
+                onChange={(e) => handleInputChange('fecha_fin', e.target.value)}
                 className="pl-9"
               />
               <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -235,9 +235,9 @@ export default function DialogNuevoValorEnerlova({
               type="number"
               step="0.01"
               min="0"
-              value={formValues.valor || ""}
+              value={formValues.valor || ''}
               onChange={(e) =>
-                handleInputChange("valor", parseFloat(e.target.value) || 0)
+                handleInputChange('valor', parseFloat(e.target.value) || 0)
               }
               className="col-span-3"
             />

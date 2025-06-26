@@ -9,12 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import {
-  MoreHorizontal,
-  Edit,
-  Eye,
-  Loader2,
-} from 'lucide-react';
+import { MoreHorizontal, Edit, Eye, Loader2 } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 

@@ -1,8 +1,8 @@
 // src/components/sidebar/site-header.tsx
-import React from "react";
-import { Separator } from "~/components/ui/separator";
-import { SidebarTrigger } from "~/components/ui/sidebar";
-import { ModeToggle } from "../mode-toggle";
+import React from 'react';
+import { Separator } from '~/components/ui/separator';
+import { SidebarTrigger } from '~/components/ui/sidebar';
+import { ModeToggle } from '../mode-toggle';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,10 +10,10 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "~/components/ui/breadcrumb";
-import { useBreadcrumbs } from "~/context/BreadcrumbContext"; // Importa el hook del contexto
-import { NavUser } from "./nav-user";
-import { useAuth } from "~/context/AuthContext";
+} from '~/components/ui/breadcrumb';
+import { useBreadcrumbs } from '~/context/BreadcrumbContext'; // Importa el hook del contexto
+import { NavUser } from './nav-user';
+import { useAuth } from '~/context/AuthContext';
 
 export function SiteHeader() {
   // Obtén los breadcrumbs desde el contexto
@@ -60,10 +60,10 @@ export function SiteHeader() {
             {user && (
               <NavUser
                 user={{
-                  name: user.fullName || user.username || "Usuario",
+                  name: user.fullName || user.username || 'Usuario',
                   username: user.username,
-                  avatar: "", // Si tienes avatar, pon user.avatar aquí
-                  role: user.role || "Usuario",
+                  avatar: '', // Si tienes avatar, pon user.avatar aquí
+                  role: user.role || 'Usuario',
                 }}
               />
             )}

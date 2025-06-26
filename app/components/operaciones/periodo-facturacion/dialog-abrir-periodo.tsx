@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,28 +6,28 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import api from "~/lib/api";
-import { toast } from "sonner";
-import { Loader2, CalendarIcon, CalendarRange } from "lucide-react";
-import { useNavigate } from "react-router";
+} from '~/components/ui/dialog';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import api from '~/lib/api';
+import { toast } from 'sonner';
+import { Loader2, CalendarIcon, CalendarRange } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 const meses = [
-  "Enero",
-  "Febrero",
-  "Marzo",
-  "Abril",
-  "Mayo",
-  "Junio",
-  "Julio",
-  "Agosto",
-  "Septiembre",
-  "Octubre",
-  "Noviembre",
-  "Diciembre",
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
 ];
 
 interface DialogAbrirPeriodoProps {
@@ -41,8 +41,8 @@ interface DialogAbrirPeriodoProps {
 export default function DialogAbrirPeriodo({
   open,
   onOpenChange,
-  selectedMonth = "",
-  selectedYear = "",
+  selectedMonth = '',
+  selectedYear = '',
   onSuccess,
 }: DialogAbrirPeriodoProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +50,7 @@ export default function DialogAbrirPeriodo({
 
   const handleAbrirPeriodo = async () => {
     if (!selectedMonth || !selectedYear) {
-      toast.error("Por favor seleccione mes y año");
+      toast.error('Por favor seleccione mes y año');
       return;
     }
 
@@ -64,10 +64,10 @@ export default function DialogAbrirPeriodo({
         mesi: selectedMonth,
         añoi: selectedYear,
       };
-      const response = await api.post("/ingresa-periodo", params);
+      const response = await api.post('/ingresa-periodo', params);
 
       if (response.status === 200) {
-        toast.success("El periodo se ha abierto correctamente");
+        toast.success('El periodo se ha abierto correctamente');
         onOpenChange(false);
 
         // Llamar a onSuccess si existe
@@ -79,23 +79,23 @@ export default function DialogAbrirPeriodo({
         }
       } else {
         toast.error(
-          "El periodo ya existe, por favor seleccione otro o reabra el periodo"
+          'El periodo ya existe, por favor seleccione otro o reabra el periodo',
         );
       }
     } catch (error: any) {
-      console.error("Error:", error);
+      console.error('Error:', error);
       let errorMessage = error.response.data;
 
       if (error.response) {
         // Error de respuesta del servidor
         if (error.response.status === 404) {
-          errorMessage = "La ruta de la API no está disponible";
+          errorMessage = 'La ruta de la API no está disponible';
         } else if (error.response.data?.message) {
           errorMessage = error.response.data.message;
         }
       } else if (error.request) {
         // Error de conexión
-        errorMessage = "No se pudo conectar con el servidor";
+        errorMessage = 'No se pudo conectar con el servidor';
       }
 
       toast.error(errorMessage);

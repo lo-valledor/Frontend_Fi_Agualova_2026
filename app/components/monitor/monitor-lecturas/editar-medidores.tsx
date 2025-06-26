@@ -10,7 +10,7 @@ interface EditarMedidoresProps {
 
 export default function EditarMedidores({
   result,
-  onSuccess
+  onSuccess,
 }: EditarMedidoresProps) {
   // Renderizar el componente adecuado según el estado y tarifa del medidor
   const renderForm = () => {

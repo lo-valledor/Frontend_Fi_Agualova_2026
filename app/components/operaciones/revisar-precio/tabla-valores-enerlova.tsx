@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Table,
   TableHeader,
@@ -6,12 +6,12 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "../../ui/table";
-import { Badge } from "~/components/ui/badge";
-import { Checkbox } from "~/components/ui/checkbox";
-import type { TablaValoresEnerlovaProps } from "~/types/operaciones";
-import DialogModificarPrecio from "./dialog-modificar-precio";
-import { Loader2 } from "lucide-react";
+} from '../../ui/table';
+import { Badge } from '~/components/ui/badge';
+import { Checkbox } from '~/components/ui/checkbox';
+import type { TablaValoresEnerlovaProps } from '~/types/operaciones';
+import DialogModificarPrecio from './dialog-modificar-precio';
+import { Loader2 } from 'lucide-react';
 
 export default function TablaValoresEnerlova({
   data,
@@ -36,7 +36,7 @@ export default function TablaValoresEnerlova({
       // Seleccionar solo las filas que no están confirmadas
       const availableRows = data
         .filter(
-          (item) => item.confirmacion !== "Confirmado" && item.indice !== ""
+          (item) => item.confirmacion !== 'Confirmado' && item.indice !== '',
         )
         .map((item) => item.codigo);
       setSelectedRows(availableRows);
@@ -50,7 +50,7 @@ export default function TablaValoresEnerlova({
     data.length > 0 &&
     data
       .filter(
-        (item) => item.confirmacion !== "Confirmado" && item.indice !== ""
+        (item) => item.confirmacion !== 'Confirmado' && item.indice !== '',
       )
       .every((item) => selectedRows.includes(item.codigo));
 
@@ -108,7 +108,7 @@ export default function TablaValoresEnerlova({
                       handleCheckboxChange(item.codigo, checked === true)
                     }
                     disabled={
-                      !isAuthorized || item.confirmacion === "Confirmado"
+                      !isAuthorized || item.confirmacion === 'Confirmado'
                     }
                   />
                 </TableCell>
@@ -121,11 +121,11 @@ export default function TablaValoresEnerlova({
                   {item.valor}
                 </TableCell>
                 <TableCell className="text-center">
-                  {item.confirmacion === "Confirmado" ? (
+                  {item.confirmacion === 'Confirmado' ? (
                     <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                       Confirmado
                     </Badge>
-                  ) : item.indice === "" ? (
+                  ) : item.indice === '' ? (
                     <Badge className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
                       Inhabilitado
                     </Badge>
@@ -139,11 +139,11 @@ export default function TablaValoresEnerlova({
                   )}
                 </TableCell>
                 <TableCell className="text-center">
-                  {item.confirmacion === "Confirmado" ? (
+                  {item.confirmacion === 'Confirmado' ? (
                     <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                       Confirmado
                     </Badge>
-                  ) : item.indice === "" ? (
+                  ) : item.indice === '' ? (
                     <Badge className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
                       Inhabilitado
                     </Badge>

@@ -9,6 +9,7 @@ Este directorio contiene los workflows de GitHub Actions para automatizar la int
 **🎯 Propósito**: Workflow principal que maneja tanto la integración continua como el despliegue continuo.
 
 **🔄 Triggers**:
+
 - Pull requests a cualquier rama
 - Push a ramas: `main`, `master`, `develop`, `staging`
 - Ejecución manual (`workflow_dispatch`)
@@ -16,6 +17,7 @@ Este directorio contiene los workflows de GitHub Actions para automatizar la int
 **📋 Jobs**:
 
 #### CI (Integración Continua)
+
 - ✅ **Type checking** con TypeScript
 - 🧹 **Linting** con ESLint
 - 🏗️ **Build** del proyecto
@@ -23,6 +25,7 @@ Este directorio contiene los workflows de GitHub Actions para automatizar la int
 - 📤 **Artifacts** de build
 
 #### Deploy Production
+
 - 🚀 Se ejecuta solo en push a `main`/`master`
 - 🧹 Limpieza del entorno anterior
 - 🏗️ Build y deploy con Docker Compose
@@ -30,12 +33,14 @@ Este directorio contiene los workflows de GitHub Actions para automatizar la int
 - 🗑️ Limpieza de imágenes Docker antiguas
 
 #### Deploy Staging
+
 - 🧪 Se ejecuta en push a `develop`/`staging`
 - Similar al deploy de producción pero para staging
 
 ### 2. `deploy.yml` - Workflow Legacy (Deprecado)
 
 **⚠️ Estado**: Deprecado, mantenido solo para emergencias.
+
 - Solo se ejecuta manualmente
 - Lógica básica de deploy sin CI
 
@@ -46,16 +51,19 @@ Este directorio contiene los workflows de GitHub Actions para automatizar la int
 Configura estos secrets en tu repositorio (`Settings > Secrets and variables > Actions`):
 
 #### Producción
+
 - `VITE_API_URL`: URL de la API de producción
 - `PRODUCTION_URL`: URL del sitio de producción (opcional)
 
 #### Staging (Opcional)
+
 - `STAGING_API_URL`: URL de la API de staging
 - `STAGING_URL`: URL del sitio de staging (opcional)
 
 ### Self-hosted Runner
 
 Los jobs de deploy requieren un runner self-hosted con:
+
 - ✅ Docker y Docker Compose instalados
 - ✅ Acceso al servidor de deploy
 - ✅ Permisos para ejecutar comandos Docker
@@ -116,35 +124,42 @@ El workflow utiliza estos scripts definidos en `package.json`:
 ## 🐛 Troubleshooting
 
 ### El CI falla en Type Checking
+
 - Ejecuta `pnpm run typecheck` localmente
 - Revisa errores de TypeScript en el código
 
 ### El CI falla en Linting
+
 - Ejecuta `pnpm run lint` localmente
 - Corrige errores con `pnpm run lint:fix`
 
 ### El Deploy falla
+
 - Verifica que los secrets estén configurados
 - Revisa los logs del runner self-hosted
 - Confirma que Docker Compose está funcionando
 
 ### Cache de pnpm no funciona
+
 - El cache se basa en `pnpm-lock.yaml`
 - Si cambias la versión de Node.js/pnpm, el cache se regenera
 
 ## 📈 Monitoreo
 
 ### GitHub Actions
+
 - Ve el estado de los workflows en la pestaña "Actions"
 - Revisa los logs detallados de cada step
 
 ### Notificaciones
+
 - GitHub enviará notificaciones por email/Slack si configuras webhooks
 - Los PRs mostrarán el estado del CI automáticamente
 
 ## 🔄 Actualizaciones Futuras
 
 ### Posibles Mejoras
+
 - [ ] Tests unitarios/integración
 - [ ] Code coverage reports
 - [ ] Security scanning (Dependabot, CodeQL)
@@ -154,6 +169,7 @@ El workflow utiliza estos scripts definidos en `package.json`:
 - [ ] Rollback automático
 
 ### Mantenimiento
+
 - Actualizar versions de actions regularmente
 - Revisar y limpiar workflows antiguos
-- Monitorear uso de runners self-hosted 
+- Monitorear uso de runners self-hosted

@@ -1,8 +1,8 @@
-import { type Column } from "@tanstack/react-table";
-import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
+import { type Column } from '@tanstack/react-table';
+import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 
-import { cn } from "~/lib/utils";
-import { Button } from "~/components/ui/button";
+import { cn } from '~/lib/utils';
+import { Button } from '~/components/ui/button';
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -21,10 +21,10 @@ export function DataTableColumnHeader<TData, TValue>({
 
   const handleSort = () => {
     const currentSort = column.getIsSorted();
-    if (currentSort === "desc") {
+    if (currentSort === 'desc') {
       // Si está descendente, cambia a ascendente
       column.toggleSorting(false); // false para ascendente
-    } else if (currentSort === "asc") {
+    } else if (currentSort === 'asc') {
       // Si está ascendente, cambia a descendente
       column.toggleSorting(true); // true para descendente
     } else {
@@ -34,20 +34,20 @@ export function DataTableColumnHeader<TData, TValue>({
   };
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn('flex items-center space-x-2', className)}>
       <Button
         variant="ghost"
         size="sm"
         onClick={handleSort}
         className={cn(
-          "-ml-3 h-8 hover:bg-accent/50",
-          column.getIsSorted() && "bg-accent" // Mantiene el fondo si está ordenado
+          '-ml-3 h-8 hover:bg-accent/50',
+          column.getIsSorted() && 'bg-accent', // Mantiene el fondo si está ordenado
         )}
       >
         <span>{title}</span>
-        {column.getIsSorted() === "desc" ? (
+        {column.getIsSorted() === 'desc' ? (
           <ArrowDown className="ml-2 h-4 w-4" />
-        ) : column.getIsSorted() === "asc" ? (
+        ) : column.getIsSorted() === 'asc' ? (
           <ArrowUp className="ml-2 h-4 w-4" />
         ) : (
           // Cuando no está ordenado, ChevronsUpDown es más neutral

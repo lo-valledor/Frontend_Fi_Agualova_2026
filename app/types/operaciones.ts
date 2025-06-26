@@ -149,7 +149,7 @@ export interface ValidarSectoresPendientes {
       nicho: string;
       estado: number;
       cantidad: number;
-    }
+    },
   ];
 }
 

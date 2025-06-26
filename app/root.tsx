@@ -61,8 +61,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   console.error('Navegador:', navigator.userAgent);
   console.error('URL:', window.location.href);
   console.error(
-    'SessionStorage token:',
-    sessionStorage.getItem('token') ? 'EXISTE' : 'NO EXISTE',
+    'LocalStorage token:',
+    localStorage.getItem('token') ? 'EXISTE' : 'NO EXISTE',
   ); */
 
   let message = '¡Ups!';
@@ -100,8 +100,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
               <strong>URL:</strong> {window.location.href}
             </li>
             <li>
-              <strong>Token en sessionStorage:</strong>{' '}
-              {sessionStorage.getItem('token') ? 'SÍ' : 'NO'}
+              <strong>Token en localStorage:</strong>{' '}
+              {localStorage.getItem('token') ? 'SÍ' : 'NO'}
             </li>
           </ul>
         </div>
@@ -126,7 +126,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
           </button>
           <button
             onClick={() => {
-              sessionStorage.clear();
+              localStorage.clear();
               window.location.href = '/auth/login';
             }}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"

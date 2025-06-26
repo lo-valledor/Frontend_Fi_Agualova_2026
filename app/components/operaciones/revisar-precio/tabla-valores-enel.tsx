@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Table,
   TableHeader,
@@ -6,15 +6,15 @@ import {
   TableHead,
   TableBody,
   TableCell,
-} from "../../ui/table";
-import { Badge } from "~/components/ui/badge";
-import { Loader2 } from "lucide-react";
-import { Checkbox } from "~/components/ui/checkbox";
-import type { TablaValoresEnelProps } from "~/types/operaciones";
-import api from "~/lib/api";
-import { useAuth } from "~/context/AuthContext";
-import { toast } from "sonner";
-import DialogModificarPrecio from "./dialog-modificar-precio";
+} from '../../ui/table';
+import { Badge } from '~/components/ui/badge';
+import { Loader2 } from 'lucide-react';
+import { Checkbox } from '~/components/ui/checkbox';
+import type { TablaValoresEnelProps } from '~/types/operaciones';
+import api from '~/lib/api';
+import { useAuth } from '~/context/AuthContext';
+import { toast } from 'sonner';
+import DialogModificarPrecio from './dialog-modificar-precio';
 
 export default function TablaValoresEnel({
   data,
@@ -41,7 +41,7 @@ export default function TablaValoresEnel({
       // Seleccionar solo las filas que no están confirmadas y tienen índice
       const availableRows = data
         .filter(
-          (item) => item.confirmacion !== "Confirmado" && item.indice !== ""
+          (item) => item.confirmacion !== 'Confirmado' && item.indice !== '',
         )
         .map((item) => item.codigo);
       setSelectedRows(availableRows);
@@ -55,29 +55,29 @@ export default function TablaValoresEnel({
     data.length > 0 &&
     data
       .filter(
-        (item) => item.confirmacion !== "Confirmado" && item.indice !== ""
+        (item) => item.confirmacion !== 'Confirmado' && item.indice !== '',
       )
       .every((item) => selectedRows.includes(item.codigo));
 
   const handleConfirmar = async (item: any) => {
     if (!user || !user.username) {
-      toast.error("No se pudo obtener información del usuario");
+      toast.error('No se pudo obtener información del usuario');
       return;
     }
 
     try {
       const response = await api.post(
-        `/ConfirmarPrecio?indice=${item.indice}&usuario=${user.username}`
+        `/ConfirmarPrecio?indice=${item.indice}&usuario=${user.username}`,
       );
       if (response.status === 200) {
         setSelectedRows((prev) => [...prev, item.codigo]);
         toast.success(`Se ha confirmado el precio para ${item.descripcion}`);
       } else {
-        toast.error("No se pudo confirmar el precio");
+        toast.error('No se pudo confirmar el precio');
       }
     } catch (error) {
-      console.error("Error al confirmar precio:", error);
-      toast.error("Ocurrió un error al procesar la solicitud");
+      console.error('Error al confirmar precio:', error);
+      toast.error('Ocurrió un error al procesar la solicitud');
     }
   };
 
@@ -136,8 +136,8 @@ export default function TablaValoresEnel({
                     }
                     disabled={
                       !isAuthorized ||
-                      item.confirmacion === "Confirmado" ||
-                      item.indice === ""
+                      item.confirmacion === 'Confirmado' ||
+                      item.indice === ''
                     }
                   />
                 </TableCell>
@@ -150,11 +150,11 @@ export default function TablaValoresEnel({
                   {item.valor}
                 </TableCell>
                 <TableCell className="text-center">
-                  {item.confirmacion === "Confirmado" ? (
+                  {item.confirmacion === 'Confirmado' ? (
                     <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                       Confirmado
                     </Badge>
-                  ) : item.indice === "" ? (
+                  ) : item.indice === '' ? (
                     <Badge className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
                       Inhabilitado
                     </Badge>
@@ -168,11 +168,11 @@ export default function TablaValoresEnel({
                   )}
                 </TableCell>
                 <TableCell className="text-center">
-                  {item.confirmacion === "Confirmado" ? (
+                  {item.confirmacion === 'Confirmado' ? (
                     <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
                       Confirmado
                     </Badge>
-                  ) : item.indice === "" ? (
+                  ) : item.indice === '' ? (
                     <Badge className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
                       Inhabilitado
                     </Badge>

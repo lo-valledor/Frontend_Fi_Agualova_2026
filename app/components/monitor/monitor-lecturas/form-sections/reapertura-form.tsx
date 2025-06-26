@@ -1,51 +1,51 @@
-import React, { useState } from 'react'
-import { Label } from '~/components/ui/label'
-import { Button } from '~/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
-import { Alert, AlertDescription } from '~/components/ui/alert'
-import { AlertCircle, Key, FileText, Loader2, RotateCcw } from 'lucide-react'
-import { toast } from 'sonner'
-import type { MedidorNichoItem } from '~/types/monitor'
+import React, { useState } from 'react';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { AlertCircle, Key, FileText, Loader2, RotateCcw } from 'lucide-react';
+import { toast } from 'sonner';
+import type { MedidorNichoItem } from '~/types/monitor';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '~/components/ui/select'
-import { Textarea } from '~/components/ui/textarea'
-import api from '~/lib/api'
+} from '~/components/ui/select';
+import { Textarea } from '~/components/ui/textarea';
+import api from '~/lib/api';
 
 interface ReaperturaFormProps {
-  result: MedidorNichoItem
-  onSuccess?: () => void
+  result: MedidorNichoItem;
+  onSuccess?: () => void;
 }
 
 export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
-  const [selectedClave, setSelectedClave] = useState('0')
-  const [descripcionReapertura, setDescripcionReapertura] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [selectedClave, setSelectedClave] = useState('0');
+  const [descripcionReapertura, setDescripcionReapertura] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Función para manejar la reapertura de mediciones en estado 4
   const handleReaperturaMedicion = () => {
     // Validar que se haya seleccionado una clave
     if (selectedClave === '0') {
-      toast.warning('Debe seleccionar un motivo de reapertura')
-      return
+      toast.warning('Debe seleccionar un motivo de reapertura');
+      return;
     }
 
     // Validar que se haya ingresado una descripción
     if (!descripcionReapertura.trim()) {
       toast.warning(
         'Debe ingresar una descripción detallada del motivo de reapertura',
-      )
-      return
+      );
+      return;
     }
 
     // Validar que la descripción tenga al menos 10 caracteres
     if (descripcionReapertura.trim().length < 10) {
-      toast.warning('La descripción debe tener al menos 10 caracteres')
-      return
+      toast.warning('La descripción debe tener al menos 10 caracteres');
+      return;
     }
 
     // Preparar los datos para enviar al servidor
@@ -53,26 +53,26 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
       lecturaId: result.LM_ID.toString(),
       claveId: parseInt(selectedClave),
       descripcion: descripcionReapertura.trim(),
-    }
+    };
 
-    reabrirMedicion(dataToSend)
-  }
+    reabrirMedicion(dataToSend);
+  };
 
   // Función para reabrir mediciones
   const reabrirMedicion = async (data: any) => {
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
-      const response = await api.post('/habilitar-edicion-lectura', data)
+      const response = await api.post('/habilitar-edicion-lectura', data);
 
       if (response.status === 200) {
         toast.success(
           'Medición reabierta correctamente. Ya puede editar los valores.',
-        )
+        );
 
         // Llamar al callback de éxito para cerrar el diálogo principal y actualizar la lista
         if (onSuccess) {
-          onSuccess()
+          onSuccess();
         }
       } else {
         toast.error(
@@ -83,10 +83,10 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
               ? response.data.message
               : 'Error desconocido'
           }`,
-        )
+        );
       }
     } catch (error: any) {
-      console.error('Error al reabrir la medición:', error)
+      console.error('Error al reabrir la medición:', error);
 
       // Mostrar mensaje de error más detallado
       if (error.response) {
@@ -97,24 +97,24 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
             error.response.statusText ||
             'Error desconocido'
           }`,
-        )
+        );
       } else if (error.request) {
         // La solicitud fue hecha pero no se recibió respuesta
         toast.error(
           'No se recibió respuesta del servidor. Verifique su conexión a internet.',
-        )
+        );
       } else {
         // Algo ocurrió al configurar la solicitud
         toast.error(
           `Error al procesar la solicitud: ${
             error.message || 'Error desconocido'
           }`,
-        )
+        );
       }
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -178,7 +178,13 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
             />
             <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
               <span>Mínimo 10 caracteres</span>
-              <span className={descripcionReapertura.length < 10 ? 'text-red-500' : 'text-green-600'}>
+              <span
+                className={
+                  descripcionReapertura.length < 10
+                    ? 'text-red-500'
+                    : 'text-green-600'
+                }
+              >
                 {descripcionReapertura.length}/10
               </span>
             </div>
@@ -207,5 +213,5 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

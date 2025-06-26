@@ -1,27 +1,27 @@
-import React from "react";
-import { Card, CardContent } from "~/components/ui/card";
+import React from 'react';
+import { Card, CardContent } from '~/components/ui/card';
 
 interface LoadingStateProps {
   message?: string;
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
 
 export function LoadingState({
-  message = "Cargando...",
-  size = "md",
-  className = "",
+  message = 'Cargando...',
+  size = 'md',
+  className = '',
 }: LoadingStateProps) {
   const spinnerSizes = {
-    sm: "h-8 w-8",
-    md: "h-12 w-12",
-    lg: "h-16 w-16",
+    sm: 'h-8 w-8',
+    md: 'h-12 w-12',
+    lg: 'h-16 w-16',
   };
 
   const containerSizes = {
-    sm: "h-32",
-    md: "h-48",
-    lg: "h-64",
+    sm: 'h-32',
+    md: 'h-48',
+    lg: 'h-64',
   };
 
   return (
@@ -46,8 +46,8 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  message = "No se encontraron datos",
-  className = "",
+  message = 'No se encontraron datos',
+  className = '',
 }: EmptyStateProps) {
   return (
     <Card className={`mt-4 ${className}`}>

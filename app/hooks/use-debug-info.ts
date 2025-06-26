@@ -17,11 +17,14 @@ export const useDebugInfo = () => {
   const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
 
   const getBrowserName = (userAgent: string): string => {
-    if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) return 'Chrome';
+    if (userAgent.includes('Chrome') && !userAgent.includes('Edg'))
+      return 'Chrome';
     if (userAgent.includes('Firefox')) return 'Firefox';
-    if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) return 'Safari';
+    if (userAgent.includes('Safari') && !userAgent.includes('Chrome'))
+      return 'Safari';
     if (userAgent.includes('Edg')) return 'Edge';
-    if (userAgent.includes('Opera') || userAgent.includes('OPR')) return 'Opera';
+    if (userAgent.includes('Opera') || userAgent.includes('OPR'))
+      return 'Opera';
     return 'Unknown';
   };
 
@@ -38,19 +41,25 @@ export const useDebugInfo = () => {
     }
   };
 
-  const detectProxyOrInterception = (): { detected: boolean; evidence: string[] } => {
+  const detectProxyOrInterception = (): {
+    detected: boolean;
+    evidence: string[];
+  } => {
     const evidence: string[] = [];
-    
+
     // Verificar si hay scripts externos sospechosos
-    const scripts = Array.from(document.querySelectorAll('script')).map(s => s.src);
-    const suspiciousScripts = scripts.filter(src => 
-      src.includes('main.js') || 
-      src.includes('fiddler') || 
-      src.includes('charles') || 
-      src.includes('proxy') ||
-      src.includes('debug')
+    const scripts = Array.from(document.querySelectorAll('script')).map(
+      (s) => s.src,
     );
-    
+    const suspiciousScripts = scripts.filter(
+      (src) =>
+        src.includes('main.js') ||
+        src.includes('fiddler') ||
+        src.includes('charles') ||
+        src.includes('proxy') ||
+        src.includes('debug'),
+    );
+
     if (suspiciousScripts.length > 0) {
       evidence.push(`Scripts sospechosos: ${suspiciousScripts.join(', ')}`);
     }
@@ -68,14 +77,14 @@ export const useDebugInfo = () => {
 
     return {
       detected: evidence.length > 0,
-      evidence
+      evidence,
     };
   };
 
   useEffect(() => {
     const gatherDebugInfo = async () => {
       const userAgent = navigator.userAgent;
-      const token = sessionStorage.getItem('token');
+      const token = localStorage.getItem('token');
       const isPrivate = await detectPrivateMode();
       const proxyInfo = detectProxyOrInterception();
 
@@ -93,14 +102,16 @@ export const useDebugInfo = () => {
       };
 
       setDebugInfo(info);
-      
+
       // Log automático en consola
       //console.log('🔍 DEBUG INFO:', info);
-      
+
       if (proxyInfo.detected) {
         console.warn('⚠️ POSIBLE INTERFERENCIA DETECTADA:');
-        proxyInfo.evidence.forEach(e => console.warn(`  - ${e}`));
-        console.warn('  Esto puede causar problemas con las headers de autorización');
+        proxyInfo.evidence.forEach((e) => console.warn(`  - ${e}`));
+        console.warn(
+          '  Esto puede causar problemas con las headers de autorización',
+        );
       }
     };
 
@@ -108,4 +119,4 @@ export const useDebugInfo = () => {
   }, []);
 
   return debugInfo;
-}; 
+};

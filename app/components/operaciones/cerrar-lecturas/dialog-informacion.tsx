@@ -7,16 +7,16 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
+} from '~/components/ui/dialog';
+import { Button } from '~/components/ui/button';
 import {
   InfoIcon,
   AlertCircle,
   AlertTriangle,
   CheckCircle,
-} from "lucide-react";
-import { cn } from "~/lib/utils";
-import { Badge } from "~/components/ui/badge";
+} from 'lucide-react';
+import { cn } from '~/lib/utils';
+import { Badge } from '~/components/ui/badge';
 
 export default function DialogInformacion() {
   return (
@@ -44,16 +44,16 @@ export default function DialogInformacion() {
           </p>
 
           {[
-            "Verifica las lecturas que tienen claves rojas o naranjas antes de cerrar.",
-            "Las lecturas con clave roja requieren revisión obligatoria.",
-            "Puedes cerrar lecturas por sector o por nicho según necesites.",
-            "Una vez cerradas, las lecturas estarán disponibles para facturación.",
+            'Verifica las lecturas que tienen claves rojas o naranjas antes de cerrar.',
+            'Las lecturas con clave roja requieren revisión obligatoria.',
+            'Puedes cerrar lecturas por sector o por nicho según necesites.',
+            'Una vez cerradas, las lecturas estarán disponibles para facturación.',
           ].map((text, index) => (
             <div key={index} className="flex gap-3 items-start">
               <span
                 className={cn(
-                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
-                  "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
+                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold',
+                  'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
                 )}
               >
                 {index + 1}

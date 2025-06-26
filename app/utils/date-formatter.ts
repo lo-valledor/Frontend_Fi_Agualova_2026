@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format } from 'date-fns';
 
 /**
  * Formatea una fecha a formato DD-MM-YYYY
@@ -12,7 +12,7 @@ export function formatToDate(dateString: string | null): string {
     // Intentar extraer la fecha si es un string en formato ISO
     // eslint-disable-next-line no-console
     console.error('Error al formatear la fecha:', error);
-    return String(dateString).split("T")[0] || "-";
+    return String(dateString).split('T')[0] || '-';
   }
 }
 
@@ -36,11 +36,11 @@ export function formatToTime(dateString: string | null): string {
  * Formatea una fecha al formato YYYYMMDD (usado en las consultas a la API)
  */
 export function formatToYYYYMMDD(dateString: string): string {
-  if (!dateString) return "";
+  if (!dateString) return '';
 
   // Dividir la fecha en partes
-  const parts = dateString.split("-");
-  if (parts.length !== 3) return "";
+  const parts = dateString.split('-');
+  if (parts.length !== 3) return '';
 
   let year, month, day;
 

@@ -1,5 +1,5 @@
 # docker-compose.yml
-version: "3.8"
+version: '3.8'
 services:
   frontend:
     build:
@@ -7,4 +7,4 @@ services:
       args:
         VITE_API_URL: http://192.168.1.139:8081/Enerlova
     ports:
-      - "8080:80"
+      - '8080:80'

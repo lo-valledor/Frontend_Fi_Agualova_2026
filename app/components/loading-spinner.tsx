@@ -1,28 +1,28 @@
-import React from "react";
+import React from 'react';
 
 interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg";
+  size?: 'sm' | 'md' | 'lg';
   message?: string;
   fullScreen?: boolean;
 }
 
 export function LoadingSpinner({
-  size = "md",
-  message = "Cargando...",
+  size = 'md',
+  message = 'Cargando...',
   fullScreen = false,
 }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: "h-6 w-6",
-    md: "h-10 w-10",
-    lg: "h-16 w-16",
+    sm: 'h-6 w-6',
+    md: 'h-10 w-10',
+    lg: 'h-16 w-16',
   };
 
   return (
     <div
       className={`flex flex-col items-center justify-center ${
         fullScreen
-          ? "fixed inset-0 bg-background/80 backdrop-blur-sm z-50"
-          : "h-full min-h-[200px]"
+          ? 'fixed inset-0 bg-background/80 backdrop-blur-sm z-50'
+          : 'h-full min-h-[200px]'
       }`}
     >
       <div className="flex flex-col items-center gap-4">

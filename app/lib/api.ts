@@ -1,5 +1,5 @@
-import { type AxiosRequestConfig } from "axios";
-import axiosInstance from "../services/axiosConfig";
+import { type AxiosRequestConfig } from 'axios';
+import axiosInstance from '../services/axiosConfig';
 
 // Generic API response type
 interface ApiResponse<T> {
@@ -14,13 +14,13 @@ export const api = {
   auth: {
     login: (credentials: { usuario: string; contrasena: string }) =>
       axiosInstance.post<ApiResponse<{ token: string }> | { token: string }>(
-        "/login",
-        credentials
+        '/login',
+        credentials,
       ),
-    logout: () => axiosInstance.post<ApiResponse<void> | void>("/logout"),
+    logout: () => axiosInstance.post<ApiResponse<void> | void>('/logout'),
     refreshToken: () =>
       axiosInstance.post<ApiResponse<{ token: string }> | { token: string }>(
-        "/refresh-token"
+        '/refresh-token',
       ),
   },
 

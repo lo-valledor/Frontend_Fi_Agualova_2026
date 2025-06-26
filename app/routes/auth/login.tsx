@@ -2,7 +2,6 @@
 import { LoginForm } from '~/components/auth/login-form';
 import { useAuth } from '~/context/AuthContext';
 import { Navigate } from 'react-router';
-import { Bolt } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '~/components/theme-provider';
 import type { Route } from './+types/login';
@@ -57,7 +56,11 @@ const Login = () => {
         >
           <div className="flex items-center gap-2">
             <div className="bg-white/90 dark:bg-gray-800/90 p-2 rounded-full">
-              <Bolt className="h-6 w-6 text-sky-600 dark:text-sky-400" />
+              <img
+                src="/logo-enerlova.png"
+                alt="Enerlova"
+                className="h-6 w-6"
+              />
             </div>
             <span className="text-white text-xl font-bold">Enerlova</span>
           </div>

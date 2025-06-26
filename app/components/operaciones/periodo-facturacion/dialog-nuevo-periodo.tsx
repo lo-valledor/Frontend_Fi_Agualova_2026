@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,34 +6,34 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { Label } from "~/components/ui/label";
+} from '~/components/ui/dialog';
+import { Button } from '~/components/ui/button';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "~/components/ui/select";
-import { toast } from "sonner";
-import { CalendarDaysIcon, PlusCircleIcon, Eraser } from "lucide-react";
-import { useOperaciones } from "~/hooks/use-operaciones";
-import DialogAbrirPeriodo from "./dialog-abrir-periodo";
-import type { Anio } from "~/types/operaciones";
+} from '~/components/ui/select';
+import { toast } from 'sonner';
+import { CalendarDaysIcon, PlusCircleIcon, Eraser } from 'lucide-react';
+import { useOperaciones } from '~/hooks/use-operaciones';
+import DialogAbrirPeriodo from './dialog-abrir-periodo';
+import type { Anio } from '~/types/operaciones';
 const months = [
-  { value: "01", label: "Enero" },
-  { value: "02", label: "Febrero" },
-  { value: "03", label: "Marzo" },
-  { value: "04", label: "Abril" },
-  { value: "05", label: "Mayo" },
-  { value: "06", label: "Junio" },
-  { value: "07", label: "Julio" },
-  { value: "08", label: "Agosto" },
-  { value: "09", label: "Septiembre" },
-  { value: "10", label: "Octubre" },
-  { value: "11", label: "Noviembre" },
-  { value: "12", label: "Diciembre" },
+  { value: '01', label: 'Enero' },
+  { value: '02', label: 'Febrero' },
+  { value: '03', label: 'Marzo' },
+  { value: '04', label: 'Abril' },
+  { value: '05', label: 'Mayo' },
+  { value: '06', label: 'Junio' },
+  { value: '07', label: 'Julio' },
+  { value: '08', label: 'Agosto' },
+  { value: '09', label: 'Septiembre' },
+  { value: '10', label: 'Octubre' },
+  { value: '11', label: 'Noviembre' },
+  { value: '12', label: 'Diciembre' },
 ];
 
 interface DialogNuevoPeriodoProps {
@@ -49,21 +49,21 @@ export default function DialogNuevoPeriodo({
   onPeriodoCreated,
   years,
 }: DialogNuevoPeriodoProps) {
-  const [selectedMonth, setSelectedMonth] = useState<string>("");
-  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [selectedYear, setSelectedYear] = useState<string>('');
   const [isOpeningPeriodo, setIsOpeningPeriodo] = useState(false);
 
   const { consultaAnio, isLoading } = useOperaciones();
 
   const handleClearFilters = () => {
-    setSelectedMonth("");
-    setSelectedYear("");
-    toast.success("Campos limpiados");
+    setSelectedMonth('');
+    setSelectedYear('');
+    toast.success('Campos limpiados');
   };
 
   const handleOpenPeriodo = () => {
     if (!selectedMonth || !selectedYear) {
-      toast.error("Por favor selecciona mes y año");
+      toast.error('Por favor selecciona mes y año');
       return;
     }
 
@@ -72,8 +72,8 @@ export default function DialogNuevoPeriodo({
   };
 
   const handleClose = () => {
-    setSelectedMonth("");
-    setSelectedYear("");
+    setSelectedMonth('');
+    setSelectedYear('');
     onOpenChange(false);
   };
 

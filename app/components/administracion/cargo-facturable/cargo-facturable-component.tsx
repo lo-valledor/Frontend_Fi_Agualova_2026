@@ -9,7 +9,7 @@ import {
   CardTitle,
   CardHeader,
 } from '~/components/ui/card';
-  import type {
+import type {
   BuscarCargoFacturable,
   GeCombosConceptos,
   GetCombosTarifas,

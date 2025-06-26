@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogTrigger,
@@ -6,14 +6,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
-import { toast } from "sonner";
-import api from "~/lib/api";
-import { Loader2, PlusCircle } from "lucide-react";
-import type { DialogAgregarPreciosProps } from "~/types/operaciones";
+} from '~/components/ui/dialog';
+import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { toast } from 'sonner';
+import api from '~/lib/api';
+import { Loader2, PlusCircle } from 'lucide-react';
+import type { DialogAgregarPreciosProps } from '~/types/operaciones';
 
 export default function DialogAgregarPrecios({
   codigo,
@@ -24,20 +24,20 @@ export default function DialogAgregarPrecios({
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [valores, setValores] = useState({
-    valor1: "",
-    valor2: "",
-    valor3: "",
+    valor1: '',
+    valor2: '',
+    valor3: '',
   });
 
   const handleSubmit = async () => {
     if (!valores.valor1 || !valores.valor2 || !valores.valor3) {
-      toast.error("Por favor complete todos los valores");
+      toast.error('Por favor complete todos los valores');
       return;
     }
 
     try {
       setIsLoading(true);
-      const response = await api.post("/ingresar-precio-cargo", {
+      const response = await api.post('/ingresar-precio-cargo', {
         mes: parseInt(mes),
         año: parseInt(anio),
         codigo: codigo,
@@ -47,13 +47,13 @@ export default function DialogAgregarPrecios({
       });
 
       if (response.status === 200) {
-        toast.success("Precios agregados correctamente");
+        toast.success('Precios agregados correctamente');
         setIsOpen(false);
         if (onSuccess) onSuccess();
       }
     } catch (error) {
-      console.error("Error al agregar precios:", error);
-      toast.error("Error al agregar los precios");
+      console.error('Error al agregar precios:', error);
+      toast.error('Error al agregar los precios');
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +80,7 @@ export default function DialogAgregarPrecios({
         <div className="grid gap-4 py-3">
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">
-              Valor 1{" "}
+              Valor 1{' '}
             </Label>
             <Input
               type="number"
@@ -95,7 +95,7 @@ export default function DialogAgregarPrecios({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">
-              Valor 2{" "}
+              Valor 2{' '}
             </Label>
             <Input
               type="number"
@@ -110,7 +110,7 @@ export default function DialogAgregarPrecios({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">
-              Valor 3{" "}
+              Valor 3{' '}
             </Label>
             <Input
               type="number"

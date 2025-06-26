@@ -1,7 +1,7 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { useAuth } from "~/context/AuthContext";
-import MoonLoader from "react-spinners/MoonLoader";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router';
+import { useAuth } from '~/context/AuthContext';
+import MoonLoader from 'react-spinners/MoonLoader';
 
 interface AutoRedirectProps {
   /** Ruta a la que redirigir si el usuario está autenticado */
@@ -13,9 +13,9 @@ interface AutoRedirectProps {
 }
 
 export const AutoRedirect = ({
-  authenticatedRoute = "/dashboard",
-  unauthenticatedRoute = "/auth/login",
-  loadingMessage = "Verificando autenticación...",
+  authenticatedRoute = '/dashboard',
+  unauthenticatedRoute = '/auth/login',
+  loadingMessage = 'Verificando autenticación...',
 }: AutoRedirectProps) => {
   const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
@@ -28,7 +28,13 @@ export const AutoRedirect = ({
         navigate(unauthenticatedRoute, { replace: true });
       }
     }
-  }, [isAuthenticated, loading, navigate, authenticatedRoute, unauthenticatedRoute]);
+  }, [
+    isAuthenticated,
+    loading,
+    navigate,
+    authenticatedRoute,
+    unauthenticatedRoute,
+  ]);
 
   if (loading) {
     return (

@@ -5,6 +5,7 @@ Esta guía te ayudará a configurar y solucionar problemas del GitHub Actions se
 ## 📋 Requisitos Previos
 
 ### En el Servidor de Despliegue:
+
 - ✅ **Ubuntu/Debian** (recomendado) o CentOS/RHEL
 - ✅ **Docker** y **Docker Compose** instalados
 - ✅ **Git** instalado
@@ -94,11 +95,13 @@ sudo journalctl -u actions.runner.* -f
 ### Runner Offline
 
 #### Opción 1: Reiniciar el Servicio
+
 ```bash
 ./scripts/setup-runner.sh restart
 ```
 
 #### Opción 2: Reinstalar el Runner
+
 ```bash
 # Detener y desinstalar
 cd actions-runner
@@ -164,6 +167,7 @@ tu-proyecto/
 ## 🚀 Probar el Despliegue
 
 ### 1. Crear un PR
+
 ```bash
 git checkout -b test-deploy
 git add .
@@ -172,11 +176,13 @@ git push origin test-deploy
 ```
 
 ### 2. Crear Pull Request
+
 - Ve a GitHub y crea un PR desde `test-deploy` a `main`
 - El CI se ejecutará automáticamente
 - Si el PR se mergea a `main`, se activará el deploy
 
 ### 3. Verificar Despliegue
+
 ```bash
 # En el servidor
 ./scripts/setup-runner.sh deploy
@@ -188,6 +194,7 @@ curl http://localhost:8080
 ## 📊 Monitoreo
 
 ### Logs del Runner
+
 ```bash
 # Logs en tiempo real
 sudo journalctl -u actions.runner.* -f
@@ -197,6 +204,7 @@ tail -f actions-runner/runner.log
 ```
 
 ### Logs del Despliegue
+
 ```bash
 # Logs de Docker Compose
 docker-compose logs -f
@@ -206,6 +214,7 @@ docker-compose ps
 ```
 
 ### Métricas del Servidor
+
 ```bash
 # Uso de CPU y memoria
 htop
@@ -220,6 +229,7 @@ iftop
 ## 🔄 Mantenimiento
 
 ### Actualizar el Runner
+
 ```bash
 cd actions-runner
 sudo ./svc.sh stop
@@ -228,6 +238,7 @@ sudo ./svc.sh start
 ```
 
 ### Limpiar Docker
+
 ```bash
 # Limpiar imágenes no utilizadas
 docker image prune -f
@@ -240,6 +251,7 @@ docker volume prune -f
 ```
 
 ### Backup de Configuración
+
 ```bash
 # Backup del runner
 tar -czf runner-backup-$(date +%Y%m%d).tar.gz actions-runner/
@@ -251,22 +263,26 @@ cp docker-compose.yml docker-compose.yml.backup
 ## 🆘 Troubleshooting
 
 ### Error: "Runner is offline"
+
 - ✅ Verificar conexión a internet
 - ✅ Reiniciar el servicio del runner
 - ✅ Verificar logs del runner
 - ✅ Reinstalar con nuevo token
 
 ### Error: "Docker not found"
+
 - ✅ Instalar Docker: `sudo apt install docker.io`
 - ✅ Agregar usuario al grupo docker
 - ✅ Reiniciar sesión o ejecutar `newgrp docker`
 
 ### Error: "Port 8080 already in use"
+
 - ✅ Verificar qué proceso usa el puerto: `netstat -tlnp | grep :8080`
 - ✅ Detener proceso: `sudo lsof -ti:8080 | xargs kill -9`
 - ✅ O cambiar puerto en `docker-compose.yml`
 
 ### Error: "Build failed"
+
 - ✅ Verificar que `VITE_API_URL` está configurado
 - ✅ Verificar logs del build en GitHub Actions
 - ✅ Probar build localmente: `pnpm run build`
@@ -282,4 +298,4 @@ Si tienes problemas:
 
 ---
 
-**¡Con esta configuración, tu aplicación se desplegará automáticamente cada vez que hagas merge a main!** 🚀 
+**¡Con esta configuración, tu aplicación se desplegará automáticamente cada vez que hagas merge a main!** 🚀

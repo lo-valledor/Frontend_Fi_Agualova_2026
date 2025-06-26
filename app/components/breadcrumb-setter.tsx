@@ -1,6 +1,6 @@
 // src/components/breadcrumb-setter.tsx
-import { useEffect } from "react";
-import { useBreadcrumbs } from "~/context/BreadcrumbContext"; // Ajusta la ruta
+import { useEffect } from 'react';
+import { useBreadcrumbs } from '~/context/BreadcrumbContext'; // Ajusta la ruta
 
 // Reutiliza la interfaz
 interface BreadcrumbItem {

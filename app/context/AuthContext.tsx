@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
@@ -87,11 +88,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         //console.log('Navegador:', navigator.userAgent);
         //console.log('URL actual:', window.location.href);
 
-        const token = sessionStorage.getItem('token');
-        //console.log('Token encontrado en sessionStorage:', token ? 'SÍ' : 'NO');
+        const token = localStorage.getItem('token');
+        //console.log('Token encontrado en localStorage:', token ? 'SÍ' : 'NO');
 
         if (token) {
-          //console.log('Token completo:', token);
+          //console.log('Token completo:', token.substring(0, 50) + '...');
           const isValid = isTokenValid(token);
           //console.log('¿Token válido?', isValid);
 
@@ -101,17 +102,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             setUser(userData);
           } else {
             // Token expirado o inválido
-            sessionStorage.removeItem('token');
+            localStorage.removeItem('token');
             console.warn(
-              'Token expirado o inválido, removido del sessionStorage',
+              'Token expirado o inválido, removido del localStorage',
             );
           }
         } else {
-          //console.log('No hay token en sessionStorage');
+          //console.log('No hay token en localStorage');
         }
       } catch (error) {
         console.error('Error al inicializar autenticación:', error);
-        sessionStorage.removeItem('token');
+        localStorage.removeItem('token');
       } finally {
         //console.log('=== FIN INICIALIZACIÓN AUTENTICACIÓN ===');
         setLoading(false);
@@ -119,7 +120,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     initializeAuth();
-  }, []);
+
+    // Escuchar cambios en localStorage de otras pestañas
+    const handleStorageChange = (event: StorageEvent) => {
+      console.log('Storage change detected:', event);
+      // Solo reaccionar a cambios en el token
+      if (event.key === 'token') {
+        console.log('Token change detected in another tab');
+        if (event.newValue === null) {
+          // Token removido en otra pestaña
+          console.log('Token removed in another tab, logging out');
+          setUser(null);
+          navigate('/session-expired');
+        } else if (event.newValue && event.newValue !== event.oldValue) {
+          // Token actualizado en otra pestaña
+          console.log('Token updated in another tab');
+          try {
+            if (isTokenValid(event.newValue)) {
+              const userData = parseUserFromToken(event.newValue);
+              setUser(userData);
+            }
+          } catch (error) {
+            console.error('Error al procesar token de otra pestaña:', error);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [navigate]);
 
   const login = async (
     usuario: string,
@@ -154,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
 
       // Guardar token y datos del usuario
-      sessionStorage.setItem('token', token);
+      localStorage.setItem('token', token);
       const userData = parseUserFromToken(token);
       setUser(userData);
 
@@ -165,7 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         err instanceof Error ? err.message : 'Error desconocido';
       setError(errorMessage);
       // Limpiar cualquier token residual en caso de error
-      sessionStorage.removeItem('token');
+      localStorage.removeItem('token');
       setUser(null);
       throw err;
     } finally {
@@ -181,7 +214,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error('Error al cerrar sesión:', err);
     } finally {
       // Siempre limpiar la sesión local, incluso si hay error en el servidor
-      sessionStorage.removeItem('token');
+      localStorage.removeItem('token');
       setUser(null);
       setError(null);
       setLoading(false);

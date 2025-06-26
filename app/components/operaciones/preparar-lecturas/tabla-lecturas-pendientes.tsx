@@ -1,6 +1,6 @@
-import { type ValidarSectoresPendientes } from "~/types/operaciones";
-import { Button } from "~/components/ui/button";
-import { RefreshCwIcon, Loader2, Info, AlertCircleIcon } from "lucide-react";
+import { type ValidarSectoresPendientes } from '~/types/operaciones';
+import { Button } from '~/components/ui/button';
+import { RefreshCwIcon, Loader2, Info, AlertCircleIcon } from 'lucide-react';
 import {
   Table,
   TableHeader,
@@ -9,8 +9,8 @@ import {
   TableHead,
   TableCell,
   TableFooter,
-} from "~/components/ui/table";
-import { Badge } from "~/components/ui/badge";
+} from '~/components/ui/table';
+import { Badge } from '~/components/ui/badge';
 
 /**
  * @deprecated Este componente está obsoleto. Utilizar DialogLecturasPendientes en su lugar.

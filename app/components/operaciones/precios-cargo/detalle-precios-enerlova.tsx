@@ -1,43 +1,42 @@
-import { EyeIcon, InfoIcon, Loader2 } from "lucide-react";
-import React, { useEffect, useState, useMemo } from "react";
-import { Button } from "~/components/ui/button";
-import { ScrollArea } from "~/components/ui/scroll-area";
+import { EyeIcon, InfoIcon, Loader2 } from 'lucide-react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Button } from '~/components/ui/button';
+import { ScrollArea } from '~/components/ui/scroll-area';
 
-
-import api from "~/lib/api";
-import { toast } from "sonner";
-import type { DetallepreciosCargoEnerlova } from "~/types/operaciones";
+import api from '~/lib/api';
+import { toast } from 'sonner';
+import type { DetallepreciosCargoEnerlova } from '~/types/operaciones';
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetHeader,
   SheetTitle,
-} from "~/components/ui/sheet";
-import DialogNuevoValorEnerlova from "./dialog-nuevo-valor-enerlova";
+} from '~/components/ui/sheet';
+import DialogNuevoValorEnerlova from './dialog-nuevo-valor-enerlova';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card";
+} from '~/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "~/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+} from '~/components/ui/chart';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 
-import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 // Modificamos la configuración del gráfico para usar un color personalizado
 const chartConfig = {
   desktop: {
-    label: "Valor",
+    label: 'Valor',
     // Cambiamos el color a un tono de azul más vibrante
-    color: "hsl(210, 100%, 50%)", // Puedes usar cualquier color CSS válido aquí
+    color: 'hsl(210, 100%, 50%)', // Puedes usar cualquier color CSS válido aquí
   },
 } satisfies ChartConfig;
 
@@ -45,12 +44,12 @@ const chartConfig = {
 const normalizarValor = (valor: string | number | undefined): number => {
   if (valor === undefined || valor === null) return 0;
 
-  if (typeof valor === "number") return valor;
+  if (typeof valor === 'number') return valor;
 
   // Si es string, intentamos convertirlo a número
-  if (typeof valor === "string") {
+  if (typeof valor === 'string') {
     // Reemplazamos coma por punto para manejar formatos como "1,234.56" o "1.234,56"
-    const valorNormalizado = valor.replace(",", ".");
+    const valorNormalizado = valor.replace(',', '.');
     const numero = parseFloat(valorNormalizado);
     return isNaN(numero) ? 0 : numero;
   }
@@ -62,21 +61,21 @@ const normalizarValor = (valor: string | number | undefined): number => {
 const formatearValor = (valor: number | string): string => {
   const numero = normalizarValor(valor);
   // Formateamos con 2 decimales y separador de miles
-  return numero.toLocaleString("es-CL", {
+  return numero.toLocaleString('es-CL', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 };
 
 // Tipos para los filtros de tiempo
-type PeriodoTiempo = "todo" | "1año" | "6meses" | "3meses";
+type PeriodoTiempo = 'todo' | '1año' | '6meses' | '3meses';
 
 export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
   const [data, setData] = useState<DetallepreciosCargoEnerlova[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [periodoSeleccionado, setPeriodoSeleccionado] =
-    useState<PeriodoTiempo>("todo");
+    useState<PeriodoTiempo>('todo');
 
   const fetchData = async () => {
     try {
@@ -94,8 +93,8 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
       setData(datosNormalizados);
     } catch (error) {
-      console.error("Error al obtener datos:", error);
-      toast.error("Error al cargar los precios del cargo");
+      console.error('Error al obtener datos:', error);
+      toast.error('Error al cargar los precios del cargo');
       setData([]);
     } finally {
       setIsLoading(false);
@@ -119,14 +118,14 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
    * @returns La fecha siguiente en formato DD-MM-YYYY (ej: "01-02-2025") o una cadena vacía si hay error.
    */
   const obtenerNuevaFechaInicio = (
-    ultimaFechaFin: string | undefined
+    ultimaFechaFin: string | undefined,
   ): string => {
     if (!ultimaFechaFin) {
-      return "";
+      return '';
     }
 
     // 1. Parsear de DD-MM-YYYY a partes [day, month, year]
-    const dateParts = ultimaFechaFin.split("-");
+    const dateParts = ultimaFechaFin.split('-');
     if (
       dateParts.length !== 3 ||
       dateParts[0].length !== 2 ||
@@ -134,11 +133,11 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
       dateParts[2].length !== 4
     ) {
       console.error(
-        "Formato de fecha de entrada inesperado:",
+        'Formato de fecha de entrada inesperado:',
         ultimaFechaFin,
-        "Se esperaba DD-MM-YYYY."
+        'Se esperaba DD-MM-YYYY.',
       );
-      return "";
+      return '';
     }
     const day = dateParts[0];
     const month = dateParts[1];
@@ -150,11 +149,11 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
     try {
       // 3. Crear objeto Date en UTC
-      const fechaFinDate = new Date(fechaFormatoISO + "T00:00:00Z");
+      const fechaFinDate = new Date(fechaFormatoISO + 'T00:00:00Z');
 
       if (isNaN(fechaFinDate.getTime())) {
-        console.error("Error: Invalid Date al crear objeto Date.");
-        return "";
+        console.error('Error: Invalid Date al crear objeto Date.');
+        return '';
       }
 
       // 4. Sumar un día usando métodos UTC
@@ -166,15 +165,15 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
       const finalYear = fechaFinDate.getUTCFullYear();
 
       // 6. Formatear a DD-MM-YYYY con padding (ceros a la izquierda)
-      const paddedDay = String(finalDay).padStart(2, "0");
-      const paddedMonth = String(finalMonth).padStart(2, "0");
+      const paddedDay = String(finalDay).padStart(2, '0');
+      const paddedMonth = String(finalMonth).padStart(2, '0');
 
       const nuevaFechaInicioStringDDMMYYYY = `${paddedDay}-${paddedMonth}-${finalYear}`;
 
       return nuevaFechaInicioStringDDMMYYYY;
     } catch (error) {
-      console.error("Error al procesar la fecha:", error);
-      return "";
+      console.error('Error al procesar la fecha:', error);
+      return '';
     }
   };
 
@@ -184,7 +183,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
   const parsearFechaFinADate = (fechaFin: string | undefined): Date | null => {
     if (!fechaFin) return null;
 
-    const partes = fechaFin.split("-");
+    const partes = fechaFin.split('-');
     if (partes.length !== 3) return null;
 
     // Formato para new Date(): YYYY-MM-DD
@@ -196,11 +195,11 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
   // Función para convertir formato DD-MM-YYYY a Date (para filtrado)
   const parsearFechaInicioADate = (
-    fechaInicio: string | undefined
+    fechaInicio: string | undefined,
   ): Date | null => {
     if (!fechaInicio) return null;
 
-    const partes = fechaInicio.split("-");
+    const partes = fechaInicio.split('-');
     if (partes.length !== 3) return null;
 
     // Formato para new Date(): YYYY-MM-DD
@@ -226,7 +225,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
   // Filtrar datos según el período seleccionado
   const datosFiltrados = useMemo(() => {
-    if (!data.length || periodoSeleccionado === "todo") {
+    if (!data.length || periodoSeleccionado === 'todo') {
       return data;
     }
 
@@ -235,13 +234,13 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
     // Establecer la fecha límite según el período
     switch (periodoSeleccionado) {
-      case "1año":
+      case '1año':
         fechaLimite.setFullYear(hoy.getFullYear() - 1);
         break;
-      case "6meses":
+      case '6meses':
         fechaLimite.setMonth(hoy.getMonth() - 6);
         break;
-      case "3meses":
+      case '3meses':
         fechaLimite.setMonth(hoy.getMonth() - 3);
         break;
     }
@@ -388,10 +387,10 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               tick={{ fontSize: 12 }}
                               tickFormatter={(value) => {
                                 // Simplificar la fecha para el eje X (solo mostrar mes-año)
-                                const partes = value.split("-");
+                                const partes = value.split('-');
                                 if (partes.length === 3) {
                                   return `${partes[1]}/${partes[2].substring(
-                                    2
+                                    2,
                                   )}`;
                                 }
                                 return value;
@@ -403,12 +402,12 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               tickMargin={8}
                               tick={{ fontSize: 12 }}
                               tickFormatter={(value) =>
-                                value.toLocaleString("es-CL")
+                                value.toLocaleString('es-CL')
                               }
                             />
                             <ChartTooltip
                               cursor={{
-                                stroke: "var(--border)",
+                                stroke: 'var(--border)',
                                 strokeWidth: 1,
                               }}
                               content={
@@ -426,14 +425,14 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               stroke="var(--color-desktop)" // Usa el color de la configuración
                               strokeWidth={2.5}
                               dot={{
-                                fill: "var(--color-desktop)",
+                                fill: 'var(--color-desktop)',
                                 r: 4,
                                 strokeWidth: 0,
                               }}
                               activeDot={{
                                 r: 6,
-                                fill: "var(--color-desktop)",
-                                stroke: "var(--background)",
+                                fill: 'var(--color-desktop)',
+                                stroke: 'var(--background)',
                                 strokeWidth: 2,
                               }}
                             />
@@ -461,14 +460,14 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
             {nuevaFechaInicio && ultimoValor && (
               <DialogNuevoValorEnerlova
                 codigo={codigo.toString()}
-                descripcion={data[0]?.descripcion || ""}
+                descripcion={data[0]?.descripcion || ''}
                 fecha_inicio={nuevaFechaInicio}
-                fecha_fin={""}
+                fecha_fin={''}
                 valor={normalizarValor(ultimoValor.valor)}
                 onSuccess={() => {
                   fetchData();
                 }}
-                id={ultimoValor.id.toString() || ""}
+                id={ultimoValor.id.toString() || ''}
               />
             )}
           </div>

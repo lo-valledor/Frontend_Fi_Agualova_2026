@@ -1,12 +1,12 @@
-import { ChevronDownIcon } from "lucide-react"
+import { ChevronDownIcon } from 'lucide-react';
 
-import { Button } from "~/components/ui/button"
+import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu"
+} from '~/components/ui/dropdown-menu';
 
 export default function Component() {
   return (
@@ -28,5 +28,5 @@ export default function Component() {
         <DropdownMenuItem>Option 4</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

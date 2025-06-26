@@ -1,7 +1,7 @@
-import api from "~/lib/api";
-import { useAuth } from "~/context/AuthContext";
-import { useNavigate } from "react-router";
-import { useEffect, useState, useCallback } from "react";
+import api from '~/lib/api';
+import { useAuth } from '~/context/AuthContext';
+import { useNavigate } from 'react-router';
+import { useEffect, useState, useCallback } from 'react';
 import type {
   Anio,
   Ciclo,
@@ -11,7 +11,7 @@ import type {
   ConsultarSectores,
   ValidarSectoresPendientes,
   ConsultaPeriodosFacturacion,
-} from "~/types/operaciones";
+} from '~/types/operaciones';
 
 // Interfaz para agrupar los estados relacionados con la carga de datos
 interface LoadingState {
@@ -36,7 +36,7 @@ export function useOperaciones() {
     Ciclo[]
   >([]);
   const [periodosFacturacion, setPeriodosFacturacion] = useState<Periodos[]>(
-    []
+    [],
   );
   const [consultarSectores, setConsultarSectores] = useState<
     ConsultarSectores[]
@@ -89,7 +89,7 @@ export function useOperaciones() {
   // Verificar autenticación y redirigir si es necesario
   const checkAuth = useCallback(() => {
     if (!auth.isAuthenticated) {
-      navigate("/auth/login", { replace: true });
+      navigate('/auth/login', { replace: true });
       return false;
     }
     return true;
@@ -100,15 +100,15 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("anio", true);
-      const response = await api.get("/consulta-año");
+      setLoading('anio', true);
+      const response = await api.get('/consulta-año');
       setConsultaAnio(response.data as Anio[]);
       return response.data;
     } catch (error) {
-      setError("anio", error as Error);
+      setError('anio', error as Error);
       throw error;
     } finally {
-      setLoading("anio", false);
+      setLoading('anio', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -117,15 +117,15 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("preciosPago", true);
-      const response = await api.get("/consulta-precio-pago-tabla");
+      setLoading('preciosPago', true);
+      const response = await api.get('/consulta-precio-pago-tabla');
       setConsultaPrecioPagoTabla(response.data as PreciosCargoEnerlova[]);
       return response.data;
     } catch (error) {
-      setError("preciosPago", error as Error);
+      setError('preciosPago', error as Error);
       throw error;
     } finally {
-      setLoading("preciosPago", false);
+      setLoading('preciosPago', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -134,15 +134,15 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("periodoAbierto", true);
-      const response = await api.get("/ConsultarPeriodoAbierto");
+      setLoading('periodoAbierto', true);
+      const response = await api.get('/ConsultarPeriodoAbierto');
       setConsultarPeriodoAbierto(response.data as PeriodoAbierto[]);
       return response.data;
     } catch (error) {
-      setError("periodoAbierto", error as Error);
+      setError('periodoAbierto', error as Error);
       throw error;
     } finally {
-      setLoading("periodoAbierto", false);
+      setLoading('periodoAbierto', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -151,15 +151,15 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("ciclos", true);
-      const response = await api.get("/ciclos-facturacion-activos");
+      setLoading('ciclos', true);
+      const response = await api.get('/ciclos-facturacion-activos');
       setCiclosFacturacionActivos(response.data as Ciclo[]);
       return response.data;
     } catch (error) {
-      setError("ciclos", error as Error);
+      setError('ciclos', error as Error);
       throw error;
     } finally {
-      setLoading("ciclos", false);
+      setLoading('ciclos', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -168,15 +168,15 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("periodos", true);
-      const response = await api.get("/consulta-periodo");
+      setLoading('periodos', true);
+      const response = await api.get('/consulta-periodo');
       setPeriodosFacturacion(response.data as Periodos[]);
       return response.data;
     } catch (error) {
-      setError("periodos", error as Error);
+      setError('periodos', error as Error);
       throw error;
     } finally {
-      setLoading("periodos", false);
+      setLoading('periodos', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -186,38 +186,38 @@ export function useOperaciones() {
       if (!checkAuth()) return;
 
       try {
-        setLoading("preciosPago", true);
+        setLoading('preciosPago', true);
         const params = new URLSearchParams({
           mes,
           año: anio,
         });
-        const response = await api.get("/consulta-precio-pago", {
+        const response = await api.get('/consulta-precio-pago', {
           params,
         });
         return response.data;
       } catch (error) {
-        setError("preciosPago", error as Error);
+        setError('preciosPago', error as Error);
         throw error;
       } finally {
-        setLoading("preciosPago", false);
+        setLoading('preciosPago', false);
       }
     },
-    [checkAuth, setLoading, setError]
+    [checkAuth, setLoading, setError],
   );
 
   const fetchConsultarSectores = useCallback(async () => {
     if (!checkAuth()) return;
 
     try {
-      setLoading("consultarSectores", true);
-      const response = await api.get("/consultar-sectores");
+      setLoading('consultarSectores', true);
+      const response = await api.get('/consultar-sectores');
       setConsultarSectores(response.data as ConsultarSectores[]);
       return response.data;
     } catch (error) {
-      setError("consultarSectores", error as Error);
+      setError('consultarSectores', error as Error);
       throw error;
     } finally {
-      setLoading("consultarSectores", false);
+      setLoading('consultarSectores', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -225,15 +225,15 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("lecturasPendientes", true);
-      const response = await api.get("/validar-lecturas-pendientes");
+      setLoading('lecturasPendientes', true);
+      const response = await api.get('/validar-lecturas-pendientes');
       setLecturasPendientes(response.data as ValidarSectoresPendientes);
       return response.data;
     } catch (error: unknown) {
-      setError("lecturasPendientes", error as Error);
+      setError('lecturasPendientes', error as Error);
       throw error;
     } finally {
-      setLoading("lecturasPendientes", false);
+      setLoading('lecturasPendientes', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -241,17 +241,17 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("consultaPeriodosFacturacion", true);
-      const response = await api.get("/consulta-periodos-facturacion");
+      setLoading('consultaPeriodosFacturacion', true);
+      const response = await api.get('/consulta-periodos-facturacion');
       setConsultaPeriodosFacturacion(
-        response.data as ConsultaPeriodosFacturacion[]
+        response.data as ConsultaPeriodosFacturacion[],
       );
       return response.data;
     } catch (error) {
-      setError("consultaPeriodosFacturacion", error as Error);
+      setError('consultaPeriodosFacturacion', error as Error);
       throw error;
     } finally {
-      setLoading("consultaPeriodosFacturacion", false);
+      setLoading('consultaPeriodosFacturacion', false);
     }
   }, [checkAuth, setLoading, setError]);
 
@@ -260,7 +260,7 @@ export function useOperaciones() {
     if (!checkAuth()) return;
 
     try {
-      setLoading("global", true);
+      setLoading('global', true);
       await Promise.all([
         fetchAnios(),
         fetchPreciosPago(),
@@ -271,10 +271,10 @@ export function useOperaciones() {
         fetchLecturasPendientes(),
         fetchConsultaPeriodosFacturacion(),
       ]);
-      } catch (error) {
-      setError("global", error as Error);
+    } catch (error) {
+      setError('global', error as Error);
     } finally {
-      setLoading("global", false);
+      setLoading('global', false);
     }
   }, [
     checkAuth,
