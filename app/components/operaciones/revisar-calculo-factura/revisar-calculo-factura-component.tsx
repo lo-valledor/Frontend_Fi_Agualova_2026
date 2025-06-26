@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useMemo } from 'react';
 import { Badge } from '~/components/ui/badge';
 import {
@@ -35,7 +36,6 @@ import {
   RefreshCw,
   Clock,
   CheckCircle,
-  Calculator,
   FileSpreadsheet,
   TrendingUp,
   Info,
@@ -84,9 +84,7 @@ export default function RevisarCalculoFacturaComponent({
   const [isCalculoPreparado, setIsCalculoPreparado] = useState(false);
   const [timerCountdown, setTimerCountdown] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
-  const [preparacionTimestamp, setPreparacionTimestamp] = useState<
-    number | null
-  >(null);
+  const [, setPreparacionTimestamp] = useState<number | null>(null);
 
   // Obtención de datos del hook useOperaciones
   const { fetchCiclosFacturacion, ciclosFacturacionActivos } = useOperaciones();
@@ -172,9 +170,6 @@ export default function RevisarCalculoFacturaComponent({
     }
 
     // Por defecto, devolvemos el ciclo original
-    console.warn(
-      `No se pudo determinar el ciclo para API a partir de: ${cicloId}`,
-    );
     return cicloId;
   };
 
@@ -300,8 +295,6 @@ export default function RevisarCalculoFacturaComponent({
         `Se encontraron ${datosCombinados.length} registros con sus respectivos cargos`,
       );
     } catch (error: any) {
-      console.error('Error al revisar cálculo de factura:', error);
-
       // Manejo específico para error 404
       if (error.response && error.response.status === 404) {
         setError(
@@ -364,8 +357,6 @@ export default function RevisarCalculoFacturaComponent({
 
       return res;
     } catch (error: any) {
-      console.error('Error al lanzar cálculo de facturación:', error);
-
       if (error.response) {
         toast.error(
           `Error ${error.response.status}: ${
@@ -410,8 +401,7 @@ export default function RevisarCalculoFacturaComponent({
 
           await api.post('generar-detalle-factura', requestBody);
           successCount++;
-        } catch (error) {
-          console.error(`Error procesando lecturaId ${lecturaId}:`, error);
+        } catch (_error) {
           errorCount++;
         }
       }
@@ -436,7 +426,6 @@ export default function RevisarCalculoFacturaComponent({
       // Limpiar selecciones después de procesar
       setSelectedContratos([]);
     } catch (error: any) {
-      console.error('Error general al aceptar cálculo de facturación:', error);
       setError(`Error: ${error.message || 'Error desconocido'}`);
       toast.error('Error al procesar los cálculos seleccionados');
     } finally {

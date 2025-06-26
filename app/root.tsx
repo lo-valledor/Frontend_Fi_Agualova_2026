@@ -56,14 +56,14 @@ export default function App() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   // Log detallado del error para debugging
-  console.error('=== ERROR BOUNDARY ACTIVADO ===');
+  /* console.error('=== ERROR BOUNDARY ACTIVADO ===');
   console.error('Error completo:', error);
   console.error('Navegador:', navigator.userAgent);
   console.error('URL:', window.location.href);
   console.error(
     'SessionStorage token:',
     sessionStorage.getItem('token') ? 'EXISTE' : 'NO EXISTE',
-  );
+  ); */
 
   let message = '¡Ups!';
   let details = 'Ha ocurrido un error inesperado.';
@@ -80,8 +80,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     stack = error.stack;
 
     // Log específico para errores de JavaScript
-    console.error('Mensaje del error:', error.message);
-    console.error('Stack trace:', error.stack);
+    /* console.error('Mensaje del error:', error.message);
+    console.error('Stack trace:', error.stack); */
   }
 
   return (

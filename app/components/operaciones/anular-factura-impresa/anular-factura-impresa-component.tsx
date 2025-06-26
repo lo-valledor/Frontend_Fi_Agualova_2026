@@ -64,8 +64,7 @@ export default function AnularFacturaImpresaComponent() {
         setNumeroFactura('');
         setConTomaLectura(false);
       }
-    } catch (error) {
-      console.error('Error al anular factura:', error);
+    } catch (_error) {
       setAlertMessage(
         'Ocurrió un error al anular la factura. Por favor, intente nuevamente.',
       );
