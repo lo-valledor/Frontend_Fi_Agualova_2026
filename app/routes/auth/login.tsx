@@ -55,12 +55,8 @@ const Login = () => {
           }`}
         >
           <div className="flex items-center gap-2">
-            <div className="bg-white/90 dark:bg-gray-800/90 p-2 rounded-full">
-              <img
-                src="/logo-enerlova.png"
-                alt="Enerlova"
-                className="h-6 w-6"
-              />
+            <div className=" dark:bg-gray-800/90 p-2 rounded-full">
+              <img src="/logo-enerlova.png" alt="Enerlova" className="h-10" />
             </div>
             <span className="text-white text-xl font-bold">Enerlova</span>
           </div>

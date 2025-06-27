@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type React from 'react';
 import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
@@ -103,9 +102,14 @@ export function LoginForm({
       {/* Logo and header */}
       <div className="pt-8 pb-4 px-8">
         <div className="flex justify-center mb-6 transform transition-transform duration-700 hover:scale-110">
-          <div className="bg-gradient-to-r from-sky-500 to-teal-600 dark:from-sky-600 dark:to-teal-700 p-3 rounded-full shadow-lg">
-            {/* <Bolt className="h-8 w-8 text-white animate-pulse" style={{ animationDuration: "3s" }} /> */}
-            <img src="/logo-enerlova.png" alt="Enerlova" className="h-8 w-8" />
+          <div className="bg-gradient-to-r from-slate-500 to-teal-600 dark:from-slate-600 dark:to-teal-700 p-2 rounded-full shadow-lg">
+            {/* <Bolt className="h-8 w-8 text-white animate-pulse"  /> */}
+            <img
+              src="/logo-enerlova.png"
+              alt="Enerlova"
+              className="h-10"
+              style={{ animationDuration: '3s' }}
+            />
           </div>
         </div>
         <h1 className="text-2xl font-bold text-center bg-gradient-to-r from-sky-600 to-teal-700 dark:from-sky-400 dark:to-teal-500 bg-clip-text text-transparent">

@@ -1,6 +1,14 @@
 import * as React from 'react';
-import { ChevronRight } from 'lucide-react';
+import {
+  ChevronRight,
+  Settings,
+  BarChart3,
+  Users,
+  FileText,
+  Wrench,
+} from 'lucide-react';
 import { Link, useLocation } from 'react-router';
+import { motion, AnimatePresence } from 'motion/react';
 
 import { SearchForm } from './search-form';
 import {
@@ -21,6 +29,30 @@ import {
   SidebarRail,
 } from '~/components/ui/sidebar';
 
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    x: -20,
+    transition: { duration: 0.2 },
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+};
+
 // This is sample data.
 const data = {
   versions: ['1.0.1', '1.1.0-alpha', '2.0.0-beta1'],
@@ -28,6 +60,7 @@ const data = {
     {
       title: 'Monitor',
       url: '#',
+      icon: BarChart3,
       items: [
         {
           title: 'Monitor de Lecturas',
@@ -42,6 +75,7 @@ const data = {
     {
       title: 'Operaciones',
       url: '#',
+      icon: Settings,
       items: [
         {
           title: 'Periodo Facturación',
@@ -88,6 +122,7 @@ const data = {
     {
       title: 'Administracion',
       url: '#',
+      icon: Users,
       items: [
         {
           title: 'Usuarios',
@@ -126,6 +161,7 @@ const data = {
     {
       title: 'Mantencion',
       url: '#',
+      icon: Wrench,
       items: [
         {
           title: 'Zonas',
@@ -176,6 +212,7 @@ const data = {
     {
       title: 'Reportes',
       url: '#',
+      icon: FileText,
       items: [
         {
           title: 'Consultar Contrato',
@@ -232,68 +269,171 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar {...props}>
-      <SidebarHeader className="border-b border-border/50 pb-2">
-        <SearchForm onSearchChange={setSearchTerm} searchTerm={searchTerm} />
+      {/* Header mejorado con gradiente */}
+      <SidebarHeader className="border-b border-gradient-to-r from-blue-200/30 to-purple-200/30 dark:from-blue-800/30 dark:to-purple-800/30 pb-3 bg-gradient-to-br from-slate-50/50 to-blue-50/30 dark:from-slate-900/50 dark:to-blue-900/30">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <SearchForm onSearchChange={setSearchTerm} searchTerm={searchTerm} />
+        </motion.div>
       </SidebarHeader>
-      <SidebarContent className="gap-1 px-2 py-2">
-        {filteredNavMain.length > 0 ? (
-          filteredNavMain.map((item) => (
-            <Collapsible
-              key={item.title}
-              title={item.title}
-              defaultOpen
-              className="group/collapsible"
+
+      <SidebarContent className="gap-1 px-3 py-3 bg-gradient-to-b from-transparent to-slate-50/30 dark:to-slate-900/30">
+        <AnimatePresence>
+          {filteredNavMain.length > 0 ? (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-2"
             >
-              <SidebarGroup>
-                <SidebarGroupLabel
-                  asChild
-                  className="group/label text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground text-sm font-medium rounded-md transition-all duration-200"
+              {filteredNavMain.map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="visible"
+                  transition={{ delay: index * 0.1 }}
                 >
-                  <CollapsibleTrigger className="w-full px-3 py-2.5 flex items-center justify-between">
-                    <span className="truncate">{item.title}</span>
-                    <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 opacity-60" />
-                  </CollapsibleTrigger>
-                </SidebarGroupLabel>
-                <CollapsibleContent className="data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up">
-                  <SidebarGroupContent className="pt-1">
-                    <SidebarMenu>
-                      {item.items.map((menuItem) => (
-                        <SidebarMenuItem key={menuItem.title}>
-                          <SidebarMenuButton
-                            asChild
-                            isActive={isActiveRoute(menuItem.url)}
-                            className="rounded-md transition-all duration-200 hover:bg-sidebar-accent/50 data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                  <Collapsible
+                    title={item.title}
+                    defaultOpen
+                    className="group/collapsible"
+                  >
+                    <SidebarGroup className="mb-1">
+                      <SidebarGroupLabel
+                        asChild
+                        className="group/label text-sidebar-foreground/90 hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 hover:text-sidebar-accent-foreground text-sm font-semibold rounded-lg transition-all duration-300 border border-transparent hover:border-blue-200/50 dark:hover:border-blue-700/50"
+                      >
+                        <CollapsibleTrigger className="w-full px-4 py-3 flex items-center justify-between group">
+                          <div className="flex items-center gap-3">
+                            {item.icon && (
+                              <motion.div
+                                whileHover={{ scale: 1.1, rotate: 5 }}
+                                whileTap={{ scale: 0.95 }}
+                                transition={{
+                                  type: 'spring',
+                                  stiffness: 400,
+                                  damping: 17,
+                                }}
+                                className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-700 dark:text-blue-300 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300"
+                              >
+                                <item.icon className="h-4 w-4" />
+                              </motion.div>
+                            )}
+                            <span className="truncate font-medium">
+                              {item.title}
+                            </span>
+                          </div>
+                          <motion.div
+                            initial={{ rotate: 0 }}
+                            whileHover={{ rotate: 90 }}
+                            transition={{ duration: 0.2 }}
+                            className="group-data-[state=open]/collapsible:rotate-90 transition-transform duration-300"
                           >
-                            <Link
-                              to={menuItem.url}
-                              className="px-3 py-2 text-sm"
-                            >
-                              {menuItem.title}
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </CollapsibleContent>
-              </SidebarGroup>
-            </Collapsible>
-          ))
-        ) : (
-          <div className="flex items-center justify-center py-8 text-center">
-            <div className="space-y-2">
-              <div className="text-muted-foreground text-sm">
-                No se encontraron resultados para "{searchTerm}"
+                            <ChevronRight className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+                          </motion.div>
+                        </CollapsibleTrigger>
+                      </SidebarGroupLabel>
+
+                      <CollapsibleContent className="overflow-hidden">
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        >
+                          <SidebarGroupContent className="pt-2 ml-2 border-l border-slate-200/50 dark:border-slate-700/50">
+                            <SidebarMenu className="space-y-1">
+                              {item.items.map((menuItem, menuIndex) => (
+                                <motion.div
+                                  key={menuItem.title}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: menuIndex * 0.05 }}
+                                >
+                                  <SidebarMenuItem>
+                                    <SidebarMenuButton
+                                      asChild
+                                      isActive={isActiveRoute(menuItem.url)}
+                                      className="rounded-lg transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 data-[active=true]:bg-gradient-to-r data-[active=true]:from-blue-500/20 data-[active=true]:to-purple-500/20 data-[active=true]:text-blue-900 dark:data-[active=true]:text-blue-100 data-[active=true]:border data-[active=true]:border-blue-200/50 dark:data-[active=true]:border-blue-700/50 hover:border hover:border-slate-200/50 dark:hover:border-slate-700/50 ml-4"
+                                    >
+                                      <motion.div
+                                        whileHover={{ x: 4 }}
+                                        transition={{
+                                          type: 'spring',
+                                          stiffness: 400,
+                                          damping: 17,
+                                        }}
+                                        className="w-full"
+                                      >
+                                        <Link
+                                          to={menuItem.url}
+                                          className="px-3 py-2.5 text-sm font-medium flex items-center gap-2 w-full"
+                                        >
+                                          <motion.div
+                                            className="w-1.5 h-1.5 rounded-full bg-current opacity-50"
+                                            whileHover={{
+                                              scale: 1.5,
+                                              opacity: 1,
+                                            }}
+                                            transition={{ duration: 0.2 }}
+                                          />
+                                          <span className="truncate">
+                                            {menuItem.title}
+                                          </span>
+                                        </Link>
+                                      </motion.div>
+                                    </SidebarMenuButton>
+                                  </SidebarMenuItem>
+                                </motion.div>
+                              ))}
+                            </SidebarMenu>
+                          </SidebarGroupContent>
+                        </motion.div>
+                      </CollapsibleContent>
+                    </SidebarGroup>
+                  </Collapsible>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.3 }}
+              className="flex items-center justify-center py-12 text-center"
+            >
+              <div className="space-y-3 max-w-[200px]">
+                <motion.div
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  className="mx-auto w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center"
+                >
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 opacity-50" />
+                </motion.div>
+                <div className="text-muted-foreground text-sm leading-relaxed">
+                  No se encontraron resultados para{' '}
+                  <span className="font-medium text-blue-600 dark:text-blue-400">
+                    "{searchTerm}"
+                  </span>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSearchTerm('')}
+                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline bg-blue-50/50 dark:bg-blue-900/20 px-3 py-1.5 rounded-full border border-blue-200/50 dark:border-blue-800/50 transition-all duration-200"
+                >
+                  Limpiar búsqueda
+                </motion.button>
               </div>
-              <button
-                onClick={() => setSearchTerm('')}
-                className="text-xs text-primary hover:underline"
-              >
-                Limpiar búsqueda
-              </button>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

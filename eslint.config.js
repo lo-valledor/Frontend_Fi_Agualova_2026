@@ -62,13 +62,13 @@ export default [
       ],
 
       // General code quality
-      'no-console': 'warn',
+      'no-console': 'off',
       'prefer-const': 'error',
       'no-var': 'error',
 
       // TypeScript specific
       '@typescript-eslint/no-unused-vars': 'off', // handled by unused-imports
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ];

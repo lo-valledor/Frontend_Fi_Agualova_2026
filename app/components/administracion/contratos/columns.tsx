@@ -41,11 +41,6 @@ export const columns = ({
       const contract = row.original;
       return (
         <div className="flex items-center space-x-3">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
-            </div>
-          </div>
           <div>
             <div className="font-mono text-sm font-medium text-sky-800 dark:text-sky-200">
               {contract.codigoContrato}

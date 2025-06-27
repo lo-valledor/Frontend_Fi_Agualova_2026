@@ -1151,7 +1151,7 @@ export default function ResultadosBusqueda({
                                     </div>
                                   ) : (
                                     /* Vista de Tarjetas (default y compact) */
-                                    <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-10 gap-2">
+                                    <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2">
                                       {fila.medidores.map(
                                         (medidor: Medidor) => {
                                           // For 'compact' view, only show problematic medidores
