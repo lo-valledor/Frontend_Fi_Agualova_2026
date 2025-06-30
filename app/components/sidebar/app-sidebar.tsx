@@ -4,7 +4,7 @@ import {
   Settings,
   BarChart3,
   Users,
-  FileText,
+  //FileText,
   Wrench,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
@@ -209,7 +209,7 @@ const data = {
         },
       ],
     },
-    {
+    /* {
       title: 'Reportes',
       url: '#',
       icon: FileText,
@@ -227,7 +227,7 @@ const data = {
           url: '/dashboard/reportes/ver-facturas',
         },
       ],
-    },
+    }, */
   ],
 };
 
@@ -270,7 +270,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       {/* Header mejorado con gradiente */}
-      <SidebarHeader className="border-b border-gradient-to-r from-blue-200/30 to-purple-200/30 dark:from-blue-800/30 dark:to-purple-800/30 pb-3 bg-gradient-to-br from-slate-50/50 to-blue-50/30 dark:from-slate-900/50 dark:to-blue-900/30">
+      <SidebarHeader className="border-b border-gradient-to-r from-blue-200/30 to-purple-200/30 dark:from-blue-800/30 dark:to-purple-800/30 pb-3 bg-gradient-to-br">
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}

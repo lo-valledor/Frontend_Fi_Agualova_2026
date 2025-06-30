@@ -40,7 +40,7 @@ export default function CargoTipoContratoComponent({
     try {
       const response = await api.get('cargoTipoContrato-buscar');
       setData(response.data as GetCargoTipoContrato[]);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al recargar los datos.');
     } finally {
       setIsLoading(false);
@@ -73,7 +73,7 @@ export default function CargoTipoContratoComponent({
       );
       toast.success('Relación eliminada exitosamente');
       await refetchData();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al eliminar la relación.');
     } finally {
       setIsLoading(false);

@@ -1,0 +1,841 @@
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import {
+  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableBody,
+  TableCell,
+} from '~/components/ui/table';
+import {
+  Info,
+  TrendingUp,
+  BarChart3,
+  History,
+  Table2,
+  Gauge,
+  HelpCircle,
+} from 'lucide-react';
+import {
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  LineChart,
+  Line,
+} from 'recharts';
+import { ChartContainer, ChartTooltipContent } from '~/components/ui/chart';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import { chartConfig } from '~/components/chart-config';
+import { useState, useMemo } from 'react';
+import type { EtapaCuatro } from '~/types/monitor';
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '~/components/ui/tooltip';
+
+interface AnalisisConsumoProps {
+  data: EtapaCuatro[];
+  error?: string;
+}
+
+type PeriodoTiempo = 'todo' | '6meses' | '3meses';
+
+export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
+  const [periodoSeleccionado, setPeriodoSeleccionado] =
+    useState<PeriodoTiempo>('todo');
+
+  // Funciones de ayuda (movidas desde el componente padre)
+  const getMonthNumber = (periodo: string): number => {
+    return parseInt(periodo.substring(0, 2), 10);
+  };
+  const getYear = (periodo: string): number => {
+    return parseInt(periodo.substring(2), 10);
+  };
+  const getMonthName = (monthNumber: number): string => {
+    const months = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
+    ];
+    return months[monthNumber - 1];
+  };
+
+  const getDatosFiltrados = (datos: EtapaCuatro[]) => {
+    if (periodoSeleccionado === 'todo') {
+      return datos;
+    }
+    const datosOrdenados = [...datos].sort((a, b) => {
+      const fechaA = new Date(
+        getYear(a.LM_Periodo),
+        getMonthNumber(a.LM_Periodo) - 1,
+        1,
+      );
+      const fechaB = new Date(
+        getYear(b.LM_Periodo),
+        getMonthNumber(b.LM_Periodo) - 1,
+        1,
+      );
+      return fechaB.getTime() - fechaA.getTime();
+    });
+    const mesesAMostrar = periodoSeleccionado === '6meses' ? 6 : 3;
+    return datosOrdenados.slice(0, mesesAMostrar);
+  };
+
+  const getMensualComparisonData = (datos: EtapaCuatro[]) => {
+    const datosFiltrados = getDatosFiltrados(datos);
+    const groupedByMonth = datosFiltrados.reduce(
+      (acc, item) => {
+        const month = getMonthNumber(item.LM_Periodo);
+        const year = getYear(item.LM_Periodo);
+        const monthName = getMonthName(month);
+        if (!acc[monthName]) {
+          acc[monthName] = {};
+        }
+        acc[monthName][year] = item.LM_ConsumoPeriodo;
+        return acc;
+      },
+      {} as Record<string, Record<number, number>>,
+    );
+    const yearsInData = [
+      ...new Set(datos.map((item) => getYear(item.LM_Periodo))),
+    ].sort((a, b) => b - a);
+    const currentYear = yearsInData[0];
+    const previousYear = yearsInData[1];
+    return Object.entries(groupedByMonth).map(([month, yearData]) => ({
+      mes: month,
+      consumoActual: yearData[currentYear] || null,
+      consumoAnterior: yearData[previousYear] || null,
+    }));
+  };
+
+  const getMensualComparisonTable = (datos: EtapaCuatro[]) => {
+    const comparisonData = getMensualComparisonData(datos);
+    return comparisonData.map((item) => {
+      const diferencia =
+        item.consumoActual !== null && item.consumoAnterior !== null
+          ? item.consumoActual - item.consumoAnterior
+          : null;
+      const variacionPorcentaje =
+        item.consumoActual !== null &&
+        item.consumoAnterior !== null &&
+        item.consumoAnterior !== 0
+          ? ((item.consumoActual - item.consumoAnterior) /
+              item.consumoAnterior) *
+            100
+          : null;
+      return {
+        ...item,
+        diferencia,
+        variacionPorcentaje,
+      };
+    });
+  };
+
+  const getEstadisticasConsumo = useMemo(() => {
+    return (datos: EtapaCuatro[]) => {
+      if (datos.length === 0) return null;
+      const consumos = datos
+        .map((item) => item.LM_ConsumoPeriodo)
+        .filter((consumo) => consumo !== null && consumo !== undefined);
+      if (consumos.length === 0) return null;
+      const consumoTotal = consumos.reduce((sum, consumo) => sum + consumo, 0);
+      const consumoPromedio = consumoTotal / consumos.length;
+      const consumoMaximo = Math.max(...consumos);
+      const consumoMinimo = Math.min(...consumos);
+      const consumosOrdenados = [...consumos].sort((a, b) => a - b);
+      const mediana =
+        consumosOrdenados.length % 2 === 0
+          ? (consumosOrdenados[consumosOrdenados.length / 2 - 1] +
+              consumosOrdenados[consumosOrdenados.length / 2]) /
+            2
+          : consumosOrdenados[Math.floor(consumosOrdenados.length / 2)];
+      let tendencia = 'estable';
+      if (consumos.length >= 6) {
+        const ultimos3 = consumos.slice(-3);
+        const anteriores3 = consumos.slice(-6, -3);
+        const promedioUltimos = ultimos3.reduce((sum, c) => sum + c, 0) / 3;
+        const promedioAnteriores =
+          anteriores3.reduce((sum, c) => sum + c, 0) / 3;
+        if (promedioAnteriores > 0) {
+          const diferenciaPorcentaje =
+            ((promedioUltimos - promedioAnteriores) / promedioAnteriores) * 100;
+          if (diferenciaPorcentaje > 10) tendencia = 'creciente';
+          else if (diferenciaPorcentaje < -10) tendencia = 'decreciente';
+        }
+      }
+      const periodoMaximo =
+        datos.find((item) => item.LM_ConsumoPeriodo === consumoMaximo)
+          ?.LM_Periodo || '';
+      const periodoMinimo =
+        datos.find((item) => item.LM_ConsumoPeriodo === consumoMinimo)
+          ?.LM_Periodo || '';
+      return {
+        consumoTotal,
+        consumoPromedio,
+        consumoMaximo,
+        consumoMinimo,
+        mediana,
+        tendencia,
+        periodoMaximo,
+        periodoMinimo,
+        totalPeriodos: consumos.length,
+      };
+    };
+  }, []);
+
+  const estadisticas = getEstadisticasConsumo(data);
+
+  return (
+    <Card className="border-slate-200 dark:border-slate-800 shadow-md">
+      <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100/50 dark:from-slate-900/50 dark:to-slate-800/30 border-b border-slate-200 dark:border-slate-800">
+        <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100">
+          <div className="p-2 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+            <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          </div>
+          <span className="font-semibold">Análisis de Consumo</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-6">
+        {error ? (
+          <Alert variant="destructive" className="mb-3">
+            <Info className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : (
+          <Tabs defaultValue="estadisticas" className="w-full">
+            <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+              <TabsTrigger
+                value="estadisticas"
+                className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Estadísticas
+              </TabsTrigger>
+              <TabsTrigger
+                value="historico"
+                className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
+                <History className="mr-2 h-4 w-4" />
+                Histórico
+              </TabsTrigger>
+              <TabsTrigger
+                value="comparativas"
+                className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
+                <Table2 className="mr-2 h-4 w-4" />
+                Comparativas
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="estadisticas" className="pt-6">
+              <div className="space-y-6">
+                {!estadisticas ? (
+                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                    No hay datos suficientes para mostrar estadísticas
+                  </div>
+                ) : (
+                  <>
+                    {/* Tarjetas de estadísticas principales */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/20 p-4 rounded-xl border border-blue-200/50 dark:border-blue-800/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <Gauge className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+                            Promedio
+                          </span>
+                        </div>
+                        <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                          {estadisticas.consumoPromedio.toLocaleString(
+                            'es-CL',
+                            { maximumFractionDigits: 0 },
+                          )}
+                        </p>
+                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                          kWh/periodo
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/30 dark:to-emerald-900/20 p-4 rounded-xl border border-emerald-200/50 dark:border-emerald-800/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
+                            Máximo
+                          </span>
+                        </div>
+                        <p className="text-2xl font-bold text-emerald-900 dark:text-emerald-100">
+                          {estadisticas.consumoMaximo.toLocaleString('es-CL')}
+                        </p>
+                        <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                          {estadisticas.periodoMaximo}
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/30 dark:to-amber-900/20 p-4 rounded-xl border border-amber-200/50 dark:border-amber-800/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <BarChart3 className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                          <span className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wide">
+                            Mínimo
+                          </span>
+                        </div>
+                        <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">
+                          {estadisticas.consumoMinimo.toLocaleString('es-CL')}
+                        </p>
+                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+                          {estadisticas.periodoMinimo}
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/20 p-4 rounded-xl border border-purple-200/50 dark:border-purple-800/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <History className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                          <span className="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wide">
+                            Tendencia
+                          </span>
+                        </div>
+                        <p className="text-lg font-bold text-purple-900 dark:text-purple-100 capitalize">
+                          {estadisticas.tendencia}
+                        </p>
+                        <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                          {estadisticas.totalPeriodos} periodos
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Gráfico de evolución */}
+                    <div className="bg-white dark:bg-slate-950/50 rounded-2xl border border-slate-200/50 dark:border-slate-800/30 overflow-hidden">
+                      <div className="p-6 border-b border-slate-100 dark:border-slate-800/30">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div>
+                            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                              Evolución de Consumo
+                            </h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                              Tendencia del consumo energético a lo largo del
+                              tiempo
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Tabs
+                              defaultValue="todo"
+                              value={periodoSeleccionado}
+                              onValueChange={(value) =>
+                                setPeriodoSeleccionado(value as PeriodoTiempo)
+                              }
+                            >
+                              <TabsList className="bg-slate-100 dark:bg-slate-800/50">
+                                <TabsTrigger value="todo" className="text-xs">
+                                  Todo
+                                </TabsTrigger>
+                                <TabsTrigger value="6meses" className="text-xs">
+                                  6M
+                                </TabsTrigger>
+                                <TabsTrigger value="3meses" className="text-xs">
+                                  3M
+                                </TabsTrigger>
+                              </TabsList>
+                            </Tabs>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-6">
+                        <ChartContainer
+                          config={chartConfig}
+                          className="min-h-[320px] w-full"
+                        >
+                          <LineChart
+                            data={[...getDatosFiltrados(data)].reverse()}
+                            margin={{
+                              top: 20,
+                              right: 30,
+                              left: 20,
+                              bottom: 20,
+                            }}
+                          >
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              vertical={false}
+                              className="stroke-slate-200/50 dark:stroke-slate-700/30"
+                            />
+                            <XAxis
+                              dataKey="LM_Periodo"
+                              tickLine={false}
+                              tickMargin={12}
+                              axisLine={false}
+                              tick={{
+                                fill: 'var(--color-detallesMedidor)',
+                                fontSize: 11,
+                              }}
+                            />
+                            <YAxis
+                              tickLine={false}
+                              axisLine={false}
+                              tickMargin={8}
+                              tick={{
+                                fill: 'var(--color-detallesMedidor)',
+                                fontSize: 11,
+                              }}
+                            />
+                            <Tooltip
+                              content={
+                                <ChartTooltipContent
+                                  labelFormatter={(value) =>
+                                    `Periodo: ${value}`
+                                  }
+                                  formatter={(value) => [
+                                    `${value} kWh`,
+                                    'Consumo',
+                                  ]}
+                                />
+                              }
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="LM_ConsumoPeriodo"
+                              stroke="var(--color-detallesMedidor)"
+                              strokeWidth={3}
+                              dot={{
+                                fill: 'var(--color-detallesMedidor)',
+                                strokeWidth: 2,
+                                stroke: '#fff',
+                                r: 4,
+                              }}
+                              activeDot={{
+                                r: 6,
+                                fill: 'var(--color-detallesMedidor)',
+                                stroke: '#fff',
+                                strokeWidth: 2,
+                              }}
+                            />
+                          </LineChart>
+                        </ChartContainer>
+                      </div>
+                    </div>
+
+                    {/* Información adicional */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-slate-50 dark:bg-slate-900/20 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+                          Resumen Estadístico
+                        </h4>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Consumo Total:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {estadisticas.consumoTotal.toLocaleString(
+                                'es-CL',
+                              )}{' '}
+                              kWh
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Mediana:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {estadisticas.mediana.toLocaleString('es-CL', {
+                                maximumFractionDigits: 0,
+                              })}{' '}
+                              kWh
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Períodos registrados:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {estadisticas.totalPeriodos}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-slate-50 dark:bg-slate-900/20 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <div className="flex items-center gap-2 mb-3">
+                          <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                            Análisis de Tendencia
+                          </h4>
+                          <TooltipProvider>
+                            <UITooltip delayDuration={150}>
+                              <TooltipTrigger>
+                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="max-w-xs p-1">
+                                  Compara el promedio de los últimos 3 períodos
+                                  con los 3 anteriores. Si la variación es &gt;
+                                  10%, la tendencia cambia.
+                                </p>
+                              </TooltipContent>
+                            </UITooltip>
+                          </TooltipProvider>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center gap-2">
+                            <div
+                              className={`w-3 h-3 rounded-full ${
+                                estadisticas.tendencia === 'creciente'
+                                  ? 'bg-red-500'
+                                  : estadisticas.tendencia === 'decreciente'
+                                    ? 'bg-green-500'
+                                    : 'bg-blue-500'
+                              }`}
+                            ></div>
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Estado:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100 capitalize">
+                              {estadisticas.tendencia}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                            {estadisticas.tendencia === 'creciente' &&
+                              'El consumo ha aumentado en los últimos períodos'}
+                            {estadisticas.tendencia === 'decreciente' &&
+                              'El consumo ha disminuido en los últimos períodos'}
+                            {estadisticas.tendencia === 'estable' &&
+                              'El consumo se mantiene estable en los últimos períodos'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </TabsContent>
+            <TabsContent value="historico" className="pt-6">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-800">
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        Histórico de Lecturas
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Detalle de lecturas y consumos por periodo
+                      </p>
+                    </div>
+                    <div className="w-full sm:w-auto">
+                      <Tabs
+                        defaultValue="todo"
+                        value={periodoSeleccionado}
+                        onValueChange={(value) =>
+                          setPeriodoSeleccionado(value as PeriodoTiempo)
+                        }
+                        className="w-full"
+                      >
+                        <TabsList className="grid grid-cols-3 w-full">
+                          <TabsTrigger value="todo">Todo</TabsTrigger>
+                          <TabsTrigger value="6meses">6 Meses</TabsTrigger>
+                          <TabsTrigger value="3meses">3 Meses</TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </div>
+                  </div>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50">
+                      <TableHead className="font-semibold text-slate-900 dark:text-slate-200">
+                        Periodo
+                      </TableHead>
+                      <TableHead className="font-semibold text-slate-900 dark:text-slate-200">
+                        Fecha Lectura
+                      </TableHead>
+                      <TableHead className="font-semibold text-slate-900 dark:text-slate-200 text-right">
+                        Lectura Actual
+                      </TableHead>
+                      <TableHead className="font-semibold text-slate-900 dark:text-slate-200 text-right">
+                        Consumo
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {getDatosFiltrados(data).map((item, index) => (
+                      <TableRow
+                        key={index}
+                        className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                      >
+                        <TableCell className="font-medium text-slate-900 dark:text-slate-200">
+                          {item.LM_Periodo}
+                        </TableCell>
+                        <TableCell className="text-slate-700 dark:text-slate-300">
+                          {new Date(item.LM_FechaLectura).toLocaleDateString(
+                            'es-CL',
+                            {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            },
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right font-medium text-slate-900 dark:text-slate-200">
+                          {item.LM_ValorLecturaActual?.toLocaleString(
+                            'es-CL',
+                          ) || ''}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <span className="inline-flex items-center gap-1 font-medium text-slate-900 dark:text-slate-200">
+                            {item.LM_ConsumoPeriodo?.toLocaleString('es-CL') ||
+                              '0'}
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              kWh
+                            </span>
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+            <TabsContent value="comparativas" className="pt-6">
+              <div className="space-y-6">
+                {data.length === 0 ? (
+                  <div className="p-6 text-center text-slate-500 dark:text-slate-400">
+                    No hay datos disponibles para la comparativa
+                  </div>
+                ) : (
+                  <>
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
+                      <p className="text-slate-700 dark:text-slate-300 text-sm">
+                        Esta comparativa muestra el consumo del mismo mes en
+                        diferentes años. Solo se muestran los meses que tienen
+                        datos disponibles en ambos años.
+                      </p>
+                    </div>
+
+                    {getMensualComparisonData(data).filter(
+                      (item) =>
+                        item.consumoActual !== null &&
+                        item.consumoAnterior !== null,
+                    ).length === 0 ? (
+                      <div className="p-6 text-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 rounded-lg">
+                        No hay lecturas suficientes para realizar comparaciones
+                        entre años
+                      </div>
+                    ) : (
+                      <>
+                        {/* Gráfico de barras comparativo */}
+                        <div className="bg-white dark:bg-slate-950/50 rounded-xl border border-slate-200/50 dark:border-slate-800/30 overflow-hidden">
+                          <div className="p-4 border-b border-slate-100 dark:border-slate-800/30">
+                            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                              Comparativa Mensual por Años
+                            </h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                              Comparación de consumos del mismo mes en
+                              diferentes años
+                            </p>
+                          </div>
+                          <div className="p-4">
+                            <ChartContainer
+                              config={chartConfig}
+                              className="min-h-[300px] w-full"
+                            >
+                              <BarChart
+                                data={getMensualComparisonData(data).filter(
+                                  (item) =>
+                                    item.consumoActual !== null &&
+                                    item.consumoAnterior !== null,
+                                )}
+                                margin={{
+                                  top: 20,
+                                  right: 30,
+                                  left: 20,
+                                  bottom: 50,
+                                }}
+                              >
+                                <CartesianGrid
+                                  strokeDasharray="3 3"
+                                  vertical={false}
+                                  className="stroke-slate-100 dark:stroke-slate-800/50"
+                                />
+                                <XAxis
+                                  dataKey="mes"
+                                  tickLine={false}
+                                  tickMargin={12}
+                                  axisLine={false}
+                                  tick={{
+                                    fill: 'var(--color-detallesMedidor)',
+                                    fontSize: 12,
+                                  }}
+                                />
+                                <YAxis
+                                  tickLine={false}
+                                  axisLine={false}
+                                  tickMargin={8}
+                                  tick={{
+                                    fill: 'var(--color-detallesMedidor)',
+                                    fontSize: 12,
+                                  }}
+                                />
+                                <Tooltip
+                                  content={
+                                    <ChartTooltipContent
+                                      labelFormatter={(value) =>
+                                        `Mes: ${value}`
+                                      }
+                                    />
+                                  }
+                                />
+                                <Legend
+                                  verticalAlign="top"
+                                  height={36}
+                                  wrapperStyle={{ paddingBottom: '10px' }}
+                                />
+                                <Bar
+                                  name="Año Actual"
+                                  dataKey="consumoActual"
+                                  fill="#3b82f6"
+                                  radius={[4, 4, 0, 0]}
+                                  barSize={60}
+                                />
+                                <Bar
+                                  name="Año Anterior"
+                                  dataKey="consumoAnterior"
+                                  fill="#f97316"
+                                  radius={[4, 4, 0, 0]}
+                                  barSize={60}
+                                />
+                              </BarChart>
+                            </ChartContainer>
+                          </div>
+                        </div>
+
+                        {/* Tabla detallada de comparaciones */}
+                        <div className="rounded-lg border border-slate-200 dark:border-slate-800 overflow-hidden">
+                          <div className="p-4 border-b border-slate-100 dark:border-slate-800">
+                            <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                              Análisis Detallado de Variaciones
+                            </h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                              Comparación numérica y porcentual entre períodos
+                            </p>
+                          </div>
+                          <Table>
+                            <TableHeader>
+                              <TableRow className="hover:bg-slate-100/50 dark:hover:bg-slate-800/50">
+                                <TableHead className="font-semibold text-slate-900 dark:text-slate-200">
+                                  Mes
+                                </TableHead>
+                                <TableHead className="font-semibold text-slate-900 dark:text-slate-200 text-right">
+                                  Año Actual
+                                </TableHead>
+                                <TableHead className="font-semibold text-slate-900 dark:text-slate-200 text-right">
+                                  Año Anterior
+                                </TableHead>
+                                <TableHead className="font-semibold text-slate-900 dark:text-slate-200 text-right">
+                                  Diferencia
+                                </TableHead>
+                                <TableHead className="font-semibold text-slate-900 dark:text-slate-200 text-right">
+                                  Variación %
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {getMensualComparisonTable(data)
+                                .filter((item) => item.diferencia !== null)
+                                .map((item, index) => (
+                                  <TableRow
+                                    key={index}
+                                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                                  >
+                                    <TableCell className="font-medium text-slate-900 dark:text-slate-200">
+                                      {item.mes}
+                                    </TableCell>
+                                    <TableCell className="text-right font-medium text-blue-600 dark:text-blue-400">
+                                      {item.consumoActual?.toLocaleString(
+                                        'es-CL',
+                                      )}
+                                      <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                                        kWh
+                                      </span>
+                                    </TableCell>
+                                    <TableCell className="text-right font-medium text-orange-600 dark:text-orange-400">
+                                      {item.consumoAnterior?.toLocaleString(
+                                        'es-CL',
+                                      )}
+                                      <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                                        kWh
+                                      </span>
+                                    </TableCell>
+                                    <TableCell className="text-right font-medium">
+                                      <span
+                                        className={`${
+                                          item.diferencia != null &&
+                                          item.diferencia > 0
+                                            ? 'text-red-600 dark:text-red-400'
+                                            : item.diferencia != null &&
+                                                item.diferencia < 0
+                                              ? 'text-green-600 dark:text-green-400'
+                                              : 'text-slate-600 dark:text-slate-400'
+                                        }`}
+                                      >
+                                        {(item.diferencia != null &&
+                                        item.diferencia > 0
+                                          ? '+'
+                                          : '') +
+                                          item.diferencia?.toLocaleString(
+                                            'es-CL',
+                                          )}
+                                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                                          kWh
+                                        </span>
+                                      </span>
+                                    </TableCell>
+                                    <TableCell className="text-right font-medium">
+                                      <span
+                                        className={`${
+                                          item.variacionPorcentaje != null &&
+                                          item.variacionPorcentaje > 0
+                                            ? 'text-red-600 dark:text-red-400'
+                                            : item.variacionPorcentaje !=
+                                                  null &&
+                                                item.variacionPorcentaje < 0
+                                              ? 'text-green-600 dark:text-green-400'
+                                              : 'text-slate-600 dark:text-slate-400'
+                                        }`}
+                                      >
+                                        {(item.variacionPorcentaje != null &&
+                                        item.variacionPorcentaje > 0
+                                          ? '+'
+                                          : '') +
+                                          item.variacionPorcentaje?.toFixed(2) +
+                                          '%'}
+                                      </span>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

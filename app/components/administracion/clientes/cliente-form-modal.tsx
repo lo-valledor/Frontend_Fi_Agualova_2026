@@ -180,8 +180,6 @@ export default function ClienteFormModal({
     }),
   };
 
-  const isLoading = form.formState.isSubmitting;
-
   // Cargar comunas cuando cambia la región
   const loadComunas = async (regionCodigo: string) => {
     if (!regionCodigo) {

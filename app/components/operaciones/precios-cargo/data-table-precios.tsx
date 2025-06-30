@@ -102,14 +102,16 @@ export function DataTablePrecios<TData, TValue>({
     <div className="space-y-4">
       {/* Search */}
       {showSearch && (
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder={searchPlaceholder}
-            value={globalFilter ?? ''}
-            onChange={(e) => table.setGlobalFilter(e.target.value)}
-            className="pl-10 bg-white dark:bg-slate-800"
-          />
+        <div className="flex justify-end">
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder={searchPlaceholder}
+              value={globalFilter ?? ''}
+              onChange={(e) => table.setGlobalFilter(e.target.value)}
+              className="pl-10 w-full bg-white dark:bg-slate-800"
+            />
+          </div>
         </div>
       )}
 

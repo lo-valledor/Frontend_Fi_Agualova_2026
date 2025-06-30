@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Download, Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';

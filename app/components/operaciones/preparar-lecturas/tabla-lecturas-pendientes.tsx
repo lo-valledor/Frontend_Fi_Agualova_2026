@@ -12,24 +12,15 @@ import {
 } from '~/components/ui/table';
 import { Badge } from '~/components/ui/badge';
 
-/**
- * @deprecated Este componente está obsoleto. Utilizar DialogLecturasPendientes en su lugar.
- * Se mantiene por compatibilidad con implementaciones existentes.
- */
-
-type Estado = 0 | 1;
-
 interface TablaLecturasPendientesProps {
   data: ValidarSectoresPendientes | undefined;
   isLoading?: boolean;
-  isAuthorized?: boolean;
   onRefresh?: () => Promise<unknown>;
 }
 
 export default function TablaLecturasPendientes({
   data,
   isLoading,
-  isAuthorized,
   onRefresh,
 }: TablaLecturasPendientesProps) {
   // Función para renderizar el badge del estado

@@ -69,5 +69,9 @@ export async function clientLoader() {
 export default function MonitorLecturasPage({
   loaderData,
 }: Route.ComponentProps) {
-  return <MonitorLecturasComponent {...loaderData} />;
+  return (
+    <div>
+      <MonitorLecturasComponent {...loaderData} />
+    </div>
+  );
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import api from '~/lib/api';
+import { useApiWithLoadingBar } from '~/lib/api';
 import ClockLoader from 'react-spinners/ClockLoader';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -277,11 +277,7 @@ const MeterCard = ({
               <Calendar className="h-3 w-3" />
               <span className="truncate">
                 {medidor.fechaLectura
-                  ? new Date(medidor.fechaLectura).toLocaleString('es-CL', {
-                      dateStyle: 'short',
-                      timeStyle: 'short',
-                      hour12: false,
-                    })
+                  ? new Date(medidor.fechaLectura).toLocaleString()
                   : 'Sin registro'}
               </span>
             </div>
@@ -443,6 +439,7 @@ export default function ResultadosBusqueda({
     {},
   );
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
+  const api = useApiWithLoadingBar();
 
   // Search function (same as before)
   const searchResults = async () => {
@@ -989,9 +986,9 @@ export default function ResultadosBusqueda({
                                         <div className="font-medium">
                                           {status.label}
                                         </div>
-                                        <div className="text-xs text-muted-foreground">
+                                        {/* <div className="text-xs text-muted-foreground">
                                           ({claveHtml})
-                                        </div>
+                                        </div> */}
                                       </div>
                                       <div>{status.icon}</div>
                                     </div>
@@ -1040,13 +1037,11 @@ export default function ResultadosBusqueda({
                   <div className="space-y-3">
                     {results.nichos[selectedNichoIndex].filas.map(
                       (fila: Fila, filaIndex: number) => {
-                        // Get all problems in this fila for the badge
                         const problemCount = fila.medidores.filter(
                           (m: Medidor) =>
                             getMeterStatus(m.claveHtml).severity > 2,
                         ).length;
 
-                        // For 'compact' view, skip filas with no problems
                         if (viewMode === 'compact' && problemCount === 0) {
                           return null;
                         }
@@ -1059,7 +1054,6 @@ export default function ResultadosBusqueda({
                             key={`fila-${selectedNichoIndex}-${filaIndex}`}
                             className="overflow-hidden border-0 shadow-sm bg-card/50 backdrop-blur-sm"
                           >
-                            {/* Collapsible Fila Header */}
                             <Collapsible
                               open={
                                 isExpanded !== undefined ? isExpanded : true
@@ -1105,38 +1099,11 @@ export default function ResultadosBusqueda({
                                   </div>
                                 </div>
                               </CollapsibleTrigger>
-                              {/* Content based on view mode */}
                               <CollapsibleContent>
                                 <div className="p-3 pt-0">
                                   {viewMode === 'detailed' ? (
                                     /* Vista de Lista Compacta */
                                     <div className="space-y-2">
-                                      {/* Header de la tabla para vista detallada */}
-                                      <div className="flex items-center gap-3 p-3 text-xs font-medium text-muted-foreground bg-muted/30 rounded-lg border">
-                                        <div className="flex items-center gap-2 min-w-0">
-                                          <div className="w-4"></div>{' '}
-                                          {/* Espacio para status indicator */}
-                                          <div className="min-w-[120px]">
-                                            Medidor
-                                          </div>
-                                        </div>
-                                        <div className="flex-shrink-0 text-center min-w-[80px]">
-                                          Lectura
-                                        </div>
-                                        <div className="flex-shrink-0 text-center min-w-[70px]">
-                                          Consumo
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                          Fecha de Lectura
-                                        </div>
-                                        <div className="flex-shrink-0 min-w-[100px]">
-                                          Estado
-                                        </div>
-                                        <div className="flex-shrink-0 w-10">
-                                          Acción
-                                        </div>
-                                      </div>
-
                                       {fila.medidores.map(
                                         (medidor: Medidor) => {
                                           return (
@@ -1150,11 +1117,9 @@ export default function ResultadosBusqueda({
                                       )}
                                     </div>
                                   ) : (
-                                    /* Vista de Tarjetas (default y compact) */
                                     <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2">
                                       {fila.medidores.map(
                                         (medidor: Medidor) => {
-                                          // For 'compact' view, only show problematic medidores
                                           if (
                                             viewMode === 'compact' &&
                                             getMeterStatus(medidor.claveHtml)

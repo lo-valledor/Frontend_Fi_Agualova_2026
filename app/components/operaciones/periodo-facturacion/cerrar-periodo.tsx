@@ -61,7 +61,7 @@ export default function CerrarPeriodo({
       } else {
         toast.error('Error al cerrar el periodo');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al cerrar el periodo');
     } finally {
       setIsLoading(false);

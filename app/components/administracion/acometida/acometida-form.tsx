@@ -97,7 +97,6 @@ export function AcometidaForm({
   comboEmpalmes,
   comboNichos,
   contratosDisponibles,
-  comboSectores,
 }: AcometidaFormProps) {
   // Hooks
   const { theme } = useTheme();
@@ -173,11 +172,6 @@ export function AcometidaForm({
 
     return opciones;
   }, [contratosDisponibles, isEdit, acometida]);
-
-  const sectorOptions: SelectOption[] = comboSectores.map((sector) => ({
-    value: sector.id,
-    label: sector.nombre,
-  }));
 
   // Estilos personalizados para react-select
   const selectStyles: StylesConfig<any> = {
@@ -503,7 +497,7 @@ export function AcometidaForm({
                 <FormField
                   control={form.control}
                   name="contratoId"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel className="flex items-center justify-between text-sm font-medium">
                         Contrato *

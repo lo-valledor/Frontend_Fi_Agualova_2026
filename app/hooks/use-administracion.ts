@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuth } from '~/context/AuthContext';

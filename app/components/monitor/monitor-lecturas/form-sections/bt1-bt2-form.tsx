@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
@@ -41,6 +41,24 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   const [showMenorDialog, setShowMenorDialog] = useState(false);
   const [showIgualDialog, setShowIgualDialog] = useState(false);
   const [showMayorDialog, setShowMayorDialog] = useState(false);
+
+  // Validar que la lectura no exceda el número de dígitos del medidor
+  const validarDigitos = useCallback(
+    (value: string) => {
+      if (!value || isNaN(Number(value))) return false;
+
+      const valorNumerico = parseInt(value);
+      const maxValue = Math.pow(10, digito) - 1; // 10^digitos - 1
+
+      return valorNumerico <= maxValue;
+    },
+    [digito],
+  );
+
+  // Calcular el máximo valor permitido para mostrar al usuario
+  const maxValuePermitido = useMemo(() => {
+    return Math.pow(10, digito) - 1;
+  }, [digito]);
 
   // Función estable para calcular el consumo
   const calcularConsumo = useCallback(
@@ -104,8 +122,32 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
+      // Si el valor está vacío, permitir
+      if (value === '') {
+        setInputValue(value);
+        setConsumoCalculado('');
+        setTipoLectura(null);
+        setIsValidated(false);
+        return;
+      }
+      // Validar que sea numérico
+      if (isNaN(Number(value))) {
+        toast.error('Solo se permiten valores numéricos');
+        return;
+      }
+      // Validar que no sea menor a 0 (excepto 0)
+      if (Number(value) < 0) {
+        toast.error('No se permiten valores negativos');
+        return;
+      }
+      // Validar número de dígitos
+      if (!validarDigitos(value)) {
+        toast.error(
+          `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`,
+        );
+        return;
+      }
       setInputValue(value);
-
       if (value && !isNaN(Number(value))) {
         const resultado = calcularConsumo(value);
         setConsumoCalculado(resultado.consumo);
@@ -117,13 +159,21 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
         setIsValidated(false);
       }
     },
-    [calcularConsumo],
+    [calcularConsumo, validarDigitos, maxValuePermitido, digito],
   );
 
   // Validar la lectura
   const validarLectura = useCallback(() => {
     if (!inputValue || isNaN(Number(inputValue))) {
-      toast.info('Por favor ingrese un valor numérico válido');
+      toast.error('Por favor ingrese un valor numérico válido');
+      return;
+    }
+
+    // Validar dígitos una vez más antes de continuar
+    if (!validarDigitos(inputValue)) {
+      toast.error(
+        `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`,
+      );
       return;
     }
 
@@ -134,9 +184,9 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     } else if (tipoLectura === 'mayor') {
       setShowMayorDialog(true);
     } else {
-      toast.info('Por favor ingrese un valor válido');
+      toast.error('Por favor ingrese un valor válido');
     }
-  }, [inputValue, tipoLectura]);
+  }, [inputValue, tipoLectura, validarDigitos, maxValuePermitido, digito]);
 
   // Preparar datos para enviar
   const prepararDatosFormulario = useCallback(() => {
@@ -244,65 +294,83 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     [],
   );
 
+  // Limpiar selección de motivos al cerrar los diálogos de confirmación
+  useEffect(() => {
+    if (!showMenorDialog) setSelectedClave('0');
+  }, [showMenorDialog]);
+  useEffect(() => {
+    if (!showIgualDialog) setSelectedClave('0');
+  }, [showIgualDialog]);
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-2 space-y-2">
       <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
-            <div className="p-2 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
-              <Gauge className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <CardHeader className="pb-1">
+          <CardTitle className="flex items-center gap-1.5 text-slate-900 dark:text-slate-100 text-sm font-semibold">
+            <div className="p-1 bg-blue-50 dark:bg-blue-950/50 rounded-md">
+              <Gauge className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-lg font-semibold">
+              <p className="text-sm font-semibold">
                 Datos de Lectura y Consumo
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">
                 Formulario para medidores BT-1 y BT-2
               </p>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                <Gauge className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <CardContent className="space-y-1.5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Gauge className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                 Lectura Actual
               </Label>
               <Input
-                type="number"
                 placeholder={valorAnterior.toString()}
                 value={inputValue}
                 onChange={handleInputChange}
-                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
+                max={maxValuePermitido}
+                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-7"
               />
+              <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                <span>⚠️</span>
+                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
+                dígitos)
+              </small>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                <Calculator className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Calculator className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                 Consumo Calculado
               </Label>
-              <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
+              <div className="h-7 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoCalculado || '0'}
               </div>
+              <small className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
+                <span>📊</span>
+                Anterior:{' '}
+                {result.LM_ConsumoMesAnterior?.toLocaleString() || '0'} kWh
+              </small>
             </div>
 
-            <div className="flex items-end">
+            <div className="flex items-center pt-4">
               <Button
                 variant="outline"
                 onClick={validarLectura}
                 disabled={!inputValue || isSubmitting || isValidated}
-                className="w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                className="w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 h-7 text-xs"
               >
                 {isValidated ? (
                   <>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-3 w-3 mr-1" />
                     Validado
                   </>
                 ) : (
                   <>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-3 w-3 mr-1" />
                     Validar
                   </>
                 )}
@@ -312,47 +380,47 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
           {/* Alertas */}
           {Number(consumoCalculado) < 0 && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
+            <Alert variant="destructive" className="py-1.5">
+              <AlertCircle className="h-3 w-3" />
+              <AlertDescription className="text-xs">
                 El consumo es negativo, por favor verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {Number(consumoCalculado) === 0 && inputValue && (
-            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
-              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <AlertDescription className="text-amber-700 dark:text-amber-300">
+            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-1.5">
+              <AlertCircle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="text-amber-700 dark:text-amber-300 text-xs">
                 El consumo es cero, verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {isValidated && (
-            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
-              <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <AlertDescription className="text-green-700 dark:text-green-300">
+            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-1.5">
+              <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+              <AlertDescription className="text-green-700 dark:text-green-300 text-xs">
                 Lectura validada correctamente, puede proceder a guardar.
               </AlertDescription>
             </Alert>
           )}
 
           {/* Botón Guardar */}
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end pt-1">
             <Button
               onClick={guardarLectura}
               disabled={!isValidated || isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-8"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 h-7 text-xs"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />
                   Guardando...
                 </>
               ) : (
                 <>
-                  <Check className="mr-2 h-4 w-4" />
+                  <Check className="mr-1.5 h-3 w-3" />
                   Guardar Lectura
                 </>
               )}

@@ -82,7 +82,6 @@ const SectionTitle = ({
 
 export default function DetallesCondicionesContrato({
   condicionId,
-  onClose,
 }: DetallesCondicionesContratoProps) {
   const [condicion, setCondicion] =
     useState<GetCondicionesContratoPorId | null>(null);

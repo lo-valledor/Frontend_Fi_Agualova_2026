@@ -179,20 +179,6 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
   const nuevaFechaInicio = obtenerNuevaFechaInicio(ultimoValor?.fecha_fin);
 
-  // Función para convertir formato DD-MM-YYYY a Date
-  const parsearFechaFinADate = (fechaFin: string | undefined): Date | null => {
-    if (!fechaFin) return null;
-
-    const partes = fechaFin.split('-');
-    if (partes.length !== 3) return null;
-
-    // Formato para new Date(): YYYY-MM-DD
-    const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
-    const fecha = new Date(fechaISO);
-
-    return isNaN(fecha.getTime()) ? null : fecha;
-  };
-
   // Función para convertir formato DD-MM-YYYY a Date (para filtrado)
   const parsearFechaInicioADate = (
     fechaInicio: string | undefined,
@@ -208,20 +194,6 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
     return isNaN(fecha.getTime()) ? null : fecha;
   };
-
-  // Verificar si la fecha final del último registro es menor o igual a la fecha actual
-  const puedeAgregarNuevoValor = useMemo(() => {
-    if (!ultimoValor?.fecha_fin) return false;
-
-    const fechaFin = parsearFechaFinADate(ultimoValor.fecha_fin);
-    if (!fechaFin) return false;
-
-    const hoy = new Date();
-    // Resetear horas, minutos, segundos para comparar solo fechas
-    hoy.setHours(0, 0, 0, 0);
-
-    return fechaFin <= hoy;
-  }, [ultimoValor?.fecha_fin]);
 
   // Filtrar datos según el período seleccionado
   const datosFiltrados = useMemo(() => {

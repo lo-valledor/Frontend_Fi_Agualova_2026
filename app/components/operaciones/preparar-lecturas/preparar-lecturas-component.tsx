@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useMemo } from 'react';
 import {
   Card,
@@ -235,7 +234,7 @@ export default function PrepararLecturasComponent({
 
             <CollapsibleContent>
               <CardContent className="px-6 pb-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                   {/* Periodo */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
@@ -289,7 +288,7 @@ export default function PrepararLecturasComponent({
                     >
                       <SelectTrigger
                         id="ciclo"
-                        className="h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-emerald-400 focus:ring-emerald-400/20"
+                        className="h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-emerald-400 focus:ring-emerald-400/20 w-full"
                       >
                         <SelectValue placeholder="Selecciona un ciclo de facturación" />
                       </SelectTrigger>

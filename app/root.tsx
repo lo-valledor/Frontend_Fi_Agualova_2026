@@ -5,7 +5,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
 } from 'react-router';
+import React, { useEffect } from 'react';
 
 import type { Route } from './+types/root';
 import './app.css';
@@ -13,6 +15,7 @@ import { ThemeProvider } from './components/theme-provider';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'sonner';
+import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -37,16 +40,40 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <BreadcrumbProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </BreadcrumbProvider>
-        </ThemeProvider>
-        <Toaster richColors position="top-right" closeButton />
-        <ScrollRestoration />
-        <Scripts />
+        <LoadingBarProvider>
+          <AppLayout>{children}</AppLayout>
+        </LoadingBarProvider>
       </body>
     </html>
+  );
+}
+
+function AppLayout({ children }: { children: React.ReactNode }) {
+  const navigation = useNavigation();
+  const loadingBar = useLoadingBar();
+
+  useEffect(() => {
+    if (!loadingBar?.current) {
+      return;
+    }
+    if (navigation.state === 'loading' || navigation.state === 'submitting') {
+      loadingBar.current.continuousStart();
+    } else {
+      loadingBar.current.complete();
+    }
+  }, [navigation.state, loadingBar]);
+
+  return (
+    <>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <BreadcrumbProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </BreadcrumbProvider>
+      </ThemeProvider>
+      <Toaster richColors position="top-right" closeButton />
+      <ScrollRestoration />
+      <Scripts />
+    </>
   );
 }
 
@@ -55,16 +82,6 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  // Log detallado del error para debugging
-  /* console.error('=== ERROR BOUNDARY ACTIVADO ===');
-  console.error('Error completo:', error);
-  console.error('Navegador:', navigator.userAgent);
-  console.error('URL:', window.location.href);
-  console.error(
-    'LocalStorage token:',
-    localStorage.getItem('token') ? 'EXISTE' : 'NO EXISTE',
-  ); */
-
   let message = '¡Ups!';
   let details = 'Ha ocurrido un error inesperado.';
   let stack: string | undefined;
@@ -78,10 +95,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   } else if (error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
-
-    // Log específico para errores de JavaScript
-    /* console.error('Mensaje del error:', error.message);
-    console.error('Stack trace:', error.stack); */
   }
 
   return (

@@ -16,46 +16,6 @@ import { Badge } from '~/components/ui/badge';
 import { cn } from '~/lib/utils';
 import { Checkbox } from '~/components/ui/checkbox';
 
-// Interfaz para la función de callback después de cerrar lecturas
-interface OnCerrarLecturaSuccess {
-  (): void;
-}
-
-// Función de utilidad para formatear fechas desde string DD-MM-YYYY
-const formatearFecha = (fechaString: string): string => {
-  if (!fechaString) return '';
-
-  // Verificar si la fecha tiene el formato esperado (DD-MM-YYYY)
-  const regexFecha = /^(\d{2})-(\d{2})-(\d{4})$/;
-  const match = fechaString.match(regexFecha);
-
-  if (!match) return fechaString; // Devolver el original si no coincide con el formato
-
-  try {
-    // Extraer partes de la fecha
-    const [, dia, mes, anio] = match;
-
-    // Crear Date (el mes en JavaScript es 0-indexed)
-    const fecha = new Date(`${anio}-${mes}-${dia}`);
-
-    // Verificar si la fecha es válida
-    if (isNaN(fecha.getTime())) return fechaString;
-
-    // Opciones para formatear la fecha
-    const opciones: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    };
-
-    // Formato en español
-    return fecha.toLocaleDateString('es-ES', opciones);
-  } catch (error) {
-    console.error('Error al formatear fecha:', error);
-    return fechaString;
-  }
-};
-
 export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'select',
@@ -89,7 +49,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'sectorId',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <MapPin className="w-4 h-4 text-blue-500" />
         <span>Sector</span>
@@ -113,7 +73,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'nichoId',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <Hash className="w-4 h-4 text-slate-500" />
         <span>ID</span>
@@ -137,7 +97,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'nichoDescripcion',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center gap-2 font-semibold">
         <ClipboardList className="w-4 h-4 text-sky-500" />
         <span>Descripción del Nicho</span>
@@ -167,7 +127,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'cantidadSinLectura',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <Ban className="w-4 h-4 text-gray-500" />
         <span>Sin Lectura</span>
@@ -200,7 +160,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'cantidadLecturasOK',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <CheckCircle className="w-4 h-4 text-green-500" />
         <span>Lecturas OK</span>
@@ -225,7 +185,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'cantidadClaveRoja',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <AlertCircle className="w-4 h-4 text-red-500" />
         <span>Clave Crítica</span>
@@ -256,7 +216,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'cantidadClaveNaranja',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <AlertTriangle className="w-4 h-4 text-orange-500" />
         <span>Clave Alerta</span>
@@ -289,7 +249,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   },
   {
     id: 'cantidadCorregidas',
-    header: ({ column }) => (
+    header: () => (
       <div className="flex items-center justify-center gap-2 font-semibold">
         <Zap className="w-4 h-4 text-purple-500" />
         <span>Corregidas</span>

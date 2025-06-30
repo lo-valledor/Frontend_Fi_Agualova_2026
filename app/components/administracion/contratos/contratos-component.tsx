@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import React, { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
 import type {

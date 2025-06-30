@@ -39,6 +39,7 @@ interface DataTableAdvancedProps<TData, TValue> {
   onRowSelectionChange?: (selectedRows: TData[]) => void;
   rowIdKey?: keyof TData;
   initialSorting?: SortingState;
+  meta?: any;
 }
 
 export function DataTable<TData, TValue>({
@@ -46,13 +47,11 @@ export function DataTable<TData, TValue>({
   data,
   searchPlaceholder = 'Buscar...',
   defaultPageSize = 10,
-  pageSizeOptions = [5, 10, 20, 50, 100],
   showSearch = true,
-  showPageSizeSelector = true,
-  showPageNumbers = true,
   onRowSelectionChange,
   rowIdKey,
   initialSorting = [],
+  meta,
 }: DataTableAdvancedProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -67,6 +66,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    meta,
     state: {
       sorting,
       columnVisibility,
@@ -112,14 +112,16 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       {/* Search */}
       {showSearch && (
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder={searchPlaceholder}
-            value={globalFilter ?? ''}
-            onChange={(e) => table.setGlobalFilter(e.target.value)}
-            className="pl-10"
-          />
+        <div className="flex justify-end">
+          <div className="relative w-full max-w-xs">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder={searchPlaceholder}
+              value={globalFilter ?? ''}
+              onChange={(event) => setGlobalFilter(event.target.value)}
+              className="w-full rounded-md border-border bg-background py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
         </div>
       )}
 

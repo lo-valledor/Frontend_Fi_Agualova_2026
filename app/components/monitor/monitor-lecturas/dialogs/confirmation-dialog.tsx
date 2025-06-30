@@ -42,7 +42,6 @@ export function ConfirmationDialog({
   title,
   message,
   isDestructive = false,
-  variant = 'default',
   alertColor = 'red',
   claveOptions = [],
   selectedClave = '0',
@@ -104,8 +103,8 @@ export function ConfirmationDialog({
               Seleccione un motivo:
             </Label>
             <Select value={selectedClave} onValueChange={onClaveChange}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800">
-                <SelectValue placeholder="Seleccione" />
+              <SelectTrigger className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 w-full">
+                <SelectValue placeholder="Seleccione un motivo" />
               </SelectTrigger>
               <SelectContent>
                 {claveOptions.map((option) => (

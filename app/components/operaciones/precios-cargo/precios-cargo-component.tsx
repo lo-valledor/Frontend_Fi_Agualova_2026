@@ -323,31 +323,39 @@ export default function PreciosCargoComponent({
         <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <Tabs defaultValue="enel" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
                 <TabsTrigger
                   value="enel"
-                  className="flex items-center gap-2 data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
                 >
-                  <Building2 className="w-4 h-4" />
+                  <Building2 className="mr-2 h-4 w-4" />
                   Precios Enel
                 </TabsTrigger>
                 <TabsTrigger
                   value="enerlova"
-                  className="flex items-center gap-2 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
+                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
                 >
-                  <BarChart className="w-4 h-4" />
+                  <BarChart className="mr-2 h-4 w-4" />
                   Precios Enerlova
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="enel" className="space-y-4">
+              <TabsContent value="enel" className="space-y-4 pt-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                       Precios de Cargo - Enel
                     </h3>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Precios de cargo desde compañía de electricidad Enel
+                      Precios de cargo de compañía de electricidad, obtenidos
+                      desde{' '}
+                      <a
+                        href="https://www.enel.cl/es/clientes/tarifas-y-regulacion/tarifas.html"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Enel
+                      </a>
                     </p>
                   </div>
                   <Badge
@@ -403,7 +411,7 @@ export default function PreciosCargoComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value="enerlova" className="space-y-4">
+              <TabsContent value="enerlova" className="space-y-4 pt-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">

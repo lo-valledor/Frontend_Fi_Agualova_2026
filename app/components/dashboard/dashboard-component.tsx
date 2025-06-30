@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import {
   FileText,
@@ -11,6 +10,7 @@ import {
   Building,
   User,
   CheckCircle,
+  Snowflake,
 } from 'lucide-react';
 import { Link } from 'react-router';
 import { Button } from '~/components/ui/button';
@@ -36,6 +36,7 @@ import type {
   ValidarSectoresPendientes,
 } from '~/types/operaciones';
 import api from '~/lib/api';
+import type { GetLimiteInvierno } from '~/types/administracion';
 
 // Datos de atajos rápidos
 const quickActions = [
@@ -170,7 +171,7 @@ const AdminAnalyticsComponent = () => {
           loading: false,
         });
       } catch (error) {
-        console.error('Error al cargar datos de análisis:', error); // eslint-disable-line no-console
+        console.error('Error al cargar datos de análisis:', error);
         setAnalyticsData((prev) => ({ ...prev, loading: false }));
       }
     };
@@ -686,10 +687,12 @@ export default function DashboardComponent({
   periodoAbierto,
   lecturasPendientes,
   corte,
+  limiteInvierno,
 }: {
   periodoAbierto: PeriodoAbierto;
   lecturasPendientes: ValidarSectoresPendientes;
   corte: TotalesCorteReposicion;
+  limiteInvierno: GetLimiteInvierno;
 }) {
   const [dashboardData, setDashboardData] = useState({
     periodoActual: { mes: 0, anio: 0, estado: 'Sin período' },
@@ -715,6 +718,7 @@ export default function DashboardComponent({
       reposicionSolicitada: 0,
       total: 0,
     },
+    limiteInvierno: 0,
   });
 
   // Actualizar reloj cada segundo
@@ -800,6 +804,7 @@ export default function DashboardComponent({
           setDisplayData({
             lecturasPendientes: lecturasPendientesCount,
             totalesCorte,
+            limiteInvierno: parseInt(limiteInvierno?.valor || '0', 10),
           });
         }, 100);
       } catch (_error) {
@@ -808,7 +813,7 @@ export default function DashboardComponent({
     };
 
     processDashboardData();
-  }, [periodoAbierto, lecturasPendientes, corte]);
+  }, [periodoAbierto, lecturasPendientes, corte, limiteInvierno]);
 
   return (
     <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
@@ -884,26 +889,46 @@ export default function DashboardComponent({
             </CardContent>
           </Card>
 
-          {/* Fecha y Hora */}
+          {/* Límite de Invierno */}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Fecha y Hora
+                Límite de Invierno
               </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <Snowflake className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="space-y-1">
-                <div className="text-lg font-bold font-mono">
-                  {dashboardData.fechaHora.toLocaleDateString('es-CL')}
-                </div>
-                <div className="text-xl font-bold font-mono text-blue-600 dark:text-blue-400">
-                  {dashboardData.fechaHora.toLocaleTimeString('es-CL', {
-                    hour12: false,
-                  })}
-                </div>
+              <div className="text-2xl font-bold font-mono">
+                {dashboardData.loading ? (
+                  <span className="animate-pulse text-muted-foreground">
+                    ---
+                  </span>
+                ) : (
+                  <>
+                    <NumberFlow
+                      value={displayData.limiteInvierno}
+                      format={{
+                        useGrouping: true,
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      }}
+                      transformTiming={{
+                        duration: 1500,
+                        easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+                      }}
+                      plugins={[continuous]}
+                      className="tabular-nums"
+                    />
+                    <span className="text-xl font-normal text-muted-foreground">
+                      {' '}
+                      kWh
+                    </span>
+                  </>
+                )}
               </div>
-              <p className="text-xs text-muted-foreground">Sistema Enerlova</p>
+              <p className="text-xs text-muted-foreground">
+                Límite para sobrecargo de invierno
+              </p>
             </CardContent>
           </Card>
 

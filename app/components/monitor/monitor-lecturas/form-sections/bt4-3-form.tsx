@@ -233,7 +233,6 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   const handleActivaInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-
       // Si el valor está vacío, permitir
       if (value === '') {
         setInputActivaValue(value);
@@ -242,13 +241,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         setIsActivaValidated(false);
         return;
       }
-
       // Validar que sea numérico
       if (isNaN(Number(value))) {
         toast.error('Solo se permiten valores numéricos en Energía Activa');
         return;
       }
-
+      // Validar que no sea menor a 0 (excepto 0)
+      if (Number(value) < 0) {
+        toast.error('No se permiten valores negativos en Energía Activa');
+        return;
+      }
       // Validar número de dígitos
       if (!validarDigitos(value)) {
         toast.error(
@@ -256,9 +258,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         );
         return;
       }
-
       setInputActivaValue(value);
-
       if (value && !isNaN(Number(value))) {
         const resultado = calcularConsumoActiva(value);
         setConsumoActivaCalculado(resultado.consumo);
@@ -277,7 +277,6 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   const handleReactivaInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-
       // Si el valor está vacío, permitir
       if (value === '') {
         setInputReactivaValue(value);
@@ -286,13 +285,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         setIsReactivaValidated(false);
         return;
       }
-
       // Validar que sea numérico
       if (isNaN(Number(value))) {
         toast.error('Solo se permiten valores numéricos en Energía Reactiva');
         return;
       }
-
+      // Validar que no sea menor a 0 (excepto 0)
+      if (Number(value) < 0) {
+        toast.error('No se permiten valores negativos en Energía Reactiva');
+        return;
+      }
       // Validar número de dígitos
       if (!validarDigitos(value)) {
         toast.error(
@@ -300,9 +302,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         );
         return;
       }
-
       setInputReactivaValue(value);
-
       if (value && !isNaN(Number(value))) {
         const resultado = calcularConsumoReactiva(value);
         setConsumoReactivaCalculado(resultado.consumo);
@@ -584,37 +584,50 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     [],
   );
 
+  // Limpiar selección de motivos al cerrar los diálogos de confirmación
+  useEffect(() => {
+    if (!showMenorActivaDialog) setSelectedClaveActiva('0');
+  }, [showMenorActivaDialog]);
+  useEffect(() => {
+    if (!showIgualActivaDialog) setSelectedClaveActiva('0');
+  }, [showIgualActivaDialog]);
+  useEffect(() => {
+    if (!showMenorReactivaDialog) setSelectedClaveReactiva('0');
+  }, [showMenorReactivaDialog]);
+  useEffect(() => {
+    if (!showIgualReactivaDialog) setSelectedClaveReactiva('0');
+  }, [showIgualReactivaDialog]);
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 space-y-3">
       {/* Energía Activa */}
       <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
-            <div className="p-2 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
-              <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base font-semibold">
+            <div className="p-1.5 bg-blue-50 dark:bg-blue-950/50 rounded-lg">
+              <Zap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-lg font-semibold">Energía Activa</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+              <p className="text-base font-semibold">Energía Activa</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">
                 Lectura y validación del consumo activo
               </p>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                <Gauge className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+        <CardContent className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Gauge className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                 Lectura Actual
               </Label>
               <Input
-                type="number"
                 placeholder={valorActivaAnterior.toString()}
                 value={inputActivaValue}
                 onChange={handleActivaInputChange}
                 max={maxValuePermitido}
-                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
+                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-8"
               />
               <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
                 <span>⚠️</span>
@@ -623,37 +636,37 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </small>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                <Calculator className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Calculator className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                 Consumo Calculado
               </Label>
-              <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
+              <div className="h-8 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoActivaCalculado || '0'}
               </div>
               <small className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
                 <span>📊</span>
-                Consumo anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
+                Anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
               </small>
             </div>
 
-            <div className="flex items-end">
+            <div className="flex items-center pt-4">
               <Button
                 variant="outline"
                 onClick={validarLecturaActiva}
                 disabled={
                   !inputActivaValue || isSubmitting || isActivaValidated
                 }
-                className="w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                className="w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 h-8"
               >
                 {isActivaValidated ? (
                   <>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-3 w-3 mr-1" />
                     Validado
                   </>
                 ) : (
                   <>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-3 w-3 mr-1" />
                     Validar
                   </>
                 )}
@@ -663,9 +676,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
           {/* Alertas para Energía Activa */}
           {Number(consumoActivaCalculado) < 0 && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
+            <Alert variant="destructive" className="py-2">
+              <AlertCircle className="h-3 w-3" />
+              <AlertDescription className="text-xs">
                 El consumo de energía activa es negativo, por favor verifique la
                 lectura.
               </AlertDescription>
@@ -673,18 +686,18 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           )}
 
           {Number(consumoActivaCalculado) === 0 && inputActivaValue && (
-            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
-              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <AlertDescription className="text-amber-700 dark:text-amber-300">
+            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-2">
+              <AlertCircle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="text-amber-700 dark:text-amber-300 text-xs">
                 El consumo de energía activa es cero, verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {isActivaValidated && (
-            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
-              <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <AlertDescription className="text-green-700 dark:text-green-300">
+            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-2">
+              <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+              <AlertDescription className="text-green-700 dark:text-green-300 text-xs">
                 Lectura de energía activa validada correctamente.
               </AlertDescription>
             </Alert>
@@ -694,33 +707,32 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
       {/* Energía Reactiva */}
       <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
-            <div className="p-2 bg-emerald-50 dark:bg-emerald-950/50 rounded-lg">
-              <Activity className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base font-semibold">
+            <div className="p-1.5 bg-emerald-50 dark:bg-emerald-950/50 rounded-lg">
+              <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <p className="text-lg font-semibold">Energía Reactiva</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+              <p className="text-base font-semibold">Energía Reactiva</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">
                 Lectura y validación del consumo reactivo
               </p>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                <Gauge className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+        <CardContent className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Gauge className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                 Lectura Actual
               </Label>
               <Input
-                type="number"
                 placeholder={valorReactivaAnterior.toString()}
                 value={inputReactivaValue}
                 onChange={handleReactivaInputChange}
                 max={maxValuePermitido}
-                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono"
+                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-8"
               />
               <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
                 <span>⚠️</span>
@@ -729,37 +741,37 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </small>
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                <Calculator className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="space-y-1">
+              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                <Calculator className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
                 Consumo Calculado
               </Label>
-              <div className="h-10 px-3 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
+              <div className="h-8 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
                 {consumoReactivaCalculado || '0'}
               </div>
               <small className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                 <span>📊</span>
-                Consumo anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
+                Anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
               </small>
             </div>
 
-            <div className="flex items-end">
+            <div className="flex items-center pt-4">
               <Button
                 variant="outline"
                 onClick={validarLecturaReactiva}
                 disabled={
                   !inputReactivaValue || isSubmitting || isReactivaValidated
                 }
-                className="w-full border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                className="w-full border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 h-8"
               >
                 {isReactivaValidated ? (
                   <>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-3 w-3 mr-1" />
                     Validado
                   </>
                 ) : (
                   <>
-                    <Check className="h-4 w-4 mr-2" />
+                    <Check className="h-3 w-3 mr-1" />
                     Validar
                   </>
                 )}
@@ -769,9 +781,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
           {/* Alertas para Energía Reactiva */}
           {Number(consumoReactivaCalculado) < 0 && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
+            <Alert variant="destructive" className="py-2">
+              <AlertCircle className="h-3 w-3" />
+              <AlertDescription className="text-xs">
                 El consumo de energía reactiva es negativo, por favor verifique
                 la lectura.
               </AlertDescription>
@@ -779,18 +791,18 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           )}
 
           {Number(consumoReactivaCalculado) === 0 && inputReactivaValue && (
-            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
-              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-              <AlertDescription className="text-amber-700 dark:text-amber-300">
+            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-2">
+              <AlertCircle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
+              <AlertDescription className="text-amber-700 dark:text-amber-300 text-xs">
                 El consumo de energía reactiva es cero, verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {isReactivaValidated && (
-            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20">
-              <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-              <AlertDescription className="text-green-700 dark:text-green-300">
+            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-2">
+              <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+              <AlertDescription className="text-green-700 dark:text-green-300 text-xs">
                 Lectura de energía reactiva validada correctamente.
               </AlertDescription>
             </Alert>
@@ -800,39 +812,39 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
       {/* Datos de Demanda */}
       <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold">
-            <div className="p-2 bg-amber-50 dark:bg-amber-950/50 rounded-lg">
-              <BarChart2 className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base font-semibold">
+            <div className="p-1.5 bg-amber-50 dark:bg-amber-950/50 rounded-lg">
+              <BarChart2 className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <p className="text-lg font-semibold">Datos de Demanda</p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 font-normal">
+              <p className="text-base font-semibold">Datos de Demanda</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">
                 Configuración de demandas punta y suministrada
               </p>
             </div>
           </CardTitle>
           {!isActivaValidated || !isReactivaValidated ? (
-            <Alert variant="destructive" className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
+            <Alert variant="destructive" className="mt-2 py-2">
+              <AlertCircle className="h-3 w-3" />
+              <AlertDescription className="text-xs">
                 Los datos de demanda se habilitarán una vez validadas las
                 lecturas de energía activa y reactiva.
               </AlertDescription>
             </Alert>
           ) : null}
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4">
           {/* Demanda Punta */}
-          <div className="p-4 bg-blue-50/30 dark:bg-blue-950/20 rounded-xl border border-blue-200/30 dark:border-blue-800/30">
-            <div className="flex items-center gap-2 mb-4">
-              <BarChart2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+          <div className="p-3 bg-blue-50/30 dark:bg-blue-950/20 rounded-lg border border-blue-200/30 dark:border-blue-800/30">
+            <div className="flex items-center gap-1 mb-2">
+              <BarChart2 className="h-3 w-3 text-blue-600 dark:text-blue-400" />
               <span className="text-sm font-semibold text-blue-800 dark:text-blue-200">
                 Demanda Punta
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="space-y-1">
                 <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   Valor (kW)
                 </Label>
@@ -841,17 +853,23 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                   step="0.01"
                   placeholder="0.00"
                   value={demandaData.dp.toString()}
-                  onChange={(e) =>
-                    handleDemandaChange('dp', parseFloat(e.target.value) || 0)
-                  }
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (val < 0)
+                      return toast.error(
+                        'No se permiten valores negativos en Demanda Punta',
+                      );
+                    handleDemandaChange('dp', val || 0);
+                  }}
                   disabled={!isActivaValidated || !isReactivaValidated}
-                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono"
+                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono h-8"
+                  max={maxValuePermitido}
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                  <CalendarIcon className="h-3.5 w-3.5" />
+              <div className="space-y-1">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                  <CalendarIcon className="h-3 w-3" />
                   Fecha
                 </Label>
                 <Input
@@ -861,13 +879,14 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                     handleDemandaChange('dpFecha', e.target.value)
                   }
                   disabled={!isActivaValidated || !isReactivaValidated}
-                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800"
+                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 h-8"
+                  max={new Date().toISOString().slice(0, 10)}
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5" />
+              <div className="space-y-1">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
                   Hora
                 </Label>
                 <Input
@@ -877,22 +896,22 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                     handleDemandaChange('dpHora', e.target.value)
                   }
                   disabled={!isActivaValidated || !isReactivaValidated}
-                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono"
+                  className="bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono h-8"
                 />
               </div>
             </div>
           </div>
 
           {/* Demanda Suministrada */}
-          <div className="p-4 bg-emerald-50/30 dark:bg-emerald-950/20 rounded-xl border border-emerald-200/30 dark:border-emerald-800/30">
-            <div className="flex items-center gap-2 mb-4">
-              <BarChart2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          <div className="p-3 bg-emerald-50/30 dark:bg-emerald-950/20 rounded-lg border border-emerald-200/30 dark:border-emerald-800/30">
+            <div className="flex items-center gap-1 mb-2">
+              <BarChart2 className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
               <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">
                 Demanda Suministrada
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="space-y-1">
                 <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide">
                   Valor (kW)
                 </Label>
@@ -901,17 +920,22 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                   step="0.01"
                   placeholder="0.00"
                   value={demandaData.ds.toString()}
-                  onChange={(e) =>
-                    handleDemandaChange('ds', parseFloat(e.target.value) || 0)
-                  }
+                  onChange={(e) => {
+                    const val = parseFloat(e.target.value);
+                    if (val < 0)
+                      return toast.error(
+                        'No se permiten valores negativos en Demanda Suministrada',
+                      );
+                    handleDemandaChange('ds', val || 0);
+                  }}
                   disabled={!isActivaValidated || !isReactivaValidated}
-                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono"
+                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono h-8"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                  <CalendarIcon className="h-3.5 w-3.5" />
+              <div className="space-y-1">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                  <CalendarIcon className="h-3 w-3" />
                   Fecha
                 </Label>
                 <Input
@@ -921,13 +945,13 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                     handleDemandaChange('dsFecha', e.target.value)
                   }
                   disabled={!isActivaValidated || !isReactivaValidated}
-                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800"
+                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 h-8"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5" />
+              <div className="space-y-1">
+                <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
                   Hora
                 </Label>
                 <Input
@@ -937,14 +961,14 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                     handleDemandaChange('dsHora', e.target.value)
                   }
                   disabled={!isActivaValidated || !isReactivaValidated}
-                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono"
+                  className="bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono h-8"
                 />
               </div>
             </div>
           </div>
 
           {/* Botón Guardar */}
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end pt-2">
             <Button
               onClick={guardarLectura}
               disabled={
@@ -958,16 +982,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 !demandaData.dsHora ||
                 isSubmitting
               }
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-8"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-6 h-8"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-3 w-3 animate-spin" />
                   Guardando...
                 </>
               ) : (
                 <>
-                  <Check className="mr-2 h-4 w-4" />
+                  <Check className="mr-2 h-3 w-3" />
                   Guardar Lecturas
                 </>
               )}
@@ -980,7 +1004,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showMenorActivaDialog}
         onOpenChange={setShowMenorActivaDialog}
-        title="Confirmar lectura activa menor"
+        title="Confirmar Lectura Activa Menor"
         message="La lectura activa ingresada es menor que la anterior. Por favor seleccione un motivo."
         variant="default"
         alertColor="yellow"
@@ -995,7 +1019,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showIgualActivaDialog}
         onOpenChange={setShowIgualActivaDialog}
-        title="Confirmar lectura activa igual"
+        title="Confirmar Lectura Activa Igual"
         message="La lectura activa ingresada es igual a la anterior. Por favor seleccione un motivo."
         variant="default"
         alertColor="yellow"
@@ -1010,7 +1034,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showMayorActivaDialog}
         onOpenChange={setShowMayorActivaDialog}
-        title="Confirmar lectura activa"
+        title="Confirmar Lectura Activa"
         message="¿Está seguro de que la lectura activa es correcta?"
         alertColor="blue"
         onConfirm={handleConfirmMayorActiva}
@@ -1021,7 +1045,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showMenorReactivaDialog}
         onOpenChange={setShowMenorReactivaDialog}
-        title="Confirmar lectura reactiva menor"
+        title="Confirmar Lectura Reactiva Menor"
         message="La lectura reactiva ingresada es menor que la anterior. Por favor seleccione un motivo."
         variant="default"
         alertColor="yellow"
@@ -1036,7 +1060,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showIgualReactivaDialog}
         onOpenChange={setShowIgualReactivaDialog}
-        title="Confirmar lectura reactiva igual"
+        title="Confirmar Lectura Reactiva Igual"
         message="La lectura reactiva ingresada es igual a la anterior. Por favor seleccione un motivo."
         variant="default"
         alertColor="yellow"
@@ -1051,7 +1075,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showMayorReactivaDialog}
         onOpenChange={setShowMayorReactivaDialog}
-        title="Confirmar lectura reactiva"
+        title="Confirmar Lectura Reactiva"
         message="¿Está seguro de que la lectura reactiva es correcta?"
         alertColor="blue"
         onConfirm={handleConfirmMayorReactiva}

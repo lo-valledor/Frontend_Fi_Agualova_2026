@@ -1,6 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { MedidorNichoItem } from '~/types/monitor';
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { PencilIcon, RotateCcw, Check, CreditCard } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
@@ -18,7 +17,6 @@ export const columnsNichos = ({
   handleOpenDialog,
   openDialogs,
   lastEditedId,
-  handleSuccess,
 }: ColumnsProps): ColumnDef<MedidorNichoItem>[] => [
   {
     id: 'numero',
@@ -37,12 +35,10 @@ export const columnsNichos = ({
   {
     id: 'local',
     accessorKey: 'local',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Local" />
-    ),
+    header: () => <div className="text-center">Local</div>,
     cell: ({ row }) => (
       <div
-        className="font-medium text-xs text-left text-slate-600 dark:text-slate-400 truncate max-w-[100px]"
+        className="font-medium text-xs text-center text-slate-600 dark:text-slate-400 truncate max-w-[100px]"
         title={row.getValue('local')}
       >
         {row.getValue('local')}
@@ -55,11 +51,9 @@ export const columnsNichos = ({
   {
     id: 'tarifa',
     accessorKey: 'tarifa',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tarifa" />
-    ),
+    header: () => <div className="text-center">Tarifa</div>,
     cell: ({ row }) => (
-      <div className="text-left text-xs">
+      <div className="text-center text-xs">
         <Badge variant="outline" className="font-medium py-0 px-1.5 h-5">
           {row.getValue('tarifa')}
         </Badge>
@@ -72,11 +66,9 @@ export const columnsNichos = ({
   {
     id: 'numero_serie',
     accessorKey: 'ME_NSerie',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nro" />
-    ),
+    header: () => <div className="text-center">Nro</div>,
     cell: ({ row }) => (
-      <div className="font-mono text-xs text-left text-slate-700 dark:text-slate-300">
+      <div className="font-mono text-xs text-center text-slate-700 dark:text-slate-300">
         {row.getValue('numero_serie')}
       </div>
     ),
@@ -87,11 +79,9 @@ export const columnsNichos = ({
   {
     id: 'constante',
     accessorKey: 'ME_ConstanteMultiplicar',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Const" />
-    ),
+    header: () => <div className="text-center">Const</div>,
     cell: ({ row }) => (
-      <div className="font-medium text-xs text-left">
+      <div className="font-medium text-xs text-right">
         {row.getValue('constante')}
       </div>
     ),
@@ -102,13 +92,11 @@ export const columnsNichos = ({
   {
     id: 'anio_anterior',
     accessorKey: 'LM_ConsumoAñoAnterior',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Año" />
-    ),
+    header: () => <div className="text-center">Año</div>,
     cell: ({ row }) => {
       const value = row.getValue('anio_anterior') as number;
       return (
-        <div className="font-medium text-xs text-left">
+        <div className="font-medium text-xs text-right">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -120,13 +108,11 @@ export const columnsNichos = ({
   {
     id: 'mes_anterior',
     accessorKey: 'LM_ConsumoMesAnterior',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Mes" />
-    ),
+    header: () => <div className="text-center">Mes</div>,
     cell: ({ row }) => {
       const value = row.getValue('mes_anterior') as number;
       return (
-        <div className="font-medium text-xs text-left">
+        <div className="font-medium text-xs text-right">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -138,13 +124,11 @@ export const columnsNichos = ({
   {
     id: 'energia_activa_anterior',
     accessorKey: 'LM_ValorUltimaLectura',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ant" />
-    ),
+    header: () => <div className="text-center">Ant</div>,
     cell: ({ row }) => {
       const value = row.getValue('energia_activa_anterior') as number;
       return (
-        <div className="font-medium text-xs text-left text-red-700 dark:text-red-400">
+        <div className="font-medium text-xs text-right text-red-700 dark:text-red-400">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -156,11 +140,11 @@ export const columnsNichos = ({
   {
     id: 'energia_activa',
     accessorKey: 'LMC_EnergiaActiva',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="8" />,
+    header: () => <div className="text-center">8</div>,
     cell: ({ row }) => {
       const value = row.getValue('energia_activa') as number;
       return (
-        <div className="font-semibold text-xs text-left text-red-800 dark:text-red-300">
+        <div className="font-semibold text-xs text-right text-red-800 dark:text-red-300">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -172,13 +156,11 @@ export const columnsNichos = ({
   {
     id: 'consumo_energia_activa',
     accessorKey: 'LMC_ConsumoEnergiaActiva',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="C8" />
-    ),
+    header: () => <div className="text-center">C8</div>,
     cell: ({ row }) => {
       const value = row.getValue('consumo_energia_activa') as number;
       return (
-        <div className="font-bold text-xs text-left text-red-900 dark:text-red-200 bg-red-100/60 dark:bg-red-900/30 px-1.5 py-0.5 rounded">
+        <div className="font-bold text-xs text-right text-red-900 dark:text-red-200 bg-red-100/60 dark:bg-red-900/30 px-1.5 py-0.5 rounded">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -190,13 +172,11 @@ export const columnsNichos = ({
   {
     id: 'energia_reactiva_anterior',
     accessorKey: 'LMC_ValorUltimaLectEnergiaReactiva',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ant" />
-    ),
+    header: () => <div className="text-center">Ant</div>,
     cell: ({ row }) => {
       const value = row.getValue('energia_reactiva_anterior') as number;
       return (
-        <div className="font-medium text-xs text-left text-green-700 dark:text-green-400">
+        <div className="font-medium text-xs text-right text-green-700 dark:text-green-400">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -208,11 +188,11 @@ export const columnsNichos = ({
   {
     id: 'energia_reactiva',
     accessorKey: 'LMC_EnergiaReactiva',
-    header: ({ column }) => <DataTableColumnHeader column={column} title="9" />,
+    header: () => <div className="text-center">9</div>,
     cell: ({ row }) => {
       const value = row.getValue('energia_reactiva') as number;
       return (
-        <div className="font-semibold text-xs text-left text-green-800 dark:text-green-300">
+        <div className="font-semibold text-xs text-right text-green-800 dark:text-green-300">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -224,13 +204,11 @@ export const columnsNichos = ({
   {
     id: 'consumo_energia_reactiva',
     accessorKey: 'LMC_ConsumoEnergiaReactiva',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="C9" />
-    ),
+    header: () => <div className="text-center">C9</div>,
     cell: ({ row }) => {
       const value = row.getValue('consumo_energia_reactiva') as number;
       return (
-        <div className="font-bold text-xs text-left text-green-900 dark:text-green-200 bg-green-100/60 dark:bg-green-900/30 px-1.5 py-0.5 rounded">
+        <div className="font-bold text-xs text-right text-green-900 dark:text-green-200 bg-green-100/60 dark:bg-green-900/30 px-1.5 py-0.5 rounded">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -242,13 +220,11 @@ export const columnsNichos = ({
   {
     id: 'demanda_punta',
     accessorKey: 'LMC_DemandaPunta',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DP" />
-    ),
+    header: () => <div className="text-center">DP</div>,
     cell: ({ row }) => {
       const value = row.getValue('demanda_punta') as number;
       return (
-        <div className="font-bold text-xs text-left text-orange-900 dark:text-orange-200 bg-orange-100/60 dark:bg-orange-900/30 px-1.5 py-0.5 rounded">
+        <div className="font-bold text-xs text-right text-orange-900 dark:text-orange-200 bg-orange-100/60 dark:bg-orange-900/30 px-1.5 py-0.5 rounded">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -260,14 +236,12 @@ export const columnsNichos = ({
   {
     id: 'fecha_demanda_punta',
     accessorKey: 'LMC_FechaDemandaPunta',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha" />
-    ),
+    header: () => <div className="text-center">Fecha</div>,
     cell: ({ row }) => {
       const value = row.getValue('fecha_demanda_punta') as string;
       return (
         <div
-          className="text-xs text-left text-orange-700 dark:text-orange-400"
+          className="text-xs text-center text-orange-700 dark:text-orange-400"
           title={value}
         >
           {value ? value.split(' ')[0] : 'N/A'}
@@ -281,13 +255,11 @@ export const columnsNichos = ({
   {
     id: 'hora_demanda_punta',
     accessorKey: 'LMC_HoraDemandaPunta',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Hora" />
-    ),
+    header: () => <div className="text-center">Hora</div>,
     cell: ({ row }) => {
       const value = row.getValue('hora_demanda_punta') as string;
       return (
-        <div className="text-xs text-left text-orange-700 dark:text-orange-400 font-mono">
+        <div className="text-xs text-center text-orange-700 dark:text-orange-400 font-mono">
           {value || 'N/A'}
         </div>
       );
@@ -299,13 +271,11 @@ export const columnsNichos = ({
   {
     id: 'demanda_suministrada',
     accessorKey: 'LMC_DemandaSuministrada',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="DS" />
-    ),
+    header: () => <div className="text-center">DS</div>,
     cell: ({ row }) => {
       const value = row.getValue('demanda_suministrada') as number;
       return (
-        <div className="font-bold text-xs text-left text-blue-900 dark:text-blue-200 bg-blue-100/60 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">
+        <div className="font-bold text-xs text-right text-blue-900 dark:text-blue-200 bg-blue-100/60 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">
           {value?.toLocaleString() || '0'}
         </div>
       );
@@ -317,14 +287,12 @@ export const columnsNichos = ({
   {
     id: 'fecha_demanda_suministrada',
     accessorKey: 'LMC_FechaDemandaSuminis',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha" />
-    ),
+    header: () => <div className="text-center">Fecha</div>,
     cell: ({ row }) => {
       const value = row.getValue('fecha_demanda_suministrada') as string;
       return (
         <div
-          className="text-xs text-left text-blue-700 dark:text-blue-400"
+          className="text-xs text-center text-blue-700 dark:text-blue-400"
           title={value}
         >
           {value ? value.split(' ')[0] : 'N/A'}
@@ -338,13 +306,11 @@ export const columnsNichos = ({
   {
     id: 'hora_demanda_suministrada',
     accessorKey: 'LMC_HoraDemandaSuminis',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Hora" />
-    ),
+    header: () => <div className="text-center">Hora</div>,
     cell: ({ row }) => {
       const value = row.getValue('hora_demanda_suministrada') as string;
       return (
-        <div className="text-xs text-left text-blue-700 dark:text-blue-400 font-mono">
+        <div className="text-xs text-center text-blue-700 dark:text-blue-400 font-mono">
           {value || 'N/A'}
         </div>
       );

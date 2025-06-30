@@ -24,6 +24,8 @@ import {
   CheckCircle2,
   BarChart3,
   Info,
+  Search,
+  Loader2,
 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import {
@@ -39,6 +41,7 @@ import type {
 import { DataTable } from '~/components/data-table/data-table';
 import { columns } from './columns';
 import api from '~/lib/api';
+import { toast } from 'sonner';
 
 interface CorteReposicionComponentProps {
   totalesData: TotalesCorteReposicion[];
@@ -47,9 +50,13 @@ interface CorteReposicionComponentProps {
 
 export default function CorteReposicionComponent({
   totalesData,
-  mantenedorCorteData,
+  mantenedorCorteData: initialMantenedorCorteData,
 }: CorteReposicionComponentProps) {
   const [isRevisionOpen, setIsRevisionOpen] = useState(true);
+  const [mantenedorCorteData, setMantenedorCorteData] = useState<
+    ConsultarMantenedorRevisionCorte[]
+  >(initialMantenedorCorteData);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Obtener cantidad por código
   const getCantidadPorCodigo = (codigo: string): number => {
@@ -65,7 +72,7 @@ export default function CorteReposicionComponent({
     const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'corte_reposicion.xlsx';
+    a.download = 'mantenedor_revision.xlsx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -79,22 +86,67 @@ export default function CorteReposicionComponent({
     const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'corte.xlsx';
+    a.download = 'revision_corte.xlsx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   };
 
-  const handleActivarActualizacion = () => {
-    // Implementar lógica para activar actualización
+  const handleBuscar = async () => {
+    setIsSearching(true);
+    try {
+      const res = await api.get<ConsultarMantenedorRevisionCorte[]>(
+        'consulta-mantenedor-revision-corte',
+      );
+      if (Array.isArray(res.data)) {
+        setMantenedorCorteData(res.data);
+      }
+    } catch (error) {
+      console.error('Error al buscar datos de corte y reposición:', error);
+      toast.error('Error al buscar los datos de corte y reposición.');
+    } finally {
+      setIsSearching(false);
+    }
   };
 
-  const handleIniciar = () => {
-    // Implementar lógica para iniciar
+  const handleActivarActualizacion = async () => {
+    try {
+      const res = await api.post('modificar-revision');
+      if (res.status === 200) {
+        toast.success('Proceso de revisión modificado correctamente.');
+        void handleBuscar();
+      } else {
+        toast.error('Error al activar la actualización.');
+      }
+    } catch (error) {
+      console.error('Error al activar la actualización:', error);
+      toast.error('Error al activar la actualización.');
+    }
   };
 
-  const handleFinalizar = () => {
-    // Implementar lógica para finalizar
+  const handleIniciar = async () => {
+    try {
+      const res = await api.post('ingresar-revision');
+      if (res.status === 200) {
+        toast.success('Proceso de revisión iniciado correctamente.');
+        void handleBuscar();
+      } else {
+        toast.error('Error al iniciar el proceso de revisión.');
+      }
+    } catch (error) {
+      console.error('Error al iniciar el proceso de revisión:', error);
+      toast.error('Error al iniciar el proceso de revisión.');
+    }
+  };
+
+  const handleFinalizar = async () => {
+    toast.info('Este es un toast, no se ha implementado la lógica');
+    /* const res = await api.delete('eliminar-revision');
+    if (res.status === 200) {
+      toast.success('Actualización activada correctamente');
+    } else {
+      toast.error('Error al activar actualización');
+    } */
   };
 
   return (
@@ -116,7 +168,9 @@ export default function CorteReposicionComponent({
                   className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
                 >
                   <Info className="w-4 h-4 mr-1 text-yellow-600" />
-                  <span className="text-yellow-600 text-sm">Información</span>
+                  <span className="text-yellow-600 text-sm">
+                    Información de Corte y Reposición
+                  </span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -166,6 +220,20 @@ export default function CorteReposicionComponent({
                 <CardContent className="p-4 space-y-6">
                   {/* Botones de Acción modernizados */}
                   <div className="flex flex-wrap gap-3 justify-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleBuscar}
+                      disabled={isSearching}
+                      className="gap-1.5 border-sky-200 hover:bg-sky-50 text-sky-700 dark:border-sky-800 dark:hover:bg-sky-900/30 dark:text-sky-300"
+                    >
+                      {isSearching ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Search className="h-3.5 w-3.5" />
+                      )}
+                      Buscar
+                    </Button>
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button
@@ -337,7 +405,11 @@ export default function CorteReposicionComponent({
                 </div>
               ) : (
                 <div className="rounded-lg border border-slate-200/40 dark:border-slate-800/40 overflow-hidden">
-                  <DataTable columns={columns} data={mantenedorCorteData} />
+                  <DataTable
+                    columns={columns}
+                    data={mantenedorCorteData}
+                    meta={{ handleBuscar }}
+                  />
                 </div>
               )}
             </div>

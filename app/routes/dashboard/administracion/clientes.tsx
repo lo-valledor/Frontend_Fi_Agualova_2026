@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/clientes';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
@@ -11,20 +9,19 @@ import type {
 } from '~/types/administracion';
 import ClientesComponent from '~/components/administracion/clientes/clientes-component';
 
-export function meta({}: Route.MetaArgs) {
+export function meta(_args: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Clientes' },
     { name: 'description', content: 'Clientes' },
   ];
 }
 
-export async function clientLoader({}: Route.ClientActionArgs) {
+export async function clientLoader(_args: Route.ClientActionArgs) {
   try {
     const resClientes = await api.get('ClienteBuscar');
     const resGiros = await api.get('giro/buscar');
     const resRegiones = await api.get('region/listar');
 
-    // Manejar diferentes formatos de respuesta de la API
     let clientes: GetClientes[] = [];
     let giros: GetGiros[] = [];
     let regiones: GetRegiones[] = [];

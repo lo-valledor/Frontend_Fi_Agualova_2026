@@ -41,9 +41,11 @@ import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 export default function AbrirPeriodoFacturacion({
   years,
   periodos,
+  error,
 }: {
   years: Anio[];
   periodos: Periodos[];
+  error: string | null;
 }) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [, setPeriodosData] = useState(periodos);
@@ -63,41 +65,57 @@ export default function AbrirPeriodoFacturacion({
     return periodos.find((periodo) => periodo.epf_descripcion === 'Abierto');
   }, [periodos]);
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+        <div className="container mx-auto p-2 space-y-3">
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
+              <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+              Error al cargar datos
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
       <div className="container mx-auto p-2 space-y-3">
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Modern Header */}
-        <div className="flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 justify-between">
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 dark:from-blue-100 dark:to-sky-100 bg-clip-text text-transparent">
-                  Períodos de Facturación
-                </h1>
-              </div>
-              <Dialog>
-                <DialogTrigger>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
-                  >
-                    <Info className="w-4 h-4 mr-1 text-yellow-600" />
-                    <span className="text-yellow-600 text-sm">Información</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Información</DialogTitle>
-                    <DialogDescription>
-                      Gestión y control de períodos de facturación del sistema
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 dark:from-blue-100 dark:to-sky-100 bg-clip-text text-transparent">
+              Períodos de Facturación
+            </h1>
+          </div>
+          <div className="flex items-center gap-3 justify-end w-full">
+            <Dialog>
+              <DialogTrigger>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                >
+                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
+                  <span className="text-yellow-600 text-sm">Información</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Información</DialogTitle>
+                  <DialogDescription>
+                    Gestión y control de períodos de facturación del sistema
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 

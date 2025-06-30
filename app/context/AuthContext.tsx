@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-// src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 import { useNavigate } from 'react-router';

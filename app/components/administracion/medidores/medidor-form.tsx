@@ -21,11 +21,6 @@ import type { Marca } from '~/types/mantencion';
 import Select, { type StylesConfig } from 'react-select';
 import { useTheme } from '~/components/theme-provider';
 
-interface OptionType {
-  value: string;
-  label: string;
-}
-
 interface MedidorFormModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -166,8 +161,8 @@ export function MedidorFormModal({
         };
         await onSubmit(updatePayload, 'edit');
       }
-    } catch (error) {
-      // El error se maneja en el componente padre
+    } catch (error: any) {
+      console.error(error.message);
     }
   };
 

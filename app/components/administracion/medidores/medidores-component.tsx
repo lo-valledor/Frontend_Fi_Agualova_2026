@@ -49,7 +49,7 @@ export default function MedidoresComponent({
       const response = await api.get('buscarMedidor');
       const data = response.data as GetMedidores[];
       setMedidores(data);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al recargar los medidores.');
     } finally {
       setIsFetching(false);
@@ -103,7 +103,7 @@ export default function MedidoresComponent({
       await api.delete(`/eliminarMedidor/${selectedMedidor.codigo}`);
       toast.success('Medidor eliminado exitosamente');
       await refetchMedidores();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al eliminar el medidor.');
     } finally {
       setIsLoading(false);

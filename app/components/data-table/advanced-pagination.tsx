@@ -176,7 +176,7 @@ export function AdvancedPagination<TData>({
         {/* Page numbers */}
         {showPageNumbers && (
           <div className="flex items-center gap-1">
-            {generatePageNumbers().map((page, index) => {
+            {generatePageNumbers().map((page, _index) => {
               if (typeof page === 'string') {
                 return (
                   <span

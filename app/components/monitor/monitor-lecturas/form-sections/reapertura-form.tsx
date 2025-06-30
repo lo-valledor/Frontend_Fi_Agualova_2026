@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -25,6 +25,14 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
   const [selectedClave, setSelectedClave] = useState('0');
   const [descripcionReapertura, setDescripcionReapertura] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedClave('0');
+      setDescripcionReapertura('');
+    }
+  }, [isOpen]);
 
   // Función para manejar la reapertura de mediciones en estado 4
   const handleReaperturaMedicion = () => {
@@ -212,6 +220,16 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal de reapertura */}
+      <div className="hidden">
+        <input
+          type="checkbox"
+          checked={isOpen}
+          onChange={(e) => setIsOpen(e.target.checked)}
+          style={{ display: 'none' }}
+        />
+      </div>
     </div>
   );
 }

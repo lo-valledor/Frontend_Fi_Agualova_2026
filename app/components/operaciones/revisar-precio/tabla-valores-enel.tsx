@@ -11,9 +11,6 @@ import { Badge } from '~/components/ui/badge';
 import { Loader2 } from 'lucide-react';
 import { Checkbox } from '~/components/ui/checkbox';
 import type { TablaValoresEnelProps } from '~/types/operaciones';
-import api from '~/lib/api';
-import { useAuth } from '~/context/AuthContext';
-import { toast } from 'sonner';
 import DialogModificarPrecio from './dialog-modificar-precio';
 
 export default function TablaValoresEnel({
@@ -26,8 +23,6 @@ export default function TablaValoresEnel({
   selectedRows: string[];
   setSelectedRows: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
-  const { user } = useAuth();
-
   const handleCheckboxChange = (codigo: string, checked: boolean) => {
     if (checked) {
       setSelectedRows((prev) => [...prev, codigo]);
@@ -58,28 +53,6 @@ export default function TablaValoresEnel({
         (item) => item.confirmacion !== 'Confirmado' && item.indice !== '',
       )
       .every((item) => selectedRows.includes(item.codigo));
-
-  const handleConfirmar = async (item: any) => {
-    if (!user || !user.username) {
-      toast.error('No se pudo obtener información del usuario');
-      return;
-    }
-
-    try {
-      const response = await api.post(
-        `/ConfirmarPrecio?indice=${item.indice}&usuario=${user.username}`,
-      );
-      if (response.status === 200) {
-        setSelectedRows((prev) => [...prev, item.codigo]);
-        toast.success(`Se ha confirmado el precio para ${item.descripcion}`);
-      } else {
-        toast.error('No se pudo confirmar el precio');
-      }
-    } catch (error) {
-      console.error('Error al confirmar precio:', error);
-      toast.error('Ocurrió un error al procesar la solicitud');
-    }
-  };
 
   return (
     <div className="rounded-lg border border-border/60 overflow-hidden shadow-sm bg-background">

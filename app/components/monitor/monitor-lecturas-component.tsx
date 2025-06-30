@@ -196,8 +196,8 @@ const MonitorLecturasComponent = ({
         </div>
 
         {/* Main Control Panel */}
-        <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm mt-4">
-          <CardContent className="p-4 space-y-4">
+        <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+          <CardContent className="p-2 space-y-4">
             {/* Sector Selection - Clean Grid */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
@@ -209,7 +209,7 @@ const MonitorLecturasComponent = ({
                     Sector de Monitoreo
                   </h3>
                   <p className="text-xs text-muted-foreground">
-                    Selecciona el área geográfica a monitorear
+                    Selecciona el área a monitorear
                   </p>
                 </div>
               </div>

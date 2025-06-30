@@ -202,7 +202,7 @@ export default function MonitorNichos({
       {/* Diálogo responsive para editar/reaperturar medidor */}
       {selectedMedidor && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-auto lg:max-w-4xl xl:max-w-5xl overflow-hidden flex flex-col">
+          <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-auto lg:max-w-4xl xl:max-w-5xl overflow-auto flex flex-col">
             <DialogHeader className="shrink-0 pb-4 border-b border-border/40">
               <DialogTitle className="text-xl flex flex-col sm:flex-row sm:items-center gap-2 text-sky-800 dark:text-sky-200">
                 <div className="flex items-center gap-2">
@@ -229,7 +229,7 @@ export default function MonitorNichos({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="flex-1 overflow-auto">
+            <div>
               <div className="p-6">
                 <EditarMedidores
                   result={selectedMedidor}

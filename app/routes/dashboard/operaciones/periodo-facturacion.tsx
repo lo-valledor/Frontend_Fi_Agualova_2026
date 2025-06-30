@@ -34,7 +34,7 @@ export default function PeriodoFacturacion({
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <AbrirPeriodoFacturacion years={years} periodos={periodos} />
+      <AbrirPeriodoFacturacion years={years} periodos={periodos} error={null} />
     </div>
   );
 }

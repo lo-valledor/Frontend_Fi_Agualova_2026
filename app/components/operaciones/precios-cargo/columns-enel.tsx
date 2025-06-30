@@ -63,11 +63,11 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Valor Anterior 1"
-        className="text-orange-700 dark:text-orange-300 font-semibold"
+        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm font-mono text-orange-600 dark:text-orange-400">
+      <div className="text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2">
         {row.getValue('valor')}
       </div>
     ),
@@ -79,11 +79,11 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Valor Anterior 2"
-        className="text-orange-700 dark:text-orange-300 font-semibold"
+        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm font-mono text-orange-600 dark:text-orange-400">
+      <div className="text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2">
         {row.getValue('valor2')}
       </div>
     ),
@@ -95,11 +95,11 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Valor Anterior 3"
-        className="text-orange-700 dark:text-orange-300 font-semibold"
+        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm font-mono text-orange-600 dark:text-orange-400">
+      <div className="text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2">
         {row.getValue('valor3')}
       </div>
     ),
@@ -111,7 +111,7 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Valor Actual 1"
-        className="text-green-700 dark:text-green-300 font-semibold"
+        className="text-green-700 dark:text-green-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => {
@@ -132,7 +132,7 @@ export const columns = (
 
       return (
         <div
-          className={`text-sm font-mono ${
+          className={`text-sm font-mono text-right pr-2 ${
             isNoValue
               ? 'text-red-600 dark:text-red-400'
               : 'text-green-600 dark:text-green-400'
@@ -150,7 +150,7 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Valor Actual 2"
-        className="text-green-700 dark:text-green-300 font-semibold"
+        className="text-green-700 dark:text-green-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => {
@@ -171,7 +171,7 @@ export const columns = (
 
       return (
         <div
-          className={`text-sm font-mono ${
+          className={`text-sm font-mono text-right pr-2 ${
             isNoValue
               ? 'text-red-600 dark:text-red-400'
               : 'text-green-600 dark:text-green-400'
@@ -189,7 +189,7 @@ export const columns = (
       <DataTableColumnHeader
         column={column}
         title="Valor Actual 3"
-        className="text-green-700 dark:text-green-300 font-semibold"
+        className="text-green-700 dark:text-green-300 font-semibold justify-end"
       />
     ),
     cell: ({ row }) => {
@@ -210,7 +210,7 @@ export const columns = (
 
       return (
         <div
-          className={`text-sm font-mono ${
+          className={`text-sm font-mono text-right pr-2 ${
             isNoValue
               ? 'text-red-600 dark:text-red-400'
               : 'text-green-600 dark:text-green-400'

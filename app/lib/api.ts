@@ -1,5 +1,6 @@
 import { type AxiosRequestConfig } from 'axios';
 import axiosInstance from '../services/axiosConfig';
+import { useLoadingBar } from '~/context/LoadingBarContext';
 
 // Generic API response type
 interface ApiResponse<T> {
@@ -9,7 +10,7 @@ interface ApiResponse<T> {
 }
 
 // API endpoints con manejo flexible de respuestas
-export const api = {
+const api = {
   // Auth endpoints
   auth: {
     login: (credentials: { usuario: string; contrasena: string }) =>
@@ -34,5 +35,30 @@ export const api = {
   delete: <T>(url: string, config?: AxiosRequestConfig) =>
     axiosInstance.delete<T | ApiResponse<T>>(url, config),
 };
+
+export function useApiWithLoadingBar() {
+  const loadingBarRef = useLoadingBar();
+
+  const requestWithBar = async (method: string, ...args: any[]) => {
+    if (loadingBarRef?.current) {
+      loadingBarRef.current.current?.continuousStart();
+    }
+    try {
+      const result = await (api as any)[method](...args);
+      return result;
+    } finally {
+      if (loadingBarRef?.current) {
+        loadingBarRef.current.complete();
+      }
+    }
+  };
+
+  return {
+    get: (...args: any[]) => requestWithBar('get', ...args),
+    post: (...args: any[]) => requestWithBar('post', ...args),
+    put: (...args: any[]) => requestWithBar('put', ...args),
+    delete: (...args: any[]) => requestWithBar('delete', ...args) as any,
+  };
+}
 
 export default api;

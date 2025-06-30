@@ -9,12 +9,12 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
       <DataTableColumnHeader
         column={column}
         title="ID"
-        className="text-emerald-700 dark:text-emerald-300 font-semibold"
+        className="text-emerald-700 dark:text-emerald-300 font-semibold justify-end"
       />
     ),
     accessorKey: 'CD_ID',
     cell: ({ row }) => (
-      <div className="font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400">
+      <div className="font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400 text-right pr-2">
         {row.getValue('CD_ID')}
       </div>
     ),
@@ -57,12 +57,12 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
       <DataTableColumnHeader
         column={column}
         title="Valor"
-        className="text-green-700 dark:text-green-300 font-semibold"
+        className="text-green-700 dark:text-green-300 font-semibold justify-end"
       />
     ),
     accessorKey: 'valor',
     cell: ({ row }) => (
-      <div className="text-sm font-mono font-medium text-green-600 dark:text-green-400">
+      <div className="text-sm font-mono font-medium text-green-600 dark:text-green-400 text-right pr-2">
         {row.getValue('valor')}
       </div>
     ),
@@ -73,7 +73,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
       <DataTableColumnHeader
         column={column}
         title="Días Restantes"
-        className="text-orange-700 dark:text-orange-300 font-semibold"
+        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
       />
     ),
     accessorKey: 'dias',
@@ -84,7 +84,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
 
       return (
         <div
-          className={`text-sm font-medium ${
+          className={`text-sm font-medium text-right pr-2 ${
             isUrgent
               ? 'text-red-600 dark:text-red-400'
               : isWarning
