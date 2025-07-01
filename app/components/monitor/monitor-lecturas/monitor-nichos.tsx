@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import api from '~/lib/api';
 import { RotateCcw, Loader2, Gauge, Settings } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
@@ -16,6 +16,8 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { columnsNichos, columnGroups } from './columns-nichos';
 import { DataTableNichos } from './data-table-nichos';
+import { type PaginationState } from '@tanstack/react-table';
+import { LoadingSpinner } from '~/components/loading-spinner';
 
 export default function MonitorNichos({
   periodo,
@@ -36,15 +38,22 @@ export default function MonitorNichos({
   const [selectedMedidor, setSelectedMedidor] =
     useState<MedidorNichoItem | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [needsRefreshOnClose, setNeedsRefreshOnClose] = useState(false);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 15,
+  });
 
-  const searchResults = async () => {
+  const searchResults = useCallback(async () => {
     const params = new URLSearchParams({
       periodo,
       nicho,
     });
 
     try {
-      setIsLoading(true);
+      if (!isRefreshing) {
+        setIsLoading(true);
+      }
       const response = await api.get('/lecturas-nicho', { params });
       setResults(response.data as MedidorNichoItem[]);
     } catch (error) {
@@ -53,11 +62,11 @@ export default function MonitorNichos({
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  };
+  }, [periodo, nicho, isRefreshing]);
 
   useEffect(() => {
     searchResults();
-  }, [periodo, nicho]);
+  }, [searchResults]);
 
   // Limpiar el temporizador cuando el componente se desmonte
   useEffect(() => {
@@ -67,6 +76,14 @@ export default function MonitorNichos({
       }
     };
   }, [highlightTimeout]);
+
+  useEffect(() => {
+    if (!isDialogOpen && needsRefreshOnClose) {
+      setIsRefreshing(true);
+      searchResults();
+      setNeedsRefreshOnClose(false);
+    }
+  }, [isDialogOpen, needsRefreshOnClose, searchResults]);
 
   const handleOpenDialog = (id: number, isOpen: boolean) => {
     setOpenDialogs((prev) => ({
@@ -85,8 +102,8 @@ export default function MonitorNichos({
 
   const handleSuccess = (id: number) => {
     // Cerrar el diálogo
-    handleOpenDialog(id, false);
     setIsDialogOpen(false);
+    setNeedsRefreshOnClose(true);
 
     // Limpiar cualquier temporizador existente
     if (highlightTimeout) {
@@ -102,9 +119,6 @@ export default function MonitorNichos({
     }, 3000);
 
     setHighlightTimeout(timer);
-
-    // Actualizar los datos locales
-    searchResults();
 
     // Notificar al componente padre que hubo una actualización exitosa
     if (onSuccess) {
@@ -190,12 +204,20 @@ export default function MonitorNichos({
         </CardHeader>
 
         <CardContent className="p-0">
-          <DataTableNichos
-            columns={columnsNichos(columnProps)}
-            data={results}
-            columnGroups={columnGroups}
-            onRowClick={handleRowClick}
-          />
+          <div className="mt-4">
+            {isLoading ? (
+              <LoadingSpinner />
+            ) : (
+              <DataTableNichos
+                columns={columnsNichos(columnProps)}
+                data={results}
+                columnGroups={columnGroups}
+                onRowClick={handleRowClick}
+                pagination={pagination}
+                onPaginationChange={setPagination}
+              />
+            )}
+          </div>
         </CardContent>
       </Card>
 

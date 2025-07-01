@@ -248,6 +248,80 @@ const MonitorLecturasComponent = ({
               )}
             </div>
 
+            <div className="flex gap-2">
+              {/* Periodo */}
+              <div className="space-y-1 w-full">
+                <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                  Periodo
+                </Label>
+                {periodos && periodos.length > 0 ? (
+                  <Select
+                    value={selectedPeriodo?.IdPeriodo || ''}
+                    onValueChange={(value) => {
+                      const periodo = periodos.find(
+                        (p) => p.IdPeriodo === value,
+                      );
+                      setSelectedPeriodo(periodo || null);
+                    }}
+                  >
+                    <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                      <SelectValue placeholder="Seleccionar periodo..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {periodos?.map((periodo) => (
+                        <SelectItem
+                          key={periodo.IdPeriodo}
+                          value={String(periodo.IdPeriodo)}
+                          className="truncate"
+                        >
+                          {periodo.DescripcionPeriodo}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="h-10 w-full bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
+                )}
+              </div>
+
+              {/* Fecha Inicio */}
+              <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
+                <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                  Fecha Inicio
+                </Label>
+                <Input
+                  type="text"
+                  value={fechaInicio || 'Definida por período'}
+                  readOnly
+                  className="w-full bg-slate-50 dark:bg-slate-800 text-muted-foreground cursor-not-allowed truncate"
+                />
+              </div>
+
+              {/* Fecha Fin */}
+              <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
+                <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
+                  Fecha Fin
+                </Label>
+                <div className="w-full">
+                  <DatePicker
+                    date={
+                      fechaFin ? new Date(fechaFin + 'T00:00:00') : undefined
+                    }
+                    setDate={(date) => {
+                      if (date) {
+                        setFechaFin(date.toISOString().split('T')[0]);
+                      } else {
+                        setFechaFin('');
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Search Action */}
             <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t">
               <div className="flex items-center gap-2">
@@ -295,43 +369,7 @@ const MonitorLecturasComponent = ({
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleContent>
                 <div className="border-t pt-4 space-y-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                    {/* Periodo */}
-                    <div className="space-y-1 w-full">
-                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
-                        Periodo
-                      </Label>
-                      {periodos && periodos.length > 0 ? (
-                        <Select
-                          value={selectedPeriodo?.IdPeriodo || ''}
-                          onValueChange={(value) => {
-                            const periodo = periodos.find(
-                              (p) => p.IdPeriodo === value,
-                            );
-                            setSelectedPeriodo(periodo || null);
-                          }}
-                        >
-                          <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectValue placeholder="Seleccionar periodo..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {periodos?.map((periodo) => (
-                              <SelectItem
-                                key={periodo.IdPeriodo}
-                                value={String(periodo.IdPeriodo)}
-                                className="truncate"
-                              >
-                                {periodo.DescripcionPeriodo}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        <div className="h-10 w-full bg-slate-200 dark:bg-slate-700 rounded-md animate-pulse"></div>
-                      )}
-                    </div>
-
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-3">
                     {/* Clave */}
                     <div className="space-y-1 w-full">
                       <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
@@ -426,44 +464,6 @@ const MonitorLecturasComponent = ({
                         onChange={(e) => setMedidor(e.target.value)}
                         className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                       />
-                    </div>
-
-                    {/* Fecha Inicio */}
-                    <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
-                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
-                        Fecha Inicio
-                      </Label>
-                      <Input
-                        type="text"
-                        value={fechaInicio || 'Definida por período'}
-                        readOnly
-                        className="w-full bg-slate-50 dark:bg-slate-800 text-muted-foreground cursor-not-allowed truncate"
-                      />
-                    </div>
-
-                    {/* Fecha Fin */}
-                    <div className="space-y-1 w-full sm:col-span-2 lg:col-span-1">
-                      <Label className="text-xs font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                        <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
-                        Fecha Fin
-                      </Label>
-                      <div className="w-full">
-                        <DatePicker
-                          date={
-                            fechaFin
-                              ? new Date(fechaFin + 'T00:00:00')
-                              : undefined
-                          }
-                          setDate={(date) => {
-                            if (date) {
-                              setFechaFin(date.toISOString().split('T')[0]);
-                            } else {
-                              setFechaFin('');
-                            }
-                          }}
-                        />
-                      </div>
                     </div>
                   </div>
                 </div>

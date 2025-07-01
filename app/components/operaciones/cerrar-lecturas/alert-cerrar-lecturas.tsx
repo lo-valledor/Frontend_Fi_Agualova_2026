@@ -22,6 +22,7 @@ interface AlertCerrarLecturasProps {
   onSuccess?: () => void;
   onOpenChange: (isOpen: boolean) => void;
   isOpen: boolean;
+  totalLecturas: number;
 }
 
 export default function AlertCerrarLecturas({
@@ -31,6 +32,7 @@ export default function AlertCerrarLecturas({
   onSuccess,
   onOpenChange,
   isOpen,
+  totalLecturas,
 }: AlertCerrarLecturasProps) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,9 +47,14 @@ export default function AlertCerrarLecturas({
 
     for (const row of selectedRows) {
       try {
+        const cantLecturas =
+          row.cantidadLecturasOK +
+          row.cantidadClaveRoja +
+          row.cantidadClaveNaranja +
+          row.cantidadCorregidas;
         const response = await api.post('/cerrar-lecturas-nicho', {
           nichoId: row.nichoId,
-          cantLecturas: row.cantidadLecturasOK,
+          cantLecturas: cantLecturas,
           cicloFact: cicloFact,
           periodo: periodo,
         });
@@ -83,11 +90,6 @@ export default function AlertCerrarLecturas({
     }
     handleClose();
   };
-
-  const totalLecturas = selectedRows.reduce(
-    (acc, row) => acc + row.cantidadLecturasOK,
-    0,
-  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
@@ -41,6 +41,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   const [showMenorDialog, setShowMenorDialog] = useState(false);
   const [showIgualDialog, setShowIgualDialog] = useState(false);
   const [showMayorDialog, setShowMayorDialog] = useState(false);
+  const confirmed = useRef(false);
 
   // Validar que la lectura no exceda el número de dígitos del medidor
   const validarDigitos = useCallback(
@@ -217,6 +218,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
         toast.info('Debe seleccionar una clave');
         return;
       }
+      confirmed.current = true;
 
       // Cerrar el diálogo correspondiente
       if (tipo === 'menor') {
@@ -293,14 +295,6 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     ],
     [],
   );
-
-  // Limpiar selección de motivos al cerrar los diálogos de confirmación
-  useEffect(() => {
-    if (!showMenorDialog) setSelectedClave('0');
-  }, [showMenorDialog]);
-  useEffect(() => {
-    if (!showIgualDialog) setSelectedClave('0');
-  }, [showIgualDialog]);
 
   return (
     <div className="p-2 space-y-2">
@@ -411,7 +405,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
             <Button
               onClick={guardarLectura}
               disabled={!isValidated || isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 h-7 text-xs"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 h-7 text-xs text-white"
             >
               {isSubmitting ? (
                 <>
@@ -432,7 +426,16 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       {/* Diálogos de confirmación */}
       <ConfirmationDialog
         isOpen={showMenorDialog}
-        onOpenChange={setShowMenorDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (confirmed.current) {
+              confirmed.current = false;
+            } else {
+              setSelectedClave('0');
+            }
+          }
+          setShowMenorDialog(open);
+        }}
         title="Confirmar lectura menor"
         message="La lectura ingresada es menor que la anterior. Por favor seleccione un motivo."
         variant="default"
@@ -447,7 +450,16 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
       <ConfirmationDialog
         isOpen={showIgualDialog}
-        onOpenChange={setShowIgualDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (confirmed.current) {
+              confirmed.current = false;
+            } else {
+              setSelectedClave('0');
+            }
+          }
+          setShowIgualDialog(open);
+        }}
         title="Confirmación de Lectura"
         message="¿Está seguro de que la lectura es igual al mes anterior?"
         alertColor="yellow"

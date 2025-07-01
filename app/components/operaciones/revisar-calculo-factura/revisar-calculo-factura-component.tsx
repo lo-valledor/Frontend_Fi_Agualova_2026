@@ -109,9 +109,6 @@ export default function RevisarCalculoFacturaComponent({
           if (prev <= 1) {
             setTimerActive(false);
             setPreparacionTimestamp(null);
-            toast.warning(
-              'Tiempo de espera expirado. Debe preparar el cálculo nuevamente.',
-            );
             return 0;
           }
           return prev - 1;
@@ -204,7 +201,7 @@ export default function RevisarCalculoFacturaComponent({
 
     if (!isCalculoPreparado) {
       toast.error(
-        'Debe preparar el cálculo primero antes de ver los resultados',
+        'Haga clic en "Ver Cálculo Facturas" para ver los resultados',
       );
       return;
     }
@@ -460,6 +457,15 @@ export default function RevisarCalculoFacturaComponent({
     setTimerCountdown(0);
     setPreparacionTimestamp(null);
   };
+
+  useEffect(() => {
+    setIsCalculoPreparado(false);
+    setTimerActive(false);
+    setTimerCountdown(0);
+    setData([]);
+    setFilteredData([]);
+    setPreparacionTimestamp(null);
+  }, [cicloId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-950 dark:to-purple-950/30">

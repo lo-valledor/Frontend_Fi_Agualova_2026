@@ -16,6 +16,14 @@ import {
 import type { EtapaUno, LecturaBT43 } from '~/types/monitor';
 import { Skeleton } from '~/components/ui/skeleton';
 
+// Helper para formatear fechas de forma segura
+const formatSafeDate = (date: string | null, formatString: string) => {
+  if (!date || isNaN(new Date(date).getTime())) {
+    return 'Sin registro';
+  }
+  return format(new Date(date), formatString);
+};
+
 export default function DetalleLecturaBT43({
   lecturaId,
   etapa1,
@@ -87,10 +95,10 @@ export default function DetalleLecturaBT43({
                   </div>
                   <div className="space-y-1">
                     <p className="text-base font-semibold text-slate-900 dark:text-slate-100">
-                      {format(new Date(item.LM_FechaLectura), 'dd-MM-yyyy')}
+                      {formatSafeDate(item.LM_FechaLectura, 'dd-MM-yyyy')}
                     </p>
                     <p className="text-sm text-slate-600 dark:text-slate-400 font-mono">
-                      {format(new Date(item.LM_FechaLectura), 'HH:mm:ss')}
+                      {formatSafeDate(item.LM_FechaLectura, 'HH:mm:ss')}
                     </p>
                   </div>
                 </div>
@@ -167,12 +175,10 @@ export default function DetalleLecturaBT43({
                         Fecha:
                       </span>
                       <span className="font-medium text-slate-900 dark:text-slate-100">
-                        {item.LMC_FechaDemandaPunta
-                          ? format(
-                              new Date(item.LMC_FechaDemandaPunta),
-                              'dd-MM-yyyy',
-                            )
-                          : 'Sin registro'}
+                        {formatSafeDate(
+                          item.LMC_FechaDemandaPunta,
+                          'dd-MM-yyyy',
+                        )}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs">
@@ -212,22 +218,10 @@ export default function DetalleLecturaBT43({
                         Fecha:
                       </span>
                       <span className="font-medium text-slate-900 dark:text-slate-100">
-                        {item.LMC_FechaDemandaSuminis
-                          ? (() => {
-                              try {
-                                return format(
-                                  new Date(item.LMC_FechaDemandaSuminis),
-                                  'dd-MM-yyyy',
-                                );
-                              } catch (error) {
-                                console.error(
-                                  'Error al formatear la fecha:',
-                                  error,
-                                );
-                                return item.LMC_FechaDemandaSuminis;
-                              }
-                            })()
-                          : 'Sin registro'}
+                        {formatSafeDate(
+                          item.LMC_FechaDemandaSuminis,
+                          'dd-MM-yyyy',
+                        )}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-xs">

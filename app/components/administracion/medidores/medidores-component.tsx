@@ -68,11 +68,6 @@ export default function MedidoresComponent({
     setIsModalOpen(true);
   };
 
-  const handleDelete = (medidor: GetMedidores) => {
-    setSelectedMedidor(medidor);
-    setIsDeleteDialogOpen(true);
-  };
-
   const handleSubmit = async (
     data: CrearMedidorProps | ActualizarMedidorProps,
     mode: 'add' | 'edit',
@@ -159,7 +154,7 @@ export default function MedidoresComponent({
             </div>
           )}
           <DataTable
-            columns={columns({ onEdit: handleEdit, onDelete: handleDelete })}
+            columns={columns({ onEdit: handleEdit })}
             data={medidores}
           />
         </CardContent>

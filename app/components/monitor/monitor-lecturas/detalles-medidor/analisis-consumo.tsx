@@ -15,7 +15,7 @@ import {
   History,
   Table2,
   Gauge,
-  HelpCircle,
+  TrendingDown,
 } from 'lucide-react';
 import {
   XAxis,
@@ -77,10 +77,22 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
   };
 
   const getDatosFiltrados = (datos: EtapaCuatro[]) => {
+    // Filtrar datos inválidos (fechas 31-12-1969, consumos 0, etc.)
+    const datosValidos = datos.filter((item) => {
+      const fecha = new Date(item.LM_FechaLectura);
+      const esFechaValida = fecha.getFullYear() > 1970; // Filtrar fechas como 31-12-1969
+      const esConsumoValido =
+        item.LM_ConsumoPeriodo !== null &&
+        item.LM_ConsumoPeriodo !== undefined &&
+        item.LM_ConsumoPeriodo > 0;
+      return esFechaValida && esConsumoValido;
+    });
+
     if (periodoSeleccionado === 'todo') {
-      return datos;
+      return datosValidos;
     }
-    const datosOrdenados = [...datos].sort((a, b) => {
+
+    const datosOrdenados = [...datosValidos].sort((a, b) => {
       const fechaA = new Date(
         getYear(a.LM_Periodo),
         getMonthNumber(a.LM_Periodo) - 1,
@@ -95,6 +107,19 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
     });
     const mesesAMostrar = periodoSeleccionado === '6meses' ? 6 : 3;
     return datosOrdenados.slice(0, mesesAMostrar);
+  };
+
+  // Función para verificar si hay datos válidos
+  const tieneDatosValidos = (datos: EtapaCuatro[]) => {
+    return datos.some((item) => {
+      const fecha = new Date(item.LM_FechaLectura);
+      const esFechaValida = fecha.getFullYear() > 1970;
+      const esConsumoValido =
+        item.LM_ConsumoPeriodo !== null &&
+        item.LM_ConsumoPeriodo !== undefined &&
+        item.LM_ConsumoPeriodo > 0;
+      return esFechaValida && esConsumoValido;
+    });
   };
 
   const getMensualComparisonData = (datos: EtapaCuatro[]) => {
@@ -150,9 +175,21 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
   const getEstadisticasConsumo = useMemo(() => {
     return (datos: EtapaCuatro[]) => {
       if (datos.length === 0) return null;
-      const consumos = datos
-        .map((item) => item.LM_ConsumoPeriodo)
-        .filter((consumo) => consumo !== null && consumo !== undefined);
+
+      // Filtrar datos válidos para estadísticas
+      const datosValidos = datos.filter((item) => {
+        const fecha = new Date(item.LM_FechaLectura);
+        const esFechaValida = fecha.getFullYear() > 1970;
+        const esConsumoValido =
+          item.LM_ConsumoPeriodo !== null &&
+          item.LM_ConsumoPeriodo !== undefined &&
+          item.LM_ConsumoPeriodo > 0;
+        return esFechaValida && esConsumoValido;
+      });
+
+      if (datosValidos.length === 0) return null;
+
+      const consumos = datosValidos.map((item) => item.LM_ConsumoPeriodo);
       if (consumos.length === 0) return null;
       const consumoTotal = consumos.reduce((sum, consumo) => sum + consumo, 0);
       const consumoPromedio = consumoTotal / consumos.length;
@@ -165,41 +202,133 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
               consumosOrdenados[consumosOrdenados.length / 2]) /
             2
           : consumosOrdenados[Math.floor(consumosOrdenados.length / 2)];
-      let tendencia = 'estable';
-      if (consumos.length >= 6) {
-        const ultimos3 = consumos.slice(-3);
-        const anteriores3 = consumos.slice(-6, -3);
-        const promedioUltimos = ultimos3.reduce((sum, c) => sum + c, 0) / 3;
-        const promedioAnteriores =
-          anteriores3.reduce((sum, c) => sum + c, 0) / 3;
-        if (promedioAnteriores > 0) {
-          const diferenciaPorcentaje =
-            ((promedioUltimos - promedioAnteriores) / promedioAnteriores) * 100;
-          if (diferenciaPorcentaje > 10) tendencia = 'creciente';
-          else if (diferenciaPorcentaje < -10) tendencia = 'decreciente';
-        }
-      }
+
+      // Análisis del último consumo vs promedio
+      const ultimoConsumo = consumos[consumos.length - 1];
+      const variacionUltimoVsPromedio =
+        consumoPromedio > 0
+          ? ((ultimoConsumo - consumoPromedio) / consumoPromedio) * 100
+          : 0;
+
+      // Análisis de variación del último periodo vs anterior
+      const variacionUltimoPeriodo =
+        consumos.length >= 2
+          ? ((ultimoConsumo - consumos[consumos.length - 2]) /
+              consumos[consumos.length - 2]) *
+            100
+          : 0;
+
       const periodoMaximo =
-        datos.find((item) => item.LM_ConsumoPeriodo === consumoMaximo)
+        datosValidos.find((item) => item.LM_ConsumoPeriodo === consumoMaximo)
           ?.LM_Periodo || '';
       const periodoMinimo =
-        datos.find((item) => item.LM_ConsumoPeriodo === consumoMinimo)
+        datosValidos.find((item) => item.LM_ConsumoPeriodo === consumoMinimo)
           ?.LM_Periodo || '';
+      const ultimoPeriodo =
+        datosValidos[datosValidos.length - 1]?.LM_Periodo || '';
+
       return {
         consumoTotal,
         consumoPromedio,
         consumoMaximo,
         consumoMinimo,
         mediana,
-        tendencia,
+        ultimoConsumo,
+        variacionUltimoVsPromedio,
+        variacionUltimoPeriodo,
         periodoMaximo,
         periodoMinimo,
+        ultimoPeriodo,
         totalPeriodos: consumos.length,
       };
     };
   }, []);
 
   const estadisticas = getEstadisticasConsumo(data);
+
+  const datosValidos = data.filter((item) => {
+    const fecha = new Date(item.LM_FechaLectura);
+    const esFechaValida = fecha.getFullYear() > 1970;
+    const esConsumoValido =
+      item.LM_ConsumoPeriodo !== null &&
+      item.LM_ConsumoPeriodo !== undefined &&
+      item.LM_ConsumoPeriodo > 0;
+    return esFechaValida && esConsumoValido;
+  });
+  // Ordenar de menor a mayor periodo (más antiguo a más reciente)
+  const datosValidosOrdenados = [...datosValidos].sort((a, b) => {
+    // Asumimos que LM_Periodo es un string tipo MMYYYY
+    const periodoA =
+      parseInt(a.LM_Periodo.slice(2)) * 100 +
+      parseInt(a.LM_Periodo.slice(0, 2));
+    const periodoB =
+      parseInt(b.LM_Periodo.slice(2)) * 100 +
+      parseInt(b.LM_Periodo.slice(0, 2));
+    return periodoA - periodoB;
+  });
+
+  // Primer consumo registrado
+  let primerConsumo = null;
+  let periodoPrimerConsumo = '';
+  if (datosValidosOrdenados.length > 0) {
+    primerConsumo = datosValidosOrdenados[0]?.LM_ConsumoPeriodo;
+    periodoPrimerConsumo = datosValidosOrdenados[0]?.LM_Periodo;
+  }
+  // Último consumo registrado (más reciente)
+  let ultimoConsumo = 0;
+  let periodoUltimoConsumo = '';
+  if (datosValidosOrdenados.length > 0) {
+    ultimoConsumo =
+      datosValidosOrdenados[datosValidosOrdenados.length - 1]
+        ?.LM_ConsumoPeriodo || 0;
+    periodoUltimoConsumo =
+      datosValidosOrdenados[datosValidosOrdenados.length - 1]?.LM_Periodo;
+  }
+  // Mes anterior
+  let consumoMesAnterior = null;
+  let periodoMesAnterior = '';
+  let variacionMesAnterior = null;
+  if (datosValidosOrdenados.length >= 2) {
+    consumoMesAnterior =
+      datosValidosOrdenados[datosValidosOrdenados.length - 2]
+        ?.LM_ConsumoPeriodo;
+    periodoMesAnterior =
+      datosValidosOrdenados[datosValidosOrdenados.length - 2]?.LM_Periodo;
+    if (
+      consumoMesAnterior !== null &&
+      consumoMesAnterior !== undefined &&
+      consumoMesAnterior !== 0
+    ) {
+      variacionMesAnterior =
+        ((ultimoConsumo - consumoMesAnterior) / consumoMesAnterior) * 100;
+    }
+  }
+
+  // Calcular variación respecto al primer consumo
+  let variacionPrimerConsumo = null;
+  if (
+    primerConsumo !== null &&
+    primerConsumo !== undefined &&
+    primerConsumo > 0
+  ) {
+    variacionPrimerConsumo =
+      ((ultimoConsumo - primerConsumo) / primerConsumo) * 100;
+  }
+
+  // Calcular estadísticas adicionales
+  let desviacionEstandar = null;
+  let rango = null;
+  if (datosValidosOrdenados.length > 2) {
+    const consumos = datosValidosOrdenados.map(
+      (item) => item.LM_ConsumoPeriodo,
+    );
+    const promedio = consumos.reduce((a, b) => a + b, 0) / consumos.length;
+    const varianza =
+      consumos.reduce((a, b) => a + Math.pow(b - promedio, 2), 0) /
+      (consumos.length - 1);
+    desviacionEstandar = Math.sqrt(varianza);
+    rango = Math.max(...consumos) - Math.min(...consumos);
+  }
 
   return (
     <Card className="border-slate-200 dark:border-slate-800 shadow-md">
@@ -217,12 +346,21 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
             <Info className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
+        ) : !tieneDatosValidos(data) ? (
+          <Alert className="mb-3 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
+            <Info className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <AlertDescription className="text-amber-800 dark:text-amber-200">
+              No se encontraron datos válidos de consumo para este medidor. Esto
+              puede deberse a que el medidor es nuevo o no tiene lecturas
+              registradas aún.
+            </AlertDescription>
+          </Alert>
         ) : (
           <Tabs defaultValue="estadisticas" className="w-full">
             <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
               <TabsTrigger
                 value="estadisticas"
-                className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
               >
                 <BarChart3 className="mr-2 h-4 w-4" />
                 Estadísticas
@@ -245,8 +383,14 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
             <TabsContent value="estadisticas" className="pt-6">
               <div className="space-y-6">
                 {!estadisticas ? (
-                  <div className="text-center py-8 text-slate-500 dark:text-slate-400">
-                    No hay datos suficientes para mostrar estadísticas
+                  <div className="text-center py-8">
+                    <div className="text-slate-500 dark:text-slate-400 mb-2">
+                      No hay datos suficientes para mostrar estadísticas
+                    </div>
+                    <div className="text-xs text-slate-400 dark:text-slate-500">
+                      Se requieren lecturas válidas con fechas y consumos
+                      mayores a 0
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -304,14 +448,24 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                         <div className="flex items-center justify-between mb-2">
                           <History className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                           <span className="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wide">
-                            Tendencia
+                            Último vs Promedio
                           </span>
                         </div>
-                        <p className="text-lg font-bold text-purple-900 dark:text-purple-100 capitalize">
-                          {estadisticas.tendencia}
+                        <p className="text-lg font-bold text-purple-900 dark:text-purple-100">
+                          {(variacionMesAnterior !== null &&
+                          variacionMesAnterior > 0
+                            ? '+'
+                            : '') + variacionMesAnterior?.toFixed(1)}
+                          %
                         </p>
                         <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
-                          {estadisticas.totalPeriodos} periodos
+                          {variacionMesAnterior !== null &&
+                          variacionMesAnterior > 5
+                            ? 'Por encima del promedio'
+                            : variacionMesAnterior !== null &&
+                                variacionMesAnterior < -5
+                              ? 'Por debajo del promedio'
+                              : 'Cercano al promedio'}
                         </p>
                       </div>
                     </div>
@@ -446,13 +600,27 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-slate-600 dark:text-slate-400">
-                              Mediana:
+                              Mediana
                             </span>
-                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                            <span className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide flex items-center gap-1">
                               {estadisticas.mediana.toLocaleString('es-CL', {
                                 maximumFractionDigits: 0,
-                              })}{' '}
-                              kWh
+                              })}
+                              <TooltipProvider>
+                                <UITooltip delayDuration={150}>
+                                  <TooltipTrigger asChild>
+                                    <Info className="h-3 w-3 text-blue-400 dark:text-blue-300 cursor-pointer" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <span>
+                                      La mediana es el valor central de todos
+                                      los consumos registrados, útil para evitar
+                                      que valores extremos distorsionen el
+                                      análisis.
+                                    </span>
+                                  </TooltipContent>
+                                </UITooltip>
+                              </TooltipProvider>
                             </span>
                           </div>
                           <div className="flex justify-between">
@@ -463,55 +631,193 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                               {estadisticas.totalPeriodos}
                             </span>
                           </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Promedio:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {estadisticas.consumoPromedio.toLocaleString(
+                                'es-CL',
+                                { maximumFractionDigits: 0 },
+                              )}
+                              kWh
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Máximo:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {estadisticas.consumoMaximo.toLocaleString(
+                                'es-CL',
+                              )}
+                              kWh ({estadisticas.periodoMaximo})
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Mínimo:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {estadisticas.consumoMinimo.toLocaleString(
+                                'es-CL',
+                              )}
+                              kWh ({estadisticas.periodoMinimo})
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Desviación estándar:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {desviacionEstandar !== null
+                                ? desviacionEstandar.toLocaleString('es-CL', {
+                                    maximumFractionDigits: 0,
+                                  }) + ' kWh'
+                                : '-'}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Rango:
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {rango !== null
+                                ? rango.toLocaleString('es-CL', {
+                                    maximumFractionDigits: 0,
+                                  }) + ' kWh'
+                                : '-'}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
                       <div className="bg-slate-50 dark:bg-slate-900/20 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
                         <div className="flex items-center gap-2 mb-3">
                           <h4 className="font-semibold text-slate-900 dark:text-slate-100">
-                            Análisis de Tendencia
+                            Datos de Consumo
                           </h4>
-                          <TooltipProvider>
-                            <UITooltip delayDuration={150}>
-                              <TooltipTrigger>
-                                <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="max-w-xs p-1">
-                                  Compara el promedio de los últimos 3 períodos
-                                  con los 3 anteriores. Si la variación es &gt;
-                                  10%, la tendencia cambia.
-                                </p>
-                              </TooltipContent>
-                            </UITooltip>
-                          </TooltipProvider>
                         </div>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`w-3 h-3 rounded-full ${
-                                estadisticas.tendencia === 'creciente'
-                                  ? 'bg-red-500'
-                                  : estadisticas.tendencia === 'decreciente'
-                                    ? 'bg-green-500'
-                                    : 'bg-blue-500'
-                              }`}
-                            ></div>
+                        <div className="space-y-3 text-sm">
+                          <div className="flex items-center justify-between">
                             <span className="text-slate-600 dark:text-slate-400">
-                              Estado:
+                              Último consumo registrado ({periodoUltimoConsumo}
+                              ):
                             </span>
-                            <span className="font-medium text-slate-900 dark:text-slate-100 capitalize">
-                              {estadisticas.tendencia}
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {ultimoConsumo?.toLocaleString('es-CL')}
+                              kWh
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                            {estadisticas.tendencia === 'creciente' &&
-                              'El consumo ha aumentado en los últimos períodos'}
-                            {estadisticas.tendencia === 'decreciente' &&
-                              'El consumo ha disminuido en los últimos períodos'}
-                            {estadisticas.tendencia === 'estable' &&
-                              'El consumo se mantiene estable en los últimos períodos'}
-                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Mes anterior ({periodoMesAnterior}):
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {consumoMesAnterior?.toLocaleString('es-CL')}
+                              kWh
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Primer consumo registrado ({periodoPrimerConsumo}
+                              ):
+                            </span>
+                            <span className="font-medium text-slate-900 dark:text-slate-100">
+                              {primerConsumo?.toLocaleString('es-CL')}
+                              kWh
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between mt-2">
+                            <span className="text-slate-600 dark:text-slate-400">
+                              Variación respecto al primer consumo:
+                            </span>
+                            {primerConsumo !== null &&
+                            primerConsumo !== undefined &&
+                            variacionPrimerConsumo !== null &&
+                            variacionPrimerConsumo !== undefined ? (
+                              primerConsumo <= 20 ? (
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  El consumo inicial es muy bajo, la variación
+                                  puede no ser representativa.
+                                </span>
+                              ) : variacionPrimerConsumo > 0 ? (
+                                <span className="text-red-600 dark:text-red-400">
+                                  El consumo ha aumentado{' '}
+                                  {variacionPrimerConsumo.toFixed(1)}% respecto
+                                  al primer registro.
+                                </span>
+                              ) : variacionPrimerConsumo < 0 ? (
+                                <span className="text-green-600 dark:text-green-400">
+                                  El consumo ha disminuido{' '}
+                                  {Math.abs(variacionPrimerConsumo).toFixed(1)}%
+                                  respecto al primer registro.
+                                </span>
+                              ) : (
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  El consumo es igual al primer registro.
+                                </span>
+                              )
+                            ) : (
+                              <span className="text-slate-400 dark:text-slate-500">
+                                No hay datos suficientes para calcular la
+                                variación respecto al primer consumo.
+                              </span>
+                            )}
+                          </div>
+
+                          {consumoMesAnterior !== null &&
+                            variacionMesAnterior !== null && (
+                              <div className="flex items-center justify-between">
+                                <span className="text-slate-600 dark:text-slate-400">
+                                  Variación respecto al mes anterior:
+                                </span>
+                                <span
+                                  className={`font-medium flex items-center gap-1 ${
+                                    variacionMesAnterior > 0
+                                      ? 'text-red-600 dark:text-red-400'
+                                      : variacionMesAnterior < 0
+                                        ? 'text-green-600 dark:text-green-400'
+                                        : 'text-slate-600 dark:text-slate-400'
+                                  }`}
+                                >
+                                  {variacionMesAnterior > 0 ? '+' : ''}
+                                  {variacionMesAnterior.toFixed(1)}%
+                                  {variacionMesAnterior > 0 ? (
+                                    <TrendingUp className="h-4 w-4" />
+                                  ) : (
+                                    <TrendingDown className="h-4 w-4" />
+                                  )}
+                                </span>
+                              </div>
+                            )}
+                          <div className="mt-3 p-2 bg-slate-100 dark:bg-slate-800/50 rounded-lg">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-3 h-3 rounded-full ${
+                                  estadisticas.variacionUltimoVsPromedio > 5
+                                    ? 'bg-red-500'
+                                    : estadisticas.variacionUltimoVsPromedio <
+                                        -5
+                                      ? 'bg-green-500'
+                                      : 'bg-blue-500'
+                                }`}
+                              ></div>
+                              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                                {estadisticas.variacionUltimoVsPromedio > 5
+                                  ? 'Consumo por encima del promedio'
+                                  : estadisticas.variacionUltimoVsPromedio < -5
+                                    ? 'Consumo por debajo del promedio'
+                                    : 'Consumo cercano al promedio'}{' '}
+                                (
+                                {estadisticas.consumoPromedio.toLocaleString(
+                                  'es-CL',
+                                  { maximumFractionDigits: 0 },
+                                )}{' '}
+                                kWh)
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -567,42 +873,57 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {getDatosFiltrados(data).map((item, index) => (
-                      <TableRow
-                        key={index}
-                        className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
-                      >
-                        <TableCell className="font-medium text-slate-900 dark:text-slate-200">
-                          {item.LM_Periodo}
-                        </TableCell>
-                        <TableCell className="text-slate-700 dark:text-slate-300">
-                          {new Date(item.LM_FechaLectura).toLocaleDateString(
-                            'es-CL',
-                            {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            },
-                          )}
-                        </TableCell>
-                        <TableCell className="text-right font-medium text-slate-900 dark:text-slate-200">
-                          {item.LM_ValorLecturaActual?.toLocaleString(
-                            'es-CL',
-                          ) || ''}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <span className="inline-flex items-center gap-1 font-medium text-slate-900 dark:text-slate-200">
-                            {item.LM_ConsumoPeriodo?.toLocaleString('es-CL') ||
-                              '0'}
-                            <span className="text-xs text-slate-500 dark:text-slate-400">
-                              kWh
-                            </span>
-                          </span>
+                    {getDatosFiltrados(data).length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} className="text-center py-8">
+                          <div className="text-slate-500 dark:text-slate-400 mb-2">
+                            No hay lecturas válidas disponibles
+                          </div>
+                          <div className="text-xs text-slate-400 dark:text-slate-500">
+                            Los datos mostrados anteriormente pueden contener
+                            fechas inválidas o consumos en 0
+                          </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ) : (
+                      getDatosFiltrados(data).map((item, index) => (
+                        <TableRow
+                          key={index}
+                          className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                        >
+                          <TableCell className="font-medium text-slate-900 dark:text-slate-200">
+                            {item.LM_Periodo}
+                          </TableCell>
+                          <TableCell className="text-slate-700 dark:text-slate-300">
+                            {new Date(item.LM_FechaLectura).toLocaleDateString(
+                              'es-CL',
+                              {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              },
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right font-medium text-slate-900 dark:text-slate-200">
+                            {item.LM_ValorLecturaActual?.toLocaleString(
+                              'es-CL',
+                            ) || ''}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <span className="inline-flex items-center gap-1 font-medium text-slate-900 dark:text-slate-200">
+                              {item.LM_ConsumoPeriodo?.toLocaleString(
+                                'es-CL',
+                              ) || '0'}
+                              <span className="text-xs text-slate-500 dark:text-slate-400">
+                                kWh
+                              </span>
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
               </div>
@@ -628,9 +949,15 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                         item.consumoActual !== null &&
                         item.consumoAnterior !== null,
                     ).length === 0 ? (
-                      <div className="p-6 text-center text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 rounded-lg">
-                        No hay lecturas suficientes para realizar comparaciones
-                        entre años
+                      <div className="p-6 text-center border border-slate-200 dark:border-slate-800 rounded-lg">
+                        <div className="text-slate-500 dark:text-slate-400 mb-2">
+                          No hay lecturas suficientes para realizar
+                          comparaciones entre años
+                        </div>
+                        <div className="text-xs text-slate-400 dark:text-slate-500">
+                          Se requieren datos válidos del mismo mes en diferentes
+                          años
+                        </div>
                       </div>
                     ) : (
                       <>

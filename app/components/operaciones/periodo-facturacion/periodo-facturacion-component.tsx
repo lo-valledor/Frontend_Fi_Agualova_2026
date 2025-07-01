@@ -97,7 +97,7 @@ export default function AbrirPeriodoFacturacion({
           </div>
           <div className="flex items-center gap-3 justify-end w-full">
             <Dialog>
-              <DialogTrigger>
+              <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"

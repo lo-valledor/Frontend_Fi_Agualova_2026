@@ -6,6 +6,7 @@ import {
   getSortedRowModel,
   type SortingState,
   useReactTable,
+  type PaginationState,
 } from '@tanstack/react-table';
 
 import {
@@ -30,6 +31,8 @@ interface DataTableNichosProps<TData, TValue> {
     className?: string;
   }[];
   onRowClick?: (row: TData) => void;
+  pagination: PaginationState;
+  onPaginationChange: React.Dispatch<React.SetStateAction<PaginationState>>;
 }
 
 export function DataTableNichos<TData, TValue>({
@@ -37,6 +40,8 @@ export function DataTableNichos<TData, TValue>({
   data,
   columnGroups,
   onRowClick,
+  pagination,
+  onPaginationChange,
 }: DataTableNichosProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
@@ -47,13 +52,10 @@ export function DataTableNichos<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onPaginationChange: onPaginationChange,
     state: {
       sorting,
-    },
-    initialState: {
-      pagination: {
-        pageSize: 15,
-      },
+      pagination,
     },
   });
 

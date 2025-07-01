@@ -2,7 +2,6 @@ import type { ColumnDef } from '@tanstack/react-table';
 import {
   Edit,
   Eye,
-  MoreHorizontal,
   Loader2,
   Building2,
   User2,
@@ -12,14 +11,8 @@ import {
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
+
+
 import type { GetClientes } from '~/types/administracion';
 import { format } from 'rut.js';
 
@@ -142,36 +135,30 @@ export const columns = ({
     cell: ({ row }) => {
       const cliente = row.original;
       const isEditing = editingClienteRut === cliente.rut;
-
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onDetails(cliente)}>
-              <Eye className="mr-2 h-4 w-4" />
-              Ver Detalles
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onEdit(cliente)}
-              disabled={isEditing}
-              className={isEditing ? 'opacity-50 cursor-not-allowed' : ''}
-            >
-              {isEditing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Edit className="mr-2 h-4 w-4" />
-              )}
-              {isEditing ? 'Cargando...' : 'Editar'}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => onDetails(cliente)}
+            title="Ver Detalles"
+          >
+            <Eye className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => onEdit(cliente)}
+            title="Editar"
+            disabled={isEditing}
+          >
+            {isEditing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Edit className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
       );
     },
   },

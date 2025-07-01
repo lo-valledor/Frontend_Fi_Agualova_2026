@@ -215,7 +215,7 @@ export default function PreciosCargoComponent({
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-green-600 dark:text-green-400" />
                   <span className="text-sm font-medium text-green-800 dark:text-green-300">
-                    Período actual:
+                    Mes actual:
                   </span>
                 </div>
                 <Badge
@@ -346,15 +346,19 @@ export default function PreciosCargoComponent({
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                       Precios de Cargo - Enel
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Precios de cargo de compañía de electricidad, obtenidos
-                      desde{' '}
+                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                      <Info className="w-4 h-4 text-blue-500 dark:text-blue-300" />
+                      Los precios de cargo mostrados corresponden a los valores
+                      vigentes publicados por Enel para el período consultado.
+                      <br />
+                      Consulta la fuente oficial en:
                       <a
                         href="https://www.enel.cl/es/clientes/tarifas-y-regulacion/tarifas.html"
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="underline text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 ml-1"
                       >
-                        Enel
+                        enel.cl - Tarifas y Regulación
                       </a>
                     </p>
                   </div>
@@ -417,8 +421,10 @@ export default function PreciosCargoComponent({
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                       Precios de Cargo - Enerlova
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Precios de cargo desde Enerlova
+                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                      <Info className="w-4 h-4 text-emerald-500 dark:text-emerald-300" />
+                      Los precios de cargo mostrados son fijados directamente
+                      por Enerlova para el período consultado.
                     </p>
                   </div>
                   <Badge

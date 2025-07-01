@@ -29,6 +29,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Seleccionar todo"
           className="translate-y-[2px]"
+          disabled={false}
         />
       </div>
     ),
@@ -39,7 +40,12 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Seleccionar fila"
           className="translate-y-[2px]"
-          disabled={row.original.cantidadLecturasOK === 0}
+          disabled={
+            row.original.cantidadLecturasOK === 0 &&
+            row.original.cantidadClaveRoja === 0 &&
+            row.original.cantidadClaveNaranja === 0 &&
+            row.original.cantidadCorregidas === 0
+          }
         />
       </div>
     ),

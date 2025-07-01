@@ -114,6 +114,11 @@ export function ConfirmationDialog({
                 ))}
               </SelectContent>
             </Select>
+            {selectedClave === '0' && (
+              <span className="text-xs text-amber-600">
+                Debe seleccionar un motivo para continuar.
+              </span>
+            )}
           </div>
         )}
 

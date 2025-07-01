@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
@@ -45,6 +51,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     () => result.ME_ConstanteMultiplicar,
     [result.ME_ConstanteMultiplicar],
   );
+
+  const confirmedActiva = useRef(false);
+  const confirmedReactiva = useRef(false);
 
   // Estado del formulario principal
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -402,6 +411,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       toast.info('Debe seleccionar una clave para Energía Activa');
       return;
     }
+    confirmedActiva.current = true;
 
     // Cerrar diálogos
     setShowMenorActivaDialog(false);
@@ -425,6 +435,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       toast.info('Debe seleccionar una clave para Energía Reactiva');
       return;
     }
+    confirmedReactiva.current = true;
 
     // Cerrar diálogos
     setShowMenorReactivaDialog(false);
@@ -449,8 +460,8 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       !consumoActivaCalculado ||
       !inputReactivaValue ||
       !consumoReactivaCalculado ||
-      !demandaData.dp ||
-      !demandaData.ds
+      demandaData.dp === undefined ||
+      demandaData.ds === undefined
     )
       return null;
 
@@ -583,20 +594,6 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     ],
     [],
   );
-
-  // Limpiar selección de motivos al cerrar los diálogos de confirmación
-  useEffect(() => {
-    if (!showMenorActivaDialog) setSelectedClaveActiva('0');
-  }, [showMenorActivaDialog]);
-  useEffect(() => {
-    if (!showIgualActivaDialog) setSelectedClaveActiva('0');
-  }, [showIgualActivaDialog]);
-  useEffect(() => {
-    if (!showMenorReactivaDialog) setSelectedClaveReactiva('0');
-  }, [showMenorReactivaDialog]);
-  useEffect(() => {
-    if (!showIgualReactivaDialog) setSelectedClaveReactiva('0');
-  }, [showIgualReactivaDialog]);
 
   return (
     <div className="p-3 space-y-3">
@@ -982,7 +979,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 !demandaData.dsHora ||
                 isSubmitting
               }
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-6 h-8"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-6 h-8 text-white"
             >
               {isSubmitting ? (
                 <>
@@ -1003,7 +1000,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       {/* Diálogos para energía activa */}
       <ConfirmationDialog
         isOpen={showMenorActivaDialog}
-        onOpenChange={setShowMenorActivaDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (confirmedActiva.current) {
+              confirmedActiva.current = false;
+            } else {
+              setSelectedClaveActiva('0');
+            }
+          }
+          setShowMenorActivaDialog(open);
+        }}
         title="Confirmar Lectura Activa Menor"
         message="La lectura activa ingresada es menor que la anterior. Por favor seleccione un motivo."
         variant="default"
@@ -1018,7 +1024,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
       <ConfirmationDialog
         isOpen={showIgualActivaDialog}
-        onOpenChange={setShowIgualActivaDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (confirmedActiva.current) {
+              confirmedActiva.current = false;
+            } else {
+              setSelectedClaveActiva('0');
+            }
+          }
+          setShowIgualActivaDialog(open);
+        }}
         title="Confirmar Lectura Activa Igual"
         message="La lectura activa ingresada es igual a la anterior. Por favor seleccione un motivo."
         variant="default"
@@ -1044,7 +1059,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       {/* Diálogos para energía reactiva */}
       <ConfirmationDialog
         isOpen={showMenorReactivaDialog}
-        onOpenChange={setShowMenorReactivaDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (confirmedReactiva.current) {
+              confirmedReactiva.current = false;
+            } else {
+              setSelectedClaveReactiva('0');
+            }
+          }
+          setShowMenorReactivaDialog(open);
+        }}
         title="Confirmar Lectura Reactiva Menor"
         message="La lectura reactiva ingresada es menor que la anterior. Por favor seleccione un motivo."
         variant="default"
@@ -1059,7 +1083,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
       <ConfirmationDialog
         isOpen={showIgualReactivaDialog}
-        onOpenChange={setShowIgualReactivaDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (confirmedReactiva.current) {
+              confirmedReactiva.current = false;
+            } else {
+              setSelectedClaveReactiva('0');
+            }
+          }
+          setShowIgualReactivaDialog(open);
+        }}
         title="Confirmar Lectura Reactiva Igual"
         message="La lectura reactiva ingresada es igual a la anterior. Por favor seleccione un motivo."
         variant="default"

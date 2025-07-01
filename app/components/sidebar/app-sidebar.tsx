@@ -106,7 +106,7 @@ const data = {
           url: '/dashboard/operaciones/cambio-medidor',
         },
         {
-          title: 'Corte de Reposición',
+          title: 'Corte y Reposición',
           url: '/dashboard/operaciones/corte-reposicion',
         },
         {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useApiWithLoadingBar } from '~/lib/api';
 import ClockLoader from 'react-spinners/ClockLoader';
@@ -312,9 +312,13 @@ const MeterRowDetailed = ({
 
   return (
     <div
-      className={`group flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 border-l-4 ${status.borderColor}`}
+      className={cn(
+        'group grid items-center gap-4 p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 border-l-4',
+        'grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]',
+        status.borderColor,
+      )}
     >
-      {/* Status Indicator */}
+      {/* Status Indicator & Name/ID */}
       <div className="flex items-center gap-2 min-w-0">
         <StatusIndicator status={status} size="sm" />
         <div className="min-w-0">
@@ -324,7 +328,7 @@ const MeterRowDetailed = ({
       </div>
 
       {/* Lectura */}
-      <div className="flex-shrink-0 text-center min-w-[80px]">
+      <div className="text-left">
         <div className="text-xs text-muted-foreground">Lectura</div>
         <div className="font-semibold text-sm">
           {medidor.ultimaLectura || '-'}
@@ -332,13 +336,13 @@ const MeterRowDetailed = ({
       </div>
 
       {/* Consumo */}
-      <div className="flex-shrink-0 text-center min-w-[70px]">
+      <div className="text-left">
         <div className="text-xs text-muted-foreground">Consumo</div>
         <div className="font-semibold text-sm">{medidor.consumo || '0'}</div>
       </div>
 
       {/* Fecha */}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 text-left">
         <div className="text-xs text-muted-foreground">Fecha</div>
         <div className="text-sm font-medium truncate">
           {medidor.fechaLectura
@@ -352,18 +356,22 @@ const MeterRowDetailed = ({
       </div>
 
       {/* Estado */}
-      <div className="flex-shrink-0">
+      <div className="flex justify-start">
         <Badge
           variant="outline"
-          className={`${status.borderColor} ${status.textColor} text-xs`}
+          className={cn(
+            'text-xs whitespace-nowrap',
+            status.borderColor,
+            status.textColor,
+          )}
         >
           <span className="mr-1">{status.icon}</span>
-          {medidor.clave || status.label}
+          <span className="truncate">{medidor.clave || status.label}</span>
         </Badge>
       </div>
 
       {/* Acción */}
-      <div className="flex-shrink-0">
+      <div className="flex justify-end">
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -379,7 +387,7 @@ const MeterRowDetailed = ({
               <SheetTitle>
                 <div className="flex items-center gap-3 rounded-lg p-4">
                   <div
-                    className={`p-2 rounded-lg ${status.bgColor} text-white`}
+                    className={cn('p-2 rounded-lg text-white', status.bgColor)}
                   >
                     {status.icon}
                   </div>
@@ -439,6 +447,7 @@ export default function ResultadosBusqueda({
     {},
   );
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
+  const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
   const api = useApiWithLoadingBar();
 
   // Search function (same as before)
@@ -538,13 +547,7 @@ export default function ResultadosBusqueda({
     }
   };
 
-  useEffect(() => {
-    if (triggerSearch > 0) {
-      searchResults();
-    }
-  }, [triggerSearch, refreshCounter]);
-
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     if (sector && periodo && stfechaini && stfechafin) {
       // Incrementar el contador de refrescar para desencadenar la recarga
       setRefreshCounter((prev) => prev + 1);
@@ -554,7 +557,20 @@ export default function ResultadosBusqueda({
     } else {
       toast.info('Seleccione Sector, Periodo y Fechas para refrescar.');
     }
-  };
+  }, [sector, periodo, stfechaini, stfechafin]);
+
+  useEffect(() => {
+    if (triggerSearch > 0) {
+      searchResults();
+    }
+  }, [triggerSearch, refreshCounter]);
+
+  useEffect(() => {
+    if (!isNichoModalOpen && needsNichoRefresh) {
+      handleRefresh();
+      setNeedsNichoRefresh(false);
+    }
+  }, [isNichoModalOpen, needsNichoRefresh, handleRefresh]);
 
   interface ToggleFilaFn {
     (nichoIndex: number, filaIndex: number): void;
@@ -579,9 +595,10 @@ export default function ResultadosBusqueda({
   const handleNichoModalSuccess = () => {
     // Mostrar notificación de éxito inmediatamente
     toast.success('Medidor actualizado correctamente');
+    setNeedsNichoRefresh(true);
 
     // Refrescar los resultados en segundo plano sin cerrar el modal
-    handleRefresh();
+    // handleRefresh();
 
     // Mostrar notificación adicional que los datos se están actualizando
     setTimeout(() => {
@@ -597,9 +614,6 @@ export default function ResultadosBusqueda({
           <h2 className="text-2xl text-sky-800 dark:text-sky-200 font-bold tracking-tight">
             Resultados de la búsqueda
           </h2>
-          <p className="text-sm text-muted-foreground">
-            {results.nichos.length} nichos encontrados
-          </p>
         </div>
 
         <div className="flex items-center gap-2">

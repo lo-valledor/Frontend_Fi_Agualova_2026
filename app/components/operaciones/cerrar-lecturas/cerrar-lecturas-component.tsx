@@ -68,6 +68,7 @@ export default function CerrarLecturasComponent({
   >([]);
   const [selectedRows, setSelectedRows] = useState<EstadoCierreLecturas[]>([]);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [totalLecturasCerrar, setTotalLecturasCerrar] = useState(0);
 
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
@@ -152,6 +153,16 @@ export default function CerrarLecturasComponent({
 
   const handleOpenAlert = () => {
     if (selectedRows.length > 0) {
+      const total = selectedRows.reduce(
+        (acc, row) =>
+          acc +
+          row.cantidadLecturasOK +
+          row.cantidadClaveRoja +
+          row.cantidadClaveNaranja +
+          row.cantidadCorregidas,
+        0,
+      );
+      setTotalLecturasCerrar(total);
       setIsAlertOpen(true);
     } else {
       toast.info('Debe seleccionar al menos un nicho para cerrar.');
@@ -480,7 +491,21 @@ export default function CerrarLecturasComponent({
                   </div>
                 </div>
                 <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
-                  <DataTable columns={columns} data={estadoCierreLecturas} />
+                  <DataTable
+                    columns={columns}
+                    data={estadoCierreLecturas}
+                    onRowSelectionChange={setSelectedRows}
+                    rowIdKey="nichoId"
+                    meta={{
+                      allRowsDisabled: estadoCierreLecturas.every(
+                        (row) =>
+                          row.cantidadLecturasOK === 0 &&
+                          row.cantidadClaveRoja === 0 &&
+                          row.cantidadClaveNaranja === 0 &&
+                          row.cantidadCorregidas === 0,
+                      ),
+                    }}
+                  />
                 </div>
               </div>
             )}
@@ -495,6 +520,7 @@ export default function CerrarLecturasComponent({
             cicloFact={cicloSeleccionado}
             periodo={periodoFormateado}
             onSuccess={handleLecturaCerrada}
+            totalLecturas={totalLecturasCerrar}
           />
         )}
       </div>

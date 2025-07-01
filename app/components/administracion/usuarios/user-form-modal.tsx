@@ -273,9 +273,16 @@ export function UserFormModal({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="1">Administrador</SelectItem>
-                    <SelectItem value="2">Moderador</SelectItem>
-                    <SelectItem value="3">Usuario</SelectItem>
-                    <SelectItem value="4">Visualizador</SelectItem>
+                    <SelectItem value="2">Lectura</SelectItem>
+                    <SelectItem value="3">Supervisor Operativo</SelectItem>
+                    <SelectItem value="4">
+                      Administrativo Facturación
+                    </SelectItem>
+                    <SelectItem value="7">Supervisor Facturación</SelectItem>
+                    <SelectItem value="8">Usuario Consulta</SelectItem>
+                    <SelectItem value="10">
+                      Autorizador Límite Invierno
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
