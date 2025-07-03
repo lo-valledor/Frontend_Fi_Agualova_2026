@@ -89,10 +89,10 @@ export default function DialogLecturasPendientes({
             </div>
             <div>
               <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-amber-700 to-orange-700 dark:from-amber-300 dark:to-orange-300 bg-clip-text text-transparent">
-                Lecturas Pendientes
+                Sectores con Lecturas Pendientes
               </DialogTitle>
               <DialogDescription className="text-slate-600 dark:text-slate-400">
-                Sectores con lecturas pendientes para el periodo actual
+                Sectores con lecturas pendientes para el periodo en consulta
               </DialogDescription>
             </div>
           </div>

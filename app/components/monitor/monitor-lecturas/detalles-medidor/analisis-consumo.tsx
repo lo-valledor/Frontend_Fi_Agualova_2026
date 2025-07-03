@@ -31,25 +31,68 @@ import {
 import { ChartContainer, ChartTooltipContent } from '~/components/ui/chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { chartConfig } from '~/components/chart-config';
-import { useState, useMemo } from 'react';
-import type { EtapaCuatro } from '~/types/monitor';
+import { useState, useMemo, useEffect } from 'react';
+import type {
+  EtapaCuatro,
+  CompararConsumoMedidor,
+  EtapaDos,
+  EtapaUno,
+} from '~/types/monitor';
 import {
   Tooltip as UITooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '~/components/ui/tooltip';
+import api from '~/lib/api';
 
 interface AnalisisConsumoProps {
-  data: EtapaCuatro[];
+  dataEtapaUno: EtapaUno[];
+  dataEtapaDos: EtapaDos[];
+  dataEtapaCuatro: EtapaCuatro[];
   error?: string;
 }
 
 type PeriodoTiempo = 'todo' | '6meses' | '3meses';
 
-export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
+export default function AnalisisConsumo({
+  dataEtapaUno,
+  dataEtapaDos,
+  dataEtapaCuatro,
+  error,
+}: AnalisisConsumoProps) {
   const [periodoSeleccionado, setPeriodoSeleccionado] =
     useState<PeriodoTiempo>('todo');
+  const [datosComparacion, setDatosComparacion] = useState<
+    CompararConsumoMedidor[]
+  >([]);
+
+  useEffect(() => {
+    const getComparacionData = async (
+      numeroSerie: string,
+      periodoActual: string,
+    ) => {
+      try {
+        const response = await api.post('/comparar-consumo-medidor', {
+          numeroSerie,
+          periodoActual,
+        });
+        setDatosComparacion(response.data as CompararConsumoMedidor[]);
+      } catch (e) {
+        console.error('Error fetching comparison data:', e);
+        setDatosComparacion([]);
+      }
+    };
+
+    if (
+      dataEtapaUno.length > 0 &&
+      dataEtapaUno[0].ME_NSerie &&
+      dataEtapaDos.length > 0 &&
+      dataEtapaDos[0].LM_Periodo
+    ) {
+      getComparacionData(dataEtapaUno[0].ME_NSerie, dataEtapaDos[0].LM_Periodo);
+    }
+  }, [dataEtapaUno, dataEtapaDos]);
 
   // Funciones de ayuda (movidas desde el componente padre)
   const getMonthNumber = (periodo: string): number => {
@@ -122,36 +165,40 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
     });
   };
 
-  const getMensualComparisonData = (datos: EtapaCuatro[]) => {
-    const datosFiltrados = getDatosFiltrados(datos);
-    const groupedByMonth = datosFiltrados.reduce(
-      (acc, item) => {
-        const month = getMonthNumber(item.LM_Periodo);
-        const year = getYear(item.LM_Periodo);
-        const monthName = getMonthName(month);
-        if (!acc[monthName]) {
-          acc[monthName] = {};
-        }
-        acc[monthName][year] = item.LM_ConsumoPeriodo;
-        return acc;
-      },
-      {} as Record<string, Record<number, number>>,
-    );
-    const yearsInData = [
-      ...new Set(datos.map((item) => getYear(item.LM_Periodo))),
-    ].sort((a, b) => b - a);
-    const currentYear = yearsInData[0];
-    const previousYear = yearsInData[1];
-    return Object.entries(groupedByMonth).map(([month, yearData]) => ({
-      mes: month,
-      consumoActual: yearData[currentYear] || null,
-      consumoAnterior: yearData[previousYear] || null,
-    }));
-  };
+  const getMensualComparisonData = useMemo(() => {
+    if (!datosComparacion || datosComparacion.length === 0) return [];
 
-  const getMensualComparisonTable = (datos: EtapaCuatro[]) => {
-    const comparisonData = getMensualComparisonData(datos);
-    return comparisonData.map((item) => {
+    const groupedByMonth: Record<
+      string,
+      { consumoActual: number | null; consumoAnterior: number | null }
+    > = {};
+
+    datosComparacion.forEach((item) => {
+      const month = getMonthNumber(item.lM_Periodo);
+      const monthName = getMonthName(month);
+
+      if (!groupedByMonth[monthName]) {
+        groupedByMonth[monthName] = {
+          consumoActual: null,
+          consumoAnterior: null,
+        };
+      }
+
+      if (item.tipoPeriodo === 'PeriodoActual') {
+        groupedByMonth[monthName].consumoActual = item.lM_ConsumoPeriodo;
+      } else if (item.tipoPeriodo === 'PeriodoAnterior') {
+        groupedByMonth[monthName].consumoAnterior = item.lM_ConsumoPeriodo;
+      }
+    });
+
+    return Object.entries(groupedByMonth).map(([mes, consumos]) => ({
+      mes,
+      ...consumos,
+    }));
+  }, [datosComparacion]);
+
+  const getMensualComparisonTable = useMemo(() => {
+    return getMensualComparisonData.map((item) => {
       const diferencia =
         item.consumoActual !== null && item.consumoAnterior !== null
           ? item.consumoActual - item.consumoAnterior
@@ -170,7 +217,7 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
         variacionPorcentaje,
       };
     });
-  };
+  }, [getMensualComparisonData]);
 
   const getEstadisticasConsumo = useMemo(() => {
     return (datos: EtapaCuatro[]) => {
@@ -244,9 +291,9 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
     };
   }, []);
 
-  const estadisticas = getEstadisticasConsumo(data);
+  const estadisticas = getEstadisticasConsumo(dataEtapaCuatro);
 
-  const datosValidos = data.filter((item) => {
+  const datosValidos = dataEtapaCuatro.filter((item) => {
     const fecha = new Date(item.LM_FechaLectura);
     const esFechaValida = fecha.getFullYear() > 1970;
     const esConsumoValido =
@@ -346,7 +393,7 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
             <Info className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
-        ) : !tieneDatosValidos(data) ? (
+        ) : !tieneDatosValidos(dataEtapaCuatro) ? (
           <Alert className="mb-3 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
             <Info className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <AlertDescription className="text-amber-800 dark:text-amber-200">
@@ -512,7 +559,9 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                           className="min-h-[320px] w-full"
                         >
                           <LineChart
-                            data={[...getDatosFiltrados(data)].reverse()}
+                            data={[
+                              ...getDatosFiltrados(dataEtapaCuatro),
+                            ].reverse()}
                             margin={{
                               top: 20,
                               right: 30,
@@ -873,7 +922,7 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {getDatosFiltrados(data).length === 0 ? (
+                    {getDatosFiltrados(dataEtapaCuatro).length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={4} className="text-center py-8">
                           <div className="text-slate-500 dark:text-slate-400 mb-2">
@@ -886,7 +935,7 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      getDatosFiltrados(data).map((item, index) => (
+                      getDatosFiltrados(dataEtapaCuatro).map((item, index) => (
                         <TableRow
                           key={index}
                           className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
@@ -930,10 +979,8 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
             </TabsContent>
             <TabsContent value="comparativas" className="pt-6">
               <div className="space-y-6">
-                {data.length === 0 ? (
-                  <div className="p-6 text-center text-slate-500 dark:text-slate-400">
-                    No hay datos disponibles para la comparativa
-                  </div>
+                {datosComparacion.length === 0 ? (
+                  <pre>{JSON.stringify(datosComparacion, null, 2)}</pre>
                 ) : (
                   <>
                     <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
@@ -944,7 +991,7 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                       </p>
                     </div>
 
-                    {getMensualComparisonData(data).filter(
+                    {getMensualComparisonData.filter(
                       (item) =>
                         item.consumoActual !== null &&
                         item.consumoAnterior !== null,
@@ -978,7 +1025,7 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                               className="min-h-[300px] w-full"
                             >
                               <BarChart
-                                data={getMensualComparisonData(data).filter(
+                                data={getMensualComparisonData.filter(
                                   (item) =>
                                     item.consumoActual !== null &&
                                     item.consumoAnterior !== null,
@@ -1078,7 +1125,7 @@ export default function AnalisisConsumo({ data, error }: AnalisisConsumoProps) {
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {getMensualComparisonTable(data)
+                              {getMensualComparisonTable
                                 .filter((item) => item.diferencia !== null)
                                 .map((item, index) => (
                                   <TableRow

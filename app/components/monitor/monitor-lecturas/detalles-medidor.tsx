@@ -15,6 +15,7 @@ import type {
 import InformacionMedidor from './detalles-medidor/informacion-medidor';
 import ClavesLectura from './detalles-medidor/claves-lectura';
 import AnalisisConsumo from './detalles-medidor/analisis-consumo';
+import InformacionLectura from './detalles-medidor/informacion-lectura';
 
 export default function DetallesMedidor({
   lecturaId,
@@ -27,7 +28,7 @@ export default function DetallesMedidor({
   const [error, setError] = useState<string | null>(null);
   const [etapaErrors, setEtapaErrors] = useState<Record<number, string>>({});
   const [etapa1Data, setEtapa1Data] = useState<EtapaUno[]>([]);
-  const [, setEtapa2Data] = useState<EtapaDos[]>([]);
+  const [etapa2Data, setEtapa2Data] = useState<EtapaDos[]>([]);
   const [etapa3Data, setEtapa3Data] = useState<EtapaTres[]>([]);
   const [etapa4Data, setEtapa4Data] = useState<EtapaCuatro[]>([]);
 
@@ -171,14 +172,21 @@ export default function DetallesMedidor({
 
   return (
     <ScrollArea className="overflow-y-auto">
-      <div className="">
+      <div className="space-y-4 p-1">
         <InformacionMedidor
           data={etapa1Data}
           error={etapaErrors[1]}
           lecturaId={lecturaId}
         />
 
-        <AnalisisConsumo data={etapa4Data} error={etapaErrors[4]} />
+        <InformacionLectura data={etapa2Data} error={etapaErrors[2]} />
+
+        <AnalisisConsumo
+          dataEtapaUno={etapa1Data}
+          dataEtapaDos={etapa2Data}
+          dataEtapaCuatro={etapa4Data}
+          error={etapaErrors[4]}
+        />
 
         <ClavesLectura
           data={etapa3Data}
