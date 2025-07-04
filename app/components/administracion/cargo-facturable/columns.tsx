@@ -1,11 +1,11 @@
 /* eslint-disable unused-imports/no-unused-vars */
 import type { ColumnDef } from '@tanstack/react-table';
 import type { BuscarCargoFacturable } from '~/types/administracion';
-import { Button } from '~/components/ui/button';
 
-import { Edit, Calendar, Settings, Box } from 'lucide-react';
+import { Calendar, Settings, Box } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { TableActions } from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (cargo: BuscarCargoFacturable) => void;
@@ -139,19 +139,7 @@ export const columns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const item = row.original;
-      return (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onEdit(item)}
-            title="Editar"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-        </div>
-      );
+      return <TableActions onEdit={onEdit} item={row.original} showView={false} showDelete={false} />;
     },
   },
 ];

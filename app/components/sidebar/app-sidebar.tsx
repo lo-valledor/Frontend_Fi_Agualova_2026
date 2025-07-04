@@ -152,10 +152,10 @@ const data = {
           title: 'Cargo Tipo Contrato',
           url: '/dashboard/administracion/cargo-tipo-contrato',
         },
-        {
+        /* {
           title: 'Condiciones Contrato',
           url: '/dashboard/administracion/condiciones-contrato',
-        },
+        }, */
       ],
     },
     {

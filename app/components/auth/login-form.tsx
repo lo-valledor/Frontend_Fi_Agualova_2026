@@ -5,7 +5,7 @@ import { Input } from '~/components/ui/input';
 import { useState, useEffect } from 'react';
 import { useAuth } from '~/context/AuthContext';
 import { useLocation } from 'react-router';
-import { Lock, Moon, Sun, User } from 'lucide-react';
+import { Lock, Moon, Sun, User, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '~/components/theme-provider';
 
 export function LoginForm({
@@ -17,6 +17,7 @@ export function LoginForm({
     contrasena: '',
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const { login, loading } = useAuth();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
@@ -145,7 +146,7 @@ export function LoginForm({
                   id="usuario"
                   name="usuario"
                   type="text"
-                  placeholder="m@example.com"
+                  placeholder="Nombre de Usuario"
                   value={input.usuario}
                   onChange={handleInput}
                   required
@@ -170,13 +171,24 @@ export function LoginForm({
                 <Input
                   id="contrasena"
                   name="contrasena"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   placeholder="********"
                   value={input.contrasena}
                   onChange={handleInput}
                   required
-                  className="pl-10 bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-600 focus:ring-sky-500 dark:focus:ring-sky-600 rounded-lg transition-all duration-200 focus:shadow-md dark:focus:shadow-sky-900/20"
+                  className="pl-10 pr-10 bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-600 focus:ring-sky-500 dark:focus:ring-sky-600 rounded-lg transition-all duration-200 focus:shadow-md dark:focus:shadow-sky-900/20"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
             </div>
           </div>

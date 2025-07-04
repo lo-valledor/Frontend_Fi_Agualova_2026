@@ -1,9 +1,14 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
-import type { GetCargoTipoContrato } from '~/types/administracion';
+import type {
+  GetCargoTipoContrato,
+  CargoTipoContratoEditor,
+  BuscarCargoFacturable,
+  GetCondicionesContrato,
+} from '~/types/administracion';
+import type { TiposContrato } from '~/types/mantencion';
 import { columns } from './columns';
-import { Button } from '~/components/ui/button';
-import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '~/lib/api';
 import { DeleteDialog } from './delete-dialog';
@@ -25,15 +30,38 @@ export default function CargoTipoContratoComponent({
   const [data, setData] = useState<GetCargoTipoContrato[]>(initialData);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<GetCargoTipoContrato | null>(
-    null,
-  );
+  const [selectedItem, setSelectedItem] = useState<GetCargoTipoContrato | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
+
+  // State for combo/select data
+  const [tiposContrato, setTiposContrato] = useState<TiposContrato[]>([]);
+  const [cargos, setCargos] = useState<BuscarCargoFacturable[]>([]);
+  const [condiciones, setCondiciones] = useState<GetCondicionesContrato[]>([]);
+  const [editorData, setEditorData] = useState<CargoTipoContratoEditor | null>(null);
 
   useEffect(() => {
     setData(initialData);
   }, [initialData]);
+
+  // Fetch data for the form selects
+  useEffect(() => {
+    const fetchFormData = async () => {
+      try {
+        const [tiposContratoRes, cargosRes, condicionesRes] = await Promise.all([
+          api.get('tipoContrato/combo'),
+          api.get('buscarCargoFacturable'),
+          api.get('condicionesContrato/combo'),
+        ]);
+        setTiposContrato(tiposContratoRes.data as TiposContrato[]);
+        setCargos(cargosRes.data as BuscarCargoFacturable[]);
+        setCondiciones(condicionesRes.data as GetCondicionesContrato[]);
+      } catch (_error) {
+        toast.error('Error al cargar los datos para el formulario.');
+      }
+    };
+    fetchFormData();
+  }, []);
 
   const refetchData = async () => {
     setIsLoading(true);
@@ -48,14 +76,25 @@ export default function CargoTipoContratoComponent({
   };
 
   const handleAdd = () => {
-    setModalMode('add');
-    setIsModalOpen(true);
+    toast.info('Funcionalidad deshabilitada temporalmente');
+    // setSelectedItem(null);
+    // setEditorData(null);
+    // setModalMode('add');
+    // setIsModalOpen(true);
   };
 
-  const handleEdit = (item: GetCargoTipoContrato) => {
-    setSelectedItem(item);
-    setModalMode('edit');
-    setIsModalOpen(true);
+  const handleEdit = async (item: GetCargoTipoContrato) => {
+    toast.info('Funcionalidad deshabilitada temporalmente');
+    // setSelectedItem(item);
+    // setModalMode('edit');
+    // setIsModalOpen(true);
+    // try {
+    //   const response = await api.get(`cargoTipoContrato-editar/${item.tipoContratoId}`);
+    //   setEditorData(response.data as CargoTipoContratoEditor);
+    // } catch (_error) {
+    //   toast.error('Error al cargar la configuración para editar.');
+    //   setIsModalOpen(false);
+    // }
   };
 
   const handleDelete = (item: GetCargoTipoContrato) => {
@@ -63,14 +102,16 @@ export default function CargoTipoContratoComponent({
     setIsDeleteDialogOpen(true);
   };
 
+  const handleSubmit = async (formData: any) => {
+    await api.post('cargoTipoContrato-guardarConfiguracion', formData);
+    await refetchData();
+  };
+
   const handleConfirmDelete = async () => {
     if (!selectedItem) return;
     setIsLoading(true);
     try {
-      // Asumo que el ID para eliminar es `tipoContratoId`
-      await api.delete(
-        `/cargoTipoContrato-eliminar/${selectedItem.tipoContratoId}`,
-      );
+      await api.delete(`/cargoTipoContrato-eliminar/${selectedItem.tipoContratoId}`);
       toast.success('Relación eliminada exitosamente');
       await refetchData();
     } catch (_error) {
@@ -84,24 +125,21 @@ export default function CargoTipoContratoComponent({
 
   return (
     <div className="container mx-auto p-3 md:p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-indigo-900 dark:text-indigo-100">
-            Cargo y Tipo de Contrato
-          </h1>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">
+            Cargo Tipo Contrato
+          </h2>
           <p className="text-muted-foreground">
-            Gestión de la relación entre cargos facturables y tipos de contrato
+            Gestiona la relación entre cargos facturables y tipos de contrato
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={handleAdd}
-            className="bg-indigo-600 hover:bg-indigo-700"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Añadir Relación
-          </Button>
-        </div>
+        {/* Botón de añadir deshabilitado temporalmente
+        <Button onClick={handleAdd}>
+          <Plus className="mr-2 h-4 w-4" />
+          Añadir
+        </Button>
+        */}
       </div>
       <Card>
         <CardHeader>
@@ -128,7 +166,13 @@ export default function CargoTipoContratoComponent({
       <FormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit}
         mode={modalMode}
+        tiposContrato={tiposContrato}
+        cargos={cargos}
+        condiciones={condiciones}
+        initialData={editorData}
+        selectedItem={selectedItem}
       />
       <DeleteDialog
         isOpen={isDeleteDialogOpen}

@@ -2,17 +2,14 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
 import type { Acometida } from '~/types/administracion';
-import { Button } from '~/components/ui/button';
-import { Pencil } from 'lucide-react';
+import { TableActions } from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (acometida: Acometida) => void;
-  editingAcometidaId: number | null;
 }
 
 export const columns = ({
   onEdit,
-  editingAcometidaId,
 }: TableColumnsProps): ColumnDef<Acometida>[] => [
   {
     accessorKey: 'acometidaId',
@@ -182,28 +179,31 @@ export const columns = ({
     },
   },
   {
-    accessorKey: 'actions',
+    accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acciones" />
+      <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
-      const acometida = row.original;
-      const id = row.getValue('acometidaId') as number;
-      const isEditing = editingAcometidaId === id;
-
+      const estado = row.getValue('estado') as boolean;
       return (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onEdit(acometida)}
-            disabled={isEditing}
-          >
-            <Pencil className="h-4 w-4" />
-            {isEditing ? 'Editando...' : 'Editar'}
-          </Button>
-        </div>
+        <Badge
+          variant={estado ? 'default' : 'destructive'}
+          className={
+            estado
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
+          {estado ? 'Activo' : 'Inactivo'}
+        </Badge>
       );
+    },
+  },
+  {
+    id: 'actions',
+    header: 'Acciones',
+    cell: ({ row }) => {
+      return <TableActions onEdit={onEdit} item={row.original} showView={false} showDelete={false} />;
     },
   },
 ];

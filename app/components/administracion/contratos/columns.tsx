@@ -1,11 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 
 import {
-  Edit,
-  Trash2,
-  FileText,
   Building,
   User,
   MapPin,
@@ -14,6 +10,7 @@ import {
   Zap,
 } from 'lucide-react';
 import type { GetContratos } from '~/types/administracion';
+import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (contract: GetContratos) => void;
@@ -163,15 +160,7 @@ export const columns = ({
     accessorKey: 'activo',
     header: 'Estado',
     cell: ({ row }) => {
-      const activo = row.getValue('activo') as boolean;
-      return (
-        <Badge variant={activo ? 'default' : 'secondary'}>
-          <div
-            className={`w-2 h-2 rounded-full mr-1.5 ${activo ? 'bg-green-500' : 'bg-red-500'}`}
-          />
-          {activo ? 'Activo' : 'Inactivo'}
-        </Badge>
-      );
+      return <EstadoBadge estado={row.getValue('activo')} />;
     },
   },
   {
@@ -208,35 +197,7 @@ export const columns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const contract = row.original;
-      return (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onViewDetails(contract)}
-            title="Ver Detalles"
-          >
-            <FileText className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onEdit(contract)}
-            title="Editar"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="destructive"
-            size="icon"
-            onClick={() => onDelete(contract)}
-            title="Eliminar"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      );
+      return <TableActions onView={onViewDetails} onEdit={onEdit} onDelete={onDelete} item={row.original} showView={true} />;
     },
   },
 ];

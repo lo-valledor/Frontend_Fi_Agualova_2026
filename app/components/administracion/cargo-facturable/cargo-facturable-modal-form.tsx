@@ -31,7 +31,24 @@ import {
 import { Input } from '~/components/ui/input';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Button } from '~/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import {
+  FilePlus2,
+  FileEdit,
+  Info,
+  Hash,
+  Type,
+  Text,
+  Repeat,
+  CalendarClock,
+  Tags,
+  Receipt,
+  DollarSign,
+  Gauge,
+  CheckCircle2,
+  FileText,
+  Link2,
+  Settings2,
+} from 'lucide-react';
 
 const cargoFacturableFormSchema = z.object({
   cuenta: z.string().min(1, { message: 'La cuenta es requerida.' }),
@@ -113,10 +130,7 @@ export default function CargoFacturableModalForm({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
       borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-      '&:hover': {
-        borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
-      },
+      minHeight: '44px',
     }),
     menu: (styles) => ({
       ...styles,
@@ -133,77 +147,98 @@ export default function CargoFacturableModalForm({
             ? '#1E293B'
             : '#F1F5F9'
           : 'transparent',
-      color: isSelected ? '#FFFFFF' : theme === 'dark' ? '#F8FAFC' : '#0F172A',
-      ':active': {
-        ...styles[':active'],
-        backgroundColor: theme === 'dark' ? '#166534' : '#16A34A',
-      },
     }),
     singleValue: (styles) => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
-    }),
-    input: (styles) => ({
-      ...styles,
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-    }),
-    placeholder: (styles) => ({
-      ...styles,
-      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
   };
 
   const isLoading = form.formState.isSubmitting;
 
   useEffect(() => {
-    if (isOpen && cargo) {
-      // Mapear valores abreviados a valores completos
-      const mapearFijoVariable = (valor: string) => {
-        if (valor === 'F') return 'Fijo';
-        if (valor === 'V') return 'Variable';
-        return valor; // Si ya viene completo
-      };
+    if (isOpen) {
+      if (cargo && mode === 'edit') {
+        const mapearFijoVariable = (valor: string) => {
+          if (valor === 'F') return 'Fijo';
+          if (valor === 'V') return 'Variable';
+          return valor;
+        };
 
-      const mapearPeriodicoEventual = (valor: string) => {
-        if (valor === 'P') return 'Periodico';
-        if (valor === 'E') return 'Eventual';
-        return valor; // Si ya viene completo
-      };
+        const mapearPeriodicoEventual = (valor: string) => {
+          if (valor === 'P') return 'Periodico';
+          if (valor === 'E') return 'Eventual';
+          return valor;
+        };
 
-      form.reset({
-        cuenta: cargo.cuenta || '',
-        descripcion: cargo.descripcion || '',
-        codigo: cargo.codigoEnerlova || '',
-        tipo: cargo.tipo || '',
-        fijoVariable: mapearFijoVariable(cargo.fijoVariable || ''),
-        periodicoEventual: mapearPeriodicoEventual(
-          cargo.periodicoEventual || '',
-        ),
-        conceptoId: conceptos.find((c) => c.nombre === cargo.concepto)?.id || 0,
-        tarifaId: tarifas.find((t) => t.nombre === cargo.tarifa)?.id || 0,
-        tipoMedidorId:
-          tiposMedidor.find((t) => t.nombre === cargo.tipoMedidor)?.id || 0,
-        muestraValorEn0: false, // Este valor deberá venir del backend
-      });
-    } else if (isOpen) {
-      form.reset({
-        cuenta: '',
-        descripcion: '',
-        codigo: '',
-        tipo: '',
-        fijoVariable: '',
-        periodicoEventual: '',
-        conceptoId: 0,
-        tarifaId: 0,
-        tipoMedidorId: 0,
-        muestraValorEn0: false,
-      });
+        const mapearTipo = (valorApi: string): string => {
+          if (!valorApi) return '';
+          const valorTrimmed = String(valorApi).trim().toLowerCase();
+
+          if (valorTrimmed === '1' || valorTrimmed === 'base ch') return 'Base CH';
+          if (valorTrimmed === '2' || valorTrimmed === 'cargo fact.') return 'Cargo Fact.';
+          if (valorTrimmed === '3' || valorTrimmed === 'condición') return 'Condición';
+
+          const foundOption = tiposOptions.find(
+            (option) => option.label.toLowerCase() === valorTrimmed,
+          );
+          return foundOption ? foundOption.value : '';
+        };
+
+        const normalizeAndFind = (
+          list: { id: number; nombre: string }[],
+          name: string | undefined,
+        ) => {
+          if (!name) return 0;
+          const normalizedName = name
+            .trim()
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+          const found = list.find(
+            (item) =>
+              item.nombre
+                .trim()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') === normalizedName,
+          );
+          return found?.id || 0;
+        };
+
+        form.reset({
+          cuenta: cargo.cuenta || '',
+          descripcion: cargo.descripcion || '',
+          codigo: cargo.codigoEnerlova || '',
+          tipo: mapearTipo(cargo.tipo || ''),
+          fijoVariable: mapearFijoVariable(cargo.fijoVariable || ''),
+          periodicoEventual: mapearPeriodicoEventual(
+            cargo.periodicoEventual || '',
+          ),
+          conceptoId: normalizeAndFind(conceptos, cargo.concepto),
+          tarifaId: normalizeAndFind(tarifas, cargo.tarifa),
+          tipoMedidorId: normalizeAndFind(tiposMedidor, cargo.tipoMedidor),
+          muestraValorEn0: false, // Este valor deberá venir del backend
+        });
+      } else {
+        form.reset({
+          cuenta: '',
+          descripcion: '',
+          codigo: '',
+          tipo: '',
+          fijoVariable: '',
+          periodicoEventual: '',
+          conceptoId: 0,
+          tarifaId: 0,
+          tipoMedidorId: 0,
+          muestraValorEn0: false,
+        });
+      }
     }
-  }, [isOpen, cargo, form, conceptos, tarifas, tiposMedidor]);
+  }, [isOpen, cargo, mode, form, conceptos, tarifas, tiposMedidor]);
 
   const onSubmit = async (data: CargoFacturableFormValues) => {
     try {
-      // Función para mapear tipo string a número
       const getTipoNumero = (tipoString: string): number => {
         switch (tipoString) {
           case 'Base CH':
@@ -213,37 +248,10 @@ export default function CargoFacturableModalForm({
           case 'Condición':
             return 3;
           default:
-            return 1; // Valor por defecto
+            return 1;
         }
       };
 
-      // Validación previa
-      if (!data.cuenta.trim()) {
-        toast.error('La cuenta es requerida');
-        return;
-      }
-      if (!data.descripcion.trim()) {
-        toast.error('La descripción es requerida');
-        return;
-      }
-      if (!data.codigo.trim()) {
-        toast.error('El código es requerido');
-        return;
-      }
-      if (data.conceptoId === 0) {
-        toast.error('Debe seleccionar un concepto');
-        return;
-      }
-      if (data.tarifaId === 0) {
-        toast.error('Debe seleccionar una tarifa');
-        return;
-      }
-      if (data.tipoMedidorId === 0) {
-        toast.error('Debe seleccionar un tipo de medidor');
-        return;
-      }
-
-      // Mapear los datos del formulario a los nombres que espera el backend
       const mappedData = {
         cuenta: data.cuenta.trim(),
         descripcion: data.descripcion.trim(),
@@ -257,19 +265,11 @@ export default function CargoFacturableModalForm({
         mostrarValorCero: data.muestraValorEn0,
       };
 
-      console.log('Datos del formulario:', data);
-      console.log('Datos mapeados para enviar:', mappedData);
-
       if (mode === 'add') {
         await api.post('crearCargoFacturableNuevo', mappedData);
         toast.success('Cargo facturable creado exitosamente');
       } else if (cargo) {
-        // Para el PUT, agregar el ID del cargo
-        const updateData = {
-          id: cargo.id,
-          ...mappedData,
-        };
-        console.log('Datos para actualizar:', updateData);
+        const updateData = { id: cargo.id, ...mappedData };
         await api.put('modificarCargoFacturable', updateData);
         toast.success('Cargo facturable actualizado exitosamente');
       }
@@ -278,301 +278,273 @@ export default function CargoFacturableModalForm({
       onClose();
     } catch (error: any) {
       console.error('Error al guardar el cargo facturable:', error);
-
-      // Manejo más específico de errores
-      if (error.response?.status === 400) {
-        const errorMessage =
-          error.response?.data?.message ||
-          'Datos inválidos enviados al servidor';
-        toast.error(`Error de validación: ${errorMessage}`);
-      } else if (error.response?.status === 500) {
-        toast.error('Error interno del servidor');
-      } else {
-        toast.error('Error al guardar el cargo facturable');
-      }
+      toast.error('Error al guardar el cargo facturable');
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>
-            {mode === 'add'
-              ? 'Agregar Nuevo Cargo Facturable'
-              : 'Editar Cargo Facturable'}
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="text-2xl font-semibold flex items-center gap-2">
+            {mode === 'add' ? (
+              <>
+                <FilePlus2 className="h-6 w-6 text-green-600" />
+                Agregar Cargo Facturable
+              </>
+            ) : (
+              <>
+                <FileEdit className="h-6 w-6 text-blue-600" />
+                Editar Cargo Facturable
+              </>
+            )}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-base">
             {mode === 'add'
-              ? 'Complete los datos para crear un nuevo cargo facturable'
-              : 'Modifique los datos del cargo facturable seleccionado'}
+              ? 'Complete el formulario para crear un nuevo cargo.'
+              : 'Modifique la información del cargo seleccionado.'}
           </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pt-4">
+            {/* Información Básica */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 pb-2 border-b">
+                <Info className="h-5 w-5 text-blue-600" />
+                <h3 className="text-lg font-medium">Información Básica</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="cuenta"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <FileText className="h-4 w-4" />
+                        Cuenta
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="cta001" className="h-11" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="codigo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Hash className="h-4 w-4" />
+                        Código
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Código del cargo" className="h-11" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
               <FormField
                 control={form.control}
-                name="cuenta"
+                name="descripcion"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Cuenta</FormLabel>
+                    <FormLabel className="flex items-center gap-2">
+                      <Text className="h-4 w-4" />
+                      Descripción
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Ingrese la cuenta" />
+                      <Input {...field} placeholder="Descripción detallada" className="h-11" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="codigo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Código</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Ingrese el código" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
-            <FormField
-              control={form.control}
-              name="descripcion"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="Ingrese la descripción" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Controller
-              name="tipo"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tipo</FormLabel>
-                  <Select
-                    options={tiposOptions}
-                    value={tiposOptions.find(
-                      (option) => option.value === field.value,
-                    )}
-                    onChange={(option) =>
-                      field.onChange((option as { value: string })?.value || '')
-                    }
-                    styles={selectStyles}
-                    placeholder="Seleccione el tipo"
-                    isClearable
-                  />
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Controller
-                name="fijoVariable"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fijo/Variable</FormLabel>
-                    <Select
-                      options={fijoVariableOptions}
-                      value={fijoVariableOptions.find(
-                        (option) => option.value === field.value,
-                      )}
-                      onChange={(option) =>
-                        field.onChange(
-                          (option as { value: string })?.value || '',
-                        )
-                      }
-                      styles={selectStyles}
-                      placeholder="Seleccione tipo"
-                      isClearable
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Controller
-                name="periodicoEventual"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Periódico/Eventual</FormLabel>
-                    <Select
-                      options={periodicoEventualOptions}
-                      value={periodicoEventualOptions.find(
-                        (option) => option.value === field.value,
-                      )}
-                      onChange={(option) =>
-                        field.onChange(
-                          (option as { value: string })?.value || '',
-                        )
-                      }
-                      styles={selectStyles}
-                      placeholder="Seleccione tipo"
-                      isClearable
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Controller
-                name="conceptoId"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Concepto</FormLabel>
-                    <Select
-                      options={conceptos.map((concepto) => ({
-                        value: concepto.id,
-                        label: concepto.nombre,
-                      }))}
-                      value={
-                        field.value
-                          ? {
-                              value: field.value,
-                              label:
-                                conceptos.find((c) => c.id === field.value)
-                                  ?.nombre || '',
-                            }
-                          : null
-                      }
-                      onChange={(option) =>
-                        field.onChange(
-                          (option as { value: number })?.value || 0,
-                        )
-                      }
-                      styles={selectStyles}
-                      placeholder="Seleccione concepto"
-                      isClearable
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Controller
-                name="tarifaId"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tarifa</FormLabel>
-                    <Select
-                      options={tarifas.map((tarifa) => ({
-                        value: tarifa.id,
-                        label: tarifa.nombre,
-                      }))}
-                      value={
-                        field.value
-                          ? {
-                              value: field.value,
-                              label:
-                                tarifas.find((t) => t.id === field.value)
-                                  ?.nombre || '',
-                            }
-                          : null
-                      }
-                      onChange={(option) =>
-                        field.onChange(
-                          (option as { value: number })?.value || 0,
-                        )
-                      }
-                      styles={selectStyles}
-                      placeholder="Seleccione tarifa"
-                      isClearable
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Controller
-                name="tipoMedidorId"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo Medidor</FormLabel>
-                    <Select
-                      options={tiposMedidor.map((tipo) => ({
-                        value: tipo.id,
-                        label: tipo.nombre,
-                      }))}
-                      value={
-                        field.value
-                          ? {
-                              value: field.value,
-                              label:
-                                tiposMedidor.find((t) => t.id === field.value)
-                                  ?.nombre || '',
-                            }
-                          : null
-                      }
-                      onChange={(option) =>
-                        field.onChange(
-                          (option as { value: number })?.value || 0,
-                        )
-                      }
-                      styles={selectStyles}
-                      placeholder="Seleccione tipo de medidor"
-                      isClearable
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="muestraValorEn0"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
+            {/* Clasificación */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 pb-2 border-b">
+                <Tags className="h-5 w-5 text-purple-600" />
+                <h3 className="text-lg font-medium">Clasificación</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Controller
+                  name="tipo"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Type className="h-4 w-4" />
+                        Tipo
+                      </FormLabel>
+                      <Select
+                        options={tiposOptions}
+                        value={tiposOptions.find(o => o.value === field.value)}
+                        onChange={(o: any) => field.onChange(o ? o.value : '')}
+                        styles={selectStyles}
+                        placeholder="Seleccione..."
+                        isClearable
                       />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Muestra valor en 0</FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Controller
+                  name="fijoVariable"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Repeat className="h-4 w-4" />
+                        Fijo/Variable
+                      </FormLabel>
+                      <Select
+                        options={fijoVariableOptions}
+                        value={fijoVariableOptions.find(o => o.value === field.value)}
+                        onChange={(o: any) => field.onChange(o ? o.value : '')}
+                        styles={selectStyles}
+                        placeholder="Seleccione..."
+                        isClearable
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Controller
+                  name="periodicoEventual"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <CalendarClock className="h-4 w-4" />
+                        Periódico/Eventual
+                      </FormLabel>
+                      <Select
+                        options={periodicoEventualOptions}
+                        value={periodicoEventualOptions.find(o => o.value === field.value)}
+                        onChange={(o: any) => field.onChange(o ? o.value : '')}
+                        styles={selectStyles}
+                        placeholder="Seleccione..."
+                        isClearable
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
-            <DialogFooter>
+            {/* Asociaciones y Configuración */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-2 pb-2 border-b">
+                <Link2 className="h-5 w-5 text-orange-600" />
+                <h3 className="text-lg font-medium">Asociaciones y Configuración</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Controller
+                  name="conceptoId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Receipt className="h-4 w-4" />
+                        Concepto
+                      </FormLabel>
+                      <Select
+                        options={conceptos.map(c => ({ value: c.id, label: c.nombre }))}
+                        value={conceptos.map(c => ({ value: c.id, label: c.nombre })).find(c => c.value === field.value)}
+                        onChange={(o: any) => field.onChange(o ? o.value : 0)}
+                        styles={selectStyles}
+                        placeholder="Seleccione..."
+                        isClearable
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Controller
+                  name="tarifaId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4" />
+                        Tarifa
+                      </FormLabel>
+                      <Select
+                        options={tarifas.map(t => ({ value: t.id, label: t.nombre }))}
+                        value={tarifas.map(t => ({ value: t.id, label: t.nombre })).find(t => t.value === field.value)}
+                        onChange={(o: any) => field.onChange(o ? o.value : 0)}
+                        styles={selectStyles}
+                        placeholder="Seleccione..."
+                        isClearable
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Controller
+                  name="tipoMedidorId"
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Gauge className="h-4 w-4" />
+                        Tipo Medidor
+                      </FormLabel>
+                      <Select
+                        options={tiposMedidor.map(t => ({ value: t.id, label: t.nombre }))}
+                        value={tiposMedidor.map(t => ({ value: t.id, label: t.nombre })).find(t => t.value === field.value)}
+                        onChange={(o: any) => field.onChange(o ? o.value : 0)}
+                        styles={selectStyles}
+                        placeholder="Seleccione..."
+                        isClearable
+                      />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="muestraValorEn0"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-start space-x-3 space-y-0 rounded-md border p-4 bg-muted/30 mt-8">
+                      <FormControl>
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="flex items-center gap-2">
+                          <Settings2 className="h-4 w-4" />
+                          ¿Mostrar valor en 0?
+                        </FormLabel>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="pt-6 border-t">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
                 disabled={isLoading}
+                className="h-11 px-6"
               >
                 Cancelar
               </Button>
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
-              >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {mode === 'add' ? 'Crear' : 'Actualizar'}
+              <Button type="submit" disabled={isLoading} className="h-11 px-6 flex items-center gap-2">
+                {isLoading ? (
+                  <><FileEdit className="mr-2 h-4 w-4 animate-spin" /> Procesando...</>
+                ) : (
+                  <><CheckCircle2 className="h-4 w-4" /> {mode === 'add' ? 'Crear' : 'Actualizar'}</>
+                )}
               </Button>
             </DialogFooter>
           </form>

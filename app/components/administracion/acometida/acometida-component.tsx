@@ -44,9 +44,7 @@ export default function AcometidaComponent({
     null,
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-  const [editingAcometidaId, setEditingAcometidaId] = useState<number | null>(
-    null,
-  );
+  const [, setEditingAcometidaId] = useState<number | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   const revalidator = useRevalidator();
@@ -208,7 +206,6 @@ export default function AcometidaComponent({
           <DataTable
             columns={columns({
               onEdit: handleEditAcometida,
-              editingAcometidaId,
             })}
             data={acometidas}
           />

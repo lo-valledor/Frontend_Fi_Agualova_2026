@@ -440,6 +440,42 @@ export interface ClientesFormData {
 
 // Cargo Tipo Contrato
 
+export interface CargoTipoContratoEditor {
+  grilla: CargoGrilla[];
+  cargoMonofasico: CargoPorTipoMedidor[];
+  cargoTrifasico: CargoPorTipoMedidor[];
+  cargoAmbos: CargoPorTipoMedidor[];
+}
+
+export interface CargoGrilla {
+  cargoId: number;
+  cargoDescripcion: string;
+  condicionId: number;
+  condicionDescripcion: string;
+  descripcion: string;
+}
+
+export interface CargoPorTipoMedidor {
+  tipoMedidor: number;
+  cargoId: number;
+  cargoDescripcion: string;
+}
+
+export interface GuardarCargoTipoContratoConfiguracion {
+  tipoContratoId: number;
+  configuraciones: ConfiguracionCargo[];
+  cargoMonofasicoIds: number[];
+  cargoTrifasicoIds: number[];
+  cargoAmbosIds: number[];
+}
+
+export interface ConfiguracionCargo {
+  cargoId: number;
+  tipoContratoId: number;
+  condicionId: number;
+  descripcion: string;
+}
+
 export interface GetCargoTipoContrato {
   tipoContratoId: number;
   tipoContratoDescripcion: string;

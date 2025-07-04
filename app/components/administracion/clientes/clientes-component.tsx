@@ -1,4 +1,4 @@
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
@@ -11,16 +11,6 @@ import {
   CardTitle,
   CardHeader,
 } from '~/components/ui/card';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetFooter,
-  SheetClose,
-} from '~/components/ui/sheet';
-import { Separator } from '~/components/ui/separator';
 import type {
   GetClientes,
   GetClientesByRut,
@@ -29,7 +19,7 @@ import type {
 } from '~/types/administracion';
 import { useClientes } from '~/hooks/use-administracion';
 import { columns } from './columns';
-import DetallesCliente from './detalles-cliente';
+import { ClienteDetailsModal } from './detalles-cliente';
 import ClienteFormModal from './cliente-form-modal';
 
 interface ClientesComponentProps {
@@ -48,10 +38,12 @@ export default function ClientesComponent({
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [detailedCliente, setDetailedCliente] = useState<GetClientesByRut>();
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [editingClienteRut, setEditingClienteRut] = useState<string | null>(
     null,
   );
+  const [detailingClienteRut, setDetailingClienteRut] = useState<
+    string | null
+  >(null);
 
   const revalidator = useRevalidator();
   const { getClienteByRut } = useClientes();
@@ -79,18 +71,16 @@ export default function ClientesComponent({
 
   const handleDetailsCliente = async (cliente: GetClientes) => {
     try {
-      setIsLoadingDetails(true);
-      setIsDetailsOpen(true);
-
-      // Obtener los detalles completos del cliente
+      setDetailingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
       setDetailedCliente(clienteDetallado);
+      setIsDetailsOpen(true);
     } catch (error) {
       console.error('Error al cargar detalles del cliente:', error);
       toast.error('Error al cargar los detalles del cliente');
       setIsDetailsOpen(false);
     } finally {
-      setIsLoadingDetails(false);
+      setDetailingClienteRut(null);
     }
   };
 
@@ -147,6 +137,7 @@ export default function ClientesComponent({
               onDetails: handleDetailsCliente,
               onEdit: handleEditCliente,
               editingClienteRut,
+              detailingClienteRut,
             })}
             data={clientes}
           />
@@ -154,38 +145,11 @@ export default function ClientesComponent({
       </Card>
 
       {/* Modal de Detalles */}
-      <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <SheetContent className="sm:max-w-2xl">
-          <SheetHeader>
-            <SheetTitle>Detalles del Cliente</SheetTitle>
-            <SheetDescription>
-              Información completa del cliente seleccionado.
-            </SheetDescription>
-          </SheetHeader>
-          <Separator className="my-4" />
-          <div className="h-[calc(100vh-150px)] overflow-y-auto pr-4">
-            {isLoadingDetails ? (
-              <div className="flex items-center justify-center h-32">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <span className="ml-2 text-muted-foreground">
-                  Cargando detalles...
-                </span>
-              </div>
-            ) : detailedCliente ? (
-              <DetallesCliente cliente={detailedCliente} />
-            ) : (
-              <div className="text-center text-muted-foreground py-8">
-                No se pudieron cargar los detalles del cliente
-              </div>
-            )}
-          </div>
-          <SheetFooter className="mt-4">
-            <SheetClose asChild>
-              <Button variant="outline">Cerrar</Button>
-            </SheetClose>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+      <ClienteDetailsModal
+        isOpen={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        cliente={detailedCliente ?? null}
+      />
 
       {/* Modal de Formulario */}
       <ClienteFormModal

@@ -1,8 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { GetCargoTipoContrato } from '~/types/administracion';
-import { Button } from '~/components/ui/button';
-import { Badge } from '~/components/ui/badge';
-import { Edit, Trash2 } from 'lucide-react';
+import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
 
 interface ColumnsProps {
   onEdit: (data: GetCargoTipoContrato) => void;
@@ -43,40 +41,18 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: 'Estado',
-    cell: ({ row }) => {
-      const estado = row.getValue('estado') as boolean;
-      return (
-        <Badge variant={estado ? 'default' : 'secondary'}>
-          {estado ? 'Activo' : 'Inactivo'}
-        </Badge>
-      );
-    },
+    cell: ({ row }) => <EstadoBadge estado={row.getValue('estado')} />,
   },
   {
     id: 'actions',
     header: 'Acciones',
-    cell: ({ row }) => {
-      const item = row.original;
-      return (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onEdit(item)}
-            title="Editar"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="destructive"
-            size="icon"
-            onClick={() => onDelete(item)}
-            title="Eliminar"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <TableActions
+        onEdit={() => onEdit(row.original)}
+        onDelete={() => onDelete(row.original)}
+        showView={false}
+        item={row.original}
+      />
+    ),
   },
 ];

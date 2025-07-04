@@ -1,10 +1,10 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { GetMedidores } from '~/types/administracion';
-import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 
-import { Edit, CircuitBoard, MapPin, Activity, Zap } from 'lucide-react';
+import { CircuitBoard, MapPin, Zap } from 'lucide-react';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
 
 interface MedidoresColumnsProps {
   onEdit: (medidor: GetMedidores) => void;
@@ -89,6 +89,48 @@ export const columns = ({
     },
   },
   {
+    accessorKey: 'fechaInicio',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Fecha de Inicio" />
+    ),
+    cell: ({ row }) => {
+      const medidor = row.original;
+      return (
+        <span className="font-medium text-gray-900 dark:text-gray-100">
+          {medidor.fechaInicio}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: 'digitos',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Dígitos" />
+    ),
+    cell: ({ row }) => {
+      const medidor = row.original;
+      return (
+        <span className="font-medium text-gray-900 dark:text-gray-100">
+          {medidor.digitos}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: 'multiplicar',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Multiplicar" />
+    ),
+    cell: ({ row }) => {
+      const medidor = row.original;
+      return (
+        <span className="font-medium text-gray-900 dark:text-gray-100">
+          {medidor.multiplicar}
+        </span>
+      );
+    },
+  },
+  {
     accessorKey: 'tipo',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tipo" />
@@ -102,6 +144,25 @@ export const columns = ({
           <Badge variant={variant} className={className}>
             {tipo}
           </Badge>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'codigoAcometida',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Acometida" />
+    ),
+    cell: ({ row }) => {
+      const medidor = row.original;
+      return (
+        <div className="flex items-center space-x-2">
+          <CircuitBoard className="h-4 w-4 text-gray-500" />
+          <div>
+            <div className="font-medium text-gray-900 dark:text-gray-100">
+              {medidor.codigoAcometida}
+            </div>
+          </div>
         </div>
       );
     },
@@ -126,16 +187,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
-      const estado = row.getValue('estado') as string;
-      const isActive = estado.toLowerCase() === 'activo';
-      return (
-        <div className="flex items-center space-x-2">
-          <Activity
-            className={`h-4 w-4 ${isActive ? 'text-green-500' : 'text-gray-500'}`}
-          />
-          <Badge variant={isActive ? 'default' : 'secondary'}>{estado}</Badge>
-        </div>
-      );
+      return <EstadoBadge estado={row.getValue('estado')} />;
     },
   },
   {
@@ -144,19 +196,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: ({ row }) => {
-      const item = row.original;
-      return (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onEdit(item)}
-            title="Editar"
-          >
-            <Edit className="h-4 w-4" /> Modificar
-          </Button>
-        </div>
-      );
+      return <TableActions onEdit={onEdit} item={row.original} showView={false} showDelete={false} />;
     },
   },
 ];

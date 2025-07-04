@@ -1,8 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
-import { Edit, Trash2 } from 'lucide-react';
 import type { Usuarios } from '~/types/administracion';
+import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (user: Usuarios) => void;
@@ -89,12 +88,11 @@ export const columns = ({
     accessorKey: 'activo',
     header: 'Estado',
     cell: ({ row }) => {
-      const activo = row.getValue('activo') as boolean;
-      return (
-        <Badge variant={activo ? 'default' : 'secondary'}>
-          {activo ? 'Activo' : 'Inactivo'}
-        </Badge>
-      );
+      return <EstadoBadge estado={row.getValue('activo')} />;
+    },
+    enableSorting: true,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
     },
   },
   {
@@ -113,27 +111,7 @@ export const columns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const user = row.original;
-      return (
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => onEdit(user)}
-            title="Editar"
-          >
-            <Edit className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="destructive"
-            size="icon"
-            onClick={() => onDelete(user)}
-            title="Eliminar"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      );
+      return <TableActions onEdit={onEdit} onDelete={onDelete} item={row.original} showView={false} />;
     },
   },
 ];

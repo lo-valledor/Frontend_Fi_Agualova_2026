@@ -1,4 +1,7 @@
-import type React from 'react';
+import React, { useEffect } from 'react';
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -8,52 +11,303 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import { Label } from '~/components/ui/label';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import {
+  Select as UiSelect,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select';
+import { Checkbox } from '~/components/ui/checkbox';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import { Trash2, FilePlus2, FileEdit, CheckCircle2, PlusCircle, Link2, ListChecks, Grid } from 'lucide-react';
+import type {
+  CargoTipoContratoEditor,
+  GetCargoTipoContrato,
+  BuscarCargoFacturable,
+  GetCondicionesContrato,
+} from '~/types/administracion';
+import type { TiposContrato } from '~/types/mantencion';
+import { toast } from 'sonner';
+
+const formSchema = z.object({
+  tipoContratoId: z.number().min(1, 'Debe seleccionar un tipo de contrato'),
+  cargoMonofasicoIds: z.array(z.number()),
+  cargoTrifasicoIds: z.array(z.number()),
+  cargoAmbosIds: z.array(z.number()),
+  grilla: z.array(
+    z.object({
+      cargoId: z.number().min(1, 'El cargo es requerido'),
+      condicionId: z.number().min(1, 'La condición es requerida'),
+      descripcion: z.string().min(1, 'La descripción es requerida'),
+    }),
+  ),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 interface FormModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: (data: any) => Promise<void>;
   mode: 'add' | 'edit';
+  tiposContrato: TiposContrato[];
+  cargos: BuscarCargoFacturable[];
+  condiciones: GetCondicionesContrato[];
+  initialData?: CargoTipoContratoEditor | null;
+  selectedItem?: GetCargoTipoContrato | null;
 }
 
-export function FormModal({ isOpen, onClose, mode }: FormModalProps) {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert('Funcionalidad de guardado no implementada.');
+export function FormModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  mode,
+  tiposContrato,
+  cargos,
+  condiciones,
+  initialData,
+  selectedItem,
+}: FormModalProps) {
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      tipoContratoId: 0,
+      cargoMonofasicoIds: [],
+      cargoTrifasicoIds: [],
+      cargoAmbosIds: [],
+      grilla: [],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'grilla',
+  });
+
+  useEffect(() => {
+    if (isOpen) {
+      if (mode === 'edit' && initialData && selectedItem) {
+        form.reset({
+          tipoContratoId: selectedItem.tipoContratoId,
+          cargoMonofasicoIds: initialData.cargoMonofasico.map(c => c.cargoId),
+          cargoTrifasicoIds: initialData.cargoTrifasico.map(c => c.cargoId),
+          cargoAmbosIds: initialData.cargoAmbos.map(c => c.cargoId),
+          grilla: initialData.grilla.map(g => ({
+            cargoId: g.cargoId,
+            condicionId: g.condicionId,
+            descripcion: g.descripcion,
+          })),
+        });
+      } else {
+        form.reset({
+          tipoContratoId: 0,
+          cargoMonofasicoIds: [],
+          cargoTrifasicoIds: [],
+          cargoAmbosIds: [],
+          grilla: [],
+        });
+      }
+    }
+  }, [isOpen, mode, initialData, selectedItem, form]);
+
+  const handleFormSubmit = (data: FormValues) => {
+    const payload = {
+      tipoContratoId: data.tipoContratoId,
+      configuraciones: data.grilla.map(g => ({ ...g, tipoContratoId: data.tipoContratoId })),
+      cargoMonofasicoIds: data.cargoMonofasicoIds,
+      cargoTrifasicoIds: data.cargoTrifasicoIds,
+      cargoAmbosIds: data.cargoAmbosIds,
+    };
+    toast.promise(onSubmit(payload), {
+      loading: 'Guardando configuración...',
+      success: 'Configuración guardada exitosamente',
+      error: 'Error al guardar la configuración',
+    });
     onClose();
   };
 
+  const renderCheckboxList = (name: 'cargoMonofasicoIds' | 'cargoTrifasicoIds' | 'cargoAmbosIds', title: string) => (
+    <div className="space-y-4 rounded-lg border p-4">
+        <h4 className="text-md font-medium">{title}</h4>
+        <ScrollArea className="h-48">
+            <div className="space-y-2 pr-4">
+                {cargos.map((cargo) => (
+                    <FormField
+                        key={cargo.id}
+                        control={form.control}
+                        name={name}
+                        render={({ field }) => (
+                            <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                <FormControl>
+                                    <Checkbox
+                                        checked={field.value?.includes(cargo.id)}
+                                        onCheckedChange={(checked) => {
+                                            return checked
+                                                ? field.onChange([...field.value, cargo.id])
+                                                : field.onChange(field.value?.filter((value) => value !== cargo.id));
+                                        }}
+                                    />
+                                </FormControl>
+                                <FormLabel className="font-normal w-full cursor-pointer">
+                                    {cargo.descripcion}
+                                </FormLabel>
+                            </FormItem>
+                        )}
+                    />
+                ))}
+            </div>
+        </ScrollArea>
+    </div>
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-4xl max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle>
-            {mode === 'add'
-              ? 'Crear Relación Cargo-Contrato'
-              : 'Editar Relación'}
+          <DialogTitle className="text-2xl font-semibold flex items-center gap-2">
+            {mode === 'add' ? (
+              <>
+                <FilePlus2 className="h-6 w-6 text-green-600" />
+                Crear Configuración
+              </>
+            ) : (
+              <>
+                <FileEdit className="h-6 w-6 text-blue-600" />
+                Editar Configuración
+              </>
+            )}
           </DialogTitle>
           <DialogDescription>
-            {mode === 'add'
-              ? 'Complete los campos para crear una nueva relación.'
-              : 'Edite los campos de la relación seleccionada.'}
+            Defina las relaciones entre cargos, condiciones y tipos de contrato.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-          <div className="text-center p-4 border rounded-lg bg-yellow-50 dark:bg-yellow-900/30">
-            <Label className="text-yellow-700 dark:text-yellow-300">
-              Formulario no implementado. La creación y edición no están
-              disponibles por el momento.
-            </Label>
-          </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled>
-              Guardar Cambios
-            </Button>
-          </DialogFooter>
-        </form>
+        <ScrollArea className="max-h-[70vh] p-1">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8 p-4">
+            <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                    <Link2 className="h-5 w-5 text-blue-600" />
+                    <h3 className="text-lg font-medium">Tipo de Contrato</h3>
+                </div>
+                 <FormField
+                    control={form.control}
+                    name="tipoContratoId"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Seleccione el Tipo de Contrato</FormLabel>
+                        <UiSelect onValueChange={value => field.onChange(Number(value))} value={String(field.value)} disabled={mode === 'edit'}>
+                            <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Seleccione un tipo de contrato..." />
+                            </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                            {tiposContrato.map(tc => (
+                                <SelectItem key={tc.id} value={String(tc.id)}>{tc.nombre}</SelectItem>
+                            ))}
+                            </SelectContent>
+                        </UiSelect>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+            </div>
+
+            <div className="space-y-6">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                    <ListChecks className="h-5 w-5 text-purple-600" />
+                    <h3 className="text-lg font-medium">Cargos por Tipo de Medidor</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {renderCheckboxList('cargoMonofasicoIds', 'Cargos Monofásicos')}
+                    {renderCheckboxList('cargoTrifasicoIds', 'Cargos Trifásicos')}
+                    {renderCheckboxList('cargoAmbosIds', 'Cargos para Ambos')}
+                </div>
+            </div>
+
+            <div className="space-y-6">
+                <div className="flex items-center justify-between pb-2 border-b">
+                    <div className="flex items-center gap-2">
+                        <Grid className="h-5 w-5 text-orange-600" />
+                        <h3 className="text-lg font-medium">Grilla de Condiciones y Cargos</h3>
+                    </div>
+                    <Button type="button" size="sm" onClick={() => append({ cargoId: 0, condicionId: 0, descripcion: '' })}>
+                        <PlusCircle className="h-4 w-4 mr-2" />
+                        Añadir Fila
+                    </Button>
+                </div>
+                <div className="space-y-4">
+                    {fields.map((item, index) => (
+                        <div key={item.id} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 items-start p-3 border rounded-lg">
+                            <FormField
+                                control={form.control}
+                                name={`grilla.${index}.cargoId`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Cargo</FormLabel>
+                                    <UiSelect onValueChange={value => field.onChange(Number(value))} value={String(field.value)}>
+                                        <FormControl><SelectTrigger><SelectValue placeholder="Seleccione..." /></SelectTrigger></FormControl>
+                                        <SelectContent>{cargos.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.descripcion}</SelectItem>)}</SelectContent>
+                                    </UiSelect>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`grilla.${index}.condicionId`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Condición</FormLabel>
+                                    <UiSelect onValueChange={value => field.onChange(Number(value))} value={String(field.value)}>
+                                        <FormControl><SelectTrigger><SelectValue placeholder="Seleccione..." /></SelectTrigger></FormControl>
+                                        <SelectContent>{condiciones.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.descripcion}</SelectItem>)}</SelectContent>
+                                    </UiSelect>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name={`grilla.${index}.descripcion`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                    <FormLabel>Descripción</FormLabel>
+                                    <FormControl><Input {...field} placeholder="Descripción..." /></FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)} className="mt-8">
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <DialogFooter className="pt-6 border-t">
+              <Button type="button" variant="outline" onClick={onClose} className="h-11 px-6">
+                Cancelar
+              </Button>
+              <Button type="submit" className="h-11 px-6 flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4" />
+                Guardar Configuración
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

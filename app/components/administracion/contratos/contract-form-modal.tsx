@@ -374,8 +374,8 @@ export function ContractFormModal({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-sky-600 hover:bg-sky-700">
-              {mode === 'add' ? 'Crear Contrato' : 'Guardar Cambios'}
+            <Button type="submit" className="bg-sky-600 hover:bg-sky-700 text-white">
+              {mode === 'add' ? 'Crear' : 'Actualizar'}
             </Button>
           </DialogFooter>
         </form>

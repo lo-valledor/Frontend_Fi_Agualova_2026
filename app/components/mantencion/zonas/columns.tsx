@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Zonas } from '~/types/mantencion';
-import { Edit, MapPinIcon, MoreHorizontal, Trash2 } from 'lucide-react';
+import { Edit, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
@@ -31,11 +31,6 @@ export const columns = ({
       const zona = row.original;
       return (
         <div className="flex items-center space-x-3">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center">
-              <MapPinIcon className="w-5 h-5 text-white" />
-            </div>
-          </div>
           <div>
             <div className="font-medium text-gray-900 dark:text-gray-100">
               {zona.nombre}
