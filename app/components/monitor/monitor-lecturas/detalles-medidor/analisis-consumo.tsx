@@ -1075,17 +1075,18 @@ export default function AnalisisConsumo({
                                   height={36}
                                   wrapperStyle={{ paddingBottom: '10px' }}
                                 />
-                                <Bar
-                                  name="Año Actual"
-                                  dataKey="consumoActual"
-                                  fill="#3b82f6"
-                                  radius={[4, 4, 0, 0]}
-                                  barSize={60}
-                                />
+
                                 <Bar
                                   name="Año Anterior"
                                   dataKey="consumoAnterior"
                                   fill="#f97316"
+                                  radius={[4, 4, 0, 0]}
+                                  barSize={60}
+                                />
+                                <Bar
+                                  name="Año Actual"
+                                  dataKey="consumoActual"
+                                  fill="#3b82f6"
                                   radius={[4, 4, 0, 0]}
                                   barSize={60}
                                 />

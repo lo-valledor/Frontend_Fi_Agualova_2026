@@ -3,7 +3,7 @@ import type { GetMedidores } from '~/types/administracion';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 
-import { Edit, CircuitBoard, MapPin, Activity, Zap } from 'lucide-react';
+import { Edit, CircuitBoard, MapPin, Zap } from 'lucide-react';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 
 interface MedidoresColumnsProps {
@@ -130,10 +130,16 @@ export const columns = ({
       const isActive = estado.toLowerCase() === 'activo';
       return (
         <div className="flex items-center space-x-2">
-          <Activity
-            className={`h-4 w-4 ${isActive ? 'text-green-500' : 'text-gray-500'}`}
-          />
-          <Badge variant={isActive ? 'default' : 'secondary'}>{estado}</Badge>
+          <Badge
+                    variant={isActive ? 'default' : 'destructive'}
+                    className={
+                      isActive
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        : ''
+                    }
+                  >
+                    {isActive ? 'Activo' : 'Inactivo'}
+                  </Badge>
         </div>
       );
     },

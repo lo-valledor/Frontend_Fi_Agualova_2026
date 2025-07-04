@@ -46,7 +46,14 @@ export const columns = ({
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;
       return (
-        <Badge variant={estado ? 'default' : 'secondary'}>
+        <Badge
+          variant={estado ? 'default' : 'destructive'}
+          className={
+            estado
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
           {estado ? 'Activo' : 'Inactivo'}
         </Badge>
       );

@@ -191,6 +191,8 @@ export default function ClienteFormModal({
     try {
       const response = await api.get(`comuna/por-region/${regionCodigo}`);
       const data = response.data as GetComunas[];
+      console.log('data', data);
+      console.log('comunas', regionCodigo);
       setComunas(data);
     } catch (error) {
       console.error('Error al cargar comunas:', error);
@@ -205,12 +207,9 @@ export default function ClienteFormModal({
     if (isOpen) {
       setInitialLoad(true);
       if (cliente && mode === 'edit') {
-        // Solo buscamos la región si hay una comuna
-        const regionCliente = cliente.codComuna
-          ? regiones.find(
-              (r) => r.codigo === cliente.codComuna?.substring(0, 2),
-            )
-          : undefined;
+        const regionCliente = regiones.find(
+          (r) => r.codigo === cliente.codComuna?.substring(0, 2),
+        );
 
         form.reset({
           rut: cliente.rut || '',
@@ -228,7 +227,7 @@ export default function ClienteFormModal({
 
         // Solo cargamos las comunas si hay una región
         if (regionCliente) {
-          loadComunas(regionCliente.codigo);
+          loadComunas(regionCliente.region);
         }
       } else {
         form.reset({
@@ -252,16 +251,19 @@ export default function ClienteFormModal({
 
   // Manejar cambios en la región
   useEffect(() => {
-    const region = form.watch('region');
-    if (!initialLoad && region) {
-      loadComunas(region);
-      // Limpiar comuna solo si no estamos en modo edición o si la región cambió
+    const regionCode = form.watch('region');
+    if (!initialLoad && regionCode) {
+      const regionData = regiones.find((r) => r.codigo === regionCode);
+      if (regionData) {
+        loadComunas(regionData.region);
+      }
+
       const currentRegion = cliente?.codComuna?.substring(0, 2);
-      if (mode === 'add' || (mode === 'edit' && region !== currentRegion)) {
+      if (mode === 'add' || (mode === 'edit' && regionCode !== currentRegion)) {
         form.setValue('codComuna', '');
       }
     }
-  }, [form.watch('region'), initialLoad, mode, cliente]);
+  }, [form.watch('region'), initialLoad, mode, cliente, regiones]);
 
   const onSubmit = async (data: ClienteFormData) => {
     try {

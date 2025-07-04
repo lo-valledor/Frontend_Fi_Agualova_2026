@@ -3,8 +3,6 @@ import {
   Edit,
   Eye,
   Loader2,
-  Building2,
-  User2,
   MapPin,
   Phone,
 } from 'lucide-react';
@@ -20,12 +18,14 @@ interface ClientesColumnsProps {
   onEdit: (cliente: GetClientes) => void;
   onDetails: (cliente: GetClientes) => void;
   editingClienteRut: string | null;
+  detailingClienteRut: string | null;
 }
 
 export const columns = ({
   onEdit,
   onDetails,
   editingClienteRut,
+  detailingClienteRut,
 }: ClientesColumnsProps): ColumnDef<GetClientes>[] => [
   {
     accessorKey: 'rut',
@@ -33,18 +33,8 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Cliente" />
     ),
     cell: ({ row }) => {
-      const cliente = row.original;
       return (
         <div className="flex items-center space-x-3">
-          <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center">
-              {cliente.esEmpresa ? (
-                <Building2 className="w-5 h-5 text-white" />
-              ) : (
-                <User2 className="w-5 h-5 text-white" />
-              )}
-            </div>
-          </div>
           <div>
             <div className="font-medium text-gray-900 dark:text-gray-100">
               {row.original.nombreCompleto}
@@ -135,6 +125,7 @@ export const columns = ({
     cell: ({ row }) => {
       const cliente = row.original;
       const isEditing = editingClienteRut === cliente.rut;
+      const isDetailing = detailingClienteRut === cliente.rut;
       return (
         <div className="flex gap-2">
           <Button
@@ -142,8 +133,13 @@ export const columns = ({
             size="icon"
             onClick={() => onDetails(cliente)}
             title="Ver Detalles"
+            disabled={isDetailing}
           >
-            <Eye className="h-4 w-4" />
+            {isDetailing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </Button>
           <Button
             variant="outline"

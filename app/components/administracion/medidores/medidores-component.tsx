@@ -39,6 +39,12 @@ export default function MedidoresComponent({
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
+  // Tipos de medidores hardcodeados como placeholder
+  const [tipos] = useState([
+    { id: 1, nombre: 'Monofásico' },
+    { id: 2, nombre: 'Trifásico' },
+  ]);
+
   useEffect(() => {
     setMedidores(initialMedidores);
   }, [initialMedidores]);
@@ -75,10 +81,10 @@ export default function MedidoresComponent({
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/crearMedidor', data);
+        await api.post('/MedidorCrear', data);
         toast.success('Medidor creado exitosamente');
       } else {
-        await api.put(`/actualizarMedidor/${selectedMedidor?.codigo}`, data);
+        await api.put(`/MedidorModificar`, data);
         toast.success('Medidor actualizado exitosamente');
       }
       await refetchMedidores();
@@ -169,6 +175,7 @@ export default function MedidoresComponent({
           mode={modalMode}
           isLoading={isLoading}
           marcas={marcas}
+          tipos={tipos}
         />
       )}
 

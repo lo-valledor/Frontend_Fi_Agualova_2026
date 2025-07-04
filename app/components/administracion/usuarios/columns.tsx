@@ -91,10 +91,21 @@ export const columns = ({
     cell: ({ row }) => {
       const activo = row.getValue('activo') as boolean;
       return (
-        <Badge variant={activo ? 'default' : 'secondary'}>
+        <Badge
+          variant={activo ? 'default' : 'destructive'}
+          className={
+            activo
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
           {activo ? 'Activo' : 'Inactivo'}
         </Badge>
       );
+    },
+    enableSorting: true,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
     },
   },
   {

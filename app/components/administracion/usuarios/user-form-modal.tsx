@@ -21,7 +21,7 @@ import {
 } from '~/components/ui/select';
 import { useAdministracion } from '~/hooks/use-administracion';
 import { toast } from 'sonner';
-import { User } from 'lucide-react';
+import { User, Eye, EyeOff } from 'lucide-react';
 import type {
   Usuarios,
   CrearUsuarioProps,
@@ -44,6 +44,7 @@ export function UserFormModal({
   mode,
 }: UserFormModalProps) {
   const { createUsuario, updateUsuario, loadingState } = useAdministracion();
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState<CrearUsuarioProps>({
     nombreDeUsuario: '',
@@ -119,12 +120,16 @@ export function UserFormModal({
         toast.success('Usuario creado exitosamente');
       } else if (mode === 'edit' && user) {
         // Para actualizar, si hay nueva contraseña, incluirla en el campo nuevaContrasena
+        const { contrasena: _contrasena, ...restOfUpdateData } = updateData;
+
         const updatePayload: ActualizarUsuarioProps = {
-          ...updateData,
-          nuevaContrasena: formData.contrasena.trim()
-            ? formData.contrasena
-            : undefined,
+          ...restOfUpdateData,
+          contrasena: updateData.contrasena,
         };
+
+        if (formData.contrasena.trim()) {
+          updatePayload.nuevaContrasena = formData.contrasena;
+        }
 
         await updateUsuario(user.idUsuario, updatePayload);
         toast.success('Usuario actualizado exitosamente');
@@ -219,19 +224,35 @@ export function UserFormModal({
             <Label htmlFor="contrasena">
               {mode === 'add' ? 'Contraseña' : 'Nueva Contraseña (opcional)'}
             </Label>
-            <Input
-              id="contrasena"
-              type="password"
-              value={formData.contrasena}
-              onChange={(e) => handleInputChange('contrasena', e.target.value)}
-              placeholder={
-                mode === 'add'
-                  ? 'Ingresa la contraseña'
-                  : 'Dejar vacío para mantener la actual'
-              }
-              required={mode === 'add'}
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Input
+                id="contrasena"
+                type={showPassword ? 'text' : 'password'}
+                value={formData.contrasena}
+                onChange={(e) =>
+                  handleInputChange('contrasena', e.target.value)
+                }
+                placeholder={
+                  mode === 'add'
+                    ? 'Ingresa la contraseña'
+                    : 'Dejar vacío para mantener la actual'
+                }
+                required={mode === 'add'}
+                disabled={isLoading}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -247,12 +268,12 @@ export function UserFormModal({
                 <SelectValue placeholder="Selecciona un departamento" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Recursos Humanos</SelectItem>
+                <SelectItem value="1">Gerencia</SelectItem>
                 <SelectItem value="2">Tecnología</SelectItem>
-                <SelectItem value="3">Ventas</SelectItem>
-                <SelectItem value="4">Marketing</SelectItem>
-                <SelectItem value="5">Finanzas</SelectItem>
-                <SelectItem value="6">Operaciones</SelectItem>
+                <SelectItem value="3">Recaudación</SelectItem>
+                <SelectItem value="4">Seguridad</SelectItem>
+                <SelectItem value="5">RR.HH</SelectItem>
+                <SelectItem value="6">Enerlova</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -318,7 +339,7 @@ export function UserFormModal({
             </Button>
             <Button
               type="submit"
-              className="bg-sky-600 hover:bg-sky-700"
+              className="bg-sky-600 hover:bg-sky-700 text-white"
               disabled={isLoading}
             >
               {isLoading

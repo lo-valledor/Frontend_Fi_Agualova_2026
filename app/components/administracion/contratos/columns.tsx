@@ -165,10 +165,14 @@ export const columns = ({
     cell: ({ row }) => {
       const activo = row.getValue('activo') as boolean;
       return (
-        <Badge variant={activo ? 'default' : 'secondary'}>
-          <div
-            className={`w-2 h-2 rounded-full mr-1.5 ${activo ? 'bg-green-500' : 'bg-red-500'}`}
-          />
+        <Badge
+          variant={activo ? 'default' : 'destructive'}
+          className={
+            activo
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
           {activo ? 'Activo' : 'Inactivo'}
         </Badge>
       );

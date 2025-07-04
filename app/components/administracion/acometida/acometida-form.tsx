@@ -779,17 +779,17 @@ export function AcometidaForm({
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="gap-2 bg-sky-600 hover:bg-sky-700"
+                  className="gap-2 bg-sky-600 hover:bg-sky-700 text-white"
                 >
                   {isLoading ? (
                     <>
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      <div className="h-4 w-4 animate-spin rounded-2xl border-2 border-white border-t-transparent" />
                       Guardando...
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4" />
-                      {isEdit ? 'Actualizar' : 'Registrar'}
+                      {isEdit ? 'Actualizar Acometida' : 'Crear Acometida'}
                     </>
                   )}
                 </Button>
