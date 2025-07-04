@@ -335,11 +335,7 @@ export function MedidorFormModal({
               </Button>
               <Button type="submit" className="h-11 px-6 flex items-center gap-2" disabled={isLoading}>
                 <CheckCircle2 className="h-4 w-4" />
-<<<<<<< HEAD
                 {isLoading ? 'Guardando...' : (mode === 'add' ? 'Crear' : 'Actualizar')}
-=======
-                {isLoading ? 'Guardando...' : (mode === 'add' ? 'Crear Medidor' : 'Guardar Cambios')}
->>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
               </Button>
             </DialogFooter>
           </form>

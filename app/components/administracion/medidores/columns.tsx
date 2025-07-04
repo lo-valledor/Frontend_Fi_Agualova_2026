@@ -2,11 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { GetMedidores } from '~/types/administracion';
 import { Badge } from '~/components/ui/badge';
 
-<<<<<<< HEAD
 import { CircuitBoard, MapPin, Zap } from 'lucide-react';
-=======
-import { Edit, CircuitBoard, MapPin, Zap } from 'lucide-react';
->>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
 
@@ -191,26 +187,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Estado" />
     ),
     cell: ({ row }) => {
-<<<<<<< HEAD
       return <EstadoBadge estado={row.getValue('estado')} />;
-=======
-      const estado = row.getValue('estado') as string;
-      const isActive = estado.toLowerCase() === 'activo';
-      return (
-        <div className="flex items-center space-x-2">
-          <Badge
-                    variant={isActive ? 'default' : 'destructive'}
-                    className={
-                      isActive
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                        : ''
-                    }
-                  >
-                    {isActive ? 'Activo' : 'Inactivo'}
-                  </Badge>
-        </div>
-      );
->>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
     },
   },
   {

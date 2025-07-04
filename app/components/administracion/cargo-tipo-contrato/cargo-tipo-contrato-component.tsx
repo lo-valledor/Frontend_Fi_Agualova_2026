@@ -76,7 +76,6 @@ export default function CargoTipoContratoComponent({
   };
 
   const handleAdd = () => {
-<<<<<<< HEAD
     toast.info('Funcionalidad deshabilitada temporalmente');
     // setSelectedItem(null);
     // setEditorData(null);
@@ -96,25 +95,6 @@ export default function CargoTipoContratoComponent({
     //   toast.error('Error al cargar la configuración para editar.');
     //   setIsModalOpen(false);
     // }
-=======
-    setSelectedItem(null);
-    setEditorData(null);
-    setModalMode('add');
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = async (item: GetCargoTipoContrato) => {
-    setSelectedItem(item);
-    setModalMode('edit');
-    setIsModalOpen(true);
-    try {
-      const response = await api.get(`cargoTipoContrato-editar/${item.tipoContratoId}`);
-      setEditorData(response.data as CargoTipoContratoEditor);
-    } catch (_error) {
-      toast.error('Error al cargar la configuración para editar.');
-      setIsModalOpen(false);
-    }
->>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
   };
 
   const handleDelete = (item: GetCargoTipoContrato) => {
@@ -154,24 +134,12 @@ export default function CargoTipoContratoComponent({
             Gestiona la relación entre cargos facturables y tipos de contrato
           </p>
         </div>
-<<<<<<< HEAD
         {/* Botón de añadir deshabilitado temporalmente
         <Button onClick={handleAdd}>
           <Plus className="mr-2 h-4 w-4" />
           Añadir
         </Button>
         */}
-=======
-        <div className="flex gap-2">
-          <Button
-            onClick={handleAdd}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Añadir Relación
-          </Button>
-        </div>
->>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
       </div>
       <Card>
         <CardHeader>

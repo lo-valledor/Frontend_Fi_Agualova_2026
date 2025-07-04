@@ -41,25 +41,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: 'Estado',
-<<<<<<< HEAD
     cell: ({ row }) => <EstadoBadge estado={row.getValue('estado')} />,
-=======
-    cell: ({ row }) => {
-      const estado = row.getValue('estado') as boolean;
-      return (
-        <Badge
-          variant={estado ? 'default' : 'destructive'}
-          className={
-            estado
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              : ''
-          }
-        >
-          {estado ? 'Activo' : 'Inactivo'}
-        </Badge>
-      );
-    },
->>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
   },
   {
     id: 'actions',

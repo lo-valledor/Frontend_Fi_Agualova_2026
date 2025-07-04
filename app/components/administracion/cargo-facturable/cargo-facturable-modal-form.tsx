@@ -543,11 +543,7 @@ export default function CargoFacturableModalForm({
                 {isLoading ? (
                   <><FileEdit className="mr-2 h-4 w-4 animate-spin" /> Procesando...</>
                 ) : (
-<<<<<<< HEAD
                   <><CheckCircle2 className="h-4 w-4" /> {mode === 'add' ? 'Crear' : 'Actualizar'}</>
-=======
-                  <><CheckCircle2 className="h-4 w-4" /> {mode === 'add' ? 'Crear Cargo' : 'Guardar Cambios'}</>
->>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
                 )}
               </Button>
             </DialogFooter>
