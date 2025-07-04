@@ -88,7 +88,27 @@ export const columns = ({
     accessorKey: 'activo',
     header: 'Estado',
     cell: ({ row }) => {
+<<<<<<< HEAD
       return <EstadoBadge estado={row.getValue('activo')} />;
+    },
+    enableSorting: true,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+=======
+      const activo = row.getValue('activo') as boolean;
+      return (
+        <Badge
+          variant={activo ? 'default' : 'destructive'}
+          className={
+            activo
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+              : ''
+          }
+        >
+          {activo ? 'Activo' : 'Inactivo'}
+        </Badge>
+      );
+>>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
     },
     enableSorting: true,
     filterFn: (row, id, value) => {

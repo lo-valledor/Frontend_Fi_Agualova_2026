@@ -1,5 +1,11 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import {
+<<<<<<< HEAD
+=======
+  Edit,
+  Eye,
+  Loader2,
+>>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
   MapPin,
   Phone,
 } from 'lucide-react';
@@ -119,7 +125,43 @@ export const columns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
+<<<<<<< HEAD
       return <TableActions onView={onDetails} onEdit={onEdit} item={row.original} showView={true} showDelete={false} loadingEdit={editingClienteRut === row.original.rut} loadingView={detailingClienteRut === row.original.rut} />;
+=======
+      const cliente = row.original;
+      const isEditing = editingClienteRut === cliente.rut;
+      const isDetailing = detailingClienteRut === cliente.rut;
+      return (
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => onDetails(cliente)}
+            title="Ver Detalles"
+            disabled={isDetailing}
+          >
+            {isDetailing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => onEdit(cliente)}
+            title="Editar"
+            disabled={isEditing}
+          >
+            {isEditing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Edit className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      );
+>>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
     },
   },
 ];

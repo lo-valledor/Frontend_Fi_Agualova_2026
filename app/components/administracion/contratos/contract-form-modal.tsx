@@ -375,7 +375,11 @@ export function ContractFormModal({
               Cancelar
             </Button>
             <Button type="submit" className="bg-sky-600 hover:bg-sky-700 text-white">
+<<<<<<< HEAD
               {mode === 'add' ? 'Crear' : 'Actualizar'}
+=======
+              {mode === 'add' ? 'Crear Contrato' : 'Guardar Cambios'}
+>>>>>>> 9486bdcd9fa00e16cea7cde82d07cbeeaffaa316
             </Button>
           </DialogFooter>
         </form>
