@@ -4,6 +4,7 @@ import {
   Settings,
   BarChart3,
   Users,
+  Activity,
   //FileText,
   Wrench,
 } from 'lucide-react';
@@ -206,6 +207,17 @@ const data = {
         {
           title: 'Parametros',
           url: '/dashboard/mantencion/parametros',
+        },
+      ],
+    },
+    {
+      title: 'Análisis',
+      url: '#',
+      icon: Activity,
+      items: [
+        {
+          title: 'Análisis de Actividad',
+          url: '/dashboard/activity-analytics',
         },
       ],
     },

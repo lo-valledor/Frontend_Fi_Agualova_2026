@@ -294,18 +294,18 @@ export function FormModal({
                         </div>
                     ))}
                 </div>
-            </div>
+          </div>
 
             <DialogFooter className="pt-6 border-t">
               <Button type="button" variant="outline" onClick={onClose} className="h-11 px-6">
-                Cancelar
-              </Button>
+              Cancelar
+            </Button>
               <Button type="submit" className="h-11 px-6 flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4" />
                 Guardar Configuración
-              </Button>
-            </DialogFooter>
-          </form>
+            </Button>
+          </DialogFooter>
+        </form>
         </Form>
         </ScrollArea>
       </DialogContent>

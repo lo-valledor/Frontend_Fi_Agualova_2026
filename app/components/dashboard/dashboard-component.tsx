@@ -12,6 +12,7 @@ import {
   CheckCircle,
   Snowflake,
 } from 'lucide-react';
+import { RecentActivity } from './recent-activity';
 import { Link } from 'react-router';
 import { Button } from '~/components/ui/button';
 import {
@@ -1026,67 +1027,7 @@ export default function DashboardComponent({
         </div>
 
         {/* Actividad Reciente */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Actividad Reciente del Sistema</CardTitle>
-            <CardDescription>
-              Últimas acciones registradas en Enerlova
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-blue-500" />
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Nuevo contrato registrado
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Hace 2 minutos
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-green-500" />
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Lectura de medidor procesada
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Hace 15 minutos
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-orange-500" />
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Cliente registrado
-                  </p>
-                  <p className="text-xs text-muted-foreground">Hace 1 hora</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-purple-500" />
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Acometida configurada
-                  </p>
-                  <p className="text-xs text-muted-foreground">Hace 2 horas</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full bg-teal-500" />
-                <div className="flex-1 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Medidor instalado
-                  </p>
-                  <p className="text-xs text-muted-foreground">Hace 3 horas</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <RecentActivity limit={8} showUserInfo={true} refreshInterval={30000} />
       </div>
     </div>
   );

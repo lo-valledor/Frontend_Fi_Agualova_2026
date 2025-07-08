@@ -1,7 +1,8 @@
-import { Plus } from 'lucide-react';
-import React, { useState } from 'react';
+import { Plus, Users, Building2, UserCheck, Mail } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import {
@@ -18,9 +19,12 @@ import type {
   GetRegiones,
 } from '~/types/administracion';
 import { useClientes } from '~/hooks/use-administracion';
+import { useClientFilters, type ClientFilters } from '~/hooks/administracion/use-client-filters';
 import { columns } from './columns';
 import { ClienteDetailsModal } from './detalles-cliente';
 import ClienteFormModal from './cliente-form-modal';
+import { ClientFiltersComponent } from './client-filters';
+import { FilterSummary } from './filter-summary';
 
 interface ClientesComponentProps {
   clientes: GetClientes[];
@@ -33,6 +37,7 @@ export default function ClientesComponent({
   giros,
   regiones,
 }: ClientesComponentProps) {
+  const [clients, setClients] = useState<GetClientes[]>(clientes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState<GetClientesByRut>();
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -44,11 +49,30 @@ export default function ClientesComponent({
   const [detailingClienteRut, setDetailingClienteRut] = useState<
     string | null
   >(null);
+  const [filters, setFilters] = useState<ClientFilters>({
+    esEmpresa: 'all',
+    comuna: 'all',
+    codigoComuna: 'all',
+    tieneContacto: 'all',
+    tieneTelefono: 'all',
+    tieneEmail: 'all',
+  });
 
   const revalidator = useRevalidator();
   const { getClienteByRut } = useClientes();
+  const { filteredClients, filterStats, filterOptions } = useClientFilters(
+    clients,
+    filters,
+  );
+  const { trackPageView, trackDataAction } = useActivityEvent();
+
+  // Rastrear vista de página
+  useEffect(() => {
+    trackPageView('Gestión de Clientes');
+  }, [trackPageView]);
 
   const handleAddCliente = () => {
+    trackDataAction('Abrir formulario', 'Clientes', 'Crear nuevo cliente');
     setSelectedCliente(undefined);
     setModalMode('add');
     setIsModalOpen(true);
@@ -56,6 +80,7 @@ export default function ClientesComponent({
 
   const handleEditCliente = async (cliente: GetClientes) => {
     try {
+      trackDataAction('Abrir formulario', 'Clientes', `Editar cliente: ${cliente.rut}`);
       setEditingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
       setSelectedCliente(clienteDetallado);
@@ -71,6 +96,7 @@ export default function ClientesComponent({
 
   const handleDetailsCliente = async (cliente: GetClientes) => {
     try {
+      trackDataAction('Ver detalles', 'Clientes', `Cliente: ${cliente.rut}`);
       setDetailingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
       setDetailedCliente(clienteDetallado);
@@ -85,6 +111,11 @@ export default function ClientesComponent({
   };
 
   const handleClienteSuccess = () => {
+    trackDataAction(
+      modalMode === 'add' ? 'Crear' : 'Actualizar',
+      'Clientes',
+      modalMode === 'add' ? 'Cliente creado exitosamente' : 'Cliente actualizado exitosamente'
+    );
     revalidator.revalidate();
     setIsModalOpen(false);
     setSelectedCliente(undefined); // Limpiar cliente seleccionado
@@ -98,6 +129,21 @@ export default function ClientesComponent({
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedCliente(undefined); // Limpiar cliente seleccionado
+  };
+
+  const handleFiltersChange = (newFilters: ClientFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      esEmpresa: 'all',
+      comuna: 'all',
+      codigoComuna: 'all',
+      tieneContacto: 'all',
+      tieneTelefono: 'all',
+      tieneEmail: 'all',
+    });
   };
 
   return (
@@ -123,6 +169,83 @@ export default function ClientesComponent({
         </Button>
       </div>
 
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Clientes
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {filterStats.isFiltered
+                ? filteredClients.length
+                : clients.length}
+            </div>
+            {filterStats.isFiltered && (
+              <p className="text-xs text-muted-foreground">
+                de {clients.length} total
+              </p>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Personas Naturales
+            </CardTitle>
+            <UserCheck className="h-4 w-4 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {filteredClients.filter((c) => !c.esEmpresa).length}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Empresas</CardTitle>
+            <Building2 className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {filteredClients.filter((c) => c.esEmpresa).length}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Con Email
+            </CardTitle>
+            <Mail className="h-4 w-4 text-purple-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {filteredClients.filter((c) => c.email).length}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
+      <ClientFiltersComponent
+        filters={filters}
+        onFiltersChange={handleFiltersChange}
+        onClearFilters={handleClearFilters}
+        filterOptions={filterOptions}
+      />
+
+      {/* Filter Summary */}
+      <FilterSummary
+        totalClients={clients.length}
+        filteredClients={filteredClients.length}
+        activeFilters={filterStats.activeFilters}
+        isFiltered={filterStats.isFiltered}
+      />
+
       {/* Table */}
       <Card>
         <CardHeader>
@@ -139,7 +262,7 @@ export default function ClientesComponent({
               editingClienteRut,
               detailingClienteRut,
             })}
-            data={clientes}
+            data={filteredClients}
           />
         </CardContent>
       </Card>

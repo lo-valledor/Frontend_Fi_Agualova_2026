@@ -1,4 +1,4 @@
-import { ChevronsUpDown, LogOut } from 'lucide-react';
+import { ChevronsUpDown, LogOut, User } from 'lucide-react';
 import { motion } from 'motion/react';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import {
@@ -17,6 +17,7 @@ import {
 } from '~/components/ui/sidebar';
 import { useAuth } from '~/context/AuthContext';
 import { toast } from 'sonner';
+import { Link } from 'react-router';
 
 interface NavUserProps {
   user: {
@@ -97,6 +98,13 @@ export function NavUser({ user }: NavUserProps) {
                 </div>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link to="/dashboard/profile" className="flex items-center gap-2 cursor-pointer">
+                <User className="h-4 w-4" />
+                <span>Mi Perfil</span>
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleSignOut}
