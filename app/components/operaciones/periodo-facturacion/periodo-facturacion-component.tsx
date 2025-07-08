@@ -234,19 +234,66 @@ export default function AbrirPeriodoFacturacion({
                   Historial de Períodos
                 </CardTitle>
                 <CardDescription className="text-slate-600 dark:text-slate-400 text-sm">
-                  Visualiza todos los períodos de facturación del sistema
+                  Visualiza todos los períodos de facturación del sistema ({periodos.length} períodos)
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
-              <DataTable
-                columns={columns}
-                data={periodos}
-                initialSorting={[{ id: 'Column1', desc: true }]}
-              />
-            </div>
+            {periodos.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4">
+                  <History className="h-8 w-8 text-slate-400 dark:text-slate-500" />
+                </div>
+                <p className="text-lg font-medium">
+                  No se encontraron períodos
+                </p>
+                <p className="text-sm">
+                  No hay períodos de facturación registrados
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Estadísticas rápidas */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-3 border border-emerald-200/40 dark:border-emerald-800/40">
+                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                      {periodos.filter(p => p.epf_descripcion === 'Abierto').length}
+                    </div>
+                    <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                      Períodos Abiertos
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-lg p-3 border border-red-200/40 dark:border-red-800/40">
+                    <div className="text-2xl font-bold text-red-700 dark:text-red-300">
+                      {periodos.filter(p => p.epf_descripcion === 'Cerrado').length}
+                    </div>
+                    <div className="text-xs text-red-600 dark:text-red-400 font-medium">
+                      Períodos Cerrados
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/20 dark:to-gray-900/20 rounded-lg p-3 border border-slate-200/40 dark:border-slate-800/40">
+                    <div className="text-2xl font-bold text-slate-700 dark:text-slate-300">
+                      {periodos.length}
+                    </div>
+                    <div className="text-xs text-slate-600 dark:text-slate-400 font-medium">
+                      Total Períodos
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tabla moderna */}
+                <div className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden">
+                  <DataTable
+                    columns={columns}
+                    data={periodos}
+                    initialSorting={[{ id: 'Column1', desc: true }]}
+                    searchPlaceholder="Buscar por descripción o ID..."
+                    defaultPageSize={10}
+                  />
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 

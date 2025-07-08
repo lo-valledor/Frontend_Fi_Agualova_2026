@@ -3,6 +3,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
 import { cn } from '~/lib/utils';
+import { Calendar, Clock, Hash } from 'lucide-react';
 
 const parseFecha = (fecha: string): Date | null => {
   const [day, month, year] = fecha.split('-').map(Number);
@@ -37,12 +38,32 @@ export const columns: ColumnDef<Periodos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="ID" />
     ),
+    cell: ({ row }) => {
+      const id = row.getValue('pf_id') as string;
+      return (
+        <div className="flex items-center">
+          <Badge variant="outline" className="font-mono text-xs">
+            {id}
+          </Badge>
+        </div>
+      );
+    },
+    size: 80,
   },
   {
     accessorKey: 'pf_descripcion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
+    cell: ({ row }) => {
+      const descripcion = row.getValue('pf_descripcion') as string;
+      return (
+        <div className="max-w-[200px] truncate font-medium text-slate-900 dark:text-slate-100">
+          {descripcion}
+        </div>
+      );
+    },
+    size: 200,
   },
   {
     accessorKey: 'Column1', //Formato DD-MM-YYYY
@@ -53,8 +74,15 @@ export const columns: ColumnDef<Periodos>[] = [
       const periodo = row.original;
       const fechaInicio = parseFecha(periodo.Column1);
       return (
-        <div>
-          {fechaInicio ? fechaInicio.toLocaleDateString() : 'Fecha inválida'}
+        <div className="flex items-center gap-2">
+          <Calendar className="h-3 w-3 text-slate-400" />
+          <span className="text-sm text-slate-700 dark:text-slate-300">
+            {fechaInicio ? fechaInicio.toLocaleDateString('es-CL', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            }) : 'Fecha inválida'}
+          </span>
         </div>
       );
     },
@@ -63,6 +91,7 @@ export const columns: ColumnDef<Periodos>[] = [
       const fechaB = formatDateForSorting(rowB.original.Column1);
       return fechaA.localeCompare(fechaB);
     },
+    size: 140,
   },
   {
     header: ({ column }) => (
@@ -73,7 +102,16 @@ export const columns: ColumnDef<Periodos>[] = [
       const periodo = row.original;
       const fechaFin = parseFecha(periodo.Column2);
       return (
-        <div>{fechaFin ? fechaFin.toLocaleDateString() : 'Fecha inválida'}</div>
+        <div className="flex items-center gap-2">
+          <Clock className="h-3 w-3 text-slate-400" />
+          <span className="text-sm text-slate-700 dark:text-slate-300">
+            {fechaFin ? fechaFin.toLocaleDateString('es-CL', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric'
+            }) : 'Fecha inválida'}
+          </span>
+        </div>
       );
     },
     sortingFn: (rowA, rowB) => {
@@ -81,6 +119,7 @@ export const columns: ColumnDef<Periodos>[] = [
       const fechaB = formatDateForSorting(rowB.original.Column2);
       return fechaA.localeCompare(fechaB);
     },
+    size: 140,
   },
   {
     accessorKey: 'epf_descripcion',
@@ -89,19 +128,39 @@ export const columns: ColumnDef<Periodos>[] = [
     ),
     cell: ({ row }) => {
       const periodo = row.original;
-      const isOpen = periodo.epf_descripcion === 'Abierto';
+      const _isOpen = periodo.epf_descripcion === 'Abierto';
+
+      const getEstadoConfig = (estado: string) => {
+        switch (estado) {
+          case 'Abierto':
+            return {
+              variant: 'default' as const,
+              className: 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700'
+            };
+          case 'Cerrado':
+            return {
+              variant: 'destructive' as const,
+              className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700'
+            };
+          default:
+            return {
+              variant: 'outline' as const,
+              className: 'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300'
+            };
+        }
+      };
+
+      const config = getEstadoConfig(periodo.epf_descripcion);
+
       return (
-        <Badge
-          variant={isOpen ? 'default' : 'outline'}
-          className={cn(
-            isOpen
-              ? 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700'
-              : 'border-red-300 dark:border-red-700',
-          )}
-        >
-          {periodo.epf_descripcion}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Hash className="h-3 w-3 text-slate-400" />
+          <Badge variant={config.variant} className={cn("text-xs font-medium", config.className)}>
+            {periodo.epf_descripcion}
+          </Badge>
+        </div>
       );
     },
+    size: 120,
   },
 ];

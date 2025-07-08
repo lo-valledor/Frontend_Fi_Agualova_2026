@@ -404,12 +404,53 @@ export default function CorteReposicionComponent({
                   </p>
                 </div>
               ) : (
-                <div className="rounded-lg border border-slate-200/40 dark:border-slate-800/40 overflow-hidden">
-                  <DataTable
-                    columns={columns}
-                    data={mantenedorCorteData}
-                    meta={{ handleBuscar }}
-                  />
+                <div className="space-y-4">
+                  {/* Estadísticas rápidas */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg p-3 border border-amber-200/40 dark:border-amber-800/40">
+                      <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                        {getCantidadPorCodigo('NULL')}
+                      </div>
+                      <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                        Pendientes
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-3 border border-emerald-200/40 dark:border-emerald-800/40">
+                      <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                        {getCantidadPorCodigo('1')}
+                      </div>
+                      <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                        Liberados
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-lg p-3 border border-red-200/40 dark:border-red-800/40">
+                      <div className="text-2xl font-bold text-red-700 dark:text-red-300">
+                        {getCantidadPorCodigo('2')}
+                      </div>
+                      <div className="text-xs text-red-600 dark:text-red-400 font-medium">
+                        Cortados
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/20 dark:to-blue-900/20 rounded-lg p-3 border border-sky-200/40 dark:border-sky-800/40">
+                      <div className="text-2xl font-bold text-sky-700 dark:text-sky-300">
+                        {getCantidadPorCodigo('3')}
+                      </div>
+                      <div className="text-xs text-sky-600 dark:text-sky-400 font-medium">
+                        Reposición Solicitada
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tabla moderna */}
+                  <div className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden">
+                    <DataTable
+                      columns={columns}
+                      data={mantenedorCorteData}
+                      meta={{ handleBuscar }}
+                      searchPlaceholder="Buscar por código, RUT o razón social..."
+                      defaultPageSize={15}
+                    />
+                  </div>
                 </div>
               )}
             </div>
