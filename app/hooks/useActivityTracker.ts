@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAuth } from '~/context/AuthContext';
-import { activityTracker, type UserActivity } from '~/services/activityTracker';
+import { activityTracker } from '~/services/activityTracker';
 
 export const useActivityTracker = () => {
   const { user } = useAuth();

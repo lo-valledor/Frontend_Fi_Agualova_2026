@@ -26,11 +26,22 @@ export function useUserProfile(): UseUserProfileReturn {
       setError(null);
 
       // Intentar obtener datos del usuario desde la API
-      // Si no hay endpoint específico, usar datos del token como fallback
+      // Usar el endpoint de listar usuarios y filtrar por ID
       try {
-        const response = await api.get(`/usuarios/${user.id}`);
-        setUserData(response.data);
-      } catch (apiError) {
+        const response = await api.get('/usuarios');
+        const usuarios = response.data as Usuarios[];
+
+        // Buscar el usuario por ID
+        const usuarioEncontrado = usuarios.find(u => u.idUsuario === parseInt(user.id));
+
+        if (usuarioEncontrado) {
+          setUserData(usuarioEncontrado);
+        } else {
+          // Si no se encuentra, crear datos simulados basados en el token
+          console.warn('Usuario no encontrado en la lista, usando datos del token');
+          throw new Error('Usuario no encontrado');
+        }
+      } catch (_apiError) {
         // Fallback: crear datos simulados basados en el token
         console.warn('No se pudo obtener datos del usuario desde la API, usando datos del token');
 
@@ -72,7 +83,7 @@ export function useUserProfile(): UseUserProfileReturn {
 
         // Actualizar datos locales con la respuesta
         if (response.data) {
-          setUserData(response.data);
+          setUserData(response.data as Usuarios);
         } else {
           // Si no hay respuesta, actualizar localmente
           setUserData(prev => prev ? {
@@ -84,7 +95,7 @@ export function useUserProfile(): UseUserProfileReturn {
             activo: data.activo,
           } : null);
         }
-      } catch (apiError) {
+      } catch (_apiError) {
         // Fallback: actualizar solo localmente
         console.warn('No se pudo actualizar en la API, actualizando solo localmente');
         setUserData(prev => prev ? {

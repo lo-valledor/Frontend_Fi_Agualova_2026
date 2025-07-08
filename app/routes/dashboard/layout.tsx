@@ -3,7 +3,8 @@ import { SiteHeader } from '~/components/sidebar/site-header';
 import { SidebarInset } from '~/components/ui/sidebar';
 import { AppSidebar } from '~/components/sidebar/app-sidebar';
 import { SidebarProvider } from '~/components/ui/sidebar';
-import { Outlet } from 'react-router';
+import { Outlet, useRouteError } from 'react-router';
+import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
 
 const DashboardLayout = () => {
   return (
@@ -20,5 +21,10 @@ const DashboardLayout = () => {
     </SidebarProvider>
   );
 };
+
+export function ErrorBoundary() {
+  const error = useRouteError() as Error;
+  return <ErrorBoundaryComponent error={error} />;
+}
 
 export default DashboardLayout;

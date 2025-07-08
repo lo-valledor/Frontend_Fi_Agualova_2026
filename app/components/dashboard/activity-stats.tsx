@@ -13,7 +13,7 @@ interface ActivityStatsProps {
 export const ActivityStats: React.FC<ActivityStatsProps> = ({
   refreshInterval = 60000 // 1 minuto
 }) => {
-  const { getActivitySummary, getUserStats } = useActivityTracker();
+  const { getActivitySummary  } = useActivityTracker();
   const [summary, setSummary] = useState<ActivitySummary | null>(null);
   const [topUsers, setTopUsers] = useState<Array<{ userId: string; username: string; actions: number }>>([]);
   const [loading, setLoading] = useState(true);

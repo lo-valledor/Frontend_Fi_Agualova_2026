@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '~/context/AuthContext';
-import { useUserProfile } from '~/hooks/use-user-profile';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import { useUserProfileSimple } from '~/hooks/use-user-profile-simple';
+import { useRouteError, type MetaFunction } from 'react-router';
+import { ProfileHydrateFallback } from '~/components/profile-hydrate-fallback';
+import { ProfileLoadingState } from '~/components/profile-loading-state';
+import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { Badge } from '~/components/ui/badge';
-import { Separator } from '~/components/ui/separator';
 import { toast } from 'sonner';
 import {
   User,
@@ -16,17 +19,21 @@ import {
   Shield,
   Calendar,
   Building,
-  Mail,
-  Phone,
-  MapPin,
   Eye,
   EyeOff,
 } from 'lucide-react';
-import type { Usuarios, ActualizarUsuarioProps } from '~/types/administracion';
+import type { ActualizarUsuarioProps } from '~/types/administracion';
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: 'Perfil de Usuario' },
+    { name: 'description', content: 'Gestiona tu perfil de usuario' },
+  ];
+};
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const { userData, isLoading, error, updateProfile } = useUserProfile();
+  const { userData, isLoading, error, updateProfile } = useUserProfileSimple();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<ActualizarUsuarioProps>({
@@ -68,7 +75,7 @@ export default function ProfilePage() {
       await updateProfile(formData);
       toast.success('Perfil actualizado exitosamente');
       setIsEditing(false);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Error al actualizar el perfil');
     }
   };
@@ -95,33 +102,35 @@ export default function ProfilePage() {
     });
   };
 
-  if (!user || isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-600 mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Cargando perfil...</p>
-          </div>
-        </div>
-      </div>
-    );
+  if (!user) {
+    return <ProfileHydrateFallback />;
+  }
+
+  if (isLoading) {
+    return <ProfileLoadingState message="Cargando datos del perfil..." />;
   }
 
   if (error || !userData) {
     return (
       <div className="container mx-auto p-6">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mx-auto mb-4">
+          <div className="text-center max-w-md">
+            <div className="p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mx-auto mb-4 w-fit">
               <User className="h-8 w-8 text-rose-600 dark:text-rose-400" />
             </div>
-            <h3 className="font-medium text-rose-800 dark:text-rose-200 mb-2">
+            <h3 className="font-medium text-rose-800 dark:text-rose-200 mb-2 text-lg">
               Error al cargar el perfil
             </h3>
-            <p className="text-sm text-rose-600 dark:text-rose-400">
-              {error?.message || 'No se pudieron cargar los datos del usuario'}
+            <p className="text-sm text-rose-600 dark:text-rose-400 mb-4">
+              {error || 'No se pudieron cargar los datos del usuario'}
             </p>
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              className="border-rose-200 text-rose-700 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-900/20"
+            >
+              Reintentar
+            </Button>
           </div>
         </div>
       </div>
@@ -411,4 +420,13 @@ export default function ProfilePage() {
       </div>
     </div>
   );
+}
+
+export function hydrateFallback() {
+  return <ProfileHydrateFallback />;
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError() as Error;
+  return <ErrorBoundaryComponent error={error} />;
 }

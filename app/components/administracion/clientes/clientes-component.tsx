@@ -1,5 +1,5 @@
 import { Plus, Users, Building2, UserCheck, Mail } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
 import { useActivityEvent } from '~/components/activity-tracker-hoc';
@@ -37,7 +37,7 @@ export default function ClientesComponent({
   giros,
   regiones,
 }: ClientesComponentProps) {
-  const [clients, setClients] = useState<GetClientes[]>(clientes);
+  const [clients] = useState<GetClientes[]>(clientes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState<GetClientesByRut>();
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
