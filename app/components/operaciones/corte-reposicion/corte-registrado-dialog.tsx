@@ -20,6 +20,7 @@ import {
 } from '~/components/ui/tooltip';
 import { Scissors, Calendar, Clock, Hash } from 'lucide-react';
 import { toast } from 'sonner';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 
 interface CorteRegistradoDialogProps {
   acometida: string;
@@ -36,11 +37,14 @@ export function CorteRegistradoDialog({
   const [periodo, setPeriodo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { trackDataAction } = useActivityEvent();
+
   const handleSubmit = async () => {
     if (!isFormValid) return;
 
     setIsSubmitting(true);
     try {
+      trackDataAction('Registrar', 'Corte y Reposición', `Corte registrado para acometida ${acometida}`);
       await api.post('corte-registrado', null, {
         params: { acometida, fecha, hora, periodo },
       });

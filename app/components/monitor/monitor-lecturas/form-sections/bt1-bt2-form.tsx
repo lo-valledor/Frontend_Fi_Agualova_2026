@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import type { FormDataBT1y2, MedidorNichoItem } from '~/types/monitor';
 import { ConfirmationDialog } from '../dialogs/confirmation-dialog';
 import api from '~/lib/api';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 
 interface BT1BT2FormProps {
   result: MedidorNichoItem;
@@ -36,6 +37,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   const [selectedClave, setSelectedClave] = useState('0');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
+  const { trackDataAction } = useActivityEvent();
 
   // Diálogos
   const [showMenorDialog, setShowMenorDialog] = useState(false);
@@ -178,6 +180,8 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       return;
     }
 
+    trackDataAction('Validar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Valor: ${inputValue}, Tipo: ${tipoLectura}`);
+
     if (tipoLectura === 'menor') {
       setShowMenorDialog(true);
     } else if (tipoLectura === 'igual') {
@@ -187,7 +191,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     } else {
       toast.error('Por favor ingrese un valor válido');
     }
-  }, [inputValue, tipoLectura, validarDigitos, maxValuePermitido, digito]);
+  }, [inputValue, tipoLectura, validarDigitos, maxValuePermitido, digito, trackDataAction, result.ME_NSerie]);
 
   // Preparar datos para enviar
   const prepararDatosFormulario = useCallback(() => {
@@ -220,6 +224,8 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       }
       confirmed.current = true;
 
+      trackDataAction('Confirmar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Tipo: ${tipo}, Clave: ${selectedClave}`);
+
       // Cerrar el diálogo correspondiente
       if (tipo === 'menor') {
         setShowMenorDialog(false);
@@ -231,15 +237,16 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       setIsValidated(true);
       toast.success('Lectura validada correctamente');
     },
-    [selectedClave],
+    [selectedClave, trackDataAction, result.ME_NSerie],
   );
 
   // Confirmar lectura mayor
   const handleConfirmMayor = useCallback(() => {
+    trackDataAction('Confirmar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Tipo: mayor`);
     setShowMayorDialog(false);
     setIsValidated(true);
     toast.success('Lectura validada correctamente');
-  }, []);
+  }, [trackDataAction, result.ME_NSerie]);
 
   // Guardar la lectura
   const guardarLectura = useCallback(async () => {
@@ -254,6 +261,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
     try {
       setIsSubmitting(true);
+      trackDataAction('Guardar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Valor: ${data.vactual}, Consumo: ${data.consumo}`);
       const response = await api.put('/actualizar-lectura-bt-1-bt-2', data);
 
       if (response.status === 200) {
@@ -274,7 +282,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [prepararDatosFormulario, onSuccess]);
+  }, [prepararDatosFormulario, onSuccess, trackDataAction, result.ME_NSerie]);
 
   const clavesMenorOptions = useMemo(
     () => [

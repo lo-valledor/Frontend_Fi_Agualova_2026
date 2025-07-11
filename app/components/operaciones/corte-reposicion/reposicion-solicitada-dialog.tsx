@@ -20,6 +20,7 @@ import {
 import { Undo2, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 
 interface ReposicionSolicitadaDialogProps {
   acometida: string;
@@ -32,9 +33,12 @@ export function ReposicionSolicitadaDialog({
 }: ReposicionSolicitadaDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { trackDataAction } = useActivityEvent();
+
   const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
+      trackDataAction('Solicitar', 'Corte y Reposición', `Reposición solicitada para acometida ${acometida}`);
       await api.post('reposicion-solicitada', null, {
         params: { acometida },
       });

@@ -6,6 +6,7 @@ import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 
 import { ScrollArea } from '~/components/ui/scroll-area';
 import {
@@ -208,6 +209,7 @@ const MeterCard = ({
   onRefresh: any;
 }) => {
   const status = getMeterStatus(medidor.claveHtml);
+  const { trackDataAction } = useActivityEvent();
 
   return (
     <Card
@@ -227,7 +229,14 @@ const MeterCard = ({
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={() => {
+                  trackDataAction('Ver detalles', 'Monitor de Lecturas', `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`);
+                }}
+              >
                 <Eye className="h-3 w-3" />
               </Button>
             </SheetTrigger>
@@ -309,6 +318,7 @@ const MeterRowDetailed = ({
   onRefresh: any;
 }) => {
   const status = getMeterStatus(medidor.claveHtml);
+  const { trackDataAction } = useActivityEvent();
 
   return (
     <div
@@ -373,15 +383,18 @@ const MeterRowDetailed = ({
       {/* Acción */}
       <div className="flex justify-end">
         <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-          </SheetTrigger>
+                      <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => {
+                  trackDataAction('Ver detalles', 'Monitor de Lecturas', `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`);
+                }}
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </SheetTrigger>
           <SheetContent className="overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
             <SheetHeader className="border-b">
               <SheetTitle>
@@ -449,6 +462,12 @@ export default function ResultadosBusqueda({
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
   const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
   const api = useApiWithLoadingBar();
+  const { trackPageView, trackDataAction } = useActivityEvent();
+
+  // Rastrear vista de página
+  useEffect(() => {
+    trackPageView('Monitor de Lecturas');
+  }, [trackPageView]);
 
   // Search function (same as before)
   const searchResults = async () => {
@@ -468,6 +487,8 @@ export default function ResultadosBusqueda({
       toast.error('Fecha de fin no seleccionada');
       return;
     }
+
+    trackDataAction('Buscar', 'Monitor de Lecturas', `Sector: ${sector}, Periodo: ${periodo}`);
 
     setIsSearching(true);
     setSearchError(null);
@@ -549,6 +570,7 @@ export default function ResultadosBusqueda({
 
   const handleRefresh = useCallback(() => {
     if (sector && periodo && stfechaini && stfechafin) {
+      trackDataAction('Refrescar', 'Monitor de Lecturas', `Sector: ${sector}, Periodo: ${periodo}`);
       // Incrementar el contador de refrescar para desencadenar la recarga
       setRefreshCounter((prev) => prev + 1);
 
@@ -557,7 +579,7 @@ export default function ResultadosBusqueda({
     } else {
       toast.info('Seleccione Sector, Periodo y Fechas para refrescar.');
     }
-  }, [sector, periodo, stfechaini, stfechafin]);
+  }, [sector, periodo, stfechaini, stfechafin, trackDataAction]);
 
   useEffect(() => {
     if (triggerSearch > 0) {
@@ -589,10 +611,13 @@ export default function ResultadosBusqueda({
   }
 
   const handleNichoChange: HandleNichoChangeFn = (index) => {
+    const nichoName = results.nichos[index]?.nombre || `Nicho ${index + 1}`;
+    trackDataAction('Cambiar nicho', 'Monitor de Lecturas', `Nicho: ${nichoName}`);
     setSelectedNichoIndex(index);
   };
 
   const handleNichoModalSuccess = () => {
+    trackDataAction('Actualizar medidor', 'Monitor de Lecturas', 'Medidor actualizado exitosamente');
     // Mostrar notificación de éxito inmediatamente
     toast.success('Medidor actualizado correctamente');
     setNeedsNichoRefresh(true);
@@ -640,19 +665,28 @@ export default function ResultadosBusqueda({
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 className={cn(viewMode === 'default' && 'bg-accent')}
-                onClick={() => setViewMode('default')}
+                onClick={() => {
+                  trackDataAction('Cambiar vista', 'Monitor de Lecturas', 'Vista: Tarjetas');
+                  setViewMode('default');
+                }}
               >
                 <Grid3X3 className="mr-2 h-4 w-4" /> Tarjetas
               </DropdownMenuItem>
               <DropdownMenuItem
                 className={cn(viewMode === 'detailed' && 'bg-accent')}
-                onClick={() => setViewMode('detailed')}
+                onClick={() => {
+                  trackDataAction('Cambiar vista', 'Monitor de Lecturas', 'Vista: Lista Compacta');
+                  setViewMode('detailed');
+                }}
               >
                 <BarChart3 className="mr-2 h-4 w-4" /> Lista Compacta
               </DropdownMenuItem>
               <DropdownMenuItem
                 className={cn(viewMode === 'compact' && 'bg-accent')}
-                onClick={() => setViewMode('compact')}
+                onClick={() => {
+                  trackDataAction('Cambiar vista', 'Monitor de Lecturas', 'Vista: Solo Problemas');
+                  setViewMode('compact');
+                }}
               >
                 <AlertCircle className="mr-2 h-4 w-4" /> Solo Problemas
               </DropdownMenuItem>
@@ -1023,7 +1057,11 @@ export default function ResultadosBusqueda({
                         <Button
                           size="sm"
                           className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
-                          onClick={() => setIsNichoModalOpen(true)}
+                          onClick={() => {
+                            const nichoName = results.nichos[selectedNichoIndex]?.nombre || 'Nicho';
+                            trackDataAction('Abrir modal', 'Monitor de Lecturas', `Ingresar lecturas - Nicho: ${nichoName}`);
+                            setIsNichoModalOpen(true);
+                          }}
                         >
                           <Pencil className="h-4 w-4 mr-2" />
                           Ingresar Lecturas

@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { AlertCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import type {
   EtapaUno,
   EtapaDos,
@@ -31,6 +32,7 @@ export default function DetallesMedidor({
   const [etapa2Data, setEtapa2Data] = useState<EtapaDos[]>([]);
   const [etapa3Data, setEtapa3Data] = useState<EtapaTres[]>([]);
   const [etapa4Data, setEtapa4Data] = useState<EtapaCuatro[]>([]);
+  const { trackDataAction } = useActivityEvent();
 
   const fetchAllEtapas = async () => {
     setIsLoading(true);
@@ -122,6 +124,7 @@ export default function DetallesMedidor({
 
   const handleAceptarLectura = async () => {
     try {
+      trackDataAction('Aceptar lectura', 'Detalles Medidor', `Lectura ID: ${lecturaId}`);
       const response = await api.post('/aceptar-lectura-medidor', {
         idLectura: lecturaId,
       });

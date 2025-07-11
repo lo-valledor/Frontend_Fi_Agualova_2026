@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -42,6 +42,7 @@ import { DataTable } from '~/components/data-table/data-table';
 import { columns } from './columns';
 import api from '~/lib/api';
 import { toast } from 'sonner';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 
 interface CorteReposicionComponentProps {
   totalesData: TotalesCorteReposicion[];
@@ -58,6 +59,13 @@ export default function CorteReposicionComponent({
   >(initialMantenedorCorteData);
   const [isSearching, setIsSearching] = useState(false);
 
+  const { trackPageView, trackDataAction } = useActivityEvent();
+
+  // Rastrear vista de página
+  useEffect(() => {
+    trackPageView('Corte y Reposición');
+  }, [trackPageView]);
+
   // Obtener cantidad por código
   const getCantidadPorCodigo = (codigo: string): number => {
     const item = totalesData.find((item) => item.codigo === codigo);
@@ -65,41 +73,57 @@ export default function CorteReposicionComponent({
   };
 
   const handleExportarExcel = async () => {
-    const res = await api.get('exportar-mantenedor-revision', {
-      responseType: 'blob',
-    });
+    try {
+      trackDataAction('Exportar', 'Corte y Reposición', 'Exportar mantenedor revisión');
+      const res = await api.get('exportar-mantenedor-revision', {
+        responseType: 'blob',
+      });
 
-    const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'mantenedor_revision.xlsx';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mantenedor_revision.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast.success('Archivo exportado correctamente');
+    } catch (error) {
+      console.error('Error al exportar Excel:', error);
+      toast.error('Error al exportar el archivo');
+    }
   };
 
   const handleExportarExcelCorte = async () => {
-    const res = await api.get('exportar-revision-corte', {
-      responseType: 'blob',
-    });
+    try {
+      trackDataAction('Exportar', 'Corte y Reposición', 'Exportar revisión corte');
+      const res = await api.get('exportar-revision-corte', {
+        responseType: 'blob',
+      });
 
-    const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'revision_corte.xlsx';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+      const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'revision_corte.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast.success('Archivo exportado correctamente');
+    } catch (error) {
+      console.error('Error al exportar Excel corte:', error);
+      toast.error('Error al exportar el archivo');
+    }
   };
 
   const handleBuscar = async () => {
     setIsSearching(true);
     try {
+      trackDataAction('Buscar', 'Corte y Reposición', 'Consultar mantenedor revisión corte');
       const res = await api.get<ConsultarMantenedorRevisionCorte[]>(
         'consulta-mantenedor-revision-corte',
       );
       if (Array.isArray(res.data)) {
         setMantenedorCorteData(res.data);
+        toast.success(`Se encontraron ${res.data.length} registros`);
       }
     } catch (error) {
       console.error('Error al buscar datos de corte y reposición:', error);
@@ -111,6 +135,7 @@ export default function CorteReposicionComponent({
 
   const handleActivarActualizacion = async () => {
     try {
+      trackDataAction('Activar', 'Corte y Reposición', 'Activar actualización revisión');
       const res = await api.post('modificar-revision');
       if (res.status === 200) {
         toast.success('Proceso de revisión modificado correctamente.');
@@ -126,6 +151,7 @@ export default function CorteReposicionComponent({
 
   const handleIniciar = async () => {
     try {
+      trackDataAction('Iniciar', 'Corte y Reposición', 'Iniciar proceso de revisión');
       const res = await api.post('ingresar-revision');
       if (res.status === 200) {
         toast.success('Proceso de revisión iniciado correctamente.');
@@ -140,13 +166,19 @@ export default function CorteReposicionComponent({
   };
 
   const handleFinalizar = async () => {
-    toast.info('Este es un toast, no se ha implementado la lógica');
-    /* const res = await api.delete('eliminar-revision');
-    if (res.status === 200) {
-      toast.success('Actualización activada correctamente');
-    } else {
-      toast.error('Error al activar actualización');
-    } */
+    try {
+      trackDataAction('Finalizar', 'Corte y Reposición', 'Finalizar proceso de revisión');
+      toast.info('Funcionalidad de finalización en desarrollo');
+      /* const res = await api.delete('eliminar-revision');
+      if (res.status === 200) {
+        toast.success('Actualización activada correctamente');
+      } else {
+        toast.error('Error al activar actualización');
+      } */
+    } catch (error) {
+      console.error('Error al finalizar el proceso:', error);
+      toast.error('Error al finalizar el proceso.');
+    }
   };
 
   return (

@@ -20,6 +20,7 @@ import {
 } from '~/components/ui/tooltip';
 import { Unlock, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 
 interface MarcarLiberarDialogProps {
   acometida: string;
@@ -34,6 +35,8 @@ export function MarcarLiberarDialog({
   const [comentario, setComentario] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { trackDataAction } = useActivityEvent();
+
   const handleSubmit = async () => {
     if (!comentario.trim()) {
       toast.error('El comentario es obligatorio');
@@ -42,6 +45,7 @@ export function MarcarLiberarDialog({
 
     setIsSubmitting(true);
     try {
+      trackDataAction('Liberar', 'Corte y Reposición', `Liberación registrada para acometida ${acometida}`);
       await api.post('marcar-liberar', null, {
         params: { acometida, comentario },
       });

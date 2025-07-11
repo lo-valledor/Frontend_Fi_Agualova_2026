@@ -12,6 +12,55 @@ Este sistema permite rastrear y mostrar la actividad reciente de los usuarios en
 - ✅ **Exportación**: Permite exportar los datos de actividad
 - ✅ **Filtros**: Filtrado por usuario, módulo y período de tiempo
 - ✅ **Estadísticas**: Métricas detalladas de uso del sistema
+- ✅ **Prevención de duplicados**: Sistema de debounce para evitar registros múltiples
+
+## Problema Resuelto: Registros Duplicados
+
+### Descripción del Problema
+
+Anteriormente, el sistema registraba múltiples eventos cuando un usuario navegaba a una página que contenía varios componentes anidados. Por ejemplo, al entrar al monitor de lecturas se registraban:
+
+1. "Monitor de Lecturas" (desde `resultados-busqueda.tsx`)
+2. "Monitor de Nichos - {nicho}" (desde `monitor-nichos.tsx`)
+3. Otros eventos de componentes anidados
+
+Esto resultaba en una experiencia confusa donde se mostraban múltiples entradas para una sola acción del usuario.
+
+### Solución Implementada
+
+Se implementó un sistema de **debounce** que previene registros duplicados:
+
+- **Debounce para páginas**: 3 segundos entre registros de la misma página
+- **Debounce para acciones de datos**: 1 segundo entre acciones idénticas
+- **Referencias persistentes**: Mantiene un registro de las últimas acciones para comparación
+
+### Cómo Funciona
+
+```typescript
+const trackPageView = useCallback((pageName: string) => {
+  const now = Date.now();
+  const lastPageView = lastPageViewRef.current;
+
+  // Verificar si ya se registró esta página recientemente
+  if (
+    lastPageView &&
+    lastPageView.page === pageName &&
+    now - lastPageView.timestamp < PAGE_DEBOUNCE_TIME
+  ) {
+    // Evitar registro duplicado
+    return;
+  }
+
+  // Registrar la nueva vista de página
+  logActivity('Ver página', 'Navegación', `Página: ${pageName}`);
+
+  // Actualizar la referencia
+  lastPageViewRef.current = {
+    page: pageName,
+    timestamp: now,
+  };
+}, [logActivity]);
+```
 
 ## Componentes Principales
 
@@ -42,8 +91,14 @@ const { logActivity, getRecentActivities, getActivitySummary } =
 
 ```typescript
 // app/components/activity-tracker-hoc.tsx
-const { trackEvent, trackPageView, trackFormAction, trackDataAction } =
-  useActivityEvent();
+const {
+  trackEvent,
+  trackPageView,
+  trackFormAction,
+  trackDataAction,
+  clearPageViewHistory,
+  clearDataActionHistory
+} = useActivityEvent();
 ```
 
 ## Cómo Usar
@@ -133,7 +188,7 @@ function AnalyticsPage() {
 
 ### Acciones Automáticas
 
-- **Navegación**: Visitas a páginas
+- **Navegación**: Visitas a páginas (con debounce)
 - **Formularios**: Apertura, envío y cancelación
 - **Operaciones CRUD**: Crear, leer, actualizar, eliminar
 - **Búsquedas**: Consultas y filtros
@@ -174,6 +229,12 @@ interface UserActivity {
 - **Estadísticas**: 60 segundos
 - **Configurable**: Cada componente puede tener su propio intervalo
 
+### Configuración de Debounce
+
+- **Páginas**: 3 segundos entre registros de la misma página
+- **Acciones de datos**: 1 segundo entre acciones idénticas
+- **Configurable**: Se puede ajustar en `activity-tracker-hoc.tsx`
+
 ## Páginas Disponibles
 
 ### 1. Dashboard Principal
@@ -212,6 +273,12 @@ interface UserActivity {
 - Fácil de personalizar
 - Se puede extender con nuevas funcionalidades
 - Compatible con cualquier tipo de aplicación
+
+### ✅ Prevención de Duplicados
+
+- Sistema de debounce inteligente
+- Evita registros múltiples innecesarios
+- Mejora la experiencia del usuario
 
 ## Limitaciones
 
@@ -320,16 +387,55 @@ export default function ClienteFormModal() {
 **Solución:**
 
 1. Verificar el intervalo de actualización
-2. Revisar que el componente esté montado
-3. Confirmar que no haya errores en el hook
+2. Revisar si hay errores en la consola
+3. Confirmar que el componente esté montado
 
-### Problema: Rendimiento lento
+### Problema: Registros duplicados
 
 **Solución:**
 
-1. Reducir el número máximo de actividades
-2. Aumentar el intervalo de limpieza
-3. Optimizar los filtros de búsqueda
+1. Verificar que se esté usando la versión actualizada del hook
+2. Confirmar que los tiempos de debounce sean apropiados
+3. Usar `clearPageViewHistory()` o `clearDataActionHistory()` si es necesario
+
+### Problema: Actividades no aparecen
+
+**Solución:**
+
+1. Verificar que el usuario tenga permisos
+2. Revisar la configuración de filtros
+3. Confirmar que los datos estén en localStorage
+
+## Configuración Avanzada
+
+### Personalizar Tiempos de Debounce
+
+```typescript
+// En activity-tracker-hoc.tsx
+const PAGE_DEBOUNCE_TIME = 5000; // 5 segundos para páginas
+const DATA_DEBOUNCE_TIME = 2000; // 2 segundos para acciones de datos
+```
+
+### Limpiar Historial Manualmente
+
+```typescript
+const { clearPageViewHistory, clearDataActionHistory } = useActivityEvent();
+
+// Limpiar historial de páginas
+clearPageViewHistory();
+
+// Limpiar historial de acciones de datos
+clearDataActionHistory();
+```
+
+### Verificar Estado del Sistema
+
+```typescript
+// Verificar si hay actividades recientes
+const { getRecentActivities } = useActivityTracker();
+const activities = getRecentActivities(1); // Última hora
+console.log('Actividades recientes:', activities);
+```
 
 ## Contribución
 
