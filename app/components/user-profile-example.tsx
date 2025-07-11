@@ -1,5 +1,11 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Skeleton } from '~/components/ui/skeleton';
@@ -12,7 +18,8 @@ import { RefreshCw, User, Calendar, Building } from 'lucide-react';
 import { useUserProfileSimple } from '~/hooks/use-user-profile-simple';
 
 export const UserProfileExample: React.FC = () => {
-  const { userData, isLoading, error, refreshProfile, clearCache } = useUserProfileSimple();
+  const { userData, isLoading, error, refreshProfile, clearCache } =
+    useUserProfileSimple();
 
   if (isLoading) {
     return (
@@ -48,9 +55,7 @@ export const UserProfileExample: React.FC = () => {
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
-            <AlertDescription>
-              {error}
-            </AlertDescription>
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
           <div className="mt-4 space-x-2">
             <Button onClick={refreshProfile} variant="outline">
@@ -112,7 +117,8 @@ export const UserProfileExample: React.FC = () => {
         {/* Información básica */}
         <div className="flex items-center space-x-4">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
-            {userData.nombres.charAt(0)}{userData.apellidos.charAt(0)}
+            {userData.nombres.charAt(0)}
+            {userData.apellidos.charAt(0)}
           </div>
           <div>
             <h3 className="text-lg font-semibold">
@@ -120,12 +126,10 @@ export const UserProfileExample: React.FC = () => {
             </h3>
             <p className="text-muted-foreground">@{userData.nombreDeUsuario}</p>
             <div className="flex items-center gap-2 mt-1">
-              <Badge variant={userData.activo ? "default" : "secondary"}>
-                {userData.activo ? "Activo" : "Inactivo"}
+              <Badge variant={userData.activo ? 'default' : 'secondary'}>
+                {userData.activo ? 'Activo' : 'Inactivo'}
               </Badge>
-              <Badge variant="outline">
-                ID: {userData.idUsuario}
-              </Badge>
+              <Badge variant="outline">ID: {userData.idUsuario}</Badge>
             </div>
           </div>
         </div>
@@ -163,8 +167,8 @@ export const UserProfileExample: React.FC = () => {
 
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">Estado:</span>
-              <Badge variant={userData.activo ? "default" : "secondary"}>
-                {userData.activo ? "Activo" : "Inactivo"}
+              <Badge variant={userData.activo ? 'default' : 'secondary'}>
+                {userData.activo ? 'Activo' : 'Inactivo'}
               </Badge>
             </div>
           </div>

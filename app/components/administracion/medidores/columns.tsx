@@ -4,7 +4,10 @@ import { Badge } from '~/components/ui/badge';
 
 import { CircuitBoard, MapPin, Zap } from 'lucide-react';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
+import {
+  TableActions,
+  EstadoBadge,
+} from '~/components/data-table/table-helpers';
 
 interface MedidoresColumnsProps {
   onEdit: (medidor: GetMedidores) => void;
@@ -196,7 +199,14 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Acciones" />
     ),
     cell: ({ row }) => {
-      return <TableActions onEdit={onEdit} item={row.original} showView={false} showDelete={false} />;
+      return (
+        <TableActions
+          onEdit={onEdit}
+          item={row.original}
+          showView={false}
+          showDelete={false}
+        />
+      );
     },
   },
 ];

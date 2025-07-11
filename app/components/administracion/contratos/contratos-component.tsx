@@ -27,15 +27,20 @@ import {
 } from './contract-filters';
 import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
 import { FilterSummary } from './filter-summary';
+import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
 export default function ContratosComponent({
   contratos,
+  tipoContrato,
+  tarifas,
 }: {
   contratos: GetContratos[];
   regiones: GetRegiones[];
   contratosClientes: GetContratosClientes[];
   limiteInvierno: GetLimiteInvierno[];
   fechaActual: GetFechaActual[];
+  tipoContrato: TiposContrato[];
+  tarifas: Tarifas[];
 }) {
   const [contracts, setContracts] = useState<GetContratos[]>(contratos);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -174,7 +179,6 @@ export default function ContratosComponent({
 
       {/* Stats Cards */}
 
-
       {/* Filters */}
       <ContractFiltersComponent
         filters={filters}
@@ -203,7 +207,8 @@ export default function ContratosComponent({
                 Lista de Contratos
               </CardTitle>
               <CardDescription className="text-slate-600 dark:text-slate-400 text-sm">
-                Visualiza y gestiona todos los contratos registrados en el sistema ({filteredContracts.length} contratos)
+                Visualiza y gestiona todos los contratos registrados en el
+                sistema ({filteredContracts.length} contratos)
               </CardDescription>
             </div>
           </div>
@@ -214,20 +219,15 @@ export default function ContratosComponent({
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4">
                 <FileText className="h-8 w-8 text-slate-400 dark:text-slate-500" />
               </div>
-              <p className="text-lg font-medium">
-                No se encontraron contratos
-              </p>
+              <p className="text-lg font-medium">No se encontraron contratos</p>
               <p className="text-sm">
                 {filterStats.isFiltered
                   ? 'No hay contratos que coincidan con los filtros aplicados'
-                  : 'No hay contratos registrados en el sistema'
-                }
+                  : 'No hay contratos registrados en el sistema'}
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-
-
               {/* Tabla moderna */}
               <div className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden">
                 <DataTable
@@ -249,6 +249,8 @@ export default function ContratosComponent({
         onSubmit={handleSubmitContract}
         contract={selectedContract}
         mode={modalMode}
+        tipoContrato={tipoContrato}
+        tarifas={tarifas}
       />
 
       <DeleteConfirmationDialog

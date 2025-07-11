@@ -21,13 +21,13 @@ class UserService {
       return {
         data: response.data as Usuarios[],
         error: null,
-        fromCache: false
+        fromCache: false,
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al obtener usuarios',
-        fromCache: false
+        fromCache: false,
       };
     }
   }
@@ -35,7 +35,9 @@ class UserService {
   /**
    * Obtiene un usuario específico por ID
    */
-  async getUserById(userId: string | number): Promise<UserServiceResponse<Usuarios>> {
+  async getUserById(
+    userId: string | number,
+  ): Promise<UserServiceResponse<Usuarios>> {
     const userIdStr = userId.toString();
     const cacheKey = `user_${userIdStr}`;
 
@@ -46,7 +48,7 @@ class UserService {
         return {
           data: cached.data,
           error: null,
-          fromCache: true
+          fromCache: true,
         };
       }
     }
@@ -59,37 +61,39 @@ class UserService {
         return {
           data: null,
           error: allUsersResponse.error,
-          fromCache: false
+          fromCache: false,
         };
       }
 
       const usuarios = allUsersResponse.data!;
-      const usuarioEncontrado = usuarios.find(u => u.idUsuario === parseInt(userIdStr));
+      const usuarioEncontrado = usuarios.find(
+        (u) => u.idUsuario === parseInt(userIdStr),
+      );
 
       if (!usuarioEncontrado) {
         return {
           data: null,
           error: 'Usuario no encontrado',
-          fromCache: false
+          fromCache: false,
         };
       }
 
       // Guardar en caché
       userCache.set(cacheKey, {
         data: usuarioEncontrado,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return {
         data: usuarioEncontrado,
         error: null,
-        fromCache: false
+        fromCache: false,
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al obtener usuario',
-        fromCache: false
+        fromCache: false,
       };
     }
   }
@@ -97,7 +101,9 @@ class UserService {
   /**
    * Obtiene un usuario por nombre de usuario
    */
-  async getUserByUsername(username: string): Promise<UserServiceResponse<Usuarios>> {
+  async getUserByUsername(
+    username: string,
+  ): Promise<UserServiceResponse<Usuarios>> {
     const cacheKey = `user_username_${username}`;
 
     // Verificar caché
@@ -107,7 +113,7 @@ class UserService {
         return {
           data: cached.data,
           error: null,
-          fromCache: true
+          fromCache: true,
         };
       }
     }
@@ -119,39 +125,39 @@ class UserService {
         return {
           data: null,
           error: allUsersResponse.error,
-          fromCache: false
+          fromCache: false,
         };
       }
 
       const usuarios = allUsersResponse.data!;
-      const usuarioEncontrado = usuarios.find(u =>
-        u.nombreDeUsuario.toLowerCase() === username.toLowerCase()
+      const usuarioEncontrado = usuarios.find(
+        (u) => u.nombreDeUsuario.toLowerCase() === username.toLowerCase(),
       );
 
       if (!usuarioEncontrado) {
         return {
           data: null,
           error: 'Usuario no encontrado',
-          fromCache: false
+          fromCache: false,
         };
       }
 
       // Guardar en caché
       userCache.set(cacheKey, {
         data: usuarioEncontrado,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return {
         data: usuarioEncontrado,
         error: null,
-        fromCache: false
+        fromCache: false,
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al obtener usuario',
-        fromCache: false
+        fromCache: false,
       };
     }
   }
@@ -159,9 +165,15 @@ class UserService {
   /**
    * Actualiza un usuario
    */
-  async updateUser(userId: number, userData: ActualizarUsuarioProps): Promise<UserServiceResponse<Usuarios>> {
+  async updateUser(
+    userId: number,
+    userData: ActualizarUsuarioProps,
+  ): Promise<UserServiceResponse<Usuarios>> {
     try {
-      const response = await api.put(`/usuarios/actualizar/${userId}`, userData);
+      const response = await api.put(
+        `/usuarios/actualizar/${userId}`,
+        userData,
+      );
 
       const updatedUser = response.data as Usuarios;
 
@@ -169,26 +181,26 @@ class UserService {
       const cacheKey = `user_${userId}`;
       userCache.set(cacheKey, {
         data: updatedUser,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       // También actualizar caché por username si existe
       const usernameCacheKey = `user_username_${updatedUser.nombreDeUsuario}`;
       userCache.set(usernameCacheKey, {
         data: updatedUser,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return {
         data: updatedUser,
         error: null,
-        fromCache: false
+        fromCache: false,
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al actualizar usuario',
-        fromCache: false
+        fromCache: false,
       };
     }
   }
@@ -228,16 +240,19 @@ class UserService {
   /**
    * Obtiene estadísticas del caché
    */
-  getCacheStats(): { size: number; entries: Array<{ key: string; age: number }> } {
+  getCacheStats(): {
+    size: number;
+    entries: Array<{ key: string; age: number }>;
+  } {
     const now = Date.now();
     const entries = Array.from(userCache.entries()).map(([key, value]) => ({
       key,
-      age: now - value.timestamp
+      age: now - value.timestamp,
     }));
 
     return {
       size: userCache.size,
-      entries
+      entries,
     };
   }
 }

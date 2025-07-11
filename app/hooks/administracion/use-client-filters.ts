@@ -71,7 +71,7 @@ export function useClientFilters(
         filters.tieneContacto &&
         filters.tieneContacto !== 'all' &&
         ((filters.tieneContacto === 'true' && !client.contacto) ||
-         (filters.tieneContacto === 'false' && client.contacto))
+          (filters.tieneContacto === 'false' && client.contacto))
       ) {
         return false;
       }
@@ -81,7 +81,7 @@ export function useClientFilters(
         filters.tieneTelefono &&
         filters.tieneTelefono !== 'all' &&
         ((filters.tieneTelefono === 'true' && !client.telefono) ||
-         (filters.tieneTelefono === 'false' && client.telefono))
+          (filters.tieneTelefono === 'false' && client.telefono))
       ) {
         return false;
       }
@@ -91,7 +91,7 @@ export function useClientFilters(
         filters.tieneEmail &&
         filters.tieneEmail !== 'all' &&
         ((filters.tieneEmail === 'true' && !client.email) ||
-         (filters.tieneEmail === 'false' && client.email))
+          (filters.tieneEmail === 'false' && client.email))
       ) {
         return false;
       }

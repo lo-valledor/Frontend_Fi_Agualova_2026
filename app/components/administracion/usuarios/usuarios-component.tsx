@@ -101,7 +101,10 @@ export default function UsuariosComponent({
             Administra los usuarios del sistema de manera eficiente
           </p>
         </div>
-        <Button onClick={handleAddUser} className="bg-sky-600 hover:bg-sky-700 text-white">
+        <Button
+          onClick={handleAddUser}
+          className="bg-sky-600 hover:bg-sky-700 text-white"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Agregar Usuario
         </Button>

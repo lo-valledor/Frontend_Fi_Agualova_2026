@@ -100,7 +100,10 @@ export function NavUser({ user }: NavUserProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to="/dashboard/profile" className="flex items-center gap-2 cursor-pointer">
+              <Link
+                to="/dashboard/profile"
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <User className="h-4 w-4" />
                 <span>Mi Perfil</span>
               </Link>

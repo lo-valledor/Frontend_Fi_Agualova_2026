@@ -16,6 +16,7 @@ El hook `useUserProfileSimple` es la solución más práctica para obtener los d
 ## Instalación
 
 Los archivos ya están creados:
+
 - `app/services/userService.ts` - Servicio de usuario
 - `app/hooks/use-user-profile-simple.ts` - Hook principal
 - `app/components/user-profile-test.tsx` - Componente de prueba
@@ -49,12 +50,12 @@ function MiComponente() {
 
 ```typescript
 interface UseUserProfileSimpleReturn {
-  userData: Usuarios | null;           // Datos del usuario
-  isLoading: boolean;                  // Estado de carga
-  error: string | null;                // Error si existe
-  updateProfile: (data: ActualizarUsuarioProps) => Promise<void>;  // Actualizar perfil
+  userData: Usuarios | null; // Datos del usuario
+  isLoading: boolean; // Estado de carga
+  error: string | null; // Error si existe
+  updateProfile: (data: ActualizarUsuarioProps) => Promise<void>; // Actualizar perfil
   refreshProfile: () => Promise<void>; // Refrescar datos
-  clearCache: () => void;              // Limpiar caché
+  clearCache: () => void; // Limpiar caché
 }
 ```
 
@@ -62,35 +63,41 @@ interface UseUserProfileSimpleReturn {
 
 ```typescript
 interface Usuarios {
-  idUsuario: number;        // ID del usuario
-  nombreDeUsuario: string;  // Nombre de usuario
-  perfilId: number;         // ID del perfil
-  nombres: string;          // Nombres
-  apellidos: string;        // Apellidos
-  departamento: number;     // Departamento
-  activo: boolean;          // Estado activo
-  fechaCreacion: string;    // Fecha de creación
+  idUsuario: number; // ID del usuario
+  nombreDeUsuario: string; // Nombre de usuario
+  perfilId: number; // ID del perfil
+  nombres: string; // Nombres
+  apellidos: string; // Apellidos
+  departamento: number; // Departamento
+  activo: boolean; // Estado activo
+  fechaCreacion: string; // Fecha de creación
 }
 ```
 
 ## Funciones Disponibles
 
 ### 1. `userData`
+
 Datos del usuario obtenidos del servidor o simulados.
 
 ### 2. `isLoading`
+
 Indica si se están cargando los datos.
 
 ### 3. `error`
+
 Mensaje de error si algo falló.
 
 ### 4. `refreshProfile()`
+
 Actualiza los datos del usuario (fuerza nueva llamada a la API).
 
 ### 5. `clearCache()`
+
 Limpia el caché del servicio.
 
 ### 6. `updateProfile(data)`
+
 Actualiza el perfil del usuario.
 
 ## Ejemplos de Uso
@@ -224,6 +231,7 @@ function UserProfile() {
 ## Cómo Funciona
 
 ### 1. Obtención de Datos
+
 1. Obtiene el ID del usuario del token JWT
 2. Llama al endpoint `/usuarios` para obtener todos los usuarios
 3. Filtra por el ID del usuario actual
@@ -231,12 +239,15 @@ function UserProfile() {
 5. Si no lo encuentra, crea datos simulados basados en el token
 
 ### 2. Caché
+
 - Los datos se almacenan en caché por 10 minutos
 - Evita llamadas repetidas a la API
 - Se puede limpiar manualmente con `clearCache()`
 
 ### 3. Fallback
+
 Si la API falla o no encuentra el usuario:
+
 - Crea datos simulados usando la información del token
 - Mantiene la funcionalidad de la aplicación
 - Registra advertencias en la consola
@@ -260,20 +271,26 @@ Si la API falla o no encuentra el usuario:
 ## Troubleshooting
 
 ### Problema: No se cargan los datos
+
 **Solución:**
+
 1. Verificar que el usuario esté autenticado
 2. Revisar que el endpoint `/usuarios` funcione
 3. Verificar la consola para errores
 4. Usar `refreshProfile()` para forzar actualización
 
 ### Problema: Datos simulados en lugar de reales
+
 **Solución:**
+
 1. Verificar que el usuario exista en la base de datos
 2. Confirmar que el ID del token coincida con un usuario real
 3. Revisar logs del servidor
 
 ### Problema: Caché desactualizado
+
 **Solución:**
+
 1. Usar `clearCache()` para limpiar el caché
 2. Usar `refreshProfile()` para obtener datos frescos
 3. Esperar 10 minutos para que expire automáticamente

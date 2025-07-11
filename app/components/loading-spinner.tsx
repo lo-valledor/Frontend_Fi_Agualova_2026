@@ -11,18 +11,18 @@ interface LoadingSpinnerProps {
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message = 'Cargando...',
   showSkeleton = false,
-  size = 'md'
+  size = 'md',
 }) => {
   const sizeClasses = {
     sm: 'h-6 w-6',
     md: 'h-8 w-8',
-    lg: 'h-12 w-12'
+    lg: 'h-12 w-12',
   };
 
   const textSizes = {
     sm: 'text-sm',
     md: 'text-base',
-    lg: 'text-lg'
+    lg: 'text-lg',
   };
 
   if (showSkeleton) {
@@ -64,17 +64,32 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     <div className="flex items-center justify-center min-h-[40vh]">
       <div className="text-center space-y-4">
         <div className="relative">
-          <div className={`${sizeClasses[size]} animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 mx-auto`} />
-          <div className={`${sizeClasses[size]} absolute top-0 left-0 animate-ping rounded-full border-2 border-blue-400 opacity-75`} />
+          <div
+            className={`${sizeClasses[size]} animate-spin rounded-full border-4 border-gray-200 border-t-blue-600 mx-auto`}
+          />
+          <div
+            className={`${sizeClasses[size]} absolute top-0 left-0 animate-ping rounded-full border-2 border-blue-400 opacity-75`}
+          />
         </div>
         <div className="space-y-2">
-          <p className={`${textSizes[size]} font-medium text-gray-700 dark:text-gray-300`}>
+          <p
+            className={`${textSizes[size]} font-medium text-gray-700 dark:text-gray-300`}
+          >
             {message}
           </p>
           <div className="flex justify-center space-x-1">
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            <div
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '0ms' }}
+            />
+            <div
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '150ms' }}
+            />
+            <div
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '300ms' }}
+            />
           </div>
         </div>
       </div>
@@ -101,9 +116,18 @@ export const ModuleLoadingSpinner: React.FC = () => {
             </p>
           </div>
           <div className="flex justify-center space-x-1">
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+            <div
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '0ms' }}
+            />
+            <div
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '150ms' }}
+            />
+            <div
+              className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+              style={{ animationDelay: '300ms' }}
+            />
           </div>
         </CardContent>
       </Card>

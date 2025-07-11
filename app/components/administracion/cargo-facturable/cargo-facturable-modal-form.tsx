@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import { z } from 'zod';
+  import React, { useEffect } from 'react';
 import type {
   BuscarCargoFacturable,
   GeCombosConceptos,
@@ -7,7 +6,6 @@ import type {
   GetCombosTarifas,
 } from '~/types/administracion';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import api from '~/lib/api';
 import { toast } from 'sonner';
 import Select, { type StylesConfig } from 'react-select';
@@ -50,30 +48,11 @@ import {
   Settings2,
 } from 'lucide-react';
 
-const cargoFacturableFormSchema = z.object({
-  cuenta: z.string().min(1, { message: 'La cuenta es requerida.' }),
-  descripcion: z.string().min(1, { message: 'La descripción es requerida.' }),
-  codigo: z.string().min(1, { message: 'El código es requerido.' }),
-  tipo: z.string().min(1, { message: 'El tipo es requerido.' }),
-  fijoVariable: z
-    .string()
-    .min(1, { message: 'Debe seleccionar si es fijo o variable.' }),
-  periodicoEventual: z
-    .string()
-    .min(1, { message: 'Debe seleccionar si es periódico o eventual.' }),
-  conceptoId: z.number().min(1, { message: 'El concepto es requerido.' }),
-  tarifaId: z.number().min(1, { message: 'La tarifa es requerida.' }),
-  tipoMedidorId: z
-    .number()
-    .min(1, { message: 'El tipo de medidor es requerido.' }),
-  muestraValorEn0: z.boolean(),
-});
-
-type CargoFacturableFormValues = z.infer<typeof cargoFacturableFormSchema>;
 
 interface CargoFacturableModalFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onSubmit: (data: any) => Promise<void>;
   onSuccess: () => void;
   cargo: BuscarCargoFacturable | undefined;
   mode: 'add' | 'edit';
@@ -101,16 +80,15 @@ const periodicoEventualOptions = [
 export default function CargoFacturableModalForm({
   isOpen,
   onClose,
-  onSuccess,
   cargo,
   mode,
   conceptos,
   tarifas,
   tiposMedidor,
+  onSuccess,
 }: CargoFacturableModalFormProps) {
   const { theme } = useTheme();
-  const form = useForm<CargoFacturableFormValues>({
-    resolver: zodResolver(cargoFacturableFormSchema),
+  const form = useForm({
     defaultValues: {
       cuenta: '',
       descripcion: '',
@@ -175,9 +153,12 @@ export default function CargoFacturableModalForm({
           if (!valorApi) return '';
           const valorTrimmed = String(valorApi).trim().toLowerCase();
 
-          if (valorTrimmed === '1' || valorTrimmed === 'base ch') return 'Base CH';
-          if (valorTrimmed === '2' || valorTrimmed === 'cargo fact.') return 'Cargo Fact.';
-          if (valorTrimmed === '3' || valorTrimmed === 'condición') return 'Condición';
+          if (valorTrimmed === '1' || valorTrimmed === 'base ch')
+            return 'Base CH';
+          if (valorTrimmed === '2' || valorTrimmed === 'cargo fact.')
+            return 'Cargo Fact.';
+          if (valorTrimmed === '3' || valorTrimmed === 'condición')
+            return 'Condición';
 
           const foundOption = tiposOptions.find(
             (option) => option.label.toLowerCase() === valorTrimmed,
@@ -218,7 +199,7 @@ export default function CargoFacturableModalForm({
           conceptoId: normalizeAndFind(conceptos, cargo.concepto),
           tarifaId: normalizeAndFind(tarifas, cargo.tarifa),
           tipoMedidorId: normalizeAndFind(tiposMedidor, cargo.tipoMedidor),
-          muestraValorEn0: false, // Este valor deberá venir del backend
+          muestraValorEn0: cargo.mostrarValorCero || false,
         });
       } else {
         form.reset({
@@ -237,7 +218,7 @@ export default function CargoFacturableModalForm({
     }
   }, [isOpen, cargo, mode, form, conceptos, tarifas, tiposMedidor]);
 
-  const onSubmit = async (data: CargoFacturableFormValues) => {
+  const onSubmitForm = async (data: any) => {
     try {
       const getTipoNumero = (tipoString: string): number => {
         switch (tipoString) {
@@ -273,9 +254,8 @@ export default function CargoFacturableModalForm({
         await api.put('modificarCargoFacturable', updateData);
         toast.success('Cargo facturable actualizado exitosamente');
       }
-
-      onSuccess();
       onClose();
+      onSuccess();
     } catch (error: any) {
       console.error('Error al guardar el cargo facturable:', error);
       toast.error('Error al guardar el cargo facturable');
@@ -307,7 +287,10 @@ export default function CargoFacturableModalForm({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pt-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmitForm)}
+            className="space-y-8 pt-4"
+          >
             {/* Información Básica */}
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-2 border-b">
@@ -325,7 +308,11 @@ export default function CargoFacturableModalForm({
                         Cuenta
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="cta001" className="h-11" />
+                        <Input
+                          {...field}
+                          placeholder="cta001"
+                          className="h-11"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -341,7 +328,11 @@ export default function CargoFacturableModalForm({
                         Código
                       </FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Código del cargo" className="h-11" />
+                        <Input
+                          {...field}
+                          placeholder="Código del cargo"
+                          className="h-11"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -358,7 +349,11 @@ export default function CargoFacturableModalForm({
                       Descripción
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Descripción detallada" className="h-11" />
+                      <Input
+                        {...field}
+                        placeholder="Descripción detallada"
+                        className="h-11"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -384,7 +379,9 @@ export default function CargoFacturableModalForm({
                       </FormLabel>
                       <Select
                         options={tiposOptions}
-                        value={tiposOptions.find(o => o.value === field.value)}
+                        value={tiposOptions.find(
+                          (o) => o.value === field.value,
+                        )}
                         onChange={(o: any) => field.onChange(o ? o.value : '')}
                         styles={selectStyles}
                         placeholder="Seleccione..."
@@ -405,7 +402,9 @@ export default function CargoFacturableModalForm({
                       </FormLabel>
                       <Select
                         options={fijoVariableOptions}
-                        value={fijoVariableOptions.find(o => o.value === field.value)}
+                        value={fijoVariableOptions.find(
+                          (o) => o.value === field.value,
+                        )}
                         onChange={(o: any) => field.onChange(o ? o.value : '')}
                         styles={selectStyles}
                         placeholder="Seleccione..."
@@ -426,7 +425,9 @@ export default function CargoFacturableModalForm({
                       </FormLabel>
                       <Select
                         options={periodicoEventualOptions}
-                        value={periodicoEventualOptions.find(o => o.value === field.value)}
+                        value={periodicoEventualOptions.find(
+                          (o) => o.value === field.value,
+                        )}
                         onChange={(o: any) => field.onChange(o ? o.value : '')}
                         styles={selectStyles}
                         placeholder="Seleccione..."
@@ -443,7 +444,9 @@ export default function CargoFacturableModalForm({
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-2 border-b">
                 <Link2 className="h-5 w-5 text-orange-600" />
-                <h3 className="text-lg font-medium">Asociaciones y Configuración</h3>
+                <h3 className="text-lg font-medium">
+                  Asociaciones y Configuración
+                </h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Controller
@@ -456,8 +459,13 @@ export default function CargoFacturableModalForm({
                         Concepto
                       </FormLabel>
                       <Select
-                        options={conceptos.map(c => ({ value: c.id, label: c.nombre }))}
-                        value={conceptos.map(c => ({ value: c.id, label: c.nombre })).find(c => c.value === field.value)}
+                        options={conceptos.map((c) => ({
+                          value: c.id,
+                          label: c.nombre,
+                        }))}
+                        value={conceptos
+                          .map((c) => ({ value: c.id, label: c.nombre }))
+                          .find((c) => c.value === field.value)}
                         onChange={(o: any) => field.onChange(o ? o.value : 0)}
                         styles={selectStyles}
                         placeholder="Seleccione..."
@@ -477,8 +485,13 @@ export default function CargoFacturableModalForm({
                         Tarifa
                       </FormLabel>
                       <Select
-                        options={tarifas.map(t => ({ value: t.id, label: t.nombre }))}
-                        value={tarifas.map(t => ({ value: t.id, label: t.nombre })).find(t => t.value === field.value)}
+                        options={tarifas.map((t) => ({
+                          value: t.id,
+                          label: t.nombre,
+                        }))}
+                        value={tarifas
+                          .map((t) => ({ value: t.id, label: t.nombre }))
+                          .find((t) => t.value === field.value)}
                         onChange={(o: any) => field.onChange(o ? o.value : 0)}
                         styles={selectStyles}
                         placeholder="Seleccione..."
@@ -498,8 +511,13 @@ export default function CargoFacturableModalForm({
                         Tipo Medidor
                       </FormLabel>
                       <Select
-                        options={tiposMedidor.map(t => ({ value: t.id, label: t.nombre }))}
-                        value={tiposMedidor.map(t => ({ value: t.id, label: t.nombre })).find(t => t.value === field.value)}
+                        options={tiposMedidor.map((t) => ({
+                          value: t.id,
+                          label: t.nombre,
+                        }))}
+                        value={tiposMedidor
+                          .map((t) => ({ value: t.id, label: t.nombre }))
+                          .find((t) => t.value === field.value)}
                         onChange={(o: any) => field.onChange(o ? o.value : 0)}
                         styles={selectStyles}
                         placeholder="Seleccione..."
@@ -515,7 +533,10 @@ export default function CargoFacturableModalForm({
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-start space-x-3 space-y-0 rounded-md border p-4 bg-muted/30 mt-8">
                       <FormControl>
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel className="flex items-center gap-2">
@@ -539,11 +560,21 @@ export default function CargoFacturableModalForm({
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading} className="h-11 px-6 flex items-center gap-2">
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="h-11 px-6 flex items-center gap-2"
+              >
                 {isLoading ? (
-                  <><FileEdit className="mr-2 h-4 w-4 animate-spin" /> Procesando...</>
+                  <>
+                    <FileEdit className="mr-2 h-4 w-4 animate-spin" />{' '}
+                    Procesando...
+                  </>
                 ) : (
-                  <><CheckCircle2 className="h-4 w-4" /> {mode === 'add' ? 'Crear' : 'Actualizar'}</>
+                  <>
+                    <CheckCircle2 className="h-4 w-4" />{' '}
+                    {mode === 'add' ? 'Crear' : 'Actualizar'}
+                  </>
                 )}
               </Button>
             </DialogFooter>

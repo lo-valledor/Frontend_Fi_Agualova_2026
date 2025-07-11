@@ -1,6 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { GetCargoTipoContrato } from '~/types/administracion';
-import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
+import {
+  TableActions,
+  EstadoBadge,
+} from '~/components/data-table/table-helpers';
 
 interface ColumnsProps {
   onEdit: (data: GetCargoTipoContrato) => void;

@@ -16,12 +16,14 @@ Este sistema permite rastrear y mostrar la actividad reciente de los usuarios en
 ## Componentes Principales
 
 ### 1. ActivityTracker (Servicio)
+
 ```typescript
 // app/services/activityTracker.ts
 export const activityTracker = new ActivityTracker();
 ```
 
 **Funciones principales:**
+
 - `logActivity()`: Registra una nueva actividad
 - `getRecentActivities()`: Obtiene actividades recientes
 - `getActivitySummary()`: Obtiene resumen de estadísticas
@@ -29,15 +31,19 @@ export const activityTracker = new ActivityTracker();
 - `exportActivities()`: Exporta datos en formato JSON
 
 ### 2. useActivityTracker (Hook)
+
 ```typescript
 // app/hooks/useActivityTracker.ts
-const { logActivity, getRecentActivities, getActivitySummary } = useActivityTracker();
+const { logActivity, getRecentActivities, getActivitySummary } =
+  useActivityTracker();
 ```
 
 ### 3. useActivityEvent (Hook para eventos específicos)
+
 ```typescript
 // app/components/activity-tracker-hoc.tsx
-const { trackEvent, trackPageView, trackFormAction, trackDataAction } = useActivityEvent();
+const { trackEvent, trackPageView, trackFormAction, trackDataAction } =
+  useActivityEvent();
 ```
 
 ## Cómo Usar
@@ -86,7 +92,11 @@ function MiFormulario() {
 
   const handleSubmit = (data: any) => {
     // Lógica de envío
-    trackFormAction('Enviar', 'Formulario Cliente', `Datos: ${JSON.stringify(data)}`);
+    trackFormAction(
+      'Enviar',
+      'Formulario Cliente',
+      `Datos: ${JSON.stringify(data)}`,
+    );
   };
 }
 ```
@@ -122,6 +132,7 @@ function AnalyticsPage() {
 ## Tipos de Actividad Rastreados
 
 ### Acciones Automáticas
+
 - **Navegación**: Visitas a páginas
 - **Formularios**: Apertura, envío y cancelación
 - **Operaciones CRUD**: Crear, leer, actualizar, eliminar
@@ -129,6 +140,7 @@ function AnalyticsPage() {
 - **Exportaciones**: Descarga de datos
 
 ### Acciones Personalizadas
+
 - **Eventos específicos**: Cualquier acción que quieras rastrear
 - **Métricas de negocio**: Actividades relevantes para el negocio
 - **Errores**: Intentos fallidos de operaciones
@@ -151,11 +163,13 @@ interface UserActivity {
 ## Configuración
 
 ### Límites de Almacenamiento
+
 - **Máximo de actividades**: 1000 registros
 - **Retención**: 30 días
 - **Limpieza automática**: Se ejecuta al cargar el módulo
 
 ### Intervalos de Actualización
+
 - **Actividad reciente**: 30 segundos
 - **Estadísticas**: 60 segundos
 - **Configurable**: Cada componente puede tener su propio intervalo
@@ -163,10 +177,12 @@ interface UserActivity {
 ## Páginas Disponibles
 
 ### 1. Dashboard Principal
+
 - Muestra actividad reciente en el dashboard principal
 - Componente: `RecentActivity`
 
 ### 2. Análisis de Actividad
+
 - URL: `/dashboard/activity-analytics`
 - Página dedicada con estadísticas detalladas
 - Componentes: `ActivityStats`, `RecentActivity`
@@ -174,21 +190,25 @@ interface UserActivity {
 ## Ventajas del Sistema
 
 ### ✅ Sin Backend
+
 - No requiere cambios en la base de datos
 - No necesita APIs adicionales
 - Implementación rápida y sencilla
 
 ### ✅ Privacidad
+
 - Los datos se mantienen en el navegador del usuario
 - No se envían al servidor
 - Cumple con regulaciones de privacidad
 
 ### ✅ Rendimiento
+
 - No hay llamadas al servidor para logging
 - Actualización en tiempo real
 - Interfaz responsiva y fluida
 
 ### ✅ Flexibilidad
+
 - Fácil de personalizar
 - Se puede extender con nuevas funcionalidades
 - Compatible con cualquier tipo de aplicación
@@ -196,16 +216,19 @@ interface UserActivity {
 ## Limitaciones
 
 ### ❌ Persistencia
+
 - Los datos se pierden al limpiar el navegador
 - No se sincronizan entre dispositivos
 - No hay backup automático
 
 ### ❌ Alcance
+
 - Solo rastrea actividad en el frontend
 - No captura errores del servidor
 - No registra actividad de otros usuarios
 
 ### ❌ Análisis Avanzado
+
 - Análisis limitado a datos locales
 - No hay correlación entre usuarios
 - No hay métricas de rendimiento del servidor
@@ -213,16 +236,19 @@ interface UserActivity {
 ## Mejoras Futuras
 
 ### 🔮 Sincronización
+
 - Integración con backend para persistencia
 - Sincronización entre dispositivos
 - Backup automático de datos
 
 ### 🔮 Análisis Avanzado
+
 - Machine learning para detectar patrones
 - Predicción de uso del sistema
 - Recomendaciones personalizadas
 
 ### 🔮 Integración
+
 - Webhooks para notificaciones
 - APIs para exportación
 - Integración con herramientas de analytics
@@ -230,6 +256,7 @@ interface UserActivity {
 ## Ejemplos de Uso
 
 ### Ejemplo 1: Rastreo en Componente de Clientes
+
 ```typescript
 // app/components/administracion/clientes/clientes-component.tsx
 import { useActivityEvent } from '~/components/activity-tracker-hoc';
@@ -247,13 +274,18 @@ export default function ClientesComponent() {
   };
 
   const handleEditCliente = (cliente: any) => {
-    trackDataAction('Abrir formulario', 'Clientes', `Editar cliente: ${cliente.rut}`);
+    trackDataAction(
+      'Abrir formulario',
+      'Clientes',
+      `Editar cliente: ${cliente.rut}`,
+    );
     // Lógica del componente
   };
 }
 ```
 
 ### Ejemplo 2: Rastreo en Formularios
+
 ```typescript
 // app/components/administracion/clientes/cliente-form-modal.tsx
 import { useActivityEvent } from '~/components/activity-tracker-hoc';
@@ -276,19 +308,25 @@ export default function ClienteFormModal() {
 ## Troubleshooting
 
 ### Problema: No se registran actividades
+
 **Solución:**
+
 1. Verificar que el usuario esté autenticado
 2. Revisar la consola del navegador para errores
 3. Confirmar que localStorage esté habilitado
 
 ### Problema: Datos no se actualizan
+
 **Solución:**
+
 1. Verificar el intervalo de actualización
 2. Revisar que el componente esté montado
 3. Confirmar que no haya errores en el hook
 
 ### Problema: Rendimiento lento
+
 **Solución:**
+
 1. Reducir el número máximo de actividades
 2. Aumentar el intervalo de limpieza
 3. Optimizar los filtros de búsqueda

@@ -20,7 +20,15 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import { Gauge, Tag, Type, Hash, Calendar, Power, CheckCircle2 } from 'lucide-react';
+import {
+  Gauge,
+  Tag,
+  Type,
+  Hash,
+  Calendar,
+  Power,
+  CheckCircle2,
+} from 'lucide-react';
 import type {
   GetMedidores,
   CrearMedidorProps,
@@ -60,8 +68,8 @@ type MedidorFormData = z.infer<typeof medidorSchema>;
 
 // Tipo local para los tipos de medidores, ya que no existe en los tipos globales.
 interface TiposMedidores {
-    id: number;
-    nombre: string;
+  id: number;
+  nombre: string;
 }
 
 interface MedidorFormModalProps {
@@ -105,15 +113,19 @@ export function MedidorFormModal({
   useEffect(() => {
     if (isOpen) {
       if (mode === 'edit' && medidor) {
-        const marcaSeleccionada = marcas.find(m => m.nombre === medidor.marca);
-        const tipoSeleccionado = tipos.find(t => t.nombre === medidor.tipo);
+        const marcaSeleccionada = marcas.find(
+          (m) => m.nombre === medidor.marca,
+        );
+        const tipoSeleccionado = tipos.find((t) => t.nombre === medidor.tipo);
 
         form.reset({
           marcaCodigo: marcaSeleccionada?.codigo ?? '',
           tipoId: tipoSeleccionado?.id ?? 0,
           modelo: medidor.modelo,
           serie: medidor.serie,
-          fechaInicio: new Date(medidor.fechaInicio).toISOString().split('T')[0],
+          fechaInicio: new Date(medidor.fechaInicio)
+            .toISOString()
+            .split('T')[0],
           digitos: medidor.digitos,
           multiplicar: medidor.multiplicar,
         });
@@ -133,14 +145,31 @@ export function MedidorFormModal({
 
   const handleFormSubmit = (data: MedidorFormData) => {
     if (mode === 'edit' && medidor) {
-      const marcaId = marcas.find(m => m.codigo === data.marcaCodigo)?.id ?? 0;
+      const marcaId =
+        marcas.find((m) => m.codigo === data.marcaCodigo)?.id ?? 0;
       const estadoId = getEstadoIdFromString(medidor.estado);
-      const payload = { ...data, marcaId, estadoId, primeraLectura: '', fechaPrimeraLectura: '' };
+      const payload = {
+        ...data,
+        marcaId,
+        estadoId,
+        primeraLectura: '',
+        fechaPrimeraLectura: '',
+      };
       delete (payload as any).marcaCodigo;
-      onSubmit({ ...payload, codigoMedidor: medidor.codigo, subempalmeCodigo: '' }, 'edit');
+      onSubmit(
+        { ...payload, codigoMedidor: medidor.codigo, subempalmeCodigo: '' },
+        'edit',
+      );
     } else {
-      const marcaId = marcas.find(m => m.codigo === data.marcaCodigo)?.id ?? 0;
-      const payload = { ...data, marcaId, estadoId: 1, primeraLectura: '', fechaPrimeraLectura: '' };
+      const marcaId =
+        marcas.find((m) => m.codigo === data.marcaCodigo)?.id ?? 0;
+      const payload = {
+        ...data,
+        marcaId,
+        estadoId: 1,
+        primeraLectura: '',
+        fechaPrimeraLectura: '',
+      };
       delete (payload as any).marcaCodigo;
       onSubmit(payload, 'add');
     }
@@ -159,9 +188,20 @@ export function MedidorFormModal({
     }),
     option: (styles, { isFocused, isSelected }) => ({
       ...styles,
-      backgroundColor: isSelected ? (theme === 'dark' ? '#0891B2' : '#06B6D4') : isFocused ? (theme === 'dark' ? '#1E293B' : '#F1F5F9') : 'transparent',
+      backgroundColor: isSelected
+        ? theme === 'dark'
+          ? '#0891B2'
+          : '#06B6D4'
+        : isFocused
+          ? theme === 'dark'
+            ? '#1E293B'
+            : '#F1F5F9'
+          : 'transparent',
     }),
-    singleValue: (styles) => ({ ...styles, color: theme === 'dark' ? '#FFFFFF' : '#000000' }),
+    singleValue: (styles) => ({
+      ...styles,
+      color: theme === 'dark' ? '#FFFFFF' : '#000000',
+    }),
   };
 
   return (
@@ -182,7 +222,10 @@ export function MedidorFormModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8 pt-4">
+          <form
+            onSubmit={form.handleSubmit(handleFormSubmit)}
+            className="space-y-8 pt-4"
+          >
             <div className="space-y-6">
               <div className="flex items-center gap-2 pb-2 border-b">
                 <Gauge className="h-5 w-5 text-sky-600" />
@@ -199,7 +242,11 @@ export function MedidorFormModal({
                         N° Serie
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Número de serie" {...field} className="h-11" />
+                        <Input
+                          placeholder="Número de serie"
+                          {...field}
+                          className="h-11"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -215,7 +262,11 @@ export function MedidorFormModal({
                         Modelo
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Modelo del medidor" {...field} className="h-11" />
+                        <Input
+                          placeholder="Modelo del medidor"
+                          {...field}
+                          className="h-11"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -234,9 +285,16 @@ export function MedidorFormModal({
                         <Select
                           {...field}
                           instanceId="marca-select"
-                          options={marcas.map(m => ({ value: m.codigo, label: m.nombre }))}
-                          value={marcas.map(m => ({ value: m.codigo, label: m.nombre })).find(m => m.value === field.value)}
-                          onChange={option => field.onChange(option ? (option as any).value : '')}
+                          options={marcas.map((m) => ({
+                            value: m.codigo,
+                            label: m.nombre,
+                          }))}
+                          value={marcas
+                            .map((m) => ({ value: m.codigo, label: m.nombre }))
+                            .find((m) => m.value === field.value)}
+                          onChange={(option) =>
+                            field.onChange(option ? (option as any).value : '')
+                          }
                           placeholder="Seleccione una marca"
                           styles={selectStyles}
                         />
@@ -256,13 +314,22 @@ export function MedidorFormModal({
                           Tipo
                         </FormLabel>
                         <Select
-                           {...field}
-                           instanceId="tipo-select"
-                           options={tipos.map(t => ({ value: t.id, label: t.nombre }))}
-                           value={tipos.map(t => ({ value: t.id, label: t.nombre })).find(t => t.value === field.value)}
-                           onChange={option => field.onChange(option ? (option as any).value : null)}
-                           placeholder="Seleccione un tipo"
-                           styles={selectStyles}
+                          {...field}
+                          instanceId="tipo-select"
+                          options={tipos.map((t) => ({
+                            value: t.id,
+                            label: t.nombre,
+                          }))}
+                          value={tipos
+                            .map((t) => ({ value: t.id, label: t.nombre }))
+                            .find((t) => t.value === field.value)}
+                          onChange={(option) =>
+                            field.onChange(
+                              option ? (option as any).value : null,
+                            )
+                          }
+                          placeholder="Seleccione un tipo"
+                          styles={selectStyles}
                         />
                         <FormMessage />
                       </FormItem>
@@ -273,12 +340,12 @@ export function MedidorFormModal({
             </div>
 
             <div className="space-y-6">
-               <div className="flex items-center gap-2 pb-2 border-b">
+              <div className="flex items-center gap-2 pb-2 border-b">
                 <Power className="h-5 w-5 text-green-600" />
                 <h3 className="text-lg font-medium">Configuración</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <FormField
+                <FormField
                   control={form.control}
                   name="digitos"
                   render={({ field }) => (
@@ -288,7 +355,12 @@ export function MedidorFormModal({
                         Dígitos
                       </FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Cantidad de dígitos" {...field} className="h-11" />
+                        <Input
+                          type="number"
+                          placeholder="Cantidad de dígitos"
+                          {...field}
+                          className="h-11"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -304,7 +376,12 @@ export function MedidorFormModal({
                         Multiplicador
                       </FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Factor multiplicador" {...field} className="h-11" />
+                        <Input
+                          type="number"
+                          placeholder="Factor multiplicador"
+                          {...field}
+                          className="h-11"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -330,12 +407,26 @@ export function MedidorFormModal({
             </div>
 
             <DialogFooter className="pt-6 border-t">
-              <Button type="button" variant="outline" onClick={onClose} className="h-11 px-6" disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="h-11 px-6"
+                disabled={isLoading}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" className="h-11 px-6 flex items-center gap-2" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="h-11 px-6 flex items-center gap-2"
+                disabled={isLoading}
+              >
                 <CheckCircle2 className="h-4 w-4" />
-                {isLoading ? 'Guardando...' : (mode === 'add' ? 'Crear' : 'Actualizar')}
+                {isLoading
+                  ? 'Guardando...'
+                  : mode === 'add'
+                    ? 'Crear'
+                    : 'Actualizar'}
               </Button>
             </DialogFooter>
           </form>

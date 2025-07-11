@@ -29,7 +29,16 @@ import {
 } from '~/components/ui/select';
 import { Checkbox } from '~/components/ui/checkbox';
 import { ScrollArea } from '~/components/ui/scroll-area';
-import { Trash2, FilePlus2, FileEdit, CheckCircle2, PlusCircle, Link2, ListChecks, Grid } from 'lucide-react';
+import {
+  Trash2,
+  FilePlus2,
+  FileEdit,
+  CheckCircle2,
+  PlusCircle,
+  Link2,
+  ListChecks,
+  Grid,
+} from 'lucide-react';
 import type {
   CargoTipoContratoEditor,
   GetCargoTipoContrato,
@@ -99,10 +108,10 @@ export function FormModal({
       if (mode === 'edit' && initialData && selectedItem) {
         form.reset({
           tipoContratoId: selectedItem.tipoContratoId,
-          cargoMonofasicoIds: initialData.cargoMonofasico.map(c => c.cargoId),
-          cargoTrifasicoIds: initialData.cargoTrifasico.map(c => c.cargoId),
-          cargoAmbosIds: initialData.cargoAmbos.map(c => c.cargoId),
-          grilla: initialData.grilla.map(g => ({
+          cargoMonofasicoIds: initialData.cargoMonofasico.map((c) => c.cargoId),
+          cargoTrifasicoIds: initialData.cargoTrifasico.map((c) => c.cargoId),
+          cargoAmbosIds: initialData.cargoAmbos.map((c) => c.cargoId),
+          grilla: initialData.grilla.map((g) => ({
             cargoId: g.cargoId,
             condicionId: g.condicionId,
             descripcion: g.descripcion,
@@ -123,7 +132,10 @@ export function FormModal({
   const handleFormSubmit = (data: FormValues) => {
     const payload = {
       tipoContratoId: data.tipoContratoId,
-      configuraciones: data.grilla.map(g => ({ ...g, tipoContratoId: data.tipoContratoId })),
+      configuraciones: data.grilla.map((g) => ({
+        ...g,
+        tipoContratoId: data.tipoContratoId,
+      })),
       cargoMonofasicoIds: data.cargoMonofasicoIds,
       cargoTrifasicoIds: data.cargoTrifasicoIds,
       cargoAmbosIds: data.cargoAmbosIds,
@@ -136,37 +148,44 @@ export function FormModal({
     onClose();
   };
 
-  const renderCheckboxList = (name: 'cargoMonofasicoIds' | 'cargoTrifasicoIds' | 'cargoAmbosIds', title: string) => (
+  const renderCheckboxList = (
+    name: 'cargoMonofasicoIds' | 'cargoTrifasicoIds' | 'cargoAmbosIds',
+    title: string,
+  ) => (
     <div className="space-y-4 rounded-lg border p-4">
-        <h4 className="text-md font-medium">{title}</h4>
-        <ScrollArea className="h-48">
-            <div className="space-y-2 pr-4">
-                {cargos.map((cargo) => (
-                    <FormField
-                        key={cargo.id}
-                        control={form.control}
-                        name={name}
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                                <FormControl>
-                                    <Checkbox
-                                        checked={field.value?.includes(cargo.id)}
-                                        onCheckedChange={(checked) => {
-                                            return checked
-                                                ? field.onChange([...field.value, cargo.id])
-                                                : field.onChange(field.value?.filter((value) => value !== cargo.id));
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormLabel className="font-normal w-full cursor-pointer">
-                                    {cargo.descripcion}
-                                </FormLabel>
-                            </FormItem>
-                        )}
+      <h4 className="text-md font-medium">{title}</h4>
+      <ScrollArea className="h-48">
+        <div className="space-y-2 pr-4">
+          {cargos.map((cargo) => (
+            <FormField
+              key={cargo.id}
+              control={form.control}
+              name={name}
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value?.includes(cargo.id)}
+                      onCheckedChange={(checked) => {
+                        return checked
+                          ? field.onChange([...field.value, cargo.id])
+                          : field.onChange(
+                              field.value?.filter(
+                                (value) => value !== cargo.id,
+                              ),
+                            );
+                      }}
                     />
-                ))}
-            </div>
-        </ScrollArea>
+                  </FormControl>
+                  <FormLabel className="font-normal w-full cursor-pointer">
+                    {cargo.descripcion}
+                  </FormLabel>
+                </FormItem>
+              )}
+            />
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   );
 
@@ -192,121 +211,192 @@ export function FormModal({
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh] p-1">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8 p-4">
-            <div className="space-y-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleFormSubmit)}
+              className="space-y-8 p-4"
+            >
+              <div className="space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
-                    <Link2 className="h-5 w-5 text-blue-600" />
-                    <h3 className="text-lg font-medium">Tipo de Contrato</h3>
+                  <Link2 className="h-5 w-5 text-blue-600" />
+                  <h3 className="text-lg font-medium">Tipo de Contrato</h3>
                 </div>
-                 <FormField
-                    control={form.control}
-                    name="tipoContratoId"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Seleccione el Tipo de Contrato</FormLabel>
-                        <UiSelect onValueChange={value => field.onChange(Number(value))} value={String(field.value)} disabled={mode === 'edit'}>
-                            <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Seleccione un tipo de contrato..." />
-                            </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                            {tiposContrato.map(tc => (
-                                <SelectItem key={tc.id} value={String(tc.id)}>{tc.nombre}</SelectItem>
-                            ))}
-                            </SelectContent>
-                        </UiSelect>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                    />
-            </div>
+                <FormField
+                  control={form.control}
+                  name="tipoContratoId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Seleccione el Tipo de Contrato</FormLabel>
+                      <UiSelect
+                        onValueChange={(value) => field.onChange(Number(value))}
+                        value={String(field.value)}
+                        disabled={mode === 'edit'}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccione un tipo de contrato..." />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {tiposContrato.map((tc) => (
+                            <SelectItem key={tc.id} value={String(tc.id)}>
+                              {tc.nombre}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </UiSelect>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-            <div className="space-y-6">
+              <div className="space-y-6">
                 <div className="flex items-center gap-2 pb-2 border-b">
-                    <ListChecks className="h-5 w-5 text-purple-600" />
-                    <h3 className="text-lg font-medium">Cargos por Tipo de Medidor</h3>
+                  <ListChecks className="h-5 w-5 text-purple-600" />
+                  <h3 className="text-lg font-medium">
+                    Cargos por Tipo de Medidor
+                  </h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {renderCheckboxList('cargoMonofasicoIds', 'Cargos Monofásicos')}
-                    {renderCheckboxList('cargoTrifasicoIds', 'Cargos Trifásicos')}
-                    {renderCheckboxList('cargoAmbosIds', 'Cargos para Ambos')}
+                  {renderCheckboxList(
+                    'cargoMonofasicoIds',
+                    'Cargos Monofásicos',
+                  )}
+                  {renderCheckboxList('cargoTrifasicoIds', 'Cargos Trifásicos')}
+                  {renderCheckboxList('cargoAmbosIds', 'Cargos para Ambos')}
                 </div>
-            </div>
+              </div>
 
-            <div className="space-y-6">
+              <div className="space-y-6">
                 <div className="flex items-center justify-between pb-2 border-b">
-                    <div className="flex items-center gap-2">
-                        <Grid className="h-5 w-5 text-orange-600" />
-                        <h3 className="text-lg font-medium">Grilla de Condiciones y Cargos</h3>
-                    </div>
-                    <Button type="button" size="sm" onClick={() => append({ cargoId: 0, condicionId: 0, descripcion: '' })}>
-                        <PlusCircle className="h-4 w-4 mr-2" />
-                        Añadir Fila
-                    </Button>
+                  <div className="flex items-center gap-2">
+                    <Grid className="h-5 w-5 text-orange-600" />
+                    <h3 className="text-lg font-medium">
+                      Grilla de Condiciones y Cargos
+                    </h3>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() =>
+                      append({ cargoId: 0, condicionId: 0, descripcion: '' })
+                    }
+                  >
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Añadir Fila
+                  </Button>
                 </div>
                 <div className="space-y-4">
-                    {fields.map((item, index) => (
-                        <div key={item.id} className="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 items-start p-3 border rounded-lg">
-                            <FormField
-                                control={form.control}
-                                name={`grilla.${index}.cargoId`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Cargo</FormLabel>
-                                    <UiSelect onValueChange={value => field.onChange(Number(value))} value={String(field.value)}>
-                                        <FormControl><SelectTrigger><SelectValue placeholder="Seleccione..." /></SelectTrigger></FormControl>
-                                        <SelectContent>{cargos.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.descripcion}</SelectItem>)}</SelectContent>
-                                    </UiSelect>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`grilla.${index}.condicionId`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Condición</FormLabel>
-                                    <UiSelect onValueChange={value => field.onChange(Number(value))} value={String(field.value)}>
-                                        <FormControl><SelectTrigger><SelectValue placeholder="Seleccione..." /></SelectTrigger></FormControl>
-                                        <SelectContent>{condiciones.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.descripcion}</SelectItem>)}</SelectContent>
-                                    </UiSelect>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={`grilla.${index}.descripcion`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Descripción</FormLabel>
-                                    <FormControl><Input {...field} placeholder="Descripción..." /></FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)} className="mt-8">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    ))}
+                  {fields.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="grid grid-cols-[1fr_1fr_1fr_auto] gap-4 items-start p-3 border rounded-lg"
+                    >
+                      <FormField
+                        control={form.control}
+                        name={`grilla.${index}.cargoId`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cargo</FormLabel>
+                            <UiSelect
+                              onValueChange={(value) =>
+                                field.onChange(Number(value))
+                              }
+                              value={String(field.value)}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Seleccione..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {cargos.map((c) => (
+                                  <SelectItem key={c.id} value={String(c.id)}>
+                                    {c.descripcion}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </UiSelect>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`grilla.${index}.condicionId`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Condición</FormLabel>
+                            <UiSelect
+                              onValueChange={(value) =>
+                                field.onChange(Number(value))
+                              }
+                              value={String(field.value)}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Seleccione..." />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {condiciones.map((c) => (
+                                  <SelectItem key={c.id} value={String(c.id)}>
+                                    {c.descripcion}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </UiSelect>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`grilla.${index}.descripcion`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Descripción</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="Descripción..." />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => remove(index)}
+                        className="mt-8"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-          </div>
+              </div>
 
-            <DialogFooter className="pt-6 border-t">
-              <Button type="button" variant="outline" onClick={onClose} className="h-11 px-6">
-              Cancelar
-            </Button>
-              <Button type="submit" className="h-11 px-6 flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" />
-                Guardar Configuración
-            </Button>
-          </DialogFooter>
-        </form>
-        </Form>
+              <DialogFooter className="pt-6 border-t">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onClose}
+                  className="h-11 px-6"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  className="h-11 px-6 flex items-center gap-2"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  Guardar Configuración
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </ScrollArea>
       </DialogContent>
     </Dialog>

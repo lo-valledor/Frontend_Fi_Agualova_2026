@@ -10,11 +10,16 @@ interface ActivityTrackerProps {
 export function withActivityTracker<P extends object>(
   WrappedComponent: React.ComponentType<P>,
   defaultModule: string,
-  defaultAction?: string
+  defaultAction?: string,
 ) {
   return function ActivityTrackedComponent(props: P & ActivityTrackerProps) {
     const { logActivity } = useActivityTracker();
-    const { module = defaultModule, action = defaultAction, details, ...componentProps } = props;
+    const {
+      module = defaultModule,
+      action = defaultAction,
+      details,
+      ...componentProps
+    } = props;
 
     useEffect(() => {
       if (action) {
@@ -30,11 +35,7 @@ export function withActivityTracker<P extends object>(
 export const useActivityEvent = () => {
   const { logActivity } = useActivityTracker();
 
-  const trackEvent = (
-    action: string,
-    module: string,
-    details?: string
-  ) => {
+  const trackEvent = (action: string, module: string, details?: string) => {
     logActivity(action, module, details);
   };
 
@@ -42,11 +43,19 @@ export const useActivityEvent = () => {
     logActivity('Ver página', 'Navegación', `Página: ${pageName}`);
   };
 
-  const trackFormAction = (action: string, formName: string, details?: string) => {
+  const trackFormAction = (
+    action: string,
+    formName: string,
+    details?: string,
+  ) => {
     logActivity(action, 'Formulario', `${formName}: ${details || ''}`);
   };
 
-  const trackDataAction = (action: string, dataType: string, details?: string) => {
+  const trackDataAction = (
+    action: string,
+    dataType: string,
+    details?: string,
+  ) => {
     logActivity(action, dataType, details);
   };
 

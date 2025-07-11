@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import Select, { type StylesConfig } from 'react-select';
 import { toast } from 'sonner';
 import { useTheme } from '~/components/theme-provider';
@@ -42,26 +40,6 @@ import type {
   ContratosDisponibles,
   ComboSectores,
 } from '~/types/administracion';
-
-// Schema de validación
-const acometidaSchema = z.object({
-  ubicacion: z.string().min(2, 'La ubicación es requerida'),
-  empalmeId: z.string().min(1, 'Seleccione un empalme'),
-  nichoId: z.string().min(1, 'Seleccione un nicho'),
-  contratoId: z.string().min(1, 'Seleccione un contrato'),
-  codigo: z
-    .string()
-    .min(1, 'El código es requerido')
-    .refine((val) => val.trim().length > 0, 'El código no puede estar vacío'),
-  limitePotencia: z
-    .string()
-    .refine(
-      (val) => !val || (!isNaN(Number(val)) && Number(val) >= 0),
-      'Debe ser un número válido mayor o igual a 0',
-    ),
-});
-
-type FormularioAcometida = z.infer<typeof acometidaSchema>;
 
 // Tipos para las opciones de react-select
 interface SelectOption {
@@ -107,8 +85,7 @@ export function AcometidaForm({
   const [busquedaContrato, setBusquedaContrato] = useState('');
 
   // Formulario
-  const form = useForm<FormularioAcometida>({
-    resolver: zodResolver(acometidaSchema),
+  const form = useForm({
     defaultValues: {
       ubicacion: '',
       empalmeId: '',
@@ -277,15 +254,6 @@ export function AcometidaForm({
         (c) => c.contratoId === acometida.contratoId,
       );
 
-      //console.log('=== EDICIÓN DEBUG ===');
-      //console.log('Editando acometida:', acometida);
-      //console.log('ContratoId de acometida:', acometida.contratoId);
-      //console.log('Total contratos disponibles:', contratosDisponibles.length);
-      //console.log('Contrato encontrado:', contratoExiste);
-      //console.log('Empalme encontrado:', empalmeId);
-      //console.log('Nicho encontrado:', nichoId);
-
-      // Si no encontramos el contrato, buscar por diferentes criterios
       if (!contratoExiste && acometida.contratoId) {
         console.log('Buscando contrato con criterios alternativos...');
         const contratoAlternativo = contratosDisponibles.find(
@@ -329,7 +297,7 @@ export function AcometidaForm({
   ]);
 
   // Handlers
-  const handleSubmit = async (data: FormularioAcometida) => {
+  const handleSubmit = async (data: any) => {
     try {
       // Validación adicional antes del envío
       const empalmeId = Number(data.empalmeId);

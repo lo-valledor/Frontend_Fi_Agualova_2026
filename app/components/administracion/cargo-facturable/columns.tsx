@@ -1,8 +1,14 @@
-/* eslint-disable unused-imports/no-unused-vars */
 import type { ColumnDef } from '@tanstack/react-table';
 import type { BuscarCargoFacturable } from '~/types/administracion';
-
-import { Calendar, Settings, Box } from 'lucide-react';
+import {
+  FileText,
+  Calendar,
+  Settings,
+  Box,
+  DollarSign,
+  Tag,
+  Zap,
+} from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
@@ -17,28 +23,26 @@ export const columns = ({
   editingCargoId,
 }: TableColumnsProps): ColumnDef<BuscarCargoFacturable>[] => [
   {
-    id: 'cuenta',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Cuenta" />
-    ),
-    cell: ({ row }) => {
-      return <div className="font-medium">{row.original.cuenta}</div>;
-    },
-  },
-  {
-    id: 'descripcion',
+    accessorKey: 'descripcion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Descripción" />
     ),
     cell: ({ row }) => {
+      const { descripcion, cuenta, codigoEnerlova } = row.original;
       return (
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-3">
+          <div className="p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md">
+            <FileText className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+          </div>
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
-              {row.original.descripcion}
+            <div className="font-medium text-slate-900 dark:text-slate-100 max-w-[200px] truncate">
+              {descripcion}
             </div>
-            <div className="text-sm text-muted-foreground">
-              Código: {row.original.codigoEnerlova}
+            <div className="text-xs text-slate-500 dark:text-slate-400 space-x-2">
+              <span className="font-mono">{cuenta}</span>
+              <Badge variant="outline" className="text-xs">
+                {codigoEnerlova}
+              </Badge>
             </div>
           </div>
         </div>
@@ -46,100 +50,114 @@ export const columns = ({
     },
   },
   {
-    id: 'tipo',
+    accessorKey: 'tipo',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tipo" />
     ),
-    cell: ({ row }) => {
-      return (
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="flex items-center gap-1">
-            <Settings className="w-3 h-3" />
-            {row.original.tipo}
-          </Badge>
-        </div>
-      );
-    },
+    cell: ({ row }) => (
+      <Badge variant="outline" className="flex items-center gap-1.5">
+        <Settings className="w-3.5 h-3.5" />
+        {row.original.tipo}
+      </Badge>
+    ),
   },
   {
-    id: 'fijoVariable',
+    accessorKey: 'fijoVariable',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fijo/Variable" />
+      <DataTableColumnHeader column={column} title="Modalidad" />
     ),
     cell: ({ row }) => {
-      const valor = row.original.fijoVariable;
-      const esF = valor === 'F' || valor === 'Fijo';
-
-      return (
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="flex items-center gap-1">
-            <Box className="w-3 h-3" />
-            {esF ? 'Fijo' : 'Variable'}
-          </Badge>
-        </div>
-      );
-    },
-  },
-  {
-    id: 'periodicoEventual',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Periódico/Eventual" />
-    ),
-    cell: ({ row }) => {
-      const valor = row.original.periodicoEventual;
+      const esFijo =
+        row.original.fijoVariable === 'F' ||
+        row.original.fijoVariable === 'Fijo';
       const esPeriodico =
-        valor === 'P' || valor === 'Periodico' || valor === 'Periódico';
-      const textoMostrar = esPeriodico ? 'Periódico' : 'Eventual';
+        row.original.periodicoEventual === 'P' ||
+        row.original.periodicoEventual === 'Periodico' ||
+        row.original.periodicoEventual === 'Periódico';
 
       return (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 items-start">
+          <Badge
+            variant="secondary"
+            className="flex items-center gap-1.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200"
+          >
+            <Box className="w-3.5 h-3.5" />
+            {esFijo ? 'Fijo' : 'Variable'}
+          </Badge>
           <Badge
             variant="outline"
-            className={
+            className={`flex items-center gap-1.5 ${
               esPeriodico
-                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-            }
+                ? 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+                : 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800'
+            }`}
           >
-            <Calendar className="w-3 h-3 mr-1" />
-            {textoMostrar}
+            <Calendar className="w-3.5 h-3.5" />
+            {esPeriodico ? 'Periódico' : 'Eventual'}
           </Badge>
         </div>
       );
     },
   },
   {
-    id: 'concepto',
+    accessorKey: 'concepto',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Concepto" />
     ),
-    cell: ({ row }) => {
-      return <div className="font-medium">{row.original.concepto}</div>;
-    },
+    cell: ({ row }) => (
+      <Badge
+        variant="outline"
+        className="flex items-center gap-1.5 bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800"
+      >
+        <DollarSign className="w-3.5 h-3.5" />
+        {row.original.concepto}
+      </Badge>
+    ),
   },
   {
-    id: 'tarifa',
+    accessorKey: 'tarifa',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tarifa" />
     ),
-    cell: ({ row }) => {
-      return <div className="font-medium">{row.original.tarifa}</div>;
-    },
+    cell: ({ row }) => (
+      <Badge
+        variant="outline"
+        className="flex items-center gap-1.5 bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800"
+      >
+        <Tag className="w-3.5 h-3.5" />
+        {row.original.tarifa}
+      </Badge>
+    ),
   },
   {
-    id: 'tipoMedidor',
+    accessorKey: 'tipoMedidor',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tipo Medidor" />
     ),
-    cell: ({ row }) => {
-      return <div className="font-medium">{row.original.tipoMedidor}</div>;
-    },
+    cell: ({ row }) => (
+      <Badge
+        variant="outline"
+        className="flex items-center gap-1.5 bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800"
+      >
+        <Zap className="w-3.5 h-3.5" />
+        {row.original.tipoMedidor}
+      </Badge>
+    ),
   },
   {
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      return <TableActions onEdit={onEdit} item={row.original} showView={false} showDelete={false} />;
+      const isEditing = editingCargoId === row.original.id;
+      return (
+        <TableActions
+          onEdit={() => onEdit(row.original)}
+          item={row.original}
+          showView={false}
+          showDelete={false}
+          loadingEdit={isEditing}
+        />
+      );
     },
   },
 ];

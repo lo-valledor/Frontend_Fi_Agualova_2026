@@ -1,5 +1,11 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
@@ -9,7 +15,10 @@ interface ErrorBoundaryProps {
   resetError?: () => void;
 }
 
-export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ error, resetError }) => {
+export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
+  error,
+  resetError,
+}) => {
   const handleRetry = () => {
     if (resetError) {
       resetError();
@@ -64,7 +73,11 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({ error, resetError 
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Reintentar
               </Button>
-              <Button onClick={handleGoHome} variant="outline" className="w-full">
+              <Button
+                onClick={handleGoHome}
+                variant="outline"
+                className="w-full"
+              >
                 <Home className="h-4 w-4 mr-2" />
                 Ir al Inicio
               </Button>

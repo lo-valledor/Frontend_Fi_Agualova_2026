@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Users, Clock, TrendingUp, BarChart3 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { useActivityTracker } from '~/hooks/useActivityTracker';
@@ -11,11 +17,13 @@ interface ActivityStatsProps {
 }
 
 export const ActivityStats: React.FC<ActivityStatsProps> = ({
-  refreshInterval = 60000 // 1 minuto
+  refreshInterval = 60000, // 1 minuto
 }) => {
-  const { getActivitySummary  } = useActivityTracker();
+  const { getActivitySummary } = useActivityTracker();
   const [summary, setSummary] = useState<ActivitySummary | null>(null);
-  const [topUsers, setTopUsers] = useState<Array<{ userId: string; username: string; actions: number }>>([]);
+  const [topUsers, setTopUsers] = useState<
+    Array<{ userId: string; username: string; actions: number }>
+  >([]);
   const [loading, setLoading] = useState(true);
 
   const loadStats = () => {
@@ -25,13 +33,15 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
       // Obtener usuarios más activos
       const allActivities = activitySummary.recentActions;
-      const userStats: { [key: string]: { username: string; actions: number } } = {};
+      const userStats: {
+        [key: string]: { username: string; actions: number };
+      } = {};
 
-      allActivities.forEach(activity => {
+      allActivities.forEach((activity) => {
         if (!userStats[activity.userId]) {
           userStats[activity.userId] = {
             username: activity.username,
-            actions: 0
+            actions: 0,
           };
         }
         userStats[activity.userId].actions++;
@@ -59,13 +69,16 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
   const getModuleColor = (module: string): string => {
     const colors: { [key: string]: string } = {
-      'clientes': 'bg-blue-100 text-blue-800 border-blue-200',
-      'contratos': 'bg-green-100 text-green-800 border-green-200',
-      'medidores': 'bg-purple-100 text-purple-800 border-purple-200',
-      'navegación': 'bg-gray-100 text-gray-800 border-gray-200',
-      'formulario': 'bg-orange-100 text-orange-800 border-orange-200',
+      clientes: 'bg-blue-100 text-blue-800 border-blue-200',
+      contratos: 'bg-green-100 text-green-800 border-green-200',
+      medidores: 'bg-purple-100 text-purple-800 border-purple-200',
+      navegación: 'bg-gray-100 text-gray-800 border-gray-200',
+      formulario: 'bg-orange-100 text-orange-800 border-orange-200',
     };
-    return colors[module.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-200';
+    return (
+      colors[module.toLowerCase()] ||
+      'bg-gray-100 text-gray-800 border-gray-200'
+    );
   };
 
   const formatTimeAgo = (timestamp: number): string => {
@@ -119,7 +132,9 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Acciones</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Acciones
+            </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -132,12 +147,16 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Última Actividad</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Última Actividad
+            </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-sm font-medium">
-              {summary.lastActivity ? formatTimeAgo(summary.lastActivity) : 'N/A'}
+              {summary.lastActivity
+                ? formatTimeAgo(summary.lastActivity)
+                : 'N/A'}
             </div>
             <p className="text-xs text-muted-foreground">
               Actividad más reciente
@@ -147,7 +166,9 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Usuarios Activos</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Usuarios Activos
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -160,7 +181,9 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Módulos Usados</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Módulos Usados
+            </CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -191,7 +214,10 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
               .sort(([, a], [, b]) => b - a)
               .slice(0, 5)
               .map(([module, count]) => (
-                <div key={module} className="flex items-center justify-between p-3 rounded-lg border">
+                <div
+                  key={module}
+                  className="flex items-center justify-between p-3 rounded-lg border"
+                >
                   <div className="flex items-center space-x-3">
                     <Badge variant="outline" className={getModuleColor(module)}>
                       {module}
@@ -199,7 +225,9 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-semibold">{count}</div>
-                    <div className="text-xs text-muted-foreground">acciones</div>
+                    <div className="text-xs text-muted-foreground">
+                      acciones
+                    </div>
                   </div>
                 </div>
               ))}
@@ -221,14 +249,19 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
         <CardContent>
           <div className="space-y-3">
             {topUsers.map((user, index) => (
-              <div key={user.userId} className="flex items-center justify-between p-3 rounded-lg border">
+              <div
+                key={user.userId}
+                className="flex items-center justify-between p-3 rounded-lg border"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm font-medium">
                     {index + 1}
                   </div>
                   <div>
                     <div className="font-medium">{user.username}</div>
-                    <div className="text-xs text-muted-foreground">Usuario activo</div>
+                    <div className="text-xs text-muted-foreground">
+                      Usuario activo
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">

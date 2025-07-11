@@ -282,6 +282,7 @@ export interface BuscarCargoFacturable {
   tipoMedidor: string;
   tipo: string;
   codigoEnerlova: string;
+  mostrarValorCero: boolean;
 }
 
 export interface CrearCargoFacturableProps {

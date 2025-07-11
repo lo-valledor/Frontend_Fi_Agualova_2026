@@ -1,6 +1,4 @@
 /* eslint-disable no-empty-pattern */
-// eslint-disable no-empty-pattern
-import React from 'react';
 import ContratosComponent from '~/components/administracion/contratos/contratos-component';
 import type { Route } from './+types/contratos';
 import type {
@@ -12,6 +10,7 @@ import type {
 } from '~/types/administracion';
 import api from '~/lib/api';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -26,12 +25,16 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   const resContratosClientes = await api.get('contrato/buscar');
   const resLimiteInvierno = await api.get('parametro/limite-invierno');
   const resFechaActual = await api.get('util/fecha-actual');
+  const resTipoContrato = await api.get('buscarTipoContrato');
+  const resTarifas = await api.get('buscarTarifa');
   return {
     contratos: resContratos.data as GetContratos[],
     regiones: resRegiones.data as GetRegiones[],
     contratosClientes: resContratosClientes.data as GetContratosClientes[],
     limiteInvierno: resLimiteInvierno.data as GetLimiteInvierno[],
     fechaActual: resFechaActual.data as GetFechaActual[],
+    tipoContrato: resTipoContrato.data as TiposContrato[],
+    tarifas: resTarifas.data as Tarifas[],
   };
 }
 
@@ -42,6 +45,8 @@ export default function Contratos({ loaderData }: Route.ComponentProps) {
     contratosClientes,
     limiteInvierno,
     fechaActual,
+    tipoContrato,
+    tarifas,
   } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Contratos' }];
   return (
@@ -53,6 +58,8 @@ export default function Contratos({ loaderData }: Route.ComponentProps) {
         contratosClientes={contratosClientes}
         limiteInvierno={limiteInvierno}
         fechaActual={fechaActual}
+        tipoContrato={tipoContrato}
+        tarifas={tarifas}
       />
     </div>
   );

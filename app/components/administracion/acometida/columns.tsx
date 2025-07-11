@@ -179,31 +179,17 @@ export const columns = ({
     },
   },
   {
-    accessorKey: 'estado',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
-    ),
-    cell: ({ row }) => {
-      const estado = row.getValue('estado') as boolean;
-      return (
-        <Badge
-          variant={estado ? 'default' : 'destructive'}
-          className={
-            estado
-              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-              : ''
-          }
-        >
-          {estado ? 'Activo' : 'Inactivo'}
-        </Badge>
-      );
-    },
-  },
-  {
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      return <TableActions onEdit={onEdit} item={row.original} showView={false} showDelete={false} />;
+      return (
+        <TableActions
+          onEdit={onEdit}
+          item={row.original}
+          showView={false}
+          showDelete={false}
+        />
+      );
     },
   },
 ];

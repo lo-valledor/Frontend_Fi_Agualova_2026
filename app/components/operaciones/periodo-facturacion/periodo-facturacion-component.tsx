@@ -234,7 +234,8 @@ export default function AbrirPeriodoFacturacion({
                   Historial de Períodos
                 </CardTitle>
                 <CardDescription className="text-slate-600 dark:text-slate-400 text-sm">
-                  Visualiza todos los períodos de facturación del sistema ({periodos.length} períodos)
+                  Visualiza todos los períodos de facturación del sistema (
+                  {periodos.length} períodos)
                 </CardDescription>
               </div>
             </div>
@@ -258,7 +259,10 @@ export default function AbrirPeriodoFacturacion({
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-3 border border-emerald-200/40 dark:border-emerald-800/40">
                     <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
-                      {periodos.filter(p => p.epf_descripcion === 'Abierto').length}
+                      {
+                        periodos.filter((p) => p.epf_descripcion === 'Abierto')
+                          .length
+                      }
                     </div>
                     <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
                       Períodos Abiertos
@@ -266,7 +270,10 @@ export default function AbrirPeriodoFacturacion({
                   </div>
                   <div className="bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-lg p-3 border border-red-200/40 dark:border-red-800/40">
                     <div className="text-2xl font-bold text-red-700 dark:text-red-300">
-                      {periodos.filter(p => p.epf_descripcion === 'Cerrado').length}
+                      {
+                        periodos.filter((p) => p.epf_descripcion === 'Cerrado')
+                          .length
+                      }
                     </div>
                     <div className="text-xs text-red-600 dark:text-red-400 font-medium">
                       Períodos Cerrados

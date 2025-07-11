@@ -1,7 +1,13 @@
 import React from 'react';
 import { RecentActivity } from '~/components/dashboard/recent-activity';
 import { ActivityStats } from '~/components/dashboard/activity-stats';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import { Activity, BarChart3, Clock, Users } from 'lucide-react';
 
@@ -41,7 +47,11 @@ export default function ActivityAnalyticsPage() {
 
         <TabsContent value="recent" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RecentActivity limit={15} showUserInfo={true} refreshInterval={15000} />
+            <RecentActivity
+              limit={15}
+              showUserInfo={true}
+              refreshInterval={15000}
+            />
 
             <Card>
               <CardHeader>
@@ -69,7 +79,9 @@ export default function ActivityAnalyticsPage() {
 
                   <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-950/20">
                     <div>
-                      <div className="font-medium">Actualización Automática</div>
+                      <div className="font-medium">
+                        Actualización Automática
+                      </div>
                       <div className="text-sm text-muted-foreground">
                         Se actualiza cada 30 segundos
                       </div>
@@ -93,7 +105,9 @@ export default function ActivityAnalyticsPage() {
                 </div>
 
                 <div className="pt-4 border-t">
-                  <h4 className="font-medium mb-2">Tipos de Actividad Rastreados:</h4>
+                  <h4 className="font-medium mb-2">
+                    Tipos de Actividad Rastreados:
+                  </h4>
                   <ul className="text-sm text-muted-foreground space-y-1">
                     <li>• Navegación entre páginas</li>
                     <li>• Acciones en formularios</li>

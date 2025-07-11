@@ -126,7 +126,7 @@ export function ClienteDetailsModal({
                     <div className="grid grid-cols-2 gap-4">
                       <Skeleton className="h-10 w-full" />
                       <Skeleton className="h-10 w-full" />
-          </div>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -136,7 +136,7 @@ export function ClienteDetailsModal({
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <div className="p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full">
               <XCircle className="h-8 w-8 text-rose-600 dark:text-rose-400" />
-        </div>
+            </div>
             <div className="text-center space-y-2">
               <h3 className="font-medium text-rose-800 dark:text-rose-200">
                 Error al cargar
@@ -170,14 +170,16 @@ export function ClienteDetailsModal({
                 <InfoItem
                   label="Tipo"
                   value={
-                    <Badge variant={detailsData.esEmpresa ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={detailsData.esEmpresa ? 'default' : 'secondary'}
+                    >
                       {detailsData.esEmpresa ? 'Empresa' : 'Persona Natural'}
                     </Badge>
                   }
                   icon={
-                     <div className="p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg">
-                       <Briefcase className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-                     </div>
+                    <div className="p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg">
+                      <Briefcase className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                    </div>
                   }
                 />
                 <InfoItem
@@ -195,7 +197,7 @@ export function ClienteDetailsModal({
                   icon={
                     <div className="p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg">
                       <Phone className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-        </div>
+                    </div>
                   }
                 />
                 <InfoItem
@@ -204,7 +206,7 @@ export function ClienteDetailsModal({
                   icon={
                     <div className="p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg">
                       <Mail className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-      </div>
+                    </div>
                   }
                 />
               </CardContent>
@@ -249,7 +251,7 @@ export function ClienteDetailsModal({
                     <CardTitle className="text-lg text-violet-800 dark:text-violet-200">
                       Información Comercial
                     </CardTitle>
-            </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <InfoItem
@@ -258,7 +260,7 @@ export function ClienteDetailsModal({
                     icon={
                       <div className="p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg">
                         <Hash className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-          </div>
+                      </div>
                     }
                   />
                   <InfoItem
@@ -267,13 +269,13 @@ export function ClienteDetailsModal({
                     icon={
                       <div className="p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg">
                         <Briefcase className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-        </div>
+                      </div>
                     }
                   />
                 </CardContent>
               </Card>
-      )}
-    </div>
+            )}
+          </div>
         ) : null}
       </DialogContent>
     </Dialog>

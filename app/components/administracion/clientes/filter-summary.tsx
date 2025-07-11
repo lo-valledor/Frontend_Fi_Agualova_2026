@@ -18,9 +18,7 @@ export function FilterSummary({
   if (!isFiltered) return null;
 
   const percentageShown =
-    totalClients > 0
-      ? Math.round((filteredClients / totalClients) * 100)
-      : 0;
+    totalClients > 0 ? Math.round((filteredClients / totalClients) * 100) : 0;
   const isReduced = filteredClients < totalClients;
 
   return (

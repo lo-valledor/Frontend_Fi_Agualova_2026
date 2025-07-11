@@ -1,10 +1,11 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 
+import { type GetContratos } from '~/types/administracion';
 import {
-  type GetContratos,
-} from '~/types/administracion';
-import { EstadoBadge, TableActions } from '~/components/data-table/table-helpers';
+  EstadoBadge,
+  TableActions,
+} from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
 import {
   Building,
@@ -24,7 +25,9 @@ interface TableColumnsProps {
 }
 
 // Función robusta para formatear fechas en formato español
-const formatDateToSpanish = (dateValue: string | Date | null | undefined): string => {
+const formatDateToSpanish = (
+  dateValue: string | Date | null | undefined,
+): string => {
   if (!dateValue) return 'N/A';
 
   let date: Date;
@@ -46,7 +49,7 @@ const formatDateToSpanish = (dateValue: string | Date | null | undefined): strin
     ];
 
     // Verificar si la fecha tiene un formato reconocible
-    const isValidFormat = dateFormats.some(format => format.test(dateValue));
+    const isValidFormat = dateFormats.some((format) => format.test(dateValue));
 
     if (!isValidFormat) {
       return 'Fecha inválida';
@@ -67,11 +70,9 @@ const formatDateToSpanish = (dateValue: string | Date | null | undefined): strin
   return date.toLocaleDateString('es-ES', {
     day: '2-digit',
     month: '2-digit',
-    year: 'numeric'
+    year: 'numeric',
   });
 };
-
-
 
 export const columns = ({
   onEdit,
@@ -124,9 +125,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Tipo" />
     ),
     cell: ({ row }) => {
-      return (
-        <Badge variant="outline">{row.original.tipoContrato}</Badge>
-      );
+      return <Badge variant="outline">{row.original.tipoContrato}</Badge>;
     },
   },
   {
@@ -135,9 +134,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title="Tarifa" />
     ),
     cell: ({ row }) => {
-      return (
-        <Badge variant="secondary">{row.original.tarifa}</Badge>
-      );
+      return <Badge variant="secondary">{row.original.tarifa}</Badge>;
     },
   },
 

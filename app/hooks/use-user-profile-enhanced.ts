@@ -13,7 +13,10 @@ interface UseUserProfileEnhancedReturn {
 }
 
 // Cache para evitar llamadas repetidas
-const userProfileCache = new Map<string, { data: Usuarios; timestamp: number }>();
+const userProfileCache = new Map<
+  string,
+  { data: Usuarios; timestamp: number }
+>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
 export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
@@ -39,112 +42,152 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
   }, []);
 
   // Función para obtener información detallada del usuario
-  const fetchUserProfile = useCallback(async (forceRefresh = false) => {
-    if (!user) return;
+  const fetchUserProfile = useCallback(
+    async (forceRefresh = false) => {
+      if (!user) return;
 
-    const userId = user.id;
-    const cacheKey = `user_${userId}`;
+      const userId = user.id;
+      const cacheKey = `user_${userId}`;
 
-    // Verificar caché
-    if (!forceRefresh && userProfileCache.has(cacheKey)) {
-      const cached = userProfileCache.get(cacheKey)!;
-      if (Date.now() - cached.timestamp < CACHE_DURATION) {
-        setUserData(cached.data);
-        return;
-      }
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Cancelar llamada anterior si existe
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-
-      abortControllerRef.current = new AbortController();
-
-      // Intentar obtener datos del usuario desde la API
-      try {
-        const response = await api.get('/usuarios', {
-          signal: abortControllerRef.current.signal
-        });
-
-        const usuarios = response.data as Usuarios[];
-
-        // Buscar el usuario por ID
-        const usuarioEncontrado = usuarios.find(u => u.idUsuario === parseInt(userId));
-
-        if (usuarioEncontrado) {
-          // Guardar en caché
-          userProfileCache.set(cacheKey, {
-            data: usuarioEncontrado,
-            timestamp: Date.now()
-          });
-
-          setUserData(usuarioEncontrado);
-        } else {
-          // Si no se encuentra, crear datos simulados
-          console.warn('Usuario no encontrado en la lista, usando datos del token');
-          throw new Error('Usuario no encontrado en la base de datos');
-        }
-      } catch (apiError: any) {
-        // Si es un error de aborto, no hacer nada
-        if (apiError.name === 'AbortError') {
+      // Verificar caché
+      if (!forceRefresh && userProfileCache.has(cacheKey)) {
+        const cached = userProfileCache.get(cacheKey)!;
+        if (Date.now() - cached.timestamp < CACHE_DURATION) {
+          setUserData(cached.data);
           return;
         }
-
-        // Fallback: crear datos simulados basados en el token
-        console.warn('No se pudo obtener datos del usuario desde la API, usando datos del token:', apiError.message);
-
-        const mockUserData = createMockUserData(user);
-
-        // Guardar en caché
-        userProfileCache.set(cacheKey, {
-          data: mockUserData,
-          timestamp: Date.now()
-        });
-
-        setUserData(mockUserData);
       }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Error desconocido');
-      setError(error);
-      console.error('Error al obtener perfil del usuario:', error);
-    } finally {
-      setIsLoading(false);
-      abortControllerRef.current = null;
-    }
-  }, [user, createMockUserData]);
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Cancelar llamada anterior si existe
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+
+        abortControllerRef.current = new AbortController();
+
+        // Intentar obtener datos del usuario desde la API
+        try {
+          const response = await api.get('/usuarios', {
+            signal: abortControllerRef.current.signal,
+          });
+
+          const usuarios = response.data as Usuarios[];
+
+          // Buscar el usuario por ID
+          const usuarioEncontrado = usuarios.find(
+            (u) => u.idUsuario === parseInt(userId),
+          );
+
+          if (usuarioEncontrado) {
+            // Guardar en caché
+            userProfileCache.set(cacheKey, {
+              data: usuarioEncontrado,
+              timestamp: Date.now(),
+            });
+
+            setUserData(usuarioEncontrado);
+          } else {
+            // Si no se encuentra, crear datos simulados
+            console.warn(
+              'Usuario no encontrado en la lista, usando datos del token',
+            );
+            throw new Error('Usuario no encontrado en la base de datos');
+          }
+        } catch (apiError: any) {
+          // Si es un error de aborto, no hacer nada
+          if (apiError.name === 'AbortError') {
+            return;
+          }
+
+          // Fallback: crear datos simulados basados en el token
+          console.warn(
+            'No se pudo obtener datos del usuario desde la API, usando datos del token:',
+            apiError.message,
+          );
+
+          const mockUserData = createMockUserData(user);
+
+          // Guardar en caché
+          userProfileCache.set(cacheKey, {
+            data: mockUserData,
+            timestamp: Date.now(),
+          });
+
+          setUserData(mockUserData);
+        }
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Error desconocido');
+        setError(error);
+        console.error('Error al obtener perfil del usuario:', error);
+      } finally {
+        setIsLoading(false);
+        abortControllerRef.current = null;
+      }
+    },
+    [user, createMockUserData],
+  );
 
   // Función para actualizar el perfil
-  const updateProfile = useCallback(async (data: ActualizarUsuarioProps) => {
-    if (!userData) {
-      throw new Error('No hay datos de usuario disponibles');
-    }
+  const updateProfile = useCallback(
+    async (data: ActualizarUsuarioProps) => {
+      if (!userData) {
+        throw new Error('No hay datos de usuario disponibles');
+      }
 
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Intentar actualizar en la API
       try {
-        const response = await api.put(`/usuarios/actualizar/${userData.idUsuario}`, data);
+        setIsLoading(true);
+        setError(null);
 
-        // Actualizar datos locales con la respuesta
-        if (response.data) {
-          const updatedUserData = response.data as Usuarios;
-          setUserData(updatedUserData);
+        // Intentar actualizar en la API
+        try {
+          const response = await api.put(
+            `/usuarios/actualizar/${userData.idUsuario}`,
+            data,
+          );
 
-          // Actualizar caché
-          const cacheKey = `user_${userData.idUsuario}`;
-          userProfileCache.set(cacheKey, {
-            data: updatedUserData,
-            timestamp: Date.now()
-          });
-        } else {
-          // Si no hay respuesta, actualizar localmente
+          // Actualizar datos locales con la respuesta
+          if (response.data) {
+            const updatedUserData = response.data as Usuarios;
+            setUserData(updatedUserData);
+
+            // Actualizar caché
+            const cacheKey = `user_${userData.idUsuario}`;
+            userProfileCache.set(cacheKey, {
+              data: updatedUserData,
+              timestamp: Date.now(),
+            });
+          } else {
+            // Si no hay respuesta, actualizar localmente
+            const updatedUserData = {
+              ...userData,
+              nombreDeUsuario: data.nombreDeUsuario,
+              nombres: data.nombres,
+              apellidos: data.apellidos,
+              departamento: data.departamento,
+              activo: data.activo,
+            };
+
+            setUserData(updatedUserData);
+
+            // Actualizar caché
+            const cacheKey = `user_${userData.idUsuario}`;
+            userProfileCache.set(cacheKey, {
+              data: updatedUserData,
+              timestamp: Date.now(),
+            });
+          }
+        } catch (apiError: any) {
+          // Fallback: actualizar solo localmente
+          console.warn(
+            'No se pudo actualizar en la API, actualizando solo localmente:',
+            apiError.message,
+          );
+
           const updatedUserData = {
             ...userData,
             nombreDeUsuario: data.nombreDeUsuario,
@@ -160,39 +203,20 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
           const cacheKey = `user_${userData.idUsuario}`;
           userProfileCache.set(cacheKey, {
             data: updatedUserData,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
-      } catch (apiError: any) {
-        // Fallback: actualizar solo localmente
-        console.warn('No se pudo actualizar en la API, actualizando solo localmente:', apiError.message);
-
-        const updatedUserData = {
-          ...userData,
-          nombreDeUsuario: data.nombreDeUsuario,
-          nombres: data.nombres,
-          apellidos: data.apellidos,
-          departamento: data.departamento,
-          activo: data.activo,
-        };
-
-        setUserData(updatedUserData);
-
-        // Actualizar caché
-        const cacheKey = `user_${userData.idUsuario}`;
-        userProfileCache.set(cacheKey, {
-          data: updatedUserData,
-          timestamp: Date.now()
-        });
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Error desconocido');
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
       }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Error desconocido');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userData]);
+    },
+    [userData],
+  );
 
   // Función para refrescar el perfil
   const refreshProfile = useCallback(async () => {

@@ -77,11 +77,13 @@ export const columns: ColumnDef<Periodos>[] = [
         <div className="flex items-center gap-2">
           <Calendar className="h-3 w-3 text-slate-400" />
           <span className="text-sm text-slate-700 dark:text-slate-300">
-            {fechaInicio ? fechaInicio.toLocaleDateString('es-CL', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            }) : 'Fecha inválida'}
+            {fechaInicio
+              ? fechaInicio.toLocaleDateString('es-CL', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })
+              : 'Fecha inválida'}
           </span>
         </div>
       );
@@ -105,11 +107,13 @@ export const columns: ColumnDef<Periodos>[] = [
         <div className="flex items-center gap-2">
           <Clock className="h-3 w-3 text-slate-400" />
           <span className="text-sm text-slate-700 dark:text-slate-300">
-            {fechaFin ? fechaFin.toLocaleDateString('es-CL', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            }) : 'Fecha inválida'}
+            {fechaFin
+              ? fechaFin.toLocaleDateString('es-CL', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                })
+              : 'Fecha inválida'}
           </span>
         </div>
       );
@@ -135,17 +139,20 @@ export const columns: ColumnDef<Periodos>[] = [
           case 'Abierto':
             return {
               variant: 'default' as const,
-              className: 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700'
+              className:
+                'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700',
             };
           case 'Cerrado':
             return {
               variant: 'destructive' as const,
-              className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700'
+              className:
+                'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700',
             };
           default:
             return {
               variant: 'outline' as const,
-              className: 'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300'
+              className:
+                'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300',
             };
         }
       };
@@ -155,7 +162,10 @@ export const columns: ColumnDef<Periodos>[] = [
       return (
         <div className="flex items-center gap-2">
           <Hash className="h-3 w-3 text-slate-400" />
-          <Badge variant={config.variant} className={cn("text-xs font-medium", config.className)}>
+          <Badge
+            variant={config.variant}
+            className={cn('text-xs font-medium', config.className)}
+          >
             {periodo.epf_descripcion}
           </Badge>
         </div>

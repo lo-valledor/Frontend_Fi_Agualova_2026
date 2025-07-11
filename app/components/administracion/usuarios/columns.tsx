@@ -1,7 +1,10 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { Badge } from '~/components/ui/badge';
 import type { Usuarios } from '~/types/administracion';
-import { TableActions, EstadoBadge } from '~/components/data-table/table-helpers';
+import {
+  TableActions,
+  EstadoBadge,
+} from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (user: Usuarios) => void;
@@ -111,7 +114,14 @@ export const columns = ({
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      return <TableActions onEdit={onEdit} onDelete={onDelete} item={row.original} showView={false} />;
+      return (
+        <TableActions
+          onEdit={onEdit}
+          onDelete={onDelete}
+          item={row.original}
+          showView={false}
+        />
+      );
     },
   },
 ];

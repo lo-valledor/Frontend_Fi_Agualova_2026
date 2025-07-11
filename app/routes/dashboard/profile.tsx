@@ -61,14 +61,17 @@ export default function ProfilePage() {
     }
   }, [userData]);
 
-  const handleInputChange = (field: keyof ActualizarUsuarioProps, value: string | number | boolean) => {
-    setFormData(prev => ({
+  const handleInputChange = (
+    field: keyof ActualizarUsuarioProps,
+    value: string | number | boolean,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-    const handleSave = async () => {
+  const handleSave = async () => {
     if (!userData) return;
 
     try {
@@ -167,10 +170,7 @@ export default function ProfilePage() {
             </Button>
           ) : (
             <div className="flex gap-2">
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-              >
+              <Button onClick={handleCancel} variant="outline">
                 <X className="mr-2 h-4 w-4" />
                 Cancelar
               </Button>
@@ -210,7 +210,9 @@ export default function ProfilePage() {
                     <Input
                       id="nombres"
                       value={formData.nombres}
-                      onChange={(e) => handleInputChange('nombres', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange('nombres', e.target.value)
+                      }
                       placeholder="Ingresa tus nombres"
                     />
                   ) : (
@@ -227,7 +229,9 @@ export default function ProfilePage() {
                     <Input
                       id="apellidos"
                       value={formData.apellidos}
-                      onChange={(e) => handleInputChange('apellidos', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange('apellidos', e.target.value)
+                      }
                       placeholder="Ingresa tus apellidos"
                     />
                   ) : (
@@ -238,14 +242,19 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="nombreDeUsuario" className="text-sm font-medium">
+                <Label
+                  htmlFor="nombreDeUsuario"
+                  className="text-sm font-medium"
+                >
                   Nombre de Usuario
                 </Label>
                 {isEditing ? (
                   <Input
                     id="nombreDeUsuario"
                     value={formData.nombreDeUsuario}
-                    onChange={(e) => handleInputChange('nombreDeUsuario', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange('nombreDeUsuario', e.target.value)
+                    }
                     placeholder="Nombre de usuario"
                   />
                 ) : (
@@ -278,7 +287,9 @@ export default function ProfilePage() {
                       id="contrasena"
                       type={showPassword ? 'text' : 'password'}
                       value={formData.contrasena}
-                      onChange={(e) => handleInputChange('contrasena', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange('contrasena', e.target.value)
+                      }
                       placeholder="Ingresa tu contraseña actual"
                     />
                     <Button
@@ -296,14 +307,15 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground py-2">
-                    ••••••••
-                  </p>
+                  <p className="text-sm text-muted-foreground py-2">••••••••</p>
                 )}
               </div>
               {isEditing && (
                 <div className="space-y-2">
-                  <Label htmlFor="nuevaContrasena" className="text-sm font-medium">
+                  <Label
+                    htmlFor="nuevaContrasena"
+                    className="text-sm font-medium"
+                  >
                     Nueva Contraseña (opcional)
                   </Label>
                   <div className="relative">
@@ -357,7 +369,10 @@ export default function ProfilePage() {
                 <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
                   Perfil
                 </Label>
-                <Badge variant="outline" className="bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-800">
+                <Badge
+                  variant="outline"
+                  className="bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-800"
+                >
                   ID: {userData.perfilId}
                 </Badge>
               </div>
@@ -365,7 +380,10 @@ export default function ProfilePage() {
                 <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
                   Departamento
                 </Label>
-                <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800">
+                <Badge
+                  variant="outline"
+                  className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+                >
                   {userData.departamento}
                 </Badge>
               </div>
@@ -410,7 +428,10 @@ export default function ProfilePage() {
                 <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
                   Rol Actual
                 </Label>
-                <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800">
+                <Badge
+                  variant="outline"
+                  className="bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800"
+                >
                   {user.role}
                 </Badge>
               </div>

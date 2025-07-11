@@ -96,7 +96,10 @@ export function CorteRegistradoDialog({
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="fecha" className="text-right flex items-center gap-1">
+            <Label
+              htmlFor="fecha"
+              className="text-right flex items-center gap-1"
+            >
               <Calendar className="h-3 w-3" />
               Fecha
             </Label>
@@ -109,7 +112,10 @@ export function CorteRegistradoDialog({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="hora" className="text-right flex items-center gap-1">
+            <Label
+              htmlFor="hora"
+              className="text-right flex items-center gap-1"
+            >
               <Clock className="h-3 w-3" />
               Hora
             </Label>
@@ -122,7 +128,10 @@ export function CorteRegistradoDialog({
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="periodo" className="text-right flex items-center gap-1">
+            <Label
+              htmlFor="periodo"
+              className="text-right flex items-center gap-1"
+            >
               <Hash className="h-3 w-3" />
               Periodo
             </Label>

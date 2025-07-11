@@ -129,31 +129,36 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
             return {
               label: 'Pendiente',
               variant: 'outline' as const,
-              className: 'border-amber-200 text-amber-700 bg-amber-50 dark:border-amber-700 dark:text-amber-300 dark:bg-amber-900/20'
+              className:
+                'border-amber-200 text-amber-700 bg-amber-50 dark:border-amber-700 dark:text-amber-300 dark:bg-amber-900/20',
             };
           case '1':
             return {
               label: 'Liberado',
               variant: 'default' as const,
-              className: 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700'
+              className:
+                'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700',
             };
           case '2':
             return {
               label: 'Cortado',
               variant: 'destructive' as const,
-              className: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700'
+              className:
+                'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700',
             };
           case '3':
             return {
               label: 'Reposición Solicitada',
               variant: 'outline' as const,
-              className: 'border-sky-200 text-sky-700 bg-sky-50 dark:border-sky-700 dark:text-sky-300 dark:bg-sky-900/20'
+              className:
+                'border-sky-200 text-sky-700 bg-sky-50 dark:border-sky-700 dark:text-sky-300 dark:bg-sky-900/20',
             };
           default:
             return {
               label: estado,
               variant: 'outline' as const,
-              className: 'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300'
+              className:
+                'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300',
             };
         }
       };
@@ -161,7 +166,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       const config = getEstadoConfig(estado);
 
       return (
-        <Badge variant={config.variant} className={cn("text-xs font-medium", config.className)}>
+        <Badge
+          variant={config.variant}
+          className={cn('text-xs font-medium', config.className)}
+        >
           {config.label}
         </Badge>
       );
@@ -177,7 +185,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       const documentos = row.getValue('reCantDocumentos') as number;
       return (
         <div className="text-center">
-          <Badge variant="outline" className="font-mono text-xs bg-slate-50 dark:bg-slate-800">
+          <Badge
+            variant="outline"
+            className="font-mono text-xs bg-slate-50 dark:bg-slate-800"
+          >
             {documentos}
           </Badge>
         </div>

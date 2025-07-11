@@ -20,6 +20,7 @@ import {
 } from '~/components/ui/select';
 import { Textarea } from '~/components/ui/textarea';
 import type { ContratoFormData, GetContratos } from '~/types/administracion';
+import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
 interface ContractFormModalProps {
   isOpen: boolean;
@@ -27,6 +28,8 @@ interface ContractFormModalProps {
   onSubmit: (data: ContratoFormData) => void;
   contract?: GetContratos | null;
   mode: 'add' | 'edit';
+  tipoContrato: TiposContrato[];
+  tarifas: Tarifas[];
 }
 
 export function ContractFormModal({
@@ -35,6 +38,8 @@ export function ContractFormModal({
   onSubmit,
   contract,
   mode,
+  tipoContrato,
+  tarifas,
 }: ContractFormModalProps) {
   const [formData, setFormData] = useState<ContratoFormData>({
     tipoContrato: '',
@@ -138,14 +143,19 @@ export function ContractFormModal({
                     handleInputChange('tipoContrato', value)
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecciona tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Residencial">Residencial</SelectItem>
-                    <SelectItem value="Comercial">Comercial</SelectItem>
-                    <SelectItem value="Industrial">Industrial</SelectItem>
-                    <SelectItem value="Público">Público</SelectItem>
+                    {tipoContrato.map((tipo) => (
+                      <SelectItem
+                        key={tipo.id}
+                        value={tipo.id.toString()}
+                        className="capitalize"
+                      >
+                        {tipo.nombre}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -155,15 +165,19 @@ export function ContractFormModal({
                   value={formData.tarifa}
                   onValueChange={(value) => handleInputChange('tarifa', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecciona tarifa" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="BT-1">BT-1</SelectItem>
-                    <SelectItem value="BT-2">BT-2</SelectItem>
-                    <SelectItem value="BT-3">BT-3</SelectItem>
-                    <SelectItem value="AT-2">AT-2</SelectItem>
-                    <SelectItem value="AT-3">AT-3</SelectItem>
+                    {tarifas.map((tarifa) => (
+                      <SelectItem
+                        key={tarifa.id}
+                        value={tarifa.id.toString()}
+                        className="capitalize"
+                      >
+                        {tarifa.codigo}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -323,7 +337,7 @@ export function ContractFormModal({
                     handleInputChange('cicloFacturacion', value)
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecciona ciclo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -341,7 +355,7 @@ export function ContractFormModal({
                     handleInputChange('activo', value === 'true')
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -358,7 +372,7 @@ export function ContractFormModal({
                     handleInputChange('liberadoCorte', value === 'true')
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -374,7 +388,10 @@ export function ContractFormModal({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-sky-600 hover:bg-sky-700 text-white">
+            <Button
+              type="submit"
+              className="bg-sky-600 hover:bg-sky-700 text-white"
+            >
               {mode === 'add' ? 'Crear' : 'Actualizar'}
             </Button>
           </DialogFooter>

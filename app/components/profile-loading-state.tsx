@@ -13,7 +13,7 @@ interface ProfileLoadingStateProps {
 export const ProfileLoadingState: React.FC<ProfileLoadingStateProps> = ({
   message = 'Cargando datos del perfil...',
   showRetry = false,
-  onRetry
+  onRetry,
 }) => {
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -43,9 +43,18 @@ export const ProfileLoadingState: React.FC<ProfileLoadingStateProps> = ({
       <div className="text-center py-8">
         <p className="text-muted-foreground">{message}</p>
         <div className="flex justify-center space-x-1 mt-4">
-          <div className="w-2 h-2 bg-sky-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-          <div className="w-2 h-2 bg-sky-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-          <div className="w-2 h-2 bg-sky-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          <div
+            className="w-2 h-2 bg-sky-600 rounded-full animate-bounce"
+            style={{ animationDelay: '0ms' }}
+          />
+          <div
+            className="w-2 h-2 bg-sky-600 rounded-full animate-bounce"
+            style={{ animationDelay: '150ms' }}
+          />
+          <div
+            className="w-2 h-2 bg-sky-600 rounded-full animate-bounce"
+            style={{ animationDelay: '300ms' }}
+          />
         </div>
       </div>
 

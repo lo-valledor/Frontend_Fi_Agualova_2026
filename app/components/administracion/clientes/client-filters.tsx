@@ -286,9 +286,7 @@ export function ClientFiltersComponent({
                             variant="ghost"
                             size="sm"
                             className="h-auto p-0 ml-1 hover:bg-transparent"
-                            onClick={() =>
-                              handleFilterChange('esEmpresa', '')
-                            }
+                            onClick={() => handleFilterChange('esEmpresa', '')}
                           >
                             <X className="h-3 w-3" />
                           </Button>
@@ -310,65 +308,71 @@ export function ClientFiltersComponent({
                           </Button>
                         </Badge>
                       )}
-                      {filters.codigoComuna && filters.codigoComuna !== 'all' && (
-                        <Badge
-                          variant="outline"
-                          className="bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800"
-                        >
-                          Código: {filters.codigoComuna}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-1 hover:bg-transparent"
-                            onClick={() =>
-                              handleFilterChange('codigoComuna', '')
-                            }
+                      {filters.codigoComuna &&
+                        filters.codigoComuna !== 'all' && (
+                          <Badge
+                            variant="outline"
+                            className="bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800"
                           >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </Badge>
-                      )}
-                      {filters.tieneContacto && filters.tieneContacto !== 'all' && (
-                        <Badge
-                          variant="outline"
-                          className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800"
-                        >
-                          Contacto:{' '}
-                          {filters.tieneContacto === 'true' ? 'Con' : 'Sin'}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-1 hover:bg-transparent"
-                            onClick={() => handleFilterChange('tieneContacto', '')}
+                            Código: {filters.codigoComuna}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 ml-1 hover:bg-transparent"
+                              onClick={() =>
+                                handleFilterChange('codigoComuna', '')
+                              }
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </Badge>
+                        )}
+                      {filters.tieneContacto &&
+                        filters.tieneContacto !== 'all' && (
+                          <Badge
+                            variant="outline"
+                            className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800"
                           >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </Badge>
-                      )}
-                      {filters.tieneTelefono && filters.tieneTelefono !== 'all' && (
-                        <Badge
-                          variant="outline"
-                          className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
-                        >
-                          Teléfono:{' '}
-                          {filters.tieneTelefono === 'true' ? 'Con' : 'Sin'}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-1 hover:bg-transparent"
-                            onClick={() => handleFilterChange('tieneTelefono', '')}
+                            Contacto:{' '}
+                            {filters.tieneContacto === 'true' ? 'Con' : 'Sin'}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 ml-1 hover:bg-transparent"
+                              onClick={() =>
+                                handleFilterChange('tieneContacto', '')
+                              }
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </Badge>
+                        )}
+                      {filters.tieneTelefono &&
+                        filters.tieneTelefono !== 'all' && (
+                          <Badge
+                            variant="outline"
+                            className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
                           >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </Badge>
-                      )}
+                            Teléfono:{' '}
+                            {filters.tieneTelefono === 'true' ? 'Con' : 'Sin'}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 ml-1 hover:bg-transparent"
+                              onClick={() =>
+                                handleFilterChange('tieneTelefono', '')
+                              }
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </Badge>
+                        )}
                       {filters.tieneEmail && filters.tieneEmail !== 'all' && (
                         <Badge
                           variant="outline"
                           className="bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800"
                         >
-                          Email:{' '}
-                          {filters.tieneEmail === 'true' ? 'Con' : 'Sin'}
+                          Email: {filters.tieneEmail === 'true' ? 'Con' : 'Sin'}
                           <Button
                             variant="ghost"
                             size="sm"

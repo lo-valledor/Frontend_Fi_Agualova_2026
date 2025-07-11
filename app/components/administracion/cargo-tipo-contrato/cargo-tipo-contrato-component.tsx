@@ -30,7 +30,9 @@ export default function CargoTipoContratoComponent({
   const [data, setData] = useState<GetCargoTipoContrato[]>(initialData);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<GetCargoTipoContrato | null>(null);
+  const [selectedItem, setSelectedItem] = useState<GetCargoTipoContrato | null>(
+    null,
+  );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,7 +40,9 @@ export default function CargoTipoContratoComponent({
   const [tiposContrato, setTiposContrato] = useState<TiposContrato[]>([]);
   const [cargos, setCargos] = useState<BuscarCargoFacturable[]>([]);
   const [condiciones, setCondiciones] = useState<GetCondicionesContrato[]>([]);
-  const [editorData, setEditorData] = useState<CargoTipoContratoEditor | null>(null);
+  const [editorData, setEditorData] = useState<CargoTipoContratoEditor | null>(
+    null,
+  );
 
   useEffect(() => {
     setData(initialData);
@@ -48,11 +52,13 @@ export default function CargoTipoContratoComponent({
   useEffect(() => {
     const fetchFormData = async () => {
       try {
-        const [tiposContratoRes, cargosRes, condicionesRes] = await Promise.all([
-          api.get('tipoContrato/combo'),
-          api.get('buscarCargoFacturable'),
-          api.get('condicionesContrato/combo'),
-        ]);
+        const [tiposContratoRes, cargosRes, condicionesRes] = await Promise.all(
+          [
+            api.get('tipoContrato/combo'),
+            api.get('buscarCargoFacturable'),
+            api.get('condicionesContrato/combo'),
+          ],
+        );
         setTiposContrato(tiposContratoRes.data as TiposContrato[]);
         setCargos(cargosRes.data as BuscarCargoFacturable[]);
         setCondiciones(condicionesRes.data as GetCondicionesContrato[]);
@@ -111,7 +117,9 @@ export default function CargoTipoContratoComponent({
     if (!selectedItem) return;
     setIsLoading(true);
     try {
-      await api.delete(`/cargoTipoContrato-eliminar/${selectedItem.tipoContratoId}`);
+      await api.delete(
+        `/cargoTipoContrato-eliminar/${selectedItem.tipoContratoId}`,
+      );
       toast.success('Relación eliminada exitosamente');
       await refetchData();
     } catch (_error) {

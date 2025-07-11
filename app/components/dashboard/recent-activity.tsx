@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Activity, Clock, User, FileText, Settings, Users, Package } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Activity,
+  Clock,
+  User,
+  FileText,
+  Settings,
+  Users,
+  Package,
+} from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { useActivityTracker } from '~/hooks/useActivityTracker';
@@ -24,16 +38,32 @@ const getModuleIcon = (module: string) => {
 
 const getActionColor = (action: string): string => {
   const actionLower = action.toLowerCase();
-  if (actionLower.includes('crear') || actionLower.includes('nuevo') || actionLower.includes('agregar')) {
+  if (
+    actionLower.includes('crear') ||
+    actionLower.includes('nuevo') ||
+    actionLower.includes('agregar')
+  ) {
     return 'bg-green-100 text-green-800 border-green-200';
   }
-  if (actionLower.includes('editar') || actionLower.includes('modificar') || actionLower.includes('actualizar')) {
+  if (
+    actionLower.includes('editar') ||
+    actionLower.includes('modificar') ||
+    actionLower.includes('actualizar')
+  ) {
     return 'bg-blue-100 text-blue-800 border-blue-200';
   }
-  if (actionLower.includes('eliminar') || actionLower.includes('borrar') || actionLower.includes('anular')) {
+  if (
+    actionLower.includes('eliminar') ||
+    actionLower.includes('borrar') ||
+    actionLower.includes('anular')
+  ) {
     return 'bg-red-100 text-red-800 border-red-200';
   }
-  if (actionLower.includes('ver') || actionLower.includes('consultar') || actionLower.includes('buscar')) {
+  if (
+    actionLower.includes('ver') ||
+    actionLower.includes('consultar') ||
+    actionLower.includes('buscar')
+  ) {
     return 'bg-gray-100 text-gray-800 border-gray-200';
   }
   return 'bg-purple-100 text-purple-800 border-purple-200';
@@ -56,7 +86,7 @@ const formatTimestamp = (timestamp: number): string => {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 
@@ -69,7 +99,7 @@ interface RecentActivityProps {
 export const RecentActivity: React.FC<RecentActivityProps> = ({
   limit = 10,
   showUserInfo = true,
-  refreshInterval = 30000 // 30 segundos
+  refreshInterval = 30000, // 30 segundos
 }) => {
   const { getRecentActivities, getActivitySummary } = useActivityTracker();
   const [activities, setActivities] = useState<UserActivity[]>([]);
@@ -123,7 +153,10 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
         <CardContent>
           <div className="space-y-3">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center space-x-3 animate-pulse">
+              <div
+                key={i}
+                className="flex items-center space-x-3 animate-pulse"
+              >
                 <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
@@ -160,10 +193,14 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
           <div className="mb-4 p-3 bg-gray-50 rounded-lg">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="font-medium">Total acciones:</span> {summary.totalActions}
+                <span className="font-medium">Total acciones:</span>{' '}
+                {summary.totalActions}
               </div>
               <div>
-                <span className="font-medium">Última actividad:</span> {summary.lastActivity ? formatTimestamp(summary.lastActivity) : 'N/A'}
+                <span className="font-medium">Última actividad:</span>{' '}
+                {summary.lastActivity
+                  ? formatTimestamp(summary.lastActivity)
+                  : 'N/A'}
               </div>
             </div>
           </div>
@@ -177,7 +214,10 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
         ) : (
           <div className="space-y-3">
             {activities.map((activity) => (
-              <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-gray-50 transition-colors">
+              <div
+                key={activity.id}
+                className="flex items-start space-x-3 p-3 rounded-lg border hover:bg-gray-50 transition-colors"
+              >
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                     {getModuleIcon(activity.module)}
@@ -187,7 +227,10 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                      <Badge variant="outline" className={getActionColor(activity.action)}>
+                      <Badge
+                        variant="outline"
+                        className={getActionColor(activity.action)}
+                      >
                         {activity.action}
                       </Badge>
                       <span className="text-sm font-medium text-gray-900">
@@ -220,7 +263,12 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
 
         {activities.length > 0 && (
           <div className="mt-4 pt-4 border-t">
-            <Button variant="ghost" size="sm" className="w-full" onClick={loadActivities}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full"
+              onClick={loadActivities}
+            >
               Actualizar
             </Button>
           </div>

@@ -32,18 +32,24 @@ export function useUserProfile(): UseUserProfileReturn {
         const usuarios = response.data as Usuarios[];
 
         // Buscar el usuario por ID
-        const usuarioEncontrado = usuarios.find(u => u.idUsuario === parseInt(user.id));
+        const usuarioEncontrado = usuarios.find(
+          (u) => u.idUsuario === parseInt(user.id),
+        );
 
         if (usuarioEncontrado) {
           setUserData(usuarioEncontrado);
         } else {
           // Si no se encuentra, crear datos simulados basados en el token
-          console.warn('Usuario no encontrado en la lista, usando datos del token');
+          console.warn(
+            'Usuario no encontrado en la lista, usando datos del token',
+          );
           throw new Error('Usuario no encontrado');
         }
       } catch (_apiError) {
         // Fallback: crear datos simulados basados en el token
-        console.warn('No se pudo obtener datos del usuario desde la API, usando datos del token');
+        console.warn(
+          'No se pudo obtener datos del usuario desde la API, usando datos del token',
+        );
 
         const mockUserData: Usuarios = {
           idUsuario: parseInt(user.id),
@@ -68,53 +74,70 @@ export function useUserProfile(): UseUserProfileReturn {
   }, [user]);
 
   // Función para actualizar el perfil
-  const updateProfile = useCallback(async (data: ActualizarUsuarioProps) => {
-    if (!userData) {
-      throw new Error('No hay datos de usuario disponibles');
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Intentar actualizar en la API
-      try {
-        const response = await api.put(`/usuarios/actualizar/${userData.idUsuario}`, data);
-
-        // Actualizar datos locales con la respuesta
-        if (response.data) {
-          setUserData(response.data as Usuarios);
-        } else {
-          // Si no hay respuesta, actualizar localmente
-          setUserData(prev => prev ? {
-            ...prev,
-            nombreDeUsuario: data.nombreDeUsuario,
-            nombres: data.nombres,
-            apellidos: data.apellidos,
-            departamento: data.departamento,
-            activo: data.activo,
-          } : null);
-        }
-      } catch (_apiError) {
-        // Fallback: actualizar solo localmente
-        console.warn('No se pudo actualizar en la API, actualizando solo localmente');
-        setUserData(prev => prev ? {
-          ...prev,
-          nombreDeUsuario: data.nombreDeUsuario,
-          nombres: data.nombres,
-          apellidos: data.apellidos,
-          departamento: data.departamento,
-          activo: data.activo,
-        } : null);
+  const updateProfile = useCallback(
+    async (data: ActualizarUsuarioProps) => {
+      if (!userData) {
+        throw new Error('No hay datos de usuario disponibles');
       }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Error desconocido');
-      setError(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userData]);
+
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Intentar actualizar en la API
+        try {
+          const response = await api.put(
+            `/usuarios/actualizar/${userData.idUsuario}`,
+            data,
+          );
+
+          // Actualizar datos locales con la respuesta
+          if (response.data) {
+            setUserData(response.data as Usuarios);
+          } else {
+            // Si no hay respuesta, actualizar localmente
+            setUserData((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    nombreDeUsuario: data.nombreDeUsuario,
+                    nombres: data.nombres,
+                    apellidos: data.apellidos,
+                    departamento: data.departamento,
+                    activo: data.activo,
+                  }
+                : null,
+            );
+          }
+        } catch (_apiError) {
+          // Fallback: actualizar solo localmente
+          console.warn(
+            'No se pudo actualizar en la API, actualizando solo localmente',
+          );
+          setUserData((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  nombreDeUsuario: data.nombreDeUsuario,
+                  nombres: data.nombres,
+                  apellidos: data.apellidos,
+                  departamento: data.departamento,
+                  activo: data.activo,
+                }
+              : null,
+          );
+        }
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error('Error desconocido');
+        setError(error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [userData],
+  );
 
   // Función para refrescar el perfil
   const refreshProfile = useCallback(async () => {

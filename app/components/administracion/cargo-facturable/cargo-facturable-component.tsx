@@ -10,7 +10,9 @@ import {
   CardHeader,
 } from '~/components/ui/card';
 import type {
+  ActualizarCargoFacturableProps,
   BuscarCargoFacturable,
+  CrearCargoFacturableProps,
   GeCombosConceptos,
   GetCombosTarifas,
   GetCombosTiposMedidor,
@@ -19,6 +21,7 @@ import { columns } from './columns';
 import CargoFacturableModalForm from './cargo-facturable-modal-form';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
+import api from '~/lib/api';
 
 interface CargoFacturableComponentProps {
   cargos: BuscarCargoFacturable[];
@@ -53,6 +56,23 @@ export default function CargoFacturableComponent({
     setSelectedCargo(cargo);
     setModalMode('edit');
     setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (
+    data: CrearCargoFacturableProps | ActualizarCargoFacturableProps,
+  ) => {
+    console.log('Enviando datos:', data);
+    try {
+      if (modalMode === 'add') {
+        await api.post('cargoFacturable/crearCargoFacturableNuevo', data);
+      } else {
+        await api.put('cargoFacturable/modificarCargoFacturable', data);
+      }
+      handleSuccess();
+    } catch (error) {
+      console.error('Error al guardar el cargo facturable:', error);
+      toast.error('Error al guardar el cargo facturable.');
+    }
   };
 
   const handleSuccess = () => {
@@ -118,6 +138,7 @@ export default function CargoFacturableComponent({
           setIsModalOpen(false);
           setEditingCargoId(null);
         }}
+        onSubmit={handleSubmit}
         onSuccess={handleSuccess}
         cargo={selectedCargo}
         mode={modalMode}
