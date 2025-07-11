@@ -1,4 +1,4 @@
-import { Plus, Users, Building2, UserCheck, Mail } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
@@ -167,67 +167,6 @@ export default function ClientesComponent({
           <Plus className="mr-2 h-4 w-4" />
           Agregar Cliente
         </Button>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Clientes
-            </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {filterStats.isFiltered
-                ? filteredClients.length
-                : clients.length}
-            </div>
-            {filterStats.isFiltered && (
-              <p className="text-xs text-muted-foreground">
-                de {clients.length} total
-              </p>
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Personas Naturales
-            </CardTitle>
-            <UserCheck className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {filteredClients.filter((c) => !c.esEmpresa).length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Empresas</CardTitle>
-            <Building2 className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {filteredClients.filter((c) => c.esEmpresa).length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Con Email
-            </CardTitle>
-            <Mail className="h-4 w-4 text-purple-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {filteredClients.filter((c) => c.email).length}
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Filters */}

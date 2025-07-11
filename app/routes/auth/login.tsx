@@ -17,7 +17,7 @@ const Login = () => {
   const { isAuthenticated, loading } = useAuth();
   const [mounted, setMounted] = useState(false);
 
-  // Animación de entrada para los elementos de la página
+  // Animación de entrada para los elementos de la páginaP
   useEffect(() => {
     setMounted(true);
   }, []);
