@@ -71,7 +71,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
 
         // Intentar obtener datos del usuario desde la API
         try {
-          const response = await api.get('/usuarios', {
+          const response = await api.get('/listar', {
             signal: abortControllerRef.current.signal,
           });
 
@@ -146,7 +146,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
         // Intentar actualizar en la API
         try {
           const response = await api.put(
-            `/usuarios/actualizar/${userData.idUsuario}`,
+            `/actualizar/${userData.idUsuario}`,
             data,
           );
 

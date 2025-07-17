@@ -126,7 +126,7 @@ export default function PreciosCargoComponent({
   // Mostrar error si existe
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-green-50 dark:from-slate-950 dark:to-green-950/30">
+      <div className="min-h-screen ">
         <div className="container mx-auto p-2 space-y-3">
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
@@ -143,16 +143,16 @@ export default function PreciosCargoComponent({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-green-50 dark:from-slate-950 dark:to-green-950/30">
+    <div className="min-h-screen ">
       <div className="container mx-auto p-2 space-y-3">
         {/* Header modernizado */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
+        <div className="flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-100 dark:to-sky-100 bg-clip-text text-transparent">
-              Precios de Cargo
+            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
+              Precios Cargo
             </h1>
           </div>
-          <div className="flex items-center gap-3 justify-end w-full">
+          <div className="flex items-center gap-3">
             <Dialog>
               <DialogTrigger>
                 <Button
@@ -178,19 +178,19 @@ export default function PreciosCargoComponent({
         </div>
 
         {/* Filtros */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardContent className="p-6 space-y-6">
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
+          <CardContent className="pb-3">
             {/* Filtros principales */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                  <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-100">
+                  <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     Período de Consulta
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
                     Selecciona el período para consultar los precios de cargo
                   </p>
                 </div>
@@ -198,7 +198,7 @@ export default function PreciosCargoComponent({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground hover:bg-blue-50 dark:hover:bg-blue-900/20"
                 >
                   <Search className="w-4 h-4 mr-2" />
                   Filtros
@@ -211,16 +211,16 @@ export default function PreciosCargoComponent({
               </div>
 
               {/* Período seleccionado visible */}
-              <div className="flex items-center gap-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl">
+              <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  <span className="text-sm font-medium text-green-800 dark:text-green-300">
+                  <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
                     Mes actual:
                   </span>
                 </div>
                 <Badge
                   variant="outline"
-                  className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700"
+                  className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
                 >
                   {months.find((m) => m.value === mes)?.label} {anio}
                 </Badge>
@@ -230,7 +230,7 @@ export default function PreciosCargoComponent({
             {/* Filtros expandibles */}
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleContent>
-                <div className="border-t pt-6 space-y-6">
+                <div className="border-t pt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Mes */}
                     <div className="space-y-2 w-full">
@@ -320,8 +320,8 @@ export default function PreciosCargoComponent({
         </Card>
 
         {/* Tablas de Precios con Tabs */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardContent className="p-6">
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
+          <CardContent className="pb-3">
             <Tabs defaultValue="enel" className="w-full">
               <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
                 <TabsTrigger

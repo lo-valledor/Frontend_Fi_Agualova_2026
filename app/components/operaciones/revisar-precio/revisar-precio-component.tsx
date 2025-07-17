@@ -439,7 +439,7 @@ export default function RevisarPrecioComponent({
   // Mostrar error si existe
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+      <div className="min-h-screen ">
         <div className="container mx-auto p-2 space-y-3">
           <div className="text-center py-12">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
@@ -456,12 +456,12 @@ export default function RevisarPrecioComponent({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+    <div className="min-h-screen ">
       <div className="container mx-auto p-2 space-y-3">
         {/* Header modernizado */}
         <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
               Revisar Precio
             </h1>
           </div>
@@ -490,24 +490,24 @@ export default function RevisarPrecioComponent({
         </div>
 
         {/* Validación de Usuario */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50 pb-3">
           <Collapsible
             open={isValidacionOpen}
             onOpenChange={setIsValidacionOpen}
           >
             <div
-              className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+              className="flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
               onClick={() => setIsValidacionOpen(!isValidacionOpen)}
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                  <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
+                  <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     Validación de Usuario
                   </CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400">
+                  <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
                     Autorización para realizar modificaciones de precios
                   </CardDescription>
                 </div>
@@ -516,7 +516,7 @@ export default function RevisarPrecioComponent({
                 {isAuthorized && (
                   <Badge
                     variant="outline"
-                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                    className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
                   >
                     ✓ Autorizado
                   </Badge>
@@ -634,13 +634,13 @@ export default function RevisarPrecioComponent({
         </Card>
 
         {/* Tablas de Precios con Tabs */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardContent className="p-6">
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
+          <CardContent className="pb-3">
             <Tabs defaultValue="enel" className="w-full">
               <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
                 <TabsTrigger
                   value="enel"
-                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-rose-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
                 >
                   <Building2 className="mr-2 h-4 w-4" />
                   Valores Enel

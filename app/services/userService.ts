@@ -17,7 +17,7 @@ class UserService {
    */
   async getAllUsers(): Promise<UserServiceResponse<Usuarios[]>> {
     try {
-      const response = await api.get('/usuarios');
+      const response = await api.get('/listar');
       return {
         data: response.data as Usuarios[],
         error: null,
@@ -171,7 +171,7 @@ class UserService {
   ): Promise<UserServiceResponse<Usuarios>> {
     try {
       const response = await api.put(
-        `/usuarios/actualizar/${userId}`,
+        `actualizar/${userId}`,
         userData,
       );
 

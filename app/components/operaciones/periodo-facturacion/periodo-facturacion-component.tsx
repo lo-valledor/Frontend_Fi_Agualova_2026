@@ -84,18 +84,18 @@ export default function AbrirPeriodoFacturacion({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30">
+    <div className="min-h-screen ">
       <div className="container mx-auto p-2 space-y-3">
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
-        {/* Modern Header */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
+        {/* Header modernizado */}
+        <div className="flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 dark:from-blue-100 dark:to-sky-100 bg-clip-text text-transparent">
-              Períodos de Facturación
+            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
+              Período Facturación
             </h1>
           </div>
-          <div className="flex items-center gap-3 justify-end w-full">
+          <div className="flex items-center gap-3">
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -223,17 +223,17 @@ export default function AbrirPeriodoFacturacion({
         )}
 
         {/* History Table */}
-        <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
-                <History className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
+          <CardHeader className="border-b border-slate-200 dark:border-slate-700">
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                <History className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <CardTitle className="text-lg text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   Historial de Períodos
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400 text-sm">
+                <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
                   Visualiza todos los períodos de facturación del sistema (
                   {periodos.length} períodos)
                 </CardDescription>

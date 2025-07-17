@@ -1,8 +1,7 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/sector';
-import api from '~/lib/api';
-import type { Sectores } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import SectorComponent from '~/components/mantencion/sector/sector-component';
 
@@ -14,27 +13,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarSector');
+  const result = await mantencionService.getSectores();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let sectores: Sectores[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: Sectores[] }).data)
-    ) {
-      sectores = (response.data as { data: Sectores[] }).data;
-    } else if (Array.isArray(response.data)) {
-      sectores = response.data;
-    }
-
-    return { sectores };
-  } catch (_error) {
-    throw new Response('Error al cargar los sectores', { status: 500 });
+  if (result.error || !result.data) {
+    return { sectores: [] };
   }
+
+  return { sectores: result.data };
 }
 
 export default function Sector({ loaderData }: Route.ComponentProps) {

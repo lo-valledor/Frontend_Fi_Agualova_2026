@@ -35,7 +35,7 @@ import {
   type ConsultarSectores,
 } from '~/types/operaciones';
 import { toast } from 'sonner';
-import { useOperaciones } from '~/hooks/use-operaciones';
+// Removido useOperaciones ya que los datos vienen como props
 import TablaAsignacionSectores from './tabla-asignacion-sectores';
 import DialogLecturasPendientes from './dialog-lecturas-pendientes';
 import {
@@ -75,9 +75,7 @@ export default function PrepararLecturasComponent({
   const [error, setError] = useState<string | null>(null);
   const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
 
-  // Solo necesitamos fetchLecturasPendientes para el refresh del dialog
-  const { fetchLecturasPendientes, loadingState } = useOperaciones();
-  const isLecturasPendientesLoading = loadingState.lecturasPendientes.isLoading;
+  // Los datos vienen como props, no necesitamos el hook
 
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
@@ -165,12 +163,12 @@ export default function PrepararLecturasComponent({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50 dark:from-slate-950 dark:to-emerald-950/30">
+          <div className="min-h-screen ">
       <div className="container mx-auto p-2 space-y-3">
         {/* Header modernizado */}
         <div className="flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-100 dark:to-teal-100 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
               Preparar Lecturas
             </h1>
           </div>
@@ -197,28 +195,28 @@ export default function PrepararLecturasComponent({
             </Dialog>
             <DialogLecturasPendientes
               data={lecturasPendientes || undefined}
-              isLoading={isLecturasPendientesLoading}
-              onRefresh={fetchLecturasPendientes}
+              isLoading={false}
+              onRefresh={() => Promise.resolve(undefined  )}
             />
           </div>
         </div>
 
         {/* Filtros de Búsqueda */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+              className="flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
-                  <SearchIcon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                  <SearchIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
+                  <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     Criterios de Búsqueda
                   </CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400">
+                  <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
                     Selecciona criterios para preparar lecturas
                   </CardDescription>
                 </div>
@@ -233,25 +231,25 @@ export default function PrepararLecturasComponent({
             </div>
 
             <CollapsibleContent>
-              <CardContent className="px-6 pb-6 space-y-6">
+              <CardContent className="px-4 pb-4 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                   {/* Periodo */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <CalendarIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Periodo actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-800">
-                        <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg flex items-center justify-center">
-                          <CalendarIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                      <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-50 dark:from-blue-900/20 dark:to-blue-900/20 border border-blue-200 dark:border-blue-800">
+                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-800/50 rounded-lg flex items-center justify-center">
+                          <CalendarIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                          <span className="font-semibold text-emerald-800 dark:text-emerald-200">
+                          <span className="font-semibold text-blue-800 dark:text-blue-200">
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
                             Periodo activo para facturación
                           </p>
                         </div>
@@ -279,7 +277,7 @@ export default function PrepararLecturasComponent({
                       htmlFor="ciclo"
                       className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
                     >
-                      <FileTextIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                      <FileTextIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Ciclo de facturación
                     </Label>
                     <Select
@@ -288,7 +286,7 @@ export default function PrepararLecturasComponent({
                     >
                       <SelectTrigger
                         id="ciclo"
-                        className="h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-emerald-400 focus:ring-emerald-400/20 w-full"
+                        className="h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-blue-400/20 w-full"
                       >
                         <SelectValue placeholder="Selecciona un ciclo de facturación" />
                       </SelectTrigger>
@@ -316,7 +314,7 @@ export default function PrepararLecturasComponent({
                 </div>
 
                 {/* Botones de acción */}
-                <div className="flex flex-wrap justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                   <Button
                     onClick={handleClearFilters}
                     variant="outline"
@@ -333,7 +331,7 @@ export default function PrepararLecturasComponent({
                       !cicloSeleccionado ||
                       !periodoFormateado
                     }
-                    className="gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white"
+                    className="gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
                   >
                     <SearchIcon className="h-4 w-4" />
                     {isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}
@@ -345,17 +343,17 @@ export default function PrepararLecturasComponent({
         </Card>
 
         {/* Resultados de la búsqueda */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
           <CardHeader className="border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-xl flex items-center justify-center">
-                <UsersIcon className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+              <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                <UsersIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   Asignación de Sectores
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400">
+                <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
                   {asignacionSectores.length > 0
                     ? `${asignacionSectores.length} sectores encontrados`
                     : 'No hay sectores asignados'}

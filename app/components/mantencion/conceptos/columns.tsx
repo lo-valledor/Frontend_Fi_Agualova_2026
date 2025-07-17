@@ -1,17 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal, Edit, Trash2 } from 'lucide-react';
-import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import type { Conceptos } from '~/types/mantencion';
+import { TableActions } from '~/components/data-table/table-helpers';
 
 interface ConceptosColumnsProps {
   onEdit: (concepto: Conceptos) => void;
@@ -67,12 +58,18 @@ export const createColumns = ({
       <DataTableColumnHeader column={column} title="Fijo/Variable" />
     ),
     cell: ({ row }) => {
-      const valor = row.getValue('fijoVariable') as string;
+      const valor = (row.getValue('fijoVariable') as string)?.toUpperCase();
+      const esFijo = valor === 'F';
       return (
         <Badge
-          variant={valor?.toLowerCase() === 'fijo' ? 'default' : 'secondary'}
+          variant={esFijo ? 'default' : 'secondary'}
+          className={
+            esFijo
+              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+              : 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200'
+          }
         >
-          {valor}
+          {valor === 'V' ? 'Variable' : 'Fijo'}
         </Badge>
       );
     },
@@ -94,34 +91,13 @@ export const createColumns = ({
   {
     id: 'actions',
     header: 'Acciones',
-    cell: ({ row }) => {
-      const concepto = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menú</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onEdit(concepto)}>
-              <Edit className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(concepto)}
-              className="text-red-600"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <TableActions
+        onEdit={() => onEdit(row.original)}
+        onDelete={() => onDelete(row.original)}
+        showView={false}
+        item={row.original}
+      />
+    ),
   },
 ];

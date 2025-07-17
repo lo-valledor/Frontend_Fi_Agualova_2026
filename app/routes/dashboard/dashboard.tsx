@@ -2,7 +2,7 @@
 import { useLoaderData } from 'react-router';
 import type { Route } from './+types/dashboard';
 import DashboardComponent from '~/components/dashboard/dashboard-component';
-import { HydrateFallback } from '~/components/hydrate-fallback';
+import HydrateFallback from '~/components/hydrate-fallback';
 import api from '~/lib/api';
 import type {
   PeriodoAbierto,

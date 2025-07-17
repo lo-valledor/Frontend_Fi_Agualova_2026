@@ -4,9 +4,8 @@ import {
   Settings,
   BarChart3,
   Users,
-  Activity,
-  //FileText,
   Wrench,
+  FileText,
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
@@ -83,7 +82,7 @@ const data = {
           url: '/dashboard/operaciones/periodo-facturacion',
         },
         {
-          title: 'Precios de Cargos',
+          title: 'Precios Cargos',
           url: '/dashboard/operaciones/precios-cargo',
         },
         {
@@ -99,11 +98,11 @@ const data = {
           url: '/dashboard/operaciones/cerrar-lecturas',
         },
         {
-          title: 'Revisar Calculo de Factura',
+          title: 'Revisar Calculo Facturas',
           url: '/dashboard/operaciones/revisar-calculo-factura',
         },
         {
-          title: 'Cambio de Medidor',
+          title: 'Cambio Medidor',
           url: '/dashboard/operaciones/cambio-medidor',
         },
         {
@@ -153,10 +152,10 @@ const data = {
           title: 'Cargo Tipo Contrato',
           url: '/dashboard/administracion/cargo-tipo-contrato',
         },
-        /* {
+        {
           title: 'Condiciones Contrato',
           url: '/dashboard/administracion/condiciones-contrato',
-        }, */
+        },
       ],
     },
     {
@@ -185,7 +184,7 @@ const data = {
           url: '/dashboard/mantencion/marcas',
         },
         {
-          title: 'Ciclos de Facturación',
+          title: 'Ciclos Facturación',
           url: '/dashboard/mantencion/ciclos-facturacion',
         },
         {
@@ -193,7 +192,7 @@ const data = {
           url: '/dashboard/mantencion/claves',
         },
         {
-          title: 'Tipos de Contratos',
+          title: 'Tipos Contrato',
           url: '/dashboard/mantencion/tipos-contratos',
         },
         {
@@ -210,7 +209,7 @@ const data = {
         },
       ],
     },
-    {
+    /* {
       title: 'Análisis',
       url: '#',
       icon: Activity,
@@ -220,8 +219,8 @@ const data = {
           url: '/dashboard/activity-analytics',
         },
       ],
-    },
-    /* {
+    }, */
+    {
       title: 'Reportes',
       url: '#',
       icon: FileText,
@@ -231,7 +230,7 @@ const data = {
           url: '/dashboard/reportes/consultar-contrato',
         },
         {
-          title: 'Resumen de Facturación',
+          title: 'Resumen Facturación',
           url: '/dashboard/reportes/resumen-facturacion',
         },
         {
@@ -239,7 +238,7 @@ const data = {
           url: '/dashboard/reportes/ver-facturas',
         },
       ],
-    }, */
+    },
   ],
 };
 

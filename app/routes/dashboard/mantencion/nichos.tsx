@@ -2,8 +2,7 @@
 import React from 'react';
 import type { Route } from './+types/nichos';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import api from '~/lib/api';
-import type { Nicho } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
 import NichosComponent from '~/components/mantencion/nichos/nichos-component';
 
 export function meta({}: Route.MetaArgs) {
@@ -14,27 +13,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarNichoM');
+  const result = await mantencionService.getNichos();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let nichos: Nicho[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: Nicho[] }).data)
-    ) {
-      nichos = (response.data as { data: Nicho[] }).data;
-    } else if (Array.isArray(response.data)) {
-      nichos = response.data;
-    }
-
-    return { nichos };
-  } catch (_error) {
-    throw new Response('Error al cargar los nichos', { status: 500 });
+  if (result.error || !result.data) {
+    return { nichos: [] };
   }
+
+  return { nichos: result.data };
 }
 
 export default function Nichos({ loaderData }: Route.ComponentProps) {

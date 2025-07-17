@@ -1,12 +1,7 @@
 import React from 'react';
 import type { Route } from './+types/clientes';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import api from '~/lib/api';
-import type {
-  GetClientes,
-  GetGiros,
-  GetRegiones,
-} from '~/types/administracion';
+import { administracionService } from '~/services/administracionService';
 import ClientesComponent from '~/components/administracion/clientes/clientes-component';
 
 export function meta(_args: Route.MetaArgs) {
@@ -17,52 +12,13 @@ export function meta(_args: Route.MetaArgs) {
 }
 
 export async function clientLoader(_args: Route.ClientActionArgs) {
-  try {
-    const resClientes = await api.get('ClienteBuscar');
-    const resGiros = await api.get('giro/buscar');
-    const resRegiones = await api.get('region/listar');
+  const result = await administracionService.getClientesData();
 
-    let clientes: GetClientes[] = [];
-    let giros: GetGiros[] = [];
-    let regiones: GetRegiones[] = [];
-
-    if (
-      resClientes.data &&
-      typeof resClientes.data === 'object' &&
-      'data' in resClientes.data &&
-      Array.isArray((resClientes.data as any).data)
-    ) {
-      clientes = (resClientes.data as { data: GetClientes[] }).data;
-    } else if (Array.isArray(resClientes.data)) {
-      clientes = resClientes.data;
-    }
-
-    if (
-      resGiros.data &&
-      typeof resGiros.data === 'object' &&
-      'data' in resGiros.data &&
-      Array.isArray((resGiros.data as any).data)
-    ) {
-      giros = (resGiros.data as { data: GetGiros[] }).data;
-    } else if (Array.isArray(resGiros.data)) {
-      giros = resGiros.data;
-    }
-
-    if (
-      resRegiones.data &&
-      typeof resRegiones.data === 'object' &&
-      'data' in resRegiones.data &&
-      Array.isArray((resRegiones.data as any).data)
-    ) {
-      regiones = (resRegiones.data as { data: GetRegiones[] }).data;
-    } else if (Array.isArray(resRegiones.data)) {
-      regiones = resRegiones.data;
-    }
-
-    return { clientes, giros, regiones };
-  } catch (_error) {
+  if (result.error || !result.data) {
     throw new Response('Error al cargar los clientes', { status: 500 });
   }
+
+  return result.data;
 }
 
 export default function Clientes({ loaderData }: Route.ComponentProps) {

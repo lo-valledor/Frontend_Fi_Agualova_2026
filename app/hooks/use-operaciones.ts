@@ -1,350 +1,370 @@
-import api from '~/lib/api';
-import { useAuth } from '~/context/AuthContext';
-import { useNavigate } from 'react-router';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { operacionesService } from '~/services/operacionesService';
 import type {
-  Anio,
-  Ciclo,
   PeriodoAbierto,
-  PreciosCargoEnerlova,
-  Periodos,
-  ConsultarSectores,
   ValidarSectoresPendientes,
-  ConsultaPeriodosFacturacion,
+  ConsultarSectores,
+  OpcionesPrepararLecturas,
+  ConsultarAsignacionSectores,
+  PreciosCargoEnel,
+  PreciosCargoEnerlova,
+  RevisarPrecioUno,
+  RevisarPrecioDos,
+  Ciclo,
+  Anio,
+  Periodos,
+  ConsultarMantenedorRevisionCorte,
+  TotalesCorteReposicion,
 } from '~/types/operaciones';
 
-// Interfaz para agrupar los estados relacionados con la carga de datos
-interface LoadingState {
-  isLoading: boolean;
-  error: Error | null;
-}
+export function usePrepararLecturasData() {
+  const [data, setData] = useState<{
+    periodoAbierto: PeriodoAbierto[];
+    lecturasPendientes: ValidarSectoresPendientes | null;
+    sectores: ConsultarSectores[];
+    opcionesPreparar: OpcionesPrepararLecturas[];
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-/**
- * Hook para gestionar datos y operaciones relacionadas con el módulo de operaciones
- * Permite cargar datos de forma individual o en conjunto según las necesidades
- */
-export function useOperaciones() {
-  // Estados para los diferentes datos
-  const [consultaAnio, setConsultaAnio] = useState<Anio[]>([]);
-  const [consultaPrecioPagoTabla, setConsultaPrecioPagoTabla] = useState<
-    PreciosCargoEnerlova[]
-  >([]);
-  const [consultarPeriodoAbierto, setConsultarPeriodoAbierto] = useState<
-    PeriodoAbierto[]
-  >([]);
-  const [ciclosFacturacionActivos, setCiclosFacturacionActivos] = useState<
-    Ciclo[]
-  >([]);
-  const [periodosFacturacion, setPeriodosFacturacion] = useState<Periodos[]>(
-    [],
-  );
-  const [consultarSectores, setConsultarSectores] = useState<
-    ConsultarSectores[]
-  >([]);
-  const [lecturasPendientes, setLecturasPendientes] =
-    useState<ValidarSectoresPendientes | null>(null);
-  const [consultaPeriodosFacturacion, setConsultaPeriodosFacturacion] =
-    useState<ConsultaPeriodosFacturacion[]>([]);
-
-  // Estado unificado para manejo de carga y errores
-  const [loadingState, setLoadingState] = useState<
-    Record<string, LoadingState>
-  >({
-    anio: { isLoading: false, error: null },
-    preciosPago: { isLoading: false, error: null },
-    periodoAbierto: { isLoading: false, error: null },
-    ciclos: { isLoading: false, error: null },
-    periodos: { isLoading: false, error: null },
-    consultarSectores: { isLoading: false, error: null },
-    global: { isLoading: false, error: null },
-    lecturasPendientes: { isLoading: false, error: null },
-    consultaPeriodosFacturacion: { isLoading: false, error: null },
-  });
-
-  const auth = useAuth();
-  const navigate = useNavigate();
-
-  // Función para actualizar el estado de carga
-  const setLoading = useCallback((key: string, isLoading: boolean) => {
-    setLoadingState((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        isLoading,
-      },
-    }));
-  }, []);
-
-  // Función para actualizar el estado de error
-  const setError = useCallback((key: string, error: Error | null) => {
-    setLoadingState((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        error,
-      },
-    }));
-  }, []);
-
-  // Verificar autenticación y redirigir si es necesario
-  const checkAuth = useCallback(() => {
-    if (!auth.isAuthenticated) {
-      navigate('/auth/login', { replace: true });
-      return false;
-    }
-    return true;
-  }, [auth, navigate]);
-
-  // Función para cargar los años disponibles
-  const fetchAnios = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('anio', true);
-      const response = await api.get('/consulta-año');
-      setConsultaAnio(response.data as Anio[]);
-      return response.data;
-    } catch (error) {
-      setError('anio', error as Error);
-      throw error;
-    } finally {
-      setLoading('anio', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  // Función para cargar precios de pago
-  const fetchPreciosPago = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('preciosPago', true);
-      const response = await api.get('/consulta-precio-pago-tabla');
-      setConsultaPrecioPagoTabla(response.data as PreciosCargoEnerlova[]);
-      return response.data;
-    } catch (error) {
-      setError('preciosPago', error as Error);
-      throw error;
-    } finally {
-      setLoading('preciosPago', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  // Función para cargar periodo abierto
-  const fetchPeriodoAbierto = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('periodoAbierto', true);
-      const response = await api.get('/ConsultarPeriodoAbierto');
-      setConsultarPeriodoAbierto(response.data as PeriodoAbierto[]);
-      return response.data;
-    } catch (error) {
-      setError('periodoAbierto', error as Error);
-      throw error;
-    } finally {
-      setLoading('periodoAbierto', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  // Función para cargar ciclos de facturación
-  const fetchCiclosFacturacion = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('ciclos', true);
-      const response = await api.get('/ciclos-facturacion-activos');
-      setCiclosFacturacionActivos(response.data as Ciclo[]);
-      return response.data;
-    } catch (error) {
-      setError('ciclos', error as Error);
-      throw error;
-    } finally {
-      setLoading('ciclos', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  // Función para cargar los periodos de facturación
-  const fetchPeriodosFacturacion = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('periodos', true);
-      const response = await api.get('/consulta-periodo');
-      setPeriodosFacturacion(response.data as Periodos[]);
-      return response.data;
-    } catch (error) {
-      setError('periodos', error as Error);
-      throw error;
-    } finally {
-      setLoading('periodos', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  // Buscar precios de cargos por mes y año
-  const fetchPreciosCargoPorFecha = useCallback(
-    async (mes: string, anio: string) => {
-      if (!checkAuth()) return;
-
-      try {
-        setLoading('preciosPago', true);
-        const params = new URLSearchParams({
-          mes,
-          año: anio,
-        });
-        const response = await api.get('/consulta-precio-pago', {
-          params,
-        });
-        return response.data;
-      } catch (error) {
-        setError('preciosPago', error as Error);
-        throw error;
-      } finally {
-        setLoading('preciosPago', false);
-      }
-    },
-    [checkAuth, setLoading, setError],
-  );
-
-  const fetchConsultarSectores = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('consultarSectores', true);
-      const response = await api.get('/consultar-sectores');
-      setConsultarSectores(response.data as ConsultarSectores[]);
-      return response.data;
-    } catch (error) {
-      setError('consultarSectores', error as Error);
-      throw error;
-    } finally {
-      setLoading('consultarSectores', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  const fetchLecturasPendientes = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('lecturasPendientes', true);
-      const response = await api.get('/validar-lecturas-pendientes');
-      setLecturasPendientes(response.data as ValidarSectoresPendientes);
-      return response.data;
-    } catch (error: unknown) {
-      setError('lecturasPendientes', error as Error);
-      throw error;
-    } finally {
-      setLoading('lecturasPendientes', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  const fetchConsultaPeriodosFacturacion = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('consultaPeriodosFacturacion', true);
-      const response = await api.get('/consulta-periodos-facturacion');
-      setConsultaPeriodosFacturacion(
-        response.data as ConsultaPeriodosFacturacion[],
-      );
-      return response.data;
-    } catch (error) {
-      setError('consultaPeriodosFacturacion', error as Error);
-      throw error;
-    } finally {
-      setLoading('consultaPeriodosFacturacion', false);
-    }
-  }, [checkAuth, setLoading, setError]);
-
-  // Cargar todos los datos iniciales
-  const fetchAllData = useCallback(async () => {
-    if (!checkAuth()) return;
-
-    try {
-      setLoading('global', true);
-      await Promise.all([
-        fetchAnios(),
-        fetchPreciosPago(),
-        fetchPeriodoAbierto(),
-        fetchCiclosFacturacion(),
-        fetchPeriodosFacturacion(),
-        fetchConsultarSectores(),
-        fetchLecturasPendientes(),
-        fetchConsultaPeriodosFacturacion(),
-      ]);
-    } catch (error) {
-      setError('global', error as Error);
-    } finally {
-      setLoading('global', false);
-    }
-  }, [
-    checkAuth,
-    fetchAnios,
-    fetchPreciosPago,
-    fetchPeriodoAbierto,
-    fetchCiclosFacturacion,
-    fetchPeriodosFacturacion,
-    fetchConsultarSectores,
-    fetchLecturasPendientes,
-    fetchConsultaPeriodosFacturacion,
-    setLoading,
-    setError,
-  ]);
-
-  // Cargar datos al iniciar el hook
   useEffect(() => {
-    // No cargamos todos los datos automáticamente para mejorar el rendimiento
-    // Los componentes pueden llamar a fetchAllData() o a funciones específicas
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await operacionesService.getPrepararLecturasData();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
-  // Estado global de carga
-  const isLoading =
-    loadingState.anio.isLoading ||
-    loadingState.preciosPago.isLoading ||
-    loadingState.periodoAbierto.isLoading ||
-    loadingState.ciclos.isLoading ||
-    loadingState.periodos.isLoading ||
-    loadingState.consultarSectores.isLoading ||
-    loadingState.global.isLoading ||
-    loadingState.lecturasPendientes.isLoading ||
-    loadingState.consultaPeriodosFacturacion.isLoading;
+  const refreshData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  // Estado global de error
-  const error =
-    loadingState.global.error ||
-    loadingState.anio.error ||
-    loadingState.preciosPago.error ||
-    loadingState.periodoAbierto.error ||
-    loadingState.ciclos.error ||
-    loadingState.periodos.error ||
-    loadingState.consultarSectores.error ||
-    loadingState.lecturasPendientes.error ||
-    loadingState.consultaPeriodosFacturacion.error;
+      const result = await operacionesService.getPrepararLecturasData();
+
+      if (result.error) {
+        setError(result.error);
+      } else if (result.data) {
+        setData(result.data);
+      } else {
+        setError('No se pudieron cargar los datos');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return {
-    // Datos
-    consultaAnio,
-    consultaPrecioPagoTabla,
-    consultarPeriodoAbierto,
-    ciclosFacturacionActivos,
-    periodosFacturacion,
-    consultarSectores,
-    lecturasPendientes,
-    consultaPeriodosFacturacion,
-    // Estado de carga
-    isLoading,
+    data,
+    loading,
     error,
-    loadingState,
+    refreshData,
+  };
+}
 
-    // Funciones para cargar datos individuales
-    fetchAnios,
-    fetchPreciosPago,
-    fetchPeriodoAbierto,
-    fetchCiclosFacturacion,
-    fetchPeriodosFacturacion,
-    fetchPreciosCargoPorFecha,
-    fetchConsultarSectores,
-    fetchLecturasPendientes,
-    // Función para cargar todos los datos
-    fetchAllData,
+export function useAsignacionSectores() {
+  const [data, setData] = useState<ConsultarAsignacionSectores[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadAsignacionSectores = useCallback(
+    async (cicloFacturable: string, periodo: string) => {
+      if (!cicloFacturable || !periodo) {
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await operacionesService.getAsignacionSectores(
+          cicloFacturable,
+          periodo,
+        );
+
+        if (result.error) {
+          setError(result.error);
+          setData([]);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setData([]);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
+  return {
+    data,
+    loading,
+    error,
+    loadAsignacionSectores,
+  };
+}
+
+export function usePreciosCargo(mes: string, anio: string) {
+  const [data, setData] = useState<{
+    tablaEnel: PreciosCargoEnel[];
+    tablaEnerlova: PreciosCargoEnerlova[];
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await operacionesService.getPreciosCargoData(mes, anio);
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [mes, anio]);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useRevisarPrecio(dia: string = '15') {
+  const [data, setData] = useState<{
+    dataPeriodoAbierto: PeriodoAbierto[];
+    dataConsultarPreciosUno: RevisarPrecioUno[];
+    dataConsultarPreciosDos: RevisarPrecioDos[];
+    ciclosFacturacion: Array<{
+      diaFacturacion: string;
+      descripcion: string;
+    }>;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await operacionesService.getRevisarPrecioData(dia);
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [dia]);
+
+  const refreshPrecios = useCallback(
+    async (nuevoCiclo?: string) => {
+      if (!data?.dataPeriodoAbierto || data.dataPeriodoAbierto.length === 0) {
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const mes = data.dataPeriodoAbierto[0].mes;
+        const anio = data.dataPeriodoAbierto[0].anio;
+        const ciclo = nuevoCiclo || dia;
+
+        const result = await operacionesService.getPreciosPorCiclo(
+          mes,
+          anio,
+          ciclo,
+        );
+
+        if (result.error || !result.data) {
+          setError(result.error || 'Error al cargar precios');
+        } else {
+          setData(prev => prev ? {
+            ...prev,
+            dataConsultarPreciosUno: result.data.preciosUno,
+            dataConsultarPreciosDos: result.data.preciosDos,
+          } : null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [data, dia],
+  );
+
+  return {
+    data,
+    loading,
+    error,
+    refreshPrecios,
+  };
+}
+
+export function useCorteReposicion() {
+  const [data, setData] = useState<{
+    totalesData: TotalesCorteReposicion[];
+    mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await operacionesService.getCorteReposicionData();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useCerrarLecturas() {
+  const [data, setData] = useState<{
+    periodoAbierto: PeriodoAbierto[];
+    ciclosFacturacion: Ciclo[];
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await operacionesService.getCerrarLecturasData();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function usePeriodoFacturacion() {
+  const [data, setData] = useState<{
+    years: Anio[];
+    periodos: Periodos[];
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await operacionesService.getPeriodoFacturacionData();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
   };
 }

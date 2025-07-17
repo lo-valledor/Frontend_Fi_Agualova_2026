@@ -3,8 +3,7 @@ import React from 'react';
 import CargoTipoContratoComponent from '~/components/administracion/cargo-tipo-contrato/cargo-tipo-contrato-component';
 import type { Route } from './+types/cargo-tipo-contrato';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import api from '~/lib/api';
-import type { GetCargoTipoContrato } from '~/types/administracion';
+import { administracionService } from '~/services/administracionService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,9 +13,16 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientActionArgs) {
-  const res = await api.get('cargoTipoContrato-buscar');
+  const result = await administracionService.getCargoTipoContrato();
+
+  if (result.error || !result.data) {
+    return {
+      cargoTipoContrato: [],
+    };
+  }
+
   return {
-    cargoTipoContrato: res.data as GetCargoTipoContrato[],
+    cargoTipoContrato: result.data,
   };
 }
 

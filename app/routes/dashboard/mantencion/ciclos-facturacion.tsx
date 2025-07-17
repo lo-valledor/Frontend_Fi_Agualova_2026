@@ -3,8 +3,7 @@ import React from 'react';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CiclosFacturacionComponent from '~/components/mantencion/ciclos-facturacion/ciclos-facturacion-component';
 import type { Route } from './+types/ciclos-facturacion';
-import api from '~/lib/api';
-import type { CiclosFacturacion } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -17,29 +16,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarCiclo');
+  const result = await mantencionService.getCiclosFacturacion();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let ciclosFacturacion: CiclosFacturacion[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: CiclosFacturacion[] }).data)
-    ) {
-      ciclosFacturacion = (response.data as { data: CiclosFacturacion[] }).data;
-    } else if (Array.isArray(response.data)) {
-      ciclosFacturacion = response.data;
-    }
-
-    return { ciclosFacturacion };
-  } catch (_error) {
-    throw new Response('Error al cargar los ciclos de facturación', {
-      status: 500,
-    });
+  if (result.error || !result.data) {
+    return { ciclosFacturacion: [] };
   }
+
+  return { ciclosFacturacion: result.data };
 }
 
 export default function CiclosFacturacion({

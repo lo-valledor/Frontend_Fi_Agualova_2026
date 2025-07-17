@@ -3,8 +3,7 @@ import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import RevisarCalculoFacturaComponent from '~/components/operaciones/revisar-calculo-factura/revisar-calculo-factura-component';
 import React from 'react';
 import type { Route } from './+types/revisar-calculo-factura';
-import type { PeriodoAbierto } from '~/types/operaciones';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,14 +13,21 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  const periodoAbierto = await api.get('/ConsultarPeriodoAbierto');
-  return { periodoAbierto: periodoAbierto.data as PeriodoAbierto[] };
+  const [periodoResult, ciclosResult] = await Promise.all([
+    operacionesService.getPeriodoAbierto(),
+    operacionesService.getCiclosFacturacion(),
+  ]);
+
+  return {
+    periodoAbierto: periodoResult.error || !periodoResult.data ? [] : periodoResult.data,
+    ciclosFacturacionActivos: ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data,
+  };
 }
 
 export default function RevisarCalculoFactura({
   loaderData,
 }: Route.ComponentProps) {
-  const { periodoAbierto } = loaderData;
+  const { periodoAbierto, ciclosFacturacionActivos } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
     { label: 'Revisar Calculo de Factura' },
@@ -30,7 +36,10 @@ export default function RevisarCalculoFactura({
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <RevisarCalculoFacturaComponent periodoAbierto={periodoAbierto ?? []} />
+      <RevisarCalculoFacturaComponent
+        periodoAbierto={periodoAbierto ?? []}
+        ciclosFacturacionActivos={ciclosFacturacionActivos ?? []}
+      />
     </div>
   );
 }

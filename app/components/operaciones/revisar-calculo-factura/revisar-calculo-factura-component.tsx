@@ -16,11 +16,10 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { Button } from '~/components/ui/button';
-import { useOperaciones } from '~/hooks/use-operaciones';
+// Removido useOperaciones ya que los datos vienen como props
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
 } from '~/components/ui/collapsible';
 import {
   AlertCircleIcon,
@@ -48,6 +47,7 @@ import {
   type CalculoPrefacturaCargoResponse,
   type CalculoPrefacturaCompleto,
   type PeriodoAbierto,
+  type Ciclo,
 } from '~/types/operaciones';
 import { Input } from '~/components/ui/input';
 import {
@@ -61,8 +61,10 @@ import {
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
+  ciclosFacturacionActivos,
 }: {
   periodoAbierto: PeriodoAbierto[];
+  ciclosFacturacionActivos: Ciclo[];
 }) {
   // Estados para el formulario
   const [cicloId, setCicloId] = useState<string>('');
@@ -85,8 +87,7 @@ export default function RevisarCalculoFacturaComponent({
   const [timerActive, setTimerActive] = useState(false);
   const [, setPreparacionTimestamp] = useState<number | null>(null);
 
-  // Obtención de datos del hook useOperaciones
-  const { fetchCiclosFacturacion, ciclosFacturacionActivos } = useOperaciones();
+  // Los datos vienen como props, no necesitamos el hook
 
   // Estados de carga
 
@@ -123,10 +124,7 @@ export default function RevisarCalculoFacturaComponent({
     };
   }, [timerActive, timerCountdown]);
 
-  // Cargar datos iniciales
-  useEffect(() => {
-    fetchCiclosFacturacion();
-  }, [fetchCiclosFacturacion]);
+  // Los datos vienen como props, no necesitamos cargar ciclos
 
   // Filtrar datos en tiempo real
   useEffect(() => {
@@ -468,12 +466,12 @@ export default function RevisarCalculoFacturaComponent({
   }, [cicloId]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-950 dark:to-purple-950/30">
+    <div className="min-h-screen ">
       <div className="container mx-auto p-2 space-y-3">
-        {/* Modern Header */}
+        {/* Header modernizado */}
         <div className="flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-100 dark:to-indigo-100 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
               Revisar Cálculo Factura
             </h1>
           </div>
@@ -502,9 +500,9 @@ export default function RevisarCalculoFacturaComponent({
             {periodoAbierto && periodoAbierto.length > 0 && (
               <Badge
                 variant="outline"
-                className="bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800"
+                className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
               >
-                <CalendarIcon className="h-3 w-3 mr-1" />
+                <CalendarIcon className="w-3 h-3 mr-1" />
                 Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                 {periodoAbierto[0].anio}
               </Badge>
@@ -563,67 +561,63 @@ export default function RevisarCalculoFacturaComponent({
             </CardContent>
           </Card>
         )}
-        {/* Sección principal con filtros */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <Collapsible
-            open={isFiltersOpen}
-            onOpenChange={setIsFiltersOpen}
-            className="w-full"
-          >
-            <CollapsibleTrigger asChild>
-              <div className="flex justify-between items-center p-6 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
-                    <FileSpreadsheet className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
-                      Listado de Precalculos
-                    </CardTitle>
-                    <CardDescription className="text-slate-600 dark:text-slate-400">
-                      Revisa los precalculos de facturación
-                    </CardDescription>
-                  </div>
+        {/* Filtros de Búsqueda */}
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
+          <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+            <div
+              className="flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+              onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                  <FileSpreadsheet className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  {isFiltersOpen ? (
-                    <ChevronUp className="h-5 w-5 text-slate-500" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-slate-500" />
-                  )}
-                </Button>
+                <div>
+                  <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    Listado de Precalculos
+                  </CardTitle>
+                  <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
+                    Revisa los precalculos de facturación
+                  </CardDescription>
+                </div>
               </div>
-            </CollapsibleTrigger>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                {isFiltersOpen ? (
+                  <ChevronUp className="h-5 w-5 text-slate-500" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-slate-500" />
+                )}
+              </Button>
+            </div>
 
             <CollapsibleContent>
-              <CardContent className="p-4 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {' '}
+              <CardContent className="px-4 pb-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                   {/* Periodo */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      <CalendarIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Periodo actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 shadow-sm">
-                        <div className="p-1.5 bg-sky-100 dark:bg-sky-800/50 rounded-md">
-                          <CalendarIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-50 dark:from-blue-900/20 dark:to-blue-900/20 border border-blue-200 dark:border-blue-800">
+                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-800/50 rounded-lg flex items-center justify-center">
+                          <CalendarIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                          <span className="font-semibold text-sky-800 dark:text-sky-200">
+                          <span className="font-semibold text-blue-800 dark:text-blue-200">
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className="text-xs text-sky-600 dark:text-sky-400 mt-0.5">
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
                             Periodo activo para facturación
                           </p>
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 shadow-sm">
-                        <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
-                          <AlertCircleIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                      <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800">
+                        <div className="w-10 h-10 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex items-center justify-center">
+                          <AlertCircleIcon className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                         </div>
                         <div>
                           <span className="font-medium text-amber-800 dark:text-amber-200">
@@ -635,25 +629,26 @@ export default function RevisarCalculoFacturaComponent({
                         </div>
                       </div>
                     )}
-                  </div>{' '}
+                  </div>
+
                   {/* Ciclo de facturación */}
                   <div className="space-y-2">
                     <Label
                       htmlFor="ciclo"
                       className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
                     >
-                      <FileTextIcon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                      <FileTextIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Ciclo de facturación
                     </Label>
 
                     <Select value={cicloId} onValueChange={setCicloId}>
                       <SelectTrigger
                         id="ciclo"
-                        className="w-full h-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                        className="h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-blue-400/20 w-full"
                       >
                         <SelectValue placeholder="Selecciona un ciclo de facturación" />
                       </SelectTrigger>
-                      <SelectContent className="border-border/60">
+                      <SelectContent>
                         {ciclosFacturacionActivos &&
                         ciclosFacturacionActivos.length > 0 ? (
                           ciclosFacturacionActivos.map((ciclo) => {
@@ -670,10 +665,10 @@ export default function RevisarCalculoFacturaComponent({
                               <SelectItem
                                 key={ciclo.diaFacturacion}
                                 value={valorCiclo}
-                                className="hover:bg-sky-50 dark:hover:bg-sky-900/20 focus:bg-sky-50 dark:focus:bg-sky-900/20"
+                                className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
                               >
                                 <div className="flex items-center gap-2">
-                                  <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                                  <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                                   <span className="font-medium">
                                     {ciclo.descripcion}
                                   </span>
@@ -685,10 +680,10 @@ export default function RevisarCalculoFacturaComponent({
                           <>
                             <SelectItem
                               value="1"
-                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                              className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
                             >
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                                 <span className="font-medium">
                                   Ciclo día 15
                                 </span>
@@ -696,10 +691,10 @@ export default function RevisarCalculoFacturaComponent({
                             </SelectItem>
                             <SelectItem
                               value="2"
-                              className="hover:bg-sky-50 dark:hover:bg-sky-900/20"
+                              className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
                             >
                               <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
                                 <span className="font-medium">
                                   Ciclo día 30
                                 </span>
@@ -710,33 +705,32 @@ export default function RevisarCalculoFacturaComponent({
                       </SelectContent>
                     </Select>
                   </div>
-                </div>{' '}
+                </div>
+
                 {/* Botones de acción */}
-                <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-6 border-t">
+                <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
                   <div className="flex gap-3">
                     <Button
                       onClick={handleClearFilters}
-                      variant="ghost"
-                      size="sm"
+                      variant="outline"
                       disabled={isLoading}
-                      className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                      className="gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
                     >
-                      <Eraser className="h-4 w-4 mr-2" />
+                      <Eraser className="h-4 w-4" />
                       Limpiar
                     </Button>
                     <Button
                       onClick={handleRefreshData}
-                      variant="ghost"
-                      size="sm"
+                      variant="outline"
                       disabled={
                         isLoading ||
                         !cicloId ||
                         !isCalculoPreparado ||
                         timerActive
                       }
-                      className="text-slate-600 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-950/20"
+                      className="gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
                     >
-                      <RefreshCw className="h-4 w-4 mr-2" />
+                      <RefreshCw className="h-4 w-4" />
                       Actualizar
                     </Button>
                   </div>
@@ -744,16 +738,16 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       onClick={handleLanzarCalculoFacturas}
                       disabled={isLoading || !cicloId || timerActive}
-                      className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
                     >
                       {isLaunchingCalculo ? (
                         <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                           Preparando...
                         </>
                       ) : (
                         <>
-                          <SearchIcon className="h-4 w-4 mr-2" />
+                          <SearchIcon className="h-4 w-4" />
                           Preparar Cálculo
                         </>
                       )}
@@ -766,16 +760,16 @@ export default function RevisarCalculoFacturaComponent({
                         !isCalculoPreparado ||
                         timerActive
                       }
-                      className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
                     >
                       {isLoading ? (
                         <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                           Cargando...
                         </>
                       ) : (
                         <>
-                          <FileTextIcon className="h-4 w-4 mr-2" />
+                          <FileTextIcon className="h-4 w-4" />
                           Ver Cálculo Facturas
                         </>
                       )}
@@ -785,16 +779,16 @@ export default function RevisarCalculoFacturaComponent({
                       disabled={
                         isAcceptingCalculo || selectedContratos.length === 0
                       }
-                      className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
                     >
                       {isAcceptingCalculo ? (
                         <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent mr-2" />
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                           Aceptando...
                         </>
                       ) : (
                         <>
-                          <SettingsIcon className="h-4 w-4 mr-2" />
+                          <SettingsIcon className="h-4 w-4" />
                           Aceptar Cálculo ({selectedContratos.length})
                         </>
                       )}
@@ -804,25 +798,25 @@ export default function RevisarCalculoFacturaComponent({
               </CardContent>
             </CollapsibleContent>
           </Collapsible>
-        </Card>{' '}
+        </Card>
         {/* Resultados de la búsqueda */}
-        <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardHeader className="pb-4">
+        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
+          <CardHeader className="border-b border-slate-200 dark:border-slate-700">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+              <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
+                <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <CardTitle className="text-xl text-slate-900 dark:text-slate-100">
+                <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   Resultados de la búsqueda
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400">
+                <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
                   Listado de contratos y sus cálculos de facturación
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="px-6 pb-6">
+          <CardContent className="p-6">
             {isLoading ? (
               <div className="flex justify-center items-center h-40">
                 <div className="flex flex-col items-center gap-4">

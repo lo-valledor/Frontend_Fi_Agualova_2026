@@ -1,299 +1,98 @@
 import { useState, useEffect } from 'react';
-import { administracionService } from '~/services/administracionService';
-import api from '~/lib/api';
+import { mantencionService } from '~/services/mantencionService';
 import type {
-  Acometida,
-  ComboEmpalmes,
-  ComboNichos,
-  ComboSectores,
-  ContratosDisponibles,
-  GetClientes,
-  GetGiros,
-  GetRegiones,
-  GetContratos,
-  GetContratosClientes,
-  GetLimiteInvierno,
-  GetFechaActual,
-  GetMedidores,
-  GetCargoTipoContrato,
-  GetCondicionesContrato,
-  GeCombosConceptos,
-  GetCombosTarifas,
-  GetCombosTiposMedidor,
-  BuscarCargoFacturable,
-  Usuarios,
-} from '~/types/administracion';
-import type { Marca, Conceptos, Tarifas, TiposContrato } from '~/types/mantencion';
+  CiclosFacturacion,
+  Claves,
+  Conceptos,
+  ComboAsociadoConceptos,
+  Empalme,
+  Marca,
+  Nicho,
+  Parametro,
+  Sectores,
+  Tarifas,
+  TiposContrato,
+  Zonas,
+} from '~/types/mantencion';
 
-export function useAcometidasData() {
+export function useCiclosFacturacion() {
+  const [data, setData] = useState<CiclosFacturacion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getCiclosFacturacion();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useClaves() {
+  const [data, setData] = useState<Claves[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getClaves();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useConceptos() {
   const [data, setData] = useState<{
-    acometidas: Acometida[];
-    comboEmpalmes: ComboEmpalmes[];
-    comboNichos: ComboNichos[];
-    comboSectores: ComboSectores[];
-    contratosDisponibles: ContratosDisponibles[];
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getAcometidasData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  const refreshData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const result = await administracionService.getAcometidasData();
-
-      if (result.error) {
-        setError(result.error);
-      } else if (result.data) {
-        setData(result.data);
-      } else {
-        setError('No se pudieron cargar los datos');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return {
-    data,
-    loading,
-    error,
-    refreshData,
-  };
-}
-
-export function useClientesData() {
-  const [data, setData] = useState<{
-    clientes: GetClientes[];
-    giros: GetGiros[];
-    regiones: GetRegiones[];
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getClientesData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  return {
-    data,
-    loading,
-    error,
-  };
-}
-
-export function useContratosData() {
-  const [data, setData] = useState<{
-    contratos: GetContratos[];
-    regiones: GetRegiones[];
-    contratosClientes: GetContratosClientes[];
-    limiteInvierno: GetLimiteInvierno[];
-    fechaActual: GetFechaActual[];
-    tipoContrato: TiposContrato[];
-    tarifas: Tarifas[];
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getContratosData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  return {
-    data,
-    loading,
-    error,
-  };
-}
-
-export function useMedidoresData() {
-  const [data, setData] = useState<{
-    medidores: GetMedidores[];
-    marcas: Marca[];
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getMedidoresData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  return {
-    data,
-    loading,
-    error,
-  };
-}
-
-export function useUsuarios() {
-  const [data, setData] = useState<Usuarios[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getUsuarios();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  return {
-    data,
-    loading,
-    error,
-  };
-}
-
-export function useCargoTipoContrato() {
-  const [data, setData] = useState<GetCargoTipoContrato[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getCargoTipoContrato();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  return {
-    data,
-    loading,
-    error,
-  };
-}
-
-export function useCondicionesContrato() {
-  const [data, setData] = useState<{
-    condicionesContrato: GetCondicionesContrato[];
     conceptos: Conceptos[];
+    comboAsociadoConceptos: ComboAsociadoConceptos[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -304,7 +103,7 @@ export function useCondicionesContrato() {
         setLoading(true);
         setError(null);
 
-        const result = await administracionService.getCondicionesContratoData();
+        const result = await mantencionService.getConceptosData();
 
         if (result.error) {
           setError(result.error);
@@ -330,13 +129,8 @@ export function useCondicionesContrato() {
   };
 }
 
-export function useCargoFacturable() {
-  const [data, setData] = useState<{
-    cargos: BuscarCargoFacturable[];
-    conceptos: GeCombosConceptos[];
-    tarifas: GetCombosTarifas[];
-    tiposMedidor: GetCombosTiposMedidor[];
-  } | null>(null);
+export function useEmpalmes() {
+  const [data, setData] = useState<Empalme[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -346,7 +140,7 @@ export function useCargoFacturable() {
         setLoading(true);
         setError(null);
 
-        const result = await administracionService.getCargoFacturableData();
+        const result = await mantencionService.getEmpalmes();
 
         if (result.error) {
           setError(result.error);
@@ -372,70 +166,261 @@ export function useCargoFacturable() {
   };
 }
 
-export function useAdministracion() {
-  const [loadingState, setLoadingState] = useState({
-    createUsuario: { isLoading: false },
-    updateUsuario: { isLoading: false },
-    deleteUsuario: { isLoading: false },
-    fetchUsuarios: { isLoading: false },
-  });
+export function useMarcas() {
+  const [data, setData] = useState<Marca[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const createUsuario = async (userData: any) => {
-    setLoadingState(prev => ({ ...prev, createUsuario: { isLoading: true } }));
-    try {
-      const response = await api.post('/crear', userData);
-      return response.data;
-    } finally {
-      setLoadingState(prev => ({ ...prev, createUsuario: { isLoading: false } }));
-    }
-  };
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const updateUsuario = async (idUsuario: number, userData: any) => {
-    setLoadingState(prev => ({ ...prev, updateUsuario: { isLoading: true } }));
-    try {
-      const response = await api.put(`/actualizar/${idUsuario}`, userData);
-      return response.data;
-    } finally {
-      setLoadingState(prev => ({ ...prev, updateUsuario: { isLoading: false } }));
-    }
-  };
+        const result = await mantencionService.getMarcas();
 
-  const deleteUsuario = async (idUsuario: number) => {
-    setLoadingState(prev => ({ ...prev, deleteUsuario: { isLoading: true } }));
-    try {
-      const response = await api.delete(`/eliminar/${idUsuario}`);
-      return response.data;
-    } finally {
-      setLoadingState(prev => ({ ...prev, deleteUsuario: { isLoading: false } }));
-    }
-  };
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const fetchUsuarios = async () => {
-    setLoadingState(prev => ({ ...prev, fetchUsuarios: { isLoading: true } }));
-    try {
-      const response = await api.get('/listar');
-      return response.data;
-    } finally {
-      setLoadingState(prev => ({ ...prev, fetchUsuarios: { isLoading: false } }));
-    }
-  };
+    loadData();
+  }, []);
 
   return {
-    createUsuario,
-    updateUsuario,
-    deleteUsuario,
-    fetchUsuarios,
-    loadingState,
+    data,
+    loading,
+    error,
   };
 }
 
-export function useClientes() {
-  const getClienteByRut = async (rut: string) => {
-    const response = await api.get(`/cliente/buscar/${rut}`);
-    return response.data;
-  };
+export function useNichos() {
+  const [data, setData] = useState<Nicho[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getNichos();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   return {
-    getClienteByRut,
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useParametros() {
+  const [data, setData] = useState<Parametro[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getParametros();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useSectores() {
+  const [data, setData] = useState<Sectores[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getSectores();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useTarifas() {
+  const [data, setData] = useState<Tarifas[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getTarifas();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useTiposContratos() {
+  const [data, setData] = useState<TiposContrato[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getTiposContratos();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+}
+
+export function useZonas() {
+  const [data, setData] = useState<Zonas[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await mantencionService.getZonas();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
   };
 }
