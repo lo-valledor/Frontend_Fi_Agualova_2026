@@ -1,17 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { Zonas } from '~/types/mantencion';
-import { Edit, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { TableActions } from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (zona: Zonas) => void;
@@ -85,41 +76,13 @@ export const columns = ({
   {
     id: 'actions',
     header: 'Acciones',
-    cell: ({ row }) => {
-      const zona = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0 hover:bg-muted"
-              aria-label={`Acciones para zona ${zona.nombre}`}
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onEdit(zona)}
-              className="cursor-pointer"
-            >
-              <Edit className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(zona)}
-              className="cursor-pointer text-destructive focus:text-destructive"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
+    cell: ({ row }) => (
+      <TableActions
+        onEdit={() => onEdit(row.original)}
+        onDelete={() => onDelete(row.original)}
+        showView={false}
+        item={row.original}
+      />
+    ),
   },
 ];

@@ -1,92 +1,104 @@
-import api from '~/lib/api';
-import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import type {
-  Periodo,
-  Sector,
-  Clave,
-  Lectura,
-  MedidorNicho,
-} from '../types/monitor';
+import { useState, useEffect } from 'react';
+import { monitorService, type MonitorBasicData } from '~/services/monitorService';
+import type { Periodo, Sector } from '~/types/monitor';
 
-export type { Periodo, Sector, Clave, Lectura, MedidorNicho };
+export function useMonitorData() {
+  const [data, setData] = useState<MonitorBasicData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-// Hook optimizado que solo provee funciones utilitarias para operaciones específicas
-// La carga inicial de datos se hace via clientLoader siguiendo las mejores prácticas de React Router v7
-export function useMonitor() {
-  const [lecturas, setLecturas] = useState<Lectura[]>([]);
-  const [medidores, setMedidores] = useState<MedidorNicho[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-  const { logout } = useAuth();
+        const result = await monitorService.getBasicData();
 
-  const fetchLecturas = async (periodoId: string, sectorId: string) => {
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  const refreshData = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
 
-      const response = await api.get<Lectura[]>(
-        `/Lecturas?periodoId=${periodoId}&sectorId=${sectorId}`,
-      );
-      const lecturasData = Array.isArray(response.data) ? response.data : [];
-      setLecturas(lecturasData);
+      const result = await monitorService.getBasicData();
 
-      return lecturasData;
-    } catch (error: any) {
-      console.error('Error al cargar lecturas:', error);
-      setError(error instanceof Error ? error : new Error(String(error)));
-
-      // Si el error es de autenticación, redirigir a login
-      if (
-        error.response &&
-        (error.response.status === 401 || error.response.status === 403)
-      ) {
-        logout();
+      if (result.error) {
+        setError(result.error);
+      } else if (result.data) {
+        setData(result.data);
+      } else {
+        setError('No se pudieron cargar los datos');
       }
-
-      return [];
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchMedidores = async (periodoId: string, sectorId: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await api.get<MedidorNicho[]>(
-        `/Medidores?periodoId=${periodoId}&sectorId=${sectorId}`,
-      );
-      const medidoresData = Array.isArray(response.data) ? response.data : [];
-      setMedidores(medidoresData);
-
-      return medidoresData;
-    } catch (error: any) {
-      console.error('Error al cargar medidores:', error);
-      setError(error instanceof Error ? error : new Error(String(error)));
-
-      if (
-        error.response &&
-        (error.response.status === 401 || error.response.status === 403)
-      ) {
-        logout();
-      }
-
-      return [];
-    } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return {
-    lecturas,
-    medidores,
-    isLoading,
+    data,
+    loading,
     error,
-    fetchLecturas,
-    fetchMedidores,
+    refreshData,
+  };
+}
+
+export function useMonitorPeriodosAndSectores() {
+  const [data, setData] = useState<{
+    periodos: any[];
+    sectores: any[];
+    activePeriodoId: number | null;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await monitorService.getPeriodosAndSectores();
+
+        if (result.error) {
+          setError(result.error);
+        } else if (result.data) {
+          setData(result.data);
+        } else {
+          setError('No se pudieron cargar los datos');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
   };
 }
 

@@ -3,11 +3,7 @@ import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PreciosCargoComponent from '~/components/operaciones/precios-cargo/precios-cargo-component';
 import React from 'react';
 import type { Route } from './+types/precios-cargo';
-import api from '~/lib/api';
-import type {
-  PreciosCargoEnel,
-  PreciosCargoEnerlova,
-} from '~/types/operaciones';
+import { operacionesService } from '~/services/operacionesService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -21,25 +17,13 @@ const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
 const currentYear = currentDate.getFullYear().toString();
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  try {
-    const url = new URL(request.url);
-    const mes = url.searchParams.get('mes') || currentMonth;
-    const anio = url.searchParams.get('anio') || currentYear;
+  const url = new URL(request.url);
+  const mes = url.searchParams.get('mes') || currentMonth;
+  const anio = url.searchParams.get('anio') || currentYear;
 
-    // Carga paralela de datos iniciales
-    const [resTablaEnel, resTablaEnerlova] = await Promise.all([
-      api.get(`/consulta-precio-pago?mes=${mes}&año=${anio}`),
-      api.get(`/consulta-precio-pago-tabla`),
-    ]);
+  const result = await operacionesService.getPreciosCargoData(mes, anio);
 
-    return {
-      tablaEnel: resTablaEnel.data as PreciosCargoEnel[],
-      tablaEnerlova: resTablaEnerlova.data as PreciosCargoEnerlova[],
-      initialMes: mes,
-      initialAnio: anio,
-      error: null,
-    };
-  } catch (_error) {
+  if (result.error || !result.data) {
     return {
       tablaEnel: [],
       tablaEnerlova: [],
@@ -48,6 +32,14 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
       error: 'Error al cargar los datos',
     };
   }
+
+  return {
+    tablaEnel: result.data.tablaEnel,
+    tablaEnerlova: result.data.tablaEnerlova,
+    initialMes: mes,
+    initialAnio: anio,
+    error: null,
+  };
 }
 
 export default function PreciosCargo({ loaderData }: Route.ComponentProps) {

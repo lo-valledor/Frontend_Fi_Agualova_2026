@@ -2,8 +2,7 @@
 import React from 'react';
 import type { Route } from './+types/zonas';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import api from '~/lib/api';
-import type { Zonas } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
 import ZonasComponent from '~/components/mantencion/zonas/zonas-component';
 
 export function meta({}: Route.MetaArgs) {
@@ -14,27 +13,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarZona');
+  const result = await mantencionService.getZonas();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let zonas: Zonas[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: Zonas[] }).data)
-    ) {
-      zonas = (response.data as { data: Zonas[] }).data;
-    } else if (Array.isArray(response.data)) {
-      zonas = response.data;
-    }
-
-    return { zonas };
-  } catch {
-    throw new Response('Error al cargar las zonas', { status: 500 });
+  if (result.error || !result.data) {
+    return { zonas: [] };
   }
+
+  return { zonas: result.data };
 }
 
 export default function Zonas({ loaderData }: Route.ComponentProps) {

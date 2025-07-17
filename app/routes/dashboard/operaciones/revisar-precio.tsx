@@ -3,12 +3,8 @@ import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import RevisarPrecioComponent from '~/components/operaciones/revisar-precio/revisar-precio-component';
 import React, { useState, useCallback } from 'react';
 import type { Route } from './+types/revisar-precio';
-import api from '~/lib/api';
-import type {
-  PeriodoAbierto,
-  RevisarPrecioUno,
-  RevisarPrecioDos,
-} from '~/types/operaciones';
+import { operacionesService } from '~/services/operacionesService';
+import type { RevisarPrecioUno, RevisarPrecioDos } from '~/types/operaciones';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -18,63 +14,30 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({ request }: Route.ClientLoaderArgs) {
-  try {
-    const url = new URL(request.url);
-    const dia = url.searchParams.get('dia') || '15'; // Por defecto ciclo 15
+  const url = new URL(request.url);
+  const dia = url.searchParams.get('dia') || '15'; // Por defecto ciclo 15
 
-    // Carga paralela de datos
-    const [periodoAbierto, ciclosFacturacion] = await Promise.all([
-      api.get('/ConsultarPeriodoAbierto'),
-      api.get('/ciclos-facturacion-activos'),
-    ]);
+  const result = await operacionesService.getRevisarPrecioData(dia);
 
-    const dataPeriodoAbierto = periodoAbierto.data as PeriodoAbierto[];
-    const dataCiclosFacturacion = ciclosFacturacion.data as Array<{
-      diaFacturacion: string;
-      descripcion: string;
-    }>;
-
-    if (!dataPeriodoAbierto || dataPeriodoAbierto.length === 0) {
-      return {
-        dataPeriodoAbierto: [],
-        dataConsultarPreciosUno: [],
-        dataConsultarPreciosDos: [],
-        ciclosFacturacion: [],
-        dia,
-        error: 'No hay periodo abierto',
-      };
-    }
-
-    // Validar si el ciclo es válido para el mes actual
-    const mes = dataPeriodoAbierto[0].mes;
-    const anio = dataPeriodoAbierto[0].anio;
-
-    // Cargar datos de precios
-    const [resConsultarPreciosUno, resConsultarPreciosDos] = await Promise.all([
-      api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-      api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`),
-    ]);
-
-    return {
-      dataPeriodoAbierto,
-      dataConsultarPreciosUno:
-        resConsultarPreciosUno.data as RevisarPrecioUno[],
-      dataConsultarPreciosDos:
-        resConsultarPreciosDos.data as RevisarPrecioDos[],
-      ciclosFacturacion: dataCiclosFacturacion,
-      dia,
-      error: null,
-    };
-  } catch (_error) {
+  if (result.error || !result.data) {
     return {
       dataPeriodoAbierto: [],
       dataConsultarPreciosUno: [],
       dataConsultarPreciosDos: [],
       ciclosFacturacion: [],
       dia: '15',
-      error: 'Error al cargar los datos',
+      error: result.error || 'Error al cargar los datos',
     };
   }
+
+  return {
+    dataPeriodoAbierto: result.data.dataPeriodoAbierto,
+    dataConsultarPreciosUno: result.data.dataConsultarPreciosUno,
+    dataConsultarPreciosDos: result.data.dataConsultarPreciosDos,
+    ciclosFacturacion: result.data.ciclosFacturacion,
+    dia,
+    error: null,
+  };
 }
 
 export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
@@ -113,19 +76,19 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
         const anio = dataPeriodoAbierto[0].anio;
         const ciclo = nuevoCiclo || cicloSeleccionado;
 
-        // Cargar datos de precios
-        const [resConsultarPreciosUno, resConsultarPreciosDos] =
-          await Promise.all([
-            api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-            api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${ciclo}`),
-          ]);
+        const result = await operacionesService.getPreciosPorCiclo(
+          mes,
+          anio,
+          ciclo,
+        );
 
-        setDataConsultarPreciosUno(
-          resConsultarPreciosUno.data as RevisarPrecioUno[],
-        );
-        setDataConsultarPreciosDos(
-          resConsultarPreciosDos.data as RevisarPrecioDos[],
-        );
+        if (result.error || !result.data) {
+          setDataConsultarPreciosUno([]);
+          setDataConsultarPreciosDos([]);
+        } else {
+          setDataConsultarPreciosUno(result.data.preciosUno);
+          setDataConsultarPreciosDos(result.data.preciosDos);
+        }
       } finally {
         setIsLoadingPrecios(false);
       }

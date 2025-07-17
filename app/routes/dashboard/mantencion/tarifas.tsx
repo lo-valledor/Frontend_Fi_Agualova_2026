@@ -1,8 +1,7 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/tarifas';
-import type { Tarifas } from '~/types/mantencion';
-import api from '~/lib/api';
+import { mantencionService } from '~/services/mantencionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import TarifasComponent from '~/components/mantencion/tarifas/tarifas-component';
 
@@ -14,27 +13,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarTarifa');
+  const result = await mantencionService.getTarifas();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let tarifas: Tarifas[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: Tarifas[] }).data)
-    ) {
-      tarifas = (response.data as { data: Tarifas[] }).data;
-    } else if (Array.isArray(response.data)) {
-      tarifas = response.data;
-    }
-
-    return { tarifas };
-  } catch {
-    throw new Response('Error al cargar las tarifas', { status: 500 });
+  if (result.error || !result.data) {
+    return { tarifas: [] };
   }
+
+  return { tarifas: result.data };
 }
 
 export default function Tarifas({ loaderData }: Route.ComponentProps) {

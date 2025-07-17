@@ -28,7 +28,7 @@ export function useUserProfile(): UseUserProfileReturn {
       // Intentar obtener datos del usuario desde la API
       // Usar el endpoint de listar usuarios y filtrar por ID
       try {
-        const response = await api.get('/usuarios');
+        const response = await api.get('/listar');
         const usuarios = response.data as Usuarios[];
 
         // Buscar el usuario por ID
@@ -87,7 +87,7 @@ export function useUserProfile(): UseUserProfileReturn {
         // Intentar actualizar en la API
         try {
           const response = await api.put(
-            `/usuarios/actualizar/${userData.idUsuario}`,
+            `/actualizar/${userData.idUsuario}`,
             data,
           );
 

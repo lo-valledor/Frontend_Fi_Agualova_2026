@@ -3,9 +3,7 @@ import React from 'react';
 import CondicionesContratoComponent from '~/components/administracion/condiciones-contrato/condiciones-contrato-component';
 import type { Route } from './+types/condiciones-contrato';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import api from '~/lib/api';
-import type { GetCondicionesContrato } from '~/types/administracion';
-import type { Conceptos } from '~/types/mantencion';
+import { administracionService } from '~/services/administracionService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,44 +13,16 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientActionArgs) {
-  const resCondicionesContrato = await api.get(
-    'condicion-contrato/condicionContrato-Buscar',
-  );
-  const resConceptos = await api.get('buscarConceptos');
+  const result = await administracionService.getCondicionesContratoData();
 
-  let condicionesContrato: GetCondicionesContrato[] = [];
-  let conceptos: Conceptos[] = [];
-
-  if (
-    resCondicionesContrato.data &&
-    typeof resCondicionesContrato.data === 'object' &&
-    'data' in resCondicionesContrato.data &&
-    Array.isArray(
-      (resCondicionesContrato.data as { data: GetCondicionesContrato[] }).data,
-    )
-  ) {
-    condicionesContrato = (
-      resCondicionesContrato.data as { data: GetCondicionesContrato[] }
-    ).data;
-  } else if (Array.isArray(resCondicionesContrato.data)) {
-    condicionesContrato = resCondicionesContrato.data;
+  if (result.error || !result.data) {
+    return {
+      condicionesContrato: [],
+      conceptos: [],
+    };
   }
 
-  if (
-    resConceptos.data &&
-    typeof resConceptos.data === 'object' &&
-    'data' in resConceptos.data &&
-    Array.isArray((resConceptos.data as { data: Conceptos[] }).data)
-  ) {
-    conceptos = (resConceptos.data as { data: Conceptos[] }).data;
-  } else if (Array.isArray(resConceptos.data)) {
-    conceptos = resConceptos.data;
-  }
-
-  return {
-    condicionesContrato,
-    conceptos,
-  };
+  return result.data;
 }
 
 export default function CondicionesContrato({

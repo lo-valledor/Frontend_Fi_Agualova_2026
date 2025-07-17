@@ -3,8 +3,7 @@ import React from 'react';
 import type { Route } from './+types/tipos-contratos';
 import TiposContratosComponent from '~/components/mantencion/tipos-contratos/tipos-contratos-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import type { TiposContrato } from '~/types/mantencion';
-import api from '~/lib/api';
+import { mantencionService } from '~/services/mantencionService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,29 +13,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarTipoContrato');
+  const result = await mantencionService.getTiposContratos();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let tiposContratos: TiposContrato[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: TiposContrato[] }).data)
-    ) {
-      tiposContratos = (response.data as { data: TiposContrato[] }).data;
-    } else if (Array.isArray(response.data)) {
-      tiposContratos = response.data;
-    }
-
-    return { tiposContratos };
-  } catch {
-    throw new Response('Error al cargar los tipos de contratos', {
-      status: 500,
-    });
+  if (result.error || !result.data) {
+    return { tiposContratos: [] };
   }
+
+  return { tiposContratos: result.data };
 }
 
 export default function TiposContratos({ loaderData }: Route.ComponentProps) {

@@ -1,17 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Edit, MoreHorizontal, Trash2 } from 'lucide-react';
-import { Button } from '~/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
 import type { Empalme } from '~/types/mantencion';
+import { TableActions } from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (empalme: Empalme) => void;
@@ -92,41 +83,13 @@ export const columns = ({
   {
     id: 'actions',
     header: 'Acciones',
-    cell: ({ row }) => {
-      const empalme = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-8 w-8 p-0 hover:bg-muted"
-              aria-label={`Acciones para empalme ${empalme.codigo}`}
-            >
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => onEdit(empalme)}
-              className="cursor-pointer"
-            >
-              <Edit className="mr-2 h-4 w-4" />
-              Editar
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onDelete(empalme)}
-              className="cursor-pointer text-destructive focus:text-destructive"
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-    enableSorting: false,
-    enableHiding: false,
+    cell: ({ row }) => (
+      <TableActions
+        onEdit={() => onEdit(row.original)}
+        onDelete={() => onDelete(row.original)}
+        showView={false}
+        item={row.original}
+      />
+    ),
   },
 ];

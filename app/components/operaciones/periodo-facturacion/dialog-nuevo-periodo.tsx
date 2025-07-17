@@ -18,7 +18,6 @@ import {
 } from '~/components/ui/select';
 import { toast } from 'sonner';
 import { CalendarDaysIcon, PlusCircleIcon, Eraser } from 'lucide-react';
-import { useOperaciones } from '~/hooks/use-operaciones';
 import DialogAbrirPeriodo from './dialog-abrir-periodo';
 import type { Anio } from '~/types/operaciones';
 const months = [
@@ -53,7 +52,7 @@ export default function DialogNuevoPeriodo({
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [isOpeningPeriodo, setIsOpeningPeriodo] = useState(false);
 
-  const { consultaAnio, isLoading } = useOperaciones();
+  // No necesitamos el hook ya que years viene como prop
 
   const handleClearFilters = () => {
     setSelectedMonth('');
@@ -129,23 +128,14 @@ export default function DialogNuevoPeriodo({
                   <SelectValue placeholder="Selecciona el Año" />
                 </SelectTrigger>
                 <SelectContent>
-                  {consultaAnio && consultaAnio.length > 0
-                    ? consultaAnio.map((year) => (
-                        <SelectItem
-                          key={year.idaño}
-                          value={year.año.toString()}
-                        >
-                          {year.año}
-                        </SelectItem>
-                      ))
-                    : years.map((year) => (
-                        <SelectItem
-                          key={year.idaño}
-                          value={year.año.toString()}
-                        >
-                          {year.año}
-                        </SelectItem>
-                      ))}
+                  {years.map((year) => (
+                    <SelectItem
+                      key={year.idaño}
+                      value={year.año.toString()}
+                    >
+                      {year.año}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -155,7 +145,6 @@ export default function DialogNuevoPeriodo({
             <Button
               onClick={handleClearFilters}
               variant="outline"
-              disabled={isLoading}
               className="gap-2"
             >
               <Eraser className="h-4 w-4" />
@@ -171,7 +160,7 @@ export default function DialogNuevoPeriodo({
             <Button
               variant="default"
               onClick={handleOpenPeriodo}
-              disabled={isLoading || !selectedMonth || !selectedYear}
+              disabled={!selectedMonth || !selectedYear}
               className="gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600"
             >
               <PlusCircleIcon className="h-4 w-4" />

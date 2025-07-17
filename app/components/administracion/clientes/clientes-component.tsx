@@ -92,7 +92,7 @@ export default function ClientesComponent({
       );
       setEditingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
-      setSelectedCliente(clienteDetallado);
+      setSelectedCliente(clienteDetallado as GetClientesByRut);
       setModalMode('edit');
       setIsModalOpen(true);
     } catch (error) {
@@ -108,7 +108,7 @@ export default function ClientesComponent({
       trackDataAction('Ver detalles', 'Clientes', `Cliente: ${cliente.rut}`);
       setDetailingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
-      setDetailedCliente(clienteDetallado);
+      setDetailedCliente(clienteDetallado as GetClientesByRut);
       setIsDetailsOpen(true);
     } catch (error) {
       console.error('Error al cargar detalles del cliente:', error);

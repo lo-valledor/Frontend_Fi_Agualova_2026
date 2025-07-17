@@ -3,9 +3,7 @@ import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import AbrirPeriodoFacturacion from '~/components/operaciones/periodo-facturacion/periodo-facturacion-component';
 import React from 'react';
 import type { Route } from './+types/periodo-facturacion';
-import api from '~/lib/api';
-import type { Anio } from '~/types/operaciones';
-import type { Periodos } from '~/types/operaciones';
+import { operacionesService } from '~/services/operacionesService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,11 +13,16 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  const resYears = await api.get('/consulta-año');
-  const resPeriodos = await api.get('/consulta-periodo');
-  const years = resYears.data as Anio[];
-  const periodos = resPeriodos.data as Periodos[];
-  return { years, periodos };
+  const result = await operacionesService.getPeriodoFacturacionData();
+
+  if (result.error || !result.data) {
+    return {
+      years: [],
+      periodos: [],
+    };
+  }
+
+  return result.data;
 }
 
 export default function PeriodoFacturacion({

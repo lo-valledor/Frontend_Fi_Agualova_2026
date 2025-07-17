@@ -1,8 +1,7 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/conceptos';
-import api from '~/lib/api';
-import type { ComboAsociadoConceptos, Conceptos } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import ConceptosComponent from '~/components/mantencion/conceptos/conceptos-component';
 
@@ -14,48 +13,16 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarConceptos');
-    const resComboAsociadoConceptos = await api.get(
-      '/combo-asociado-conoceptos',
-    );
+  const result = await mantencionService.getConceptosData();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let conceptos: Conceptos[] = [];
-    let comboAsociadoConceptos: ComboAsociadoConceptos[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: Conceptos[] }).data)
-    ) {
-      conceptos = (response.data as { data: Conceptos[] }).data;
-    } else if (Array.isArray(response.data)) {
-      conceptos = response.data;
-    }
-
-    // Procesar respuesta del combo asociado
-    if (
-      resComboAsociadoConceptos.data &&
-      typeof resComboAsociadoConceptos.data === 'object' &&
-      'data' in resComboAsociadoConceptos.data &&
-      Array.isArray(
-        (resComboAsociadoConceptos.data as { data: ComboAsociadoConceptos[] })
-          .data,
-      )
-    ) {
-      comboAsociadoConceptos = (
-        resComboAsociadoConceptos.data as { data: ComboAsociadoConceptos[] }
-      ).data;
-    } else if (Array.isArray(resComboAsociadoConceptos.data)) {
-      comboAsociadoConceptos = resComboAsociadoConceptos.data;
-    }
-
-    return { conceptos, comboAsociadoConceptos };
-  } catch (_error) {
-    throw new Response('Error al cargar los conceptos', { status: 500 });
+  if (result.error || !result.data) {
+    return {
+      conceptos: [],
+      comboAsociadoConceptos: []
+    };
   }
+
+  return result.data;
 }
 
 export default function Conceptos({ loaderData }: Route.ComponentProps) {

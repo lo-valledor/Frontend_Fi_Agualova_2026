@@ -3,14 +3,8 @@ import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PrepararLecturasComponent from '~/components/operaciones/preparar-lecturas/preparar-lecturas-component';
 import React, { useState, useCallback } from 'react';
 import type { Route } from './+types/preparar-lecturas';
-import api from '~/lib/api';
-import type {
-  PeriodoAbierto,
-  ValidarSectoresPendientes,
-  ConsultarSectores,
-  OpcionesPrepararLecturas,
-  ConsultarAsignacionSectores,
-} from '~/types/operaciones';
+import { operacionesService } from '~/services/operacionesService';
+import type { ConsultarAsignacionSectores } from '~/types/operaciones';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -20,22 +14,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const [periodoAbierto, lecturasPendientes, sectores, opcionesPreparar] =
-      await Promise.all([
-        api.get('/ConsultarPeriodoAbierto'),
-        api.get('/validar-lecturas-pendientes'),
-        api.get('/consultar-sectores'),
-        api.get('/opciones-preparar-lecturas', { params: { control: '1' } }),
-      ]);
+  const result = await operacionesService.getPrepararLecturasData();
 
-    return {
-      periodoAbierto: periodoAbierto.data as PeriodoAbierto[],
-      lecturasPendientes: lecturasPendientes.data as ValidarSectoresPendientes,
-      sectores: sectores.data as ConsultarSectores[],
-      opcionesPreparar: opcionesPreparar.data as OpcionesPrepararLecturas[],
-    };
-  } catch (_error) {
+  if (result.error || !result.data) {
     return {
       periodoAbierto: null,
       lecturasPendientes: null,
@@ -43,6 +24,8 @@ export async function clientLoader() {
       opcionesPreparar: null,
     };
   }
+
+  return result.data;
 }
 
 export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
@@ -69,18 +52,15 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
 
       setIsLoadingAsignacion(true);
       try {
-        const params = new URLSearchParams();
-        params.append('cicloFacturable', cicloFacturable);
-        params.append('periodo', periodo);
+        const result = await operacionesService.getAsignacionSectores(
+          cicloFacturable,
+          periodo,
+        );
 
-        const response = await api.get('/consultar-asignacion-sectores', {
-          params,
-        });
-
-        if (response.data && Array.isArray(response.data)) {
-          setAsignacionSectores(response.data as ConsultarAsignacionSectores[]);
-        } else {
+        if (result.error || !result.data) {
           setAsignacionSectores([]);
+        } else {
+          setAsignacionSectores(result.data);
         }
       } catch (error) {
         console.error('Error al recargar asignación de sectores:', error);

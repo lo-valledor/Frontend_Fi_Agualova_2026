@@ -9,7 +9,6 @@ import {
 } from 'react-router';
 import React, { useEffect } from 'react';
 
-import type { Route } from './+types/root';
 import './app.css';
 import { ThemeProvider } from './components/theme-provider';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
@@ -17,7 +16,7 @@ import { AuthProvider } from './context/AuthContext';
 import { Toaster } from 'sonner';
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext';
 
-export const links: Route.LinksFunction = () => [
+export const links = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
     rel: 'preconnect',
@@ -81,7 +80,7 @@ export default function App() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error }: { error: unknown }) {
   let message = '¡Ups!';
   let details = 'Ha ocurrido un error inesperado.';
   let stack: string | undefined;

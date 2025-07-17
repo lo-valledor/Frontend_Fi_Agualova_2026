@@ -2,11 +2,7 @@
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CorteReposicionComponent from '~/components/operaciones/corte-reposicion/corte-reposicion-component';
 import type { Route } from './+types/corte-reposicion';
-import type {
-  ConsultarMantenedorRevisionCorte,
-  TotalesCorteReposicion,
-} from '~/types/operaciones';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -16,12 +12,16 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader({}: Route.ClientActionArgs) {
-  const res = await api.get('consulta-registros-revision?acometida=0');
-  const resCorte = await api.get('consulta-mantenedor-revision-corte');
-  return {
-    totalesData: res.data as TotalesCorteReposicion[],
-    mantenedorCorteData: resCorte.data as ConsultarMantenedorRevisionCorte[],
-  };
+  const result = await operacionesService.getCorteReposicionData();
+
+  if (result.error || !result.data) {
+    return {
+      totalesData: [],
+      mantenedorCorteData: [],
+    };
+  }
+
+  return result.data;
 }
 
 export default function CorteReposicion({ loaderData }: Route.ComponentProps) {

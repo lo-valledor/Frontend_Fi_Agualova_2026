@@ -1,10 +1,9 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
 import type { Route } from './+types/claves';
-import api from '~/lib/api';
+import { mantencionService } from '~/services/mantencionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import ClavesComponent from '~/components/mantencion/claves/claves-component';
-import type { Claves } from '~/types/mantencion';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,27 +13,13 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  try {
-    const response = await api.get('/buscarClaves');
+  const result = await mantencionService.getClaves();
 
-    // Manejar diferentes formatos de respuesta de la API
-    let claves: Claves[] = [];
-
-    if (
-      response.data &&
-      typeof response.data === 'object' &&
-      'data' in response.data &&
-      Array.isArray((response.data as { data: Claves[] }).data)
-    ) {
-      claves = (response.data as { data: Claves[] }).data;
-    } else if (Array.isArray(response.data)) {
-      claves = response.data;
-    }
-
-    return { claves };
-  } catch (_error) {
-    throw new Response('Error al cargar las claves', { status: 500 });
+  if (result.error || !result.data) {
+    return { claves: [] };
   }
+
+  return { claves: result.data };
 }
 
 export default function Claves({ loaderData }: Route.ComponentProps) {
