@@ -472,6 +472,24 @@ export interface ModificarSubempalmeProps {
   subempalmeId: number;
 }
 
+export interface GetMedidoresSubempalmes {
+  id: number;
+  codigo: string;
+  ubicacion: string;
+  contratoId: number;
+  descripcionEmpalme: string;
+  descripcionNicho: string;
+}
+
+export interface SubempalmeOption {
+  id: number;
+  codigo: string;
+  ubicacion: string;
+  contratoId: number;
+  descripcionEmpalme: string;
+  descripcionNicho: string;
+}
+
 export interface MedidorSubempalmeProps {
   ubicacion: string;
   codigoAcometida: string;

@@ -24,6 +24,12 @@ export async function clientLoader({}: Route.ClientActionArgs) {
       fechaActual: [],
       tipoContrato: [],
       tarifas: [],
+      contratoId: [],
+      contratante: [],
+      propietario: [],
+      local: [],
+      madres: [],
+      comuna: [],
     };
   }
 
@@ -39,6 +45,11 @@ export default function Contratos({ loaderData }: Route.ComponentProps) {
     fechaActual,
     tipoContrato,
     tarifas,
+    contratante,
+    propietario,
+    local,
+    madres,
+    comuna,
   } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Contratos' }];
   return (
@@ -52,6 +63,11 @@ export default function Contratos({ loaderData }: Route.ComponentProps) {
         fechaActual={fechaActual}
         tipoContrato={tipoContrato}
         tarifas={tarifas}
+        contratante={contratante}
+        propietario={propietario}
+        local={local}
+        madres={madres}
+        comuna={comuna}
       />
     </div>
   );

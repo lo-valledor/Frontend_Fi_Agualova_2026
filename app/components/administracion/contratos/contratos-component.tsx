@@ -7,11 +7,16 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
 import type {
+  ContratanteProps,
   ContratoFormData,
+  GetComunas,
   GetContratos,
   GetContratosClientes,
   GetFechaActual,
   GetLimiteInvierno,
+  GetLocal,
+  GetMadres,
+  GetPropietario,
   GetRegiones,
 } from '~/types/administracion';
 import type { Tarifas, TiposContrato } from '~/types/mantencion';
@@ -30,6 +35,11 @@ export default function ContratosComponent({
   contratos,
   tipoContrato,
   tarifas,
+  contratante,
+  propietario,
+  local,
+  madres,
+  comuna,
 }: {
   contratos: GetContratos[];
   regiones: GetRegiones[];
@@ -38,6 +48,11 @@ export default function ContratosComponent({
   fechaActual: GetFechaActual[];
   tipoContrato: TiposContrato[];
   tarifas: Tarifas[];
+  contratante: ContratanteProps[];
+  propietario: GetPropietario[];
+  local: GetLocal[];
+  madres: GetMadres[];
+  comuna: GetComunas[];
 }) {
   const [contracts, setContracts] = useState<GetContratos[]>(contratos);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -103,31 +118,44 @@ export default function ContratosComponent({
   };
 
   const handleSubmitContract = (formData: ContratoFormData) => {
-    if (modalMode === 'add') {
-      const newContract: GetContratos = {
-        codigoContrato: `CTR-2024-${String(contracts.length + 1).padStart(3, '0')}`,
-        acometida: `ACO-${String(contracts.length + 1).padStart(3, '0')}`,
-        ...formData,
-        fechaInicio: new Date(formData.fechaInicio).toISOString(),
-        fechaTermino: formData.fechaTermino
-          ? new Date(formData.fechaTermino).toISOString()
-          : '',
-      };
-      setContracts(prev => [...prev, newContract]);
-    } else if (selectedContract) {
-      setContracts(prev =>
-        prev.map(contract =>
-          contract.codigoContrato === selectedContract.codigoContrato
-            ? {
-                ...contract,
-                ...formData,
-                fechaInicio: new Date(formData.fechaInicio).toISOString(),
-                fechaTermino: formData.fechaTermino
-                  ? new Date(formData.fechaTermino).toISOString()
-                  : '',
-              }
-            : contract
-        )
+    // Validar que fechaInicio no esté vacío
+    if (!formData.fechaInicio) {
+      console.error('Fecha de inicio es obligatoria');
+      return;
+    }
+
+    try {
+      if (modalMode === 'add') {
+        const newContract: GetContratos = {
+          codigoContrato: `CTR-2024-${String(contracts.length + 1).padStart(3, '0')}`,
+          acometida: `ACO-${String(contracts.length + 1).padStart(3, '0')}`,
+          ...formData,
+          fechaInicio: new Date(formData.fechaInicio).toISOString(),
+          fechaTermino: formData.fechaTermino
+            ? new Date(formData.fechaTermino).toISOString()
+            : '',
+        };
+        setContracts(prev => [...prev, newContract]);
+      } else if (selectedContract) {
+        setContracts(prev =>
+          prev.map(contract =>
+            contract.codigoContrato === selectedContract.codigoContrato
+              ? {
+                  ...contract,
+                  ...formData,
+                  fechaInicio: new Date(formData.fechaInicio).toISOString(),
+                  fechaTermino: formData.fechaTermino
+                    ? new Date(formData.fechaTermino).toISOString()
+                    : '',
+                }
+              : contract
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error al procesar las fechas:', error);
+      alert(
+        'Error al procesar las fechas. Verifica que las fechas sean válidas.'
       );
     }
   };
@@ -229,6 +257,11 @@ export default function ContratosComponent({
         mode={modalMode}
         tipoContrato={tipoContrato}
         tarifas={tarifas}
+        contratante={contratante}
+        propietario={propietario}
+        local={local}
+        madres={madres}
+        comuna={comuna}
       />
 
       <DeleteConfirmationDialog

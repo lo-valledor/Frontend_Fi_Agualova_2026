@@ -1,23 +1,20 @@
 /* eslint-disable unused-imports/no-unused-vars */
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+import { useNavigate } from 'react-router';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
+import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import api from '~/lib/api';
-import type {
-  BuscarCargoFacturable,
-  CargoTipoContratoEditor,
-  GetCargoTipoContrato,
-  GetCondicionesContrato,
-} from '~/types/administracion';
-import type { TiposContrato } from '~/types/mantencion';
+import type { GetCargoTipoContrato } from '~/types/administracion';
 
 import { columns } from './columns';
 import { DeleteDialog } from './delete-dialog';
-import { FormModal } from './form-modal';
 
 export default function CargoTipoContratoComponent({
   cargoTipoContrato: initialData,
@@ -32,39 +29,11 @@ export default function CargoTipoContratoComponent({
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
-
-  // State for combo/select data
-  const [tiposContrato, setTiposContrato] = useState<TiposContrato[]>([]);
-  const [cargos, setCargos] = useState<BuscarCargoFacturable[]>([]);
-  const [condiciones, setCondiciones] = useState<GetCondicionesContrato[]>([]);
-  const [editorData, setEditorData] = useState<CargoTipoContratoEditor | null>(
-    null
-  );
+  const router = useNavigate();
 
   useEffect(() => {
     setData(initialData);
   }, [initialData]);
-
-  // Fetch data for the form selects
-  useEffect(() => {
-    const fetchFormData = async () => {
-      try {
-        const [tiposContratoRes, cargosRes, condicionesRes] = await Promise.all(
-          [
-            api.get('tipoContrato/combo'),
-            api.get('buscarCargoFacturable'),
-            api.get('condicionesContrato/combo'),
-          ]
-        );
-        setTiposContrato(tiposContratoRes.data as TiposContrato[]);
-        setCargos(cargosRes.data as BuscarCargoFacturable[]);
-        setCondiciones(condicionesRes.data as GetCondicionesContrato[]);
-      } catch (_error) {
-        toast.error('Error al cargar los datos para el formulario.');
-      }
-    };
-    fetchFormData();
-  }, []);
 
   const refetchData = async () => {
     setIsLoading(true);
@@ -87,7 +56,9 @@ export default function CargoTipoContratoComponent({
   };
 
   const handleEdit = async (item: GetCargoTipoContrato) => {
-    toast.info('Funcionalidad deshabilitada temporalmente');
+    router(
+      `/dashboard/administracion/cargo-tipo-contrato/edit/${item.tipoContratoId}`
+    );
     // setSelectedItem(item);
     // setModalMode('edit');
     // setIsModalOpen(true);
@@ -131,17 +102,20 @@ export default function CargoTipoContratoComponent({
   return (
     <div className='container mx-auto p-3 md:p-6 space-y-6'>
       <div className='flex items-center justify-between'>
-        <div>
-          <h2 className='text-2xl font-bold tracking-tight'>
-            Cargo Tipo Contrato
-          </h2>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Cargo Tipo Contrato
+            </h1>
+          </div>
         </div>
-        {/* Botón de añadir deshabilitado temporalmente
-        <Button onClick={handleAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          Añadir
+        <Button
+          onClick={handleAdd}
+          className='bg-sky-600 hover:bg-sky-700 text-white'
+        >
+          <Plus className='mr-2 h-4 w-4' />
+          Agregar Cargo Tipo Contrato
         </Button>
-        */}
       </div>
       <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
         <CardContent className='relative'>
@@ -157,17 +131,6 @@ export default function CargoTipoContratoComponent({
         </CardContent>
       </Card>
 
-      <FormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
-        mode={modalMode}
-        tiposContrato={tiposContrato}
-        cargos={cargos}
-        condiciones={condiciones}
-        initialData={editorData}
-        selectedItem={selectedItem}
-      />
       <DeleteDialog
         isOpen={isDeleteDialogOpen}
         onClose={() => setIsDeleteDialogOpen(false)}

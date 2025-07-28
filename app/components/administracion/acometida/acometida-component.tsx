@@ -1,19 +1,13 @@
 import { Download, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import api from '~/lib/api';
 import type {
   Acometida,
@@ -196,14 +190,8 @@ export default function AcometidaComponent({
       </div>
 
       {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Acometidas</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todas las acometidas registradas en el sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable
             columns={columns({
               onEdit: handleEditAcometida,

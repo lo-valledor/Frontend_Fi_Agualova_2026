@@ -2,9 +2,13 @@ import api from '~/lib/api';
 import type {
   Acometida,
   BuscarCargoFacturable,
+  CargoTipoContratoEditor,
+  CargoTipoDetalle,
+  CargoTipoListbox,
   ComboEmpalmes,
   ComboNichos,
   ComboSectores,
+  ContratanteProps,
   ContratosDisponibles,
   GeCombosConceptos,
   GetCargoTipoContrato,
@@ -18,7 +22,10 @@ import type {
   GetFechaActual,
   GetGiros,
   GetLimiteInvierno,
+  GetLocal,
+  GetMadres,
   GetMedidores,
+  GetPropietario,
   GetRegiones,
   Usuarios,
 } from '~/types/administracion';
@@ -146,6 +153,11 @@ class AdministracionService {
       fechaActual: GetFechaActual[];
       tipoContrato: TiposContrato[];
       tarifas: Tarifas[];
+      contratante: ContratanteProps[];
+      propietario: GetPropietario[];
+      local: GetLocal[];
+      madres: GetMadres[];
+      comuna: GetComunas[];
     }>
   > {
     try {
@@ -157,6 +169,11 @@ class AdministracionService {
         resFechaActual,
         resTipoContrato,
         resTarifas,
+        resContratante,
+        resPropietario,
+        resLocal,
+        resMadre,
+        resComuna,
       ] = await Promise.all([
         api.get('contrato/buscar'),
         api.get('region/listar'),
@@ -165,6 +182,11 @@ class AdministracionService {
         api.get('util/fecha-actual'),
         api.get('buscarTipoContrato'),
         api.get('buscarTarifa'),
+        api.get('contratante/existe'),
+        api.get('propietario/buscar'),
+        api.get('local/buscar'),
+        api.get('contrato/madres/buscar'),
+        api.get('comuna/por-region'),
       ]);
 
       return {
@@ -177,6 +199,11 @@ class AdministracionService {
           fechaActual: resFechaActual.data as GetFechaActual[],
           tipoContrato: resTipoContrato.data as TiposContrato[],
           tarifas: resTarifas.data as Tarifas[],
+          contratante: resContratante.data as ContratanteProps[],
+          propietario: resPropietario.data as GetPropietario[],
+          local: resLocal.data as GetLocal[],
+          madres: resMadre.data as GetMadres[],
+          comuna: resComuna.data as GetComunas[],
         },
         error: null,
       };
@@ -246,6 +273,68 @@ class AdministracionService {
       const response = await api.get('cargoTipoContrato-buscar');
       return {
         data: response.data as GetCargoTipoContrato[],
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido',
+      };
+    }
+  }
+
+  /**
+   * Obtiene datos completos de cargo tipo contrato por ID
+   */
+  async getCargoTipoContratoById(cargoTipoContratoId: number): Promise<
+    AdministracionServiceResponse<{
+      editar: CargoTipoContratoEditor;
+      detalle: CargoTipoDetalle[];
+      listbox: CargoTipoListbox[];
+      conceptos: GeCombosConceptos[];
+      tarifas: GetCombosTarifas[];
+      tiposMedidor: GetCombosTiposMedidor[];
+      condicionesContrato: GetCondicionesContrato[];
+      cargos: BuscarCargoFacturable[];
+    }>
+  > {
+    try {
+      const [
+        responseEditar,
+        responseDetalle,
+        responseListbox,
+        responseConceptos,
+        responseTarifas,
+        responseTiposMedidor,
+        responseCondicionesContrato,
+        responseCargos,
+      ] = await Promise.all([
+        api.get(`cargoTipoContrato-editar/${cargoTipoContratoId}`),
+        api.get(`cargoTipoContrato-detalle/${cargoTipoContratoId}`),
+        api.get(`cargoTipoContrato-listbox/${cargoTipoContratoId}`),
+        api.get('combos/conceptos'),
+        api.get('combos/tarifas'),
+        api.get('combos/tipos-medidor'),
+        api.get('condicion-contrato/condicionContrato-Buscar'),
+        api.get('buscarCargoFacturable'),
+      ]);
+
+      return {
+        data: {
+          editar: responseEditar.data as CargoTipoContratoEditor,
+          detalle: responseDetalle.data as CargoTipoDetalle[],
+          listbox: responseListbox.data as CargoTipoListbox[],
+          conceptos:
+            this.processApiResponse<GeCombosConceptos>(responseConceptos),
+          tarifas: this.processApiResponse<GetCombosTarifas>(responseTarifas),
+          tiposMedidor:
+            this.processApiResponse<GetCombosTiposMedidor>(
+              responseTiposMedidor
+            ),
+          condicionesContrato:
+            responseCondicionesContrato.data as GetCondicionesContrato[],
+          cargos: responseCargos.data as BuscarCargoFacturable[],
+        },
         error: null,
       };
     } catch (error) {

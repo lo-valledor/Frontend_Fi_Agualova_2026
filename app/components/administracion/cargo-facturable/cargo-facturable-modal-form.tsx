@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import Select, { type StylesConfig } from 'react-select';
@@ -65,8 +65,8 @@ interface CargoFacturableModalFormProps {
 
 const tiposOptions = [
   { value: 'Base CH', label: 'Base CH' },
-  { value: 'Cargo Fact.', label: 'Cargo Fact.' },
-  { value: 'Condición', label: 'Condición' },
+  { value: 'Cargo Fact', label: 'Cargo Fact' },
+  { value: 'Condicion', label: 'Condición' },
 ];
 
 const fijoVariableOptions = [
@@ -153,19 +153,34 @@ export default function CargoFacturableModalForm({
 
         const mapearTipo = (valorApi: string): string => {
           if (!valorApi) return '';
+
           const valorTrimmed = String(valorApi).trim().toLowerCase();
 
+          // Mapeo por números
           if (valorTrimmed === '1' || valorTrimmed === 'base ch')
             return 'Base CH';
-          if (valorTrimmed === '2' || valorTrimmed === 'cargo fact.')
-            return 'Cargo Fact.';
+          if (
+            valorTrimmed === '2' ||
+            valorTrimmed === 'cargo fact' ||
+            valorTrimmed === 'cargo fact.'
+          )
+            return 'Cargo Fact';
           if (valorTrimmed === '3' || valorTrimmed === 'condición')
             return 'Condición';
+          if (valorTrimmed === '4' || valorTrimmed === 'cargo fijo mensual')
+            return 'Cargo Fijo mensual';
 
+          // Si el valor ya es uno de los valores exactos, devolverlo
+          if (tiposOptions.some(option => option.value === valorApi)) {
+            return valorApi;
+          }
+
+          // Buscar coincidencia exacta en las opciones (case insensitive)
           const foundOption = tiposOptions.find(
-            option => option.label.toLowerCase() === valorTrimmed
+            option => option.value.toLowerCase() === valorTrimmed
           );
-          return foundOption ? foundOption.value : '';
+
+          return foundOption ? foundOption.value : valorApi;
         };
 
         const normalizeAndFind = (
@@ -189,11 +204,13 @@ export default function CargoFacturableModalForm({
           return found?.id || 0;
         };
 
+        const tipoMapeado = mapearTipo(cargo.tipo || '');
+
         form.reset({
           cuenta: cargo.cuenta || '',
           descripcion: cargo.descripcion || '',
           codigo: cargo.codigoEnerlova || '',
-          tipo: mapearTipo(cargo.tipo || ''),
+          tipo: tipoMapeado,
           fijoVariable: mapearFijoVariable(cargo.fijoVariable || ''),
           periodicoEventual: mapearPeriodicoEventual(
             cargo.periodicoEventual || ''
@@ -226,10 +243,12 @@ export default function CargoFacturableModalForm({
         switch (tipoString) {
           case 'Base CH':
             return 1;
-          case 'Cargo Fact.':
+          case 'Cargo Fact':
             return 2;
           case 'Condición':
             return 3;
+          case 'Cargo Fijo mensual':
+            return 4;
           default:
             return 1;
         }

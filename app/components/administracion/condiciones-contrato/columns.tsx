@@ -1,18 +1,10 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Edit, Eye, Loader2, MoreHorizontal } from 'lucide-react';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import type { GetCondicionesContrato } from '~/types/administracion';
+
+import { TableActions } from '../../data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (condicionContrato: GetCondicionesContrato) => void;
@@ -98,40 +90,13 @@ export const columns = ({
   {
     id: 'actions',
     header: 'Acciones',
-    cell: ({ row }) => {
-      const condicionContrato = row.original;
-      const isEditing = editingCondicionContrato === condicionContrato.id;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='ghost' className='h-8 w-8 p-0'>
-              <span className='sr-only'>Abrir menú</span>
-              <MoreHorizontal className='h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onView(condicionContrato)}>
-              <Eye className='mr-2 h-4 w-4' />
-              Ver
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => onEdit(condicionContrato)}
-              disabled={isEditing}
-              className={isEditing ? 'opacity-50 cursor-not-allowed' : ''}
-            >
-              {isEditing ? (
-                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              ) : (
-                <Edit className='mr-2 h-4 w-4' />
-              )}
-              {isEditing ? 'Cargando...' : 'Editar'}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <TableActions
+        onEdit={() => onEdit(row.original)}
+        onView={() => onView(row.original)}
+        showView={true}
+        item={row.original}
+      />
+    ),
   },
 ];

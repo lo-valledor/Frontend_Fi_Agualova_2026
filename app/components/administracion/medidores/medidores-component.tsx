@@ -1,13 +1,14 @@
 import { Download, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import api from '~/lib/api';
+import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
 import type {
   ActualizarMedidorProps,
   CrearMedidorProps,
@@ -29,6 +30,7 @@ export default function MedidoresComponent({
   const [medidores, setMedidores] = useState<GetMedidores[]>(initialMedidores);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isAsociarModalOpen, setIsAsociarModalOpen] = useState(false);
   const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(
     null
   );
@@ -69,6 +71,11 @@ export default function MedidoresComponent({
     setSelectedMedidor(medidor);
     setModalMode('edit');
     setIsModalOpen(true);
+  };
+
+  const handleAsociarSubempalme = (medidor: GetMedidores) => {
+    setSelectedMedidor(medidor);
+    setIsAsociarModalOpen(true);
   };
 
   const handleSubmit = async (
@@ -222,7 +229,10 @@ export default function MedidoresComponent({
             </div>
           )}
           <DataTable
-            columns={columns({ onEdit: handleEdit })}
+            columns={columns({
+              onEdit: handleEdit,
+              onAsociarSubempalme: handleAsociarSubempalme,
+            })}
             data={medidores}
           />
         </CardContent>
@@ -247,6 +257,15 @@ export default function MedidoresComponent({
           onClose={() => setIsDeleteDialogOpen(false)}
           onConfirm={handleConfirmDelete}
           medidor={selectedMedidor}
+        />
+      )}
+
+      {isAsociarModalOpen && (
+        <AsociarSubempalmeModal
+          isOpen={isAsociarModalOpen}
+          onClose={() => setIsAsociarModalOpen(false)}
+          medidor={selectedMedidor}
+          onSuccess={refetchMedidores}
         />
       )}
     </div>

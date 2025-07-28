@@ -77,10 +77,13 @@ export default [
             'cargo-facturable',
             'routes/dashboard/administracion/cargo-facturable.tsx'
           ),
-          route(
-            'cargo-tipo-contrato',
-            'routes/dashboard/administracion/cargo-tipo-contrato.tsx'
-          ),
+          ...prefix('cargo-tipo-contrato', [
+            index('routes/dashboard/administracion/cargo-tipo-contrato.tsx'),
+            route(
+              'edit/:cargoTipoContratoId',
+              'routes/dashboard/administracion/cargo-tipo-contrato/edit.tsx'
+            ),
+          ]),
           route(
             'condiciones-contrato',
             'routes/dashboard/administracion/condiciones-contrato.tsx'
