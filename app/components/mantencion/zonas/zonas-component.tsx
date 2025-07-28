@@ -5,13 +5,7 @@ import { columns } from './columns';
 import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useRevalidator } from 'react-router';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-  CardHeader,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import ZonaFormModal from './zona-form-modal';
 import { toast } from 'sonner';
 
@@ -79,12 +73,6 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
 
       {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Lista de Zonas</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todas las zonas registradas en el sistema
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <DataTable
             columns={columns({

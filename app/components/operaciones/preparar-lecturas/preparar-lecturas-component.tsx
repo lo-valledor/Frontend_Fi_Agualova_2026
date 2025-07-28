@@ -163,7 +163,7 @@ export default function PrepararLecturasComponent({
   };
 
   return (
-          <div className="min-h-screen ">
+    <div className="min-h-screen ">
       <div className="container mx-auto p-2 space-y-3">
         {/* Header modernizado */}
         <div className="flex items-center gap-3 justify-between">
@@ -196,7 +196,7 @@ export default function PrepararLecturasComponent({
             <DialogLecturasPendientes
               data={lecturasPendientes || undefined}
               isLoading={false}
-              onRefresh={() => Promise.resolve(undefined  )}
+              onRefresh={() => Promise.resolve(undefined)}
             />
           </div>
         </div>

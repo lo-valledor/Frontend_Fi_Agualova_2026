@@ -26,7 +26,7 @@ interface ConfirmationDialogProps {
   message: string;
   isDestructive?: boolean;
   variant?: 'default' | 'destructive';
-  alertColor?: 'red' | 'yellow' | 'blue';
+  alertColor?: 'red' | 'yellow' | 'blue' | 'orange';
   claveOptions?: Array<{ value: string; label: string }>;
   selectedClave?: string;
   onClaveChange?: (value: string) => void;
@@ -89,9 +89,15 @@ export function ConfirmationDialog({
         </DialogHeader>
 
         {/* Alerta principal */}
-        <Alert className={`${alertStyles[alertColor]} border-l-4`}>
-          <AlertCircle className={`h-4 w-4 ${iconStyles[alertColor]}`} />
-          <AlertDescription className={`${textStyles[alertColor]} font-medium`}>
+        <Alert
+          className={`${alertStyles[alertColor as keyof typeof alertStyles]} border-l-4`}
+        >
+          <AlertCircle
+            className={`h-4 w-4 ${iconStyles[alertColor as keyof typeof iconStyles]}`}
+          />
+          <AlertDescription
+            className={`${textStyles[alertColor as keyof typeof textStyles]} font-medium`}
+          >
             {message}
           </AlertDescription>
         </Alert>

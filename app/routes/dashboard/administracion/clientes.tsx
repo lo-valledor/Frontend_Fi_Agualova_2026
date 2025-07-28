@@ -22,7 +22,7 @@ export async function clientLoader(_args: Route.ClientActionArgs) {
 }
 
 export default function Clientes({ loaderData }: Route.ComponentProps) {
-  const { clientes, giros, regiones } = loaderData;
+  const { clientes, giros, comunas } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Clientes' }];
 
   return (
@@ -31,7 +31,7 @@ export default function Clientes({ loaderData }: Route.ComponentProps) {
       <ClientesComponent
         clientes={clientes}
         giros={giros}
-        regiones={regiones}
+        comunas={comunas}
       />
     </div>
   );

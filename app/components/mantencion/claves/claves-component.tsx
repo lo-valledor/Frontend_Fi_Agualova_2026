@@ -71,7 +71,7 @@ export default function ClavesComponent({ claves }: ClavesComponentProps) {
     <div className="container mx-auto p-3 md:p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
+        <div className="space-y">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
               Gestión de Claves
@@ -92,7 +92,7 @@ export default function ClavesComponent({ claves }: ClavesComponentProps) {
 
       {/* Data Table */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="">
           <DataTable columns={columns} data={claves} />
         </CardContent>
       </Card>

@@ -16,7 +16,7 @@ import type {
   GetClientes,
   GetClientesByRut,
   GetGiros,
-  GetRegiones,
+  GetComunas,
 } from '~/types/administracion';
 import { useClientes } from '~/hooks/use-administracion';
 import {
@@ -33,13 +33,13 @@ import api from '~/lib/api';
 interface ClientesComponentProps {
   clientes: GetClientes[];
   giros: GetGiros[];
-  regiones: GetRegiones[];
+  comunas: GetComunas[];
 }
 
 export default function ClientesComponent({
   clientes,
   giros,
-  regiones,
+  comunas,
 }: ClientesComponentProps) {
   const [clients] = useState<GetClientes[]>(clientes);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -92,7 +92,12 @@ export default function ClientesComponent({
       );
       setEditingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
-      setSelectedCliente(clienteDetallado as GetClientesByRut);
+      // Convertir GetClienteById a GetClientesByRut mapeando email a correo
+      const clienteConvertido: GetClientesByRut = {
+        ...(clienteDetallado as unknown as GetClientesByRut),
+        correo: clienteDetallado.email,
+      };
+      setSelectedCliente(clienteConvertido);
       setModalMode('edit');
       setIsModalOpen(true);
     } catch (error) {
@@ -108,7 +113,12 @@ export default function ClientesComponent({
       trackDataAction('Ver detalles', 'Clientes', `Cliente: ${cliente.rut}`);
       setDetailingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
-      setDetailedCliente(clienteDetallado as GetClientesByRut);
+      // Convertir GetClienteById a GetClientesByRut mapeando email a correo
+      const clienteConvertido: GetClientesByRut = {
+        ...(clienteDetallado as unknown as GetClientesByRut),
+        correo: clienteDetallado.email,
+      };
+      setDetailedCliente(clienteConvertido);
       setIsDetailsOpen(true);
     } catch (error) {
       console.error('Error al cargar detalles del cliente:', error);
@@ -310,7 +320,7 @@ export default function ClientesComponent({
         cliente={selectedCliente}
         mode={modalMode}
         giros={giros}
-        regiones={regiones}
+        comunas={comunas}
       />
     </div>
   );

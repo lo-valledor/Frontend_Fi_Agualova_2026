@@ -1,4 +1,3 @@
-
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import {
@@ -29,7 +28,6 @@ import {
   SelectItem,
 } from '~/components/ui/select';
 import { Input } from '~/components/ui/input';
-import { DatePicker } from '~/components/date-picker';
 import ResultadosBusqueda from '~/components/monitor/monitor-lecturas/resultados-busqueda';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
@@ -306,20 +304,12 @@ const MonitorLecturasComponent = ({
                   <Calendar className="w-3 h-3 text-blue-500 flex-shrink-0" />
                   Fecha Fin
                 </Label>
-                <div className="w-full">
-                  <DatePicker
-                    date={
-                      fechaFin ? new Date(fechaFin + 'T00:00:00') : undefined
-                    }
-                    setDate={(date) => {
-                      if (date) {
-                        setFechaFin(date.toISOString().split('T')[0]);
-                      } else {
-                        setFechaFin('');
-                      }
-                    }}
-                  />
-                </div>
+                <Input
+                  type="date"
+                  value={fechaFin}
+                  onChange={(e) => setFechaFin(e.target.value)}
+                  className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                />
               </div>
             </div>
 

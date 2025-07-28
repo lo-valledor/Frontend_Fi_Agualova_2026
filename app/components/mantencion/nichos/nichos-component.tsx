@@ -5,13 +5,7 @@ import type { Nicho } from '~/types/mantencion';
 import { Plus } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { useRevalidator } from 'react-router';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import NichoFormModal from './nichos-form-modal';
 import { toast } from 'sonner';
 
@@ -79,12 +73,6 @@ export default function NichosComponent({ nichos }: NichosComponentProps) {
 
       {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Lista de Nichos</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todos los nichos registrados en el sistema
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <DataTable
             columns={columns({

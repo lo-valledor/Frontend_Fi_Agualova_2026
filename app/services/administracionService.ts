@@ -20,8 +20,14 @@ import type {
   GetCombosTiposMedidor,
   BuscarCargoFacturable,
   Usuarios,
+  GetComunas,
 } from '~/types/administracion';
-import type { Marca, Conceptos, Tarifas, TiposContrato } from '~/types/mantencion';
+import type {
+  Marca,
+  Conceptos,
+  Tarifas,
+  TiposContrato,
+} from '~/types/mantencion';
 
 export interface AdministracionServiceResponse<T> {
   data: T | null;
@@ -49,13 +55,15 @@ class AdministracionService {
   /**
    * Obtiene datos de acometidas con todos sus combos
    */
-  async getAcometidasData(): Promise<AdministracionServiceResponse<{
-    acometidas: Acometida[];
-    comboEmpalmes: ComboEmpalmes[];
-    comboNichos: ComboNichos[];
-    comboSectores: ComboSectores[];
-    contratosDisponibles: ContratosDisponibles[];
-  }>> {
+  async getAcometidasData(): Promise<
+    AdministracionServiceResponse<{
+      acometidas: Acometida[];
+      comboEmpalmes: ComboEmpalmes[];
+      comboNichos: ComboNichos[];
+      comboSectores: ComboSectores[];
+      contratosDisponibles: ContratosDisponibles[];
+    }>
+  > {
     try {
       const [
         resAcometidas,
@@ -74,10 +82,14 @@ class AdministracionService {
       return {
         data: {
           acometidas: this.processApiResponse<Acometida>(resAcometidas),
-          comboEmpalmes: this.processApiResponse<ComboEmpalmes>(resComboEmpalmes),
+          comboEmpalmes:
+            this.processApiResponse<ComboEmpalmes>(resComboEmpalmes),
           comboNichos: this.processApiResponse<ComboNichos>(resComboNichos),
-          comboSectores: this.processApiResponse<ComboSectores>(resComboSectores),
-          contratosDisponibles: this.processApiResponse<ContratosDisponibles>(resContratosDisponibles),
+          comboSectores:
+            this.processApiResponse<ComboSectores>(resComboSectores),
+          contratosDisponibles: this.processApiResponse<ContratosDisponibles>(
+            resContratosDisponibles,
+          ),
         },
         error: null,
       };
@@ -92,23 +104,25 @@ class AdministracionService {
   /**
    * Obtiene datos de clientes con giros y regiones
    */
-  async getClientesData(): Promise<AdministracionServiceResponse<{
-    clientes: GetClientes[];
-    giros: GetGiros[];
-    regiones: GetRegiones[];
-  }>> {
+  async getClientesData(): Promise<
+    AdministracionServiceResponse<{
+      clientes: GetClientes[];
+      giros: GetGiros[];
+      comunas: GetComunas[];
+    }>
+  > {
     try {
-      const [resClientes, resGiros, resRegiones] = await Promise.all([
+      const [resClientes, resGiros, resComunas] = await Promise.all([
         api.get('ClienteBuscar'),
         api.get('giro/buscar'),
-        api.get('region/listar'),
+        api.get('comuna/por-region'),
       ]);
 
       return {
         data: {
           clientes: this.processApiResponse<GetClientes>(resClientes),
           giros: this.processApiResponse<GetGiros>(resGiros),
-          regiones: this.processApiResponse<GetRegiones>(resRegiones),
+          comunas: this.processApiResponse<GetComunas>(resComunas),
         },
         error: null,
       };
@@ -123,15 +137,17 @@ class AdministracionService {
   /**
    * Obtiene datos de contratos con todos sus combos
    */
-  async getContratosData(): Promise<AdministracionServiceResponse<{
-    contratos: GetContratos[];
-    regiones: GetRegiones[];
-    contratosClientes: GetContratosClientes[];
-    limiteInvierno: GetLimiteInvierno[];
-    fechaActual: GetFechaActual[];
-    tipoContrato: TiposContrato[];
-    tarifas: Tarifas[];
-  }>> {
+  async getContratosData(): Promise<
+    AdministracionServiceResponse<{
+      contratos: GetContratos[];
+      regiones: GetRegiones[];
+      contratosClientes: GetContratosClientes[];
+      limiteInvierno: GetLimiteInvierno[];
+      fechaActual: GetFechaActual[];
+      tipoContrato: TiposContrato[];
+      tarifas: Tarifas[];
+    }>
+  > {
     try {
       const [
         resContratos,
@@ -144,7 +160,7 @@ class AdministracionService {
       ] = await Promise.all([
         api.get('contrato/buscar'),
         api.get('region/listar'),
-        api.get('contrato/buscar'),
+        api.get('cliente/buscar'),
         api.get('parametro/limite-invierno'),
         api.get('util/fecha-actual'),
         api.get('buscarTipoContrato'),
@@ -155,7 +171,8 @@ class AdministracionService {
         data: {
           contratos: resContratos.data as GetContratos[],
           regiones: resRegiones.data as GetRegiones[],
-          contratosClientes: resContratosClientes.data as GetContratosClientes[],
+          contratosClientes:
+            resContratosClientes.data as GetContratosClientes[],
           limiteInvierno: resLimiteInvierno.data as GetLimiteInvierno[],
           fechaActual: resFechaActual.data as GetFechaActual[],
           tipoContrato: resTipoContrato.data as TiposContrato[],
@@ -174,10 +191,12 @@ class AdministracionService {
   /**
    * Obtiene datos de medidores con marcas
    */
-  async getMedidoresData(): Promise<AdministracionServiceResponse<{
-    medidores: GetMedidores[];
-    marcas: Marca[];
-  }>> {
+  async getMedidoresData(): Promise<
+    AdministracionServiceResponse<{
+      medidores: GetMedidores[];
+      marcas: Marca[];
+    }>
+  > {
     try {
       const [resMedidores, resMarcas] = await Promise.all([
         api.get('buscarMedidor'),
@@ -220,7 +239,9 @@ class AdministracionService {
   /**
    * Obtiene cargo tipo contrato
    */
-  async getCargoTipoContrato(): Promise<AdministracionServiceResponse<GetCargoTipoContrato[]>> {
+  async getCargoTipoContrato(): Promise<
+    AdministracionServiceResponse<GetCargoTipoContrato[]>
+  > {
     try {
       const response = await api.get('cargoTipoContrato-buscar');
       return {
@@ -238,10 +259,12 @@ class AdministracionService {
   /**
    * Obtiene condiciones contrato con conceptos
    */
-  async getCondicionesContratoData(): Promise<AdministracionServiceResponse<{
-    condicionesContrato: GetCondicionesContrato[];
-    conceptos: Conceptos[];
-  }>> {
+  async getCondicionesContratoData(): Promise<
+    AdministracionServiceResponse<{
+      condicionesContrato: GetCondicionesContrato[];
+      conceptos: Conceptos[];
+    }>
+  > {
     try {
       const [resCondicionesContrato, resConceptos] = await Promise.all([
         api.get('condicion-contrato/condicionContrato-Buscar'),
@@ -250,7 +273,9 @@ class AdministracionService {
 
       return {
         data: {
-          condicionesContrato: this.processApiResponse<GetCondicionesContrato>(resCondicionesContrato),
+          condicionesContrato: this.processApiResponse<GetCondicionesContrato>(
+            resCondicionesContrato,
+          ),
           conceptos: this.processApiResponse<Conceptos>(resConceptos),
         },
         error: null,
@@ -266,19 +291,22 @@ class AdministracionService {
   /**
    * Obtiene cargo facturable con combos
    */
-  async getCargoFacturableData(): Promise<AdministracionServiceResponse<{
-    cargos: BuscarCargoFacturable[];
-    conceptos: GeCombosConceptos[];
-    tarifas: GetCombosTarifas[];
-    tiposMedidor: GetCombosTiposMedidor[];
-  }>> {
+  async getCargoFacturableData(): Promise<
+    AdministracionServiceResponse<{
+      cargos: BuscarCargoFacturable[];
+      conceptos: GeCombosConceptos[];
+      tarifas: GetCombosTarifas[];
+      tiposMedidor: GetCombosTiposMedidor[];
+    }>
+  > {
     try {
-      const [resCargoFacturable, resConceptos, resTarifas, resTiposMedidor] = await Promise.all([
-        api.get('buscarCargoFacturable'),
-        api.get('combos/conceptos'),
-        api.get('combos/tarifas'),
-        api.get('combos/tipos-medidor'),
-      ]);
+      const [resCargoFacturable, resConceptos, resTarifas, resTiposMedidor] =
+        await Promise.all([
+          api.get('buscarCargoFacturable'),
+          api.get('combos/conceptos'),
+          api.get('combos/tarifas'),
+          api.get('combos/tipos-medidor'),
+        ]);
 
       return {
         data: {

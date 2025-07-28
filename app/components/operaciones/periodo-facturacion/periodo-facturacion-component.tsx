@@ -84,7 +84,7 @@ export default function AbrirPeriodoFacturacion({
   }
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <div className="container mx-auto p-2 space-y-3">
         <BreadcrumbSetter items={pageBreadcrumbs} />
 

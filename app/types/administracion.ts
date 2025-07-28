@@ -31,6 +31,53 @@ export interface ActualizarUsuarioProps {
 
 //Contratos
 
+export interface ContratanteProps {
+  rut: string;
+  nombre: string;
+  apellido: string;
+  esEmpresa: boolean;
+  direccion: string;
+  comuna: string;
+  contacto: string;
+  telefono: string;
+  email: string;
+}
+
+export interface GetLocal {
+  numeroLocal: string;
+  empresa: string;
+  estadoHabilitado: string;
+  propietario: string;
+  sector: string;
+}
+
+export interface GetPropietario {
+  rut: string;
+  nombre: string;
+  comuna: string;
+  telefono: string;
+  celular: string;
+  email: string;
+}
+
+export interface GetMadres {
+  codigoContrato: string;
+  subEmpalme: string;
+  tipoContrato: string;
+  tarifa: string;
+  nombrePropietario: string;
+  nombreCliente: string;
+  numeroLocal: string;
+  fechaInicio: string;
+  activo: boolean;
+  fechaTermino: string;
+  comunaEnvio: string;
+  direccionEnvio: string;
+  limiteInvierno: number;
+  cicloFacturacion: string;
+  potenciaContratada: string;
+}
+
 export interface GetContratos {
   codigoContrato: string;
   acometida: string;
@@ -49,6 +96,31 @@ export interface GetContratos {
   cicloFacturacion: string;
   potenciaContratada: string;
   liberadoCorte: boolean;
+  madre?: string; // Campo opcional para contrato madre
+}
+
+export interface GetContratoPorId {
+  tipoContrato: string;
+  tarifa: string;
+  nombrePropietario: string;
+  rutPropietario: string;
+  nombreCliente: string;
+  rutCliente: string;
+  localId: string;
+  codigoLocal: string;
+  fechaInicio: string;
+  activoTexto: string;
+  fechaTermino: string;
+  direccion: string;
+  codigoComuna: string;
+  limiteInvierno: number;
+  cicloFacturacion: string;
+  potenciaContratada: string;
+  comunaNombre: string;
+  esMadreTexto: string;
+  codigoContratoMadre: string;
+  lugarEntrega: string;
+  liberadoCorteTexto: string;
 }
 
 export interface ContratosDisponibles {
@@ -66,6 +138,11 @@ export interface ContratosDisponibles {
   limiteInventario: number;
   cicloFacturacion: string;
   estadoActivo: boolean;
+}
+
+export interface ContratoMadresBuscar {
+  nombrePropietario: string;
+  rutPropietario: string;
 }
 
 export interface ContratosDisponiblesPorId {
@@ -148,6 +225,7 @@ export interface ContratoFormData {
   cicloFacturacion: string;
   potenciaContratada: string;
   liberadoCorte: boolean;
+  madre: string;
 }
 
 export interface ActualizarPropietariosLocal {
@@ -343,8 +421,26 @@ export interface GetMedidores {
   codigoAcometida: string;
 }
 
+export interface GetMedidorByCodigo {
+  mM_ID: string;
+  tM_ID: number;
+  modelo: string;
+  numeroSerie: string;
+  estadoId: number;
+  fechaInicio: string;
+  digitos: number;
+  constanteMultiplicar: number;
+  subEmpalmeId: number;
+  codigoSubEmpalme: string;
+  estadoNombre: string;
+}
+
+export interface GetMedidorLecturas {
+  cantidadLecturas: string;
+}
+
 export interface CrearMedidorProps {
-  marcaId: number;
+  marcaId: string; // Cambiado de number a string según el backend
   tipoId: number;
   modelo: string;
   serie: string;
@@ -358,7 +454,7 @@ export interface CrearMedidorProps {
 
 export interface ActualizarMedidorProps {
   codigoMedidor: number;
-  marcaId: number;
+  marcaId: string; // Cambiado de number a string según el backend
   modelo: string;
   serie: string;
   estadoId: number;
@@ -404,6 +500,21 @@ export interface GetClientes {
   codigoComuna: string;
 }
 
+export interface GetClienteById {
+  rut: string;
+  nombre: string;
+  apellido: string;
+  esEmpresa: boolean;
+  direccion: string;
+  comuna: string;
+  codComuna: string;
+  contacto: string;
+  telefono: string;
+  email: string;
+  codigoGiro: string;
+  giro: string;
+}
+
 export interface GetGiros {
   codigo: string;
   actividadEconomica: string;
@@ -441,14 +552,23 @@ export interface ClientesFormData {
 
 // Cargo Tipo Contrato
 
-export interface CargoTipoContratoEditor {
-  grilla: CargoGrilla[];
-  cargoMonofasico: CargoPorTipoMedidor[];
-  cargoTrifasico: CargoPorTipoMedidor[];
-  cargoAmbos: CargoPorTipoMedidor[];
+export interface GetCargoTipoContrato {
+  tipoContratoId: number;
+  tipoContratoDescripcion: string;
+  cargoFacturableDescripcion: string;
+  condicionContratoDescripcion: string;
+  estado: boolean;
+  descripcion: string;
 }
 
-export interface CargoGrilla {
+export interface CargoTipoContratoEditor {
+  grilla: CargoTipoDetalle[];
+  cargoMonofasico: CargoTipoListbox[];
+  cargoTrifasico: CargoTipoListbox[];
+  cargoAmbos: CargoTipoListbox[];
+}
+
+export interface CargoTipoDetalle {
   cargoId: number;
   cargoDescripcion: string;
   condicionId: number;
@@ -456,7 +576,7 @@ export interface CargoGrilla {
   descripcion: string;
 }
 
-export interface CargoPorTipoMedidor {
+export interface CargoTipoListbox {
   tipoMedidor: number;
   cargoId: number;
   cargoDescripcion: string;
@@ -507,4 +627,21 @@ export interface GetCondicionesContratoPorId {
   factorPorcentual: number;
   valorFijo: number | null;
   tipo: number;
+}
+
+export interface CrearCondicionContratoProps {
+  nombre: string;
+  conceptoId: number;
+  usaPorcentaje: boolean;
+  valor: number;
+  estado: boolean;
+}
+
+export interface ActualizarCondicionContratoProps {
+  codigo: number;
+  nombre: string;
+  conceptoId: number;
+  usaPorcentaje: boolean;
+  valor: number;
+  estado: boolean;
 }

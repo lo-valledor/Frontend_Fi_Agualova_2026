@@ -5,13 +5,7 @@ import type { Marca } from '~/types/mantencion';
 import { Plus } from 'lucide-react';
 import { Button } from '~/components/ui/button';
 import { useRevalidator } from 'react-router';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import { toast } from 'sonner';
 import MarcaFormModal from './marca-form-modal';
 
@@ -79,12 +73,6 @@ export default function MarcasComponent({ marcas }: MarcasComponentProps) {
 
       {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Lista de Marcas</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todas las marcas registradas en el sistema
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <DataTable
             columns={columns({

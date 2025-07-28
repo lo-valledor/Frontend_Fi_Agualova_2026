@@ -22,8 +22,15 @@ import type {
   GetCombosTiposMedidor,
   BuscarCargoFacturable,
   Usuarios,
+  GetClienteById,
+  GetComunas,
 } from '~/types/administracion';
-import type { Marca, Conceptos, Tarifas, TiposContrato } from '~/types/mantencion';
+import type {
+  Marca,
+  Conceptos,
+  Tarifas,
+  TiposContrato,
+} from '~/types/mantencion';
 
 export function useAcometidasData() {
   const [data, setData] = useState<{
@@ -94,7 +101,7 @@ export function useClientesData() {
   const [data, setData] = useState<{
     clientes: GetClientes[];
     giros: GetGiros[];
-    regiones: GetRegiones[];
+    comunas: GetComunas[];
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -381,42 +388,66 @@ export function useAdministracion() {
   });
 
   const createUsuario = async (userData: any) => {
-    setLoadingState(prev => ({ ...prev, createUsuario: { isLoading: true } }));
+    setLoadingState((prev) => ({
+      ...prev,
+      createUsuario: { isLoading: true },
+    }));
     try {
       const response = await api.post('/crear', userData);
       return response.data;
     } finally {
-      setLoadingState(prev => ({ ...prev, createUsuario: { isLoading: false } }));
+      setLoadingState((prev) => ({
+        ...prev,
+        createUsuario: { isLoading: false },
+      }));
     }
   };
 
   const updateUsuario = async (idUsuario: number, userData: any) => {
-    setLoadingState(prev => ({ ...prev, updateUsuario: { isLoading: true } }));
+    setLoadingState((prev) => ({
+      ...prev,
+      updateUsuario: { isLoading: true },
+    }));
     try {
       const response = await api.put(`/actualizar/${idUsuario}`, userData);
       return response.data;
     } finally {
-      setLoadingState(prev => ({ ...prev, updateUsuario: { isLoading: false } }));
+      setLoadingState((prev) => ({
+        ...prev,
+        updateUsuario: { isLoading: false },
+      }));
     }
   };
 
   const deleteUsuario = async (idUsuario: number) => {
-    setLoadingState(prev => ({ ...prev, deleteUsuario: { isLoading: true } }));
+    setLoadingState((prev) => ({
+      ...prev,
+      deleteUsuario: { isLoading: true },
+    }));
     try {
       const response = await api.delete(`/eliminar/${idUsuario}`);
       return response.data;
     } finally {
-      setLoadingState(prev => ({ ...prev, deleteUsuario: { isLoading: false } }));
+      setLoadingState((prev) => ({
+        ...prev,
+        deleteUsuario: { isLoading: false },
+      }));
     }
   };
 
   const fetchUsuarios = async () => {
-    setLoadingState(prev => ({ ...prev, fetchUsuarios: { isLoading: true } }));
+    setLoadingState((prev) => ({
+      ...prev,
+      fetchUsuarios: { isLoading: true },
+    }));
     try {
       const response = await api.get('/listar');
       return response.data;
     } finally {
-      setLoadingState(prev => ({ ...prev, fetchUsuarios: { isLoading: false } }));
+      setLoadingState((prev) => ({
+        ...prev,
+        fetchUsuarios: { isLoading: false },
+      }));
     }
   };
 
@@ -431,8 +462,8 @@ export function useAdministracion() {
 
 export function useClientes() {
   const getClienteByRut = async (rut: string) => {
-    const response = await api.get(`/cliente/buscar/${rut}`);
-    return response.data;
+    const response = await api.get(`/cliente/${rut}`);
+    return response.data as GetClienteById;
   };
 
   return {

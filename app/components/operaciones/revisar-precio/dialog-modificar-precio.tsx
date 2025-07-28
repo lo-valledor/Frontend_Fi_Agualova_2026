@@ -145,7 +145,7 @@ export default function DialogModificarPrecio({
           setError(
             'Sesión expirada. Recarga la página e inicia sesión nuevamente.',
           );
-          toast.error('Sesión expirada. Serás redirigido al login.');
+          toast.error('Contraseña incorrecta.');
         }
         return;
       }

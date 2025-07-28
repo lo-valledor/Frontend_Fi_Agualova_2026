@@ -157,7 +157,12 @@ export function MedidorFormModal({
       };
       delete (payload as any).marcaCodigo;
       onSubmit(
-        { ...payload, codigoMedidor: medidor.codigo, subempalmeCodigo: '' },
+        {
+          ...payload,
+          marcaId: String(payload.marcaId),
+          codigoMedidor: medidor.codigo,
+          subempalmeCodigo: ''
+        },
         'edit',
       );
     } else {
@@ -171,7 +176,7 @@ export function MedidorFormModal({
         fechaPrimeraLectura: '',
       };
       delete (payload as any).marcaCodigo;
-      onSubmit(payload, 'add');
+      onSubmit(payload as unknown as CrearMedidorProps, 'add');
     }
   };
 

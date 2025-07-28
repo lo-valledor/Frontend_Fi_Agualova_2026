@@ -57,6 +57,7 @@ export function ContractFormModal({
     cicloFacturacion: '',
     potenciaContratada: '',
     liberadoCorte: false,
+    madre: '',
   });
 
   useEffect(() => {
@@ -79,6 +80,7 @@ export function ContractFormModal({
         cicloFacturacion: contract.cicloFacturacion,
         potenciaContratada: contract.potenciaContratada,
         liberadoCorte: contract.liberadoCorte,
+        madre: contract.madre || '',
       });
     } else {
       setFormData({
@@ -97,6 +99,7 @@ export function ContractFormModal({
         cicloFacturacion: '',
         potenciaContratada: '',
         liberadoCorte: false,
+        madre: '',
       });
     }
   }, [contract, mode, isOpen]);

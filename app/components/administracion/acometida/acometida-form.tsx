@@ -114,7 +114,8 @@ export function AcometidaForm({
       data: contrato,
     }));
 
-    // Si estamos editando y el contrato no está en la lista, agregarlo como opción temporal
+    // Si estamos editando y el contrato no está en la lista, NO lo agregamos
+    // Esto evita mostrar contratos que no están disponibles para acometidas
     if (isEdit && acometida?.contratoId) {
       const contratoExiste = opciones.find(
         (opt) => opt.value === acometida.contratoId,
@@ -122,33 +123,23 @@ export function AcometidaForm({
 
       if (!contratoExiste) {
         console.log(
-          '⚠️ Contrato de acometida no encontrado en lista disponible, agregando como opción temporal',
+          '⚠️ Contrato de acometida no encontrado en lista disponible - omitiendo del selector',
         );
-        opciones.unshift({
-          value: acometida.contratoId,
-          label: `${acometida.contratoId} - (Contrato asociado)`,
-          data: {
-            contratoId: acometida.contratoId,
-            local: '',
-            tipoContrato: '',
-            tarifa: '',
-            propietario: '',
-            clienteNombre: '',
-            clienteApellidos: '',
-            empresa: '',
-            fechaInicio: '',
-            fechaFin: '',
-            direccionEnvio: '',
-            limiteInventario: 0,
-            cicloFacturacion: '',
-            estadoActivo: false,
-          },
-        });
+        // No agregamos el contrato como opción temporal
       }
     }
 
     return opciones;
   }, [contratosDisponibles, isEdit, acometida]);
+
+  // Verificar si el contrato actual está disponible
+  const contratoActualDisponible = useMemo(() => {
+    if (!isEdit || !acometida?.contratoId) return null;
+
+    return contratosDisponibles.find(
+      (c) => c.contratoId === acometida.contratoId,
+    );
+  }, [isEdit, acometida, contratosDisponibles]);
 
   // Estilos personalizados para react-select
   const selectStyles: StylesConfig<any> = {
@@ -254,19 +245,14 @@ export function AcometidaForm({
         (c) => c.contratoId === acometida.contratoId,
       );
 
-      if (!contratoExiste && acometida.contratoId) {
-        console.log('Buscando contrato con criterios alternativos...');
-        const contratoAlternativo = contratosDisponibles.find(
-          (c) => c.contratoId.trim() === acometida.contratoId.trim(),
-        );
-        console.log('Contrato alternativo encontrado:', contratoAlternativo);
-      }
+      // Solo establecer contratoId si el contrato está disponible
+      const contratoId = contratoExiste ? acometida.contratoId : '';
 
       form.reset({
         ubicacion: acometida.ubicacion || '',
         empalmeId,
         nichoId,
-        contratoId: acometida.contratoId || '',
+        contratoId,
         codigo: acometida.codigo || '',
         limitePotencia: acometida.limitePotencia?.toString() || '0',
       });
@@ -306,6 +292,7 @@ export function AcometidaForm({
       const limitePotencia = data.limitePotencia
         ? Number(data.limitePotencia)
         : 0;
+      const contratoId = data.contratoId.trim();
 
       // Validación adicional
       if (isNaN(empalmeId) || empalmeId <= 0) {
@@ -325,13 +312,19 @@ export function AcometidaForm({
         return;
       }
 
+      // En edición, permitir contratoId vacío si el contrato no está disponible
+      if (!isEdit && (!contratoId || contratoId.length === 0)) {
+        toast.error('Debe seleccionar un contrato');
+        return;
+      }
+
       if (isEdit && acometida) {
         const submitData: ActualizarAcometidaProps = {
           acometidaId: acometida.acometidaId,
           ubicacion: data.ubicacion.trim(),
           empalmeId,
           nichoId,
-          contratoId: data.contratoId.trim(),
+          contratoId: contratoId || '', // Permitir vacío en edición
           limitePotencia,
         };
 
@@ -342,7 +335,7 @@ export function AcometidaForm({
           ubicacion: data.ubicacion.trim(),
           empalmeId,
           nichoId,
-          contratoId: data.contratoId.trim(),
+          contratoId,
           codigo,
           limitePotencia,
         };
@@ -380,12 +373,16 @@ export function AcometidaForm({
     form.setValue('contratoId', contratoId);
     setModalContratos(false);
     setBusquedaContrato('');
+
+    // Si estamos editando y el contrato anterior no estaba disponible,
+    // ahora que se seleccionó uno nuevo, el campo se mostrará automáticamente
+    console.log('Contrato seleccionado:', contratoId);
   };
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-5xl max-h-[95vh] min-h-[80vh] overflow-y-auto">
+        <DialogContent className="min-w-3xl max-h-[95vh] min-h-[80vh] overflow-y-auto">
           <DialogHeader className="space-y-2">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
@@ -462,83 +459,132 @@ export function AcometidaForm({
                 <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600">
                   📄 Contrato Asociado
                 </h3>
-                <FormField
-                  control={form.control}
-                  name="contratoId"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel className="flex items-center justify-between text-sm font-medium">
-                        Contrato *
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setModalContratos(true)}
-                          className="h-8 gap-2 text-xs"
-                        >
-                          <List className="h-3 w-3" />
-                          Ver Todos
-                        </Button>
-                      </FormLabel>
-                      <Controller
-                        control={form.control}
-                        name="contratoId"
-                        render={({ field: { onChange, value, ...field } }) => (
-                          <div className="space-y-2">
-                            <Select
-                              {...field}
-                              options={contratoOptions.slice(0, 50)}
-                              styles={selectStyles}
-                              placeholder="Buscar y seleccionar contrato..."
-                              isSearchable
-                              filterOption={(option, inputValue) => {
-                                if (!inputValue) return true;
-                                const searchValue = inputValue.toLowerCase();
-                                return (
-                                  option.value
-                                    .toLowerCase()
-                                    .includes(searchValue) ||
-                                  option.label
-                                    .toLowerCase()
-                                    .includes(searchValue) ||
-                                  option.data?.empresa
-                                    ?.toLowerCase()
-                                    .includes(searchValue) ||
-                                  option.data?.local
-                                    ?.toLowerCase()
-                                    .includes(searchValue)
-                                );
-                              }}
-                              value={
-                                contratoOptions.find(
-                                  (option) => option.value === value,
-                                ) || null
-                              }
-                              onChange={(option) =>
-                                onChange(option?.value || '')
-                              }
-                              noOptionsMessage={({ inputValue }) =>
-                                inputValue
-                                  ? `No se encontraron contratos para "${inputValue}"`
-                                  : 'Escriba para buscar contratos...'
-                              }
-                              menuPlacement="auto"
-                              maxMenuHeight={280}
-                            />
-                            <p className="text-xs text-slate-500 dark:text-slate-400">
-                              💡 Busque por ID, cliente, empresa o local. Use el
-                              botón "Ver Todos" para más opciones.
-                            </p>
-                          </div>
-                        )}
-                      />
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
 
-                {/* Información del contrato seleccionado */}
-                {contratoSeleccionado && (
+                {/* Mostrar campo de contrato solo si no estamos editando o si el contrato está disponible */}
+                {(!isEdit || contratoActualDisponible) ? (
+                  <FormField
+                    control={form.control}
+                    name="contratoId"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className="flex items-center justify-between text-sm font-medium">
+                          Contrato *
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setModalContratos(true)}
+                            className="h-8 gap-2 text-xs"
+                          >
+                            <List className="h-3 w-3" />
+                            Ver Todos
+                          </Button>
+                        </FormLabel>
+                        <Controller
+                          control={form.control}
+                          name="contratoId"
+                          render={({ field: { onChange, value, ...field } }) => (
+                            <div className="space-y-2">
+                              <Select
+                                {...field}
+                                options={contratoOptions.slice(0, 50)}
+                                styles={selectStyles}
+                                placeholder="Buscar y seleccionar contrato..."
+                                isSearchable
+                                filterOption={(option, inputValue) => {
+                                  if (!inputValue) return true;
+                                  const searchValue = inputValue.toLowerCase();
+                                  return (
+                                    option.value
+                                      .toLowerCase()
+                                      .includes(searchValue) ||
+                                    option.label
+                                      .toLowerCase()
+                                      .includes(searchValue) ||
+                                    option.data?.empresa
+                                      ?.toLowerCase()
+                                      .includes(searchValue) ||
+                                    option.data?.local
+                                      ?.toLowerCase()
+                                      .includes(searchValue)
+                                  );
+                                }}
+                                value={
+                                  contratoOptions.find(
+                                    (option) => option.value === value,
+                                  ) || null
+                                }
+                                onChange={(option) =>
+                                  onChange(option?.value || '')
+                                }
+                                noOptionsMessage={({ inputValue }) =>
+                                  inputValue
+                                    ? `No se encontraron contratos para "${inputValue}"`
+                                    : 'Escriba para buscar contratos...'
+                                }
+                                menuPlacement="auto"
+                                maxMenuHeight={280}
+                              />
+                              <p className="text-xs text-slate-500 dark:text-slate-400">
+                                💡 Busque por ID, cliente, empresa o local. Use el
+                                botón "Ver Todos" para más opciones.
+                              </p>
+                            </div>
+                          )}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  /* Mostrar información de que el contrato no está disponible */
+                  <div className="p-4 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800">
+                    <div className="flex items-start gap-3">
+                      <div className="p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md">
+                        <svg
+                          className="h-4 w-4 text-amber-600 dark:text-amber-400"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                            Contrato asociado:
+                          </h4>
+                          <Badge variant="outline" className="font-mono text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-600">
+                            {acometida?.contratoId}
+                          </Badge>
+                        </div>
+                        {/* <p className="text-xs text-amber-700 dark:text-amber-300 mb-3">
+                          Este contrato no está disponible en la lista de contratos para acometidas.
+                          Esto puede indicar que el contrato no tiene acometida asociada o no está activo para este propósito.
+                        </p> */}
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setModalContratos(true)}
+                            className="h-7 gap-1.5 text-xs border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/20"
+                          >
+                            <List className="h-3 w-3" />
+                            Cambiar por contrato disponible
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Información del contrato seleccionado - solo si hay datos disponibles */}
+                {contratoSeleccionado && contratoSeleccionado.data.clienteNombre && (
                   <div
                     className={`p-3 rounded-lg border ${
                       contratoSeleccionado.data.estadoActivo === false

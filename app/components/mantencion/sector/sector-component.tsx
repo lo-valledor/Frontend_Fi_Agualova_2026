@@ -5,13 +5,7 @@ import type { Sectores } from '~/types/mantencion';
 import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useRevalidator } from 'react-router';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import SectorFormModal from './sector-form-modal';
 import { toast } from 'sonner';
 
@@ -79,12 +73,6 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
 
       {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Lista de Sectores</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todos los sectores registrados en el sistema
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <DataTable
             columns={columns({

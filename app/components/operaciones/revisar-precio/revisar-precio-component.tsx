@@ -154,8 +154,7 @@ export default function RevisarPrecioComponent({
           toast.error('Credenciales de usuario incorrectas');
         } else {
           // Error de sesión expirada
-          toast.error('Sesión expirada. Serás redirigido al login.');
-          // Aquí podrías redirigir al login si es necesario
+          toast.error('Contraseña incorrecta');
         }
         return;
       }

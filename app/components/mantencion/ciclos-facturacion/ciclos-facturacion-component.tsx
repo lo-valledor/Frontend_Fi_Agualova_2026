@@ -3,13 +3,7 @@ import React, { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import { useRevalidator } from 'react-router';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-  CardHeader,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import type { CiclosFacturacion } from '~/types/mantencion';
 import { columns } from './columns';
 import { toast } from 'sonner';
@@ -83,13 +77,6 @@ export default function CiclosFacturacionComponent({
 
       {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Lista de Ciclos de Facturación</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todos los ciclos de facturación registrados en
-            el sistema
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <DataTable
             columns={columns({

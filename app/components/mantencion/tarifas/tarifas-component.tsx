@@ -92,7 +92,7 @@ export default function TarifasComponent({ tarifas }: TarifasComponentProps) {
 
       {/* Data Table */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="">
           <DataTable columns={columns} data={tarifas} />
         </CardContent>
       </Card>

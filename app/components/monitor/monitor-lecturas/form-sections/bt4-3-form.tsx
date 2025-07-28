@@ -69,6 +69,8 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   const [showMenorActivaDialog, setShowMenorActivaDialog] = useState(false);
   const [showIgualActivaDialog, setShowIgualActivaDialog] = useState(false);
   const [showMayorActivaDialog, setShowMayorActivaDialog] = useState(false);
+  const [showConsumoExcesivoActivaDialog, setShowConsumoExcesivoActivaDialog] =
+    useState(false);
 
   // Estados para energía reactiva
   const [inputReactivaValue, setInputReactivaValue] = useState('');
@@ -81,6 +83,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   const [showMenorReactivaDialog, setShowMenorReactivaDialog] = useState(false);
   const [showIgualReactivaDialog, setShowIgualReactivaDialog] = useState(false);
   const [showMayorReactivaDialog, setShowMayorReactivaDialog] = useState(false);
+  const [
+    showConsumoExcesivoReactivaDialog,
+    setShowConsumoExcesivoReactivaDialog,
+  ] = useState(false);
 
   // Estados para demandas
   const [demandaData, setDemandaData] = useState({
@@ -91,6 +97,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     dsFecha: '',
     dsHora: '',
   });
+  const [showConsumoExcesivoDPDialog, setShowConsumoExcesivoDPDialog] =
+    useState(false);
+  const [showConsumoExcesivoDSDialog, setShowConsumoExcesivoDSDialog] =
+    useState(false);
 
   // Establecer fechas y horas por defecto al iniciar
   useEffect(() => {
@@ -233,6 +243,41 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     [digito],
   );
 
+  // Detectar si el consumo de energía activa es excesivo
+  const esConsumoActivaExcesivo = useCallback(() => {
+    if (!consumoActivaCalculado || isNaN(Number(consumoActivaCalculado))) {
+      return false;
+    }
+
+    const consumoActual = Number(consumoActivaCalculado);
+
+    // Si hay consumo anterior, verificar si es más de 3 veces mayor
+    if (consumoAnterior > 0) {
+      return consumoActual > consumoAnterior * 3;
+    }
+
+    // Si no hay consumo anterior, considerar excesivo si es mayor a 2000 kWh
+    return consumoActual > 2000;
+  }, [consumoActivaCalculado, consumoAnterior]);
+
+  // Detectar si el consumo de energía reactiva es excesivo
+  const esConsumoReactivaExcesivo = useCallback(() => {
+    if (!consumoReactivaCalculado || isNaN(Number(consumoReactivaCalculado))) {
+      return false;
+    }
+
+    const consumoActual = Number(consumoReactivaCalculado);
+
+    // Para energía reactiva, usar un umbral más alto ya que suele ser menor
+    // Si hay consumo anterior, verificar si es más de 5 veces mayor
+    if (consumoAnterior > 0) {
+      return consumoActual > consumoAnterior * 5;
+    }
+
+    // Si no hay consumo anterior, considerar excesivo si es mayor a 1000 kVArh
+    return consumoActual > 1000;
+  }, [consumoReactivaCalculado, consumoAnterior]);
+
   // Calcular el máximo valor permitido para mostrar al usuario
   const maxValuePermitido = useMemo(() => {
     return Math.pow(10, digito) - 1;
@@ -333,6 +378,14 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         ...prev,
         [field]: value,
       }));
+
+      // Verificar si la demanda es excesiva después de actualizar
+      if (field === 'dp' && typeof value === 'number' && value > 500) {
+        setTimeout(() => setShowConsumoExcesivoDPDialog(true), 100);
+      }
+      if (field === 'ds' && typeof value === 'number' && value > 500) {
+        setTimeout(() => setShowConsumoExcesivoDSDialog(true), 100);
+      }
     },
     [],
   );
@@ -354,6 +407,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return;
     }
 
+    // Verificar si el consumo es excesivo antes de otros diálogos
+    if (esConsumoActivaExcesivo()) {
+      setShowConsumoExcesivoActivaDialog(true);
+      return;
+    }
+
     if (tipoLecturaActiva === 'menor') {
       setShowMenorActivaDialog(true);
     } else if (tipoLecturaActiva === 'igual') {
@@ -369,6 +428,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     validarDigitos,
     maxValuePermitido,
     digito,
+    esConsumoActivaExcesivo,
   ]);
 
   // Validar la lectura de energía reactiva
@@ -388,6 +448,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return;
     }
 
+    // Verificar si el consumo es excesivo antes de otros diálogos
+    if (esConsumoReactivaExcesivo()) {
+      setShowConsumoExcesivoReactivaDialog(true);
+      return;
+    }
+
     if (tipoLecturaReactiva === 'menor') {
       setShowMenorReactivaDialog(true);
     } else if (tipoLecturaReactiva === 'igual') {
@@ -403,6 +469,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     validarDigitos,
     maxValuePermitido,
     digito,
+    esConsumoReactivaExcesivo,
   ]);
 
   // Confirmar tipo de lectura activa y registrar la clave seleccionada
@@ -451,6 +518,46 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     setShowMayorReactivaDialog(false);
     setIsReactivaValidated(true);
     toast.success('Lectura de Energía Reactiva validada correctamente');
+  }, []);
+
+  // Confirmar consumo excesivo de energía activa
+  const handleConfirmConsumoExcesivoActiva = useCallback(() => {
+    setShowConsumoExcesivoActivaDialog(false);
+
+    // Continuar con la validación normal según el tipo de lectura
+    if (tipoLecturaActiva === 'menor') {
+      setShowMenorActivaDialog(true);
+    } else if (tipoLecturaActiva === 'igual') {
+      setShowIgualActivaDialog(true);
+    } else if (tipoLecturaActiva === 'mayor') {
+      setShowMayorActivaDialog(true);
+    }
+  }, [tipoLecturaActiva]);
+
+  // Confirmar consumo excesivo de energía reactiva
+  const handleConfirmConsumoExcesivoReactiva = useCallback(() => {
+    setShowConsumoExcesivoReactivaDialog(false);
+
+    // Continuar con la validación normal según el tipo de lectura
+    if (tipoLecturaReactiva === 'menor') {
+      setShowMenorReactivaDialog(true);
+    } else if (tipoLecturaReactiva === 'igual') {
+      setShowIgualReactivaDialog(true);
+    } else if (tipoLecturaReactiva === 'mayor') {
+      setShowMayorReactivaDialog(true);
+    }
+  }, [tipoLecturaReactiva]);
+
+  // Confirmar demanda punta excesiva
+  const handleConfirmDemandaPuntaExcesiva = useCallback(() => {
+    setShowConsumoExcesivoDPDialog(false);
+    toast.success('Demanda Punta confirmada');
+  }, []);
+
+  // Confirmar demanda suministrada excesiva
+  const handleConfirmDemandaSuministradaExcesiva = useCallback(() => {
+    setShowConsumoExcesivoDSDialog(false);
+    toast.success('Demanda Suministrada confirmada');
   }, []);
 
   // Preparar datos para enviar
@@ -1112,6 +1219,50 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         message="¿Está seguro de que la lectura reactiva es correcta?"
         alertColor="blue"
         onConfirm={handleConfirmMayorReactiva}
+        isSubmitting={isSubmitting}
+      />
+
+      {/* Diálogos para consumo excesivo */}
+      <ConfirmationDialog
+        isOpen={showConsumoExcesivoActivaDialog}
+        onOpenChange={setShowConsumoExcesivoActivaDialog}
+        title="Consumo de Energía Activa Muy Alto"
+        message={`El consumo calculado (${consumoActivaCalculado} kWh) es significativamente mayor al consumo anterior (${consumoAnterior} kWh). ¿Está seguro de que desea continuar con esta lectura?`}
+        alertColor="red"
+        onConfirm={handleConfirmConsumoExcesivoActiva}
+        isSubmitting={isSubmitting}
+      />
+
+      <ConfirmationDialog
+        isOpen={showConsumoExcesivoReactivaDialog}
+        onOpenChange={setShowConsumoExcesivoReactivaDialog}
+        title="Consumo de Energía Reactiva Muy Alto"
+        message={`El consumo calculado (${consumoReactivaCalculado} kVArh) es significativamente mayor al consumo anterior (${consumoAnterior} kVArh). ¿Está seguro de que desea continuar con esta lectura?`}
+        alertColor="red"
+        onConfirm={handleConfirmConsumoExcesivoReactiva}
+        isSubmitting={isSubmitting}
+      />
+
+      {/* Diálogos para demandas excesivas */}
+      <ConfirmationDialog
+        isOpen={showConsumoExcesivoDPDialog}
+        onOpenChange={setShowConsumoExcesivoDPDialog}
+        title="Advertencia: Demanda Punta Muy Alta"
+        message={`La demanda punta ingresada (${demandaData.dp} kW) es considerablemente alta (superior a 500 kW). ¿Desea continuar?`}
+        variant="default"
+        alertColor="red"
+        onConfirm={handleConfirmDemandaPuntaExcesiva}
+        isSubmitting={isSubmitting}
+      />
+
+      <ConfirmationDialog
+        isOpen={showConsumoExcesivoDSDialog}
+        onOpenChange={setShowConsumoExcesivoDSDialog}
+        title="Advertencia: Demanda Suministrada Muy Alta"
+        message={`La demanda suministrada ingresada (${demandaData.ds} kW) es considerablemente alta (superior a 500 kW). ¿Desea continuar?`}
+        variant="default"
+        alertColor="red"
+        onConfirm={handleConfirmDemandaSuministradaExcesiva}
         isSubmitting={isSubmitting}
       />
     </div>

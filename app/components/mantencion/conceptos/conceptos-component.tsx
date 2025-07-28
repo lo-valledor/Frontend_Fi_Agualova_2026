@@ -96,7 +96,7 @@ export default function ConceptosComponent({
 
       {/* Data Table */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="">
           <DataTable columns={columns} data={conceptos} />
         </CardContent>
       </Card>

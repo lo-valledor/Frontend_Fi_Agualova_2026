@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import {
@@ -23,7 +23,6 @@ import {
 } from '~/components/ui/dialog';
 import type {
   GetClientesByRut,
-  GetRegiones,
   GetGiros,
   GetComunas,
 } from '~/types/administracion';
@@ -40,38 +39,18 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 
-const clienteSchema = z
-  .object({
-    rut: z.string().min(1, 'El RUT es requerido'),
-    nombre: z.string().min(1, 'El nombre es requerido'),
-    apellido: z.string(),
-    esEmpresa: z.boolean(),
-    direccion: z.string().min(1, 'La dirección es requerida'),
-    region: z.string().optional(),
-    codComuna: z.string().optional(),
-    contacto: z.string().min(1, 'El contacto es requerido'),
-    telefono: z.string().min(1, 'El teléfono es requerido'),
-    correo: z.string().email('Correo electrónico inválido'),
-    codigoGiro: z.string(),
-  })
-  .refine(
-    (data) => {
-      // Si se proporciona una comuna, la región es requerida
-      if (data.codComuna && !data.region) {
-        return false;
-      }
-      // Si se proporciona una región, la comuna es requerida
-      if (data.region && !data.codComuna) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message:
-        'Si selecciona una comuna debe seleccionar una región y viceversa',
-      path: ['region'], // esto hará que el error aparezca en el campo región
-    },
-  );
+const clienteSchema = z.object({
+  rut: z.string().min(1, 'El RUT es requerido'),
+  nombre: z.string().min(1, 'El nombre es requerido'),
+  apellido: z.string(),
+  esEmpresa: z.boolean(),
+  direccion: z.string().min(1, 'La dirección es requerida'),
+  codComuna: z.string().min(1, 'La comuna es requerida'),
+  contacto: z.string().min(1, 'El contacto es requerido'),
+  telefono: z.string().min(1, 'El teléfono es requerido'),
+  correo: z.string().email('Correo electrónico inválido'),
+  codigoGiro: z.string().min(1, 'El código de giro es requerido'),
+});
 
 type ClienteFormData = z.infer<typeof clienteSchema>;
 
@@ -82,7 +61,7 @@ interface ClienteFormModalProps {
   cliente?: GetClientesByRut;
   mode: 'add' | 'edit';
   giros: GetGiros[];
-  regiones: GetRegiones[];
+  comunas: GetComunas[];
 }
 
 export default function ClienteFormModal({
@@ -92,12 +71,8 @@ export default function ClienteFormModal({
   cliente,
   mode,
   giros,
-  regiones,
+  comunas,
 }: ClienteFormModalProps) {
-  const [comunas, setComunas] = useState<GetComunas[]>([]);
-  const [loadingComunas, setLoadingComunas] = useState(false);
-  const [initialLoad, setInitialLoad] = useState(true);
-
   const form = useForm<ClienteFormData>({
     resolver: zodResolver(clienteSchema),
     defaultValues: {
@@ -106,7 +81,6 @@ export default function ClienteFormModal({
       apellido: '',
       esEmpresa: false,
       direccion: '',
-      region: '',
       codComuna: '',
       contacto: '',
       telefono: '',
@@ -180,55 +154,22 @@ export default function ClienteFormModal({
     }),
   };
 
-  // Cargar comunas cuando cambia la región
-  const loadComunas = async (regionCodigo: string) => {
-    if (!regionCodigo) {
-      setComunas([]);
-      return;
-    }
-
-    setLoadingComunas(true);
-    try {
-      const response = await api.get(`comuna/por-region/${regionCodigo}`);
-      const data = response.data as GetComunas[];
-      console.log('data', data);
-      console.log('comunas', regionCodigo);
-      setComunas(data);
-    } catch (error) {
-      console.error('Error al cargar comunas:', error);
-      setComunas([]);
-    } finally {
-      setLoadingComunas(false);
-    }
-  };
-
   // Resetear formulario cuando se abre el modal
   React.useEffect(() => {
     if (isOpen) {
-      setInitialLoad(true);
       if (cliente && mode === 'edit') {
-        const regionCliente = regiones.find(
-          (r) => r.codigo === cliente.codComuna?.substring(0, 2),
-        );
-
         form.reset({
           rut: cliente.rut || '',
           nombre: cliente.nombre || '',
           apellido: cliente.apellido || '',
           esEmpresa: cliente.esEmpresa || false,
           direccion: cliente.direccion || '',
-          region: regionCliente?.codigo || '',
           codComuna: cliente.codComuna || '',
           contacto: cliente.contacto || '',
           telefono: cliente.telefono || '',
           correo: cliente.correo || '',
           codigoGiro: cliente.codigoGiro || '',
         });
-
-        // Solo cargamos las comunas si hay una región
-        if (regionCliente) {
-          loadComunas(regionCliente.region);
-        }
       } else {
         form.reset({
           rut: '',
@@ -236,34 +177,15 @@ export default function ClienteFormModal({
           apellido: '',
           esEmpresa: false,
           direccion: '',
-          region: '',
           codComuna: '',
           contacto: '',
           telefono: '',
           correo: '',
           codigoGiro: '',
         });
-        setComunas([]);
-      }
-      setInitialLoad(false);
-    }
-  }, [isOpen, cliente, mode, form, regiones]);
-
-  // Manejar cambios en la región
-  useEffect(() => {
-    const regionCode = form.watch('region');
-    if (!initialLoad && regionCode) {
-      const regionData = regiones.find((r) => r.codigo === regionCode);
-      if (regionData) {
-        loadComunas(regionData.region);
-      }
-
-      const currentRegion = cliente?.codComuna?.substring(0, 2);
-      if (mode === 'add' || (mode === 'edit' && regionCode !== currentRegion)) {
-        form.setValue('codComuna', '');
       }
     }
-  }, [form.watch('region'), initialLoad, mode, cliente, regiones]);
+  }, [isOpen, cliente, mode, form]);
 
   const onSubmit = async (data: ClienteFormData) => {
     try {
@@ -436,52 +358,6 @@ export default function ClienteFormModal({
                   )}
                 />
 
-                {/* Región */}
-                <Controller
-                  control={form.control}
-                  name="region"
-                  render={({ field }) => {
-                    // Encontrar la región actual basada en el código
-                    const regionActual = regiones.find(
-                      (r) => r.codigo === field.value,
-                    );
-
-                    return (
-                      <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          Región
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            instanceId="region-select"
-                            options={regiones.map((region) => ({
-                              value: region.codigo,
-                              label: region.region,
-                            }))}
-                            value={
-                              regionActual
-                                ? {
-                                    value: regionActual.codigo,
-                                    label: regionActual.region,
-                                  }
-                                : null
-                            }
-                            onChange={(option: any) =>
-                              field.onChange(option ? option.value : '')
-                            }
-                            placeholder="Seleccione la región"
-                            isClearable
-                            styles={selectStyles}
-                            classNamePrefix="react-select"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-
                 {/* Comuna */}
                 <Controller
                   control={form.control}
@@ -493,7 +369,7 @@ export default function ClienteFormModal({
                     );
 
                     return (
-                      <FormItem>
+                      <FormItem className="md:col-span-2">
                         <FormLabel className="flex items-center gap-2">
                           <MapPin className="h-4 w-4" />
                           Comuna
@@ -503,25 +379,20 @@ export default function ClienteFormModal({
                             instanceId="comuna-select"
                             options={comunas.map((comuna) => ({
                               value: comuna.codigo,
-                              label: comuna.nombre,
+                              label: `${comuna.nombre} (${comuna.region})`,
                             }))}
                             value={
                               comunaActual
                                 ? {
                                     value: comunaActual.codigo,
-                                    label: comunaActual.nombre,
+                                    label: `${comunaActual.nombre} (${comunaActual.region})`,
                                   }
                                 : null
                             }
                             onChange={(option: any) =>
                               field.onChange(option ? option.value : '')
                             }
-                            placeholder={
-                              loadingComunas
-                                ? 'Cargando comunas...'
-                                : 'Seleccione la comuna'
-                            }
-                            isDisabled={!form.watch('region') || loadingComunas}
+                            placeholder="Seleccione la comuna"
                             isClearable
                             styles={selectStyles}
                             classNamePrefix="react-select"

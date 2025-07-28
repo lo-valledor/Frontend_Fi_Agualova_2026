@@ -43,6 +43,8 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   const [showMenorDialog, setShowMenorDialog] = useState(false);
   const [showIgualDialog, setShowIgualDialog] = useState(false);
   const [showMayorDialog, setShowMayorDialog] = useState(false);
+  const [showConsumoExcesivoDialog, setShowConsumoExcesivoDialog] =
+    useState(false);
   const confirmed = useRef(false);
 
   // Validar que la lectura no exceda el número de dígitos del medidor
@@ -165,6 +167,23 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     [calcularConsumo, validarDigitos, maxValuePermitido, digito],
   );
 
+  // Detectar si el consumo es excesivamente alto
+  const esConsumoExcesivo = useCallback(() => {
+    const consumoAnterior = result.LM_ConsumoMesAnterior || 0;
+    const consumoActual = Number(consumoCalculado);
+
+    // Si no hay consumo anterior o es 0, usar un umbral base de 500 kWh
+    const umbralBase =
+      Number(consumoAnterior) > 0 ? Number(consumoAnterior) : 500;
+
+    // Considerar excesivo si el consumo actual es más de 3 veces el anterior
+    // o más de 2000 kWh si no hay referencia anterior
+    const factorMultiplicador = 3;
+    const umbralMaximo = Math.max(umbralBase * factorMultiplicador, 2000);
+
+    return consumoActual > umbralMaximo;
+  }, [consumoCalculado, result.LM_ConsumoMesAnterior]);
+
   // Validar la lectura
   const validarLectura = useCallback(() => {
     if (!inputValue || isNaN(Number(inputValue))) {
@@ -180,7 +199,17 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       return;
     }
 
-    trackDataAction('Validar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Valor: ${inputValue}, Tipo: ${tipoLectura}`);
+    // Verificar si el consumo es excesivamente alto
+    if (esConsumoExcesivo()) {
+      setShowConsumoExcesivoDialog(true);
+      return;
+    }
+
+    trackDataAction(
+      'Validar lectura',
+      'BT1-BT2 Form',
+      `Medidor: ${result.ME_NSerie}, Valor: ${inputValue}, Tipo: ${tipoLectura}`,
+    );
 
     if (tipoLectura === 'menor') {
       setShowMenorDialog(true);
@@ -191,7 +220,16 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     } else {
       toast.error('Por favor ingrese un valor válido');
     }
-  }, [inputValue, tipoLectura, validarDigitos, maxValuePermitido, digito, trackDataAction, result.ME_NSerie]);
+  }, [
+    inputValue,
+    tipoLectura,
+    validarDigitos,
+    maxValuePermitido,
+    digito,
+    trackDataAction,
+    result.ME_NSerie,
+    esConsumoExcesivo,
+  ]);
 
   // Preparar datos para enviar
   const prepararDatosFormulario = useCallback(() => {
@@ -224,7 +262,11 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       }
       confirmed.current = true;
 
-      trackDataAction('Confirmar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Tipo: ${tipo}, Clave: ${selectedClave}`);
+      trackDataAction(
+        'Confirmar lectura',
+        'BT1-BT2 Form',
+        `Medidor: ${result.ME_NSerie}, Tipo: ${tipo}, Clave: ${selectedClave}`,
+      );
 
       // Cerrar el diálogo correspondiente
       if (tipo === 'menor') {
@@ -242,11 +284,34 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
   // Confirmar lectura mayor
   const handleConfirmMayor = useCallback(() => {
-    trackDataAction('Confirmar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Tipo: mayor`);
+    trackDataAction(
+      'Confirmar lectura',
+      'BT1-BT2 Form',
+      `Medidor: ${result.ME_NSerie}, Tipo: mayor`,
+    );
     setShowMayorDialog(false);
     setIsValidated(true);
     toast.success('Lectura validada correctamente');
   }, [trackDataAction, result.ME_NSerie]);
+
+  // Confirmar consumo excesivo y continuar con validación normal
+  const handleConfirmConsumoExcesivo = useCallback(() => {
+    trackDataAction(
+      'Confirmar consumo excesivo',
+      'BT1-BT2 Form',
+      `Medidor: ${result.ME_NSerie}, Consumo: ${consumoCalculado}`,
+    );
+    setShowConsumoExcesivoDialog(false);
+
+    // Continuar con la validación normal según el tipo de lectura
+    if (tipoLectura === 'menor') {
+      setShowMenorDialog(true);
+    } else if (tipoLectura === 'igual') {
+      setShowIgualDialog(true);
+    } else if (tipoLectura === 'mayor') {
+      setShowMayorDialog(true);
+    }
+  }, [trackDataAction, result.ME_NSerie, consumoCalculado, tipoLectura]);
 
   // Guardar la lectura
   const guardarLectura = useCallback(async () => {
@@ -261,7 +326,11 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
     try {
       setIsSubmitting(true);
-      trackDataAction('Guardar lectura', 'BT1-BT2 Form', `Medidor: ${result.ME_NSerie}, Valor: ${data.vactual}, Consumo: ${data.consumo}`);
+      trackDataAction(
+        'Guardar lectura',
+        'BT1-BT2 Form',
+        `Medidor: ${result.ME_NSerie}, Valor: ${data.vactual}, Consumo: ${data.consumo}`,
+      );
       const response = await api.put('/actualizar-lectura-bt-1-bt-2', data);
 
       if (response.status === 200) {
@@ -486,6 +555,16 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
         message="¿Está seguro de que la lectura es correcta?"
         alertColor="blue"
         onConfirm={handleConfirmMayor}
+        isSubmitting={isSubmitting}
+      />
+
+      <ConfirmationDialog
+        isOpen={showConsumoExcesivoDialog}
+        onOpenChange={setShowConsumoExcesivoDialog}
+        title="⚠️ Consumo Excesivamente Alto"
+        message={`El consumo calculado (${Number(consumoCalculado).toLocaleString('es-CL')} kWh) es significativamente mayor al consumo anterior (${(result.LM_ConsumoMesAnterior || 0).toLocaleString('es-CL')} kWh). ¿Está seguro de que la lectura es correcta?`}
+        alertColor="red"
+        onConfirm={handleConfirmConsumoExcesivo}
         isSubmitting={isSubmitting}
       />
     </div>

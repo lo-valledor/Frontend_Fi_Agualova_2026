@@ -94,7 +94,7 @@ export default function TiposContratosComponent({
 
       {/* Data Table */}
       <Card>
-        <CardContent className="p-6">
+        <CardContent className="">
           <DataTable columns={columns} data={tiposContratos} />
         </CardContent>
       </Card>

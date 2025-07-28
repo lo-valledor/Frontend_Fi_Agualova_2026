@@ -5,13 +5,7 @@ import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useRevalidator } from 'react-router';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
 import EmpalmesModalForm from './empalmes-modal-form';
 import { toast } from 'sonner';
 
@@ -81,12 +75,6 @@ export default function EmpalmesComponent({
 
       {/* Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Lista de Empalmes</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todos los empalmes registrados en el sistema
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           <DataTable
             columns={columns({
