@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
 import { useAuth } from '~/context/AuthContext';
 import api from '~/lib/api';
-import type { Usuarios, ActualizarUsuarioProps } from '~/types/administracion';
+import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 
 interface UseUserProfileReturn {
   userData: Usuarios | null;
@@ -33,7 +34,7 @@ export function useUserProfile(): UseUserProfileReturn {
 
         // Buscar el usuario por ID
         const usuarioEncontrado = usuarios.find(
-          (u) => u.idUsuario === parseInt(user.id),
+          u => u.idUsuario === parseInt(user.id)
         );
 
         if (usuarioEncontrado) {
@@ -41,14 +42,14 @@ export function useUserProfile(): UseUserProfileReturn {
         } else {
           // Si no se encuentra, crear datos simulados basados en el token
           console.warn(
-            'Usuario no encontrado en la lista, usando datos del token',
+            'Usuario no encontrado en la lista, usando datos del token'
           );
           throw new Error('Usuario no encontrado');
         }
       } catch (_apiError) {
         // Fallback: crear datos simulados basados en el token
         console.warn(
-          'No se pudo obtener datos del usuario desde la API, usando datos del token',
+          'No se pudo obtener datos del usuario desde la API, usando datos del token'
         );
 
         const mockUserData: Usuarios = {
@@ -88,7 +89,7 @@ export function useUserProfile(): UseUserProfileReturn {
         try {
           const response = await api.put(
             `/actualizar/${userData.idUsuario}`,
-            data,
+            data
           );
 
           // Actualizar datos locales con la respuesta
@@ -96,7 +97,7 @@ export function useUserProfile(): UseUserProfileReturn {
             setUserData(response.data as Usuarios);
           } else {
             // Si no hay respuesta, actualizar localmente
-            setUserData((prev) =>
+            setUserData(prev =>
               prev
                 ? {
                     ...prev,
@@ -106,15 +107,15 @@ export function useUserProfile(): UseUserProfileReturn {
                     departamento: data.departamento,
                     activo: data.activo,
                   }
-                : null,
+                : null
             );
           }
         } catch (_apiError) {
           // Fallback: actualizar solo localmente
           console.warn(
-            'No se pudo actualizar en la API, actualizando solo localmente',
+            'No se pudo actualizar en la API, actualizando solo localmente'
           );
-          setUserData((prev) =>
+          setUserData(prev =>
             prev
               ? {
                   ...prev,
@@ -124,7 +125,7 @@ export function useUserProfile(): UseUserProfileReturn {
                   departamento: data.departamento,
                   activo: data.activo,
                 }
-              : null,
+              : null
           );
         }
       } catch (err) {
@@ -136,7 +137,7 @@ export function useUserProfile(): UseUserProfileReturn {
         setIsLoading(false);
       }
     },
-    [userData],
+    [userData]
   );
 
   // Función para refrescar el perfil

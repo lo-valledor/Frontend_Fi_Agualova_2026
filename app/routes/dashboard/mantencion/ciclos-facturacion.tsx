@@ -1,16 +1,18 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CiclosFacturacionComponent from '~/components/mantencion/ciclos-facturacion/ciclos-facturacion-component';
-import type { Route } from './+types/ciclos-facturacion';
 import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/ciclos-facturacion';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Ciclos de Facturación' },
     {
       name: 'description',
-      content: 'Gestión de ciclos de facturación del sistema',
+      content: ' ciclos de facturación del sistema',
     },
   ];
 }

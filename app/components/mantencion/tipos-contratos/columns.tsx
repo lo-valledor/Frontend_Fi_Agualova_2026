@@ -1,8 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '~/components/ui/badge';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { TiposContrato } from '~/types/mantencion';
 import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { TiposContrato } from '~/types/mantencion';
 
 interface TiposContratoColumnsProps {
   onEdit: (tipoContrato: TiposContrato) => void;
@@ -16,11 +17,11 @@ export const createColumns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nombre" />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => (
       <div
-        className="max-w-[200px] truncate font-medium"
+        className='max-w-[200px] truncate font-medium'
         title={row.getValue('nombre')}
       >
         {row.getValue('nombre')}
@@ -30,7 +31,7 @@ export const createColumns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

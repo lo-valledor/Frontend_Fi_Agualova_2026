@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
+
 import AcometidaComponent from '~/components/administracion/acometida/acometida-component';
-import { administracionService } from '~/services/administracionService';
-import type { Route } from './+types/acometida';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { administracionService } from '~/services/administracionService';
+
+import type { Route } from './+types/acometida';
 
 export function meta({}: Route.MetaArgs) {
   return [

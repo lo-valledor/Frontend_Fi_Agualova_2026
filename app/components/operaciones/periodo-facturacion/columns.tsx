@@ -1,9 +1,10 @@
-import { type Periodos } from '~/types/operaciones';
 import { type ColumnDef } from '@tanstack/react-table';
+import { Calendar, Clock, Hash } from 'lucide-react';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
 import { cn } from '~/lib/utils';
-import { Calendar, Clock, Hash } from 'lucide-react';
+import { type Periodos } from '~/types/operaciones';
 
 const parseFecha = (fecha: string): Date | null => {
   const [day, month, year] = fecha.split('-').map(Number);
@@ -36,13 +37,13 @@ export const columns: ColumnDef<Periodos>[] = [
   {
     accessorKey: 'pf_id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
+      <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
       const id = row.getValue('pf_id') as string;
       return (
-        <div className="flex items-center">
-          <Badge variant="outline" className="font-mono text-xs">
+        <div className='flex items-center'>
+          <Badge variant='outline' className='font-mono text-xs'>
             {id}
           </Badge>
         </div>
@@ -53,12 +54,12 @@ export const columns: ColumnDef<Periodos>[] = [
   {
     accessorKey: 'pf_descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
+      <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => {
       const descripcion = row.getValue('pf_descripcion') as string;
       return (
-        <div className="max-w-[200px] truncate font-medium text-slate-900 dark:text-slate-100">
+        <div className='max-w-[200px] truncate font-medium text-slate-900 dark:text-slate-100'>
           {descripcion}
         </div>
       );
@@ -68,15 +69,15 @@ export const columns: ColumnDef<Periodos>[] = [
   {
     accessorKey: 'Column1', //Formato DD-MM-YYYY
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha Inicio" />
+      <DataTableColumnHeader column={column} title='Fecha Inicio' />
     ),
     cell: ({ row }) => {
       const periodo = row.original;
       const fechaInicio = parseFecha(periodo.Column1);
       return (
-        <div className="flex items-center gap-2">
-          <Calendar className="h-3 w-3 text-slate-400" />
-          <span className="text-sm text-slate-700 dark:text-slate-300">
+        <div className='flex items-center gap-2'>
+          <Calendar className='h-3 w-3 text-slate-400' />
+          <span className='text-sm text-slate-700 dark:text-slate-300'>
             {fechaInicio
               ? fechaInicio.toLocaleDateString('es-CL', {
                   day: '2-digit',
@@ -97,16 +98,16 @@ export const columns: ColumnDef<Periodos>[] = [
   },
   {
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha Fin" />
+      <DataTableColumnHeader column={column} title='Fecha Fin' />
     ),
     accessorKey: 'Column2', //Formato DD-MM-YYYY
     cell: ({ row }) => {
       const periodo = row.original;
       const fechaFin = parseFecha(periodo.Column2);
       return (
-        <div className="flex items-center gap-2">
-          <Clock className="h-3 w-3 text-slate-400" />
-          <span className="text-sm text-slate-700 dark:text-slate-300">
+        <div className='flex items-center gap-2'>
+          <Clock className='h-3 w-3 text-slate-400' />
+          <span className='text-sm text-slate-700 dark:text-slate-300'>
             {fechaFin
               ? fechaFin.toLocaleDateString('es-CL', {
                   day: '2-digit',
@@ -128,7 +129,7 @@ export const columns: ColumnDef<Periodos>[] = [
   {
     accessorKey: 'epf_descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       const periodo = row.original;
@@ -160,8 +161,8 @@ export const columns: ColumnDef<Periodos>[] = [
       const config = getEstadoConfig(periodo.epf_descripcion);
 
       return (
-        <div className="flex items-center gap-2">
-          <Hash className="h-3 w-3 text-slate-400" />
+        <div className='flex items-center gap-2'>
+          <Hash className='h-3 w-3 text-slate-400' />
           <Badge
             variant={config.variant}
             className={cn('text-xs font-medium', config.className)}

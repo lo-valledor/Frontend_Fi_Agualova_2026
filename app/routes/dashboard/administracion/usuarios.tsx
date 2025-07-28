@@ -1,5 +1,5 @@
- 
 import React from 'react';
+
 import UsuariosComponent from '~/components/administracion/usuarios/usuarios-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
@@ -12,7 +12,7 @@ interface LoaderData {
 export function meta() {
   return [
     { title: 'Enerlova | Usuarios' },
-    { name: 'description', content: 'Gestión de usuarios del sistema' },
+    { name: 'description', content: ' usuarios del sistema' },
   ];
 }
 

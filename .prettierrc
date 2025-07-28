@@ -1,9 +1,40 @@
 {
+  "semi": true,
+  "trailingComma": "es5",
   "singleQuote": true,
-  "trailingComma": "all",
   "printWidth": 80,
   "tabWidth": 2,
-  "semi": true,
-  "jsxSingleQuote": false,
-  "arrowParens": "always"
+  "useTabs": false,
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "avoid",
+  "endOfLine": "lf",
+  "plugins": [
+    "prettier-plugin-tailwindcss",
+    "@trivago/prettier-plugin-sort-imports"
+  ],
+  "importOrder": ["^react$", "^react-(.*)$", "^@/(.*)$", "^~/(.*)$", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "overrides": [
+    {
+      "files": "*.tsx",
+      "options": {
+        "parser": "typescript",
+        "jsxSingleQuote": true
+      }
+    },
+    {
+      "files": "*.ts",
+      "options": {
+        "parser": "typescript"
+      }
+    },
+    {
+      "files": "*.json",
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
 }

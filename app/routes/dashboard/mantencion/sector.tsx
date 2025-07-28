@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/sector';
-import { mantencionService } from '~/services/mantencionService';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import SectorComponent from '~/components/mantencion/sector/sector-component';
+import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/sector';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Sectores' },
-    { name: 'description', content: 'Gestión de sectores del sistema' },
+    { name: 'description', content: ' sectores del sistema' },
   ];
 }
 

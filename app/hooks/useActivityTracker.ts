@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+
 import { useAuth } from '~/context/AuthContext';
 import { activityTracker } from '~/services/activityTracker';
 
@@ -13,11 +14,11 @@ export const useActivityTracker = () => {
           user.username,
           action,
           module,
-          details,
+          details
         );
       }
     },
-    [user],
+    [user]
   );
 
   const getRecentActivities = useCallback((hours: number = 24) => {
@@ -36,7 +37,7 @@ export const useActivityTracker = () => {
       }
       return null;
     },
-    [user],
+    [user]
   );
 
   const exportActivities = useCallback(() => {

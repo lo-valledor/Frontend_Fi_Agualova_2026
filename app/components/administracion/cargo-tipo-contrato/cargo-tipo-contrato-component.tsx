@@ -1,26 +1,23 @@
 /* eslint-disable unused-imports/no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+
+import React, { useEffect, useState } from 'react';
+
 import { DataTable } from '~/components/data-table/data-table';
+import { LoadingSpinner } from '~/components/loading-spinner';
+import { Card, CardContent } from '~/components/ui/card';
+import api from '~/lib/api';
 import type {
-  GetCargoTipoContrato,
-  CargoTipoContratoEditor,
   BuscarCargoFacturable,
+  CargoTipoContratoEditor,
+  GetCargoTipoContrato,
   GetCondicionesContrato,
 } from '~/types/administracion';
 import type { TiposContrato } from '~/types/mantencion';
+
 import { columns } from './columns';
-import { toast } from 'sonner';
-import api from '~/lib/api';
 import { DeleteDialog } from './delete-dialog';
 import { FormModal } from './form-modal';
-import { LoadingSpinner } from '~/components/loading-spinner';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
 
 export default function CargoTipoContratoComponent({
   cargoTipoContrato: initialData,
@@ -31,7 +28,7 @@ export default function CargoTipoContratoComponent({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<GetCargoTipoContrato | null>(
-    null,
+    null
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +38,7 @@ export default function CargoTipoContratoComponent({
   const [cargos, setCargos] = useState<BuscarCargoFacturable[]>([]);
   const [condiciones, setCondiciones] = useState<GetCondicionesContrato[]>([]);
   const [editorData, setEditorData] = useState<CargoTipoContratoEditor | null>(
-    null,
+    null
   );
 
   useEffect(() => {
@@ -57,7 +54,7 @@ export default function CargoTipoContratoComponent({
             api.get('tipoContrato/combo'),
             api.get('buscarCargoFacturable'),
             api.get('condicionesContrato/combo'),
-          ],
+          ]
         );
         setTiposContrato(tiposContratoRes.data as TiposContrato[]);
         setCargos(cargosRes.data as BuscarCargoFacturable[]);
@@ -118,7 +115,7 @@ export default function CargoTipoContratoComponent({
     setIsLoading(true);
     try {
       await api.delete(
-        `/cargoTipoContrato-eliminar/${selectedItem.tipoContratoId}`,
+        `/cargoTipoContrato-eliminar/${selectedItem.tipoContratoId}`
       );
       toast.success('Relación eliminada exitosamente');
       await refetchData();
@@ -132,15 +129,12 @@ export default function CargoTipoContratoComponent({
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
+      <div className='flex items-center justify-between'>
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">
+          <h2 className='text-2xl font-bold tracking-tight'>
             Cargo Tipo Contrato
           </h2>
-          <p className="text-muted-foreground">
-            Gestiona la relación entre cargos facturables y tipos de contrato
-          </p>
         </div>
         {/* Botón de añadir deshabilitado temporalmente
         <Button onClick={handleAdd}>
@@ -149,18 +143,10 @@ export default function CargoTipoContratoComponent({
         </Button>
         */}
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-indigo-900 dark:text-indigo-100">
-            Lista de Relaciones
-          </CardTitle>
-          <CardDescription>
-            Visualiza y gestiona las relaciones existentes
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="relative">
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           {isLoading && (
-            <div className="absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10">
+            <div className='absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10'>
               <LoadingSpinner />
             </div>
           )}

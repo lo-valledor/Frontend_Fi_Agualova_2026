@@ -1,7 +1,12 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+
+import React from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -20,8 +25,6 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import type { Tarifas } from '~/types/mantencion';
 
 const tarifaSchema = z.object({
@@ -90,7 +93,7 @@ export default function TarifaFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Tarifa' : 'Editar Tarifa'}
@@ -103,10 +106,10 @@ export default function TarifaFormModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="codigo"
+              name='codigo'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Código</FormLabel>
@@ -115,7 +118,7 @@ export default function TarifaFormModal({
                       {...field}
                       readOnly={mode === 'edit'}
                       className={mode === 'edit' ? 'bg-muted' : ''}
-                      placeholder="Ingrese el código"
+                      placeholder='Ingrese el código'
                     />
                   </FormControl>
                   <FormDescription>Máximo 20 caracteres</FormDescription>
@@ -126,14 +129,14 @@ export default function TarifaFormModal({
 
             <FormField
               control={form.control}
-              name="nombre"
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Ingrese el nombre de la tarifa"
+                      placeholder='Ingrese el nombre de la tarifa'
                     />
                   </FormControl>
                   <FormDescription>Máximo 100 caracteres</FormDescription>
@@ -144,19 +147,19 @@ export default function TarifaFormModal({
 
             <DialogFooter>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={onClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear' : 'Actualizar'}
               </Button>
             </DialogFooter>

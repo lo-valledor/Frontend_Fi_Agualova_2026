@@ -1,5 +1,5 @@
 import api from '~/lib/api';
-import type { Usuarios, ActualizarUsuarioProps } from '~/types/administracion';
+import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 
 // Cache para usuarios
 const userCache = new Map<string, { data: Usuarios; timestamp: number }>();
@@ -36,7 +36,7 @@ class UserService {
    * Obtiene un usuario específico por ID
    */
   async getUserById(
-    userId: string | number,
+    userId: string | number
   ): Promise<UserServiceResponse<Usuarios>> {
     const userIdStr = userId.toString();
     const cacheKey = `user_${userIdStr}`;
@@ -67,7 +67,7 @@ class UserService {
 
       const usuarios = allUsersResponse.data!;
       const usuarioEncontrado = usuarios.find(
-        (u) => u.idUsuario === parseInt(userIdStr),
+        u => u.idUsuario === parseInt(userIdStr)
       );
 
       if (!usuarioEncontrado) {
@@ -102,7 +102,7 @@ class UserService {
    * Obtiene un usuario por nombre de usuario
    */
   async getUserByUsername(
-    username: string,
+    username: string
   ): Promise<UserServiceResponse<Usuarios>> {
     const cacheKey = `user_username_${username}`;
 
@@ -131,7 +131,7 @@ class UserService {
 
       const usuarios = allUsersResponse.data!;
       const usuarioEncontrado = usuarios.find(
-        (u) => u.nombreDeUsuario.toLowerCase() === username.toLowerCase(),
+        u => u.nombreDeUsuario.toLowerCase() === username.toLowerCase()
       );
 
       if (!usuarioEncontrado) {
@@ -167,13 +167,10 @@ class UserService {
    */
   async updateUser(
     userId: number,
-    userData: ActualizarUsuarioProps,
+    userData: ActualizarUsuarioProps
   ): Promise<UserServiceResponse<Usuarios>> {
     try {
-      const response = await api.put(
-        `actualizar/${userId}`,
-        userData,
-      );
+      const response = await api.put(`actualizar/${userId}`, userData);
 
       const updatedUser = response.data as Usuarios;
 

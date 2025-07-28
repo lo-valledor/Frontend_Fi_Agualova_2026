@@ -1,5 +1,10 @@
 import {
   type ColumnDef,
+  type ColumnFiltersState,
+  type PaginationState,
+  type RowSelectionState,
+  type SortingState,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -8,12 +13,12 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  type ColumnFiltersState,
-  type PaginationState,
-  type SortingState,
-  type VisibilityState,
-  type RowSelectionState,
 } from '@tanstack/react-table';
+import { Search } from 'lucide-react';
+
+import { useState } from 'react';
+
+import { DataTablePagination } from '~/components/data-table/data-table-pagination';
 import { Input } from '~/components/ui/input';
 import {
   Table,
@@ -23,9 +28,6 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import { Search } from 'lucide-react';
-import { useState } from 'react';
-import { DataTablePagination } from '~/components/data-table/data-table-pagination';
 
 interface ColumnGroup {
   id: string;
@@ -89,40 +91,40 @@ export function DataTablePrecios<TData, TValue>({
 
   // Función para obtener el span de una columna
   const getColumnSpan = (groupId: string): number => {
-    const group = columnGroups.find((g) => g.id === groupId);
+    const group = columnGroups.find(g => g.id === groupId);
     return group?.columns.length || 1;
   };
 
   // Función para verificar si una columna pertenece a un grupo
   const getColumnGroup = (columnId: string): ColumnGroup | undefined => {
-    return columnGroups.find((group) => group.columns.includes(columnId));
+    return columnGroups.find(group => group.columns.includes(columnId));
   };
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       {/* Search */}
       {showSearch && (
-        <div className="flex justify-end">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+        <div className='flex justify-end'>
+          <div className='relative w-full max-w-sm'>
+            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
-              onChange={(e) => table.setGlobalFilter(e.target.value)}
-              className="pl-10 w-full bg-white dark:bg-slate-800"
+              onChange={e => table.setGlobalFilter(e.target.value)}
+              className='pl-10 w-full bg-white dark:bg-slate-800'
             />
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-lg">
+      <div className='rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-lg'>
         <Table>
           <TableHeader>
             {/* Headers agrupados */}
             {columnGroups.length > 0 && (
-              <TableRow className="border-b-0">
-                {columnGroups.map((group) => (
+              <TableRow className='border-b-0'>
+                {columnGroups.map(group => (
                   <TableHead
                     key={group.id}
                     colSpan={getColumnSpan(group.id)}
@@ -137,12 +139,12 @@ export function DataTablePrecios<TData, TValue>({
             )}
 
             {/* Headers de columnas individuales */}
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="border-b bg-slate-50 dark:bg-slate-800/50"
+                className='border-b bg-slate-50 dark:bg-slate-800/50'
               >
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   const group = getColumnGroup(header.column.id);
                   return (
                     <TableHead
@@ -161,7 +163,7 @@ export function DataTablePrecios<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -180,7 +182,7 @@ export function DataTablePrecios<TData, TValue>({
                       : 'bg-slate-25 dark:bg-slate-900/50'
                   }`}
                 >
-                  {row.getVisibleCells().map((cell) => {
+                  {row.getVisibleCells().map(cell => {
                     const group = getColumnGroup(cell.column.id);
                     return (
                       <TableCell
@@ -191,7 +193,7 @@ export function DataTablePrecios<TData, TValue>({
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext(),
+                          cell.getContext()
                         )}
                       </TableCell>
                     );
@@ -202,7 +204,7 @@ export function DataTablePrecios<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-slate-500 dark:text-slate-400"
+                  className='h-24 text-center text-slate-500 dark:text-slate-400'
                 >
                   No se encontraron resultados.
                 </TableCell>

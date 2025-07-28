@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { useAuth } from '~/context/AuthContext';
 import api from '~/lib/api';
-import type { Usuarios, ActualizarUsuarioProps } from '~/types/administracion';
+import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 
 interface UseUserProfileEnhancedReturn {
   userData: Usuarios | null;
@@ -79,7 +80,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
 
           // Buscar el usuario por ID
           const usuarioEncontrado = usuarios.find(
-            (u) => u.idUsuario === parseInt(userId),
+            u => u.idUsuario === parseInt(userId)
           );
 
           if (usuarioEncontrado) {
@@ -93,7 +94,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
           } else {
             // Si no se encuentra, crear datos simulados
             console.warn(
-              'Usuario no encontrado en la lista, usando datos del token',
+              'Usuario no encontrado en la lista, usando datos del token'
             );
             throw new Error('Usuario no encontrado en la base de datos');
           }
@@ -106,7 +107,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
           // Fallback: crear datos simulados basados en el token
           console.warn(
             'No se pudo obtener datos del usuario desde la API, usando datos del token:',
-            apiError.message,
+            apiError.message
           );
 
           const mockUserData = createMockUserData(user);
@@ -129,7 +130,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
         abortControllerRef.current = null;
       }
     },
-    [user, createMockUserData],
+    [user, createMockUserData]
   );
 
   // Función para actualizar el perfil
@@ -147,7 +148,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
         try {
           const response = await api.put(
             `/actualizar/${userData.idUsuario}`,
-            data,
+            data
           );
 
           // Actualizar datos locales con la respuesta
@@ -185,7 +186,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
           // Fallback: actualizar solo localmente
           console.warn(
             'No se pudo actualizar en la API, actualizando solo localmente:',
-            apiError.message,
+            apiError.message
           );
 
           const updatedUserData = {
@@ -215,7 +216,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
         setIsLoading(false);
       }
     },
-    [userData],
+    [userData]
   );
 
   // Función para refrescar el perfil

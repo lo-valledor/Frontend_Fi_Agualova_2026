@@ -1,21 +1,18 @@
-import React, { useState } from 'react';
-import { DataTable } from '~/components/data-table/data-table';
-import { columns } from './columns';
-import type { Usuarios } from '~/types/administracion';
-import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
-import { UserFormModal } from './user-form-modal';
-import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
-import { useAdministracion } from '~/hooks/use-administracion';
 import { toast } from 'sonner';
+
+import React, { useState } from 'react';
+
+import { DataTable } from '~/components/data-table/data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { useAdministracion } from '~/hooks/use-administracion';
+import type { Usuarios } from '~/types/administracion';
+
+import { columns } from './columns';
+import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
+import { UserFormModal } from './user-form-modal';
 
 export default function UsuariosComponent({
   usuarios: initialUsuarios,
@@ -79,8 +76,8 @@ export default function UsuariosComponent({
 
   if (loadingState.fetchUsuarios.isLoading) {
     return (
-      <div className="container mx-auto p-3 md:p-6">
-        <div className="flex items-center justify-center py-20">
+      <div className='container mx-auto p-3 md:p-6'>
+        <div className='flex items-center justify-center py-20'>
           <LoadingSpinner />
         </div>
       </div>
@@ -88,37 +85,28 @@ export default function UsuariosComponent({
   }
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Usuarios
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Usuarios
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los usuarios del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAddUser}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Usuario
         </Button>
       </div>
 
       {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Usuarios</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todos los usuarios registrados en el sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable
             columns={columns({
               onEdit: handleEditUser,

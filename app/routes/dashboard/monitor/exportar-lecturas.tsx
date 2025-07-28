@@ -1,8 +1,10 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/exportar-lecturas';
+
 import ExportarLecturasComponent from '~/components/monitor/exportar-lecturas-component';
 import { monitorService } from '~/services/monitorService';
+
+import type { Route } from './+types/exportar-lecturas';
 
 export function meta({}: Route.MetaArgs) {
   return [

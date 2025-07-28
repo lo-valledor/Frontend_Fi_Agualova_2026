@@ -1,5 +1,15 @@
+import { Calendar, Filter, RotateCcw, X } from 'lucide-react';
+
 import { useState } from 'react';
+
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import {
@@ -9,15 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
-import { Calendar, Filter, X, RotateCcw } from 'lucide-react';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '~/components/ui/collapsible';
+import type { FilterOptions } from '~/hooks/administracion/use-contract-filters';
 
 export interface ContractFilters {
   tipoContrato: string;
@@ -29,8 +32,6 @@ export interface ContractFilters {
   fechaTerminoHasta: string;
   activo: string;
 }
-
-import type { FilterOptions } from '~/hooks/administracion/use-contract-filters';
 
 interface ContractFiltersProps {
   filters: ContractFilters;
@@ -56,36 +57,36 @@ export function ContractFiltersComponent({
 
   const getActiveFiltersCount = () => {
     return Object.values(filters).filter(
-      (value) => value !== '' && value !== 'all',
+      value => value !== '' && value !== 'all'
     ).length;
   };
 
   const activeFiltersCount = getActiveFiltersCount();
 
   return (
-    <Card className="border-sky-200/50 dark:border-sky-800/50">
+    <Card className='border-sky-200/50 dark:border-sky-800/50'>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer hover:bg-sky-50/50 dark:hover:bg-sky-900/10 transition-colors">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
-                  <Filter className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+          <CardHeader className='cursor-pointer hover:bg-sky-50/50 dark:hover:bg-sky-900/10 transition-colors'>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
+                  <Filter className='h-4 w-4 text-sky-600 dark:text-sky-400' />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-sky-800 dark:text-sky-200">
+                  <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
                     Filtros Avanzados
                   </CardTitle>
-                  <p className="text-sm text-muted-foreground">
+                  <p className='text-sm text-muted-foreground'>
                     Filtra contratos por tipo, ciclo, estado y fechas
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className='flex items-center gap-2'>
                 {activeFiltersCount > 0 && (
                   <Badge
-                    variant="secondary"
-                    className="bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-200"
+                    variant='secondary'
+                    className='bg-sky-100 text-sky-800 dark:bg-sky-900/30 dark:text-sky-200'
                   >
                     {activeFiltersCount} filtro
                     {activeFiltersCount !== 1 ? 's' : ''} activo
@@ -93,9 +94,9 @@ export function ContractFiltersComponent({
                   </Badge>
                 )}
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-sky-600 dark:text-sky-400"
+                  variant='ghost'
+                  size='sm'
+                  className='text-sky-600 dark:text-sky-400'
                 >
                   {isOpen ? 'Ocultar' : 'Mostrar'}
                 </Button>
@@ -105,31 +106,31 @@ export function ContractFiltersComponent({
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <CardContent className="pt-0 space-y-6">
+          <CardContent className='pt-0 space-y-6'>
             <Separator />
 
             {/* Filtros principales */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
               {/* Tipo de Contrato */}
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label
-                  htmlFor="tipoContrato"
-                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor='tipoContrato'
+                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
                 >
                   Tipo de Contrato
                 </Label>
                 <Select
                   value={filters.tipoContrato}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     handleFilterChange('tipoContrato', value)
                   }
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todos los tipos" />
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Todos los tipos' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos los tipos</SelectItem>
-                    {filterOptions.tiposContrato.map((tipo) => (
+                    <SelectItem value='all'>Todos los tipos</SelectItem>
+                    {filterOptions.tiposContrato.map(tipo => (
                       <SelectItem key={tipo} value={tipo}>
                         {tipo}
                       </SelectItem>
@@ -139,25 +140,25 @@ export function ContractFiltersComponent({
               </div>
 
               {/* Ciclo de Facturación */}
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label
-                  htmlFor="cicloFacturacion"
-                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor='cicloFacturacion'
+                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
                 >
                   Ciclo de Facturación
                 </Label>
                 <Select
                   value={filters.cicloFacturacion}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     handleFilterChange('cicloFacturacion', value)
                   }
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todos los ciclos" />
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Todos los ciclos' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos los ciclos</SelectItem>
-                    {filterOptions.ciclosFacturacion.map((ciclo) => (
+                    <SelectItem value='all'>Todos los ciclos</SelectItem>
+                    {filterOptions.ciclosFacturacion.map(ciclo => (
                       <SelectItem key={ciclo} value={ciclo}>
                         {ciclo}
                       </SelectItem>
@@ -167,23 +168,23 @@ export function ContractFiltersComponent({
               </div>
 
               {/* Tarifa */}
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label
-                  htmlFor="tarifa"
-                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor='tarifa'
+                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
                 >
                   Tarifa
                 </Label>
                 <Select
                   value={filters.tarifa}
-                  onValueChange={(value) => handleFilterChange('tarifa', value)}
+                  onValueChange={value => handleFilterChange('tarifa', value)}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todas las tarifas" />
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Todas las tarifas' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas las tarifas</SelectItem>
-                    {filterOptions.tarifas.map((tarifa) => (
+                    <SelectItem value='all'>Todas las tarifas</SelectItem>
+                    {filterOptions.tarifas.map(tarifa => (
                       <SelectItem key={tarifa} value={tarifa}>
                         {tarifa}
                       </SelectItem>
@@ -193,23 +194,23 @@ export function ContractFiltersComponent({
               </div>
 
               {/* Comuna */}
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label
-                  htmlFor="comuna"
-                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor='comuna'
+                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
                 >
                   Comuna
                 </Label>
                 <Select
                   value={filters.comuna}
-                  onValueChange={(value) => handleFilterChange('comuna', value)}
+                  onValueChange={value => handleFilterChange('comuna', value)}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todas las comunas" />
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Todas las comunas' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas las comunas</SelectItem>
-                    {filterOptions.comunas.map((comuna) => (
+                    <SelectItem value='all'>Todas las comunas</SelectItem>
+                    {filterOptions.comunas.map(comuna => (
                       <SelectItem key={comuna} value={comuna}>
                         {comuna}
                       </SelectItem>
@@ -220,97 +221,97 @@ export function ContractFiltersComponent({
             </div>
 
             {/* Segunda fila de filtros */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
               {/* Estado Activo */}
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label
-                  htmlFor="activo"
-                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor='activo'
+                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
                 >
                   Estado
                 </Label>
                 <Select
                   value={filters.activo}
-                  onValueChange={(value) => handleFilterChange('activo', value)}
+                  onValueChange={value => handleFilterChange('activo', value)}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todos los estados" />
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Todos los estados' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos los estados</SelectItem>
-                    <SelectItem value="true">Activo</SelectItem>
-                    <SelectItem value="false">Inactivo</SelectItem>
+                    <SelectItem value='all'>Todos los estados</SelectItem>
+                    <SelectItem value='true'>Activo</SelectItem>
+                    <SelectItem value='false'>Inactivo</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Liberado de Corte */}
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label
-                  htmlFor="liberadoCorte"
-                  className="text-sm font-medium text-slate-700 dark:text-slate-300"
+                  htmlFor='liberadoCorte'
+                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
                 >
                   Liberado de Corte
                 </Label>
                 <Select
                   value={filters.liberadoCorte}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     handleFilterChange('liberadoCorte', value)
                   }
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todos" />
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Todos' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
-                    <SelectItem value="true">Liberado</SelectItem>
-                    <SelectItem value="false">No Liberado</SelectItem>
+                    <SelectItem value='all'>Todos</SelectItem>
+                    <SelectItem value='true'>Liberado</SelectItem>
+                    <SelectItem value='false'>No Liberado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             {/* Filtros de fecha */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <Label className="text-sm font-medium text-amber-700 dark:text-amber-300">
+            <div className='space-y-4'>
+              <div className='flex items-center gap-2'>
+                <Calendar className='h-4 w-4 text-amber-600 dark:text-amber-400' />
+                <Label className='text-sm font-medium text-amber-700 dark:text-amber-300'>
                   Rango de Fecha de Término
                 </Label>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='space-y-2'>
                   <Label
-                    htmlFor="fechaTerminoDesde"
-                    className="text-sm text-slate-600 dark:text-slate-400"
+                    htmlFor='fechaTerminoDesde'
+                    className='text-sm text-slate-600 dark:text-slate-400'
                   >
                     Desde
                   </Label>
                   <Input
-                    id="fechaTerminoDesde"
-                    type="date"
+                    id='fechaTerminoDesde'
+                    type='date'
                     value={filters.fechaTerminoDesde}
-                    onChange={(e) =>
+                    onChange={e =>
                       handleFilterChange('fechaTerminoDesde', e.target.value)
                     }
-                    className="border-amber-200 dark:border-amber-800 focus:border-amber-400 dark:focus:border-amber-600"
+                    className='border-amber-200 dark:border-amber-800 focus:border-amber-400 dark:focus:border-amber-600'
                   />
                 </div>
-                <div className="space-y-2">
+                <div className='space-y-2'>
                   <Label
-                    htmlFor="fechaTerminoHasta"
-                    className="text-sm text-slate-600 dark:text-slate-400"
+                    htmlFor='fechaTerminoHasta'
+                    className='text-sm text-slate-600 dark:text-slate-400'
                   >
                     Hasta
                   </Label>
                   <Input
-                    id="fechaTerminoHasta"
-                    type="date"
+                    id='fechaTerminoHasta'
+                    type='date'
                     value={filters.fechaTerminoHasta}
-                    onChange={(e) =>
+                    onChange={e =>
                       handleFilterChange('fechaTerminoHasta', e.target.value)
                     }
-                    className="border-amber-200 dark:border-amber-800 focus:border-amber-400 dark:focus:border-amber-600"
+                    className='border-amber-200 dark:border-amber-800 focus:border-amber-400 dark:focus:border-amber-600'
                   />
                 </div>
               </div>
@@ -318,151 +319,151 @@ export function ContractFiltersComponent({
 
             {/* Filtros activos y acciones */}
             {activeFiltersCount > 0 && (
-              <div className="space-y-3">
+              <div className='space-y-3'>
                 <Separator />
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-2'>
+                    <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                       Filtros activos:
                     </span>
-                    <div className="flex flex-wrap gap-2">
+                    <div className='flex flex-wrap gap-2'>
                       {filters.tipoContrato &&
                         filters.tipoContrato !== 'all' && (
                           <Badge
-                            variant="outline"
-                            className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800"
+                            variant='outline'
+                            className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800'
                           >
                             Tipo: {filters.tipoContrato}
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 ml-1 hover:bg-transparent"
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
                               onClick={() =>
                                 handleFilterChange('tipoContrato', '')
                               }
                             >
-                              <X className="h-3 w-3" />
+                              <X className='h-3 w-3' />
                             </Button>
                           </Badge>
                         )}
                       {filters.cicloFacturacion &&
                         filters.cicloFacturacion !== 'all' && (
                           <Badge
-                            variant="outline"
-                            className="bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
+                            variant='outline'
+                            className='bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
                           >
                             Ciclo: {filters.cicloFacturacion}
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 ml-1 hover:bg-transparent"
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
                               onClick={() =>
                                 handleFilterChange('cicloFacturacion', '')
                               }
                             >
-                              <X className="h-3 w-3" />
+                              <X className='h-3 w-3' />
                             </Button>
                           </Badge>
                         )}
                       {filters.tarifa && filters.tarifa !== 'all' && (
                         <Badge
-                          variant="outline"
-                          className="bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800"
+                          variant='outline'
+                          className='bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800'
                         >
                           Tarifa: {filters.tarifa}
                           <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-1 hover:bg-transparent"
+                            variant='ghost'
+                            size='sm'
+                            className='h-auto p-0 ml-1 hover:bg-transparent'
                             onClick={() => handleFilterChange('tarifa', '')}
                           >
-                            <X className="h-3 w-3" />
+                            <X className='h-3 w-3' />
                           </Button>
                         </Badge>
                       )}
                       {filters.comuna && filters.comuna !== 'all' && (
                         <Badge
-                          variant="outline"
-                          className="bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800"
+                          variant='outline'
+                          className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800'
                         >
                           Comuna: {filters.comuna}
                           <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-1 hover:bg-transparent"
+                            variant='ghost'
+                            size='sm'
+                            className='h-auto p-0 ml-1 hover:bg-transparent'
                             onClick={() => handleFilterChange('comuna', '')}
                           >
-                            <X className="h-3 w-3" />
+                            <X className='h-3 w-3' />
                           </Button>
                         </Badge>
                       )}
                       {filters.activo && filters.activo !== 'all' && (
                         <Badge
-                          variant="outline"
-                          className="bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800"
+                          variant='outline'
+                          className='bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800'
                         >
                           Estado:{' '}
                           {filters.activo === 'true' ? 'Activo' : 'Inactivo'}
                           <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-1 hover:bg-transparent"
+                            variant='ghost'
+                            size='sm'
+                            className='h-auto p-0 ml-1 hover:bg-transparent'
                             onClick={() => handleFilterChange('activo', '')}
                           >
-                            <X className="h-3 w-3" />
+                            <X className='h-3 w-3' />
                           </Button>
                         </Badge>
                       )}
                       {filters.liberadoCorte &&
                         filters.liberadoCorte !== 'all' && (
                           <Badge
-                            variant="outline"
-                            className="bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800"
+                            variant='outline'
+                            className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800'
                           >
                             Liberado:{' '}
                             {filters.liberadoCorte === 'true' ? 'Sí' : 'No'}
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 ml-1 hover:bg-transparent"
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
                               onClick={() =>
                                 handleFilterChange('liberadoCorte', '')
                               }
                             >
-                              <X className="h-3 w-3" />
+                              <X className='h-3 w-3' />
                             </Button>
                           </Badge>
                         )}
                       {(filters.fechaTerminoDesde ||
                         filters.fechaTerminoHasta) && (
                         <Badge
-                          variant="outline"
-                          className="bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800"
+                          variant='outline'
+                          className='bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800'
                         >
                           Fechas: {filters.fechaTerminoDesde || '...'} -{' '}
                           {filters.fechaTerminoHasta || '...'}
                           <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 ml-1 hover:bg-transparent"
+                            variant='ghost'
+                            size='sm'
+                            className='h-auto p-0 ml-1 hover:bg-transparent'
                             onClick={() => {
                               handleFilterChange('fechaTerminoDesde', '');
                               handleFilterChange('fechaTerminoHasta', '');
                             }}
                           >
-                            <X className="h-3 w-3" />
+                            <X className='h-3 w-3' />
                           </Button>
                         </Badge>
                       )}
                     </div>
                   </div>
                   <Button
-                    variant="outline"
-                    size="sm"
+                    variant='outline'
+                    size='sm'
                     onClick={onClearFilters}
-                    className="text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400"
+                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400'
                   >
-                    <RotateCcw className="h-4 w-4 mr-1" />
+                    <RotateCcw className='h-4 w-4 mr-1' />
                     Limpiar Filtros
                   </Button>
                 </div>

@@ -1,33 +1,34 @@
-import { useState, useEffect } from 'react';
-import { administracionService } from '~/services/administracionService';
+import { useEffect, useState } from 'react';
+
 import api from '~/lib/api';
+import { administracionService } from '~/services/administracionService';
 import type {
   Acometida,
+  BuscarCargoFacturable,
   ComboEmpalmes,
   ComboNichos,
   ComboSectores,
   ContratosDisponibles,
-  GetClientes,
-  GetGiros,
-  GetRegiones,
-  GetContratos,
-  GetContratosClientes,
-  GetLimiteInvierno,
-  GetFechaActual,
-  GetMedidores,
-  GetCargoTipoContrato,
-  GetCondicionesContrato,
   GeCombosConceptos,
+  GetCargoTipoContrato,
+  GetClienteById,
+  GetClientes,
   GetCombosTarifas,
   GetCombosTiposMedidor,
-  BuscarCargoFacturable,
-  Usuarios,
-  GetClienteById,
   GetComunas,
+  GetCondicionesContrato,
+  GetContratos,
+  GetContratosClientes,
+  GetFechaActual,
+  GetGiros,
+  GetLimiteInvierno,
+  GetMedidores,
+  GetRegiones,
+  Usuarios,
 } from '~/types/administracion';
 import type {
-  Marca,
   Conceptos,
+  Marca,
   Tarifas,
   TiposContrato,
 } from '~/types/mantencion';
@@ -388,7 +389,7 @@ export function useAdministracion() {
   });
 
   const createUsuario = async (userData: any) => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
       createUsuario: { isLoading: true },
     }));
@@ -396,7 +397,7 @@ export function useAdministracion() {
       const response = await api.post('/crear', userData);
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
         createUsuario: { isLoading: false },
       }));
@@ -404,7 +405,7 @@ export function useAdministracion() {
   };
 
   const updateUsuario = async (idUsuario: number, userData: any) => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
       updateUsuario: { isLoading: true },
     }));
@@ -412,7 +413,7 @@ export function useAdministracion() {
       const response = await api.put(`/actualizar/${idUsuario}`, userData);
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
         updateUsuario: { isLoading: false },
       }));
@@ -420,7 +421,7 @@ export function useAdministracion() {
   };
 
   const deleteUsuario = async (idUsuario: number) => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
       deleteUsuario: { isLoading: true },
     }));
@@ -428,7 +429,7 @@ export function useAdministracion() {
       const response = await api.delete(`/eliminar/${idUsuario}`);
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
         deleteUsuario: { isLoading: false },
       }));
@@ -436,7 +437,7 @@ export function useAdministracion() {
   };
 
   const fetchUsuarios = async () => {
-    setLoadingState((prev) => ({
+    setLoadingState(prev => ({
       ...prev,
       fetchUsuarios: { isLoading: true },
     }));
@@ -444,7 +445,7 @@ export function useAdministracion() {
       const response = await api.get('/listar');
       return response.data;
     } finally {
-      setLoadingState((prev) => ({
+      setLoadingState(prev => ({
         ...prev,
         fetchUsuarios: { isLoading: false },
       }));

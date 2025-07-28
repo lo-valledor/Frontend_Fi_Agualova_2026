@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import type { Nicho, Sectores } from '~/types/mantencion';
-import api from '~/lib/api';
+import { z } from 'zod';
+
+import { useEffect, useState } from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -22,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -29,9 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import { Button } from '~/components/ui/button';
+import api from '~/lib/api';
+import type { Nicho, Sectores } from '~/types/mantencion';
 
 const nichoFormSchema = z.object({
   sectorId: z.string().min(1, { message: 'El sector es requerido.' }),
@@ -113,7 +116,7 @@ export default function NichoFormModal({
   useEffect(() => {
     if (isOpen) {
       if (mode === 'edit' && nicho) {
-        const sector = sectores.find((s) => s.nombre === nicho.sectorNombre);
+        const sector = sectores.find(s => s.nombre === nicho.sectorNombre);
         form.reset({
           sectorId: sector?.id.toString() || '',
           nombre: nicho.nombre,
@@ -151,7 +154,7 @@ export default function NichoFormModal({
       toast.error(
         mode === 'add'
           ? 'Error al crear el nicho'
-          : 'Error al actualizar el nicho',
+          : 'Error al actualizar el nicho'
       );
     } finally {
       setIsLoading(false);
@@ -165,7 +168,7 @@ export default function NichoFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Nicho' : 'Editar Nicho'}
@@ -180,11 +183,11 @@ export default function NichoFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4 pt-4"
+            className='space-y-4 pt-4'
           >
             <FormField
               control={form.control}
-              name="sectorId"
+              name='sectorId'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Sector</FormLabel>
@@ -205,7 +208,7 @@ export default function NichoFormModal({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {sectores.map((sector) => (
+                      {sectores.map(sector => (
                         <SelectItem
                           key={sector.id}
                           value={sector.id.toString()}
@@ -222,12 +225,12 @@ export default function NichoFormModal({
 
             <FormField
               control={form.control}
-              name="nombre"
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre del Nicho</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Nicho Norte 1" {...field} />
+                    <Input placeholder='Ej: Nicho Norte 1' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -236,12 +239,12 @@ export default function NichoFormModal({
 
             <FormField
               control={form.control}
-              name="ubicacion"
+              name='ubicacion'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Ubicación</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Pasaje Los Aromos 123" {...field} />
+                    <Input placeholder='Ej: Pasaje Los Aromos 123' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -250,10 +253,10 @@ export default function NichoFormModal({
 
             <FormField
               control={form.control}
-              name="estado"
+              name='estado'
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
+                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
+                  <div className='space-y-0.5'>
                     <FormLabel>Estado del Nicho</FormLabel>
                     <FormDescription>
                       {field.value ? 'Nicho activo' : 'Nicho inactivo'}
@@ -269,19 +272,19 @@ export default function NichoFormModal({
               )}
             />
 
-            <DialogFooter className="gap-2">
+            <DialogFooter className='gap-2'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading || isLoadingSectores}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading
                   ? mode === 'add'

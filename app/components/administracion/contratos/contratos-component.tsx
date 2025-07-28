@@ -1,5 +1,11 @@
+import { FileText, Plus } from 'lucide-react';
+
 import { useState } from 'react';
+
 import { DataTable } from '~/components/data-table/data-table';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
 import type {
   ContratoFormData,
   GetContratos,
@@ -8,26 +14,17 @@ import type {
   GetLimiteInvierno,
   GetRegiones,
 } from '~/types/administracion';
+import type { Tarifas, TiposContrato } from '~/types/mantencion';
+
 import { columns } from './columns';
-import { Button } from '~/components/ui/button';
-import { FileText, Plus } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
-import { ContractFormModal } from './contract-form-modal';
-import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { ContractDetailsModal } from './contract-details-modal';
 import {
-  ContractFiltersComponent,
   type ContractFilters,
+  ContractFiltersComponent,
 } from './contract-filters';
-import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
+import { ContractFormModal } from './contract-form-modal';
+import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { FilterSummary } from './filter-summary';
-import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
 export default function ContratosComponent({
   contratos,
@@ -47,7 +44,7 @@ export default function ContratosComponent({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<GetContratos | null>(
-    null,
+    null
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [filters, setFilters] = useState<ContractFilters>({
@@ -63,7 +60,7 @@ export default function ContratosComponent({
 
   const { filteredContracts, filterStats, filterOptions } = useContractFilters(
     contracts,
-    filters,
+    filters
   );
 
   const handleFiltersChange = (newFilters: ContractFilters) => {
@@ -116,10 +113,10 @@ export default function ContratosComponent({
           ? new Date(formData.fechaTermino).toISOString()
           : '',
       };
-      setContracts((prev) => [...prev, newContract]);
+      setContracts(prev => [...prev, newContract]);
     } else if (selectedContract) {
-      setContracts((prev) =>
-        prev.map((contract) =>
+      setContracts(prev =>
+        prev.map(contract =>
           contract.codigoContrato === selectedContract.codigoContrato
             ? {
                 ...contract,
@@ -129,19 +126,19 @@ export default function ContratosComponent({
                   ? new Date(formData.fechaTermino).toISOString()
                   : '',
               }
-            : contract,
-        ),
+            : contract
+        )
       );
     }
   };
 
   const handleConfirmDelete = () => {
     if (selectedContract) {
-      setContracts((prev) =>
+      setContracts(prev =>
         prev.filter(
-          (contract) =>
-            contract.codigoContrato !== selectedContract.codigoContrato,
-        ),
+          contract =>
+            contract.codigoContrato !== selectedContract.codigoContrato
+        )
       );
       setSelectedContract(null);
     }
@@ -155,24 +152,21 @@ export default function ContratosComponent({
   });
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Contratos
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Contratos
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los contratos del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAddContract}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Contrato
         </Button>
       </div>
@@ -196,44 +190,28 @@ export default function ContratosComponent({
       />
 
       {/* Table */}
-      <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
-              <FileText className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-            </div>
-            <div>
-              <CardTitle className="text-lg text-slate-900 dark:text-slate-100">
-                Lista de Contratos
-              </CardTitle>
-              <CardDescription className="text-slate-600 dark:text-slate-400 text-sm">
-                Visualiza y gestiona todos los contratos registrados en el
-                sistema ({filteredContracts.length} contratos)
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           {filteredContracts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4">
-                <FileText className="h-8 w-8 text-slate-400 dark:text-slate-500" />
+            <div className='flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400'>
+              <div className='flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
+                <FileText className='h-8 w-8 text-slate-400 dark:text-slate-500' />
               </div>
-              <p className="text-lg font-medium">No se encontraron contratos</p>
-              <p className="text-sm">
+              <p className='text-lg font-medium'>No se encontraron contratos</p>
+              <p className='text-sm'>
                 {filterStats.isFiltered
                   ? 'No hay contratos que coincidan con los filtros aplicados'
                   : 'No hay contratos registrados en el sistema'}
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className='space-y-4'>
               {/* Tabla moderna */}
-              <div className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden">
+              <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden'>
                 <DataTable
                   columns={columnsData}
                   data={filteredContracts}
-                  searchPlaceholder="Buscar por código, propietario o local..."
+                  searchPlaceholder='Buscar por código, propietario o local...'
                   defaultPageSize={15}
                 />
               </div>

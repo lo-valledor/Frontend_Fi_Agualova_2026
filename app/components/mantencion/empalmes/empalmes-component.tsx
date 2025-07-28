@@ -1,13 +1,17 @@
-import type { Empalme } from '~/types/mantencion';
-import { DataTable } from '~/components/data-table/data-table';
-import { columns } from './columns';
-import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
-import { useRevalidator } from 'react-router';
-import { Card, CardContent } from '~/components/ui/card';
-import EmpalmesModalForm from './empalmes-modal-form';
 import { toast } from 'sonner';
+
+import { useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
+import { DataTable } from '~/components/data-table/data-table';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import type { Empalme } from '~/types/mantencion';
+
+import { columns } from './columns';
+import EmpalmesModalForm from './empalmes-modal-form';
 
 interface EmpalmesComponentProps {
   empalmes: Empalme[];
@@ -46,36 +50,33 @@ export default function EmpalmesComponent({
     toast.success(
       modalMode === 'add'
         ? 'Empalme creado exitosamente'
-        : 'Empalme actualizado exitosamente',
+        : 'Empalme actualizado exitosamente'
     );
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Empalmes
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Empalmes
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los empalmes del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAddEmpalme}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Empalme
         </Button>
       </div>
 
       {/* Table */}
-      <Card>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable
             columns={columns({
               onEdit: handleEditEmpalme,

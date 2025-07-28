@@ -1,22 +1,24 @@
-import api from '~/lib/api';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { toast } from 'sonner';
-import { ScrollArea } from '~/components/ui/scroll-area';
 import { AlertCircle } from 'lucide-react';
+import { toast } from 'sonner';
+
 import { useEffect, useState } from 'react';
+
 import { useActivityEvent } from '~/components/activity-tracker-hoc';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import api from '~/lib/api';
 import type {
-  EtapaUno,
+  EtapaCuatro,
   EtapaDos,
   EtapaTres,
-  EtapaCuatro,
+  EtapaUno,
 } from '~/types/monitor';
 
+import AnalisisConsumo from './detalles-medidor/analisis-consumo';
+import ClavesLectura from './detalles-medidor/claves-lectura';
+import InformacionLectura from './detalles-medidor/informacion-lectura';
 // Componentes de presentación
 import InformacionMedidor from './detalles-medidor/informacion-medidor';
-import ClavesLectura from './detalles-medidor/claves-lectura';
-import AnalisisConsumo from './detalles-medidor/analisis-consumo';
-import InformacionLectura from './detalles-medidor/informacion-lectura';
 
 export default function DetallesMedidor({
   lecturaId,
@@ -43,13 +45,13 @@ export default function DetallesMedidor({
       // Crear un array de promesas para todas las etapas
       const etapas = [1, 2, 3, 4];
       const results = await Promise.allSettled(
-        etapas.map((etapa) => {
+        etapas.map(etapa => {
           const params = new URLSearchParams({
             idLec: lecturaId.toString(),
             etapa: etapa.toString(),
           });
           return api.get('/datos-basicos-medidor', { params });
-        }),
+        })
       );
 
       // Procesar los resultados de cada etapa
@@ -124,7 +126,11 @@ export default function DetallesMedidor({
 
   const handleAceptarLectura = async () => {
     try {
-      trackDataAction('Aceptar lectura', 'Detalles Medidor', `Lectura ID: ${lecturaId}`);
+      trackDataAction(
+        'Aceptar lectura',
+        'Detalles Medidor',
+        `Lectura ID: ${lecturaId}`
+      );
       const response = await api.post('/aceptar-lectura-medidor', {
         idLectura: lecturaId,
       });
@@ -152,10 +158,10 @@ export default function DetallesMedidor({
 
   if (isLoading) {
     return (
-      <div className="w-full flex justify-center items-center p-8">
-        <div className="text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin mx-auto"></div>
-          <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
+      <div className='w-full flex justify-center items-center p-8'>
+        <div className='text-center space-y-3'>
+          <div className='w-8 h-8 border-2 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin mx-auto'></div>
+          <p className='text-slate-600 dark:text-slate-400 text-sm font-medium'>
             Cargando datos del medidor...
           </p>
         </div>
@@ -165,8 +171,8 @@ export default function DetallesMedidor({
 
   if (error) {
     return (
-      <Alert variant="destructive" className="my-4">
-        <AlertCircle className="h-4 w-4" />
+      <Alert variant='destructive' className='my-4'>
+        <AlertCircle className='h-4 w-4' />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
       </Alert>
@@ -174,8 +180,8 @@ export default function DetallesMedidor({
   }
 
   return (
-    <ScrollArea className="overflow-y-auto">
-      <div className="space-y-4 p-1">
+    <ScrollArea className='overflow-y-auto'>
+      <div className='space-y-4 p-1'>
         <InformacionMedidor
           data={etapa1Data}
           error={etapaErrors[1]}

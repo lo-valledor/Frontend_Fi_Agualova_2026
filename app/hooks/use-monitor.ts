@@ -1,5 +1,9 @@
-import { useState, useEffect } from 'react';
-import { monitorService, type MonitorBasicData } from '~/services/monitorService';
+import { useEffect, useState } from 'react';
+
+import {
+  type MonitorBasicData,
+  monitorService,
+} from '~/services/monitorService';
 import type { Periodo, Sector } from '~/types/monitor';
 
 export function useMonitorData() {
@@ -132,7 +136,7 @@ export const formatDateToYYYYMMDD = (dateString: string): string => {
 export const findActivePeriod = (periodos: Periodo[]): Periodo | null => {
   if (!periodos || periodos.length === 0) return null;
 
-  const activePeriodo = periodos.find((periodo) => periodo.EstadoPeriodo === 2);
+  const activePeriodo = periodos.find(periodo => periodo.EstadoPeriodo === 2);
 
   return activePeriodo || periodos[0]; // Fallback al primero si no hay activo
 };
@@ -140,7 +144,7 @@ export const findActivePeriod = (periodos: Periodo[]): Periodo | null => {
 // Función utilitaria para validar parámetros de búsqueda
 export const validateSearchParams = (
   sector: Sector | null,
-  periodo: Periodo | null,
+  periodo: Periodo | null
 ): { isValid: boolean; error?: string } => {
   if (!sector) {
     return { isValid: false, error: 'Por favor, seleccione un sector.' };
@@ -155,7 +159,7 @@ export const validateSearchParams = (
 
 // Función utilitaria para obtener fechas por defecto basadas en el período
 export const getDefaultDates = (
-  periodo: Periodo | null,
+  periodo: Periodo | null
 ): {
   fechaInicio: string;
   fechaFin: string;

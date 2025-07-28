@@ -1,7 +1,21 @@
-import React, { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Calendar,
+  CheckCircle2,
+  Gauge,
+  Hash,
+  Power,
+  Tag,
+  Type,
+} from 'lucide-react';
 import { z } from 'zod';
+
+import React, { useEffect } from 'react';
+
+import { Controller, useForm } from 'react-hook-form';
+import Select, { type StylesConfig } from 'react-select';
+
+import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -11,7 +25,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
 import {
   Form,
   FormControl,
@@ -20,23 +33,13 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import {
-  Gauge,
-  Tag,
-  Type,
-  Hash,
-  Calendar,
-  Power,
-  CheckCircle2,
-} from 'lucide-react';
+import { Input } from '~/components/ui/input';
 import type {
-  GetMedidores,
-  CrearMedidorProps,
   ActualizarMedidorProps,
+  CrearMedidorProps,
+  GetMedidores,
 } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
-import Select, { type StylesConfig } from 'react-select';
-import { useTheme } from '~/components/theme-provider';
 
 // Zod schema for form validation
 const medidorSchema = z.object({
@@ -77,7 +80,7 @@ interface MedidorFormModalProps {
   onClose: () => void;
   onSubmit: (
     data: CrearMedidorProps | ActualizarMedidorProps,
-    mode: 'add' | 'edit',
+    mode: 'add' | 'edit'
   ) => Promise<void>;
   medidor?: GetMedidores | null;
   mode: 'add' | 'edit';
@@ -113,10 +116,8 @@ export function MedidorFormModal({
   useEffect(() => {
     if (isOpen) {
       if (mode === 'edit' && medidor) {
-        const marcaSeleccionada = marcas.find(
-          (m) => m.nombre === medidor.marca,
-        );
-        const tipoSeleccionado = tipos.find((t) => t.nombre === medidor.tipo);
+        const marcaSeleccionada = marcas.find(m => m.nombre === medidor.marca);
+        const tipoSeleccionado = tipos.find(t => t.nombre === medidor.tipo);
 
         form.reset({
           marcaCodigo: marcaSeleccionada?.codigo ?? '',
@@ -145,8 +146,7 @@ export function MedidorFormModal({
 
   const handleFormSubmit = (data: MedidorFormData) => {
     if (mode === 'edit' && medidor) {
-      const marcaId =
-        marcas.find((m) => m.codigo === data.marcaCodigo)?.id ?? 0;
+      const marcaId = marcas.find(m => m.codigo === data.marcaCodigo)?.id ?? 0;
       const estadoId = getEstadoIdFromString(medidor.estado);
       const payload = {
         ...data,
@@ -161,13 +161,12 @@ export function MedidorFormModal({
           ...payload,
           marcaId: String(payload.marcaId),
           codigoMedidor: medidor.codigo,
-          subempalmeCodigo: ''
+          subempalmeCodigo: '',
         },
-        'edit',
+        'edit'
       );
     } else {
-      const marcaId =
-        marcas.find((m) => m.codigo === data.marcaCodigo)?.id ?? 0;
+      const marcaId = marcas.find(m => m.codigo === data.marcaCodigo)?.id ?? 0;
       const payload = {
         ...data,
         marcaId,
@@ -181,13 +180,13 @@ export function MedidorFormModal({
   };
 
   const selectStyles: StylesConfig = {
-    control: (styles) => ({
+    control: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
       borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
       minHeight: '44px',
     }),
-    menu: (styles) => ({
+    menu: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
     }),
@@ -203,7 +202,7 @@ export function MedidorFormModal({
             : '#F1F5F9'
           : 'transparent',
     }),
-    singleValue: (styles) => ({
+    singleValue: styles => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
     }),
@@ -211,15 +210,15 @@ export function MedidorFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-3">
-            <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
-              <Gauge className="h-6 w-6 text-sky-600 dark:text-sky-400" />
+      <DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+        <DialogHeader className='space-y-3'>
+          <DialogTitle className='text-2xl font-bold flex items-center gap-3'>
+            <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
+              <Gauge className='h-6 w-6 text-sky-600 dark:text-sky-400' />
             </div>
             {mode === 'add' ? 'Crear Nuevo Medidor' : 'Editar Medidor'}
           </DialogTitle>
-          <DialogDescription className="text-base text-muted-foreground">
+          <DialogDescription className='text-base text-muted-foreground'>
             {mode === 'add'
               ? 'Complete la información para registrar un nuevo medidor.'
               : 'Modifique la información del medidor.'}
@@ -229,28 +228,28 @@ export function MedidorFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleFormSubmit)}
-            className="space-y-8 pt-4"
+            className='space-y-8 pt-4'
           >
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <Gauge className="h-5 w-5 text-sky-600" />
-                <h3 className="text-lg font-medium">Detalles del Medidor</h3>
+            <div className='space-y-6'>
+              <div className='flex items-center gap-2 pb-2 border-b'>
+                <Gauge className='h-5 w-5 text-sky-600' />
+                <h3 className='text-lg font-medium'>Detalles del Medidor</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <FormField
                   control={form.control}
-                  name="serie"
+                  name='serie'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Hash className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <Hash className='h-4 w-4' />
                         N° Serie
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Número de serie"
+                          placeholder='Número de serie'
                           {...field}
-                          className="h-11"
+                          className='h-11'
                         />
                       </FormControl>
                       <FormMessage />
@@ -259,18 +258,18 @@ export function MedidorFormModal({
                 />
                 <FormField
                   control={form.control}
-                  name="modelo"
+                  name='modelo'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Type className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <Type className='h-4 w-4' />
                         Modelo
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Modelo del medidor"
+                          placeholder='Modelo del medidor'
                           {...field}
-                          className="h-11"
+                          className='h-11'
                         />
                       </FormControl>
                       <FormMessage />
@@ -279,28 +278,28 @@ export function MedidorFormModal({
                 />
                 <Controller
                   control={form.control}
-                  name="marcaCodigo"
+                  name='marcaCodigo'
                   render={({ field }) => {
                     return (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Tag className="h-4 w-4" />
+                        <FormLabel className='flex items-center gap-2'>
+                          <Tag className='h-4 w-4' />
                           Marca
                         </FormLabel>
                         <Select
                           {...field}
-                          instanceId="marca-select"
-                          options={marcas.map((m) => ({
+                          instanceId='marca-select'
+                          options={marcas.map(m => ({
                             value: m.codigo,
                             label: m.nombre,
                           }))}
                           value={marcas
-                            .map((m) => ({ value: m.codigo, label: m.nombre }))
-                            .find((m) => m.value === field.value)}
-                          onChange={(option) =>
+                            .map(m => ({ value: m.codigo, label: m.nombre }))
+                            .find(m => m.value === field.value)}
+                          onChange={option =>
                             field.onChange(option ? (option as any).value : '')
                           }
-                          placeholder="Seleccione una marca"
+                          placeholder='Seleccione una marca'
                           styles={selectStyles}
                         />
                         <FormMessage />
@@ -310,30 +309,30 @@ export function MedidorFormModal({
                 />
                 <Controller
                   control={form.control}
-                  name="tipoId"
+                  name='tipoId'
                   render={({ field }) => {
                     return (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Type className="h-4 w-4" />
+                        <FormLabel className='flex items-center gap-2'>
+                          <Type className='h-4 w-4' />
                           Tipo
                         </FormLabel>
                         <Select
                           {...field}
-                          instanceId="tipo-select"
-                          options={tipos.map((t) => ({
+                          instanceId='tipo-select'
+                          options={tipos.map(t => ({
                             value: t.id,
                             label: t.nombre,
                           }))}
                           value={tipos
-                            .map((t) => ({ value: t.id, label: t.nombre }))
-                            .find((t) => t.value === field.value)}
-                          onChange={(option) =>
+                            .map(t => ({ value: t.id, label: t.nombre }))
+                            .find(t => t.value === field.value)}
+                          onChange={option =>
                             field.onChange(
-                              option ? (option as any).value : null,
+                              option ? (option as any).value : null
                             )
                           }
-                          placeholder="Seleccione un tipo"
+                          placeholder='Seleccione un tipo'
                           styles={selectStyles}
                         />
                         <FormMessage />
@@ -344,27 +343,27 @@ export function MedidorFormModal({
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <Power className="h-5 w-5 text-green-600" />
-                <h3 className="text-lg font-medium">Configuración</h3>
+            <div className='space-y-6'>
+              <div className='flex items-center gap-2 pb-2 border-b'>
+                <Power className='h-5 w-5 text-green-600' />
+                <h3 className='text-lg font-medium'>Configuración</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <FormField
                   control={form.control}
-                  name="digitos"
+                  name='digitos'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Hash className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <Hash className='h-4 w-4' />
                         Dígitos
                       </FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
-                          placeholder="Cantidad de dígitos"
+                          type='number'
+                          placeholder='Cantidad de dígitos'
                           {...field}
-                          className="h-11"
+                          className='h-11'
                         />
                       </FormControl>
                       <FormMessage />
@@ -373,19 +372,19 @@ export function MedidorFormModal({
                 />
                 <FormField
                   control={form.control}
-                  name="multiplicar"
+                  name='multiplicar'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Power className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <Power className='h-4 w-4' />
                         Multiplicador
                       </FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
-                          placeholder="Factor multiplicador"
+                          type='number'
+                          placeholder='Factor multiplicador'
                           {...field}
-                          className="h-11"
+                          className='h-11'
                         />
                       </FormControl>
                       <FormMessage />
@@ -394,15 +393,15 @@ export function MedidorFormModal({
                 />
                 <FormField
                   control={form.control}
-                  name="fechaInicio"
+                  name='fechaInicio'
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
+                    <FormItem className='md:col-span-2'>
+                      <FormLabel className='flex items-center gap-2'>
+                        <Calendar className='h-4 w-4' />
                         Fecha de Inicio
                       </FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} className="h-11" />
+                        <Input type='date' {...field} className='h-11' />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -411,22 +410,22 @@ export function MedidorFormModal({
               </div>
             </div>
 
-            <DialogFooter className="pt-6 border-t">
+            <DialogFooter className='pt-6 border-t'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={onClose}
-                className="h-11 px-6"
+                className='h-11 px-6'
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
-                className="h-11 px-6 flex items-center gap-2"
+                type='submit'
+                className='h-11 px-6 flex items-center gap-2'
                 disabled={isLoading}
               >
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className='h-4 w-4' />
                 {isLoading
                   ? 'Guardando...'
                   : mode === 'add'

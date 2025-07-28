@@ -1,15 +1,18 @@
-import React, { useState, useCallback, useMemo, useRef } from 'react';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
+import { AlertCircle, Calculator, Check, Gauge, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
+import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Alert, AlertDescription } from '~/components/ui/alert';
-import { AlertCircle, Gauge, Calculator, Loader2, Check } from 'lucide-react';
-import { toast } from 'sonner';
-import type { FormDataBT1y2, MedidorNichoItem } from '~/types/monitor';
-import { ConfirmationDialog } from '../dialogs/confirmation-dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import api from '~/lib/api';
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
+import type { FormDataBT1y2, MedidorNichoItem } from '~/types/monitor';
+
+import { ConfirmationDialog } from '../dialogs/confirmation-dialog';
 
 interface BT1BT2FormProps {
   result: MedidorNichoItem;
@@ -21,11 +24,11 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
   const valorAnterior = useMemo(
     () => result.LM_ValorUltimaLectura,
-    [result.LM_ValorUltimaLectura],
+    [result.LM_ValorUltimaLectura]
   );
   const constante = useMemo(
     () => result.ME_ConstanteMultiplicar,
-    [result.ME_ConstanteMultiplicar],
+    [result.ME_ConstanteMultiplicar]
   );
 
   // Estado del formulario
@@ -57,7 +60,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
       return valorNumerico <= maxValue;
     },
-    [digito],
+    [digito]
   );
 
   // Calcular el máximo valor permitido para mostrar al usuario
@@ -120,7 +123,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
         vlecturadigitos,
       };
     },
-    [digito, valorAnterior, constante],
+    [digito, valorAnterior, constante]
   );
 
   // Actualizar el consumo cuando cambia el input
@@ -148,7 +151,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       // Validar número de dígitos
       if (!validarDigitos(value)) {
         toast.error(
-          `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`,
+          `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`
         );
         return;
       }
@@ -164,7 +167,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
         setIsValidated(false);
       }
     },
-    [calcularConsumo, validarDigitos, maxValuePermitido, digito],
+    [calcularConsumo, validarDigitos, maxValuePermitido, digito]
   );
 
   // Detectar si el consumo es excesivamente alto
@@ -194,7 +197,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     // Validar dígitos una vez más antes de continuar
     if (!validarDigitos(inputValue)) {
       toast.error(
-        `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`,
+        `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`
       );
       return;
     }
@@ -208,7 +211,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     trackDataAction(
       'Validar lectura',
       'BT1-BT2 Form',
-      `Medidor: ${result.ME_NSerie}, Valor: ${inputValue}, Tipo: ${tipoLectura}`,
+      `Medidor: ${result.ME_NSerie}, Valor: ${inputValue}, Tipo: ${tipoLectura}`
     );
 
     if (tipoLectura === 'menor') {
@@ -265,7 +268,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       trackDataAction(
         'Confirmar lectura',
         'BT1-BT2 Form',
-        `Medidor: ${result.ME_NSerie}, Tipo: ${tipo}, Clave: ${selectedClave}`,
+        `Medidor: ${result.ME_NSerie}, Tipo: ${tipo}, Clave: ${selectedClave}`
       );
 
       // Cerrar el diálogo correspondiente
@@ -279,7 +282,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       setIsValidated(true);
       toast.success('Lectura validada correctamente');
     },
-    [selectedClave, trackDataAction, result.ME_NSerie],
+    [selectedClave, trackDataAction, result.ME_NSerie]
   );
 
   // Confirmar lectura mayor
@@ -287,7 +290,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     trackDataAction(
       'Confirmar lectura',
       'BT1-BT2 Form',
-      `Medidor: ${result.ME_NSerie}, Tipo: mayor`,
+      `Medidor: ${result.ME_NSerie}, Tipo: mayor`
     );
     setShowMayorDialog(false);
     setIsValidated(true);
@@ -299,7 +302,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     trackDataAction(
       'Confirmar consumo excesivo',
       'BT1-BT2 Form',
-      `Medidor: ${result.ME_NSerie}, Consumo: ${consumoCalculado}`,
+      `Medidor: ${result.ME_NSerie}, Consumo: ${consumoCalculado}`
     );
     setShowConsumoExcesivoDialog(false);
 
@@ -319,7 +322,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
     if (!data) {
       toast.error(
-        'No se pueden guardar los datos. Por favor valide la lectura primero.',
+        'No se pueden guardar los datos. Por favor valide la lectura primero.'
       );
       return;
     }
@@ -329,7 +332,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       trackDataAction(
         'Guardar lectura',
         'BT1-BT2 Form',
-        `Medidor: ${result.ME_NSerie}, Valor: ${data.vactual}, Consumo: ${data.consumo}`,
+        `Medidor: ${result.ME_NSerie}, Valor: ${data.vactual}, Consumo: ${data.consumo}`
       );
       const response = await api.put('/actualizar-lectura-bt-1-bt-2', data);
 
@@ -346,7 +349,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       toast.error(
         `Error al conectar con el servidor: ${
           error.message || 'Error desconocido'
-        }`,
+        }`
       );
     } finally {
       setIsSubmitting(false);
@@ -359,7 +362,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       { value: '1', label: 'CSCR - CONSUMO SUPERA CRITERIO DE RANGO' },
       { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' },
     ],
-    [],
+    []
   );
 
   const clavesIgualOptions = useMemo(
@@ -370,32 +373,32 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       { value: '15', label: 'MCRT - MEDIDOR CORTADO' },
       { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' },
     ],
-    [],
+    []
   );
 
   return (
-    <div className="p-2 space-y-2">
-      <Card className="border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-        <CardHeader className="pb-1">
-          <CardTitle className="flex items-center gap-1.5 text-slate-900 dark:text-slate-100 text-sm font-semibold">
-            <div className="p-1 bg-blue-50 dark:bg-blue-950/50 rounded-md">
-              <Gauge className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+    <div className='p-2 space-y-2'>
+      <Card className='border border-slate-200/50 dark:border-slate-800/50 shadow-sm'>
+        <CardHeader className='pb-1'>
+          <CardTitle className='flex items-center gap-1.5 text-slate-900 dark:text-slate-100 text-sm font-semibold'>
+            <div className='p-1 bg-blue-50 dark:bg-blue-950/50 rounded-md'>
+              <Gauge className='h-3.5 w-3.5 text-blue-600 dark:text-blue-400' />
             </div>
             <div>
-              <p className="text-sm font-semibold">
+              <p className='text-sm font-semibold'>
                 Datos de Lectura y Consumo
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">
+              <p className='text-xs text-slate-500 dark:text-slate-400 font-normal'>
                 Formulario para medidores BT-1 y BT-2
               </p>
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-1.5">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            <div className="space-y-1">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
-                <Gauge className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+        <CardContent className='space-y-1.5'>
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-2'>
+            <div className='space-y-1'>
+              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
+                <Gauge className='h-3 w-3 text-blue-600 dark:text-blue-400' />
                 Lectura Actual
               </Label>
               <Input
@@ -403,45 +406,45 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
                 value={inputValue}
                 onChange={handleInputChange}
                 max={maxValuePermitido}
-                className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-7"
+                className='bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-7'
               />
-              <small className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+              <small className='text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1'>
                 <span>⚠️</span>
                 Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
                 dígitos)
               </small>
             </div>
 
-            <div className="space-y-1">
-              <Label className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1">
-                <Calculator className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+            <div className='space-y-1'>
+              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
+                <Calculator className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
                 Consumo Calculado
               </Label>
-              <div className="h-7 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100">
+              <div className='h-7 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100'>
                 {consumoCalculado || '0'}
               </div>
-              <small className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
+              <small className='text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1'>
                 <span>📊</span>
                 Anterior:{' '}
                 {result.LM_ConsumoMesAnterior?.toLocaleString() || '0'} kWh
               </small>
             </div>
 
-            <div className="flex items-center pt-4">
+            <div className='flex items-center pt-4'>
               <Button
-                variant="outline"
+                variant='outline'
                 onClick={validarLectura}
                 disabled={!inputValue || isSubmitting || isValidated}
-                className="w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 h-7 text-xs"
+                className='w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 h-7 text-xs'
               >
                 {isValidated ? (
                   <>
-                    <Check className="h-3 w-3 mr-1" />
+                    <Check className='h-3 w-3 mr-1' />
                     Validado
                   </>
                 ) : (
                   <>
-                    <Check className="h-3 w-3 mr-1" />
+                    <Check className='h-3 w-3 mr-1' />
                     Validar
                   </>
                 )}
@@ -451,47 +454,47 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
           {/* Alertas */}
           {Number(consumoCalculado) < 0 && (
-            <Alert variant="destructive" className="py-1.5">
-              <AlertCircle className="h-3 w-3" />
-              <AlertDescription className="text-xs">
+            <Alert variant='destructive' className='py-1.5'>
+              <AlertCircle className='h-3 w-3' />
+              <AlertDescription className='text-xs'>
                 El consumo es negativo, por favor verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {Number(consumoCalculado) === 0 && inputValue && (
-            <Alert className="border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-1.5">
-              <AlertCircle className="h-3 w-3 text-amber-600 dark:text-amber-400" />
-              <AlertDescription className="text-amber-700 dark:text-amber-300 text-xs">
+            <Alert className='border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-1.5'>
+              <AlertCircle className='h-3 w-3 text-amber-600 dark:text-amber-400' />
+              <AlertDescription className='text-amber-700 dark:text-amber-300 text-xs'>
                 El consumo es cero, verifique la lectura.
               </AlertDescription>
             </Alert>
           )}
 
           {isValidated && (
-            <Alert className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-1.5">
-              <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
-              <AlertDescription className="text-green-700 dark:text-green-300 text-xs">
+            <Alert className='border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-1.5'>
+              <Check className='h-3 w-3 text-green-600 dark:text-green-400' />
+              <AlertDescription className='text-green-700 dark:text-green-300 text-xs'>
                 Lectura validada correctamente, puede proceder a guardar.
               </AlertDescription>
             </Alert>
           )}
 
           {/* Botón Guardar */}
-          <div className="flex justify-end pt-1">
+          <div className='flex justify-end pt-1'>
             <Button
               onClick={guardarLectura}
               disabled={!isValidated || isSubmitting}
-              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 h-7 text-xs text-white"
+              className='bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 h-7 text-xs text-white'
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-1.5 h-3 w-3 animate-spin" />
+                  <Loader2 className='mr-1.5 h-3 w-3 animate-spin' />
                   Guardando...
                 </>
               ) : (
                 <>
-                  <Check className="mr-1.5 h-3 w-3" />
+                  <Check className='mr-1.5 h-3 w-3' />
                   Guardar Lectura
                 </>
               )}
@@ -503,7 +506,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       {/* Diálogos de confirmación */}
       <ConfirmationDialog
         isOpen={showMenorDialog}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           if (!open) {
             if (confirmed.current) {
               confirmed.current = false;
@@ -513,10 +516,10 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
           }
           setShowMenorDialog(open);
         }}
-        title="Confirmar lectura menor"
-        message="La lectura ingresada es menor que la anterior. Por favor seleccione un motivo."
-        variant="default"
-        alertColor="yellow"
+        title='Confirmar lectura menor'
+        message='La lectura ingresada es menor que la anterior. Por favor seleccione un motivo.'
+        variant='default'
+        alertColor='yellow'
         showClaveSelect={true}
         claveOptions={clavesMenorOptions}
         selectedClave={selectedClave}
@@ -527,7 +530,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
       <ConfirmationDialog
         isOpen={showIgualDialog}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           if (!open) {
             if (confirmed.current) {
               confirmed.current = false;
@@ -537,9 +540,9 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
           }
           setShowIgualDialog(open);
         }}
-        title="Confirmación de Lectura"
-        message="¿Está seguro de que la lectura es igual al mes anterior?"
-        alertColor="yellow"
+        title='Confirmación de Lectura'
+        message='¿Está seguro de que la lectura es igual al mes anterior?'
+        alertColor='yellow'
         claveOptions={clavesIgualOptions}
         selectedClave={selectedClave}
         onClaveChange={setSelectedClave}
@@ -551,9 +554,9 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       <ConfirmationDialog
         isOpen={showMayorDialog}
         onOpenChange={setShowMayorDialog}
-        title="Confirmación de Lectura"
-        message="¿Está seguro de que la lectura es correcta?"
-        alertColor="blue"
+        title='Confirmación de Lectura'
+        message='¿Está seguro de que la lectura es correcta?'
+        alertColor='blue'
         onConfirm={handleConfirmMayor}
         isSubmitting={isSubmitting}
       />
@@ -561,9 +564,9 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       <ConfirmationDialog
         isOpen={showConsumoExcesivoDialog}
         onOpenChange={setShowConsumoExcesivoDialog}
-        title="⚠️ Consumo Excesivamente Alto"
+        title='⚠️ Consumo Excesivamente Alto'
         message={`El consumo calculado (${Number(consumoCalculado).toLocaleString('es-CL')} kWh) es significativamente mayor al consumo anterior (${(result.LM_ConsumoMesAnterior || 0).toLocaleString('es-CL')} kWh). ¿Está seguro de que la lectura es correcta?`}
-        alertColor="red"
+        alertColor='red'
         onConfirm={handleConfirmConsumoExcesivo}
         isSubmitting={isSubmitting}
       />

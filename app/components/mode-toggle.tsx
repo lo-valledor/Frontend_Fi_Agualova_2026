@@ -1,7 +1,8 @@
 import { Moon, Sun } from 'lucide-react';
-import { Button } from '~/components/ui/button';
+import { AnimatePresence, motion } from 'motion/react';
+
 import { useTheme } from '~/components/theme-provider';
-import { motion, AnimatePresence } from 'motion/react';
+import { Button } from '~/components/ui/button';
 
 export function ModeToggle() {
   const { theme, setTheme } = useTheme();
@@ -28,32 +29,32 @@ export function ModeToggle() {
 
   return (
     <Button
-      variant="outline"
-      size="icon"
+      variant='outline'
+      size='icon'
       onClick={toggleTheme}
-      aria-label="Alternar modo claro/oscuro"
-      className="relative overflow-hidden rounded-full border-2 border-muted-foreground/20 w-12 h-12"
+      aria-label='Alternar modo claro/oscuro'
+      className='relative overflow-hidden rounded-full border-2 border-muted-foreground/20 w-12 h-12'
     >
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence mode='wait' initial={false}>
         {theme === 'light' ? (
           <motion.div
-            key="sun"
+            key='sun'
             variants={iconVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
+            initial='initial'
+            animate='animate'
+            exit='exit'
           >
-            <Sun className="h-6 w-6 text-yellow-500" />
+            <Sun className='h-6 w-6 text-yellow-500' />
           </motion.div>
         ) : (
           <motion.div
-            key="moon"
+            key='moon'
             variants={iconVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
+            initial='initial'
+            animate='animate'
+            exit='exit'
           >
-            <Moon className="h-6 w-6 text-sky-400" />
+            <Moon className='h-6 w-6 text-sky-400' />
           </motion.div>
         )}
       </AnimatePresence>

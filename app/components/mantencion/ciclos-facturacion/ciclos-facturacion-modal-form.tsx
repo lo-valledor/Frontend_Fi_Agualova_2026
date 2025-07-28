@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import type { CiclosFacturacion } from '~/types/mantencion';
-import api from '~/lib/api';
+import { z } from 'zod';
+
+import { useEffect, useState } from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -24,7 +26,8 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import { Button } from '~/components/ui/button';
+import api from '~/lib/api';
+import type { CiclosFacturacion } from '~/types/mantencion';
 
 const cicloFormSchema = z.object({
   descripcion: z
@@ -120,7 +123,7 @@ export default function CiclosFacturacionModalForm({
       toast.error(
         mode === 'add'
           ? 'Error al crear el ciclo de facturación'
-          : 'Error al actualizar el ciclo de facturación',
+          : 'Error al actualizar el ciclo de facturación'
       );
     } finally {
       setIsLoading(false);
@@ -134,7 +137,7 @@ export default function CiclosFacturacionModalForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add'
@@ -151,17 +154,17 @@ export default function CiclosFacturacionModalForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4 pt-4"
+            className='space-y-4 pt-4'
           >
             <FormField
               control={form.control}
-              name="descripcion"
+              name='descripcion'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Descripción del Ciclo</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ej: Ciclo Mensual Residencial"
+                      placeholder='Ej: Ciclo Mensual Residencial'
                       {...field}
                     />
                   </FormControl>
@@ -172,18 +175,18 @@ export default function CiclosFacturacionModalForm({
 
             <FormField
               control={form.control}
-              name="diaFacturacion"
+              name='diaFacturacion'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Día de Facturación</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      min="1"
-                      max="31"
-                      placeholder="1"
+                      type='number'
+                      min='1'
+                      max='31'
+                      placeholder='1'
                       {...field}
-                      onChange={(e) =>
+                      onChange={e =>
                         field.onChange(parseInt(e.target.value) || 1)
                       }
                     />
@@ -198,18 +201,18 @@ export default function CiclosFacturacionModalForm({
 
             <FormField
               control={form.control}
-              name="diaInicioLectura"
+              name='diaInicioLectura'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Día de Inicio de Lectura</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      min="1"
-                      max="31"
-                      placeholder="1"
+                      type='number'
+                      min='1'
+                      max='31'
+                      placeholder='1'
                       {...field}
-                      onChange={(e) =>
+                      onChange={e =>
                         field.onChange(parseInt(e.target.value) || 1)
                       }
                     />
@@ -224,18 +227,18 @@ export default function CiclosFacturacionModalForm({
 
             <FormField
               control={form.control}
-              name="diasVencimientoFactura"
+              name='diasVencimientoFactura'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Días de Vencimiento</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
-                      min="1"
-                      max="365"
-                      placeholder="30"
+                      type='number'
+                      min='1'
+                      max='365'
+                      placeholder='30'
                       {...field}
-                      onChange={(e) =>
+                      onChange={e =>
                         field.onChange(parseInt(e.target.value) || 30)
                       }
                     />
@@ -250,10 +253,10 @@ export default function CiclosFacturacionModalForm({
 
             <FormField
               control={form.control}
-              name="estado"
+              name='estado'
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
+                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
+                  <div className='space-y-0.5'>
                     <FormLabel>Estado del Ciclo</FormLabel>
                     <FormDescription>
                       {field.value ? 'Ciclo activo' : 'Ciclo inactivo'}
@@ -269,19 +272,19 @@ export default function CiclosFacturacionModalForm({
               )}
             />
 
-            <DialogFooter className="gap-2">
+            <DialogFooter className='gap-2'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading
                   ? mode === 'add'

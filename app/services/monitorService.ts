@@ -1,5 +1,5 @@
 import api from '~/lib/api';
-import type { Periodo, Sector, Clave } from '~/types/monitor';
+import type { Clave, Periodo, Sector } from '~/types/monitor';
 
 export interface MonitorServiceResponse<T> {
   data: T | null;
@@ -44,7 +44,7 @@ class MonitorService {
       let activePeriodoId: number | null = null;
       if (periodosData && periodosData.length > 0) {
         const activePeriodo = periodosData.find(
-          (periodo: Periodo) => periodo.EstadoPeriodo === 2,
+          (periodo: Periodo) => periodo.EstadoPeriodo === 2
         );
         if (activePeriodo) {
           activePeriodoId = Number(activePeriodo.IdPeriodo);
@@ -71,11 +71,13 @@ class MonitorService {
   /**
    * Obtiene solo períodos y sectores (para exportar lecturas)
    */
-  async getPeriodosAndSectores(): Promise<MonitorServiceResponse<{
-    periodos: Periodo[];
-    sectores: Sector[];
-    activePeriodoId: number | null;
-  }>> {
+  async getPeriodosAndSectores(): Promise<
+    MonitorServiceResponse<{
+      periodos: Periodo[];
+      sectores: Sector[];
+      activePeriodoId: number | null;
+    }>
+  > {
     try {
       // Verificar si hay token antes de hacer peticiones
       const token = localStorage.getItem('token');
@@ -100,7 +102,7 @@ class MonitorService {
       let activePeriodoId: number | null = null;
       if (periodosData && periodosData.length > 0) {
         const activePeriodo = periodosData.find(
-          (periodo: Periodo) => periodo.EstadoPeriodo === 2,
+          (periodo: Periodo) => periodo.EstadoPeriodo === 2
         );
         if (activePeriodo) {
           activePeriodoId = Number(activePeriodo.IdPeriodo);
@@ -129,9 +131,7 @@ class MonitorService {
   async getPeriodos(): Promise<MonitorServiceResponse<Periodo[]>> {
     try {
       const response = await api.get<Periodo[]>('/Periodos');
-      const periodosData = Array.isArray(response.data)
-        ? response.data
-        : [];
+      const periodosData = Array.isArray(response.data) ? response.data : [];
 
       return {
         data: periodosData,
@@ -151,9 +151,7 @@ class MonitorService {
   async getSectores(): Promise<MonitorServiceResponse<Sector[]>> {
     try {
       const response = await api.get<Sector[]>('/Sectores');
-      const sectoresData = Array.isArray(response.data)
-        ? response.data
-        : [];
+      const sectoresData = Array.isArray(response.data) ? response.data : [];
 
       return {
         data: sectoresData,
@@ -194,7 +192,7 @@ class MonitorService {
     if (!periodos || periodos.length === 0) return null;
 
     const activePeriodo = periodos.find(
-      (periodo: Periodo) => periodo.EstadoPeriodo === 2,
+      (periodo: Periodo) => periodo.EstadoPeriodo === 2
     );
 
     return activePeriodo ? Number(activePeriodo.IdPeriodo) : null;

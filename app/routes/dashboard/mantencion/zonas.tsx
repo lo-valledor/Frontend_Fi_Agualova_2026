@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/zonas';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { mantencionService } from '~/services/mantencionService';
 import ZonasComponent from '~/components/mantencion/zonas/zonas-component';
+import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/zonas';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Zonas' },
-    { name: 'description', content: 'Gestión de zonas del sistema' },
+    { name: 'description', content: ' zonas del sistema' },
   ];
 }
 

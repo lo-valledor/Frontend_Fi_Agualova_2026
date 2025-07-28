@@ -1,28 +1,32 @@
 import { Download, Plus } from 'lucide-react';
+import { toast } from 'sonner';
+
 import React, { useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
-  CardTitle,
   CardHeader,
+  CardTitle,
 } from '~/components/ui/card';
+import api from '~/lib/api';
 import type {
   Acometida,
-  ComboSectores,
-  ComboNichos,
+  ActualizarAcometidaProps,
   ComboEmpalmes,
+  ComboNichos,
+  ComboSectores,
   ContratosDisponibles,
   CrearAcometidaProps,
-  ActualizarAcometidaProps,
 } from '~/types/administracion';
-import { columns } from './columns';
+
 import { AcometidaForm } from './acometida-form';
-import { useRevalidator } from 'react-router';
-import { toast } from 'sonner';
-import api from '~/lib/api';
+import { columns } from './columns';
 
 interface AcometidaComponentProps {
   acometidas: Acometida[];
@@ -41,7 +45,7 @@ export default function AcometidaComponent({
 }: AcometidaComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAcometida, setSelectedAcometida] = useState<Acometida | null>(
-    null,
+    null
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [, setEditingAcometidaId] = useState<number | null>(null);
@@ -71,7 +75,7 @@ export default function AcometidaComponent({
     toast.success(
       modalMode === 'add'
         ? 'Acometida creada exitosamente'
-        : 'Acometida actualizada exitosamente',
+        : 'Acometida actualizada exitosamente'
     );
   };
 
@@ -141,7 +145,7 @@ export default function AcometidaComponent({
   };
 
   const handleSubmitForm = async (
-    data: CrearAcometidaProps | ActualizarAcometidaProps,
+    data: CrearAcometidaProps | ActualizarAcometidaProps
   ) => {
     try {
       if (modalMode === 'add') {
@@ -159,25 +163,22 @@ export default function AcometidaComponent({
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Acometidas
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Acometidas
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra las acometidas del sistema de manera eficiente
-          </p>
         </div>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <Button
-            variant="default"
+            variant='default'
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className='bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <Download
               className={`h-3.5 w-3.5 ${isExporting ? 'animate-spin' : ''}`}
@@ -186,9 +187,9 @@ export default function AcometidaComponent({
           </Button>
           <Button
             onClick={handleAddAcometida}
-            className="bg-sky-600 hover:bg-sky-700 text-white"
+            className='bg-sky-600 hover:bg-sky-700 text-white'
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className='mr-2 h-4 w-4' />
             Agregar Acometida
           </Button>
         </div>

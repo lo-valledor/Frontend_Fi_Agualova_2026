@@ -1,8 +1,9 @@
 /* eslint-disable no-empty-pattern */
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CorteReposicionComponent from '~/components/operaciones/corte-reposicion/corte-reposicion-component';
-import type { Route } from './+types/corte-reposicion';
 import { operacionesService } from '~/services/operacionesService';
+
+import type { Route } from './+types/corte-reposicion';
 
 export function meta({}: Route.MetaArgs) {
   return [

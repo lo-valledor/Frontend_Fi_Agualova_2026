@@ -12,6 +12,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+
 import {
   Card,
   CardContent,
@@ -54,9 +55,9 @@ const hourlyData = [
 
 export function AdvancedCharts() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
       {/* Gráfico de Crecimiento de Usuarios */}
-      <Card className="col-span-2">
+      <Card className='col-span-2'>
         <CardHeader>
           <CardTitle>Crecimiento de Usuarios</CardTitle>
           <CardDescription>
@@ -79,35 +80,35 @@ export function AdvancedCharts() {
                 color: 'hsl(var(--chart-3))',
               },
             }}
-            className="h-[300px]"
+            className='h-[300px]'
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width='100%' height='100%'>
               <AreaChart data={userGrowthData}>
-                <XAxis dataKey="month" />
+                <XAxis dataKey='month' />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Area
-                  type="monotone"
-                  dataKey="usuarios"
-                  stackId="1"
-                  stroke="var(--color-usuarios)"
-                  fill="var(--color-usuarios)"
+                  type='monotone'
+                  dataKey='usuarios'
+                  stackId='1'
+                  stroke='var(--color-usuarios)'
+                  fill='var(--color-usuarios)'
                   fillOpacity={0.8}
                 />
                 <Area
-                  type="monotone"
-                  dataKey="activos"
-                  stackId="2"
-                  stroke="var(--color-activos)"
-                  fill="var(--color-activos)"
+                  type='monotone'
+                  dataKey='activos'
+                  stackId='2'
+                  stroke='var(--color-activos)'
+                  fill='var(--color-activos)'
                   fillOpacity={0.6}
                 />
                 <Area
-                  type="monotone"
-                  dataKey="nuevos"
-                  stackId="3"
-                  stroke="var(--color-nuevos)"
-                  fill="var(--color-nuevos)"
+                  type='monotone'
+                  dataKey='nuevos'
+                  stackId='3'
+                  stroke='var(--color-nuevos)'
+                  fill='var(--color-nuevos)'
                   fillOpacity={0.4}
                 />
               </AreaChart>
@@ -140,18 +141,18 @@ export function AdvancedCharts() {
                 color: '#FFBB28',
               },
             }}
-            className="h-[250px]"
+            className='h-[250px]'
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width='100%' height='100%'>
               <PieChart>
                 <Pie
                   data={deviceData}
-                  cx="50%"
-                  cy="50%"
+                  cx='50%'
+                  cy='50%'
                   innerRadius={60}
                   outerRadius={100}
                   paddingAngle={5}
-                  dataKey="value"
+                  dataKey='value'
                 >
                   {deviceData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
@@ -161,20 +162,20 @@ export function AdvancedCharts() {
               </PieChart>
             </ResponsiveContainer>
           </ChartContainer>
-          <div className="mt-4 space-y-2">
+          <div className='mt-4 space-y-2'>
             {deviceData.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between text-sm"
+                className='flex items-center justify-between text-sm'
               >
-                <div className="flex items-center gap-2">
+                <div className='flex items-center gap-2'>
                   <div
-                    className="h-3 w-3 rounded-full"
+                    className='h-3 w-3 rounded-full'
                     style={{ backgroundColor: item.color }}
                   />
                   <span>{item.name}</span>
                 </div>
-                <span className="font-medium">{item.value}%</span>
+                <span className='font-medium'>{item.value}%</span>
               </div>
             ))}
           </div>
@@ -182,7 +183,7 @@ export function AdvancedCharts() {
       </Card>
 
       {/* Gráfico de Rendimiento por Hora */}
-      <Card className="col-span-full">
+      <Card className='col-span-full'>
         <CardHeader>
           <CardTitle>Rendimiento por Hora</CardTitle>
           <CardDescription>
@@ -201,21 +202,21 @@ export function AdvancedCharts() {
                 color: 'hsl(var(--chart-2))',
               },
             }}
-            className="h-[200px]"
+            className='h-[200px]'
           >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width='100%' height='100%'>
               <BarChart data={hourlyData}>
-                <XAxis dataKey="hour" />
+                <XAxis dataKey='hour' />
                 <YAxis />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Bar
-                  dataKey="visitas"
-                  fill="var(--color-visitas)"
+                  dataKey='visitas'
+                  fill='var(--color-visitas)'
                   radius={[2, 2, 0, 0]}
                 />
                 <Bar
-                  dataKey="conversiones"
-                  fill="var(--color-conversiones)"
+                  dataKey='conversiones'
+                  fill='var(--color-conversiones)'
                   radius={[2, 2, 0, 0]}
                 />
               </BarChart>

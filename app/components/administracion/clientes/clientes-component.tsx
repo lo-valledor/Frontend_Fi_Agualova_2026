@@ -1,34 +1,32 @@
 import { Download, Plus } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { useRevalidator } from 'react-router';
 import { toast } from 'sonner';
+
+import { useEffect, useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
 import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-  CardHeader,
-} from '~/components/ui/card';
+  type ClientFilters,
+  useClientFilters,
+} from '~/hooks/administracion/use-client-filters';
+import { useClientes } from '~/hooks/use-administracion';
+import api from '~/lib/api';
 import type {
   GetClientes,
   GetClientesByRut,
-  GetGiros,
   GetComunas,
+  GetGiros,
 } from '~/types/administracion';
-import { useClientes } from '~/hooks/use-administracion';
-import {
-  useClientFilters,
-  type ClientFilters,
-} from '~/hooks/administracion/use-client-filters';
+
+import { ClientFiltersComponent } from './client-filters';
+import ClienteFormModal from './cliente-form-modal';
 import { columns } from './columns';
 import { ClienteDetailsModal } from './detalles-cliente';
-import ClienteFormModal from './cliente-form-modal';
-import { ClientFiltersComponent } from './client-filters';
 import { FilterSummary } from './filter-summary';
-import api from '~/lib/api';
 
 interface ClientesComponentProps {
   clientes: GetClientes[];
@@ -48,10 +46,10 @@ export default function ClientesComponent({
   const [detailedCliente, setDetailedCliente] = useState<GetClientesByRut>();
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editingClienteRut, setEditingClienteRut] = useState<string | null>(
-    null,
+    null
   );
   const [detailingClienteRut, setDetailingClienteRut] = useState<string | null>(
-    null,
+    null
   );
   const [filters, setFilters] = useState<ClientFilters>({
     esEmpresa: 'all',
@@ -66,14 +64,14 @@ export default function ClientesComponent({
   const { getClienteByRut } = useClientes();
   const { filteredClients, filterStats, filterOptions } = useClientFilters(
     clients,
-    filters,
+    filters
   );
   const { trackPageView, trackDataAction } = useActivityEvent();
   const [isExporting, setIsExporting] = useState(false);
 
   // Rastrear vista de página
   useEffect(() => {
-    trackPageView('Gestión de Clientes');
+    trackPageView(' Clientes');
   }, [trackPageView]);
 
   const handleAddCliente = () => {
@@ -88,7 +86,7 @@ export default function ClientesComponent({
       trackDataAction(
         'Abrir formulario',
         'Clientes',
-        `Editar cliente: ${cliente.rut}`,
+        `Editar cliente: ${cliente.rut}`
       );
       setEditingClienteRut(cliente.rut);
       const clienteDetallado = await getClienteByRut(cliente.rut);
@@ -135,7 +133,7 @@ export default function ClientesComponent({
       'Clientes',
       modalMode === 'add'
         ? 'Cliente creado exitosamente'
-        : 'Cliente actualizado exitosamente',
+        : 'Cliente actualizado exitosamente'
     );
     revalidator.revalidate();
     setIsModalOpen(false);
@@ -143,7 +141,7 @@ export default function ClientesComponent({
     toast.success(
       modalMode === 'add'
         ? 'Cliente creado exitosamente'
-        : 'Cliente actualizado exitosamente',
+        : 'Cliente actualizado exitosamente'
     );
   };
 
@@ -233,25 +231,22 @@ export default function ClientesComponent({
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Clientes
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Clientes
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los clientes del sistema de manera eficiente
-          </p>
         </div>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <Button
-            variant="default"
+            variant='default'
             onClick={handleExportExcel}
             disabled={isExporting}
-            className="gap-1.5 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className='gap-1.5 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <Download
               className={`h-3.5 w-3.5 ${isExporting ? 'animate-spin' : ''}`}
@@ -260,9 +255,9 @@ export default function ClientesComponent({
           </Button>
           <Button
             onClick={handleAddCliente}
-            className="bg-sky-600 hover:bg-sky-700 text-white"
+            className='bg-sky-600 hover:bg-sky-700 text-white'
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className='mr-2 h-4 w-4' />
             Agregar Cliente
           </Button>
         </div>
@@ -285,14 +280,8 @@ export default function ClientesComponent({
       />
 
       {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Clientes</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todos los clientes registrados en el sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable
             columns={columns({
               onDetails: handleDetailsCliente,

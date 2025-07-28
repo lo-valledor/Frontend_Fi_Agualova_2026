@@ -1,8 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
 import type { Acometida } from '~/types/administracion';
-import { TableActions } from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (acometida: Acometida) => void;
@@ -14,13 +15,13 @@ export const columns = ({
   {
     accessorKey: 'acometidaId',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
+      <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
       const id = row.getValue('acometidaId') as number;
       return (
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-sm font-medium">{id}</span>
+        <div className='flex items-center gap-2'>
+          <span className='font-mono text-sm font-medium'>{id}</span>
         </div>
       );
     },
@@ -28,13 +29,13 @@ export const columns = ({
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+      <DataTableColumnHeader column={column} title='Código' />
     ),
     cell: ({ row }) => {
       const codigo = row.getValue('codigo') as string;
       return (
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className='flex items-center gap-2'>
+          <span className='font-mono text-sm font-medium text-slate-900 dark:text-slate-100'>
             {codigo}
           </span>
         </div>
@@ -44,14 +45,14 @@ export const columns = ({
   {
     accessorKey: 'ubicacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ubicación" />
+      <DataTableColumnHeader column={column} title='Ubicación' />
     ),
     cell: ({ row }) => {
       const ubicacion = row.getValue('ubicacion') as string;
       return (
-        <div className="flex items-center gap-2 max-w-[200px]">
+        <div className='flex items-center gap-2 max-w-[200px]'>
           <span
-            className="text-sm text-slate-700 dark:text-slate-300 truncate"
+            className='text-sm text-slate-700 dark:text-slate-300 truncate'
             title={ubicacion}
           >
             {ubicacion}
@@ -63,15 +64,15 @@ export const columns = ({
   {
     accessorKey: 'contratoId',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Contrato" />
+      <DataTableColumnHeader column={column} title='Contrato' />
     ),
     cell: ({ row }) => {
       const contratoId = row.getValue('contratoId') as string;
       return (
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <Badge
-            variant="outline"
-            className="bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:border-sky-800 text-xs font-mono"
+            variant='outline'
+            className='bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:border-sky-800 text-xs font-mono'
           >
             {contratoId}
           </Badge>
@@ -82,13 +83,13 @@ export const columns = ({
   {
     accessorKey: 'empalmeDescripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Empalme" />
+      <DataTableColumnHeader column={column} title='Empalme' />
     ),
     cell: ({ row }) => {
       const empalme = row.getValue('empalmeDescripcion') as string;
       return (
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+        <div className='flex items-center gap-2'>
+          <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
             {empalme}
           </span>
         </div>
@@ -98,13 +99,13 @@ export const columns = ({
   {
     accessorKey: 'nichoDescripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nicho" />
+      <DataTableColumnHeader column={column} title='Nicho' />
     ),
     cell: ({ row }) => {
       const nicho = row.getValue('nichoDescripcion') as string;
       return (
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+        <div className='flex items-center gap-2'>
+          <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
             {nicho}
           </span>
         </div>
@@ -114,15 +115,15 @@ export const columns = ({
   {
     accessorKey: 'sectorDescripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Sector" />
+      <DataTableColumnHeader column={column} title='Sector' />
     ),
     cell: ({ row }) => {
       const sector = row.getValue('sectorDescripcion') as string;
       return (
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           <Badge
-            variant="outline"
-            className="bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs font-medium"
+            variant='outline'
+            className='bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs font-medium'
           >
             {sector}
           </Badge>
@@ -133,17 +134,17 @@ export const columns = ({
   {
     accessorKey: 'limitePotencia',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Límite Potencia" />
+      <DataTableColumnHeader column={column} title='Límite Potencia' />
     ),
     cell: ({ row }) => {
       const limite = row.getValue('limitePotencia') as number | null;
 
       if (limite === null || limite === 0) {
         return (
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             <Badge
-              variant="outline"
-              className="bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-700 text-xs"
+              variant='outline'
+              className='bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-700 text-xs'
             >
               Sin límite
             </Badge>
@@ -152,9 +153,9 @@ export const columns = ({
       }
 
       return (
-        <div className="flex items-center gap-2">
-          <div className="space-y-0.5">
-            <div className="text-sm font-medium text-slate-900 dark:text-slate-100">
+        <div className='flex items-center gap-2'>
+          <div className='space-y-0.5'>
+            <div className='text-sm font-medium text-slate-900 dark:text-slate-100'>
               {limite.toLocaleString('es-CL')} kW
             </div>
           </div>
@@ -165,13 +166,13 @@ export const columns = ({
   {
     accessorKey: 'numeroMedidor',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Número Medidor" />
+      <DataTableColumnHeader column={column} title='Número Medidor' />
     ),
     cell: ({ row }) => {
       const numeroMedidor = row.getValue('numeroMedidor') as string;
       return (
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+        <div className='flex items-center gap-2'>
+          <span className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
             {numeroMedidor}
           </span>
         </div>

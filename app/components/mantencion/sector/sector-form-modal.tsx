@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import api from '~/lib/api';
-import type { Sectores, Zonas } from '~/types/mantencion';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+import { useEffect, useState } from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -22,6 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -30,8 +33,8 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
+import api from '~/lib/api';
+import type { Sectores, Zonas } from '~/types/mantencion';
 
 const SectorFormSchema = z.object({
   nombre: z
@@ -137,7 +140,7 @@ export default function SectorFormModal({
       toast.error(
         mode === 'add'
           ? 'Error al crear el sector'
-          : 'Error al actualizar el sector',
+          : 'Error al actualizar el sector'
       );
     } finally {
       setIsLoading(false);
@@ -151,7 +154,7 @@ export default function SectorFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Sector' : 'Editar Sector'}
@@ -166,16 +169,16 @@ export default function SectorFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4 pt-4"
+            className='space-y-4 pt-4'
           >
             <FormField
               control={form.control}
-              name="nombre"
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre del Sector</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Sector Norte" {...field} />
+                    <Input placeholder='Ej: Sector Norte' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -184,7 +187,7 @@ export default function SectorFormModal({
 
             <FormField
               control={form.control}
-              name="zona"
+              name='zona'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Zona</FormLabel>
@@ -205,7 +208,7 @@ export default function SectorFormModal({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {zonas.map((zona) => (
+                      {zonas.map(zona => (
                         <SelectItem key={zona.id} value={zona.nombre}>
                           {zona.nombre}
                         </SelectItem>
@@ -219,10 +222,10 @@ export default function SectorFormModal({
 
             <FormField
               control={form.control}
-              name="estado"
+              name='estado'
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
+                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
+                  <div className='space-y-0.5'>
                     <FormLabel>Estado del Sector</FormLabel>
                     <FormDescription>
                       {field.value ? 'Sector activo' : 'Sector inactivo'}
@@ -238,19 +241,19 @@ export default function SectorFormModal({
               )}
             />
 
-            <DialogFooter className="gap-2">
+            <DialogFooter className='gap-2'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading || isLoadingZonas}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading
                   ? mode === 'add'

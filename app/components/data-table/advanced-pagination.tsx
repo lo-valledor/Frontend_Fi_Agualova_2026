@@ -1,3 +1,11 @@
+import type { Table } from '@tanstack/react-table';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
+
 import { Button } from '~/components/ui/button';
 import {
   Select,
@@ -6,13 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-} from 'lucide-react';
-import type { Table } from '@tanstack/react-table';
 
 interface AdvancedPaginationProps<TData> {
   table: Table<TData>;
@@ -77,26 +78,26 @@ export function AdvancedPagination<TData>({
 
   if (totalPages <= 1) {
     return (
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
+      <div className='flex items-center justify-between'>
+        <div className='text-sm text-muted-foreground'>
           {totalRows === 0
             ? 'No hay resultados'
             : `Mostrando ${totalRows} resultado${totalRows !== 1 ? 's' : ''}`}
         </div>
         {showPageSizeSelector && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
+          <div className='flex items-center gap-2'>
+            <span className='text-sm text-muted-foreground'>
               Filas por página:
             </span>
             <Select
               value={pageSize.toString()}
-              onValueChange={(value) => table.setPageSize(Number(value))}
+              onValueChange={value => table.setPageSize(Number(value))}
             >
-              <SelectTrigger className="w-16 h-8">
+              <SelectTrigger className='w-16 h-8'>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {pageSizeOptions.map((size) => (
+                {pageSizeOptions.map(size => (
                   <SelectItem key={size} value={size.toString()}>
                     {size}
                   </SelectItem>
@@ -110,31 +111,31 @@ export function AdvancedPagination<TData>({
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className='flex flex-col sm:flex-row items-center justify-between gap-4'>
       {/* Results info and page size selector */}
-      <div className="flex flex-col sm:flex-row items-center gap-4">
-        <div className="text-sm text-muted-foreground">
+      <div className='flex flex-col sm:flex-row items-center gap-4'>
+        <div className='text-sm text-muted-foreground'>
           Mostrando{' '}
-          <span className="font-medium text-foreground">{startRow}</span> a{' '}
-          <span className="font-medium text-foreground">{endRow}</span> de{' '}
-          <span className="font-medium text-foreground">{totalRows}</span>{' '}
+          <span className='font-medium text-foreground'>{startRow}</span> a{' '}
+          <span className='font-medium text-foreground'>{endRow}</span> de{' '}
+          <span className='font-medium text-foreground'>{totalRows}</span>{' '}
           resultado{totalRows !== 1 ? 's' : ''}
         </div>
 
         {showPageSizeSelector && (
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
+          <div className='flex items-center gap-2'>
+            <span className='text-sm text-muted-foreground'>
               Filas por página:
             </span>
             <Select
               value={pageSize.toString()}
-              onValueChange={(value) => table.setPageSize(Number(value))}
+              onValueChange={value => table.setPageSize(Number(value))}
             >
-              <SelectTrigger className="w-16 h-8">
+              <SelectTrigger className='w-16 h-8'>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {pageSizeOptions.map((size) => (
+                {pageSizeOptions.map(size => (
                   <SelectItem key={size} value={size.toString()}>
                     {size}
                   </SelectItem>
@@ -146,42 +147,42 @@ export function AdvancedPagination<TData>({
       </div>
 
       {/* Pagination controls */}
-      <div className="flex items-center gap-1">
+      <div className='flex items-center gap-1'>
         {/* First page */}
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
-          className="h-8 w-8 p-0"
-          title="Primera página"
+          className='h-8 w-8 p-0'
+          title='Primera página'
         >
-          <ChevronsLeft className="h-4 w-4" />
-          <span className="sr-only">Primera página</span>
+          <ChevronsLeft className='h-4 w-4' />
+          <span className='sr-only'>Primera página</span>
         </Button>
 
         {/* Previous page */}
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
-          className="h-8 w-8 p-0"
-          title="Página anterior"
+          className='h-8 w-8 p-0'
+          title='Página anterior'
         >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Página anterior</span>
+          <ChevronLeft className='h-4 w-4' />
+          <span className='sr-only'>Página anterior</span>
         </Button>
 
         {/* Page numbers */}
         {showPageNumbers && (
-          <div className="flex items-center gap-1">
+          <div className='flex items-center gap-1'>
             {generatePageNumbers().map((page, _index) => {
               if (typeof page === 'string') {
                 return (
                   <span
                     key={page}
-                    className="px-2 text-sm text-muted-foreground"
+                    className='px-2 text-sm text-muted-foreground'
                   >
                     ...
                   </span>
@@ -192,9 +193,9 @@ export function AdvancedPagination<TData>({
                 <Button
                   key={page}
                   variant={currentPage === page ? 'default' : 'outline'}
-                  size="sm"
+                  size='sm'
                   onClick={() => table.setPageIndex(page - 1)}
-                  className="h-8 w-8 p-0"
+                  className='h-8 w-8 p-0'
                   title={`Página ${page}`}
                 >
                   {page}
@@ -206,33 +207,33 @@ export function AdvancedPagination<TData>({
 
         {/* Next page */}
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
-          className="h-8 w-8 p-0"
-          title="Página siguiente"
+          className='h-8 w-8 p-0'
+          title='Página siguiente'
         >
-          <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Página siguiente</span>
+          <ChevronRight className='h-4 w-4' />
+          <span className='sr-only'>Página siguiente</span>
         </Button>
 
         {/* Last page */}
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           onClick={() => table.setPageIndex(totalPages - 1)}
           disabled={!table.getCanNextPage()}
-          className="h-8 w-8 p-0"
-          title="Última página"
+          className='h-8 w-8 p-0'
+          title='Última página'
         >
-          <ChevronsRight className="h-4 w-4" />
-          <span className="sr-only">Última página</span>
+          <ChevronsRight className='h-4 w-4' />
+          <span className='sr-only'>Última página</span>
         </Button>
       </div>
 
       {/* Page info for mobile */}
-      <div className="sm:hidden text-sm text-muted-foreground">
+      <div className='sm:hidden text-sm text-muted-foreground'>
         Página {currentPage} de {totalPages}
       </div>
     </div>

@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/nichos';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { mantencionService } from '~/services/mantencionService';
 import NichosComponent from '~/components/mantencion/nichos/nichos-component';
+import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/nichos';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Nichos' },
-    { name: 'description', content: 'Gestión de nichos del sistema' },
+    { name: 'description', content: ' nichos del sistema' },
   ];
 }
 

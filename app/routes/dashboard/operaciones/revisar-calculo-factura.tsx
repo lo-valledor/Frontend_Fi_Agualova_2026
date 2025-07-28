@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
+import React from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import RevisarCalculoFacturaComponent from '~/components/operaciones/revisar-calculo-factura/revisar-calculo-factura-component';
-import React from 'react';
-import type { Route } from './+types/revisar-calculo-factura';
 import { operacionesService } from '~/services/operacionesService';
+
+import type { Route } from './+types/revisar-calculo-factura';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,8 +21,10 @@ export async function clientLoader() {
   ]);
 
   return {
-    periodoAbierto: periodoResult.error || !periodoResult.data ? [] : periodoResult.data,
-    ciclosFacturacionActivos: ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data,
+    periodoAbierto:
+      periodoResult.error || !periodoResult.data ? [] : periodoResult.data,
+    ciclosFacturacionActivos:
+      ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data,
   };
 }
 

@@ -1,10 +1,11 @@
 import type { ColumnDef } from '@tanstack/react-table';
+
+import {
+  EstadoBadge,
+  TableActions,
+} from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
 import type { Usuarios } from '~/types/administracion';
-import {
-  TableActions,
-  EstadoBadge,
-} from '~/components/data-table/table-helpers';
 
 interface TableColumnsProps {
   onEdit: (user: Usuarios) => void;
@@ -21,12 +22,12 @@ export const columns = ({
     cell: ({ row }) => {
       const user = row.original;
       return (
-        <div className="flex items-center space-x-3">
+        <div className='flex items-center space-x-3'>
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
+            <div className='font-medium text-gray-900 dark:text-gray-100'>
               {user.nombres} {user.apellidos}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
               @{user.nombreDeUsuario}
             </div>
           </div>
@@ -48,7 +49,7 @@ export const columns = ({
         6: 'Operaciones',
       };
       return (
-        <div className="text-sm text-gray-600 dark:text-gray-300">
+        <div className='text-sm text-gray-600 dark:text-gray-300'>
           {departamentos[departamento as keyof typeof departamentos] ||
             `Departamento ${departamento}`}
         </div>
@@ -104,7 +105,7 @@ export const columns = ({
     cell: ({ row }) => {
       const fecha = new Date(row.getValue('fechaCreacion'));
       return (
-        <div className="text-sm text-gray-600 dark:text-gray-300">
+        <div className='text-sm text-gray-600 dark:text-gray-300'>
           {fecha.toLocaleDateString('es-ES')}
         </div>
       );

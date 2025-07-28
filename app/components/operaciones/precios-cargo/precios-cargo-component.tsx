@@ -1,26 +1,31 @@
-import React, { useState } from 'react';
-import { columns } from './columns-enerlova';
-import { Button } from '~/components/ui/button';
 import {
   BarChart,
-  ChevronUp,
-  ChevronDown,
-  Calendar,
-  Search,
-  Eraser,
-  TrendingUp,
   Building2,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Eraser,
   Info,
+  Search,
+  TrendingUp,
 } from 'lucide-react';
-import { columns as columnsEnel } from './columns-enel';
-import { Card, CardContent } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
-import type {
-  PreciosCargoEnel,
-  PreciosCargoEnerlova,
-} from '~/types/operaciones';
+import { toast } from 'sonner';
 
-import { DataTablePrecios } from './data-table-precios';
+import React, { useState } from 'react';
+
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/ui/dialog';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -28,19 +33,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { Label } from '~/components/ui/label';
-import { toast } from 'sonner';
-import api from '~/lib/api';
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '~/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+import api from '~/lib/api';
+import type {
+  PreciosCargoEnel,
+  PreciosCargoEnerlova,
+} from '~/types/operaciones';
+
+import { columns as columnsEnel } from './columns-enel';
+import { columns } from './columns-enerlova';
+import { DataTablePrecios } from './data-table-precios';
 
 interface PreciosCargoComponentProps {
   tablaEnel: PreciosCargoEnel[];
@@ -126,16 +128,16 @@ export default function PreciosCargoComponent({
   // Mostrar error si existe
   if (error) {
     return (
-      <div className="min-h-screen ">
-        <div className="container mx-auto p-2 space-y-3">
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
-              <TrendingUp className="w-8 h-8 text-red-600 dark:text-red-400" />
+      <div className='min-h-screen '>
+        <div className='container mx-auto p-2 space-y-3'>
+          <div className='text-center py-12'>
+            <div className='inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4'>
+              <TrendingUp className='w-8 h-8 text-red-600 dark:text-red-400' />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+            <h1 className='text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2'>
               Error al cargar datos
             </h1>
-            <p className="text-slate-600 dark:text-slate-400">{error}</p>
+            <p className='text-slate-600 dark:text-slate-400'>{error}</p>
           </div>
         </div>
       </div>
@@ -143,25 +145,25 @@ export default function PreciosCargoComponent({
   }
 
   return (
-    <div className="min-h-screen ">
-      <div className="container mx-auto p-2 space-y-3">
+    <div className='min-h-screen '>
+      <div className='container mx-auto p-2 space-y-3'>
         {/* Header modernizado */}
-        <div className="flex items-center gap-3 justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
+        <div className='flex items-center gap-3 justify-between'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
               Precios Cargo
             </h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className='flex items-center gap-3'>
             <Dialog>
               <DialogTrigger>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                  variant='outline'
+                  size='sm'
+                  className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
                 >
-                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
-                  <span className="text-yellow-600 text-sm">Información</span>
+                  <Info className='w-4 h-4 mr-1 text-yellow-600' />
+                  <span className='text-yellow-600 text-sm'>Información</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -178,51 +180,51 @@ export default function PreciosCargoComponent({
         </div>
 
         {/* Filtros */}
-        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
-          <CardContent className="pb-3">
+        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
+          <CardContent className='pb-3'>
             {/* Filtros principales */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
-                  <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+            <div className='space-y-4'>
+              <div className='flex items-center gap-3'>
+                <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
+                  <Calendar className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <div className='flex-1'>
+                  <h3 className='font-semibold text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
                     Período de Consulta
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                  <p className='text-sm text-slate-600 dark:text-slate-400'>
                     Selecciona el período para consultar los precios de cargo
                   </p>
                 </div>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant='ghost'
+                  size='sm'
                   onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                  className="text-muted-foreground hover:text-foreground hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  className='text-muted-foreground hover:text-foreground hover:bg-blue-50 dark:hover:bg-blue-900/20'
                 >
-                  <Search className="w-4 h-4 mr-2" />
+                  <Search className='w-4 h-4 mr-2' />
                   Filtros
                   {isFiltersOpen ? (
-                    <ChevronUp className="w-4 h-4 ml-2" />
+                    <ChevronUp className='w-4 h-4 ml-2' />
                   ) : (
-                    <ChevronDown className="w-4 h-4 ml-2" />
+                    <ChevronDown className='w-4 h-4 ml-2' />
                   )}
                 </Button>
               </div>
 
               {/* Período seleccionado visible */}
-              <div className="flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
+              <div className='flex items-center gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg'>
+                <div className='flex items-center gap-2'>
+                  <Calendar className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+                  <span className='text-sm font-medium text-blue-800 dark:text-blue-300'>
                     Mes actual:
                   </span>
                 </div>
                 <Badge
-                  variant="outline"
-                  className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                  variant='outline'
+                  className='bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                 >
-                  {months.find((m) => m.value === mes)?.label} {anio}
+                  {months.find(m => m.value === mes)?.label} {anio}
                 </Badge>
               </div>
             </div>
@@ -230,24 +232,24 @@ export default function PreciosCargoComponent({
             {/* Filtros expandibles */}
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleContent>
-                <div className="border-t pt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className='border-t pt-4'>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                     {/* Mes */}
-                    <div className="space-y-2 w-full">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <div className='space-y-2 w-full'>
+                      <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                         Mes
                       </Label>
-                      <div className="w-full">
+                      <div className='w-full'>
                         <Select value={mes} onValueChange={setMes}>
-                          <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectValue placeholder="Selecciona un mes" />
+                          <SelectTrigger className='w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'>
+                            <SelectValue placeholder='Selecciona un mes' />
                           </SelectTrigger>
                           <SelectContent>
-                            {months.map((month) => (
+                            {months.map(month => (
                               <SelectItem
                                 key={month.value}
                                 value={month.value}
-                                className="truncate"
+                                className='truncate'
                               >
                                 {month.label}
                               </SelectItem>
@@ -258,21 +260,21 @@ export default function PreciosCargoComponent({
                     </div>
 
                     {/* Año */}
-                    <div className="space-y-2 w-full">
-                      <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    <div className='space-y-2 w-full'>
+                      <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                         Año
                       </Label>
-                      <div className="w-full">
+                      <div className='w-full'>
                         <Select value={anio} onValueChange={setAnio}>
-                          <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                            <SelectValue placeholder="Selecciona un año" />
+                          <SelectTrigger className='w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'>
+                            <SelectValue placeholder='Selecciona un año' />
                           </SelectTrigger>
                           <SelectContent>
-                            {years.map((year) => (
+                            {years.map(year => (
                               <SelectItem
                                 key={year.value}
                                 value={year.value}
-                                className="truncate"
+                                className='truncate'
                               >
                                 {year.label}
                               </SelectItem>
@@ -284,30 +286,30 @@ export default function PreciosCargoComponent({
                   </div>
 
                   {/* Acciones */}
-                  <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pt-4 border-t">
+                  <div className='flex flex-col sm:flex-row gap-3 items-center justify-between pt-4 border-t'>
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant='ghost'
+                      size='sm'
                       onClick={handleClearFilters}
-                      className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                      className='text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20'
                     >
-                      <Eraser className="w-4 h-4 mr-2" />
+                      <Eraser className='w-4 h-4 mr-2' />
                       Limpiar Filtros
                     </Button>
 
                     <Button
                       onClick={handleSearch}
                       disabled={isLoading}
-                      className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                      className='bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-2 shadow-lg hover:shadow-xl transition-all duration-200'
                     >
                       {isLoading ? (
                         <>
-                          <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          <div className='w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent' />
                           Buscando...
                         </>
                       ) : (
                         <>
-                          <Search className="w-4 h-4 mr-2" />
+                          <Search className='w-4 h-4 mr-2' />
                           Buscar Precios
                         </>
                       )}
@@ -320,60 +322,60 @@ export default function PreciosCargoComponent({
         </Card>
 
         {/* Tablas de Precios con Tabs */}
-        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
-          <CardContent className="pb-3">
-            <Tabs defaultValue="enel" className="w-full">
-              <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
+          <CardContent className='pb-3'>
+            <Tabs defaultValue='enel' className='w-full'>
+              <TabsList className='w-full justify-start rounded-none border-b bg-transparent p-0'>
                 <TabsTrigger
-                  value="enel"
-                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  value='enel'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
                 >
-                  <Building2 className="mr-2 h-4 w-4" />
+                  <Building2 className='mr-2 h-4 w-4' />
                   Precios Enel
                 </TabsTrigger>
                 <TabsTrigger
-                  value="enerlova"
-                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  value='enerlova'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
                 >
-                  <BarChart className="mr-2 h-4 w-4" />
+                  <BarChart className='mr-2 h-4 w-4' />
                   Precios Enerlova
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="enel" className="space-y-4 pt-6">
-                <div className="flex items-center justify-between">
+              <TabsContent value='enel' className='space-y-4 pt-6'>
+                <div className='flex items-center justify-between'>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
                       Precios de Cargo - Enel
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
-                      <Info className="w-4 h-4 text-blue-500 dark:text-blue-300" />
+                    <p className='text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2'>
+                      <Info className='w-4 h-4 text-blue-500 dark:text-blue-300' />
                       Los precios de cargo mostrados corresponden a los valores
                       vigentes publicados por Enel para el período consultado.
                       <br />
                       Consulta la fuente oficial en:
                       <a
-                        href="https://www.enel.cl/es/clientes/tarifas-y-regulacion/tarifas.html"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 ml-1"
+                        href='https://www.enel.cl/es/clientes/tarifas-y-regulacion/tarifas.html'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='underline text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 ml-1'
                       >
                         enel.cl - Tarifas y Regulación
                       </a>
                     </p>
                   </div>
                   <Badge
-                    variant="outline"
-                    className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                    variant='outline'
+                    className='bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                   >
-                    {months.find((m) => m.value === mes)?.label} {anio}
+                    {months.find(m => m.value === mes)?.label} {anio}
                   </Badge>
                 </div>
-                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900'>
                   <DataTablePrecios
                     columns={columnsEnel(mes, anio, handleDataUpdate)}
                     data={tablaEnel}
-                    searchPlaceholder="Buscar por descripción o código..."
+                    searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}
                     defaultPageSize={10}
                     pageSizeOptions={[5, 10, 20, 50]}
@@ -415,30 +417,30 @@ export default function PreciosCargoComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value="enerlova" className="space-y-4 pt-6">
-                <div className="flex items-center justify-between">
+              <TabsContent value='enerlova' className='space-y-4 pt-6'>
+                <div className='flex items-center justify-between'>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
                       Precios de Cargo - Enerlova
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
-                      <Info className="w-4 h-4 text-emerald-500 dark:text-emerald-300" />
+                    <p className='text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2'>
+                      <Info className='w-4 h-4 text-emerald-500 dark:text-emerald-300' />
                       Los precios de cargo mostrados son fijados directamente
                       por Enerlova para el período consultado.
                     </p>
                   </div>
                   <Badge
-                    variant="outline"
-                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                    variant='outline'
+                    className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                   >
                     Precios actuales
                   </Badge>
                 </div>
-                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900'>
                   <DataTablePrecios
                     columns={columns}
                     data={tablaEnerlova}
-                    searchPlaceholder="Buscar por descripción o código..."
+                    searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}
                     defaultPageSize={10}
                     pageSizeOptions={[5, 10, 20, 50]}

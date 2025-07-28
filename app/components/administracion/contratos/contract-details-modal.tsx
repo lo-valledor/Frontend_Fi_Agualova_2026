@@ -1,4 +1,23 @@
-import { useState, useEffect } from 'react';
+import {
+  Building,
+  Calendar,
+  CheckCircle,
+  FileText,
+  Gauge,
+  Hash,
+  Loader2,
+  MapPin,
+  Settings,
+  Shield,
+  User,
+  XCircle,
+  Zap,
+} from 'lucide-react';
+
+import { useEffect, useState } from 'react';
+
+import { Badge } from '~/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -6,28 +25,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
 import { Skeleton } from '~/components/ui/skeleton';
-import {
-  FileText,
-  User,
-  MapPin,
-  Calendar,
-  Building,
-  Zap,
-  Shield,
-  Gauge,
-  CheckCircle,
-  XCircle,
-  Hash,
-  Settings,
-  Loader2,
-} from 'lucide-react';
 import type {
-  GetContratos,
   ContratosDisponiblesPorId,
+  GetContratos,
 } from '~/types/administracion';
 
 interface ContractDetailsModalProps {
@@ -54,7 +56,7 @@ export function ContractDetailsModal({
         setIsLoading(true);
         setError(null);
         // Simulate API call - replace with actual API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Mock detailed data based on contract
         const mockDetails: ContratosDisponiblesPorId = {
@@ -122,17 +124,17 @@ export function ContractDetailsModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="space-y-3 pb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl shadow-sm">
-              <FileText className="h-6 w-6 text-sky-600 dark:text-sky-400" />
+      <DialogContent className='sm:max-w-[900px] max-h-[90vh] overflow-y-auto'>
+        <DialogHeader className='space-y-3 pb-6'>
+          <div className='flex items-center gap-3'>
+            <div className='p-3 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl shadow-sm'>
+              <FileText className='h-6 w-6 text-sky-600 dark:text-sky-400' />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-sky-800 to-blue-800 dark:from-sky-200 dark:to-blue-200 bg-clip-text text-transparent">
+              <DialogTitle className='text-2xl font-bold bg-gradient-to-r from-sky-800 to-blue-800 dark:from-sky-200 dark:to-blue-200 bg-clip-text text-transparent'>
                 Detalles del Contrato
               </DialogTitle>
-              <DialogDescription className="text-base text-muted-foreground mt-1">
+              <DialogDescription className='text-base text-muted-foreground mt-1'>
                 Información completa del contrato {contract?.codigoContrato}
               </DialogDescription>
             </div>
@@ -140,25 +142,25 @@ export function ContractDetailsModal({
         </DialogHeader>
 
         {isLoading ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-center py-8">
-              <div className="flex items-center gap-3">
-                <Loader2 className="h-6 w-6 animate-spin text-sky-600" />
-                <span className="text-sm text-muted-foreground">
+          <div className='space-y-6'>
+            <div className='flex items-center justify-center py-8'>
+              <div className='flex items-center gap-3'>
+                <Loader2 className='h-6 w-6 animate-spin text-sky-600' />
+                <span className='text-sm text-muted-foreground'>
                   Cargando detalles del contrato...
                 </span>
               </div>
             </div>
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="animate-pulse">
+            <div className='space-y-4'>
+              {[1, 2, 3].map(i => (
+                <Card key={i} className='animate-pulse'>
                   <CardHeader>
-                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className='h-4 w-32' />
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-3/4" />
+                    <div className='space-y-2'>
+                      <Skeleton className='h-4 w-full' />
+                      <Skeleton className='h-4 w-3/4' />
                     </div>
                   </CardContent>
                 </Card>
@@ -166,70 +168,70 @@ export function ContractDetailsModal({
             </div>
           </div>
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-12 gap-4">
-            <div className="p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full">
-              <XCircle className="h-8 w-8 text-rose-600 dark:text-rose-400" />
+          <div className='flex flex-col items-center justify-center py-12 gap-4'>
+            <div className='p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full'>
+              <XCircle className='h-8 w-8 text-rose-600 dark:text-rose-400' />
             </div>
-            <div className="text-center space-y-2">
-              <h3 className="font-medium text-rose-800 dark:text-rose-200">
+            <div className='text-center space-y-2'>
+              <h3 className='font-medium text-rose-800 dark:text-rose-200'>
                 Error al cargar
               </h3>
-              <p className="text-sm text-rose-600 dark:text-rose-400">
+              <p className='text-sm text-rose-600 dark:text-rose-400'>
                 {error}
               </p>
             </div>
           </div>
         ) : detailsData ? (
-          <div className="space-y-6">
+          <div className='space-y-6'>
             {/* Información básica del contrato */}
-            <Card className="border-sky-200/50 dark:border-sky-800/50 shadow-sm">
-              <CardHeader className="bg-gradient-to-r from-sky-50/80 to-blue-50/80 dark:from-sky-900/20 dark:to-blue-900/20 rounded-t-lg">
-                <div className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                  <CardTitle className="text-lg text-sky-800 dark:text-sky-200">
+            <Card className='border-sky-200/50 dark:border-sky-800/50 shadow-sm'>
+              <CardHeader className='bg-gradient-to-r from-sky-50/80 to-blue-50/80 dark:from-sky-900/20 dark:to-blue-900/20 rounded-t-lg'>
+                <div className='flex items-center gap-2'>
+                  <FileText className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                  <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
                     Información del Contrato
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                      <Building className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              <CardContent className='pt-6 space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg'>
+                      <Building className='h-4 w-4 text-indigo-600 dark:text-indigo-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Tipo de Contrato
                       </p>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">
+                      <p className='font-semibold text-slate-800 dark:text-slate-200'>
                         {detailsData.tipoContrato}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                      <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
+                      <Zap className='h-4 w-4 text-purple-600 dark:text-purple-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Tarifa
                       </p>
                       <Badge
-                        variant="outline"
-                        className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800"
+                        variant='outline'
+                        className='bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
                       >
                         {detailsData.tarifa}
                       </Badge>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                      <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+                      <CheckCircle className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Estado
                       </p>
                       <Badge
@@ -249,15 +251,15 @@ export function ContractDetailsModal({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                      <Gauge className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg'>
+                      <Gauge className='h-4 w-4 text-amber-600 dark:text-amber-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Potencia Contratada
                       </p>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">
+                      <p className='font-semibold text-slate-800 dark:text-slate-200'>
                         {detailsData.potenciaContratada}
                       </p>
                     </div>
@@ -267,69 +269,69 @@ export function ContractDetailsModal({
             </Card>
 
             {/* Información de personas */}
-            <Card className="border-emerald-200/50 dark:border-emerald-800/50 shadow-sm">
-              <CardHeader className="bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg">
-                <div className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                  <CardTitle className="text-lg text-emerald-800 dark:text-emerald-200">
+            <Card className='border-emerald-200/50 dark:border-emerald-800/50 shadow-sm'>
+              <CardHeader className='bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg'>
+                <div className='flex items-center gap-2'>
+                  <User className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                  <CardTitle className='text-lg text-emerald-800 dark:text-emerald-200'>
                     Información de Personas
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-4 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                        <User className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <CardContent className='pt-6 space-y-6'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  <div className='p-4 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-lg border border-emerald-200 dark:border-emerald-800'>
+                    <div className='flex items-center gap-3 mb-3'>
+                      <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+                        <User className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
                       </div>
-                      <h3 className="font-semibold text-emerald-800 dark:text-emerald-200">
+                      <h3 className='font-semibold text-emerald-800 dark:text-emerald-200'>
                         Propietario
                       </h3>
                     </div>
-                    <div className="space-y-2">
+                    <div className='space-y-2'>
                       <div>
-                        <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                        <p className='text-xs font-medium text-emerald-600 dark:text-emerald-400'>
                           Nombre
                         </p>
-                        <p className="font-medium text-slate-800 dark:text-slate-200">
+                        <p className='font-medium text-slate-800 dark:text-slate-200'>
                           {detailsData.nombrePropietario}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                        <p className='text-xs font-medium text-emerald-600 dark:text-emerald-400'>
                           RUT
                         </p>
-                        <p className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
                           {formatRut(detailsData.rutPropietario)}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                        <User className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <div className='p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800'>
+                    <div className='flex items-center gap-3 mb-3'>
+                      <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
+                        <User className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                       </div>
-                      <h3 className="font-semibold text-blue-800 dark:text-blue-200">
+                      <h3 className='font-semibold text-blue-800 dark:text-blue-200'>
                         Cliente
                       </h3>
                     </div>
-                    <div className="space-y-2">
+                    <div className='space-y-2'>
                       <div>
-                        <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                        <p className='text-xs font-medium text-blue-600 dark:text-blue-400'>
                           Nombre
                         </p>
-                        <p className="font-medium text-slate-800 dark:text-slate-200">
+                        <p className='font-medium text-slate-800 dark:text-slate-200'>
                           {detailsData.nombreCliente}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                        <p className='text-xs font-medium text-blue-600 dark:text-blue-400'>
                           RUT
                         </p>
-                        <p className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
                           {formatRut(detailsData.rutCliente)}
                         </p>
                       </div>
@@ -340,68 +342,68 @@ export function ContractDetailsModal({
             </Card>
 
             {/* Información de ubicación */}
-            <Card className="border-violet-200/50 dark:border-violet-800/50 shadow-sm">
-              <CardHeader className="bg-gradient-to-r from-violet-50/80 to-purple-50/80 dark:from-violet-900/20 dark:to-purple-900/20 rounded-t-lg">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                  <CardTitle className="text-lg text-violet-800 dark:text-violet-200">
+            <Card className='border-violet-200/50 dark:border-violet-800/50 shadow-sm'>
+              <CardHeader className='bg-gradient-to-r from-violet-50/80 to-purple-50/80 dark:from-violet-900/20 dark:to-purple-900/20 rounded-t-lg'>
+                <div className='flex items-center gap-2'>
+                  <MapPin className='h-5 w-5 text-violet-600 dark:text-violet-400' />
+                  <CardTitle className='text-lg text-violet-800 dark:text-violet-200'>
                     Información de Ubicación
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
-                      <Hash className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+              <CardContent className='pt-6 space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg'>
+                      <Hash className='h-4 w-4 text-teal-600 dark:text-teal-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         ID Local
                       </p>
-                      <p className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
                         {detailsData.localId}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
-                      <Building className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg'>
+                      <Building className='h-4 w-4 text-cyan-600 dark:text-cyan-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Código Local
                       </p>
-                      <p className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+                      <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
                         {detailsData.codigoLocal}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
-                      <MapPin className="h-4 w-4 text-pink-600 dark:text-pink-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg'>
+                      <MapPin className='h-4 w-4 text-pink-600 dark:text-pink-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Dirección
                       </p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">
+                      <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {detailsData.direccion}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                      <MapPin className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
+                      <MapPin className='h-4 w-4 text-orange-600 dark:text-orange-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Comuna
                       </p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">
+                      <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {detailsData.comunaNombre} ({detailsData.codigoComuna})
                       </p>
                     </div>
@@ -411,71 +413,71 @@ export function ContractDetailsModal({
             </Card>
 
             {/* Información de fechas y configuración */}
-            <Card className="border-amber-200/50 dark:border-amber-800/50 shadow-sm">
-              <CardHeader className="bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20 rounded-t-lg">
-                <div className="flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                  <CardTitle className="text-lg text-amber-800 dark:text-amber-200">
+            <Card className='border-amber-200/50 dark:border-amber-800/50 shadow-sm'>
+              <CardHeader className='bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20 rounded-t-lg'>
+                <div className='flex items-center gap-2'>
+                  <Settings className='h-5 w-5 text-amber-600 dark:text-amber-400' />
+                  <CardTitle className='text-lg text-amber-800 dark:text-amber-200'>
                     Configuración y Fechas
                   </CardTitle>
                 </div>
               </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg">
-                      <Calendar className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+              <CardContent className='pt-6 space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg'>
+                      <Calendar className='h-4 w-4 text-cyan-600 dark:text-cyan-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Fecha de Inicio
                       </p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">
+                      <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {formatDate(detailsData.fechaInicio)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                      <Calendar className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
+                      <Calendar className='h-4 w-4 text-orange-600 dark:text-orange-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Fecha de Término
                       </p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">
+                      <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {formatDate(detailsData.fechaTermino)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                      <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
+                      <Calendar className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Ciclo de Facturación
                       </p>
                       <Badge
-                        variant="outline"
-                        className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                        variant='outline'
+                        className='bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                       >
                         {detailsData.cicloFacturacion}
                       </Badge>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                      <Gauge className="h-4 w-4 text-red-600 dark:text-red-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-lg'>
+                      <Gauge className='h-4 w-4 text-red-600 dark:text-red-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Límite Invierno
                       </p>
-                      <p className="font-medium text-slate-800 dark:text-slate-200">
+                      <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {detailsData.limiteInvierno.toLocaleString('es-CL')} kWh
                       </p>
                     </div>
@@ -484,13 +486,13 @@ export function ContractDetailsModal({
 
                 <Separator />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                      <Shield className="h-4 w-4 text-green-600 dark:text-green-400" />
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-lg'>
+                      <Shield className='h-4 w-4 text-green-600 dark:text-green-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         Liberado de Corte
                       </p>
                       <Badge
@@ -510,12 +512,12 @@ export function ContractDetailsModal({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                      <Building className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
+                      <Building className='h-4 w-4 text-purple-600 dark:text-purple-400' />
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                         ¿Es Madre?
                       </p>
                       <Badge
@@ -532,16 +534,16 @@ export function ContractDetailsModal({
                 </div>
 
                 {detailsData.codigoContratoMadre && (
-                  <div className="pt-2">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                        <FileText className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                  <div className='pt-2'>
+                    <div className='flex items-center gap-3'>
+                      <div className='p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg'>
+                        <FileText className='h-4 w-4 text-indigo-600 dark:text-indigo-400' />
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                        <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
                           Código Contrato Madre
                         </p>
-                        <p className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+                        <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
                           {detailsData.codigoContratoMadre}
                         </p>
                       </div>

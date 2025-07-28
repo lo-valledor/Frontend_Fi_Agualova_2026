@@ -1,30 +1,30 @@
 import api from '~/lib/api';
 import type {
   Acometida,
+  BuscarCargoFacturable,
   ComboEmpalmes,
   ComboNichos,
   ComboSectores,
   ContratosDisponibles,
-  GetClientes,
-  GetGiros,
-  GetRegiones,
-  GetContratos,
-  GetContratosClientes,
-  GetLimiteInvierno,
-  GetFechaActual,
-  GetMedidores,
-  GetCargoTipoContrato,
-  GetCondicionesContrato,
   GeCombosConceptos,
+  GetCargoTipoContrato,
+  GetClientes,
   GetCombosTarifas,
   GetCombosTiposMedidor,
-  BuscarCargoFacturable,
-  Usuarios,
   GetComunas,
+  GetCondicionesContrato,
+  GetContratos,
+  GetContratosClientes,
+  GetFechaActual,
+  GetGiros,
+  GetLimiteInvierno,
+  GetMedidores,
+  GetRegiones,
+  Usuarios,
 } from '~/types/administracion';
 import type {
-  Marca,
   Conceptos,
+  Marca,
   Tarifas,
   TiposContrato,
 } from '~/types/mantencion';
@@ -88,7 +88,7 @@ class AdministracionService {
           comboSectores:
             this.processApiResponse<ComboSectores>(resComboSectores),
           contratosDisponibles: this.processApiResponse<ContratosDisponibles>(
-            resContratosDisponibles,
+            resContratosDisponibles
           ),
         },
         error: null,
@@ -274,7 +274,7 @@ class AdministracionService {
       return {
         data: {
           condicionesContrato: this.processApiResponse<GetCondicionesContrato>(
-            resCondicionesContrato,
+            resCondicionesContrato
           ),
           conceptos: this.processApiResponse<Conceptos>(resConceptos),
         },

@@ -1,24 +1,27 @@
+import { type PaginationState } from '@tanstack/react-table';
+import { Gauge, Loader2, RotateCcw, Settings } from 'lucide-react';
+
 import React, { useCallback, useEffect, useState } from 'react';
-import api from '~/lib/api';
-import { RotateCcw, Loader2, Gauge, Settings } from 'lucide-react';
+
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
+import { LoadingSpinner } from '~/components/loading-spinner';
+import { EmptyState, LoadingState } from '~/components/loading-state';
 import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '~/components/ui/dialog';
-import EditarMedidores from './editar-medidores';
+import api from '~/lib/api';
 import type { MedidorNichoItem } from '~/types/monitor';
-import { LoadingState, EmptyState } from '~/components/loading-state';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { columnsNichos, columnGroups } from './columns-nichos';
+
+import { columnGroups, columnsNichos } from './columns-nichos';
 import { DataTableNichos } from './data-table-nichos';
-import { type PaginationState } from '@tanstack/react-table';
-import { LoadingSpinner } from '~/components/loading-spinner';
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
+import EditarMedidores from './editar-medidores';
 
 export default function MonitorNichos({
   periodo,
@@ -60,7 +63,11 @@ export default function MonitorNichos({
     try {
       if (!isRefreshing) {
         setIsLoading(true);
-        trackDataAction('Cargar datos', 'Monitor de Nichos', `Nicho: ${nicho}, Periodo: ${periodo}`);
+        trackDataAction(
+          'Cargar datos',
+          'Monitor de Nichos',
+          `Nicho: ${nicho}, Periodo: ${periodo}`
+        );
       }
       const response = await api.get('/lecturas-nicho', { params });
       setResults(response.data as MedidorNichoItem[]);
@@ -94,7 +101,7 @@ export default function MonitorNichos({
   }, [isDialogOpen, needsRefreshOnClose, searchResults]);
 
   const handleOpenDialog = (id: number, isOpen: boolean) => {
-    setOpenDialogs((prev) => ({
+    setOpenDialogs(prev => ({
       ...prev,
       [id]: isOpen,
     }));
@@ -103,14 +110,22 @@ export default function MonitorNichos({
   const handleRowClick = (medidor: MedidorNichoItem) => {
     // Solo abrir el diálogo si no es Estado 5 (facturación) y no es el último editado
     if (medidor.Estado !== 5 && lastEditedId !== medidor.LM_ID) {
-      trackDataAction('Abrir edición', 'Monitor de Nichos', `Medidor: ${medidor.ME_NSerie} (ID: ${medidor.LM_ID})`);
+      trackDataAction(
+        'Abrir edición',
+        'Monitor de Nichos',
+        `Medidor: ${medidor.ME_NSerie} (ID: ${medidor.LM_ID})`
+      );
       setSelectedMedidor(medidor);
       setIsDialogOpen(true);
     }
   };
 
   const handleSuccess = (id: number) => {
-    trackDataAction('Actualizar medidor', 'Monitor de Nichos', `Medidor actualizado exitosamente (ID: ${id})`);
+    trackDataAction(
+      'Actualizar medidor',
+      'Monitor de Nichos',
+      `Medidor actualizado exitosamente (ID: ${id})`
+    );
     // Cerrar el diálogo
     setIsDialogOpen(false);
     setNeedsRefreshOnClose(true);
@@ -144,16 +159,16 @@ export default function MonitorNichos({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <LoadingState message="Cargando datos de nichos..." />
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <LoadingState message='Cargando datos de nichos...' />
       </div>
     );
   }
 
   if (results.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <EmptyState message="No se encontraron medidores para los parámetros seleccionados" />
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <EmptyState message='No se encontraron medidores para los parámetros seleccionados' />
       </div>
     );
   }
@@ -167,46 +182,46 @@ export default function MonitorNichos({
   };
 
   return (
-    <div className="space-y-3">
-      <Card className="border-border/50 shadow-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <CardHeader className="pb-2 px-4 pt-3">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <CardTitle className="text-base flex items-center gap-2 text-slate-800 dark:text-slate-200">
-              <Gauge className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+    <div className='space-y-3'>
+      <Card className='border-border/50 shadow-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
+        <CardHeader className='pb-2 px-4 pt-3'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+            <CardTitle className='text-base flex items-center gap-2 text-slate-800 dark:text-slate-200'>
+              <Gauge className='h-4 w-4 text-blue-600 dark:text-blue-400' />
               Monitor de Medidores
             </CardTitle>
 
-            <div className="flex flex-wrap items-center gap-1.5">
+            <div className='flex flex-wrap items-center gap-1.5'>
               <Badge
-                variant="secondary"
-                className="bg-sky-100/80 dark:bg-sky-900/30 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-700 font-medium text-xs py-0 px-2 h-5"
+                variant='secondary'
+                className='bg-sky-100/80 dark:bg-sky-900/30 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-700 font-medium text-xs py-0 px-2 h-5'
               >
                 Nicho: {nicho}
               </Badge>
               <Badge
-                variant="secondary"
-                className="bg-amber-100/80 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 font-medium text-xs py-0 px-2 h-5"
+                variant='secondary'
+                className='bg-amber-100/80 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 font-medium text-xs py-0 px-2 h-5'
               >
                 Periodo: {periodo}
               </Badge>
               <Badge
-                variant="outline"
-                className="bg-slate-50/80 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 text-xs py-0 px-2 h-5"
+                variant='outline'
+                className='bg-slate-50/80 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 text-xs py-0 px-2 h-5'
               >
                 {results.length} medidores
               </Badge>
 
               <Button
-                variant="outline"
-                size="sm"
-                className="gap-1.5 bg-muted/50 hover:bg-muted/80 transition-all duration-200 h-6 px-2 text-xs"
+                variant='outline'
+                size='sm'
+                className='gap-1.5 bg-muted/50 hover:bg-muted/80 transition-all duration-200 h-6 px-2 text-xs'
                 onClick={handleRefresh}
                 disabled={isRefreshing}
               >
                 {isRefreshing ? (
-                  <Loader2 className="h-3 w-3 animate-spin" />
+                  <Loader2 className='h-3 w-3 animate-spin' />
                 ) : (
-                  <RotateCcw className="h-3 w-3" />
+                  <RotateCcw className='h-3 w-3' />
                 )}
                 {isRefreshing ? 'Actualizando...' : 'Actualizar'}
               </Button>
@@ -214,8 +229,8 @@ export default function MonitorNichos({
           </div>
         </CardHeader>
 
-        <CardContent className="p-0">
-          <div className="mt-4">
+        <CardContent className='p-0'>
+          <div className='mt-4'>
             {isLoading ? (
               <LoadingSpinner />
             ) : (
@@ -235,27 +250,27 @@ export default function MonitorNichos({
       {/* Diálogo responsive para editar/reaperturar medidor */}
       {selectedMedidor && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-[95vw] w-full max-h-[95vh] h-auto lg:max-w-4xl xl:max-w-5xl overflow-auto flex flex-col">
-            <DialogHeader className="shrink-0 pb-4 border-b border-border/40">
-              <DialogTitle className="text-xl flex flex-col sm:flex-row sm:items-center gap-2 text-sky-800 dark:text-sky-200">
-                <div className="flex items-center gap-2">
+          <DialogContent className='max-w-[95vw] w-full max-h-[95vh] h-auto lg:max-w-4xl xl:max-w-5xl overflow-auto flex flex-col'>
+            <DialogHeader className='shrink-0 pb-4 border-b border-border/40'>
+              <DialogTitle className='text-xl flex flex-col sm:flex-row sm:items-center gap-2 text-sky-800 dark:text-sky-200'>
+                <div className='flex items-center gap-2'>
                   {selectedMedidor.Estado === 4 ? (
-                    <RotateCcw className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                    <RotateCcw className='h-5 w-5 text-blue-600 dark:text-blue-400' />
                   ) : (
-                    <Settings className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+                    <Settings className='h-5 w-5 text-sky-600 dark:text-sky-400' />
                   )}
                   {selectedMedidor.Estado === 4
                     ? 'Reaperturar Medidor'
                     : 'Editar Medidor'}
                 </div>
                 <Badge
-                  variant="outline"
-                  className="bg-sky-50/80 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-700 font-mono text-sm"
+                  variant='outline'
+                  className='bg-sky-50/80 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-700 font-mono text-sm'
                 >
                   {selectedMedidor.ME_NSerie}
                 </Badge>
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground">
+              <DialogDescription className='text-muted-foreground'>
                 Complete la información para{' '}
                 {selectedMedidor.Estado === 4 ? 'reaperturar' : 'actualizar'} la
                 medición del medidor seleccionado
@@ -263,7 +278,7 @@ export default function MonitorNichos({
             </DialogHeader>
 
             <div>
-              <div className="p-6">
+              <div className='p-6'>
                 <EditarMedidores
                   result={selectedMedidor}
                   onSuccess={() => handleSuccess(selectedMedidor.LM_ID)}

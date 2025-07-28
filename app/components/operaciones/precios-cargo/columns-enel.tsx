@@ -1,25 +1,27 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '~/components/ui/badge';
-import DialogAgregarPrecios from './dialog-agregar-precios';
-import type { PreciosCargoEnel } from '~/types/operaciones';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { Badge } from '~/components/ui/badge';
+import type { PreciosCargoEnel } from '~/types/operaciones';
+
+import DialogAgregarPrecios from './dialog-agregar-precios';
 
 export const columns = (
   mes: string,
   anio: string,
-  onSuccess: () => void,
+  onSuccess: () => void
 ): ColumnDef<PreciosCargoEnel>[] => [
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Código"
-        className="text-slate-700 dark:text-slate-300 font-semibold"
+        title='Código'
+        className='text-slate-700 dark:text-slate-300 font-semibold'
       />
     ),
     cell: ({ row }) => (
-      <div className="font-mono text-sm font-medium text-slate-900 dark:text-slate-100">
+      <div className='font-mono text-sm font-medium text-slate-900 dark:text-slate-100'>
         {row.getValue('codigo')}
       </div>
     ),
@@ -30,12 +32,12 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Código Enerlova"
-        className="text-slate-700 dark:text-slate-300 font-semibold"
+        title='Código Enerlova'
+        className='text-slate-700 dark:text-slate-300 font-semibold'
       />
     ),
     cell: ({ row }) => (
-      <div className="font-mono text-sm text-slate-700 dark:text-slate-400">
+      <div className='font-mono text-sm text-slate-700 dark:text-slate-400'>
         {row.getValue('codigoener')}
       </div>
     ),
@@ -46,12 +48,12 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Descripción"
-        className="text-slate-700 dark:text-slate-300 font-semibold"
+        title='Descripción'
+        className='text-slate-700 dark:text-slate-300 font-semibold'
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-slate-900 dark:text-slate-100 max-w-xs truncate">
+      <div className='text-sm text-slate-900 dark:text-slate-100 max-w-xs truncate'>
         {row.getValue('descripcion')}
       </div>
     ),
@@ -62,12 +64,12 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Valor Anterior 1"
-        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
+        title='Valor Anterior 1'
+        className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2">
+      <div className='text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2'>
         {row.getValue('valor')}
       </div>
     ),
@@ -78,12 +80,12 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Valor Anterior 2"
-        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
+        title='Valor Anterior 2'
+        className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2">
+      <div className='text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2'>
         {row.getValue('valor2')}
       </div>
     ),
@@ -94,12 +96,12 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Valor Anterior 3"
-        className="text-orange-700 dark:text-orange-300 font-semibold justify-end"
+        title='Valor Anterior 3'
+        className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2">
+      <div className='text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2'>
         {row.getValue('valor3')}
       </div>
     ),
@@ -110,8 +112,8 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Valor Actual 1"
-        className="text-green-700 dark:text-green-300 font-semibold justify-end"
+        title='Valor Actual 1'
+        className='text-green-700 dark:text-green-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => {
@@ -149,8 +151,8 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Valor Actual 2"
-        className="text-green-700 dark:text-green-300 font-semibold justify-end"
+        title='Valor Actual 2'
+        className='text-green-700 dark:text-green-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => {
@@ -188,8 +190,8 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Valor Actual 3"
-        className="text-green-700 dark:text-green-300 font-semibold justify-end"
+        title='Valor Actual 3'
+        className='text-green-700 dark:text-green-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => {
@@ -225,7 +227,7 @@ export const columns = (
   {
     id: 'actions',
     header: () => (
-      <div className="text-center text-slate-700 dark:text-slate-300 font-semibold">
+      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold'>
         Estado
       </div>
     ),
@@ -237,7 +239,7 @@ export const columns = (
         valoractual3 === 'Sin Valor';
 
       return (
-        <div className="flex justify-center">
+        <div className='flex justify-center'>
           {hasNoValues ? (
             <DialogAgregarPrecios
               valor1={Number(valoractual.replace(',', '.'))}
@@ -250,8 +252,8 @@ export const columns = (
             />
           ) : (
             <Badge
-              variant="outline"
-              className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800"
+              variant='outline'
+              className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
             >
               ✓ Actualizado
             </Badge>

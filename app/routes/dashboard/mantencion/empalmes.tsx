@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/empalmes';
-import EmpalmesComponent from '~/components/mantencion/empalmes/empalmes-component';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import EmpalmesComponent from '~/components/mantencion/empalmes/empalmes-component';
 import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/empalmes';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Empalmes' },
-    { name: 'description', content: 'Gestión de empalmes del sistema' },
+    { name: 'description', content: ' empalmes del sistema' },
   ];
 }
 

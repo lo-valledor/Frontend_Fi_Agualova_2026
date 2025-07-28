@@ -1,8 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '~/components/ui/badge';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { Parametro } from '~/types/mantencion';
 import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { Parametro } from '~/types/mantencion';
 
 interface ParametrosColumnsProps {
   onEdit: (parametro: Parametro) => void;
@@ -16,11 +17,11 @@ export const createColumns = ({
   {
     accessorKey: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
+      <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => (
       <div
-        className="max-w-[200px] truncate font-medium"
+        className='max-w-[200px] truncate font-medium'
         title={row.getValue('descripcion')}
       >
         {row.getValue('descripcion')}
@@ -30,10 +31,10 @@ export const createColumns = ({
   {
     accessorKey: 'valor',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Valor" />
+      <DataTableColumnHeader column={column} title='Valor' />
     ),
     cell: ({ row }) => (
-      <div className="max-w-[150px] truncate" title={row.getValue('valor')}>
+      <div className='max-w-[150px] truncate' title={row.getValue('valor')}>
         {row.getValue('valor')}
       </div>
     ),
@@ -41,10 +42,10 @@ export const createColumns = ({
   {
     accessorKey: 'sigla',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Sigla" />
+      <DataTableColumnHeader column={column} title='Sigla' />
     ),
     cell: ({ row }) => (
-      <Badge variant="outline" className="font-mono">
+      <Badge variant='outline' className='font-mono'>
         {row.getValue('sigla')}
       </Badge>
     ),
@@ -52,7 +53,7 @@ export const createColumns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

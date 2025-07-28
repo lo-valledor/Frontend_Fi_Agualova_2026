@@ -1,10 +1,12 @@
 /* eslint-disable no-empty-pattern */
+import React, { useCallback, useState } from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import RevisarPrecioComponent from '~/components/operaciones/revisar-precio/revisar-precio-component';
-import React, { useState, useCallback } from 'react';
-import type { Route } from './+types/revisar-precio';
 import { operacionesService } from '~/services/operacionesService';
-import type { RevisarPrecioUno, RevisarPrecioDos } from '~/types/operaciones';
+import type { RevisarPrecioDos, RevisarPrecioUno } from '~/types/operaciones';
+
+import type { Route } from './+types/revisar-precio';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -79,7 +81,7 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
         const result = await operacionesService.getPreciosPorCiclo(
           mes,
           anio,
-          ciclo,
+          ciclo
         );
 
         if (result.error || !result.data) {
@@ -93,7 +95,7 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
         setIsLoadingPrecios(false);
       }
     },
-    [dataPeriodoAbierto, cicloSeleccionado],
+    [dataPeriodoAbierto, cicloSeleccionado]
   );
 
   const handleCicloChange = async (nuevoCiclo: string) => {

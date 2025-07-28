@@ -5,33 +5,37 @@ Sistema integral de gestión para empresas de distribución eléctrica, diseñad
 ## 🚀 Características Principales
 
 ### 📊 **Monitor de Lecturas**
-- Visualización y gestión de lecturas de medidores por sector y período
+
+- Visualización y lecturas de medidores por sector y período
 - Soporte para diferentes tipos de tarifas (BT-1, BT-2, BT-4.3)
 - Análisis de consumo energético con estadísticas detalladas
 - Validación automática de lecturas con claves de control
 - Exportación de datos de lecturas
 
 ### ⚙️ **Operaciones**
-- **Gestión de Períodos**: Apertura y cierre de períodos de facturación
+
+- ** Períodos**: Apertura y cierre de períodos de facturación
 - **Preparación de Lecturas**: Asignación de sectores y validación de pendientes
 - **Cálculo de Facturas**: Revisión y aceptación de cálculos prefactura
-- **Cambio de Medidores**: Gestión de reemplazos y reaperturas
+- **Cambio de Medidores**: reemplazos y reaperturas
 - **Corte y Reposición**: Control de servicios suspendidos
 - **Precios y Cargos**: Administración de tarifas y conceptos facturables
 - **Integración SAP**: Generación de archivos para sistemas externos
 
 ### 👥 **Administración**
-- **Gestión de Usuarios**: Control de acceso y perfiles
+
+- ** Usuarios**: Control de acceso y perfiles
 - **Clientes**: Registro y mantenimiento de información de clientes
 - **Contratos**: Administración de contratos de suministro
 - **Medidores**: Control de equipos de medición
-- **Acometidas**: Gestión de conexiones eléctricas
+- **Acometidas**: conexiones eléctricas
 - **Cargos Facturables**: Configuración de conceptos de cobro
 
 ### 🔧 **Mantención**
+
 - **Parámetros del Sistema**: Configuración de variables operativas
 - **Tarifas**: Definición de estructuras tarifarias
-- **Conceptos**: Gestión de conceptos facturables
+- **Conceptos**: conceptos facturables
 - **Ciclos de Facturación**: Configuración de períodos
 - **Zonas y Sectores**: Organización territorial
 - **Nichos y Empalmes**: Infraestructura de distribución
@@ -52,6 +56,7 @@ Sistema integral de gestión para empresas de distribución eléctrica, diseñad
 ## 📦 Instalación
 
 ### Prerrequisitos
+
 - Node.js 18+
 - pnpm (recomendado) o npm
 
@@ -100,6 +105,7 @@ docker run -p 3000:3000 enerlova-app
 ```
 
 ### Plataformas de Despliegue Soportadas
+
 - AWS ECS
 - Google Cloud Run
 - Azure Container Apps
@@ -135,16 +141,19 @@ app/
 ## 📊 Funcionalidades Avanzadas
 
 ### Análisis de Actividad
+
 - Tracking de acciones de usuarios
 - Métricas de uso del sistema
 - Reportes de actividad
 
-### Gestión de Estados
+### Estados
+
 - Estados de carga optimizados
 - Manejo de errores centralizado
 - Feedback visual para usuarios
 
 ### Responsive Design
+
 - Interfaz adaptativa para móviles
 - Componentes optimizados para diferentes pantallas
 - Navegación intuitiva

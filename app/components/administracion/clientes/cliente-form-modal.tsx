@@ -1,16 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
+  Building2,
+  CheckCircle2,
+  FileText,
+  Mail,
+  MapPin,
+  Phone,
+  User,
+} from 'lucide-react';
+import { z } from 'zod';
+
+import React from 'react';
+
+import { Controller, useForm } from 'react-hook-form';
+import Select, { type StylesConfig } from 'react-select';
+
+import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
 import {
@@ -21,23 +26,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from '~/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '~/components/ui/form';
+import { Input } from '~/components/ui/input';
+import api from '~/lib/api';
 import type {
   GetClientesByRut,
-  GetGiros,
   GetComunas,
+  GetGiros,
 } from '~/types/administracion';
-import Select, { type StylesConfig } from 'react-select';
-import { useTheme } from '~/components/theme-provider';
-import api from '~/lib/api';
-import {
-  User,
-  Building2,
-  MapPin,
-  Phone,
-  Mail,
-  FileText,
-  CheckCircle2,
-} from 'lucide-react';
 
 const clienteSchema = z.object({
   rut: z.string().min(1, 'El RUT es requerido'),
@@ -91,7 +94,7 @@ export default function ClienteFormModal({
   const { theme } = useTheme();
 
   const selectStyles: StylesConfig = {
-    control: (styles) => ({
+    control: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
       borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
@@ -100,7 +103,7 @@ export default function ClienteFormModal({
         borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
       },
     }),
-    menu: (styles) => ({
+    menu: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
     }),
@@ -121,34 +124,34 @@ export default function ClienteFormModal({
         backgroundColor: theme === 'dark' ? '#166534' : '#16A34A',
       },
     }),
-    singleValue: (styles) => ({
+    singleValue: styles => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
     }),
-    input: (styles) => ({
+    input: styles => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
     }),
-    placeholder: (styles) => ({
+    placeholder: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
-    indicatorSeparator: (styles) => ({
+    indicatorSeparator: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#334155' : '#E2E8F0',
     }),
-    dropdownIndicator: (styles) => ({
+    dropdownIndicator: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
       '&:hover': {
         color: theme === 'dark' ? '#CBD5E1' : '#374151',
       },
     }),
-    noOptionsMessage: (styles) => ({
+    noOptionsMessage: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
-    loadingMessage: (styles) => ({
+    loadingMessage: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
@@ -203,22 +206,22 @@ export default function ClienteFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl font-semibold flex items-center gap-2">
+      <DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+        <DialogHeader className='space-y-3'>
+          <DialogTitle className='text-2xl font-semibold flex items-center gap-2'>
             {mode === 'add' ? (
               <>
-                <User className="h-6 w-6 text-blue-600" />
+                <User className='h-6 w-6 text-blue-600' />
                 Agregar Cliente
               </>
             ) : (
               <>
-                <User className="h-6 w-6 text-green-600" />
+                <User className='h-6 w-6 text-green-600' />
                 Editar Cliente
               </>
             )}
           </DialogTitle>
-          <DialogDescription className="text-base">
+          <DialogDescription className='text-base'>
             {mode === 'add'
               ? 'Complete el formulario para agregar un nuevo cliente al sistema.'
               : 'Modifique los datos del cliente según sea necesario.'}
@@ -226,29 +229,29 @@ export default function ClienteFormModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             {/* Información Básica */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <User className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-medium">Información Básica</h3>
+            <div className='space-y-6'>
+              <div className='flex items-center gap-2 pb-2 border-b'>
+                <User className='h-5 w-5 text-blue-600' />
+                <h3 className='text-lg font-medium'>Información Básica</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <FormField
                   control={form.control}
-                  name="rut"
+                  name='rut'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <FileText className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <FileText className='h-4 w-4' />
                         RUT
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="12345678-9"
+                          placeholder='12345678-9'
                           {...field}
-                          className="h-11"
+                          className='h-11'
                         />
                       </FormControl>
                       <FormMessage />
@@ -258,18 +261,18 @@ export default function ClienteFormModal({
 
                 <FormField
                   control={form.control}
-                  name="esEmpresa"
+                  name='esEmpresa'
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4 bg-muted/30">
+                    <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4 bg-muted/30'>
                       <FormControl>
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel className="flex items-center gap-2">
-                          <Building2 className="h-4 w-4" />
+                      <div className='space-y-1 leading-none'>
+                        <FormLabel className='flex items-center gap-2'>
+                          <Building2 className='h-4 w-4' />
                           ¿Es Empresa?
                         </FormLabel>
                       </div>
@@ -279,17 +282,17 @@ export default function ClienteFormModal({
 
                 <FormField
                   control={form.control}
-                  name="nombre"
+                  name='nombre'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <User className='h-4 w-4' />
                         {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="h-11"
+                          className='h-11'
                           placeholder={
                             form.watch('esEmpresa')
                               ? 'Nombre de la empresa'
@@ -305,18 +308,18 @@ export default function ClienteFormModal({
                 {!form.watch('esEmpresa') && (
                   <FormField
                     control={form.control}
-                    name="apellido"
+                    name='apellido'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <User className="h-4 w-4" />
+                        <FormLabel className='flex items-center gap-2'>
+                          <User className='h-4 w-4' />
                           Apellido
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
-                            className="h-11"
-                            placeholder="Apellido"
+                            className='h-11'
+                            placeholder='Apellido'
                           />
                         </FormControl>
                         <FormMessage />
@@ -328,29 +331,29 @@ export default function ClienteFormModal({
             </div>
 
             {/* Información de Ubicación */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <MapPin className="h-5 w-5 text-green-600" />
-                <h3 className="text-lg font-medium">
+            <div className='space-y-6'>
+              <div className='flex items-center gap-2 pb-2 border-b'>
+                <MapPin className='h-5 w-5 text-green-600' />
+                <h3 className='text-lg font-medium'>
                   Información de Ubicación
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <FormField
                   control={form.control}
-                  name="direccion"
+                  name='direccion'
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
+                    <FormItem className='md:col-span-2'>
+                      <FormLabel className='flex items-center gap-2'>
+                        <MapPin className='h-4 w-4' />
                         Dirección
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="h-11"
-                          placeholder="Dirección completa"
+                          className='h-11'
+                          placeholder='Dirección completa'
                         />
                       </FormControl>
                       <FormMessage />
@@ -361,23 +364,23 @@ export default function ClienteFormModal({
                 {/* Comuna */}
                 <Controller
                   control={form.control}
-                  name="codComuna"
+                  name='codComuna'
                   render={({ field }) => {
                     // Encontrar la comuna actual basada en el código
                     const comunaActual = comunas.find(
-                      (c) => c.codigo === field.value,
+                      c => c.codigo === field.value
                     );
 
                     return (
-                      <FormItem className="md:col-span-2">
-                        <FormLabel className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
+                      <FormItem className='md:col-span-2'>
+                        <FormLabel className='flex items-center gap-2'>
+                          <MapPin className='h-4 w-4' />
                           Comuna
                         </FormLabel>
                         <FormControl>
                           <Select
-                            instanceId="comuna-select"
-                            options={comunas.map((comuna) => ({
+                            instanceId='comuna-select'
+                            options={comunas.map(comuna => ({
                               value: comuna.codigo,
                               label: `${comuna.nombre} (${comuna.region})`,
                             }))}
@@ -392,10 +395,10 @@ export default function ClienteFormModal({
                             onChange={(option: any) =>
                               field.onChange(option ? option.value : '')
                             }
-                            placeholder="Seleccione la comuna"
+                            placeholder='Seleccione la comuna'
                             isClearable
                             styles={selectStyles}
-                            classNamePrefix="react-select"
+                            classNamePrefix='react-select'
                           />
                         </FormControl>
                         <FormMessage />
@@ -407,27 +410,27 @@ export default function ClienteFormModal({
             </div>
 
             {/* Información de Contacto */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <Phone className="h-5 w-5 text-purple-600" />
-                <h3 className="text-lg font-medium">Información de Contacto</h3>
+            <div className='space-y-6'>
+              <div className='flex items-center gap-2 pb-2 border-b'>
+                <Phone className='h-5 w-5 text-purple-600' />
+                <h3 className='text-lg font-medium'>Información de Contacto</h3>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                 <FormField
                   control={form.control}
-                  name="contacto"
+                  name='contacto'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <User className='h-4 w-4' />
                         Contacto
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="h-11"
-                          placeholder="Nombre del contacto"
+                          className='h-11'
+                          placeholder='Nombre del contacto'
                         />
                       </FormControl>
                       <FormMessage />
@@ -437,18 +440,18 @@ export default function ClienteFormModal({
 
                 <FormField
                   control={form.control}
-                  name="telefono"
+                  name='telefono'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Phone className="h-4 w-4" />
+                      <FormLabel className='flex items-center gap-2'>
+                        <Phone className='h-4 w-4' />
                         Teléfono
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          className="h-11"
-                          placeholder="+56 9 1234 5678"
+                          className='h-11'
+                          placeholder='+56 9 1234 5678'
                         />
                       </FormControl>
                       <FormMessage />
@@ -458,19 +461,19 @@ export default function ClienteFormModal({
 
                 <FormField
                   control={form.control}
-                  name="correo"
+                  name='correo'
                   render={({ field }) => (
-                    <FormItem className="md:col-span-2">
-                      <FormLabel className="flex items-center gap-2">
-                        <Mail className="h-4 w-4" />
+                    <FormItem className='md:col-span-2'>
+                      <FormLabel className='flex items-center gap-2'>
+                        <Mail className='h-4 w-4' />
                         Correo Electrónico
                       </FormLabel>
                       <FormControl>
                         <Input
-                          type="email"
+                          type='email'
                           {...field}
-                          className="h-11"
-                          placeholder="correo@ejemplo.com"
+                          className='h-11'
+                          placeholder='correo@ejemplo.com'
                         />
                       </FormControl>
                       <FormMessage />
@@ -481,32 +484,32 @@ export default function ClienteFormModal({
             </div>
 
             {/* Información de Giro */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 pb-2 border-b">
-                <Building2 className="h-5 w-5 text-orange-600" />
-                <h3 className="text-lg font-medium">Información de Giro</h3>
+            <div className='space-y-6'>
+              <div className='flex items-center gap-2 pb-2 border-b'>
+                <Building2 className='h-5 w-5 text-orange-600' />
+                <h3 className='text-lg font-medium'>Información de Giro</h3>
               </div>
 
-              <div className="grid grid-cols-1 gap-6">
+              <div className='grid grid-cols-1 gap-6'>
                 <Controller
                   control={form.control}
-                  name="codigoGiro"
+                  name='codigoGiro'
                   render={({ field }) => {
                     // Encontrar el giro actual basado en el código
                     const giroActual = giros.find(
-                      (g) => g.codigo === field.value,
+                      g => g.codigo === field.value
                     );
 
                     return (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <Building2 className="h-4 w-4" />
+                        <FormLabel className='flex items-center gap-2'>
+                          <Building2 className='h-4 w-4' />
                           Código de Giro
                         </FormLabel>
                         <FormControl>
                           <Select
-                            instanceId="giro-select"
-                            options={giros.map((giro) => ({
+                            instanceId='giro-select'
+                            options={giros.map(giro => ({
                               value: giro.codigo,
                               label: `${giro.codigo} - ${giro.actividadEconomica}`,
                             }))}
@@ -521,10 +524,10 @@ export default function ClienteFormModal({
                             onChange={(option: any) =>
                               field.onChange(option ? option.value : '')
                             }
-                            placeholder="Seleccione el giro"
+                            placeholder='Seleccione el giro'
                             isClearable
                             styles={selectStyles}
-                            classNamePrefix="react-select"
+                            classNamePrefix='react-select'
                           />
                         </FormControl>
                         <FormMessage />
@@ -535,20 +538,20 @@ export default function ClienteFormModal({
               </div>
             </div>
 
-            <DialogFooter className="pt-6 border-t">
+            <DialogFooter className='pt-6 border-t'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={onClose}
-                className="h-11 px-6"
+                className='h-11 px-6'
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
-                className="h-11 px-6 flex items-center gap-2"
+                type='submit'
+                className='h-11 px-6 flex items-center gap-2'
               >
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className='h-4 w-4' />
                 {mode === 'add' ? 'Agregar' : 'Actualizar'}
               </Button>
             </DialogFooter>

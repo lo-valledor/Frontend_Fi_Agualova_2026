@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { authService } from './authService';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -10,7 +11,7 @@ const axiosInstance = axios.create({
 
 // Interceptor para añadir el token a las peticiones
 axiosInstance.interceptors.request.use(
-  (config) => {
+  config => {
     const token = localStorage.getItem('token');
 
     if (token) {
@@ -35,13 +36,13 @@ axiosInstance.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error),
+  error => Promise.reject(error)
 );
 
 // Interceptor para manejar errores de token expirado
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  response => response,
+  async error => {
     const originalRequest = error.config;
 
     console.log('Axios interceptor - Error detected:', {
@@ -63,8 +64,8 @@ axiosInstance.interceptors.response.use(
     ];
 
     // Verificar si la URL contiene alguna de las rutas excluidas
-    const isExpected401 = routesWithExpected401.some((route) =>
-      originalRequest.url?.includes(route),
+    const isExpected401 = routesWithExpected401.some(route =>
+      originalRequest.url?.includes(route)
     );
 
     // Si el error es 401 (Unauthorized) y no es una petición de refresh token o login
@@ -115,15 +116,15 @@ axiosInstance.interceptors.response.use(
       window.location.href = '/session-expired';
       return Promise.reject(
         new Error(
-          'La sesión ha sido cerrada. Por favor, inicie sesión nuevamente.',
-        ),
+          'La sesión ha sido cerrada. Por favor, inicie sesión nuevamente.'
+        )
       );
     }
 
     // Para todos los demás errores (incluyendo 401 en rutas excluidas),
     // permitir que el código del componente los maneje
     return Promise.reject(error);
-  },
+  }
 );
 
 export default axiosInstance;

@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
 import { useAuth } from '~/context/AuthContext';
 import { userService } from '~/services/userService';
-import type { Usuarios, ActualizarUsuarioProps } from '~/types/administracion';
+import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 
 interface UseUserProfileSimpleReturn {
   userData: Usuarios | null;
@@ -53,7 +54,7 @@ export function useUserProfileSimple(): UseUserProfileSimpleReturn {
         setIsLoading(false);
       }
     },
-    [user],
+    [user]
   );
 
   // Función para actualizar el perfil
@@ -93,7 +94,7 @@ export function useUserProfileSimple(): UseUserProfileSimpleReturn {
         setIsLoading(false);
       }
     },
-    [userData],
+    [userData]
   );
 
   // Función para refrescar el perfil

@@ -1,8 +1,8 @@
 import { type Column } from '@tanstack/react-table';
 import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 
-import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -36,22 +36,22 @@ export function DataTableColumnHeader<TData, TValue>({
   return (
     <div className={cn('flex items-center space-x-2', className)}>
       <Button
-        variant="ghost"
-        size="sm"
+        variant='ghost'
+        size='sm'
         onClick={handleSort}
         className={cn(
           '-ml-3 h-8 hover:bg-accent/50',
-          column.getIsSorted() && 'bg-accent', // Mantiene el fondo si está ordenado
+          column.getIsSorted() && 'bg-accent' // Mantiene el fondo si está ordenado
         )}
       >
         <span>{title}</span>
         {column.getIsSorted() === 'desc' ? (
-          <ArrowDown className="ml-2 h-4 w-4" />
+          <ArrowDown className='ml-2 h-4 w-4' />
         ) : column.getIsSorted() === 'asc' ? (
-          <ArrowUp className="ml-2 h-4 w-4" />
+          <ArrowUp className='ml-2 h-4 w-4' />
         ) : (
           // Cuando no está ordenado, ChevronsUpDown es más neutral
-          <ChevronsUpDown className="ml-2 h-4 w-4 text-muted-foreground/70" />
+          <ChevronsUpDown className='ml-2 h-4 w-4 text-muted-foreground/70' />
         )}
       </Button>
     </div>

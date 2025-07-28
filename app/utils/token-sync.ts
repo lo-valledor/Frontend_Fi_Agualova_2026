@@ -50,17 +50,17 @@ export const TOKEN_CHANGED_EVENT = 'tokenChanged';
 
 export const dispatchTokenChange = (
   action: 'login' | 'logout',
-  token?: string,
+  token?: string
 ) => {
   window.dispatchEvent(
     new CustomEvent(TOKEN_CHANGED_EVENT, {
       detail: { action, token },
-    }),
+    })
   );
 };
 
 export const listenToTokenChanges = (
-  callback: (action: 'login' | 'logout', token?: string) => void,
+  callback: (action: 'login' | 'logout', token?: string) => void
 ) => {
   const handler = (event: Event) => {
     const customEvent = event as CustomEvent;

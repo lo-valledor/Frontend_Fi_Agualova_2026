@@ -1,19 +1,10 @@
 import { EyeIcon, InfoIcon, Loader2 } from 'lucide-react';
-import React, { useEffect, useState, useMemo } from 'react';
-import { Button } from '~/components/ui/button';
-import { ScrollArea } from '~/components/ui/scroll-area';
-
-import api from '~/lib/api';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { toast } from 'sonner';
-import type { DetallepreciosCargoEnerlova } from '~/types/operaciones';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-} from '~/components/ui/sheet';
-import DialogNuevoValorEnerlova from './dialog-nuevo-valor-enerlova';
+
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
@@ -27,9 +18,19 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '~/components/ui/chart';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-
+import { ScrollArea } from '~/components/ui/scroll-area';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '~/components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import api from '~/lib/api';
+import type { DetallepreciosCargoEnerlova } from '~/types/operaciones';
+
+import DialogNuevoValorEnerlova from './dialog-nuevo-valor-enerlova';
 
 // Modificamos la configuración del gráfico para usar un color personalizado
 const chartConfig = {
@@ -85,7 +86,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
       // Normalizamos los datos al recibirlos
       const datosNormalizados = (
         response.data as DetallepreciosCargoEnerlova[]
-      ).map((item) => ({
+      ).map(item => ({
         ...item,
         // Aseguramos que valor sea un número para operaciones
         valorNumerico: normalizarValor(item.valor),
@@ -118,7 +119,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
    * @returns La fecha siguiente en formato DD-MM-YYYY (ej: "01-02-2025") o una cadena vacía si hay error.
    */
   const obtenerNuevaFechaInicio = (
-    ultimaFechaFin: string | undefined,
+    ultimaFechaFin: string | undefined
   ): string => {
     if (!ultimaFechaFin) {
       return '';
@@ -135,7 +136,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
       console.error(
         'Formato de fecha de entrada inesperado:',
         ultimaFechaFin,
-        'Se esperaba DD-MM-YYYY.',
+        'Se esperaba DD-MM-YYYY.'
       );
       return '';
     }
@@ -181,7 +182,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
   // Función para convertir formato DD-MM-YYYY a Date (para filtrado)
   const parsearFechaInicioADate = (
-    fechaInicio: string | undefined,
+    fechaInicio: string | undefined
   ): Date | null => {
     if (!fechaInicio) return null;
 
@@ -218,7 +219,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
     }
 
     // Filtrar los datos que estén dentro del rango
-    return data.filter((item) => {
+    return data.filter(item => {
       const fechaItem = parsearFechaInicioADate(item.fecha_inicio);
       return fechaItem && fechaItem >= fechaLimite;
     });
@@ -226,7 +227,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
 
   // Preparamos los datos para el gráfico asegurándonos que valor sea numérico
   const datosGrafico = useMemo(() => {
-    return datosFiltrados.map((item) => ({
+    return datosFiltrados.map(item => ({
       ...item,
       // Aseguramos que valor sea un número para el gráfico
       valor: normalizarValor(item.valor),
@@ -237,95 +238,95 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5 bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800/40"
+          variant='outline'
+          size='sm'
+          className='gap-1.5 bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800/40'
         >
-          <EyeIcon className="h-3.5 w-3.5" />
+          <EyeIcon className='h-3.5 w-3.5' />
           Ver Detalle
         </Button>
       </SheetTrigger>
-      <SheetContent className="sm:max-w-[800px] p-0">
-        <SheetHeader className="px-6 py-4 border-b border-border/60 bg-muted/40">
-          <SheetTitle className="text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2">
-            <InfoIcon className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+      <SheetContent className='sm:max-w-[800px] p-0'>
+        <SheetHeader className='px-6 py-4 border-b border-border/60 bg-muted/40'>
+          <SheetTitle className='text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
+            <InfoIcon className='h-5 w-5 text-sky-600 dark:text-sky-400' />
             Detalle de Precios de Cargo
           </SheetTitle>
         </SheetHeader>
 
-        <div className="px-6 py-4">
-          <ScrollArea className="h-[calc(100vh-200px)] pr-4 -mr-4">
+        <div className='px-6 py-4'>
+          <ScrollArea className='h-[calc(100vh-200px)] pr-4 -mr-4'>
             {isLoading ? (
-              <div className="flex justify-center items-center h-60">
-                <Loader2 className="h-8 w-8 animate-spin text-sky-600 dark:text-sky-400" />
+              <div className='flex justify-center items-center h-60'>
+                <Loader2 className='h-8 w-8 animate-spin text-sky-600 dark:text-sky-400' />
               </div>
             ) : data && data.length > 0 ? (
-              <div className="space-y-6">
+              <div className='space-y-6'>
                 <Card>
-                  <CardHeader className="pb-2">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <CardHeader className='pb-2'>
+                    <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2'>
                       <div>
-                        <CardTitle className="text-lg text-sky-800 dark:text-sky-200">
+                        <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
                           Histórico de Precios
                         </CardTitle>
                         <CardDescription>
                           Evolución de precios del cargo a lo largo del tiempo
                         </CardDescription>
                       </div>
-                      <div className="w-full sm:w-auto">
+                      <div className='w-full sm:w-auto'>
                         <Tabs
-                          defaultValue="todo"
+                          defaultValue='todo'
                           value={periodoSeleccionado}
-                          onValueChange={(value) =>
+                          onValueChange={value =>
                             setPeriodoSeleccionado(value as PeriodoTiempo)
                           }
-                          className="w-full"
+                          className='w-full'
                         >
-                          <TabsList className="grid grid-cols-4 w-full">
-                            <TabsTrigger value="todo">Todo</TabsTrigger>
-                            <TabsTrigger value="1año">1 Año</TabsTrigger>
-                            <TabsTrigger value="6meses">6 Meses</TabsTrigger>
-                            <TabsTrigger value="3meses">3 Meses</TabsTrigger>
+                          <TabsList className='grid grid-cols-4 w-full'>
+                            <TabsTrigger value='todo'>Todo</TabsTrigger>
+                            <TabsTrigger value='1año'>1 Año</TabsTrigger>
+                            <TabsTrigger value='6meses'>6 Meses</TabsTrigger>
+                            <TabsTrigger value='3meses'>3 Meses</TabsTrigger>
                           </TabsList>
                         </Tabs>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="h-auto">
+                  <CardContent className='h-auto'>
                     {/* Información del último valor */}
-                    <div className="mb-4 p-3 bg-muted/30 rounded-md border border-border/40">
-                      <div className="flex flex-col sm:flex-row sm:justify-between gap-2">
+                    <div className='mb-4 p-3 bg-muted/30 rounded-md border border-border/40'>
+                      <div className='flex flex-col sm:flex-row sm:justify-between gap-2'>
                         <div>
-                          <p className="text-xs text-muted-foreground">
+                          <p className='text-xs text-muted-foreground'>
                             Cargo actual
                           </p>
-                          <p className="font-medium">
+                          <p className='font-medium'>
                             {ultimoValor?.descripcion}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">
+                          <p className='text-xs text-muted-foreground'>
                             Último valor
                           </p>
-                          <p className="font-semibold text-lg text-sky-700 dark:text-sky-300">
+                          <p className='font-semibold text-lg text-sky-700 dark:text-sky-300'>
                             {formatearValor(ultimoValor?.valor || 0)}
                           </p>
                         </div>
                       </div>
-                      <div className="flex flex-col sm:flex-row sm:justify-between gap-2 mt-2">
+                      <div className='flex flex-col sm:flex-row sm:justify-between gap-2 mt-2'>
                         <div>
-                          <p className="text-xs text-muted-foreground">
+                          <p className='text-xs text-muted-foreground'>
                             Vigencia desde
                           </p>
-                          <p className="font-mono text-sm">
+                          <p className='font-mono text-sm'>
                             {ultimoValor?.fecha_inicio}
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">
+                          <p className='text-xs text-muted-foreground'>
                             Vigencia hasta
                           </p>
-                          <p className="font-mono text-sm">
+                          <p className='font-mono text-sm'>
                             {ultimoValor?.fecha_fin}
                           </p>
                         </div>
@@ -333,7 +334,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                     </div>
 
                     {/* Gráfico */}
-                    <div className="h-[400px]">
+                    <div className='h-[400px]'>
                       {datosGrafico.length > 0 ? (
                         <ChartContainer config={chartConfig}>
                           <LineChart
@@ -348,21 +349,21 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                           >
                             <CartesianGrid
                               vertical={false}
-                              strokeDasharray="3 3"
-                              stroke="var(--border)"
+                              strokeDasharray='3 3'
+                              stroke='var(--border)'
                             />
                             <XAxis
-                              dataKey="fecha_inicio"
+                              dataKey='fecha_inicio'
                               tickLine={false}
                               axisLine={false}
                               tickMargin={8}
                               tick={{ fontSize: 12 }}
-                              tickFormatter={(value) => {
+                              tickFormatter={value => {
                                 // Simplificar la fecha para el eje X (solo mostrar mes-año)
                                 const partes = value.split('-');
                                 if (partes.length === 3) {
                                   return `${partes[1]}/${partes[2].substring(
-                                    2,
+                                    2
                                   )}`;
                                 }
                                 return value;
@@ -373,7 +374,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               axisLine={false}
                               tickMargin={8}
                               tick={{ fontSize: 12 }}
-                              tickFormatter={(value) =>
+                              tickFormatter={value =>
                                 value.toLocaleString('es-CL')
                               }
                             />
@@ -385,16 +386,16 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               content={
                                 <ChartTooltipContent
                                   hideLabel
-                                  formatter={(value) =>
+                                  formatter={value =>
                                     formatearValor(Number(value))
                                   }
                                 />
                               }
                             />
                             <Line
-                              dataKey="valor"
-                              type="monotone" // Cambiado a monotone para una curva más suave
-                              stroke="var(--color-desktop)" // Usa el color de la configuración
+                              dataKey='valor'
+                              type='monotone' // Cambiado a monotone para una curva más suave
+                              stroke='var(--color-desktop)' // Usa el color de la configuración
                               strokeWidth={2.5}
                               dot={{
                                 fill: 'var(--color-desktop)',
@@ -411,7 +412,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                           </LineChart>
                         </ChartContainer>
                       ) : (
-                        <div className="flex items-center justify-center h-full text-muted-foreground">
+                        <div className='flex items-center justify-center h-full text-muted-foreground'>
                           No hay datos disponibles para el período seleccionado
                         </div>
                       )}
@@ -420,15 +421,15 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                 </Card>
               </div>
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className='text-center py-12 text-muted-foreground'>
                 No hay datos disponibles para este cargo
               </div>
             )}
           </ScrollArea>
         </div>
 
-        <div className="flex gap-2 justify-end px-6 py-4 border-t border-border/60 bg-muted/20">
-          <div className="">
+        <div className='flex gap-2 justify-end px-6 py-4 border-t border-border/60 bg-muted/20'>
+          <div className=''>
             {nuevaFechaInicio && ultimoValor && (
               <DialogNuevoValorEnerlova
                 codigo={codigo.toString()}
@@ -444,9 +445,9 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
             )}
           </div>
           <Button
-            variant="ghost"
+            variant='ghost'
             onClick={() => setIsOpen(false)}
-            className="text-muted-foreground hover:text-muted-foreground hover:bg-muted"
+            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted'
           >
             Cerrar
           </Button>

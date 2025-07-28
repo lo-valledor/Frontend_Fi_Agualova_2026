@@ -1,8 +1,9 @@
 /* eslint-disable no-empty-pattern */
 import ContratosComponent from '~/components/administracion/contratos/contratos-component';
-import type { Route } from './+types/contratos';
-import { administracionService } from '~/services/administracionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { administracionService } from '~/services/administracionService';
+
+import type { Route } from './+types/contratos';
 
 export function meta({}: Route.MetaArgs) {
   return [

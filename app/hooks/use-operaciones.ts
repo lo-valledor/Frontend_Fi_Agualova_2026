@@ -1,20 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
 import { operacionesService } from '~/services/operacionesService';
 import type {
-  PeriodoAbierto,
-  ValidarSectoresPendientes,
+  Anio,
+  Ciclo,
+  ConsultarAsignacionSectores,
+  ConsultarMantenedorRevisionCorte,
   ConsultarSectores,
   OpcionesPrepararLecturas,
-  ConsultarAsignacionSectores,
+  PeriodoAbierto,
+  Periodos,
   PreciosCargoEnel,
   PreciosCargoEnerlova,
-  RevisarPrecioUno,
   RevisarPrecioDos,
-  Ciclo,
-  Anio,
-  Periodos,
-  ConsultarMantenedorRevisionCorte,
+  RevisarPrecioUno,
   TotalesCorteReposicion,
+  ValidarSectoresPendientes,
 } from '~/types/operaciones';
 
 export function usePrepararLecturasData() {
@@ -98,7 +99,7 @@ export function useAsignacionSectores() {
       try {
         const result = await operacionesService.getAsignacionSectores(
           cicloFacturable,
-          periodo,
+          periodo
         );
 
         if (result.error) {
@@ -116,7 +117,7 @@ export function useAsignacionSectores() {
         setLoading(false);
       }
     },
-    [],
+    []
   );
 
   return {
@@ -220,19 +221,21 @@ export function useRevisarPrecio(dia: string = '15') {
         const result = await operacionesService.getPreciosPorCiclo(
           mes,
           anio,
-          ciclo,
+          ciclo
         );
 
         if (result.error || !result.data) {
           setError(result.error || 'Error al cargar precios');
         } else {
-          setData(prev => prev ? {
-            ...prev,
-                dataConsultarPreciosUno: result.data?.preciosUno || [],
-                dataConsultarPreciosDos: result.data?.preciosDos || [],
-              }
-            : null,
-        );
+          setData(prev =>
+            prev
+              ? {
+                  ...prev,
+                  dataConsultarPreciosUno: result.data?.preciosUno || [],
+                  dataConsultarPreciosDos: result.data?.preciosDos || [],
+                }
+              : null
+          );
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -240,7 +243,7 @@ export function useRevisarPrecio(dia: string = '15') {
         setLoading(false);
       }
     },
-    [data, dia],
+    [data, dia]
   );
 
   return {

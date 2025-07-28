@@ -1,10 +1,12 @@
 /* eslint-disable no-empty-pattern */
+import React, { useCallback, useState } from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PrepararLecturasComponent from '~/components/operaciones/preparar-lecturas/preparar-lecturas-component';
-import React, { useState, useCallback } from 'react';
-import type { Route } from './+types/preparar-lecturas';
 import { operacionesService } from '~/services/operacionesService';
 import type { ConsultarAsignacionSectores } from '~/types/operaciones';
+
+import type { Route } from './+types/preparar-lecturas';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -54,7 +56,7 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
       try {
         const result = await operacionesService.getAsignacionSectores(
           cicloFacturable,
-          periodo,
+          periodo
         );
 
         if (result.error || !result.data) {
@@ -69,7 +71,7 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
         setIsLoadingAsignacion(false);
       }
     },
-    [],
+    []
   );
 
   return (

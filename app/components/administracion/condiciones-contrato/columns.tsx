@@ -1,5 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import type { GetCondicionesContrato } from '~/types/administracion';
+import { Edit, Eye, Loader2, MoreHorizontal } from 'lucide-react';
+
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
   DropdownMenu,
@@ -9,9 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { MoreHorizontal, Edit, Eye, Loader2 } from 'lucide-react';
-import { Badge } from '~/components/ui/badge';
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import type { GetCondicionesContrato } from '~/types/administracion';
 
 interface TableColumnsProps {
   onEdit: (condicionContrato: GetCondicionesContrato) => void;
@@ -27,52 +28,52 @@ export const columns = ({
   {
     id: 'id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
+      <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
-      return <div className="font-medium">{row.original.id}</div>;
+      return <div className='font-medium'>{row.original.id}</div>;
     },
   },
   {
     id: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
+      <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => {
-      return <div className="font-medium">{row.original.descripcion}</div>;
+      return <div className='font-medium'>{row.original.descripcion}</div>;
     },
   },
   {
     id: 'concepto',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Concepto" />
+      <DataTableColumnHeader column={column} title='Concepto' />
     ),
     cell: ({ row }) => {
-      return <div className="font-medium">{row.original.concepto}</div>;
+      return <div className='font-medium'>{row.original.concepto}</div>;
     },
   },
   {
     id: 'factorPorcentual',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Factor Porcentual" />
+      <DataTableColumnHeader column={column} title='Factor Porcentual' />
     ),
     cell: ({ row }) => {
-      return <div className="font-medium">{row.original.factorPorcentual}</div>;
+      return <div className='font-medium'>{row.original.factorPorcentual}</div>;
     },
   },
   {
     id: 'valorFijo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Valor Fijo" />
+      <DataTableColumnHeader column={column} title='Valor Fijo' />
     ),
     cell: ({ row }) => {
-      return <div className="font-medium">{row.original.valorFijo}</div>;
+      return <div className='font-medium'>{row.original.valorFijo}</div>;
     },
   },
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;
@@ -104,16 +105,16 @@ export const columns = ({
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Abrir menú</span>
-              <MoreHorizontal className="h-4 w-4" />
+            <Button variant='ghost' className='h-8 w-8 p-0'>
+              <span className='sr-only'>Abrir menú</span>
+              <MoreHorizontal className='h-4 w-4' />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => onView(condicionContrato)}>
-              <Eye className="mr-2 h-4 w-4" />
+              <Eye className='mr-2 h-4 w-4' />
               Ver
             </DropdownMenuItem>
             <DropdownMenuItem
@@ -122,9 +123,9 @@ export const columns = ({
               className={isEditing ? 'opacity-50 cursor-not-allowed' : ''}
             >
               {isEditing ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
               ) : (
-                <Edit className="mr-2 h-4 w-4" />
+                <Edit className='mr-2 h-4 w-4' />
               )}
               {isEditing ? 'Cargando...' : 'Editar'}
             </DropdownMenuItem>

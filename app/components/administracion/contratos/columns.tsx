@@ -1,12 +1,4 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-
-import { type GetContratos } from '~/types/administracion';
-import {
-  EstadoBadge,
-  TableActions,
-} from '~/components/data-table/table-helpers';
-import { Badge } from '~/components/ui/badge';
 import {
   Building,
   Calendar,
@@ -18,6 +10,14 @@ import {
   Zap,
 } from 'lucide-react';
 
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
+import {
+  EstadoBadge,
+  TableActions,
+} from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import { type GetContratos } from '~/types/administracion';
+
 interface TableColumnsProps {
   onEdit: (contract: GetContratos) => void;
   onDelete: (contract: GetContratos) => void;
@@ -26,7 +26,7 @@ interface TableColumnsProps {
 
 // Función robusta para formatear fechas en formato español
 const formatDateToSpanish = (
-  dateValue: string | Date | null | undefined,
+  dateValue: string | Date | null | undefined
 ): string => {
   if (!dateValue) return 'N/A';
 
@@ -49,7 +49,7 @@ const formatDateToSpanish = (
     ];
 
     // Verificar si la fecha tiene un formato reconocible
-    const isValidFormat = dateFormats.some((format) => format.test(dateValue));
+    const isValidFormat = dateFormats.some(format => format.test(dateValue));
 
     if (!isValidFormat) {
       return 'Fecha inválida';
@@ -82,15 +82,15 @@ export const columns = ({
   {
     accessorKey: 'codigoContrato',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Contrato" />
+      <DataTableColumnHeader column={column} title='Contrato' />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <div className="p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md">
-            <FileText className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+        <div className='flex items-center gap-2'>
+          <div className='p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md'>
+            <FileText className='h-4 w-4 text-sky-600 dark:text-sky-400' />
           </div>
-          <span className="font-mono text-sm">
+          <span className='font-mono text-sm'>
             {row.original.codigoContrato}
           </span>
         </div>
@@ -100,19 +100,19 @@ export const columns = ({
   {
     accessorKey: 'nombreCliente',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Cliente / Propietario" />
+      <DataTableColumnHeader column={column} title='Cliente / Propietario' />
     ),
     cell: ({ row }) => (
-      <div className="space-y-1">
-        <div className="flex items-center gap-2">
-          <User className="h-4 w-4 text-slate-500" />
-          <span className="text-sm font-medium">
+      <div className='space-y-1'>
+        <div className='flex items-center gap-2'>
+          <User className='h-4 w-4 text-slate-500' />
+          <span className='text-sm font-medium'>
             {row.original.nombreCliente}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <Building className="h-4 w-4 text-slate-500" />
-          <span className="text-sm text-muted-foreground">
+        <div className='flex items-center gap-2'>
+          <Building className='h-4 w-4 text-slate-500' />
+          <span className='text-sm text-muted-foreground'>
             {row.original.nombrePropietario}
           </span>
         </div>
@@ -122,32 +122,32 @@ export const columns = ({
   {
     accessorKey: 'tipoContrato',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
+      <DataTableColumnHeader column={column} title='Tipo' />
     ),
     cell: ({ row }) => {
-      return <Badge variant="outline">{row.original.tipoContrato}</Badge>;
+      return <Badge variant='outline'>{row.original.tipoContrato}</Badge>;
     },
   },
   {
     accessorKey: 'tarifa',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tarifa" />
+      <DataTableColumnHeader column={column} title='Tarifa' />
     ),
     cell: ({ row }) => {
-      return <Badge variant="secondary">{row.original.tarifa}</Badge>;
+      return <Badge variant='secondary'>{row.original.tarifa}</Badge>;
     },
   },
 
   {
     accessorKey: 'local',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Local" />
+      <DataTableColumnHeader column={column} title='Local' />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <Store className="h-4 w-4 text-slate-500" />
-          <span className="text-sm">{row.original.local}</span>
+        <div className='flex items-center gap-2'>
+          <Store className='h-4 w-4 text-slate-500' />
+          <span className='text-sm'>{row.original.local}</span>
         </div>
       );
     },
@@ -155,13 +155,13 @@ export const columns = ({
   {
     accessorKey: 'fechaInicio',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="F. Inicio" />
+      <DataTableColumnHeader column={column} title='F. Inicio' />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-slate-500" />
-          <span className="text-sm">
+        <div className='flex items-center gap-2'>
+          <Calendar className='h-4 w-4 text-slate-500' />
+          <span className='text-sm'>
             {formatDateToSpanish(row.original.fechaInicio)}
           </span>
         </div>
@@ -171,7 +171,7 @@ export const columns = ({
   {
     accessorKey: 'activo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       return <EstadoBadge estado={row.original.activo} />;
@@ -180,17 +180,17 @@ export const columns = ({
   {
     accessorKey: 'fechaTermino',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="F. Término" />
+      <DataTableColumnHeader column={column} title='F. Término' />
     ),
     cell: ({ row }) => {
       const fechaTermino = formatDateToSpanish(row.original.fechaTermino);
       if (fechaTermino === 'N/A' || fechaTermino === 'Fecha inválida') {
-        return <Badge variant="outline">Indefinido</Badge>;
+        return <Badge variant='outline'>Indefinido</Badge>;
       }
       return (
-        <div className="flex items-center gap-2">
-          <Calendar className="h-4 w-4 text-slate-500" />
-          <span className="text-sm">{fechaTermino}</span>
+        <div className='flex items-center gap-2'>
+          <Calendar className='h-4 w-4 text-slate-500' />
+          <span className='text-sm'>{fechaTermino}</span>
         </div>
       );
     },
@@ -198,15 +198,15 @@ export const columns = ({
   {
     accessorKey: 'cicloFacturacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ciclo" />
+      <DataTableColumnHeader column={column} title='Ciclo' />
     ),
     cell: ({ row }) => {
       return (
         <Badge
-          variant="outline"
-          className="bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800"
+          variant='outline'
+          className='bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800'
         >
-          <Repeat className="mr-2 h-3.5 w-3.5" />
+          <Repeat className='mr-2 h-3.5 w-3.5' />
           {row.original.cicloFacturacion}
         </Badge>
       );
@@ -215,13 +215,13 @@ export const columns = ({
   {
     accessorKey: 'potenciaContratada',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Potencia" />
+      <DataTableColumnHeader column={column} title='Potencia' />
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-amber-500" />
-          <span className="text-sm font-semibold">
+        <div className='flex items-center gap-2'>
+          <Zap className='h-4 w-4 text-amber-500' />
+          <span className='text-sm font-semibold'>
             {row.original.potenciaContratada}
           </span>
         </div>
@@ -231,26 +231,26 @@ export const columns = ({
   {
     accessorKey: 'liberadoCorte',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Liberado Corte" />
+      <DataTableColumnHeader column={column} title='Liberado Corte' />
     ),
     cell: ({ row }) => {
       return row.original.liberadoCorte ? (
         <Badge
-          variant="outline"
-          className="bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
+          variant='outline'
+          className='bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
         >
-          <ShieldCheck className="mr-2 h-3.5 w-3.5" />
+          <ShieldCheck className='mr-2 h-3.5 w-3.5' />
           Liberado
         </Badge>
       ) : (
-        <Badge variant="secondary">No Liberado</Badge>
+        <Badge variant='secondary'>No Liberado</Badge>
       );
     },
   },
   {
     id: 'actions',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acciones" />
+      <DataTableColumnHeader column={column} title='Acciones' />
     ),
     cell: ({ row }) => {
       return (

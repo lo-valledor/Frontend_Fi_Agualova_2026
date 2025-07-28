@@ -1,4 +1,9 @@
+import { MessageSquare, Unlock } from 'lucide-react';
+import { toast } from 'sonner';
+
 import { useState } from 'react';
+
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -9,18 +14,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '~/components/ui/dialog';
-import { Textarea } from '~/components/ui/textarea';
 import { Label } from '~/components/ui/label';
-import api from '~/lib/api';
+import { Textarea } from '~/components/ui/textarea';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '~/components/ui/tooltip';
-import { Unlock, MessageSquare } from 'lucide-react';
-import { toast } from 'sonner';
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
+import api from '~/lib/api';
 
 interface MarcarLiberarDialogProps {
   acometida: string;
@@ -45,7 +47,11 @@ export function MarcarLiberarDialog({
 
     setIsSubmitting(true);
     try {
-      trackDataAction('Liberar', 'Corte y Reposición', `Liberación registrada para acometida ${acometida}`);
+      trackDataAction(
+        'Liberar',
+        'Corte y Reposición',
+        `Liberación registrada para acometida ${acometida}`
+      );
       await api.post('marcar-liberar', null, {
         params: { acometida, comentario },
       });
@@ -69,11 +75,11 @@ export function MarcarLiberarDialog({
           <TooltipTrigger asChild>
             <DialogTrigger asChild>
               <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8 border-emerald-500 text-emerald-500 hover:bg-emerald-50 hover:border-emerald-600 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:hover:border-emerald-600 transition-colors"
+                variant='outline'
+                size='icon'
+                className='h-8 w-8 border-emerald-500 text-emerald-500 hover:bg-emerald-50 hover:border-emerald-600 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:hover:border-emerald-600 transition-colors'
               >
-                <Unlock className="h-4 w-4" />
+                <Unlock className='h-4 w-4' />
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
@@ -82,44 +88,44 @@ export function MarcarLiberarDialog({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <DialogContent className="sm:max-w-md rounded-xl border border-emerald-200/40 bg-white/95 backdrop-blur-sm dark:border-emerald-800/40 dark:bg-gray-900/95">
+      <DialogContent className='sm:max-w-md rounded-xl border border-emerald-200/40 bg-white/95 backdrop-blur-sm dark:border-emerald-800/40 dark:bg-gray-900/95'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-emerald-900 dark:text-emerald-100">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white">
-              <Unlock className="h-3 w-3" />
+          <DialogTitle className='flex items-center gap-2 text-emerald-900 dark:text-emerald-100'>
+            <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white'>
+              <Unlock className='h-3 w-3' />
             </div>
             Marcar como Liberado
           </DialogTitle>
-          <DialogDescription className="text-emerald-700 dark:text-emerald-300">
+          <DialogDescription className='text-emerald-700 dark:text-emerald-300'>
             Ingrese un comentario para la liberación de la acometida{' '}
-            <span className="font-mono font-medium">{acometida}</span>.
+            <span className='font-mono font-medium'>{acometida}</span>.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="comentario" className="flex items-center gap-1">
-              <MessageSquare className="h-3 w-3" />
+        <div className='grid gap-4 py-4'>
+          <div className='space-y-2'>
+            <Label htmlFor='comentario' className='flex items-center gap-1'>
+              <MessageSquare className='h-3 w-3' />
               Comentario
             </Label>
             <Textarea
-              id="comentario"
+              id='comentario'
               value={comentario}
-              onChange={(e) => setComentario(e.target.value)}
-              placeholder="Comentario obligatorio para liberación..."
-              className="min-h-[100px] resize-none"
+              onChange={e => setComentario(e.target.value)}
+              placeholder='Comentario obligatorio para liberación...'
+              className='min-h-[100px] resize-none'
               maxLength={500}
             />
-            <div className="text-xs text-slate-500 dark:text-slate-400 text-right">
+            <div className='text-xs text-slate-500 dark:text-slate-400 text-right'>
               {comentario.length}/500
             </div>
           </div>
         </div>
         <DialogFooter>
           <Button
-            type="submit"
+            type='submit'
             onClick={handleSubmit}
             disabled={!comentario.trim() || isSubmitting}
-            className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white"
+            className='bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white'
           >
             {isSubmitting ? 'Guardando...' : 'Guardar'}
           </Button>

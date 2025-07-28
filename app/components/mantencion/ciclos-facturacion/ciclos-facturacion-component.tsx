@@ -1,13 +1,17 @@
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
+
 import React, { useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
-import { useRevalidator } from 'react-router';
 import { Card, CardContent } from '~/components/ui/card';
 import type { CiclosFacturacion } from '~/types/mantencion';
-import { columns } from './columns';
-import { toast } from 'sonner';
+
 import CiclosFacturacionModalForm from './ciclos-facturacion-modal-form';
+import { columns } from './columns';
 
 interface CiclosFacturacionComponentProps {
   ciclosFacturacion: CiclosFacturacion[];
@@ -18,7 +22,7 @@ export default function CiclosFacturacionComponent({
 }: CiclosFacturacionComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCiclo, setSelectedCiclo] = useState<CiclosFacturacion | null>(
-    null,
+    null
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
@@ -48,36 +52,33 @@ export default function CiclosFacturacionComponent({
     toast.success(
       modalMode === 'add'
         ? 'Ciclo de facturación creado exitosamente'
-        : 'Ciclo de facturación actualizado exitosamente',
+        : 'Ciclo de facturación actualizado exitosamente'
     );
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Ciclos de Facturación
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Ciclos de Facturación
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los ciclos de facturación del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAddCiclo}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Ciclo de Facturación
         </Button>
       </div>
 
       {/* Table */}
-      <Card>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable
             columns={columns({
               onEdit: handleEditCiclo,

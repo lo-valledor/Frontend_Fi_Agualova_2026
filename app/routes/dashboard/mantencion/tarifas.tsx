@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/tarifas';
-import { mantencionService } from '~/services/mantencionService';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import TarifasComponent from '~/components/mantencion/tarifas/tarifas-component';
+import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/tarifas';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Tarifas' },
-    { name: 'description', content: 'Gestión de Tarifas del sistema' },
+    { name: 'description', content: ' Tarifas del sistema' },
   ];
 }
 

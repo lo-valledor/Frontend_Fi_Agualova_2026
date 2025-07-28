@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useRef } from 'react';
 import type { MutableRefObject } from 'react';
+
 import LoadingBar from 'react-top-loading-bar';
 
 interface LoadingBarRef {
@@ -23,7 +24,7 @@ export function LoadingBarProvider({
 
   return (
     <LoadingBarContext.Provider value={loadingBarRef}>
-      <LoadingBar color="#2563eb" ref={loadingBarRef as any} />
+      <LoadingBar color='#2563eb' ref={loadingBarRef as any} />
       {children}
     </LoadingBarContext.Provider>
   );

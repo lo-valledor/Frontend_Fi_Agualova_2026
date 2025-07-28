@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
+
 import CondicionesContratoComponent from '~/components/administracion/condiciones-contrato/condiciones-contrato-component';
-import type { Route } from './+types/condiciones-contrato';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
+
+import type { Route } from './+types/condiciones-contrato';
 
 export function meta({}: Route.MetaArgs) {
   return [

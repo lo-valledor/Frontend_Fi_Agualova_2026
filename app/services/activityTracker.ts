@@ -26,7 +26,7 @@ class ActivityTracker {
     username: string,
     action: string,
     module: string,
-    details?: string,
+    details?: string
   ): void {
     try {
       const activity: UserActivity = {
@@ -69,7 +69,7 @@ class ActivityTracker {
   getUserActivities(userId: string, limit: number = 50): UserActivity[] {
     const activities = this.getActivities();
     return activities
-      .filter((activity) => activity.userId === userId)
+      .filter(activity => activity.userId === userId)
       .slice(0, limit);
   }
 
@@ -77,7 +77,7 @@ class ActivityTracker {
   getRecentActivities(hours: number = 24): UserActivity[] {
     const activities = this.getActivities();
     const cutoffTime = Date.now() - hours * 60 * 60 * 1000;
-    return activities.filter((activity) => activity.timestamp > cutoffTime);
+    return activities.filter(activity => activity.timestamp > cutoffTime);
   }
 
   // Obtener resumen de actividad
@@ -87,7 +87,7 @@ class ActivityTracker {
 
     // Contar módulos más usados
     const moduleCounts: { [key: string]: number } = {};
-    activities.forEach((activity) => {
+    activities.forEach(activity => {
       moduleCounts[activity.module] = (moduleCounts[activity.module] || 0) + 1;
     });
 
@@ -104,7 +104,7 @@ class ActivityTracker {
     const userActivities = this.getUserActivities(userId);
     const moduleCounts: { [key: string]: number } = {};
 
-    userActivities.forEach((activity) => {
+    userActivities.forEach(activity => {
       moduleCounts[activity.module] = (moduleCounts[activity.module] || 0) + 1;
     });
 
@@ -121,7 +121,7 @@ class ActivityTracker {
     const activities = this.getActivities();
     const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
     const filteredActivities = activities.filter(
-      (activity) => activity.timestamp > thirtyDaysAgo,
+      activity => activity.timestamp > thirtyDaysAgo
     );
 
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(filteredActivities));

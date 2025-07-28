@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/marcas';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { mantencionService } from '~/services/mantencionService';
 import MarcasComponent from '~/components/mantencion/marcas/marcas-component';
+import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/marcas';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Marcas' },
-    { name: 'description', content: 'Gestión de marcas del sistema' },
+    { name: 'description', content: ' marcas del sistema' },
   ];
 }
 

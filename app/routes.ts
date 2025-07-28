@@ -17,54 +17,54 @@ export default [
         ...prefix('monitor', [
           route(
             'monitor-lecturas',
-            'routes/dashboard/monitor/monitor-lecturas.tsx',
+            'routes/dashboard/monitor/monitor-lecturas.tsx'
           ),
           route(
             'exportar-lecturas',
-            'routes/dashboard/monitor/exportar-lecturas.tsx',
+            'routes/dashboard/monitor/exportar-lecturas.tsx'
           ),
         ]),
         ...prefix('operaciones', [
           route(
             'periodo-facturacion',
-            'routes/dashboard/operaciones/periodo-facturacion.tsx',
+            'routes/dashboard/operaciones/periodo-facturacion.tsx'
           ),
           route(
             'precios-cargo',
-            'routes/dashboard/operaciones/precios-cargo.tsx',
+            'routes/dashboard/operaciones/precios-cargo.tsx'
           ),
           route(
             'revisar-precio',
-            'routes/dashboard/operaciones/revisar-precio.tsx',
+            'routes/dashboard/operaciones/revisar-precio.tsx'
           ),
           route(
             'preparar-lecturas',
-            'routes/dashboard/operaciones/preparar-lecturas.tsx',
+            'routes/dashboard/operaciones/preparar-lecturas.tsx'
           ),
           route(
             'cerrar-lecturas',
-            'routes/dashboard/operaciones/cerrar-lecturas.tsx',
+            'routes/dashboard/operaciones/cerrar-lecturas.tsx'
           ),
           route(
             'revisar-calculo-factura',
-            'routes/dashboard/operaciones/revisar-calculo-factura.tsx',
+            'routes/dashboard/operaciones/revisar-calculo-factura.tsx'
           ),
           route(
             'cambio-medidor',
-            'routes/dashboard/operaciones/cambio-medidor.tsx',
+            'routes/dashboard/operaciones/cambio-medidor.tsx'
           ),
           route(
             'corte-reposicion',
-            'routes/dashboard/operaciones/corte-reposicion.tsx',
+            'routes/dashboard/operaciones/corte-reposicion.tsx'
           ),
           route(
             'crear-archivos-sap',
-            'routes/dashboard/operaciones/crear-archivos-sap.tsx',
+            'routes/dashboard/operaciones/crear-archivos-sap.tsx'
           ),
 
           route(
             'anular-factura-impresa',
-            'routes/dashboard/operaciones/anular-factura-impresa.tsx',
+            'routes/dashboard/operaciones/anular-factura-impresa.tsx'
           ),
         ]),
         ...prefix('administracion', [
@@ -75,15 +75,15 @@ export default [
           route('acometida', 'routes/dashboard/administracion/acometida.tsx'),
           route(
             'cargo-facturable',
-            'routes/dashboard/administracion/cargo-facturable.tsx',
+            'routes/dashboard/administracion/cargo-facturable.tsx'
           ),
           route(
             'cargo-tipo-contrato',
-            'routes/dashboard/administracion/cargo-tipo-contrato.tsx',
+            'routes/dashboard/administracion/cargo-tipo-contrato.tsx'
           ),
           route(
             'condiciones-contrato',
-            'routes/dashboard/administracion/condiciones-contrato.tsx',
+            'routes/dashboard/administracion/condiciones-contrato.tsx'
           ),
         ]),
         route('profile', 'routes/dashboard/profile.tsx'),
@@ -95,12 +95,12 @@ export default [
           route('marcas', 'routes/dashboard/mantencion/marcas.tsx'),
           route(
             'ciclos-facturacion',
-            'routes/dashboard/mantencion/ciclos-facturacion.tsx',
+            'routes/dashboard/mantencion/ciclos-facturacion.tsx'
           ),
           route('claves', 'routes/dashboard/mantencion/claves.tsx'),
           route(
             'tipos-contratos',
-            'routes/dashboard/mantencion/tipos-contratos.tsx',
+            'routes/dashboard/mantencion/tipos-contratos.tsx'
           ),
           route('conceptos', 'routes/dashboard/mantencion/conceptos.tsx'),
           route('tarifas', 'routes/dashboard/mantencion/tarifas.tsx'),
@@ -109,11 +109,11 @@ export default [
         ...prefix('reportes', [
           route(
             'consultar-contrato',
-            'routes/dashboard/reportes/consultar-contrato.tsx',
+            'routes/dashboard/reportes/consultar-contrato.tsx'
           ),
           route(
             'resumen-facturacion',
-            'routes/dashboard/reportes/resumen-facturacion.tsx',
+            'routes/dashboard/reportes/resumen-facturacion.tsx'
           ),
           route('ver-facturas', 'routes/dashboard/reportes/ver-facturas.tsx'),
         ]),

@@ -1,35 +1,37 @@
 import type { ColumnDef } from '@tanstack/react-table';
+import { AlertTriangle, CheckCircle } from 'lucide-react';
+
+import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
 import { Checkbox } from '~/components/ui/checkbox';
-import DialogModificarPrecio from './dialog-modificar-precio';
 import type { RevisarPrecioDos } from '~/types/operaciones';
-import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import { CheckCircle, AlertTriangle } from 'lucide-react';
+
+import DialogModificarPrecio from './dialog-modificar-precio';
 
 export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
   {
     id: 'select',
     header: ({ table }) => (
-      <div className="flex items-center justify-center">
+      <div className='flex items-center justify-center'>
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && 'indeterminate')
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Seleccionar todo"
-          className="translate-y-[2px]"
+          onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+          aria-label='Seleccionar todo'
+          className='translate-y-[2px]'
         />
       </div>
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex items-center justify-center">
+        <div className='flex items-center justify-center'>
           <Checkbox
             checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Seleccionar fila"
-            className="translate-y-[2px]"
+            onCheckedChange={value => row.toggleSelected(!!value)}
+            aria-label='Seleccionar fila'
+            className='translate-y-[2px]'
             disabled={row.original.confirmacion === 'Confirmado'}
           />
         </div>
@@ -44,12 +46,12 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Código"
-        className="text-emerald-700 dark:text-emerald-300 font-semibold"
+        title='Código'
+        className='text-emerald-700 dark:text-emerald-300 font-semibold'
       />
     ),
     cell: ({ row }) => (
-      <div className="font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400">
+      <div className='font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400'>
         {row.getValue('codigo')}
       </div>
     ),
@@ -60,12 +62,12 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Código Energía"
-        className="text-blue-700 dark:text-blue-300 font-semibold"
+        title='Código Energía'
+        className='text-blue-700 dark:text-blue-300 font-semibold'
       />
     ),
     cell: ({ row }) => (
-      <div className="font-mono text-sm text-blue-600 dark:text-blue-400">
+      <div className='font-mono text-sm text-blue-600 dark:text-blue-400'>
         {row.getValue('codigoEner')}
       </div>
     ),
@@ -76,12 +78,12 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Descripción"
-        className="text-slate-700 dark:text-slate-300 font-semibold"
+        title='Descripción'
+        className='text-slate-700 dark:text-slate-300 font-semibold'
       />
     ),
     cell: ({ row }) => (
-      <div className="text-sm text-slate-900 dark:text-slate-100 max-w-sm">
+      <div className='text-sm text-slate-900 dark:text-slate-100 max-w-sm'>
         {row.getValue('descripcion')}
       </div>
     ),
@@ -92,8 +94,8 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Valor"
-        className="text-green-700 dark:text-green-300 font-semibold"
+        title='Valor'
+        className='text-green-700 dark:text-green-300 font-semibold'
       />
     ),
     cell: ({ row }) => {
@@ -111,7 +113,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       };
 
       return (
-        <div className="text-sm font-mono font-medium text-green-600 dark:text-green-400">
+        <div className='text-sm font-mono font-medium text-green-600 dark:text-green-400'>
           {formatValue(value)}
         </div>
       );
@@ -123,26 +125,26 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Estado"
-        className="text-slate-700 dark:text-slate-300 font-semibold"
+        title='Estado'
+        className='text-slate-700 dark:text-slate-300 font-semibold'
       />
     ),
     cell: ({ row }) => {
       const confirmacion = row.getValue('confirmacion') as string;
 
       return (
-        <div className="flex items-center justify-center">
+        <div className='flex items-center justify-center'>
           {confirmacion === 'Confirmado' ? (
-            <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" />
+            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1'>
+              <CheckCircle className='w-3 h-3' />
               Confirmado
             </Badge>
           ) : (
             <Badge
-              variant="outline"
-              className="bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 flex items-center gap-1"
+              variant='outline'
+              className='bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 flex items-center gap-1'
             >
-              <AlertTriangle className="w-3 h-3" />
+              <AlertTriangle className='w-3 h-3' />
               Pendiente
             </Badge>
           )}
@@ -154,7 +156,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
   {
     id: 'acciones',
     header: () => (
-      <div className="text-center text-slate-700 dark:text-slate-300 font-semibold">
+      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold'>
         Acciones
       </div>
     ),
@@ -162,10 +164,10 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       const confirmacion = row.getValue('confirmacion') as string;
 
       return (
-        <div className="flex items-center justify-center">
+        <div className='flex items-center justify-center'>
           {confirmacion === 'Confirmado' ? (
-            <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
-              <CheckCircle className="w-3 h-3" />
+            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1'>
+              <CheckCircle className='w-3 h-3' />
               Confirmado
             </Badge>
           ) : (

@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import type { GetClientes } from '~/types/administracion';
 
 export interface ClientFilters {
@@ -18,16 +19,16 @@ export interface FilterOptions {
 
 export function useClientFilters(
   clients: GetClientes[],
-  filters: ClientFilters,
+  filters: ClientFilters
 ) {
   // Extraer opciones únicas de los clientes
   const filterOptions = useMemo((): FilterOptions => {
     const tiposCliente = ['Persona', 'Empresa'];
     const comunas = [
-      ...new Set(clients.map((c) => c.comuna).filter(Boolean)),
+      ...new Set(clients.map(c => c.comuna).filter(Boolean)),
     ].sort();
     const codigosComuna = [
-      ...new Set(clients.map((c) => c.codigoComuna).filter(Boolean)),
+      ...new Set(clients.map(c => c.codigoComuna).filter(Boolean)),
     ].sort();
 
     return {
@@ -38,7 +39,7 @@ export function useClientFilters(
   }, [clients]);
 
   const filteredClients = useMemo(() => {
-    return clients.filter((client) => {
+    return clients.filter(client => {
       // Filtro por tipo de cliente (Persona/Empresa)
       if (
         filters.esEmpresa &&
@@ -104,7 +105,7 @@ export function useClientFilters(
     const total = clients.length;
     const filtered = filteredClients.length;
     const activeFilters = Object.values(filters).filter(
-      (value) => value !== '' && value !== 'all',
+      value => value !== '' && value !== 'all'
     ).length;
 
     return {

@@ -17,7 +17,7 @@ export const createUnauthenticatedLoaderResponse = (error: Error) => {
 
 // Wrapper para clientLoaders que necesitan autenticación
 export const withAuthCheck = async <T>(
-  loaderFunction: () => Promise<T>,
+  loaderFunction: () => Promise<T>
 ): Promise<T | { error: Error; data: null }> => {
   try {
     checkAuthBeforeLoader();

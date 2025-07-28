@@ -31,7 +31,7 @@ export function DeleteConfirmationDialog({
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminará permanentemente el
             medidor con serie{' '}
-            <span className="font-semibold text-foreground">
+            <span className='font-semibold text-foreground'>
               {medidor?.serie}
             </span>{' '}
             del sistema.
@@ -41,7 +41,7 @@ export function DeleteConfirmationDialog({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            className='bg-red-600 hover:bg-red-700 focus:ring-red-600'
           >
             Sí, eliminar medidor
           </AlertDialogAction>

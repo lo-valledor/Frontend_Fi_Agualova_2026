@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
+import React from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PreciosCargoComponent from '~/components/operaciones/precios-cargo/precios-cargo-component';
-import React from 'react';
-import type { Route } from './+types/precios-cargo';
 import { operacionesService } from '~/services/operacionesService';
+
+import type { Route } from './+types/precios-cargo';
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -49,7 +51,7 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className='min-h-screen'>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <PreciosCargoComponent {...loaderData} />
     </div>

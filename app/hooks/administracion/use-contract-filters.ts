@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import type { GetContratos } from '~/types/administracion';
+
 import type { ContractFilters } from '~/components/administracion/contratos/contract-filters';
+import type { GetContratos } from '~/types/administracion';
 
 export interface FilterOptions {
   tiposContrato: string[];
@@ -11,21 +12,21 @@ export interface FilterOptions {
 
 export function useContractFilters(
   contracts: GetContratos[],
-  filters: ContractFilters,
+  filters: ContractFilters
 ) {
   // Extraer opciones únicas de los contratos
   const filterOptions = useMemo((): FilterOptions => {
     const tiposContrato = [
-      ...new Set(contracts.map((c) => c.tipoContrato).filter(Boolean)),
+      ...new Set(contracts.map(c => c.tipoContrato).filter(Boolean)),
     ].sort();
     const ciclosFacturacion = [
-      ...new Set(contracts.map((c) => c.cicloFacturacion).filter(Boolean)),
+      ...new Set(contracts.map(c => c.cicloFacturacion).filter(Boolean)),
     ].sort();
     const tarifas = [
-      ...new Set(contracts.map((c) => c.tarifa).filter(Boolean)),
+      ...new Set(contracts.map(c => c.tarifa).filter(Boolean)),
     ].sort();
     const comunas = [
-      ...new Set(contracts.map((c) => c.comunaEnvio).filter(Boolean)),
+      ...new Set(contracts.map(c => c.comunaEnvio).filter(Boolean)),
     ].sort();
 
     return {
@@ -37,7 +38,7 @@ export function useContractFilters(
   }, [contracts]);
 
   const filteredContracts = useMemo(() => {
-    return contracts.filter((contract) => {
+    return contracts.filter(contract => {
       // Filtro por tipo de contrato
       if (
         filters.tipoContrato &&
@@ -133,7 +134,7 @@ export function useContractFilters(
     const total = contracts.length;
     const filtered = filteredContracts.length;
     const activeFilters = Object.values(filters).filter(
-      (value) => value !== '' && value !== 'all',
+      value => value !== '' && value !== 'all'
     ).length;
 
     return {

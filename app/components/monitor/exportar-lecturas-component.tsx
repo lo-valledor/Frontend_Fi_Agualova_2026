@@ -1,47 +1,49 @@
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { Card, CardContent } from '~/components/ui/card';
-import React, { useEffect, useState } from 'react';
 import {
-  SelectValue,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-} from '~/components/ui/select';
-import { Select } from '~/components/ui/select';
-import { Checkbox } from '~/components/ui/checkbox';
-import { Label } from '~/components/ui/label';
-import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
-import { toast } from 'sonner';
-import {
-  Download,
-  Loader2,
-  Filter,
-  X,
   Calendar,
-  MapPin,
-  Hash,
   CheckSquare,
   ChevronDown,
   ChevronUp,
+  Download,
   Eraser,
+  Filter,
+  Hash,
   Info,
+  Loader2,
+  MapPin,
+  X,
 } from 'lucide-react';
-import { Badge } from '~/components/ui/badge';
-import { Alert, AlertDescription } from '~/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import api from '~/lib/api';
-import { type Periodo, type Sector } from '~/types/monitor';
-import { ScrollArea } from '~/components/ui/scroll-area';
+import { toast } from 'sonner';
+
+import React, { useEffect, useState } from 'react';
+
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import { Checkbox } from '~/components/ui/checkbox';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import {
   Dialog,
   DialogContent,
-  DialogTrigger,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogTrigger,
 } from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select';
+import { Select } from '~/components/ui/select';
+import api from '~/lib/api';
+import { type Periodo, type Sector } from '~/types/monitor';
 
 interface ExportarLecturasComponentProps {
   periodos: Periodo[];
@@ -76,7 +78,7 @@ export default function ExportarLecturasComponent({
   useEffect(() => {
     if (periodos && periodos.length > 0 && !selectedPeriodo) {
       const periodoActivo =
-        periodos.find((p) => Number(p.IdPeriodo) === Number(activePeriodoId)) ||
+        periodos.find(p => Number(p.IdPeriodo) === Number(activePeriodoId)) ||
         periodos[0];
 
       if (periodoActivo) {
@@ -90,7 +92,7 @@ export default function ExportarLecturasComponent({
     if (checked) {
       setSelectedSectores([...selectedSectores, sectorId]);
     } else {
-      setSelectedSectores(selectedSectores.filter((id) => id !== sectorId));
+      setSelectedSectores(selectedSectores.filter(id => id !== sectorId));
     }
   };
 
@@ -106,7 +108,7 @@ export default function ExportarLecturasComponent({
     if (checked) {
       setSelectedEstados([...selectedEstados, estado]);
     } else {
-      setSelectedEstados(selectedEstados.filter((e) => e !== estado));
+      setSelectedEstados(selectedEstados.filter(e => e !== estado));
     }
   };
 
@@ -120,7 +122,7 @@ export default function ExportarLecturasComponent({
 
   // Función para eliminar un medidor de la lista
   const handleRemoveMedidor = (medidor: string) => {
-    setSelectedMedidores(selectedMedidores.filter((m) => m !== medidor));
+    setSelectedMedidores(selectedMedidores.filter(m => m !== medidor));
   };
 
   // Función para limpiar todos los filtros
@@ -178,7 +180,7 @@ export default function ExportarLecturasComponent({
 
       // Crear un enlace para descargar el archivo
       const url = window.URL.createObjectURL(
-        new Blob([response.data as BlobPart]),
+        new Blob([response.data as BlobPart])
       );
       const link = document.createElement('a');
       link.href = url;
@@ -188,9 +190,9 @@ export default function ExportarLecturasComponent({
       let filename = `Lecturas_${
         selectedPeriodo.DescripcionPeriodo
       }_${selectedSectores.join(',')}_${selectedNichos.join(
-        ',',
+        ','
       )}_${selectedEstados.join(',')}_${selectedMedidores.join(
-        ',',
+        ','
       )}_${new Date().toLocaleDateString('es-ES', {
         year: 'numeric',
         month: '2-digit',
@@ -221,9 +223,9 @@ export default function ExportarLecturasComponent({
   // Manejo de errores
   if (error) {
     return (
-      <div className="container mx-auto p-6">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
+      <div className='container mx-auto p-6'>
+        <Alert variant='destructive'>
+          <AlertCircle className='h-4 w-4' />
           <AlertDescription>
             Error al cargar datos: {error.message}
           </AlertDescription>
@@ -238,28 +240,28 @@ export default function ExportarLecturasComponent({
     selectedMedidores.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-sky-50 dark:from-slate-950 dark:to-sky-950/30">
-      <div className="container mx-auto p-2 space-y-3">
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-sky-50 dark:from-slate-950 dark:to-sky-950/30'>
+      <div className='container mx-auto p-2 space-y-3'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Modern Header */}
-        <div className="flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 justify-between">
-              <div className="flex items-center gap-3">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-100 dark:to-sky-100 bg-clip-text text-transparent">
+        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
+          <div className='flex-1'>
+            <div className='flex items-center gap-3 justify-between'>
+              <div className='flex items-center gap-3'>
+                <h1 className='text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-100 dark:to-sky-100 bg-clip-text text-transparent'>
                   Exportar Lecturas
                 </h1>
               </div>
               <Dialog>
                 <DialogTrigger>
                   <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                    variant='outline'
+                    size='sm'
+                    className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
                   >
-                    <Info className="w-4 h-4 mr-1 text-yellow-600" />
-                    <span className="text-yellow-600 text-sm">Información</span>
+                    <Info className='w-4 h-4 mr-1 text-yellow-600' />
+                    <span className='text-yellow-600 text-sm'>Información</span>
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -277,44 +279,44 @@ export default function ExportarLecturasComponent({
         </div>
 
         {/* Main Control Panel */}
-        <Card className="border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
-          <CardContent className="p-4 space-y-4">
+        <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+          <CardContent className='p-4 space-y-4'>
             {/* Período Selection - Required */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <div className='space-y-3'>
+              <div className='flex items-center gap-2'>
+                <div className='w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center'>
+                  <Calendar className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-base text-slate-900 dark:text-slate-100">
+                <div className='flex-1'>
+                  <h3 className='font-semibold text-base text-slate-900 dark:text-slate-100'>
                     Período de Exportación
                   </h3>
-                  <p className="text-xs text-muted-foreground">
+                  <p className='text-xs text-muted-foreground'>
                     Selecciona el período para generar el reporte
                   </p>
                 </div>
-                <Badge variant="destructive" className="text-xs">
+                <Badge variant='destructive' className='text-xs'>
                   Requerido
                 </Badge>
               </div>
 
-              <div className="max-w-md">
+              <div className='max-w-md'>
                 <Select
                   value={selectedPeriodo?.IdPeriodo || ''}
-                  onValueChange={(value) => {
-                    const periodo = periodos.find((p) => p.IdPeriodo === value);
+                  onValueChange={value => {
+                    const periodo = periodos.find(p => p.IdPeriodo === value);
                     setSelectedPeriodo(periodo || null);
                   }}
                 >
-                  <SelectTrigger className="w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                    <SelectValue placeholder="Seleccionar Periodo" />
+                  <SelectTrigger className='w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'>
+                    <SelectValue placeholder='Seleccionar Periodo' />
                   </SelectTrigger>
                   <SelectContent>
-                    {periodos?.map((periodo) => (
+                    {periodos?.map(periodo => (
                       <SelectItem
                         key={periodo.IdPeriodo}
                         value={periodo.IdPeriodo}
-                        className="truncate"
+                        className='truncate'
                       >
                         {periodo.DescripcionPeriodo}
                       </SelectItem>
@@ -325,32 +327,32 @@ export default function ExportarLecturasComponent({
             </div>
 
             {/* Export Action */}
-            <div className="flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t">
-              <div className="flex items-center gap-2">
+            <div className='flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t'>
+              <div className='flex items-center gap-2'>
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant='ghost'
+                  size='sm'
                   onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                  className="text-muted-foreground hover:text-foreground"
+                  className='text-muted-foreground hover:text-foreground'
                 >
-                  <Filter className="w-4 h-4 mr-1" />
-                  <span className="text-sm">Filtros Opcionales</span>
+                  <Filter className='w-4 h-4 mr-1' />
+                  <span className='text-sm'>Filtros Opcionales</span>
                   {isFiltersOpen ? (
-                    <ChevronUp className="w-4 h-4 ml-1" />
+                    <ChevronUp className='w-4 h-4 ml-1' />
                   ) : (
-                    <ChevronDown className="w-4 h-4 ml-1" />
+                    <ChevronDown className='w-4 h-4 ml-1' />
                   )}
                 </Button>
 
                 {hasFilters && (
                   <Button
-                    variant="ghost"
-                    size="sm"
+                    variant='ghost'
+                    size='sm'
                     onClick={handleLimpiarFiltros}
-                    className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20"
+                    className='text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20'
                   >
-                    <Eraser className="w-4 h-4 mr-1" />
-                    <span className="text-sm">Limpiar Filtros</span>
+                    <Eraser className='w-4 h-4 mr-1' />
+                    <span className='text-sm'>Limpiar Filtros</span>
                   </Button>
                 )}
               </div>
@@ -358,17 +360,17 @@ export default function ExportarLecturasComponent({
               <Button
                 onClick={handleExportar}
                 disabled={!selectedPeriodo || isExporting}
-                className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                className='bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200'
               >
                 {isExporting ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    <span className="text-sm">Exportando...</span>
+                    <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                    <span className='text-sm'>Exportando...</span>
                   </>
                 ) : (
                   <>
-                    <Download className="w-4 h-4 mr-2" />
-                    <span className="text-sm">Exportar a Excel</span>
+                    <Download className='w-4 h-4 mr-2' />
+                    <span className='text-sm'>Exportar a Excel</span>
                   </>
                 )}
               </Button>
@@ -377,46 +379,46 @@ export default function ExportarLecturasComponent({
             {/* Optional Filters - Collapsible */}
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleContent>
-                <div className="border-t pt-4 space-y-4">
+                <div className='border-t pt-4 space-y-4'>
                   {/* Sectores Filter */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        <MapPin className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                  <div className='space-y-3'>
+                    <div className='flex items-center gap-2'>
+                      <div className='w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center'>
+                        <MapPin className='w-3 h-3 text-blue-600 dark:text-blue-400' />
                       </div>
                       <div>
-                        <h4 className="font-medium text-sm text-slate-900 dark:text-slate-100">
+                        <h4 className='font-medium text-sm text-slate-900 dark:text-slate-100'>
                           Sectores
                         </h4>
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className='text-[10px] text-muted-foreground'>
                           Filtra por sectores específicos
                         </p>
                       </div>
                     </div>
 
-                    <ScrollArea className="h-28 rounded-lg border bg-slate-50 dark:bg-slate-900/50 p-2">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                        {sectores?.map((sector) => (
+                    <ScrollArea className='h-28 rounded-lg border bg-slate-50 dark:bg-slate-900/50 p-2'>
+                      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2'>
+                        {sectores?.map(sector => (
                           <div
                             key={sector.sectorId}
-                            className="flex items-center gap-2"
+                            className='flex items-center gap-2'
                           >
                             <Checkbox
                               id={sector.sectorId}
                               checked={selectedSectores.includes(
-                                sector.descripcion,
+                                sector.descripcion
                               )}
-                              onCheckedChange={(checked) =>
+                              onCheckedChange={checked =>
                                 handleSectorChange(
                                   sector.descripcion,
-                                  checked as boolean,
+                                  checked as boolean
                                 )
                               }
-                              className="text-blue-600"
+                              className='text-blue-600'
                             />
                             <Label
                               htmlFor={sector.sectorId}
-                              className="cursor-pointer text-xs font-medium"
+                              className='cursor-pointer text-xs font-medium'
                             >
                               {sector.descripcion}
                             </Label>
@@ -426,25 +428,25 @@ export default function ExportarLecturasComponent({
                     </ScrollArea>
 
                     {selectedSectores.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedSectores.map((sectorId) => {
+                      <div className='flex flex-wrap gap-2'>
+                        {selectedSectores.map(sectorId => {
                           const sector = sectores?.find(
-                            (s) => s.sectorId === sectorId,
+                            s => s.sectorId === sectorId
                           );
                           return (
                             <Badge
                               key={sectorId}
-                              variant="outline"
-                              className="bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-700"
+                              variant='outline'
+                              className='bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-700'
                             >
                               {sector?.descripcion || sectorId}
                               <button
-                                className="ml-2 text-blue-500 hover:text-blue-700 dark:hover:text-blue-300"
+                                className='ml-2 text-blue-500 hover:text-blue-700 dark:hover:text-blue-300'
                                 onClick={() =>
                                   handleSectorChange(sectorId, false)
                                 }
                               >
-                                <X className="w-3 h-3" />
+                                <X className='w-3 h-3' />
                               </button>
                             </Badge>
                           );
@@ -454,50 +456,50 @@ export default function ExportarLecturasComponent({
                   </div>
 
                   {/* Estados Filter */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                        <CheckSquare className="w-3 h-3 text-purple-600 dark:text-purple-400" />
+                  <div className='space-y-3'>
+                    <div className='flex items-center gap-2'>
+                      <div className='w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center'>
+                        <CheckSquare className='w-3 h-3 text-purple-600 dark:text-purple-400' />
                       </div>
                       <div>
-                        <h4 className="font-medium text-sm text-slate-900 dark:text-slate-100">
+                        <h4 className='font-medium text-sm text-slate-900 dark:text-slate-100'>
                           Estados de Lectura
                         </h4>
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className='text-[10px] text-muted-foreground'>
                           Filtra por estado de procesamiento
                         </p>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
-                      <div className="flex items-center space-x-3">
+                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg'>
+                      <div className='flex items-center space-x-3'>
                         <Checkbox
-                          id="estado-normal"
+                          id='estado-normal'
                           checked={estadoNormal}
-                          onCheckedChange={(checked) =>
+                          onCheckedChange={checked =>
                             handleEstadoChange(2, checked as boolean)
                           }
-                          className="text-purple-600"
+                          className='text-purple-600'
                         />
                         <Label
-                          htmlFor="estado-normal"
-                          className="cursor-pointer font-medium"
+                          htmlFor='estado-normal'
+                          className='cursor-pointer font-medium'
                         >
                           Lectura Normal
                         </Label>
                       </div>
-                      <div className="flex items-center space-x-3">
+                      <div className='flex items-center space-x-3'>
                         <Checkbox
-                          id="estado-facturado"
+                          id='estado-facturado'
                           checked={estadoFacturado}
-                          onCheckedChange={(checked) =>
+                          onCheckedChange={checked =>
                             handleEstadoChange(5, checked as boolean)
                           }
-                          className="text-purple-600"
+                          className='text-purple-600'
                         />
                         <Label
-                          htmlFor="estado-facturado"
-                          className="cursor-pointer font-medium"
+                          htmlFor='estado-facturado'
+                          className='cursor-pointer font-medium'
                         >
                           Facturado
                         </Label>
@@ -505,19 +507,19 @@ export default function ExportarLecturasComponent({
                     </div>
 
                     {selectedEstados.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedEstados.map((estado) => (
+                      <div className='flex flex-wrap gap-2'>
+                        {selectedEstados.map(estado => (
                           <Badge
                             key={estado}
-                            variant="outline"
-                            className="bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-purple-200 dark:border-purple-700"
+                            variant='outline'
+                            className='bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-purple-200 dark:border-purple-700'
                           >
                             {estado === 2 ? 'Lectura Normal' : 'Facturado'}
                             <button
-                              className="ml-2 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300"
+                              className='ml-2 text-purple-500 hover:text-purple-700 dark:hover:text-purple-300'
                               onClick={() => handleEstadoChange(estado, false)}
                             >
-                              <X className="w-3 h-3" />
+                              <X className='w-3 h-3' />
                             </button>
                           </Badge>
                         ))}
@@ -526,59 +528,59 @@ export default function ExportarLecturasComponent({
                   </div>
 
                   {/* Medidores Filter */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                        <Hash className="w-3 h-3 text-green-600 dark:text-green-400" />
+                  <div className='space-y-3'>
+                    <div className='flex items-center gap-2'>
+                      <div className='w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center'>
+                        <Hash className='w-3 h-3 text-green-600 dark:text-green-400' />
                       </div>
                       <div>
-                        <h4 className="font-medium text-sm text-slate-900 dark:text-slate-100">
+                        <h4 className='font-medium text-sm text-slate-900 dark:text-slate-100'>
                           Medidores Específicos
                         </h4>
-                        <p className="text-[10px] text-muted-foreground">
+                        <p className='text-[10px] text-muted-foreground'>
                           Agrega números de serie específicos
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className='flex gap-2'>
                       <Input
-                        type="text"
-                        placeholder="Ingrese número de serie del medidor"
+                        type='text'
+                        placeholder='Ingrese número de serie del medidor'
                         value={medidorInput}
-                        onChange={(e) => setMedidorInput(e.target.value)}
-                        onKeyDown={(e) => {
+                        onChange={e => setMedidorInput(e.target.value)}
+                        onKeyDown={e => {
                           if (e.key === 'Enter') {
                             e.preventDefault();
                             handleAddMedidor();
                           }
                         }}
-                        className="flex-1 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        className='flex-1 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
                       />
                       <Button
                         onClick={handleAddMedidor}
                         disabled={!medidorInput.trim()}
-                        variant="outline"
-                        className="border-green-200 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/20"
+                        variant='outline'
+                        className='border-green-200 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/20'
                       >
                         Agregar
                       </Button>
                     </div>
 
                     {selectedMedidores.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
+                      <div className='flex flex-wrap gap-1'>
                         {selectedMedidores.map((medidor, index) => (
                           <Badge
                             key={index}
-                            variant="outline"
-                            className="bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-700 font-mono text-xs"
+                            variant='outline'
+                            className='bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-700 font-mono text-xs'
                           >
                             {medidor}
                             <button
-                              className="ml-1 text-green-500 hover:text-green-700 dark:hover:text-green-300"
+                              className='ml-1 text-green-500 hover:text-green-700 dark:hover:text-green-300'
                               onClick={() => handleRemoveMedidor(medidor)}
                             >
-                              <X className="w-3 h-3" />
+                              <X className='w-3 h-3' />
                             </button>
                           </Badge>
                         ))}

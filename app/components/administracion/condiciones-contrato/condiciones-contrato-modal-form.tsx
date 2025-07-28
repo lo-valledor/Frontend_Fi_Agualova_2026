@@ -1,34 +1,37 @@
-import React, { useEffect } from 'react';
-import { z } from 'zod';
-import type { GetCondicionesContrato } from '~/types/administracion';
-import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import api from '~/lib/api';
+import { DollarSign, Loader2, Percent } from 'lucide-react';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+import React, { useEffect } from 'react';
+
+import { Controller, useForm } from 'react-hook-form';
 import Select, { type StylesConfig } from 'react-select';
-import type { Conceptos } from '~/types/mantencion';
+
 import { useTheme } from '~/components/theme-provider';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogTitle,
-  DialogHeader,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '~/components/ui/dialog';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
-import { Button } from '~/components/ui/button';
-import { Loader2, Percent, DollarSign } from 'lucide-react';
+import api from '~/lib/api';
+import type { GetCondicionesContrato } from '~/types/administracion';
+import type { Conceptos } from '~/types/mantencion';
 
 const condicionContratoFormSchema = z.object({
   descripcion: z.string().min(1, { message: 'La descripción es requerida.' }),
@@ -70,7 +73,7 @@ export default function CondicionesContratoModalForm({
   });
 
   const selectStyles: StylesConfig = {
-    control: (styles) => ({
+    control: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
       borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
@@ -79,7 +82,7 @@ export default function CondicionesContratoModalForm({
         borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
       },
     }),
-    menu: (styles) => ({
+    menu: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
     }),
@@ -100,34 +103,34 @@ export default function CondicionesContratoModalForm({
         backgroundColor: theme === 'dark' ? '#166534' : '#16A34A',
       },
     }),
-    singleValue: (styles) => ({
+    singleValue: styles => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
     }),
-    input: (styles) => ({
+    input: styles => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
     }),
-    placeholder: (styles) => ({
+    placeholder: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
-    indicatorSeparator: (styles) => ({
+    indicatorSeparator: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#334155' : '#E2E8F0',
     }),
-    dropdownIndicator: (styles) => ({
+    dropdownIndicator: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
       '&:hover': {
         color: theme === 'dark' ? '#CBD5E1' : '#374151',
       },
     }),
-    noOptionsMessage: (styles) => ({
+    noOptionsMessage: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
-    loadingMessage: (styles) => ({
+    loadingMessage: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
@@ -146,7 +149,7 @@ export default function CondicionesContratoModalForm({
 
       // Encontrar el conceptoId basado en el nombre del concepto
       const conceptoEncontrado = conceptos.find(
-        (c) => c.descripcion === condicionContrato?.concepto,
+        c => c.descripcion === condicionContrato?.concepto
       );
       const conceptoId = conceptoEncontrado?.id || 0;
 
@@ -167,13 +170,13 @@ export default function CondicionesContratoModalForm({
       } else {
         await api.put(
           `/condicion-contrato/condicionContrato-modificar/${condicionContrato?.id}`,
-          data,
+          data
         );
       }
       toast.success(
         mode === 'add'
           ? 'Condición de contrato creada exitosamente'
-          : 'Condición de contrato actualizada exitosamente',
+          : 'Condición de contrato actualizada exitosamente'
       );
       onSuccess();
       onClose();
@@ -185,7 +188,7 @@ export default function CondicionesContratoModalForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className='sm:max-w-[600px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add'
@@ -200,15 +203,15 @@ export default function CondicionesContratoModalForm({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="descripcion"
+              name='descripcion'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Descripción</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Ingrese la descripción" />
+                    <Input {...field} placeholder='Ingrese la descripción' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -216,13 +219,13 @@ export default function CondicionesContratoModalForm({
             />
 
             <Controller
-              name="conceptoId"
+              name='conceptoId'
               control={form.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Concepto</FormLabel>
                   <Select
-                    options={conceptos.map((concepto) => ({
+                    options={conceptos.map(concepto => ({
                       value: concepto.id,
                       label: concepto.descripcion,
                     }))}
@@ -231,7 +234,7 @@ export default function CondicionesContratoModalForm({
                         ? {
                             value: field.value,
                             label:
-                              conceptos.find((c) => c.id === field.value)
+                              conceptos.find(c => c.id === field.value)
                                 ?.descripcion || '',
                           }
                         : null
@@ -239,7 +242,7 @@ export default function CondicionesContratoModalForm({
                     onChange={(option: any) =>
                       field.onChange(option?.value || 0)
                     }
-                    placeholder="Seleccione un concepto"
+                    placeholder='Seleccione un concepto'
                     styles={selectStyles}
                     isClearable
                   />
@@ -248,13 +251,13 @@ export default function CondicionesContratoModalForm({
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name="usaPorcentaje"
+                name='usaPorcentaje'
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
+                  <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                    <div className='space-y-0.5'>
                       <FormLabel>Tipo de Valor</FormLabel>
                       <FormDescription>
                         {field.value ? 'Porcentual' : 'Valor Fijo'}
@@ -272,7 +275,7 @@ export default function CondicionesContratoModalForm({
 
               <FormField
                 control={form.control}
-                name="valor"
+                name='valor'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
@@ -281,23 +284,21 @@ export default function CondicionesContratoModalForm({
                         : 'Valor Fijo'}
                     </FormLabel>
                     <FormControl>
-                      <div className="relative">
+                      <div className='relative'>
                         <Input
                           {...field}
-                          type="number"
+                          type='number'
                           step={form.watch('usaPorcentaje') ? '0.01' : '1'}
                           placeholder={
                             form.watch('usaPorcentaje') ? '0.00' : '0'
                           }
-                          className="pl-8"
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          className='pl-8'
+                          onChange={e => field.onChange(Number(e.target.value))}
                         />
                         {form.watch('usaPorcentaje') ? (
-                          <Percent className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                          <Percent className='absolute left-2 top-2.5 h-4 w-4 text-gray-500' />
                         ) : (
-                          <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                          <DollarSign className='absolute left-2 top-2.5 h-4 w-4 text-gray-500' />
                         )}
                       </div>
                     </FormControl>
@@ -314,10 +315,10 @@ export default function CondicionesContratoModalForm({
 
             <FormField
               control={form.control}
-              name="estado"
+              name='estado'
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
+                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+                  <div className='space-y-0.5'>
                     <FormLabel>Estado</FormLabel>
                     <FormDescription>
                       Activa o desactiva la condición de contrato
@@ -335,19 +336,19 @@ export default function CondicionesContratoModalForm({
 
             <DialogFooter>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={onClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear' : 'Actualizar'}
               </Button>
             </DialogFooter>

@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
+import React from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import AbrirPeriodoFacturacion from '~/components/operaciones/periodo-facturacion/periodo-facturacion-component';
-import React from 'react';
-import type { Route } from './+types/periodo-facturacion';
 import { operacionesService } from '~/services/operacionesService';
+
+import type { Route } from './+types/periodo-facturacion';
 
 export function meta({}: Route.MetaArgs) {
   return [

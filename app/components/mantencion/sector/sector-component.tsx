@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import { DataTable } from '~/components/data-table/data-table';
-import { columns } from './columns';
-import type { Sectores } from '~/types/mantencion';
-import { Button } from '~/components/ui/button';
 import { Plus } from 'lucide-react';
-import { useRevalidator } from 'react-router';
-import { Card, CardContent } from '~/components/ui/card';
-import SectorFormModal from './sector-form-modal';
 import { toast } from 'sonner';
+
+import React, { useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
+import { DataTable } from '~/components/data-table/data-table';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent } from '~/components/ui/card';
+import type { Sectores } from '~/types/mantencion';
+
+import { columns } from './columns';
+import SectorFormModal from './sector-form-modal';
 
 interface SectorComponentProps {
   sectores: Sectores[];
@@ -44,36 +48,33 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
     toast.success(
       modalMode === 'add'
         ? 'Sector creado exitosamente'
-        : 'Sector actualizado exitosamente',
+        : 'Sector actualizado exitosamente'
     );
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Sectores
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Sectores
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los sectores del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAddSector}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Sector
         </Button>
       </div>
 
       {/* Table */}
-      <Card>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable
             columns={columns({
               onEdit: handleEditSector,

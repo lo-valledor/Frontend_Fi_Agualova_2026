@@ -1,15 +1,19 @@
 import {
   type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  getPaginationRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
   type PaginationState,
   type RowSelectionState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
 } from '@tanstack/react-table';
+import { Loader2 } from 'lucide-react';
 
+import { useEffect, useState } from 'react';
+
+import { DataTablePagination } from '~/components/data-table/data-table-pagination';
 import {
   Table,
   TableBody,
@@ -18,9 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import { DataTablePagination } from '~/components/data-table/data-table-pagination';
-import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -55,7 +56,7 @@ export function DataTable<TData, TValue>({
     if (!enableSelection || !selectedRowIds || !rowId) return;
 
     const newRowSelection: RowSelectionState = {};
-    selectedRowIds.forEach((id) => {
+    selectedRowIds.forEach(id => {
       newRowSelection[id] = true;
     });
     setRowSelection(newRowSelection);
@@ -68,7 +69,7 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onRowSelectionChange: (updater) => {
+    onRowSelectionChange: updater => {
       if (!enableSelection) return;
 
       // Aplicar la actualización al estado interno
@@ -92,24 +93,24 @@ export function DataTable<TData, TValue>({
     onPaginationChange: setPagination,
     enableRowSelection: enableSelection,
     enableMultiRowSelection: enableSelection,
-    getRowId: (row) => String(row[rowId]),
+    getRowId: row => String(row[rowId]),
   });
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className='rounded-md border'>
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -122,27 +123,27 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className='h-24 text-center'
                 >
-                  <div className="flex justify-center items-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-sky-600 dark:text-sky-400" />
-                    <span className="ml-2 text-muted-foreground">
+                  <div className='flex justify-center items-center'>
+                    <Loader2 className='h-6 w-6 animate-spin text-sky-600 dark:text-sky-400' />
+                    <span className='ml-2 text-muted-foreground'>
                       Actualizando datos...
                     </span>
                   </div>
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -152,7 +153,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className='h-24 text-center'
                 >
                   No results.
                 </TableCell>

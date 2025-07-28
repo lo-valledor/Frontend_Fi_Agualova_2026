@@ -1,8 +1,10 @@
 import React from 'react';
-import type { Route } from './+types/clientes';
+
+import ClientesComponent from '~/components/administracion/clientes/clientes-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
-import ClientesComponent from '~/components/administracion/clientes/clientes-component';
+
+import type { Route } from './+types/clientes';
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -28,11 +30,7 @@ export default function Clientes({ loaderData }: Route.ComponentProps) {
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <ClientesComponent
-        clientes={clientes}
-        giros={giros}
-        comunas={comunas}
-      />
+      <ClientesComponent clientes={clientes} giros={giros} comunas={comunas} />
     </div>
   );
 }

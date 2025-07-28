@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { useRevalidator } from 'react-router';
-import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
+
+import React, { useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import type { Parametro } from '~/types/mantencion';
+
 import { createColumns } from './columns';
 import ParametroFormModal from './parametro-form-modal';
 
@@ -39,7 +43,7 @@ export default function ParametrosComponent({
   const handleDelete = async (parametro: Parametro) => {
     if (
       window.confirm(
-        `¿Está seguro de que desea eliminar el parámetro "${parametro.descripcion}"?`,
+        `¿Está seguro de que desea eliminar el parámetro "${parametro.descripcion}"?`
       )
     ) {
       try {
@@ -59,7 +63,7 @@ export default function ParametrosComponent({
     toast.success(
       modalMode === 'add'
         ? 'Parámetro creado exitosamente'
-        : 'Parámetro actualizado exitosamente',
+        : 'Parámetro actualizado exitosamente'
     );
     revalidator.revalidate();
   };
@@ -70,31 +74,28 @@ export default function ParametrosComponent({
   });
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Parámetros
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Parámetros
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los parámetros del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAdd}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Parámetro
         </Button>
       </div>
 
       {/* Data Table */}
-      <Card>
-        <CardContent className="">
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable columns={columns} data={parametros} />
         </CardContent>
       </Card>

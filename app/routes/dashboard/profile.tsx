@@ -1,27 +1,30 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '~/context/AuthContext';
-import { useUserProfileSimple } from '~/hooks/use-user-profile-simple';
-import { useRouteError, type MetaFunction } from 'react-router';
-import { ProfileHydrateFallback } from '~/components/profile-hydrate-fallback';
-import { ProfileLoadingState } from '~/components/profile-loading-state';
-import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Button } from '~/components/ui/button';
-import { Input } from '~/components/ui/input';
-import { Label } from '~/components/ui/label';
-import { Badge } from '~/components/ui/badge';
-import { toast } from 'sonner';
 import {
-  User,
-  Edit,
-  Save,
-  X,
-  Shield,
-  Calendar,
   Building,
+  Calendar,
+  Edit,
   Eye,
   EyeOff,
+  Save,
+  Shield,
+  User,
+  X,
 } from 'lucide-react';
+import { toast } from 'sonner';
+
+import { useEffect, useState } from 'react';
+
+import { type MetaFunction, useRouteError } from 'react-router';
+
+import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
+import { ProfileHydrateFallback } from '~/components/profile-hydrate-fallback';
+import { ProfileLoadingState } from '~/components/profile-loading-state';
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import { useAuth } from '~/context/AuthContext';
+import { useUserProfileSimple } from '~/hooks/use-user-profile-simple';
 import type { ActualizarUsuarioProps } from '~/types/administracion';
 
 export const meta: MetaFunction = () => {
@@ -63,9 +66,9 @@ export default function ProfilePage() {
 
   const handleInputChange = (
     field: keyof ActualizarUsuarioProps,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [field]: value,
     }));
@@ -110,27 +113,27 @@ export default function ProfilePage() {
   }
 
   if (isLoading) {
-    return <ProfileLoadingState message="Cargando datos del perfil..." />;
+    return <ProfileLoadingState message='Cargando datos del perfil...' />;
   }
 
   if (error || !userData) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center max-w-md">
-            <div className="p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mx-auto mb-4 w-fit">
-              <User className="h-8 w-8 text-rose-600 dark:text-rose-400" />
+      <div className='container mx-auto p-6'>
+        <div className='flex items-center justify-center min-h-[400px]'>
+          <div className='text-center max-w-md'>
+            <div className='p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mx-auto mb-4 w-fit'>
+              <User className='h-8 w-8 text-rose-600 dark:text-rose-400' />
             </div>
-            <h3 className="font-medium text-rose-800 dark:text-rose-200 mb-2 text-lg">
+            <h3 className='font-medium text-rose-800 dark:text-rose-200 mb-2 text-lg'>
               Error al cargar el perfil
             </h3>
-            <p className="text-sm text-rose-600 dark:text-rose-400 mb-4">
+            <p className='text-sm text-rose-600 dark:text-rose-400 mb-4'>
               {error || 'No se pudieron cargar los datos del usuario'}
             </p>
             <Button
               onClick={() => window.location.reload()}
-              variant="outline"
-              className="border-rose-200 text-rose-700 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-900/20"
+              variant='outline'
+              className='border-rose-200 text-rose-700 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-900/20'
             >
               Reintentar
             </Button>
@@ -141,45 +144,45 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className='container mx-auto p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl shadow-sm">
-              <User className="h-6 w-6 text-sky-600 dark:text-sky-400" />
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <div className='p-3 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl shadow-sm'>
+              <User className='h-6 w-6 text-sky-600 dark:text-sky-400' />
             </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
+              <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
                 Mi Perfil
               </h1>
-              <p className="text-muted-foreground">
+              <p className='text-muted-foreground'>
                 Gestiona tu información personal y configuración de cuenta
               </p>
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           {!isEditing ? (
             <Button
               onClick={() => setIsEditing(true)}
-              className="bg-sky-600 hover:bg-sky-700 text-white"
+              className='bg-sky-600 hover:bg-sky-700 text-white'
             >
-              <Edit className="mr-2 h-4 w-4" />
+              <Edit className='mr-2 h-4 w-4' />
               Editar Perfil
             </Button>
           ) : (
-            <div className="flex gap-2">
-              <Button onClick={handleCancel} variant="outline">
-                <X className="mr-2 h-4 w-4" />
+            <div className='flex gap-2'>
+              <Button onClick={handleCancel} variant='outline'>
+                <X className='mr-2 h-4 w-4' />
                 Cancelar
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700 text-white"
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
-                <Save className="mr-2 h-4 w-4" />
+                <Save className='mr-2 h-4 w-4' />
                 {isLoading ? 'Guardando...' : 'Guardar'}
               </Button>
             </div>
@@ -187,78 +190,78 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
         {/* Información Principal */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className='lg:col-span-2 space-y-6'>
           {/* Información Personal */}
-          <Card className="border-sky-200/50 dark:border-sky-800/50">
-            <CardHeader className="bg-gradient-to-r from-sky-50/80 to-blue-50/80 dark:from-sky-900/20 dark:to-blue-900/20 rounded-t-lg">
-              <div className="flex items-center gap-2">
-                <User className="h-5 w-5 text-sky-600 dark:text-sky-400" />
-                <CardTitle className="text-lg text-sky-800 dark:text-sky-200">
+          <Card className='border-sky-200/50 dark:border-sky-800/50'>
+            <CardHeader className='bg-gradient-to-r from-sky-50/80 to-blue-50/80 dark:from-sky-900/20 dark:to-blue-900/20 rounded-t-lg'>
+              <div className='flex items-center gap-2'>
+                <User className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
                   Información Personal
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="nombres" className="text-sm font-medium">
+            <CardContent className='pt-6 space-y-4'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='nombres' className='text-sm font-medium'>
                     Nombres
                   </Label>
                   {isEditing ? (
                     <Input
-                      id="nombres"
+                      id='nombres'
                       value={formData.nombres}
-                      onChange={(e) =>
+                      onChange={e =>
                         handleInputChange('nombres', e.target.value)
                       }
-                      placeholder="Ingresa tus nombres"
+                      placeholder='Ingresa tus nombres'
                     />
                   ) : (
-                    <p className="text-sm text-muted-foreground py-2">
+                    <p className='text-sm text-muted-foreground py-2'>
                       {userData.nombres || 'No especificado'}
                     </p>
                   )}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="apellidos" className="text-sm font-medium">
+                <div className='space-y-2'>
+                  <Label htmlFor='apellidos' className='text-sm font-medium'>
                     Apellidos
                   </Label>
                   {isEditing ? (
                     <Input
-                      id="apellidos"
+                      id='apellidos'
                       value={formData.apellidos}
-                      onChange={(e) =>
+                      onChange={e =>
                         handleInputChange('apellidos', e.target.value)
                       }
-                      placeholder="Ingresa tus apellidos"
+                      placeholder='Ingresa tus apellidos'
                     />
                   ) : (
-                    <p className="text-sm text-muted-foreground py-2">
+                    <p className='text-sm text-muted-foreground py-2'>
                       {userData.apellidos || 'No especificado'}
                     </p>
                   )}
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className='space-y-2'>
                 <Label
-                  htmlFor="nombreDeUsuario"
-                  className="text-sm font-medium"
+                  htmlFor='nombreDeUsuario'
+                  className='text-sm font-medium'
                 >
                   Nombre de Usuario
                 </Label>
                 {isEditing ? (
                   <Input
-                    id="nombreDeUsuario"
+                    id='nombreDeUsuario'
                     value={formData.nombreDeUsuario}
-                    onChange={(e) =>
+                    onChange={e =>
                       handleInputChange('nombreDeUsuario', e.target.value)
                     }
-                    placeholder="Nombre de usuario"
+                    placeholder='Nombre de usuario'
                   />
                 ) : (
-                  <p className="text-sm text-muted-foreground py-2">
+                  <p className='text-sm text-muted-foreground py-2'>
                     {userData.nombreDeUsuario}
                   </p>
                 )}
@@ -267,74 +270,74 @@ export default function ProfilePage() {
           </Card>
 
           {/* Información de Seguridad */}
-          <Card className="border-emerald-200/50 dark:border-emerald-800/50">
-            <CardHeader className="bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg">
-              <div className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                <CardTitle className="text-lg text-emerald-800 dark:text-emerald-200">
+          <Card className='border-emerald-200/50 dark:border-emerald-800/50'>
+            <CardHeader className='bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg'>
+              <div className='flex items-center gap-2'>
+                <Shield className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                <CardTitle className='text-lg text-emerald-800 dark:text-emerald-200'>
                   Seguridad
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="contrasena" className="text-sm font-medium">
+            <CardContent className='pt-6 space-y-4'>
+              <div className='space-y-2'>
+                <Label htmlFor='contrasena' className='text-sm font-medium'>
                   Contraseña Actual
                 </Label>
                 {isEditing ? (
-                  <div className="relative">
+                  <div className='relative'>
                     <Input
-                      id="contrasena"
+                      id='contrasena'
                       type={showPassword ? 'text' : 'password'}
                       value={formData.contrasena}
-                      onChange={(e) =>
+                      onChange={e =>
                         handleInputChange('contrasena', e.target.value)
                       }
-                      placeholder="Ingresa tu contraseña actual"
+                      placeholder='Ingresa tu contraseña actual'
                     />
                     <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      type='button'
+                      variant='ghost'
+                      size='sm'
+                      className='absolute right-0 top-0 h-full px-3 hover:bg-transparent'
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className='h-4 w-4' />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className='h-4 w-4' />
                       )}
                     </Button>
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground py-2">••••••••</p>
+                  <p className='text-sm text-muted-foreground py-2'>••••••••</p>
                 )}
               </div>
               {isEditing && (
-                <div className="space-y-2">
+                <div className='space-y-2'>
                   <Label
-                    htmlFor="nuevaContrasena"
-                    className="text-sm font-medium"
+                    htmlFor='nuevaContrasena'
+                    className='text-sm font-medium'
                   >
                     Nueva Contraseña (opcional)
                   </Label>
-                  <div className="relative">
+                  <div className='relative'>
                     <Input
-                      id="nuevaContrasena"
+                      id='nuevaContrasena'
                       type={showNewPassword ? 'text' : 'password'}
-                      placeholder="Deja vacío para mantener la actual"
+                      placeholder='Deja vacío para mantener la actual'
                     />
                     <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                      type='button'
+                      variant='ghost'
+                      size='sm'
+                      className='absolute right-0 top-0 h-full px-3 hover:bg-transparent'
                       onClick={() => setShowNewPassword(!showNewPassword)}
                     >
                       {showNewPassword ? (
-                        <EyeOff className="h-4 w-4" />
+                        <EyeOff className='h-4 w-4' />
                       ) : (
-                        <Eye className="h-4 w-4" />
+                        <Eye className='h-4 w-4' />
                       )}
                     </Button>
                   </div>
@@ -345,50 +348,50 @@ export default function ProfilePage() {
         </div>
 
         {/* Sidebar con información adicional */}
-        <div className="space-y-6">
+        <div className='space-y-6'>
           {/* Información de la Cuenta */}
-          <Card className="border-violet-200/50 dark:border-violet-800/50">
-            <CardHeader className="bg-gradient-to-r from-violet-50/80 to-purple-50/80 dark:from-violet-900/20 dark:to-purple-900/20 rounded-t-lg">
-              <div className="flex items-center gap-2">
-                <Building className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                <CardTitle className="text-lg text-violet-800 dark:text-violet-200">
+          <Card className='border-violet-200/50 dark:border-violet-800/50'>
+            <CardHeader className='bg-gradient-to-r from-violet-50/80 to-purple-50/80 dark:from-violet-900/20 dark:to-purple-900/20 rounded-t-lg'>
+              <div className='flex items-center gap-2'>
+                <Building className='h-5 w-5 text-violet-600 dark:text-violet-400' />
+                <CardTitle className='text-lg text-violet-800 dark:text-violet-200'>
                   Información de la Cuenta
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+            <CardContent className='pt-6 space-y-4'>
+              <div className='space-y-2'>
+                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
                   ID de Usuario
                 </Label>
-                <p className="font-mono text-sm font-medium text-slate-700 dark:text-slate-300">
+                <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
                   {userData.idUsuario}
                 </p>
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className='space-y-2'>
+                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
                   Perfil
                 </Label>
                 <Badge
-                  variant="outline"
-                  className="bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-800"
+                  variant='outline'
+                  className='bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-800'
                 >
                   ID: {userData.perfilId}
                 </Badge>
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className='space-y-2'>
+                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
                   Departamento
                 </Label>
                 <Badge
-                  variant="outline"
-                  className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+                  variant='outline'
+                  className='bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
                 >
                   {userData.departamento}
                 </Badge>
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className='space-y-2'>
+                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
                   Estado
                 </Label>
                 <Badge
@@ -406,31 +409,31 @@ export default function ProfilePage() {
           </Card>
 
           {/* Información de Sesión */}
-          <Card className="border-amber-200/50 dark:border-amber-800/50">
-            <CardHeader className="bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20 rounded-t-lg">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                <CardTitle className="text-lg text-amber-800 dark:text-amber-200">
+          <Card className='border-amber-200/50 dark:border-amber-800/50'>
+            <CardHeader className='bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20 rounded-t-lg'>
+              <div className='flex items-center gap-2'>
+                <Calendar className='h-5 w-5 text-amber-600 dark:text-amber-400' />
+                <CardTitle className='text-lg text-amber-800 dark:text-amber-200'>
                   Información de Sesión
                 </CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+            <CardContent className='pt-6 space-y-4'>
+              <div className='space-y-2'>
+                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
                   Fecha de Creación
                 </Label>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <p className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                   {formatDate(userData.fechaCreacion)}
                 </p>
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-600 dark:text-slate-400">
+              <div className='space-y-2'>
+                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
                   Rol Actual
                 </Label>
                 <Badge
-                  variant="outline"
-                  className="bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800"
+                  variant='outline'
+                  className='bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800'
                 >
                   {user.role}
                 </Badge>

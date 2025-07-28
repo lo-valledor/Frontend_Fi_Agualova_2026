@@ -1,7 +1,9 @@
+import { ChevronDown, ChevronUp } from 'lucide-react';
+
 import React from 'react';
+
 import { Button } from '~/components/ui/button';
-import { CardTitle, CardDescription } from '~/components/ui/card';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { CardDescription, CardTitle } from '~/components/ui/card';
 import { CollapsibleTrigger } from '~/components/ui/collapsible';
 
 interface CollapsibleHeaderProps {
@@ -9,18 +11,18 @@ interface CollapsibleHeaderProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  colorScheme: 'amber' | 'blue' | 'green' | 'purple';
+  colorScheme: 'sky' | 'blue' | 'green' | 'amber';
 }
 
 const colorVariants = {
-  amber: {
+  sky: {
     container:
-      'hover:bg-amber-50/50 border-amber-200/40 dark:hover:bg-amber-900/20 dark:border-amber-800/40',
-    iconBg: 'bg-gradient-to-r from-amber-500 to-orange-500',
-    title: 'text-amber-900 dark:text-amber-100',
-    description: 'text-amber-700 dark:text-amber-300',
-    button: 'hover:bg-amber-100 dark:hover:bg-amber-900/50',
-    chevron: 'text-amber-600 dark:text-amber-400',
+      'hover:bg-sky-50/50 border-sky-200/40 dark:hover:bg-sky-900/20 dark:border-sky-800/40',
+    iconBg: 'bg-sky-500',
+    title: 'text-sky-900 dark:text-sky-100',
+    description: 'text-sky-700 dark:text-sky-300',
+    button: 'hover:bg-sky-100 dark:hover:bg-sky-900/50',
+    chevron: 'text-sky-600 dark:text-sky-400',
   },
   blue: {
     container:
@@ -40,14 +42,14 @@ const colorVariants = {
     button: 'hover:bg-green-100 dark:hover:bg-green-900/50',
     chevron: 'text-green-600 dark:text-green-400',
   },
-  purple: {
+  amber: {
     container:
-      'hover:bg-purple-50/50 border-purple-200/40 dark:hover:bg-purple-900/20 dark:border-purple-800/40',
-    iconBg: 'bg-gradient-to-r from-purple-500 to-indigo-500',
-    title: 'text-purple-900 dark:text-purple-100',
-    description: 'text-purple-700 dark:text-purple-300',
-    button: 'hover:bg-purple-100 dark:hover:bg-purple-900/50',
-    chevron: 'text-purple-600 dark:text-purple-400',
+      'hover:bg-amber-50/50 border-amber-200/40 dark:hover:bg-amber-900/20 dark:border-amber-800/40',
+    iconBg: 'bg-gradient-to-r from-amber-500 to-orange-500',
+    title: 'text-amber-900 dark:text-amber-100',
+    description: 'text-amber-700 dark:text-amber-300',
+    button: 'hover:bg-amber-100 dark:hover:bg-amber-900/50',
+    chevron: 'text-amber-600 dark:text-amber-400',
   },
 };
 
@@ -65,7 +67,7 @@ export default function CollapsibleHeader({
       <div
         className={`flex justify-between items-center p-4 cursor-pointer border-b ${colors.container}`}
       >
-        <div className="flex items-center gap-3">
+        <div className='flex items-center gap-3'>
           <div
             className={`flex h-8 w-8 items-center justify-center rounded-full ${colors.iconBg} text-white shadow-sm`}
           >
@@ -81,8 +83,8 @@ export default function CollapsibleHeader({
           </div>
         </div>
         <Button
-          variant="ghost"
-          size="icon"
+          variant='ghost'
+          size='icon'
           className={`h-8 w-8 rounded-full ${colors.button}`}
         >
           {isOpen ? (
@@ -90,7 +92,7 @@ export default function CollapsibleHeader({
           ) : (
             <ChevronDown className={`h-5 w-5 ${colors.chevron}`} />
           )}
-          <span className="sr-only">Abrir/Cerrar panel</span>
+          <span className='sr-only'>Abrir/Cerrar panel</span>
         </Button>
       </div>
     </CollapsibleTrigger>

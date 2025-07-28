@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import type { Marca } from '~/types/mantencion';
-import api from '~/lib/api';
+import { z } from 'zod';
+
+import { useEffect, useState } from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -22,7 +24,8 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
+import api from '~/lib/api';
+import type { Marca } from '~/types/mantencion';
 
 const marcaFormSchema = z.object({
   codigo: z
@@ -93,7 +96,7 @@ export default function MarcaFormModal({
       toast.error(
         mode === 'add'
           ? 'Error al crear la marca'
-          : 'Error al actualizar la marca',
+          : 'Error al actualizar la marca'
       );
     } finally {
       setIsLoading(false);
@@ -107,7 +110,7 @@ export default function MarcaFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Marca' : 'Editar Marca'}
@@ -122,17 +125,17 @@ export default function MarcaFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4 pt-4"
+            className='space-y-4 pt-4'
           >
             <FormField
               control={form.control}
-              name="codigo"
+              name='codigo'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Código de la Marca</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Ej: ABC123"
+                      placeholder='Ej: ABC123'
                       {...field}
                       disabled={mode === 'edit'}
                     />
@@ -144,31 +147,31 @@ export default function MarcaFormModal({
 
             <FormField
               control={form.control}
-              name="nombre"
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre de la Marca</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Siemens" {...field} />
+                    <Input placeholder='Ej: Siemens' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <DialogFooter className="gap-2">
+            <DialogFooter className='gap-2'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading
                   ? mode === 'add'

@@ -1,9 +1,10 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import type { GetCargoTipoContrato } from '~/types/administracion';
+
 import {
-  TableActions,
   EstadoBadge,
+  TableActions,
 } from '~/components/data-table/table-helpers';
+import type { GetCargoTipoContrato } from '~/types/administracion';
 
 interface ColumnsProps {
   onEdit: (data: GetCargoTipoContrato) => void;
@@ -20,12 +21,12 @@ export const columns = ({
     cell: ({ row }) => {
       const data = row.original;
       return (
-        <div className="flex items-center space-x-3">
+        <div className='flex items-center space-x-3'>
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
+            <div className='font-medium text-gray-900 dark:text-gray-100'>
               {data.tipoContratoDescripcion}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
               {data.cargoFacturableDescripcion}
             </div>
           </div>

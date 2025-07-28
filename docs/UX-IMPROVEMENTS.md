@@ -17,13 +17,17 @@ Este documento describe las mejoras implementadas para proporcionar una mejor ex
 **Problema**:
 
 ```typescript
-import { Cache } from 'lucide-react'; // ❌ No existe
+import { Cache } from 'lucide-react';
+
+// ❌ No existe
 ```
 
 **Solución**:
 
 ```typescript
-import { Trash2 } from 'lucide-react'; // ✅ Ícono válido
+import { Trash2 } from 'lucide-react';
+
+// ✅ Ícono válido
 ```
 
 ### 2. HydrateFallback para Mejor UX

@@ -1,13 +1,13 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import type { GetMedidores } from '~/types/administracion';
-import { Badge } from '~/components/ui/badge';
-
 import { CircuitBoard, MapPin, Zap } from 'lucide-react';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import {
-  TableActions,
   EstadoBadge,
+  TableActions,
 } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { GetMedidores } from '~/types/administracion';
 
 interface MedidoresColumnsProps {
   onEdit: (medidor: GetMedidores) => void;
@@ -19,26 +19,26 @@ const getTipoBadgeProps = (tipo: string) => {
     case 'trifásico':
     case 'trifasico':
       return {
-        icon: <Zap className="h-4 w-4 text-blue-500" />,
+        icon: <Zap className='h-4 w-4 text-blue-500' />,
         variant: 'outline' as const,
         className: 'border-blue-500 text-blue-600 dark:text-blue-400',
       };
     case 'monofásico':
     case 'monofasico':
       return {
-        icon: <Zap className="h-4 w-4 text-emerald-500" />,
+        icon: <Zap className='h-4 w-4 text-emerald-500' />,
         variant: 'outline' as const,
         className: 'border-emerald-500 text-emerald-600 dark:text-emerald-400',
       };
     case 'ambos':
       return {
-        icon: <Zap className="h-4 w-4 text-purple-500" />,
+        icon: <Zap className='h-4 w-4 text-purple-500' />,
         variant: 'outline' as const,
         className: 'border-purple-500 text-purple-600 dark:text-purple-400',
       };
     default:
       return {
-        icon: <Zap className="h-4 w-4 text-gray-500" />,
+        icon: <Zap className='h-4 w-4 text-gray-500' />,
         variant: 'outline' as const,
         className: 'border-gray-500 text-gray-600 dark:text-gray-400',
       };
@@ -51,17 +51,17 @@ export const columns = ({
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Medidor" />
+      <DataTableColumnHeader column={column} title='Medidor' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className="flex items-center space-x-3">
+        <div className='flex items-center space-x-3'>
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
+            <div className='font-medium text-gray-900 dark:text-gray-100'>
               {medidor.serie}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
               Código: {medidor.codigo}
             </div>
           </div>
@@ -72,18 +72,18 @@ export const columns = ({
   {
     accessorKey: 'marca',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Marca y Modelo" />
+      <DataTableColumnHeader column={column} title='Marca y Modelo' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className="flex items-center space-x-2">
-          <CircuitBoard className="h-4 w-4 text-gray-500" />
+        <div className='flex items-center space-x-2'>
+          <CircuitBoard className='h-4 w-4 text-gray-500' />
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
+            <div className='font-medium text-gray-900 dark:text-gray-100'>
               {medidor.marca}
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
+            <div className='text-sm text-gray-500 dark:text-gray-400'>
               {medidor.modelo}
             </div>
           </div>
@@ -94,12 +94,12 @@ export const columns = ({
   {
     accessorKey: 'fechaInicio',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Fecha de Inicio" />
+      <DataTableColumnHeader column={column} title='Fecha de Inicio' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className="font-medium text-gray-900 dark:text-gray-100">
+        <span className='font-medium text-gray-900 dark:text-gray-100'>
           {medidor.fechaInicio}
         </span>
       );
@@ -108,12 +108,12 @@ export const columns = ({
   {
     accessorKey: 'digitos',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Dígitos" />
+      <DataTableColumnHeader column={column} title='Dígitos' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className="font-medium text-gray-900 dark:text-gray-100">
+        <span className='font-medium text-gray-900 dark:text-gray-100'>
           {medidor.digitos}
         </span>
       );
@@ -122,12 +122,12 @@ export const columns = ({
   {
     accessorKey: 'multiplicar',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Multiplicar" />
+      <DataTableColumnHeader column={column} title='Multiplicar' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className="font-medium text-gray-900 dark:text-gray-100">
+        <span className='font-medium text-gray-900 dark:text-gray-100'>
           {medidor.multiplicar}
         </span>
       );
@@ -136,13 +136,13 @@ export const columns = ({
   {
     accessorKey: 'tipo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tipo" />
+      <DataTableColumnHeader column={column} title='Tipo' />
     ),
     cell: ({ row }) => {
       const tipo = row.getValue('tipo') as string;
       const { icon, variant, className } = getTipoBadgeProps(tipo);
       return (
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           {icon}
           <Badge variant={variant} className={className}>
             {tipo}
@@ -154,15 +154,15 @@ export const columns = ({
   {
     accessorKey: 'codigoAcometida',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acometida" />
+      <DataTableColumnHeader column={column} title='Acometida' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className="flex items-center space-x-2">
-          <CircuitBoard className="h-4 w-4 text-gray-500" />
+        <div className='flex items-center space-x-2'>
+          <CircuitBoard className='h-4 w-4 text-gray-500' />
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
+            <div className='font-medium text-gray-900 dark:text-gray-100'>
               {medidor.codigoAcometida}
             </div>
           </div>
@@ -173,12 +173,12 @@ export const columns = ({
   {
     accessorKey: 'ubicacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ubicación" />
+      <DataTableColumnHeader column={column} title='Ubicación' />
     ),
     cell: ({ row }) => (
-      <div className="flex items-center space-x-2">
-        <MapPin className="h-4 w-4 text-gray-500" />
-        <span className="font-medium text-gray-900 dark:text-gray-100">
+      <div className='flex items-center space-x-2'>
+        <MapPin className='h-4 w-4 text-gray-500' />
+        <span className='font-medium text-gray-900 dark:text-gray-100'>
           {row.getValue('ubicacion')}
         </span>
       </div>
@@ -187,7 +187,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       return <EstadoBadge estado={row.getValue('estado')} />;
@@ -196,7 +196,7 @@ export const columns = ({
   {
     id: 'actions',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Acciones" />
+      <DataTableColumnHeader column={column} title='Acciones' />
     ),
     cell: ({ row }) => {
       return (

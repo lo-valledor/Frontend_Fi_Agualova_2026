@@ -1,19 +1,19 @@
 import api from '~/lib/api';
 import type {
-  PeriodoAbierto,
-  ValidarSectoresPendientes,
+  Anio,
+  Ciclo,
+  ConsultarAsignacionSectores,
+  ConsultarMantenedorRevisionCorte,
   ConsultarSectores,
   OpcionesPrepararLecturas,
-  ConsultarAsignacionSectores,
+  PeriodoAbierto,
+  Periodos,
   PreciosCargoEnel,
   PreciosCargoEnerlova,
-  RevisarPrecioUno,
   RevisarPrecioDos,
-  Ciclo,
-  Anio,
-  Periodos,
-  ConsultarMantenedorRevisionCorte,
+  RevisarPrecioUno,
   TotalesCorteReposicion,
+  ValidarSectoresPendientes,
 } from '~/types/operaciones';
 
 export interface OperacionesServiceResponse<T> {
@@ -25,7 +25,9 @@ class OperacionesService {
   /**
    * Obtiene datos básicos de período abierto
    */
-  async getPeriodoAbierto(): Promise<OperacionesServiceResponse<PeriodoAbierto[]>> {
+  async getPeriodoAbierto(): Promise<
+    OperacionesServiceResponse<PeriodoAbierto[]>
+  > {
     try {
       const response = await api.get('/ConsultarPeriodoAbierto');
       return {
@@ -61,12 +63,14 @@ class OperacionesService {
   /**
    * Obtiene datos para preparar lecturas
    */
-  async getPrepararLecturasData(): Promise<OperacionesServiceResponse<{
-    periodoAbierto: PeriodoAbierto[];
-    lecturasPendientes: ValidarSectoresPendientes;
-    sectores: ConsultarSectores[];
-    opcionesPreparar: OpcionesPrepararLecturas[];
-  }>> {
+  async getPrepararLecturasData(): Promise<
+    OperacionesServiceResponse<{
+      periodoAbierto: PeriodoAbierto[];
+      lecturasPendientes: ValidarSectoresPendientes;
+      sectores: ConsultarSectores[];
+      opcionesPreparar: OpcionesPrepararLecturas[];
+    }>
+  > {
     try {
       const [periodoAbierto, lecturasPendientes, sectores, opcionesPreparar] =
         await Promise.all([
@@ -79,7 +83,8 @@ class OperacionesService {
       return {
         data: {
           periodoAbierto: periodoAbierto.data as PeriodoAbierto[],
-          lecturasPendientes: lecturasPendientes.data as ValidarSectoresPendientes,
+          lecturasPendientes:
+            lecturasPendientes.data as ValidarSectoresPendientes,
           sectores: sectores.data as ConsultarSectores[],
           opcionesPreparar: opcionesPreparar.data as OpcionesPrepararLecturas[],
         },
@@ -98,7 +103,7 @@ class OperacionesService {
    */
   async getAsignacionSectores(
     cicloFacturable: string,
-    periodo: string,
+    periodo: string
   ): Promise<OperacionesServiceResponse<ConsultarAsignacionSectores[]>> {
     try {
       const params = new URLSearchParams();
@@ -126,11 +131,13 @@ class OperacionesService {
    */
   async getPreciosCargoData(
     mes: string,
-    anio: string,
-  ): Promise<OperacionesServiceResponse<{
-    tablaEnel: PreciosCargoEnel[];
-    tablaEnerlova: PreciosCargoEnerlova[];
-  }>> {
+    anio: string
+  ): Promise<
+    OperacionesServiceResponse<{
+      tablaEnel: PreciosCargoEnel[];
+      tablaEnerlova: PreciosCargoEnerlova[];
+    }>
+  > {
     try {
       const [resTablaEnel, resTablaEnerlova] = await Promise.all([
         api.get(`/consulta-precio-pago?mes=${mes}&año=${anio}`),
@@ -155,17 +162,17 @@ class OperacionesService {
   /**
    * Obtiene datos para revisar precio
    */
-  async getRevisarPrecioData(
-    dia: string = '15',
-  ): Promise<OperacionesServiceResponse<{
-    dataPeriodoAbierto: PeriodoAbierto[];
-    dataConsultarPreciosUno: RevisarPrecioUno[];
-    dataConsultarPreciosDos: RevisarPrecioDos[];
-    ciclosFacturacion: Array<{
-      diaFacturacion: string;
-      descripcion: string;
-    }>;
-  }>> {
+  async getRevisarPrecioData(dia: string = '15'): Promise<
+    OperacionesServiceResponse<{
+      dataPeriodoAbierto: PeriodoAbierto[];
+      dataConsultarPreciosUno: RevisarPrecioUno[];
+      dataConsultarPreciosDos: RevisarPrecioDos[];
+      ciclosFacturacion: Array<{
+        diaFacturacion: string;
+        descripcion: string;
+      }>;
+    }>
+  > {
     try {
       // Carga paralela de datos básicos
       const [periodoAbierto, ciclosFacturacion] = await Promise.all([
@@ -196,16 +203,19 @@ class OperacionesService {
       const anio = dataPeriodoAbierto[0].anio;
 
       // Cargar datos de precios
-      const [resConsultarPreciosUno, resConsultarPreciosDos] = await Promise.all([
-        api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-        api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`),
-      ]);
+      const [resConsultarPreciosUno, resConsultarPreciosDos] =
+        await Promise.all([
+          api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
+          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`),
+        ]);
 
       return {
         data: {
           dataPeriodoAbierto,
-          dataConsultarPreciosUno: resConsultarPreciosUno.data as RevisarPrecioUno[],
-          dataConsultarPreciosDos: resConsultarPreciosDos.data as RevisarPrecioDos[],
+          dataConsultarPreciosUno:
+            resConsultarPreciosUno.data as RevisarPrecioUno[],
+          dataConsultarPreciosDos:
+            resConsultarPreciosDos.data as RevisarPrecioDos[],
           ciclosFacturacion: dataCiclosFacturacion,
         },
         error: null,
@@ -221,10 +231,12 @@ class OperacionesService {
   /**
    * Obtiene datos de corte y reposición
    */
-  async getCorteReposicionData(): Promise<OperacionesServiceResponse<{
-    totalesData: TotalesCorteReposicion[];
-    mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
-  }>> {
+  async getCorteReposicionData(): Promise<
+    OperacionesServiceResponse<{
+      totalesData: TotalesCorteReposicion[];
+      mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
+    }>
+  > {
     try {
       const [res, resCorte] = await Promise.all([
         api.get('consulta-registros-revision?acometida=0'),
@@ -234,7 +246,8 @@ class OperacionesService {
       return {
         data: {
           totalesData: res.data as TotalesCorteReposicion[],
-          mantenedorCorteData: resCorte.data as ConsultarMantenedorRevisionCorte[],
+          mantenedorCorteData:
+            resCorte.data as ConsultarMantenedorRevisionCorte[],
         },
         error: null,
       };
@@ -249,10 +262,12 @@ class OperacionesService {
   /**
    * Obtiene datos para cerrar lecturas
    */
-  async getCerrarLecturasData(): Promise<OperacionesServiceResponse<{
-    periodoAbierto: PeriodoAbierto[];
-    ciclosFacturacion: Ciclo[];
-  }>> {
+  async getCerrarLecturasData(): Promise<
+    OperacionesServiceResponse<{
+      periodoAbierto: PeriodoAbierto[];
+      ciclosFacturacion: Ciclo[];
+    }>
+  > {
     try {
       const [periodoAbierto, ciclosFacturacion] = await Promise.all([
         api.get('/ConsultarPeriodoAbierto'),
@@ -277,10 +292,12 @@ class OperacionesService {
   /**
    * Obtiene datos para período de facturación
    */
-  async getPeriodoFacturacionData(): Promise<OperacionesServiceResponse<{
-    years: Anio[];
-    periodos: Periodos[];
-  }>> {
+  async getPeriodoFacturacionData(): Promise<
+    OperacionesServiceResponse<{
+      years: Anio[];
+      periodos: Periodos[];
+    }>
+  > {
     try {
       const [resYears, resPeriodos] = await Promise.all([
         api.get('/consulta-año'),
@@ -308,16 +325,19 @@ class OperacionesService {
   async getPreciosPorCiclo(
     mes: number,
     anio: number,
-    dia: string,
-  ): Promise<OperacionesServiceResponse<{
-    preciosUno: RevisarPrecioUno[];
-    preciosDos: RevisarPrecioDos[];
-  }>> {
+    dia: string
+  ): Promise<
+    OperacionesServiceResponse<{
+      preciosUno: RevisarPrecioUno[];
+      preciosDos: RevisarPrecioDos[];
+    }>
+  > {
     try {
-      const [resConsultarPreciosUno, resConsultarPreciosDos] = await Promise.all([
-        api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-        api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`),
-      ]);
+      const [resConsultarPreciosUno, resConsultarPreciosDos] =
+        await Promise.all([
+          api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
+          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`),
+        ]);
 
       return {
         data: {

@@ -1,8 +1,23 @@
-import React, { useState, useMemo } from 'react';
-import { Label } from '~/components/ui/label';
-import { Input } from '~/components/ui/input';
+import {
+  AlertCircleIcon,
+  BarChartIcon,
+  Building2,
+  CalendarIcon,
+  CheckCircleIcon,
+  ChevronDown,
+  ChevronUp,
+  ClockIcon,
+  Info,
+  KeyIcon,
+  Shield,
+  Users,
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+import React, { useMemo, useState } from 'react';
+
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import api from '~/lib/api';
 import {
   Card,
   CardContent,
@@ -10,21 +25,17 @@ import {
   CardFooter,
   CardTitle,
 } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import {
-  KeyIcon,
-  CheckCircleIcon,
-  AlertCircleIcon,
-  ChevronDown,
-  ChevronUp,
-  Shield,
-  Users,
-  Building2,
-  CalendarIcon,
-  BarChartIcon,
-  ClockIcon,
-  Info,
-} from 'lucide-react';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -32,29 +43,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { toast } from 'sonner';
-import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-import type {
-  RevisarPrecioUno,
-  RevisarPrecioDos,
-  ValidacionUsuarioResponse,
-  PeriodoAbierto,
-  Ciclo,
-} from '~/types/operaciones';
 import { Skeleton } from '~/components/ui/skeleton';
-import { columnsEnel } from './columns-enel';
-import { DataTable } from './data-table';
-import { columnsEnerlova } from './columns-enerlova';
-import DialogModificarPrecio from './dialog-modificar-precio';
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '~/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
+import api from '~/lib/api';
+import type {
+  Ciclo,
+  PeriodoAbierto,
+  RevisarPrecioDos,
+  RevisarPrecioUno,
+  ValidacionUsuarioResponse,
+} from '~/types/operaciones';
+
+import { columnsEnel } from './columns-enel';
+import { columnsEnerlova } from './columns-enerlova';
+import { DataTable } from './data-table';
+import DialogModificarPrecio from './dialog-modificar-precio';
 
 interface RevisarPrecioComponentProps {
   dataPeriodoAbierto: PeriodoAbierto[];
@@ -86,7 +89,7 @@ export default function RevisarPrecioComponent({
   const [_isLoadingCiclo] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [userData, setUserData] = useState<ValidacionUsuarioResponse | null>(
-    null,
+    null
   );
 
   // Estados para los paneles colapsables
@@ -95,7 +98,7 @@ export default function RevisarPrecioComponent({
   // Estados para las filas seleccionadas
   const [selectedEnelRows, setSelectedEnelRows] = useState<string[]>([]);
   const [selectedEnerlovaRows, setSelectedEnerlovaRows] = useState<string[]>(
-    [],
+    []
   );
   const [isConfirming, setIsConfirming] = useState(false);
 
@@ -125,7 +128,7 @@ export default function RevisarPrecioComponent({
       const response = await api.post<ValidacionUsuarioResponse>(
         '/validar-usuario-modificacion',
         data,
-        config,
+        config
       );
 
       if (response.data) {
@@ -177,7 +180,7 @@ export default function RevisarPrecioComponent({
         toast.error(`Error ${error.response.status}: ${errorMessage}`);
       } else if (error.request) {
         toast.error(
-          'No se recibió respuesta del servidor. Verifica tu conexión.',
+          'No se recibió respuesta del servidor. Verifica tu conexión.'
         );
       } else {
         toast.error(`Error: ${error.message}`);
@@ -201,18 +204,18 @@ export default function RevisarPrecioComponent({
 
       // Confirmaciones de la tabla Enel
       const confirmacionesEnel = dataConsultarPreciosUno.filter(
-        (item) =>
+        item =>
           selectedEnelRows.includes(item.codigo) &&
           item.indice !== '' &&
-          item.confirmacion !== 'Confirmado',
+          item.confirmacion !== 'Confirmado'
       );
 
       // Confirmaciones de la tabla Enerlova
       const confirmacionesEnerlova = dataConsultarPreciosDos.filter(
-        (item) =>
+        item =>
           selectedEnerlovaRows.includes(item.codigo) &&
           item.indice !== '' &&
-          item.confirmacion !== 'Confirmado',
+          item.confirmacion !== 'Confirmado'
       );
 
       // Procesar todas las confirmaciones
@@ -223,7 +226,7 @@ export default function RevisarPrecioComponent({
       for (const item of confirmacionesEnel) {
         try {
           const response = await api.post(
-            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`,
+            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
           );
 
           if (response.status === 200) {
@@ -231,7 +234,7 @@ export default function RevisarPrecioComponent({
           } else {
             confirmacionesFallidas++;
             console.warn(
-              `Error al confirmar: ${item.codigo}, status: ${response.status}`,
+              `Error al confirmar: ${item.codigo}, status: ${response.status}`
             );
           }
         } catch (error: any) {
@@ -254,12 +257,12 @@ export default function RevisarPrecioComponent({
             ) {
               // Error de autorización específico - continuar con otros registros
               console.warn(
-                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`,
+                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`
               );
             } else {
               // Error de sesión expirada - detener proceso
               toast.error(
-                'Sesión expirada durante el proceso. Reinicia la página.',
+                'Sesión expirada durante el proceso. Reinicia la página.'
               );
               setIsConfirming(false);
               return;
@@ -274,7 +277,7 @@ export default function RevisarPrecioComponent({
       for (const item of confirmacionesEnerlova) {
         try {
           const response = await api.post(
-            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`,
+            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
           );
 
           if (response.status === 200) {
@@ -282,7 +285,7 @@ export default function RevisarPrecioComponent({
           } else {
             confirmacionesFallidas++;
             console.warn(
-              `Error al confirmar: ${item.codigo}, status: ${response.status}`,
+              `Error al confirmar: ${item.codigo}, status: ${response.status}`
             );
           }
         } catch (error: any) {
@@ -305,12 +308,12 @@ export default function RevisarPrecioComponent({
             ) {
               // Error de autorización específico - continuar con otros registros
               console.warn(
-                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`,
+                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`
               );
             } else {
               // Error de sesión expirada - detener proceso
               toast.error(
-                'Sesión expirada durante el proceso. Reinicia la página.',
+                'Sesión expirada durante el proceso. Reinicia la página.'
               );
               setIsConfirming(false);
               return;
@@ -331,7 +334,7 @@ export default function RevisarPrecioComponent({
         await onRecargarPrecios();
 
         toast.success(
-          `Se han confirmado ${confirmacionesExitosas} registros correctamente`,
+          `Se han confirmado ${confirmacionesExitosas} registros correctamente`
         );
       } else if (confirmacionesExitosas === 0 && confirmacionesFallidas === 0) {
         toast.info('No había registros pendientes para confirmar');
@@ -339,10 +342,10 @@ export default function RevisarPrecioComponent({
 
       if (confirmacionesFallidas > 0) {
         console.warn(
-          `Total de confirmaciones fallidas: ${confirmacionesFallidas}`,
+          `Total de confirmaciones fallidas: ${confirmacionesFallidas}`
         );
         toast.error(
-          `No se pudieron confirmar ${confirmacionesFallidas} registros`,
+          `No se pudieron confirmar ${confirmacionesFallidas} registros`
         );
       }
     } catch (error) {
@@ -372,19 +375,19 @@ export default function RevisarPrecioComponent({
 
   // Configurar columnas con las propiedades necesarias
   const configuredColumnsEnel = useMemo(() => {
-    return columnsEnel.map((col) => {
+    return columnsEnel.map(col => {
       if (col.id === 'acciones') {
         return {
           ...col,
           cell: ({ row }: { row: any }) => {
             return (
-              <div className="text-center">
+              <div className='text-center'>
                 {row.original.confirmacion === 'Confirmado' ? (
-                  <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+                  <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'>
                     Confirmado
                   </Badge>
                 ) : row.original.indice === '' ? (
-                  <Badge className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800">
+                  <Badge className='bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800'>
                     Inhabilitado
                   </Badge>
                 ) : (
@@ -406,15 +409,15 @@ export default function RevisarPrecioComponent({
   }, [isAuthorized, onRecargarPrecios]);
 
   const configuredColumnsEnerlova = useMemo(() => {
-    return columnsEnerlova.map((col) => {
+    return columnsEnerlova.map(col => {
       if (col.id === 'acciones') {
         return {
           ...col,
           cell: ({ row }: { row: any }) => {
             return (
-              <div className="text-center">
+              <div className='text-center'>
                 {row.original.confirmacion === 'Confirmado' ? (
-                  <Badge className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800">
+                  <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'>
                     Confirmado
                   </Badge>
                 ) : (
@@ -438,16 +441,16 @@ export default function RevisarPrecioComponent({
   // Mostrar error si existe
   if (error) {
     return (
-      <div className="min-h-screen ">
-        <div className="container mx-auto p-2 space-y-3">
-          <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4">
-              <AlertCircleIcon className="w-8 h-8 text-red-600 dark:text-red-400" />
+      <div className='min-h-screen '>
+        <div className='container mx-auto p-2 space-y-3'>
+          <div className='text-center py-12'>
+            <div className='inline-flex items-center justify-center w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-2xl mb-4'>
+              <AlertCircleIcon className='w-8 h-8 text-red-600 dark:text-red-400' />
             </div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+            <h1 className='text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2'>
               Error al cargar datos
             </h1>
-            <p className="text-slate-600 dark:text-slate-400">{error}</p>
+            <p className='text-slate-600 dark:text-slate-400'>{error}</p>
           </div>
         </div>
       </div>
@@ -455,25 +458,25 @@ export default function RevisarPrecioComponent({
   }
 
   return (
-    <div className="min-h-screen ">
-      <div className="container mx-auto p-2 space-y-3">
+    <div className='min-h-screen '>
+      <div className='container mx-auto p-2 space-y-3'>
         {/* Header modernizado */}
-        <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
+        <div className='grid grid-cols-1 md:grid-cols-2 items-center gap-3 justify-between'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
               Revisar Precio
             </h1>
           </div>
-          <div className="flex items-center gap-3 justify-end w-full">
+          <div className='flex items-center gap-3 justify-end w-full'>
             <Dialog>
               <DialogTrigger>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                  variant='outline'
+                  size='sm'
+                  className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
                 >
-                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
-                  <span className="text-yellow-600 text-sm">Información</span>
+                  <Info className='w-4 h-4 mr-1 text-yellow-600' />
+                  <span className='text-yellow-600 text-sm'>Información</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -489,70 +492,70 @@ export default function RevisarPrecioComponent({
         </div>
 
         {/* Validación de Usuario */}
-        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50 pb-3">
+        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50 pb-3'>
           <Collapsible
             open={isValidacionOpen}
             onOpenChange={setIsValidacionOpen}
           >
             <div
-              className="flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+              className='flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
               onClick={() => setIsValidacionOpen(!isValidacionOpen)}
             >
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
-                  <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className='flex items-center gap-4'>
+                <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
+                  <Shield className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
                     Validación de Usuario
                   </CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
+                  <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
                     Autorización para realizar modificaciones de precios
                   </CardDescription>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className='flex items-center gap-3'>
                 {isAuthorized && (
                   <Badge
-                    variant="outline"
-                    className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800"
+                    variant='outline'
+                    className='bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                   >
                     ✓ Autorizado
                   </Badge>
                 )}
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant='ghost' size='icon' className='h-8 w-8'>
                   {isValidacionOpen ? (
-                    <ChevronUp className="h-5 w-5 text-slate-500" />
+                    <ChevronUp className='h-5 w-5 text-slate-500' />
                   ) : (
-                    <ChevronDown className="h-5 w-5 text-slate-500" />
+                    <ChevronDown className='h-5 w-5 text-slate-500' />
                   )}
                 </Button>
               </div>
             </div>
 
             <CollapsibleContent>
-              <CardContent className="px-6 pb-6 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                  <div className="space-y-2 w-full md:col-span-2">
-                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <KeyIcon className="w-4 h-4" />
+              <CardContent className='px-6 pb-6 space-y-6'>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-6 items-end'>
+                  <div className='space-y-2 w-full md:col-span-2'>
+                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
+                      <KeyIcon className='w-4 h-4' />
                       Contraseña de autorización
                     </Label>
                     <Input
-                      type="password"
+                      type='password'
                       value={contrasena}
                       onChange={handleContrasenaChange}
-                      className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                      placeholder="Ingresa tu contraseña"
+                      className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                      placeholder='Ingresa tu contraseña'
                     />
                   </div>
-                  <div className="flex gap-3 w-full">
+                  <div className='flex gap-3 w-full'>
                     <Button
                       onClick={validarUsuario}
                       disabled={isLoading || !contrasena}
-                      className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white flex-1"
+                      className='bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white flex-1'
                     >
-                      <CheckCircleIcon className="w-4 h-4 mr-2" />
+                      <CheckCircleIcon className='w-4 h-4 mr-2' />
                       {isLoading ? 'Validando...' : 'Autorizar'}
                     </Button>
                   </div>
@@ -560,13 +563,13 @@ export default function RevisarPrecioComponent({
 
                 {/* Resumen de selección y botón confirmar */}
                 {isAuthorized && (
-                  <div className="border-t pt-6 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                  <div className='border-t pt-6 space-y-4'>
+                    <div className='flex items-center justify-between'>
+                      <div className='space-y-1'>
+                        <h3 className='font-medium text-slate-900 dark:text-slate-100'>
                           Confirmación de Cambios
                         </h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                        <p className='text-sm text-slate-600 dark:text-slate-400'>
                           Registros seleccionados:{' '}
                           {selectedEnelRows.length +
                             selectedEnerlovaRows.length}
@@ -580,9 +583,9 @@ export default function RevisarPrecioComponent({
                           (selectedEnelRows.length === 0 &&
                             selectedEnerlovaRows.length === 0)
                         }
-                        className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+                        className='bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white'
                       >
-                        <AlertCircleIcon className="w-4 h-4 mr-2" />
+                        <AlertCircleIcon className='w-4 h-4 mr-2' />
                         {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
                       </Button>
                     </div>
@@ -590,14 +593,14 @@ export default function RevisarPrecioComponent({
                     {/* Detalle de selección */}
                     {(selectedEnelRows.length > 0 ||
                       selectedEnerlovaRows.length > 0) && (
-                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Users className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                          <span className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                      <div className='p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg'>
+                        <div className='flex items-center gap-2 mb-2'>
+                          <Users className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+                          <span className='text-sm font-medium text-blue-800 dark:text-blue-300'>
                             Resumen de selección:
                           </span>
                         </div>
-                        <div className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                        <div className='text-xs text-blue-700 dark:text-blue-400 space-y-1'>
                           {selectedEnelRows.length > 0 && (
                             <p>
                               • {selectedEnelRows.length} registros en Valores
@@ -619,10 +622,10 @@ export default function RevisarPrecioComponent({
 
               {/* Footer de autorización */}
               {isAuthorized && userData && (
-                <CardFooter className="bg-emerald-50 dark:bg-emerald-900/20 border-t border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 py-4 px-6">
-                  <div className="flex items-center gap-2">
-                    <CheckCircleIcon className="h-4 w-4" />
-                    <span className="text-sm font-medium">
+                <CardFooter className='bg-emerald-50 dark:bg-emerald-900/20 border-t border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 py-4 px-6'>
+                  <div className='flex items-center gap-2'>
+                    <CheckCircleIcon className='h-4 w-4' />
+                    <span className='text-sm font-medium'>
                       {userData.mensaje} - Puede modificar valores pendientes
                     </span>
                   </div>
@@ -633,43 +636,43 @@ export default function RevisarPrecioComponent({
         </Card>
 
         {/* Tablas de Precios con Tabs */}
-        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
-          <CardContent className="pb-3">
-            <Tabs defaultValue="enel" className="w-full">
-              <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0">
+        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
+          <CardContent className='pb-3'>
+            <Tabs defaultValue='enel' className='w-full'>
+              <TabsList className='w-full justify-start rounded-none border-b bg-transparent p-0'>
                 <TabsTrigger
-                  value="enel"
-                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  value='enel'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
                 >
-                  <Building2 className="mr-2 h-4 w-4" />
+                  <Building2 className='mr-2 h-4 w-4' />
                   Valores Enel
                 </TabsTrigger>
                 <TabsTrigger
-                  value="enerlova"
-                  className="relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  value='enerlova'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-4 py-3 text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
                 >
-                  <BarChartIcon className="mr-2 h-4 w-4" />
+                  <BarChartIcon className='mr-2 h-4 w-4' />
                   Precios Enerlova
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="enel" className="space-y-4 pt-6">
-                <div className="flex items-center justify-between">
+              <TabsContent value='enel' className='space-y-4 pt-6'>
+                <div className='flex items-center justify-between'>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
                       Valores Compañía de Electricidad
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className='text-sm text-slate-600 dark:text-slate-400'>
                       Revisión de precios para el período activo
                     </p>
                   </div>
                   <Badge
-                    variant="outline"
-                    className="bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700"
+                    variant='outline'
+                    className='bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                   >
-                    <CalendarIcon className="w-3 h-3 mr-1" />
+                    <CalendarIcon className='w-3 h-3 mr-1' />
                     {isPeriodoLoading ? (
-                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className='h-4 w-20' />
                     ) : dataPeriodoAbierto && dataPeriodoAbierto.length > 0 ? (
                       dataPeriodoAbierto[0].descripcion
                     ) : (
@@ -677,7 +680,7 @@ export default function RevisarPrecioComponent({
                     )}
                   </Badge>
                 </div>
-                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900'>
                   <DataTable
                     columns={configuredColumnsEnel}
                     data={dataConsultarPreciosUno}
@@ -689,46 +692,46 @@ export default function RevisarPrecioComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value="enerlova" className="space-y-4 pt-6">
-                <div className="flex items-center justify-between">
+              <TabsContent value='enerlova' className='space-y-4 pt-6'>
+                <div className='flex items-center justify-between'>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+                    <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
                       Precios por Ciclo de Facturación
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className='text-sm text-slate-600 dark:text-slate-400'>
                       Precios de ENERLOVA según ciclo de facturación
                     </p>
                   </div>
                   <Badge
-                    variant="outline"
-                    className="bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"
+                    variant='outline'
+                    className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                   >
-                    <ClockIcon className="w-3 h-3 mr-1" />
+                    <ClockIcon className='w-3 h-3 mr-1' />
                     Ciclo {cicloSeleccionado}
                   </Badge>
                 </div>
 
                 {/* Selector de ciclo */}
-                <div className="flex flex-col md:flex-row gap-4 items-end">
-                  <div className="space-y-2 flex-1">
-                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <ClockIcon className="w-4 h-4" />
+                <div className='flex flex-col md:flex-row gap-4 items-end'>
+                  <div className='space-y-2 flex-1'>
+                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
+                      <ClockIcon className='w-4 h-4' />
                       Ciclo de Facturación
                     </Label>
                     {isCiclosLoading ? (
-                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className='h-10 w-full' />
                     ) : (
                       <Select
                         value={cicloSeleccionado}
                         onValueChange={handleCicloChange}
                         disabled={isPeriodoLoading}
                       >
-                        <SelectTrigger className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
-                          <SelectValue placeholder="Selecciona un ciclo" />
+                        <SelectTrigger className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'>
+                          <SelectValue placeholder='Selecciona un ciclo' />
                         </SelectTrigger>
                         <SelectContent>
                           {ciclosFacturacion && ciclosFacturacion.length > 0 ? (
-                            ciclosFacturacion.map((ciclo) => (
+                            ciclosFacturacion.map(ciclo => (
                               <SelectItem
                                 key={ciclo.diaFacturacion}
                                 value={ciclo.diaFacturacion}
@@ -738,8 +741,8 @@ export default function RevisarPrecioComponent({
                             ))
                           ) : (
                             <>
-                              <SelectItem value="15">Ciclo día 15</SelectItem>
-                              <SelectItem value="30">Ciclo día 30</SelectItem>
+                              <SelectItem value='15'>Ciclo día 15</SelectItem>
+                              <SelectItem value='30'>Ciclo día 30</SelectItem>
                             </>
                           )}
                         </SelectContent>
@@ -749,7 +752,7 @@ export default function RevisarPrecioComponent({
                 </div>
 
                 {/* Tabla de precios Enerlova */}
-                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900'>
                   <DataTable
                     columns={configuredColumnsEnerlova}
                     data={dataConsultarPreciosDos}

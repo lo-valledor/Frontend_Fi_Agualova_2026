@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Card, CardContent } from '~/components/ui/card';
 
 interface LoadingStateProps {
@@ -28,12 +29,12 @@ export function LoadingState({
     <div
       className={`flex items-center justify-center ${containerSizes[size]} w-full ${className}`}
     >
-      <div className="flex flex-col items-center">
+      <div className='flex flex-col items-center'>
         <div
           className={`animate-spin rounded-full ${spinnerSizes[size]} border-b-2 border-indigo-600`}
         ></div>
         {message && (
-          <p className="text-gray-500 dark:text-gray-400 mt-4">{message}</p>
+          <p className='text-gray-500 dark:text-gray-400 mt-4'>{message}</p>
         )}
       </div>
     </div>
@@ -51,8 +52,8 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <Card className={`mt-4 ${className}`}>
-      <CardContent className="flex items-center justify-center p-8">
-        <p className="text-gray-500 dark:text-gray-400">{message}</p>
+      <CardContent className='flex items-center justify-center p-8'>
+        <p className='text-gray-500 dark:text-gray-400'>{message}</p>
       </CardContent>
     </Card>
   );

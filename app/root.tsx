@@ -1,19 +1,21 @@
+import { Toaster } from 'sonner';
+
+import React, { useEffect } from 'react';
+
 import {
-  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  isRouteErrorResponse,
   useNavigation,
 } from 'react-router';
-import React, { useEffect } from 'react';
 
 import './app.css';
 import { ThemeProvider } from './components/theme-provider';
-import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import { AuthProvider } from './context/AuthContext';
-import { Toaster } from 'sonner';
+import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext';
 
 export const links = () => [
@@ -31,10 +33,10 @@ export const links = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
         <Meta />
         <Links />
       </head>
@@ -64,12 +66,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
         <BreadcrumbProvider>
           <AuthProvider>{children}</AuthProvider>
         </BreadcrumbProvider>
       </ThemeProvider>
-      <Toaster richColors position="top-right" closeButton />
+      <Toaster richColors position='top-right' closeButton />
       <ScrollRestoration />
       <Scripts />
     </>
@@ -97,14 +99,14 @@ export function ErrorBoundary({ error }: { error: unknown }) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-red-600 mb-4">{message}</h1>
-        <p className="text-lg mb-4">{details}</p>
+    <main className='pt-16 p-4 container mx-auto'>
+      <div className='max-w-2xl mx-auto'>
+        <h1 className='text-3xl font-bold text-red-600 mb-4'>{message}</h1>
+        <p className='text-lg mb-4'>{details}</p>
 
-        <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-4">
-          <h2 className="font-semibold mb-2">Información de depuración:</h2>
-          <ul className="text-sm space-y-1">
+        <div className='bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-4'>
+          <h2 className='font-semibold mb-2'>Información de depuración:</h2>
+          <ul className='text-sm space-y-1'>
             <li>
               <strong>Navegador:</strong> {navigator.userAgent}
             </li>
@@ -119,20 +121,20 @@ export function ErrorBoundary({ error }: { error: unknown }) {
         </div>
 
         {stack && (
-          <details className="mb-4">
-            <summary className="cursor-pointer font-semibold">
+          <details className='mb-4'>
+            <summary className='cursor-pointer font-semibold'>
               Ver stack trace completo
             </summary>
-            <pre className="w-full p-4 overflow-x-auto bg-gray-100 dark:bg-gray-800 rounded mt-2 text-xs">
+            <pre className='w-full p-4 overflow-x-auto bg-gray-100 dark:bg-gray-800 rounded mt-2 text-xs'>
               <code>{stack}</code>
             </pre>
           </details>
         )}
 
-        <div className="flex gap-4">
+        <div className='flex gap-4'>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700'
           >
             Recargar página
           </button>
@@ -141,7 +143,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
               localStorage.clear();
               window.location.href = '/auth/login';
             }}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            className='px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'
           >
             Limpiar sesión y volver al login
           </button>

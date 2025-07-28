@@ -1,7 +1,8 @@
 // src/services/authService.ts
-import axiosInstance from './axiosConfig';
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
+
+import axiosInstance from './axiosConfig';
 
 interface LoginDto {
   usuario: string;
@@ -18,7 +19,7 @@ export const authService = {
       //console.log('Intentando login con:', { usuario: credentials.usuario });
       const response = await axiosInstance.post<LoginResponse>(
         '/login',
-        credentials,
+        credentials
       );
       //console.log('Respuesta del servidor:', response.status, response.data);
 
@@ -36,7 +37,7 @@ export const authService = {
           throw new Error('Usuario o contraseña incorrectos');
         }
         throw new Error(
-          error.response?.data || 'Error al intentar iniciar sesión',
+          error.response?.data || 'Error al intentar iniciar sesión'
         );
       }
       throw new Error('Error al intentar iniciar sesión');

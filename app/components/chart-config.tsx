@@ -1,4 +1,5 @@
 import { BarChart3, LayoutDashboard, Monitor } from 'lucide-react';
+
 import { type ChartConfig } from '~/components/ui/chart';
 
 export const chartConfig = {

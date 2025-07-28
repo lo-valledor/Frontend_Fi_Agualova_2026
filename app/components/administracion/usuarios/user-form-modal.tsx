@@ -1,6 +1,9 @@
-import type React from 'react';
+import { Eye, EyeOff, User } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { useState, useEffect } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -20,12 +23,10 @@ import {
   SelectValue,
 } from '~/components/ui/select';
 import { useAdministracion } from '~/hooks/use-administracion';
-import { toast } from 'sonner';
-import { User, Eye, EyeOff } from 'lucide-react';
 import type {
-  Usuarios,
-  CrearUsuarioProps,
   ActualizarUsuarioProps,
+  CrearUsuarioProps,
+  Usuarios,
 } from '~/types/administracion';
 
 interface UserFormModalProps {
@@ -149,13 +150,13 @@ export function UserFormModal({
 
   const handleInputChange = (
     field: keyof CrearUsuarioProps,
-    value: string | number | boolean,
+    value: string | number | boolean
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
 
     // También actualizar updateData para modo edición
     if (mode === 'edit' && field !== 'perfilId') {
-      setUpdateData((prev) => ({ ...prev, [field]: value }));
+      setUpdateData(prev => ({ ...prev, [field]: value }));
     }
   };
 
@@ -165,73 +166,71 @@ export function UserFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-2xl font-bold flex items-center gap-3 text-sky-900 dark:text-sky-100">
-            <div className="p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg">
-              <User className="h-6 w-6 text-sky-600 dark:text-sky-400" />
+      <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto'>
+        <DialogHeader className='space-y-3'>
+          <DialogTitle className='text-2xl font-bold flex items-center gap-3 text-sky-900 dark:text-sky-100'>
+            <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
+              <User className='h-6 w-6 text-sky-600 dark:text-sky-400' />
             </div>
             {mode === 'add' ? 'Crear Nuevo Usuario' : 'Editar Usuario'}
           </DialogTitle>
-          <DialogDescription className="text-base text-muted-foreground">
+          <DialogDescription className='text-base text-muted-foreground'>
             {mode === 'add'
               ? 'Complete toda la información requerida para crear un nuevo usuario en el sistema.'
               : 'Modifique los campos que desee actualizar. Los campos vacíos mantendrán su valor actual.'}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="nombres">Nombres</Label>
+        <form onSubmit={handleSubmit} className='space-y-4'>
+          <div className='grid grid-cols-2 gap-4'>
+            <div className='space-y-2'>
+              <Label htmlFor='nombres'>Nombres</Label>
               <Input
-                id="nombres"
+                id='nombres'
                 value={formData.nombres}
-                onChange={(e) => handleInputChange('nombres', e.target.value)}
-                placeholder="Ingresa los nombres"
+                onChange={e => handleInputChange('nombres', e.target.value)}
+                placeholder='Ingresa los nombres'
                 required
                 disabled={isLoading}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="apellidos">Apellidos</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='apellidos'>Apellidos</Label>
               <Input
-                id="apellidos"
+                id='apellidos'
                 value={formData.apellidos}
-                onChange={(e) => handleInputChange('apellidos', e.target.value)}
-                placeholder="Ingresa los apellidos"
+                onChange={e => handleInputChange('apellidos', e.target.value)}
+                placeholder='Ingresa los apellidos'
                 required
                 disabled={isLoading}
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="nombreDeUsuario">Nombre de Usuario</Label>
+          <div className='space-y-2'>
+            <Label htmlFor='nombreDeUsuario'>Nombre de Usuario</Label>
             <Input
-              id="nombreDeUsuario"
+              id='nombreDeUsuario'
               value={formData.nombreDeUsuario}
-              onChange={(e) =>
+              onChange={e =>
                 handleInputChange('nombreDeUsuario', e.target.value)
               }
-              placeholder="Ingresa el nombre de usuario"
+              placeholder='Ingresa el nombre de usuario'
               required
               disabled={isLoading}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="contrasena">
+          <div className='space-y-2'>
+            <Label htmlFor='contrasena'>
               {mode === 'add' ? 'Contraseña' : 'Nueva Contraseña (opcional)'}
             </Label>
-            <div className="relative">
+            <div className='relative'>
               <Input
-                id="contrasena"
+                id='contrasena'
                 type={showPassword ? 'text' : 'password'}
                 value={formData.contrasena}
-                onChange={(e) =>
-                  handleInputChange('contrasena', e.target.value)
-                }
+                onChange={e => handleInputChange('contrasena', e.target.value)}
                 placeholder={
                   mode === 'add'
                     ? 'Ingresa la contraseña'
@@ -239,107 +238,107 @@ export function UserFormModal({
                 }
                 required={mode === 'add'}
                 disabled={isLoading}
-                className="pr-10"
+                className='pr-10'
               />
               <button
-                type="button"
+                type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500"
+                className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500'
               >
                 {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
+                  <EyeOff className='h-5 w-5' />
                 ) : (
-                  <Eye className="h-5 w-5" />
+                  <Eye className='h-5 w-5' />
                 )}
               </button>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="departamento">Departamento</Label>
+          <div className='space-y-2'>
+            <Label htmlFor='departamento'>Departamento</Label>
             <Select
               value={formData.departamento.toString()}
-              onValueChange={(value) =>
+              onValueChange={value =>
                 handleInputChange('departamento', Number.parseInt(value))
               }
               disabled={isLoading}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Selecciona un departamento" />
+              <SelectTrigger className='w-full'>
+                <SelectValue placeholder='Selecciona un departamento' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">Gerencia</SelectItem>
-                <SelectItem value="2">Tecnología</SelectItem>
-                <SelectItem value="3">Recaudación</SelectItem>
-                <SelectItem value="4">Seguridad</SelectItem>
-                <SelectItem value="5">RR.HH</SelectItem>
-                <SelectItem value="6">Enerlova</SelectItem>
+                <SelectItem value='1'>Gerencia</SelectItem>
+                <SelectItem value='2'>Tecnología</SelectItem>
+                <SelectItem value='3'>Recaudación</SelectItem>
+                <SelectItem value='4'>Seguridad</SelectItem>
+                <SelectItem value='5'>RR.HH</SelectItem>
+                <SelectItem value='6'>Enerlova</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className='grid grid-cols-2 gap-4'>
             {mode === 'add' && (
-              <div className="space-y-2">
-                <Label htmlFor="perfilId">Perfil</Label>
+              <div className='space-y-2'>
+                <Label htmlFor='perfilId'>Perfil</Label>
                 <Select
                   value={formData.perfilId.toString()}
-                  onValueChange={(value) =>
+                  onValueChange={value =>
                     handleInputChange('perfilId', Number.parseInt(value))
                   }
                   disabled={isLoading}
                 >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecciona un perfil" />
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Selecciona un perfil' />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">Administrador</SelectItem>
-                    <SelectItem value="2">Lectura</SelectItem>
-                    <SelectItem value="3">Supervisor Operativo</SelectItem>
-                    <SelectItem value="4">
+                    <SelectItem value='1'>Administrador</SelectItem>
+                    <SelectItem value='2'>Lectura</SelectItem>
+                    <SelectItem value='3'>Supervisor Operativo</SelectItem>
+                    <SelectItem value='4'>
                       Administrativo Facturación
                     </SelectItem>
-                    <SelectItem value="7">Supervisor Facturación</SelectItem>
-                    <SelectItem value="8">Usuario Consulta</SelectItem>
-                    <SelectItem value="10">
+                    <SelectItem value='7'>Supervisor Facturación</SelectItem>
+                    <SelectItem value='8'>Usuario Consulta</SelectItem>
+                    <SelectItem value='10'>
                       Autorizador Límite Invierno
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="activo">Estado</Label>
+            <div className='space-y-2'>
+              <Label htmlFor='activo'>Estado</Label>
               <Select
                 value={formData.activo.toString()}
-                onValueChange={(value) =>
+                onValueChange={value =>
                   handleInputChange('activo', value === 'true')
                 }
                 disabled={isLoading}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className='w-full'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="true">Activo</SelectItem>
-                  <SelectItem value="false">Inactivo</SelectItem>
+                  <SelectItem value='true'>Activo</SelectItem>
+                  <SelectItem value='false'>Inactivo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <DialogFooter className="gap-2 pt-4">
+          <DialogFooter className='gap-2 pt-4'>
             <Button
-              type="button"
-              variant="outline"
+              type='button'
+              variant='outline'
               onClick={onClose}
               disabled={isLoading}
             >
               Cancelar
             </Button>
             <Button
-              type="submit"
-              className="bg-sky-600 hover:bg-sky-700 text-white"
+              type='submit'
+              className='bg-sky-600 hover:bg-sky-700 text-white'
               disabled={isLoading}
             >
               {isLoading

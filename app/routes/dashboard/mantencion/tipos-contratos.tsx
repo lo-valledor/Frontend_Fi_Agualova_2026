@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/tipos-contratos';
-import TiposContratosComponent from '~/components/mantencion/tipos-contratos/tipos-contratos-component';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import TiposContratosComponent from '~/components/mantencion/tipos-contratos/tipos-contratos-component';
 import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/tipos-contratos';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Tipos de Contratos' },
-    { name: 'description', content: 'Gestión de Tipos de Contratos' },
+    { name: 'description', content: ' Tipos de Contratos' },
   ];
 }
 

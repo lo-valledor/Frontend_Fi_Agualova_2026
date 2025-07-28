@@ -1,6 +1,10 @@
-import { XCircle, Loader2, AlertCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import { AlertCircle, Loader2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
+
+import React, { useState } from 'react';
+
+import { useNavigate } from 'react-router';
+
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -10,13 +14,12 @@ import {
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogDescription,
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import api from '~/lib/api';
-import { useNavigate } from 'react-router';
 import { cn } from '~/lib/utils';
 
 interface CerrarPeriodoProps {
@@ -44,7 +47,7 @@ export default function CerrarPeriodo({
           headers: {
             'Content-Type': 'application/json',
           },
-        },
+        }
       );
 
       if (response.status === 200) {
@@ -72,28 +75,28 @@ export default function CerrarPeriodo({
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogTrigger asChild>
         <Button
-          variant="outline"
-          size="sm"
+          variant='outline'
+          size='sm'
           className={cn(
             'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30 gap-1.5 w-full',
-            className,
+            className
           )}
         >
-          <XCircle className="h-4 w-4" />
+          <XCircle className='h-4 w-4' />
           Cerrar Periodo
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg shadow-sm">
-              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
+          <div className='flex items-center gap-3'>
+            <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-lg shadow-sm'>
+              <AlertCircle className='h-5 w-5 text-red-600 dark:text-red-400' />
             </div>
             <div>
-              <AlertDialogTitle className="text-lg font-semibold text-red-800 dark:text-red-200">
+              <AlertDialogTitle className='text-lg font-semibold text-red-800 dark:text-red-200'>
                 Cerrar periodo de facturación
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-sm text-muted-foreground">
+              <AlertDialogDescription className='text-sm text-muted-foreground'>
                 Esta acción cerrará el periodo de facturación {periodoId}.
                 ¿Estás seguro de que deseas continuar?
               </AlertDialogDescription>
@@ -101,29 +104,29 @@ export default function CerrarPeriodo({
           </div>
         </AlertDialogHeader>
 
-        <div className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-md p-3 my-2">
-          <p className="text-sm text-red-700 dark:text-red-300">
+        <div className='bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-md p-3 my-2'>
+          <p className='text-sm text-red-700 dark:text-red-300'>
             Al cerrar el periodo, no se podrán realizar más operaciones en él a
             menos que sea reabierto por un usuario autorizado.
           </p>
         </div>
 
-        <AlertDialogFooter className="gap-2 pt-2">
-          <AlertDialogCancel className="text-muted-foreground hover:text-muted-foreground hover:bg-muted">
+        <AlertDialogFooter className='gap-2 pt-2'>
+          <AlertDialogCancel className='text-muted-foreground hover:text-muted-foreground hover:bg-muted'>
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleCerrarPeriodo}
-            className="gap-2 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800"
+            className='gap-2 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800'
           >
             {isLoading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className='h-4 w-4 animate-spin' />
                 Procesando...
               </>
             ) : (
               <>
-                <XCircle className="h-4 w-4" />
+                <XCircle className='h-4 w-4' />
                 Cerrar Periodo
               </>
             )}

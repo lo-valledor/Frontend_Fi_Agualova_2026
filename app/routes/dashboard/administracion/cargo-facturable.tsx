@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
+
 import CargoFacturableComponent from '~/components/administracion/cargo-facturable/cargo-facturable-component';
-import type { Route } from './+types/cargo-facturable';
-import { administracionService } from '~/services/administracionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { administracionService } from '~/services/administracionService';
+
+import type { Route } from './+types/cargo-facturable';
 
 export function meta({}: Route.MetaArgs) {
   return [

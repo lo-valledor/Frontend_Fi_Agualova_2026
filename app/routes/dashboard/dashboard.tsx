@@ -1,15 +1,17 @@
 /* eslint-disable no-empty-pattern */
 import { useLoaderData } from 'react-router';
-import type { Route } from './+types/dashboard';
+
 import DashboardComponent from '~/components/dashboard/dashboard-component';
 import HydrateFallback from '~/components/hydrate-fallback';
 import api from '~/lib/api';
+import type { GetLimiteInvierno } from '~/types/administracion';
 import type {
   PeriodoAbierto,
   TotalesCorteReposicion,
   ValidarSectoresPendientes,
 } from '~/types/operaciones';
-import type { GetLimiteInvierno } from '~/types/administracion';
+
+import type { Route } from './+types/dashboard';
 
 export function meta({}: Route.MetaArgs) {
   return [

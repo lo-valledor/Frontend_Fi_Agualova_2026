@@ -49,15 +49,15 @@ export const useDebugInfo = () => {
 
     // Verificar si hay scripts externos sospechosos
     const scripts = Array.from(document.querySelectorAll('script')).map(
-      (s) => s.src,
+      s => s.src
     );
     const suspiciousScripts = scripts.filter(
-      (src) =>
+      src =>
         src.includes('main.js') ||
         src.includes('fiddler') ||
         src.includes('charles') ||
         src.includes('proxy') ||
-        src.includes('debug'),
+        src.includes('debug')
     );
 
     if (suspiciousScripts.length > 0) {
@@ -108,9 +108,9 @@ export const useDebugInfo = () => {
 
       if (proxyInfo.detected) {
         console.warn('⚠️ POSIBLE INTERFERENCIA DETECTADA:');
-        proxyInfo.evidence.forEach((e) => console.warn(`  - ${e}`));
+        proxyInfo.evidence.forEach(e => console.warn(`  - ${e}`));
         console.warn(
-          '  Esto puede causar problemas con las headers de autorización',
+          '  Esto puede causar problemas con las headers de autorización'
         );
       }
     };

@@ -1,49 +1,44 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import {
+  AlertCircle,
+  AlertTriangle,
+  BarChart3,
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Gauge,
+  Grid3X3,
+  History,
+  Info,
+  MapPin,
+  Pencil,
+  RefreshCw,
+} from 'lucide-react';
 import { toast } from 'sonner';
-import { useApiWithLoadingBar } from '~/lib/api';
+
+import React, { useCallback, useEffect, useState } from 'react';
+
 import ClockLoader from 'react-spinners/ClockLoader';
+
+import { useActivityEvent } from '~/components/activity-tracker-hoc';
+import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
+import MonitorNichos from '~/components/monitor/monitor-lecturas/monitor-nichos';
+import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { Separator } from '~/components/ui/separator';
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
-
-import { ScrollArea } from '~/components/ui/scroll-area';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '~/components/ui/collapsible';
 import {
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  Eye,
-  Grid3X3,
-  History,
-  MapPin,
-  Pencil,
-  RefreshCw,
-  BarChart3,
-  AlertTriangle,
-  Info,
-  Calendar,
-  Gauge,
-} from 'lucide-react';
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '~/components/ui/sheet';
-import {
   Dialog,
-  DialogTrigger,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
+  DialogTrigger,
 } from '~/components/ui/dialog';
 import {
   DropdownMenu,
@@ -51,18 +46,27 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import { Separator } from '~/components/ui/separator';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '~/components/ui/sheet';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '~/components/ui/tooltip';
-import MonitorNichos from '~/components/monitor/monitor-lecturas/monitor-nichos';
-import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
-import { Alert, AlertDescription } from '~/components/ui/alert';
-import { formatToYYYYMMDD } from '~/utils/date-formatter';
-import { cn } from '~/lib/utils'; // Assuming you have this utility for conditional classes
+import { useApiWithLoadingBar } from '~/lib/api';
+import { cn } from '~/lib/utils';
+// Assuming you have this utility for conditional classes
 import type { Fila, Medidor, NichoBusqueda } from '~/types/monitor';
+import { formatToYYYYMMDD } from '~/utils/date-formatter';
+
 // Status helpers with enhanced information
 const getMeterStatus = (claveHtml: string) => {
   const statusMap = {
@@ -72,7 +76,7 @@ const getMeterStatus = (claveHtml: string) => {
       borderColor: 'border-gray-500',
       textColor: 'text-gray-500',
       label: 'Sin Lectura',
-      icon: <History className="h-3.5 w-3.5" />,
+      icon: <History className='h-3.5 w-3.5' />,
       severity: 1,
     },
     SINCLA: {
@@ -81,7 +85,7 @@ const getMeterStatus = (claveHtml: string) => {
       borderColor: 'border-green-500',
       textColor: 'text-green-500',
       label: 'Lectura Normal',
-      icon: <Grid3X3 className="h-3.5 w-3.5" />,
+      icon: <Grid3X3 className='h-3.5 w-3.5' />,
       severity: 0,
     },
     CLAINF: {
@@ -90,7 +94,7 @@ const getMeterStatus = (claveHtml: string) => {
       borderColor: 'border-yellow-500',
       textColor: 'text-yellow-500',
       label: 'Clave Informativa',
-      icon: <AlertCircle className="h-3.5 w-3.5" />,
+      icon: <AlertCircle className='h-3.5 w-3.5' />,
       severity: 2,
     },
     CLAREL: {
@@ -99,7 +103,7 @@ const getMeterStatus = (claveHtml: string) => {
       borderColor: 'border-orange-500',
       textColor: 'text-orange-500',
       label: 'Clave Relevante',
-      icon: <AlertTriangle className="h-3.5 w-3.5" />,
+      icon: <AlertTriangle className='h-3.5 w-3.5' />,
       severity: 3,
     },
     CLACRI: {
@@ -108,7 +112,7 @@ const getMeterStatus = (claveHtml: string) => {
       borderColor: 'border-red-500',
       textColor: 'text-red-500',
       label: 'Clave Crítica',
-      icon: <AlertCircle className="h-3.5 w-3.5" />,
+      icon: <AlertCircle className='h-3.5 w-3.5' />,
       severity: 4,
     },
     LECCER: {
@@ -117,7 +121,7 @@ const getMeterStatus = (claveHtml: string) => {
       borderColor: 'border-blue-500',
       textColor: 'text-blue-500',
       label: 'Lectura Cerrada',
-      icon: <MapPin className="h-3.5 w-3.5" />,
+      icon: <MapPin className='h-3.5 w-3.5' />,
       severity: 0,
     },
     LECIMP: {
@@ -126,7 +130,7 @@ const getMeterStatus = (claveHtml: string) => {
       borderColor: 'border-purple-500',
       textColor: 'text-purple-500',
       label: 'En Facturación',
-      icon: <BarChart3 className="h-3.5 w-3.5" />,
+      icon: <BarChart3 className='h-3.5 w-3.5' />,
       severity: 0,
     },
   };
@@ -173,7 +177,7 @@ const calculateTotalStats = (nichos: NichoBusqueda[]) => {
         sinlec: acc.sinlec + stats.sinlec,
       };
     },
-    { total: 0, critical: 0, warning: 0, info: 0, normal: 0, sinlec: 0 },
+    { total: 0, critical: 0, warning: 0, info: 0, normal: 0, sinlec: 0 }
   );
 };
 
@@ -215,13 +219,13 @@ const MeterCard = ({
     <Card
       className={`overflow-hidden transition-all duration-300 hover:shadow-md border-l-4 ${status.borderColor}`}
     >
-      <CardContent className="p-2">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-1">
-            <StatusIndicator status={status} size="sm" />
+      <CardContent className='p-2'>
+        <div className='flex justify-between items-start'>
+          <div className='flex items-center gap-1'>
+            <StatusIndicator status={status} size='sm' />
             <div>
-              <div className="font-medium text-xs">{medidor.nSerie}</div>
-              <div className="text-[10px] text-muted-foreground">
+              <div className='font-medium text-xs'>{medidor.nSerie}</div>
+              <div className='text-[10px] text-muted-foreground'>
                 ID: {medidor.id}
               </div>
             </div>
@@ -230,30 +234,34 @@ const MeterCard = ({
           <Sheet>
             <SheetTrigger asChild>
               <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 w-6 p-0"
+                variant='ghost'
+                size='sm'
+                className='h-6 w-6 p-0'
                 onClick={() => {
-                  trackDataAction('Ver detalles', 'Monitor de Lecturas', `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`);
+                  trackDataAction(
+                    'Ver detalles',
+                    'Monitor de Lecturas',
+                    `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`
+                  );
                 }}
               >
-                <Eye className="h-3 w-3" />
+                <Eye className='h-3 w-3' />
               </Button>
             </SheetTrigger>
-            <SheetContent className="overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
-              <SheetHeader className="border-b">
+            <SheetContent className='overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl'>
+              <SheetHeader className='border-b'>
                 <SheetTitle>
-                  <div className="flex items-center gap-3 rounded-lg p-4">
+                  <div className='flex items-center gap-3 rounded-lg p-4'>
                     <div
                       className={`p-2 rounded-lg ${status.bgColor} text-white`}
                     >
                       {status.icon}
                     </div>
                     <div>
-                      <h2 className="text-xl font-semibold tracking-tight">
+                      <h2 className='text-xl font-semibold tracking-tight'>
                         Detalle de Lectura
                       </h2>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className='text-sm text-muted-foreground mt-1'>
                         ID: {medidor.id} | Medidor: {medidor.nSerie}
                       </p>
                     </div>
@@ -261,30 +269,30 @@ const MeterCard = ({
                   </div>
                 </SheetTitle>
               </SheetHeader>
-              <div className="pt-2">
+              <div className='pt-2'>
                 <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
               </div>
             </SheetContent>
           </Sheet>
         </div>
 
-        <div className="mt-2 grid grid-cols-2 gap-1 text-xs">
+        <div className='mt-2 grid grid-cols-2 gap-1 text-xs'>
           <div>
-            <div className="text-muted-foreground text-[10px]">Lectura</div>
-            <div className="font-semibold text-xs">
+            <div className='text-muted-foreground text-[10px]'>Lectura</div>
+            <div className='font-semibold text-xs'>
               {medidor.ultimaLectura || '-'}
             </div>
           </div>
           <div>
-            <div className="text-muted-foreground text-[10px]">Consumo</div>
-            <div className="font-semibold text-xs">
+            <div className='text-muted-foreground text-[10px]'>Consumo</div>
+            <div className='font-semibold text-xs'>
               {medidor.consumo || '0'}
             </div>
           </div>
-          <div className="col-span-2">
-            <div className="font-medium text-xs flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              <span className="truncate">
+          <div className='col-span-2'>
+            <div className='font-medium text-xs flex items-center gap-1'>
+              <Calendar className='h-3 w-3' />
+              <span className='truncate'>
                 {medidor.fechaLectura
                   ? new Date(medidor.fechaLectura).toLocaleString()
                   : 'Sin registro'}
@@ -293,15 +301,15 @@ const MeterCard = ({
           </div>
         </div>
 
-        <Separator className="my-2" />
+        <Separator className='my-2' />
 
-        <div className="flex justify-center">
+        <div className='flex justify-center'>
           <Badge
-            variant="outline"
+            variant='outline'
             className={`${status.borderColor} ${status.textColor} text-[10px] px-1 py-0`}
           >
-            <span className="mr-1">{status.icon}</span>
-            <span className="truncate">{medidor.clave || status.label}</span>
+            <span className='mr-1'>{status.icon}</span>
+            <span className='truncate'>{medidor.clave || status.label}</span>
           </Badge>
         </div>
       </CardContent>
@@ -325,36 +333,36 @@ const MeterRowDetailed = ({
       className={cn(
         'group grid items-center gap-4 p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 border-l-4',
         'grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]',
-        status.borderColor,
+        status.borderColor
       )}
     >
       {/* Status Indicator & Name/ID */}
-      <div className="flex items-center gap-2 min-w-0">
-        <StatusIndicator status={status} size="sm" />
-        <div className="min-w-0">
-          <div className="font-medium text-sm truncate">{medidor.nSerie}</div>
-          <div className="text-xs text-muted-foreground">ID: {medidor.id}</div>
+      <div className='flex items-center gap-2 min-w-0'>
+        <StatusIndicator status={status} size='sm' />
+        <div className='min-w-0'>
+          <div className='font-medium text-sm truncate'>{medidor.nSerie}</div>
+          <div className='text-xs text-muted-foreground'>ID: {medidor.id}</div>
         </div>
       </div>
 
       {/* Lectura */}
-      <div className="text-left">
-        <div className="text-xs text-muted-foreground">Lectura</div>
-        <div className="font-semibold text-sm">
+      <div className='text-left'>
+        <div className='text-xs text-muted-foreground'>Lectura</div>
+        <div className='font-semibold text-sm'>
           {medidor.ultimaLectura || '-'}
         </div>
       </div>
 
       {/* Consumo */}
-      <div className="text-left">
-        <div className="text-xs text-muted-foreground">Consumo</div>
-        <div className="font-semibold text-sm">{medidor.consumo || '0'}</div>
+      <div className='text-left'>
+        <div className='text-xs text-muted-foreground'>Consumo</div>
+        <div className='font-semibold text-sm'>{medidor.consumo || '0'}</div>
       </div>
 
       {/* Fecha */}
-      <div className="min-w-0 text-left">
-        <div className="text-xs text-muted-foreground">Fecha</div>
-        <div className="text-sm font-medium truncate">
+      <div className='min-w-0 text-left'>
+        <div className='text-xs text-muted-foreground'>Fecha</div>
+        <div className='text-sm font-medium truncate'>
           {medidor.fechaLectura
             ? new Date(medidor.fechaLectura).toLocaleString('es-CL', {
                 dateStyle: 'short',
@@ -366,49 +374,53 @@ const MeterRowDetailed = ({
       </div>
 
       {/* Estado */}
-      <div className="flex justify-start">
+      <div className='flex justify-start'>
         <Badge
-          variant="outline"
+          variant='outline'
           className={cn(
             'text-xs whitespace-nowrap',
             status.borderColor,
-            status.textColor,
+            status.textColor
           )}
         >
-          <span className="mr-1">{status.icon}</span>
-          <span className="truncate">{medidor.clave || status.label}</span>
+          <span className='mr-1'>{status.icon}</span>
+          <span className='truncate'>{medidor.clave || status.label}</span>
         </Badge>
       </div>
 
       {/* Acción */}
-      <div className="flex justify-end">
+      <div className='flex justify-end'>
         <Sheet>
-                      <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => {
-                  trackDataAction('Ver detalles', 'Monitor de Lecturas', `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`);
-                }}
-              >
-                <Eye className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
-          <SheetContent className="overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
-            <SheetHeader className="border-b">
+          <SheetTrigger asChild>
+            <Button
+              variant='ghost'
+              size='sm'
+              className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity'
+              onClick={() => {
+                trackDataAction(
+                  'Ver detalles',
+                  'Monitor de Lecturas',
+                  `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`
+                );
+              }}
+            >
+              <Eye className='h-4 w-4' />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className='overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl'>
+            <SheetHeader className='border-b'>
               <SheetTitle>
-                <div className="flex items-center gap-3 rounded-lg p-4">
+                <div className='flex items-center gap-3 rounded-lg p-4'>
                   <div
                     className={cn('p-2 rounded-lg text-white', status.bgColor)}
                   >
                     {status.icon}
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold tracking-tight">
+                    <h2 className='text-xl font-semibold tracking-tight'>
                       Detalle de Lectura
                     </h2>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className='text-sm text-muted-foreground mt-1'>
                       ID: {medidor.id} | Medidor: {medidor.nSerie}
                     </p>
                   </div>
@@ -416,7 +428,7 @@ const MeterRowDetailed = ({
                 </div>
               </SheetTitle>
             </SheetHeader>
-            <div className="pt-2">
+            <div className='pt-2'>
               <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
             </div>
           </SheetContent>
@@ -457,7 +469,7 @@ export default function ResultadosBusqueda({
   const [viewMode, setViewMode] = useState('default'); // 'default', 'compact', 'detailed'
   const [selectedNichoIndex, setSelectedNichoIndex] = useState(0);
   const [expandedFilas, setExpandedFilas] = useState<Record<string, boolean>>(
-    {},
+    {}
   );
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
   const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
@@ -488,7 +500,11 @@ export default function ResultadosBusqueda({
       return;
     }
 
-    trackDataAction('Buscar', 'Monitor de Lecturas', `Sector: ${sector}, Periodo: ${periodo}`);
+    trackDataAction(
+      'Buscar',
+      'Monitor de Lecturas',
+      `Sector: ${sector}, Periodo: ${periodo}`
+    );
 
     setIsSearching(true);
     setSearchError(null);
@@ -570,9 +586,13 @@ export default function ResultadosBusqueda({
 
   const handleRefresh = useCallback(() => {
     if (sector && periodo && stfechaini && stfechafin) {
-      trackDataAction('Refrescar', 'Monitor de Lecturas', `Sector: ${sector}, Periodo: ${periodo}`);
+      trackDataAction(
+        'Refrescar',
+        'Monitor de Lecturas',
+        `Sector: ${sector}, Periodo: ${periodo}`
+      );
       // Incrementar el contador de refrescar para desencadenar la recarga
-      setRefreshCounter((prev) => prev + 1);
+      setRefreshCounter(prev => prev + 1);
 
       // Después de que se completa la búsqueda, restauramos el estado expandido
       // Esto se maneja automáticamente si preservamos el objeto de estado
@@ -600,7 +620,7 @@ export default function ResultadosBusqueda({
 
   const toggleFila: ToggleFilaFn = (nichoIndex, filaIndex) => {
     const key = `${nichoIndex}-${filaIndex}`;
-    setExpandedFilas((prev) => ({
+    setExpandedFilas(prev => ({
       ...prev,
       [key]: !prev[key],
     }));
@@ -610,14 +630,22 @@ export default function ResultadosBusqueda({
     (index: number): void;
   }
 
-  const handleNichoChange: HandleNichoChangeFn = (index) => {
+  const handleNichoChange: HandleNichoChangeFn = index => {
     const nichoName = results.nichos[index]?.nombre || `Nicho ${index + 1}`;
-    trackDataAction('Cambiar nicho', 'Monitor de Lecturas', `Nicho: ${nichoName}`);
+    trackDataAction(
+      'Cambiar nicho',
+      'Monitor de Lecturas',
+      `Nicho: ${nichoName}`
+    );
     setSelectedNichoIndex(index);
   };
 
   const handleNichoModalSuccess = () => {
-    trackDataAction('Actualizar medidor', 'Monitor de Lecturas', 'Medidor actualizado exitosamente');
+    trackDataAction(
+      'Actualizar medidor',
+      'Monitor de Lecturas',
+      'Medidor actualizado exitosamente'
+    );
     // Mostrar notificación de éxito inmediatamente
     toast.success('Medidor actualizado correctamente');
     setNeedsNichoRefresh(true);
@@ -632,28 +660,28 @@ export default function ResultadosBusqueda({
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header with Controls */}
-      <div className="flex flex-wrap justify-between items-center gap-3 pb-4 border-b">
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl text-sky-800 dark:text-sky-200 font-bold tracking-tight">
+      <div className='flex flex-wrap justify-between items-center gap-3 pb-4 border-b'>
+        <div className='flex items-center gap-3'>
+          <h2 className='text-2xl text-sky-800 dark:text-sky-200 font-bold tracking-tight'>
             Resultados de la búsqueda
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className='flex items-center gap-2'>
           {/* View Mode Selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-1">
+              <Button variant='outline' size='sm' className='gap-1'>
                 {viewMode === 'detailed' ? (
-                  <BarChart3 className="h-4 w-4" />
+                  <BarChart3 className='h-4 w-4' />
                 ) : viewMode === 'compact' ? (
-                  <AlertCircle className="h-4 w-4" />
+                  <AlertCircle className='h-4 w-4' />
                 ) : (
-                  <Grid3X3 className="h-4 w-4" />
+                  <Grid3X3 className='h-4 w-4' />
                 )}
-                <span className="hidden sm:inline">
+                <span className='hidden sm:inline'>
                   {viewMode === 'detailed'
                     ? 'Lista'
                     : viewMode === 'compact'
@@ -662,58 +690,70 @@ export default function ResultadosBusqueda({
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align='end'>
               <DropdownMenuItem
                 className={cn(viewMode === 'default' && 'bg-accent')}
                 onClick={() => {
-                  trackDataAction('Cambiar vista', 'Monitor de Lecturas', 'Vista: Tarjetas');
+                  trackDataAction(
+                    'Cambiar vista',
+                    'Monitor de Lecturas',
+                    'Vista: Tarjetas'
+                  );
                   setViewMode('default');
                 }}
               >
-                <Grid3X3 className="mr-2 h-4 w-4" /> Tarjetas
+                <Grid3X3 className='mr-2 h-4 w-4' /> Tarjetas
               </DropdownMenuItem>
               <DropdownMenuItem
                 className={cn(viewMode === 'detailed' && 'bg-accent')}
                 onClick={() => {
-                  trackDataAction('Cambiar vista', 'Monitor de Lecturas', 'Vista: Lista Compacta');
+                  trackDataAction(
+                    'Cambiar vista',
+                    'Monitor de Lecturas',
+                    'Vista: Lista Compacta'
+                  );
                   setViewMode('detailed');
                 }}
               >
-                <BarChart3 className="mr-2 h-4 w-4" /> Lista Compacta
+                <BarChart3 className='mr-2 h-4 w-4' /> Lista Compacta
               </DropdownMenuItem>
               <DropdownMenuItem
                 className={cn(viewMode === 'compact' && 'bg-accent')}
                 onClick={() => {
-                  trackDataAction('Cambiar vista', 'Monitor de Lecturas', 'Vista: Solo Problemas');
+                  trackDataAction(
+                    'Cambiar vista',
+                    'Monitor de Lecturas',
+                    'Vista: Solo Problemas'
+                  );
                   setViewMode('compact');
                 }}
               >
-                <AlertCircle className="mr-2 h-4 w-4" /> Solo Problemas
+                <AlertCircle className='mr-2 h-4 w-4' /> Solo Problemas
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
           {/* Refresh Button */}
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={handleRefresh}
             disabled={isSearching}
-            className="gap-1 text-sky-800 dark:text-sky-200"
+            className='gap-1 text-sky-800 dark:text-sky-200'
           >
             <RefreshCw
               className={`h-4 w-4 ${isSearching ? 'animate-spin' : ''}`}
             />
-            <span className="hidden sm:inline">Refrescar</span>
+            <span className='hidden sm:inline'>Refrescar</span>
           </Button>
         </div>
       </div>
 
       {/* Loading State */}
       {isSearching && (
-        <div className="flex justify-center items-center py-12">
-          <ClockLoader color="#0ea5e9" size={40} />
-          <span className="ml-4 text-muted-foreground">
+        <div className='flex justify-center items-center py-12'>
+          <ClockLoader color='#0ea5e9' size={40} />
+          <span className='ml-4 text-muted-foreground'>
             Buscando resultados...
           </span>
         </div>
@@ -721,111 +761,111 @@ export default function ResultadosBusqueda({
 
       {/* Error State */}
       {searchError && !isSearching && (
-        <Alert variant="destructive">
+        <Alert variant='destructive'>
           <AlertDescription>{searchError}</AlertDescription>
         </Alert>
       )}
 
       {/* Results Display - Command Center Design */}
       {results.nichos.length > 0 && !isSearching && !searchError && (
-        <div className="space-y-6">
+        <div className='space-y-6'>
           {/* Quick Stats Summary (if we have data) */}
           {results.nichos.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4'>
               {(() => {
                 const stats = calculateTotalStats(results.nichos);
                 return (
                   <>
                     <Card>
-                      <CardContent className="flex items-center justify-between p-6">
+                      <CardContent className='flex items-center justify-between p-6'>
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">
+                          <p className='text-sm font-medium text-muted-foreground'>
                             Total Medidores
                           </p>
-                          <h3 className="text-2xl font-bold mt-1">
+                          <h3 className='text-2xl font-bold mt-1'>
                             {stats.total}
                           </h3>
                         </div>
-                        <Grid3X3 className="h-8 w-8 text-muted-foreground" />
+                        <Grid3X3 className='h-8 w-8 text-muted-foreground' />
                       </CardContent>
                     </Card>
 
-                    <Card className="border-red-200 dark:border-red-900">
-                      <CardContent className="flex items-center justify-between p-6">
+                    <Card className='border-red-200 dark:border-red-900'>
+                      <CardContent className='flex items-center justify-between p-6'>
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">
+                          <p className='text-sm font-medium text-muted-foreground'>
                             Críticos
                           </p>
-                          <h3 className="text-2xl font-bold mt-1 text-red-600 dark:text-red-400">
+                          <h3 className='text-2xl font-bold mt-1 text-red-600 dark:text-red-400'>
                             {stats.critical}
                           </h3>
                         </div>
-                        <div className="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                          <AlertCircle className="h-5 w-5 text-red-500" />
+                        <div className='h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center'>
+                          <AlertCircle className='h-5 w-5 text-red-500' />
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="border-orange-200 dark:border-orange-900">
-                      <CardContent className="flex items-center justify-between p-6">
+                    <Card className='border-orange-200 dark:border-orange-900'>
+                      <CardContent className='flex items-center justify-between p-6'>
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">
+                          <p className='text-sm font-medium text-muted-foreground'>
                             Relevantes
                           </p>
-                          <h3 className="text-2xl font-bold mt-1 text-orange-600 dark:text-orange-400">
+                          <h3 className='text-2xl font-bold mt-1 text-orange-600 dark:text-orange-400'>
                             {stats.warning}
                           </h3>
                         </div>
-                        <div className="h-8 w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">
-                          <AlertTriangle className="h-5 w-5 text-orange-500" />
+                        <div className='h-8 w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center'>
+                          <AlertTriangle className='h-5 w-5 text-orange-500' />
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="border-yellow-200 dark:border-yellow-900">
-                      <CardContent className="flex items-center justify-between p-6">
+                    <Card className='border-yellow-200 dark:border-yellow-900'>
+                      <CardContent className='flex items-center justify-between p-6'>
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">
+                          <p className='text-sm font-medium text-muted-foreground'>
                             Informativos
                           </p>
-                          <h3 className="text-2xl font-bold mt-1 text-yellow-600 dark:text-yellow-400">
+                          <h3 className='text-2xl font-bold mt-1 text-yellow-600 dark:text-yellow-400'>
                             {stats.info}
                           </h3>
                         </div>
-                        <div className="h-8 w-8 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-                          <Info className="h-5 w-5 text-yellow-500" />
+                        <div className='h-8 w-8 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center'>
+                          <Info className='h-5 w-5 text-yellow-500' />
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="border-gray-200 dark:border-gray-900">
-                      <CardContent className="flex items-center justify-between p-6">
+                    <Card className='border-gray-200 dark:border-gray-900'>
+                      <CardContent className='flex items-center justify-between p-6'>
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">
+                          <p className='text-sm font-medium text-muted-foreground'>
                             Sin Lectura
                           </p>
-                          <h3 className="text-2xl font-bold mt-1 text-gray-600 dark:text-gray-400">
+                          <h3 className='text-2xl font-bold mt-1 text-gray-600 dark:text-gray-400'>
                             {stats.sinlec}
                           </h3>
                         </div>
-                        <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
-                          <Info className="h-5 w-5 text-gray-500" />
+                        <div className='h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center'>
+                          <Info className='h-5 w-5 text-gray-500' />
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="border-green-200 dark:border-green-900">
-                      <CardContent className="flex items-center justify-between p-6">
+                    <Card className='border-green-200 dark:border-green-900'>
+                      <CardContent className='flex items-center justify-between p-6'>
                         <div>
-                          <p className="text-sm font-medium text-muted-foreground">
+                          <p className='text-sm font-medium text-muted-foreground'>
                             Correctas
                           </p>
-                          <h3 className="text-2xl font-bold mt-1 text-green-600 dark:text-green-400">
+                          <h3 className='text-2xl font-bold mt-1 text-green-600 dark:text-green-400'>
                             {stats.normal}
                           </h3>
                         </div>
-                        <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                          <RefreshCw className="h-5 w-5 text-green-500" />
+                        <div className='h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
+                          <RefreshCw className='h-5 w-5 text-green-500' />
                         </div>
                       </CardContent>
                     </Card>
@@ -836,24 +876,24 @@ export default function ResultadosBusqueda({
           )}
 
           {/* Nicho Tabs Navigation - Modernized Design */}
-          <div className="w-full space-y-6">
+          <div className='w-full space-y-6'>
             {/* Modern Tab Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-sky-600 dark:text-sky-400" />
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <h3 className='text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2'>
+                  <MapPin className='h-5 w-5 text-sky-600 dark:text-sky-400' />
                   Nichos
                 </h3>
-                <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                <span className='text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full'>
                   {results.nichos.length} encontrados
                 </span>
               </div>
             </div>
 
             {/* Modern Horizontal Tabs */}
-            <div className="space-y-4">
-              <ScrollArea className="w-full">
-                <div className="flex gap-1 p-1 bg-muted/30 rounded-xl border backdrop-blur-sm">
+            <div className='space-y-4'>
+              <ScrollArea className='w-full'>
+                <div className='flex gap-1 p-1 bg-muted/30 rounded-xl border backdrop-blur-sm'>
                   {results.nichos.map((nicho: NichoBusqueda, index: number) => {
                     const stats = calculateNichoStats(nicho);
                     const isActive = index === selectedNichoIndex;
@@ -869,32 +909,32 @@ export default function ResultadosBusqueda({
                                 'hover:bg-background/60 hover:shadow-sm',
                                 isActive
                                   ? 'bg-background shadow-sm border text-sky-700 dark:text-sky-300 font-semibold'
-                                  : 'text-muted-foreground hover:text-foreground',
+                                  : 'text-muted-foreground hover:text-foreground'
                               )}
                             >
-                              <span className="font-medium">
+                              <span className='font-medium'>
                                 {nicho.nombre}
                               </span>
 
                               {/* Status indicators */}
-                              <div className="flex items-center gap-1">
+                              <div className='flex items-center gap-1'>
                                 {stats.critical > 0 && (
-                                  <span className="inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full">
+                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full'>
                                     {stats.critical}
                                   </span>
                                 )}
                                 {stats.warning > 0 && (
-                                  <span className="inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-orange-500 rounded-full">
+                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-orange-500 rounded-full'>
                                     {stats.warning}
                                   </span>
                                 )}
                                 {stats.info > 0 && (
-                                  <span className="inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-slate-700 bg-yellow-400 rounded-full">
+                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-slate-700 bg-yellow-400 rounded-full'>
                                     {stats.info}
                                   </span>
                                 )}
                                 {stats.sinlec > 0 && (
-                                  <span className="inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-gray-500 rounded-full">
+                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-gray-500 rounded-full'>
                                     {stats.sinlec}
                                   </span>
                                 )}
@@ -903,7 +943,7 @@ export default function ResultadosBusqueda({
                                   stats.warning === 0 &&
                                   stats.info === 0 &&
                                   stats.sinlec === 0 && (
-                                    <span className="inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-green-500 rounded-full">
+                                    <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-green-500 rounded-full'>
                                       {stats.normal}
                                     </span>
                                   )}
@@ -911,40 +951,40 @@ export default function ResultadosBusqueda({
                             </button>
                           </TooltipTrigger>
                           <TooltipContent
-                            side="bottom"
-                            className="bg-background border shadow-lg"
+                            side='bottom'
+                            className='bg-background border shadow-lg'
                           >
-                            <div className="space-y-1">
-                              <p className="font-semibold text-foreground">
+                            <div className='space-y-1'>
+                              <p className='font-semibold text-foreground'>
                                 Nicho: {nicho.nombre}
                               </p>
-                              <div className="text-xs text-muted-foreground space-y-0.5">
+                              <div className='text-xs text-muted-foreground space-y-0.5'>
                                 <div>
                                   {nicho.filas.length} filas • {stats.total}{' '}
                                   medidores
                                 </div>
                                 {stats.critical > 0 && (
-                                  <div className="text-red-600 font-medium">
+                                  <div className='text-red-600 font-medium'>
                                     • {stats.critical} críticos
                                   </div>
                                 )}
                                 {stats.warning > 0 && (
-                                  <div className="text-orange-600 font-medium">
+                                  <div className='text-orange-600 font-medium'>
                                     • {stats.warning} relevantes
                                   </div>
                                 )}
                                 {stats.info > 0 && (
-                                  <div className="text-yellow-600 font-medium">
+                                  <div className='text-yellow-600 font-medium'>
                                     • {stats.info} informativos
                                   </div>
                                 )}
                                 {stats.sinlec > 0 && (
-                                  <div className="text-gray-600 font-medium">
+                                  <div className='text-gray-600 font-medium'>
                                     • {stats.sinlec} sin lectura
                                   </div>
                                 )}
                                 {stats.normal > 0 && (
-                                  <div className="text-green-600 font-medium">
+                                  <div className='text-green-600 font-medium'>
                                     • {stats.normal} normales
                                   </div>
                                 )}
@@ -960,23 +1000,23 @@ export default function ResultadosBusqueda({
 
               {/* Content for Selected Nicho */}
               {results.nichos[selectedNichoIndex] && (
-                <div className="space-y-3">
+                <div className='space-y-3'>
                   {/* Nicho Header with Edit Button */}
-                  <div className="flex justify-between items-center p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30 rounded-lg border">
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-sky-100 dark:bg-sky-900/50 rounded-lg">
-                        <MapPin className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                  <div className='flex justify-between items-center p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30 rounded-lg border'>
+                    <div className='flex items-center gap-2'>
+                      <div className='p-1.5 bg-sky-100 dark:bg-sky-900/50 rounded-lg'>
+                        <MapPin className='h-4 w-4 text-sky-600 dark:text-sky-400' />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                        <h3 className='text-lg font-semibold text-slate-800 dark:text-slate-200'>
                           {results.nichos[selectedNichoIndex].nombre}
                         </h3>
-                        <p className="text-xs text-muted-foreground">
+                        <p className='text-xs text-muted-foreground'>
                           {results.nichos[selectedNichoIndex].filas.length}{' '}
                           filas •{' '}
                           {results.nichos[selectedNichoIndex].filas.reduce(
                             (acc, fila) => acc + fila.medidores.length,
-                            0,
+                            0
                           )}{' '}
                           medidores
                         </p>
@@ -986,17 +1026,17 @@ export default function ResultadosBusqueda({
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
-                            variant="outline"
-                            size="sm"
-                            className="ml-auto"
+                            variant='outline'
+                            size='sm'
+                            className='ml-auto'
                           >
-                            <AlertCircle className="h-4 w-4 sm:mr-1" />
-                            <span className="hidden sm:inline">Leyenda</span>
+                            <AlertCircle className='h-4 w-4 sm:mr-1' />
+                            <span className='hidden sm:inline'>Leyenda</span>
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-md">
+                        <DialogContent className='max-w-md'>
                           <DialogHeader>
-                            <DialogTitle className="text-xl font-semibold">
+                            <DialogTitle className='text-xl font-semibold'>
                               Colores de las claves
                             </DialogTitle>
                             <DialogDescription>
@@ -1004,12 +1044,12 @@ export default function ResultadosBusqueda({
                               de lectura
                             </DialogDescription>
                           </DialogHeader>
-                          <div className="space-y-4">
-                            <div className="space-y-2">
-                              <h3 className="font-medium">
+                          <div className='space-y-4'>
+                            <div className='space-y-2'>
+                              <h3 className='font-medium'>
                                 Estado de Lecturas:
                               </h3>
-                              <div className="space-y-2">
+                              <div className='space-y-2'>
                                 {/* Lista estática de todos los estados posibles */}
                                 {[
                                   'SINLEC',
@@ -1019,19 +1059,19 @@ export default function ResultadosBusqueda({
                                   'CLACRI',
                                   'LECCER',
                                   'LECIMP',
-                                ].map((claveHtml) => {
+                                ].map(claveHtml => {
                                   const status = getMeterStatus(claveHtml);
                                   return (
                                     <div
                                       key={claveHtml}
-                                      className="flex items-center gap-3"
+                                      className='flex items-center gap-3'
                                     >
                                       <StatusIndicator
                                         status={status}
-                                        size="lg"
+                                        size='lg'
                                       />
-                                      <div className="flex-grow">
-                                        <div className="font-medium">
+                                      <div className='flex-grow'>
+                                        <div className='font-medium'>
                                           {status.label}
                                         </div>
                                         {/* <div className="text-xs text-muted-foreground">
@@ -1055,26 +1095,32 @@ export default function ResultadosBusqueda({
                     >
                       <DialogTrigger asChild>
                         <Button
-                          size="sm"
-                          className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg"
+                          size='sm'
+                          className='bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'
                           onClick={() => {
-                            const nichoName = results.nichos[selectedNichoIndex]?.nombre || 'Nicho';
-                            trackDataAction('Abrir modal', 'Monitor de Lecturas', `Ingresar lecturas - Nicho: ${nichoName}`);
+                            const nichoName =
+                              results.nichos[selectedNichoIndex]?.nombre ||
+                              'Nicho';
+                            trackDataAction(
+                              'Abrir modal',
+                              'Monitor de Lecturas',
+                              `Ingresar lecturas - Nicho: ${nichoName}`
+                            );
                             setIsNichoModalOpen(true);
                           }}
                         >
-                          <Pencil className="h-4 w-4 mr-2" />
+                          <Pencil className='h-4 w-4 mr-2' />
                           Ingresar Lecturas
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="min-w-full h-auto overflow-y-auto">
+                      <DialogContent className='min-w-full h-auto overflow-y-auto'>
                         <DialogTitle>
-                          <div className="text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500">
-                            <Gauge className="h-5 w-5 text-sky-700 dark:text-sky-500" />
+                          <div className='text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500'>
+                            <Gauge className='h-5 w-5 text-sky-700 dark:text-sky-500' />
                             Monitor de Medidores
                           </div>
                         </DialogTitle>
-                        <ScrollArea className="h-[calc(100vh-200px)]">
+                        <ScrollArea className='h-[calc(100vh-200px)]'>
                           <MonitorNichos
                             periodo={periodo}
                             nicho={results.nichos[selectedNichoIndex].nombre}
@@ -1086,12 +1132,12 @@ export default function ResultadosBusqueda({
                   </div>
 
                   {/* Filas Container */}
-                  <div className="space-y-3">
+                  <div className='space-y-3'>
                     {results.nichos[selectedNichoIndex].filas.map(
                       (fila: Fila, filaIndex: number) => {
                         const problemCount = fila.medidores.filter(
                           (m: Medidor) =>
-                            getMeterStatus(m.claveHtml).severity > 2,
+                            getMeterStatus(m.claveHtml).severity > 2
                         ).length;
 
                         if (viewMode === 'compact' && problemCount === 0) {
@@ -1104,7 +1150,7 @@ export default function ResultadosBusqueda({
                         return (
                           <Card
                             key={`fila-${selectedNichoIndex}-${filaIndex}`}
-                            className="overflow-hidden border-0 shadow-sm bg-card/50 backdrop-blur-sm"
+                            className='overflow-hidden border-0 shadow-sm bg-card/50 backdrop-blur-sm'
                           >
                             <Collapsible
                               open={
@@ -1115,23 +1161,23 @@ export default function ResultadosBusqueda({
                               }
                             >
                               <CollapsibleTrigger asChild>
-                                <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-muted/50 transition-colors">
-                                  <div className="flex items-center gap-2">
-                                    <div className="p-1 bg-muted rounded-md">
-                                      <Grid3X3 className="h-3 w-3 text-muted-foreground" />
+                                <div className='flex items-center justify-between p-3 cursor-pointer hover:bg-muted/50 transition-colors'>
+                                  <div className='flex items-center gap-2'>
+                                    <div className='p-1 bg-muted rounded-md'>
+                                      <Grid3X3 className='h-3 w-3 text-muted-foreground' />
                                     </div>
                                     <div>
-                                      <h4 className="text-base font-medium">
+                                      <h4 className='text-base font-medium'>
                                         Fila {fila.numero}
                                       </h4>
-                                      <p className="text-xs text-muted-foreground">
+                                      <p className='text-xs text-muted-foreground'>
                                         {fila.medidores.length} medidores
                                       </p>
                                     </div>
                                     {problemCount > 0 && (
                                       <Badge
-                                        variant="destructive"
-                                        className="ml-2"
+                                        variant='destructive'
+                                        className='ml-2'
                                       >
                                         {problemCount} problema
                                         {problemCount !== 1 && 's'}
@@ -1139,23 +1185,23 @@ export default function ResultadosBusqueda({
                                     )}
                                   </div>
 
-                                  <div className="flex items-center gap-3">
-                                    <div className="text-sm text-muted-foreground">
+                                  <div className='flex items-center gap-3'>
+                                    <div className='text-sm text-muted-foreground'>
                                       {isExpanded ? 'Ocultar' : 'Mostrar'}
                                     </div>
                                     {isExpanded ? (
-                                      <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                                      <ChevronUp className='h-5 w-5 text-muted-foreground' />
                                     ) : (
-                                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                                      <ChevronDown className='h-5 w-5 text-muted-foreground' />
                                     )}
                                   </div>
                                 </div>
                               </CollapsibleTrigger>
                               <CollapsibleContent>
-                                <div className="p-3 pt-0">
+                                <div className='p-3 pt-0'>
                                   {viewMode === 'detailed' ? (
                                     /* Vista de Lista Compacta */
-                                    <div className="space-y-2">
+                                    <div className='space-y-2'>
                                       {fila.medidores.map(
                                         (medidor: Medidor) => {
                                           return (
@@ -1165,11 +1211,11 @@ export default function ResultadosBusqueda({
                                               onRefresh={handleRefresh}
                                             />
                                           );
-                                        },
+                                        }
                                       )}
                                     </div>
                                   ) : (
-                                    <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2">
+                                    <div className='grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2'>
                                       {fila.medidores.map(
                                         (medidor: Medidor) => {
                                           if (
@@ -1187,7 +1233,7 @@ export default function ResultadosBusqueda({
                                               onRefresh={handleRefresh}
                                             />
                                           );
-                                        },
+                                        }
                                       )}
                                     </div>
                                   )}
@@ -1196,7 +1242,7 @@ export default function ResultadosBusqueda({
                             </Collapsible>
                           </Card>
                         );
-                      },
+                      }
                     )}
                   </div>
                 </div>
@@ -1208,12 +1254,12 @@ export default function ResultadosBusqueda({
 
       {/* No Results State */}
       {results.nichos.length === 0 && !isSearching && !searchError && (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
-          <p className="text-muted-foreground">
+        <div className='flex flex-col items-center justify-center py-12 text-center'>
+          <AlertCircle className='h-12 w-12 text-muted-foreground mb-4' />
+          <p className='text-muted-foreground'>
             No se encontraron resultados para los criterios seleccionados.
           </p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className='text-sm text-muted-foreground mt-1'>
             Intente ajustar los filtros o el rango de fechas.
           </p>
         </div>

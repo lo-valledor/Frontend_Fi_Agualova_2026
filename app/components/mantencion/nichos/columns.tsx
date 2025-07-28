@@ -1,8 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '~/components/ui/badge';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { Nicho } from '~/types/mantencion';
 import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { Nicho } from '~/types/mantencion';
 
 interface TableColumnsProps {
   onEdit: (nicho: Nicho) => void;
@@ -16,14 +17,14 @@ export const columns = ({
   {
     accessorKey: 'sectorNombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Sector" />
+      <DataTableColumnHeader column={column} title='Sector' />
     ),
     cell: ({ row }) => {
       const nicho = row.original;
       return (
-        <div className="flex items-center space-x-3">
+        <div className='flex items-center space-x-3'>
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
+            <div className='font-medium text-gray-900 dark:text-gray-100'>
               {nicho.sectorNombre}
             </div>
           </div>
@@ -36,23 +37,23 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nombre" />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
       const nombre = row.getValue('nombre') as string;
-      return <div className="max-w-[150px] truncate font-medium">{nombre}</div>;
+      return <div className='max-w-[150px] truncate font-medium'>{nombre}</div>;
     },
     enableSorting: true,
   },
   {
     accessorKey: 'ubicacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Ubicación" />
+      <DataTableColumnHeader column={column} title='Ubicación' />
     ),
     cell: ({ row }) => {
       const ubicacion = row.getValue('ubicacion') as string;
       return (
-        <div className="max-w-[200px] truncate text-sm text-muted-foreground">
+        <div className='max-w-[200px] truncate text-sm text-muted-foreground'>
           {ubicacion}
         </div>
       );
@@ -62,7 +63,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

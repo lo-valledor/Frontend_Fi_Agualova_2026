@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
+
 import MedidoresComponent from '~/components/administracion/medidores/medidores-component';
-import type { Route } from './+types/medidores';
-import { administracionService } from '~/services/administracionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { administracionService } from '~/services/administracionService';
+
+import type { Route } from './+types/medidores';
 
 export function meta({}: Route.MetaArgs) {
   return [

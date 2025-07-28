@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import type { Empalme } from '~/types/mantencion';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import api from '~/lib/api';
 import { toast } from 'sonner';
+import { z } from 'zod';
+
+import React, { useEffect, useState } from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -17,12 +19,13 @@ import {
   Form,
   FormControl,
   FormField,
-  FormLabel,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
+import api from '~/lib/api';
+import type { Empalme } from '~/types/mantencion';
 
 const empalmeFormSchema = z.object({
   codigo: z
@@ -117,7 +120,7 @@ export default function EmpalmesModalForm({
       toast.error(
         mode === 'add'
           ? 'Error al crear el empalme'
-          : 'Error al actualizar el empalme',
+          : 'Error al actualizar el empalme'
       );
     } finally {
       setIsLoading(false);
@@ -131,7 +134,7 @@ export default function EmpalmesModalForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Empalme' : 'Editar Empalme'}
@@ -146,11 +149,11 @@ export default function EmpalmesModalForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
+            className='space-y-4'
           >
             <FormField
               control={form.control}
-              name="codigo"
+              name='codigo'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Código del Empalme</FormLabel>
@@ -158,7 +161,7 @@ export default function EmpalmesModalForm({
                     <Input
                       {...field}
                       disabled={mode === 'edit'}
-                      placeholder="Ingrese el código del empalme"
+                      placeholder='Ingrese el código del empalme'
                     />
                   </FormControl>
                   <FormMessage />
@@ -168,14 +171,14 @@ export default function EmpalmesModalForm({
 
             <FormField
               control={form.control}
-              name="nombre"
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre del Empalme</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Ingrese el nombre del empalme"
+                      placeholder='Ingrese el nombre del empalme'
                     />
                   </FormControl>
                   <FormMessage />
@@ -185,14 +188,14 @@ export default function EmpalmesModalForm({
 
             <FormField
               control={form.control}
-              name="codigoCliente"
+              name='codigoCliente'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Código del Cliente</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="Ingrese el código del cliente"
+                      placeholder='Ingrese el código del cliente'
                     />
                   </FormControl>
                   <FormMessage />
@@ -202,18 +205,18 @@ export default function EmpalmesModalForm({
 
             <FormField
               control={form.control}
-              name="potenciaContratada"
+              name='potenciaContratada'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Potencia Contratada (kW)</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      placeholder="0.00"
-                      onChange={(e) =>
+                      type='number'
+                      step='0.01'
+                      min='0'
+                      placeholder='0.00'
+                      onChange={e =>
                         field.onChange(parseFloat(e.target.value) || 0)
                       }
                     />
@@ -225,31 +228,31 @@ export default function EmpalmesModalForm({
 
             <FormField
               control={form.control}
-              name="tarifa"
+              name='tarifa'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tarifa</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Ingrese la tarifa" />
+                    <Input {...field} placeholder='Ingrese la tarifa' />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <DialogFooter className="gap-2">
+            <DialogFooter className='gap-2'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading
                   ? mode === 'add'

@@ -1,8 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '~/components/ui/badge';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { CiclosFacturacion } from '~/types/mantencion';
 import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { CiclosFacturacion } from '~/types/mantencion';
 
 interface TableColumnsProps {
   onEdit: (ciclo: CiclosFacturacion) => void;
@@ -16,12 +17,12 @@ export const columns = ({
   {
     accessorKey: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Descripción" />
+      <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => {
       const descripcion = row.getValue('descripcion') as string;
       return (
-        <div className="max-w-[200px] truncate font-medium">{descripcion}</div>
+        <div className='max-w-[200px] truncate font-medium'>{descripcion}</div>
       );
     },
     enableSorting: true,
@@ -30,13 +31,13 @@ export const columns = ({
   {
     accessorKey: 'diaFacturacion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Día de Facturación" />
+      <DataTableColumnHeader column={column} title='Día de Facturación' />
     ),
     cell: ({ row }) => {
       const dia = row.getValue('diaFacturacion') as number;
       return (
-        <div className="text-center">
-          <Badge variant="outline" className="font-mono">
+        <div className='text-center'>
+          <Badge variant='outline' className='font-mono'>
             {dia}
           </Badge>
         </div>
@@ -47,13 +48,13 @@ export const columns = ({
   {
     accessorKey: 'diaInicioLectura',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Día Inicio Lectura" />
+      <DataTableColumnHeader column={column} title='Día Inicio Lectura' />
     ),
     cell: ({ row }) => {
       const dia = row.getValue('diaInicioLectura') as number;
       return (
-        <div className="text-center">
-          <Badge variant="outline" className="font-mono">
+        <div className='text-center'>
+          <Badge variant='outline' className='font-mono'>
             {dia}
           </Badge>
         </div>
@@ -64,14 +65,14 @@ export const columns = ({
   {
     accessorKey: 'diasVencimientoFactura',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Días Vencimiento" />
+      <DataTableColumnHeader column={column} title='Días Vencimiento' />
     ),
     cell: ({ row }) => {
       const dias = row.getValue('diasVencimientoFactura') as number;
       return (
-        <div className="text-center">
-          <span className="font-medium">{dias}</span>
-          <span className="text-xs text-muted-foreground ml-1">días</span>
+        <div className='text-center'>
+          <span className='font-medium'>{dias}</span>
+          <span className='text-xs text-muted-foreground ml-1'>días</span>
         </div>
       );
     },
@@ -80,7 +81,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

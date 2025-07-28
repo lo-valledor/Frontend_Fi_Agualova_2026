@@ -90,7 +90,8 @@ export async function clientLoader() {
 ### 3. Hooks Personalizados
 
 ```typescript
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import { moduloService } from '~/services/moduloService';
 
 export function useModuloData() {
@@ -115,6 +116,7 @@ export function useModuloData() {
 ### MonitorService (`monitorService.ts`)
 
 **Métodos disponibles:**
+
 - `getBasicData()`: Obtiene períodos, sectores y claves
 - `getPeriodosAndSectores()`: Obtiene solo períodos y sectores
 - `getPeriodos()`: Obtiene solo períodos
@@ -123,6 +125,7 @@ export function useModuloData() {
 - `findActivePeriodo()`: Encuentra el período activo
 
 **Uso:**
+
 ```typescript
 import { monitorService } from '~/services/monitorService';
 
@@ -133,6 +136,7 @@ const result = await monitorService.getBasicData();
 ### AdministracionService (`administracionService.ts`)
 
 **Métodos disponibles:**
+
 - `getAcometidasData()`: Datos de acometidas con combos
 - `getClientesData()`: Datos de clientes con giros y regiones
 - `getContratosData()`: Datos de contratos con combos
@@ -143,6 +147,7 @@ const result = await monitorService.getBasicData();
 - `getCargoFacturableData()`: Cargo facturable con combos
 
 **Uso:**
+
 ```typescript
 import { administracionService } from '~/services/administracionService';
 
@@ -153,6 +158,7 @@ const result = await administracionService.getClientesData();
 ### OperacionesService (`operacionesService.ts`)
 
 **Métodos disponibles:**
+
 - `getPeriodoAbierto()`: Obtiene período abierto
 - `getCiclosFacturacion()`: Obtiene ciclos de facturación activos
 - `getPrepararLecturasData()`: Datos completos para preparar lecturas
@@ -165,6 +171,7 @@ const result = await administracionService.getClientesData();
 - `getPeriodoFacturacionData()`: Datos de período de facturación
 
 **Uso:**
+
 ```typescript
 import { operacionesService } from '~/services/operacionesService';
 
@@ -175,6 +182,7 @@ const result = await operacionesService.getPrepararLecturasData();
 ### MantencionService (`mantencionService.ts`)
 
 **Métodos disponibles:**
+
 - `getCiclosFacturacion()`: Obtiene ciclos de facturación
 - `getClaves()`: Obtiene claves
 - `getConceptosData()`: Obtiene conceptos con combo asociado
@@ -188,6 +196,7 @@ const result = await operacionesService.getPrepararLecturasData();
 - `getZonas()`: Obtiene zonas
 
 **Uso:**
+
 ```typescript
 import { mantencionService } from '~/services/mantencionService';
 
@@ -198,21 +207,25 @@ const result = await mantencionService.getConceptosData();
 ## Ventajas de esta Estructura
 
 ### 1. **Reutilización de Código**
+
 - Los servicios pueden ser usados en múltiples rutas
 - Lógica centralizada para manejo de errores
 - Procesamiento consistente de respuestas de API
 
 ### 2. **Mantenibilidad**
+
 - Cambios en endpoints solo requieren modificar el servicio
 - Fácil testing de lógica de negocio
 - Separación clara de responsabilidades
 
 ### 3. **Type Safety**
+
 - Tipos TypeScript consistentes
 - Interfaces bien definidas para respuestas
 - Mejor autocompletado en el IDE
 
 ### 4. **Performance**
+
 - Carga paralela de datos cuando es posible
 - Manejo eficiente de errores
 - Reutilización de datos entre componentes
@@ -220,6 +233,7 @@ const result = await mantencionService.getConceptosData();
 ## Migración de Rutas Existentes
 
 ### Antes (Código Duplicado)
+
 ```typescript
 export async function clientLoader() {
   try {
@@ -240,6 +254,7 @@ export async function clientLoader() {
 ```
 
 ### Después (Código Limpio)
+
 ```typescript
 export async function clientLoader() {
   const result = await moduloService.getDatosCompletos();
@@ -260,10 +275,13 @@ export async function clientLoader() {
 ## Hooks Personalizados
 
 ### useMonitorData (`use-monitor.ts`)
+
 Hook para datos básicos del monitor (períodos, sectores, claves).
 
 ### useOperaciones (`use-operaciones.ts`)
+
 Hooks especializados para operaciones (refactorizados):
+
 - `usePrepararLecturasData()`: Datos para preparar lecturas
 - `useAsignacionSectores()`: Asignación de sectores
 - `usePreciosCargo()`: Precios de cargo por mes/año
@@ -273,7 +291,9 @@ Hooks especializados para operaciones (refactorizados):
 - `usePeriodoFacturacion()`: Datos de período de facturación
 
 ### useAdministracion (`use-administracion.ts`)
+
 Hooks especializados para administración:
+
 - `useAcometidasData()`: Datos de acometidas con combos
 - `useClientesData()`: Datos de clientes con giros y regiones
 - `useContratosData()`: Datos de contratos con combos
@@ -284,7 +304,9 @@ Hooks especializados para administración:
 - `useCargoFacturable()`: Cargo facturable con combos
 
 ### useMantencion (`use-mantencion.ts`)
+
 Hooks especializados para mantención:
+
 - `useCiclosFacturacion()`: Ciclos de facturación
 - `useClaves()`: Claves
 - `useConceptos()`: Conceptos con combo asociado
@@ -300,13 +322,14 @@ Hooks especializados para mantención:
 ## Próximos Pasos
 
 1. **Migrar módulos restantes:**
+
    - `reportes`
 
 2. **Implementar caché** para datos frecuentemente usados
 
-4. **Añadir tests unitarios** para los servicios
+3. **Añadir tests unitarios** para los servicios
 
-5. **Documentar endpoints** específicos de cada servicio
+4. **Documentar endpoints** específicos de cada servicio
 
 ## Convenciones de Nomenclatura
 
@@ -318,6 +341,7 @@ Hooks especializados para mantención:
 ## Ejemplos de Uso Completo
 
 ### En una Ruta
+
 ```typescript
 import { monitorService } from '~/services/monitorService';
 
@@ -345,6 +369,7 @@ export async function clientLoader() {
 ```
 
 ### En un Componente
+
 ```typescript
 import { useMonitorData } from '~/hooks/use-monitor';
 

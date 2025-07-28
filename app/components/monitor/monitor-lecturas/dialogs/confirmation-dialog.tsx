@@ -1,15 +1,17 @@
+import { AlertCircle } from 'lucide-react';
+
 import React from 'react';
+
+import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from '~/components/ui/dialog';
-import { Alert, AlertDescription } from '~/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
 import { Label } from '~/components/ui/label';
 import {
   Select,
@@ -80,12 +82,12 @@ export function ConfirmationDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md border border-slate-200/50 dark:border-slate-800/50 shadow-lg">
-        <DialogHeader className="space-y-3">
-          <DialogTitle className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+      <DialogContent className='max-w-md border border-slate-200/50 dark:border-slate-800/50 shadow-lg'>
+        <DialogHeader className='space-y-3'>
+          <DialogTitle className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
             {title}
           </DialogTitle>
-          <DialogDescription className="sr-only">{message}</DialogDescription>
+          <DialogDescription className='sr-only'>{message}</DialogDescription>
         </DialogHeader>
 
         {/* Alerta principal */}
@@ -104,16 +106,16 @@ export function ConfirmationDialog({
 
         {/* Selector de clave si es necesario */}
         {showClaveSelect && onClaveChange && (
-          <div className="space-y-3">
-            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+          <div className='space-y-3'>
+            <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
               Seleccione un motivo:
             </Label>
             <Select value={selectedClave} onValueChange={onClaveChange}>
-              <SelectTrigger className="bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 w-full">
-                <SelectValue placeholder="Seleccione un motivo" />
+              <SelectTrigger className='bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 w-full'>
+                <SelectValue placeholder='Seleccione un motivo' />
               </SelectTrigger>
               <SelectContent>
-                {claveOptions.map((option) => (
+                {claveOptions.map(option => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
@@ -121,19 +123,19 @@ export function ConfirmationDialog({
               </SelectContent>
             </Select>
             {selectedClave === '0' && (
-              <span className="text-xs text-amber-600">
+              <span className='text-xs text-amber-600'>
                 Debe seleccionar un motivo para continuar.
               </span>
             )}
           </div>
         )}
 
-        <DialogFooter className="gap-3 pt-4">
+        <DialogFooter className='gap-3 pt-4'>
           <Button
-            variant="outline"
+            variant='outline'
             onClick={handleCancel}
             disabled={isSubmitting}
-            className="border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50"
+            className='border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/50'
           >
             Cancelar
           </Button>

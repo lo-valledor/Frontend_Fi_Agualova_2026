@@ -12,16 +12,16 @@ export default function Component() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button variant='outline'>
           Same width of trigger
           <ChevronDownIcon
-            className="-me-1 opacity-60"
+            className='-me-1 opacity-60'
             size={16}
-            aria-hidden="true"
+            aria-hidden='true'
           />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="min-w-(--radix-dropdown-menu-trigger-width)">
+      <DropdownMenuContent className='min-w-(--radix-dropdown-menu-trigger-width)'>
         <DropdownMenuItem>Option 1</DropdownMenuItem>
         <DropdownMenuItem>Option 2</DropdownMenuItem>
         <DropdownMenuItem>Option 3</DropdownMenuItem>

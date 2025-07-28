@@ -1,7 +1,9 @@
-import { Button } from '~/components/ui/button';
-import { Badge } from '~/components/ui/badge';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Edit, Eye, Trash2 } from 'lucide-react';
+
 import React from 'react';
+
+import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
 
 // Botones de acción estandarizados
 export function TableActions({
@@ -28,13 +30,13 @@ export function TableActions({
   loadingDelete?: boolean;
 }) {
   return (
-    <div className="flex gap-2">
+    <div className='flex gap-2'>
       {showView && (
         <Button
-          variant="outline"
-          size="icon"
+          variant='outline'
+          size='icon'
           onClick={() => onView?.(item)}
-          title="Ver Detalles"
+          title='Ver Detalles'
           disabled={loadingView}
         >
           <Eye className={`h-4 w-4${loadingView ? ' animate-spin' : ''}`} />
@@ -42,10 +44,10 @@ export function TableActions({
       )}
       {showEdit && (
         <Button
-          variant="outline"
-          size="icon"
+          variant='outline'
+          size='icon'
           onClick={() => onEdit?.(item)}
-          title="Editar"
+          title='Editar'
           disabled={loadingEdit}
         >
           <Edit className={`h-4 w-4${loadingEdit ? ' animate-spin' : ''}`} />
@@ -53,10 +55,10 @@ export function TableActions({
       )}
       {showDelete && (
         <Button
-          variant="destructive"
-          size="icon"
+          variant='destructive'
+          size='icon'
           onClick={() => onDelete?.(item)}
-          title="Eliminar"
+          title='Eliminar'
           disabled={loadingDelete}
         >
           <Trash2
@@ -92,7 +94,7 @@ export function EstadoBadge({ estado }: { estado: boolean | string }) {
 export function FechaCell({ fecha }: { fecha: string | Date }) {
   const date = typeof fecha === 'string' ? new Date(fecha) : fecha;
   return (
-    <div className="text-sm text-gray-600 dark:text-gray-300">
+    <div className='text-sm text-gray-600 dark:text-gray-300'>
       {isNaN(date.getTime()) ? '' : date.toLocaleDateString('es-ES')}
     </div>
   );

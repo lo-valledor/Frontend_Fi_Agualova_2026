@@ -1,4 +1,20 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import { z } from 'zod';
+
 import React, { useEffect, useState } from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '~/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -8,23 +24,10 @@ import {
   FormLabel,
   FormMessage,
 } from '~/components/ui/form';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
-import type { Zonas } from '~/types/mantencion';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { Switch } from '~/components/ui/switch';
-import { Button } from '~/components/ui/button';
-import { toast } from 'sonner';
 import api from '~/lib/api';
+import type { Zonas } from '~/types/mantencion';
 
 const zonaFormSchema = z.object({
   nombre: z
@@ -98,7 +101,7 @@ export default function ZonaFormModal({
       toast.error(
         mode === 'add'
           ? 'Error al crear la zona'
-          : 'Error al actualizar la zona',
+          : 'Error al actualizar la zona'
       );
     } finally {
       setIsLoading(false);
@@ -112,7 +115,7 @@ export default function ZonaFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Zona' : 'Editar Zona'}
@@ -127,16 +130,16 @@ export default function ZonaFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4 pt-4"
+            className='space-y-4 pt-4'
           >
             <FormField
               control={form.control}
-              name="nombre"
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nombre de la Zona</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: Zona Norte" {...field} />
+                    <Input placeholder='Ej: Zona Norte' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,12 +148,12 @@ export default function ZonaFormModal({
 
             <FormField
               control={form.control}
-              name="referencia"
+              name='referencia'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Referencia</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ej: ZN-01" {...field} />
+                    <Input placeholder='Ej: ZN-01' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,10 +162,10 @@ export default function ZonaFormModal({
 
             <FormField
               control={form.control}
-              name="estado"
+              name='estado'
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
+                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
+                  <div className='space-y-0.5'>
                     <FormLabel>Estado de la Zona</FormLabel>
                     <FormDescription>
                       {field.value ? 'Zona activa' : 'Zona inactiva'}
@@ -178,19 +181,19 @@ export default function ZonaFormModal({
               )}
             />
 
-            <DialogFooter className="gap-2">
+            <DialogFooter className='gap-2'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={handleClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading
                   ? mode === 'add'

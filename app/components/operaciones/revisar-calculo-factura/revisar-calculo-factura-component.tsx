@@ -1,5 +1,26 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import {
+  AlertCircleIcon,
+  CalendarIcon,
+  CheckCircle,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  Clock,
+  Eraser,
+  FileSpreadsheet,
+  FileTextIcon,
+  Info,
+  RefreshCw,
+  SearchIcon,
+  SettingsIcon,
+  TrendingUp,
+} from 'lucide-react';
+import { toast } from 'sonner';
+
+import React, { useEffect, useMemo, useState } from 'react';
+
 import { Badge } from '~/components/ui/badge';
+import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
@@ -7,6 +28,17 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
+// Removido useOperaciones ya que los datos vienen como props
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import {
   Select,
@@ -15,49 +47,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { Button } from '~/components/ui/button';
-// Removido useOperaciones ya que los datos vienen como props
-import {
-  Collapsible,
-  CollapsibleContent,
-} from '~/components/ui/collapsible';
-import {
-  AlertCircleIcon,
-  CalendarIcon,
-  ChevronDown,
-  ChevronUp,
-  Eraser,
-  SearchIcon,
-  FileTextIcon,
-  SettingsIcon,
-  ChevronRight,
-  RefreshCw,
-  Clock,
-  CheckCircle,
-  FileSpreadsheet,
-  TrendingUp,
-  Info,
-} from 'lucide-react';
-import { toast } from 'sonner';
 import api from '~/lib/api';
-import { HierarchicalDataTable } from './hierarchical-data-table';
-import { columns } from './columnsPrecalculo';
 import {
-  type CalculoPrefacturaDetalle,
   type CalculoPrefacturaCargoResponse,
   type CalculoPrefacturaCompleto,
-  type PeriodoAbierto,
+  type CalculoPrefacturaDetalle,
   type Ciclo,
+  type PeriodoAbierto,
 } from '~/types/operaciones';
-import { Input } from '~/components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '~/components/ui/dialog';
+
+import { columns } from './columnsPrecalculo';
+import { HierarchicalDataTable } from './hierarchical-data-table';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
@@ -70,7 +70,7 @@ export default function RevisarCalculoFacturaComponent({
   const [cicloId, setCicloId] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [filteredData, setFilteredData] = useState<CalculoPrefacturaCompleto[]>(
-    [],
+    []
   );
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
@@ -106,7 +106,7 @@ export default function RevisarCalculoFacturaComponent({
 
     if (timerActive && timerCountdown > 0) {
       interval = setInterval(() => {
-        setTimerCountdown((prev) => {
+        setTimerCountdown(prev => {
           if (prev <= 1) {
             setTimerActive(false);
             setPreparacionTimestamp(null);
@@ -131,7 +131,7 @@ export default function RevisarCalculoFacturaComponent({
     if (!searchTerm) {
       setFilteredData(data);
     } else {
-      const filtered = data.filter((item) => {
+      const filtered = data.filter(item => {
         const searchLower = searchTerm.toLowerCase();
         return (
           item.contratoId.toString().toLowerCase().includes(searchLower) ||
@@ -181,7 +181,7 @@ export default function RevisarCalculoFacturaComponent({
         description:
           'Espere el tiempo indicado antes de hacer clic en "Ver Cálculo Facturas"',
         duration: 4000,
-      },
+      }
     );
   };
 
@@ -199,14 +199,14 @@ export default function RevisarCalculoFacturaComponent({
 
     if (!isCalculoPreparado) {
       toast.error(
-        'Haga clic en "Ver Cálculo Facturas" para ver los resultados',
+        'Haga clic en "Ver Cálculo Facturas" para ver los resultados'
       );
       return;
     }
 
     if (timerActive && timerCountdown > 0) {
       toast.error(
-        `Debe esperar ${timerCountdown} segundos antes de ver los resultados`,
+        `Debe esperar ${timerCountdown} segundos antes de ver los resultados`
       );
       return;
     }
@@ -229,7 +229,7 @@ export default function RevisarCalculoFacturaComponent({
         '/calculo-prefactura-encabezado',
         {
           params: requestParams,
-        },
+        }
       );
 
       // Los encabezados vienen directamente como array
@@ -242,7 +242,7 @@ export default function RevisarCalculoFacturaComponent({
       if (encabezados.length === 0) {
         setData([]);
         toast.info(
-          'No se encontraron prefacturas para el ciclo y periodo elegidos',
+          'No se encontraron prefacturas para el ciclo y periodo elegidos'
         );
         return;
       }
@@ -263,17 +263,17 @@ export default function RevisarCalculoFacturaComponent({
 
       // Combinar encabezados con cargos
       const datosCombinados: CalculoPrefacturaCompleto[] = encabezados.map(
-        (encabezado) => {
+        encabezado => {
           // Buscar los cargos correspondientes a este contrato
           const cargosContrato = cargosData.find(
-            (cargo) => cargo.contratoId === encabezado.contratoId,
+            cargo => cargo.contratoId === encabezado.contratoId
           );
 
           // Calcular el total facturado sumando todos los subtotales de los cargos
           const totalFacturado =
             cargosContrato?.cargos.reduce(
               (suma, cargo) => suma + cargo.subtotal,
-              0,
+              0
             ) || 0;
 
           return {
@@ -281,18 +281,18 @@ export default function RevisarCalculoFacturaComponent({
             cargos: cargosContrato?.cargos || [],
             totalFacturado,
           };
-        },
+        }
       );
 
       setData(datosCombinados);
       toast.success(
-        `Se encontraron ${datosCombinados.length} registros con sus respectivos cargos`,
+        `Se encontraron ${datosCombinados.length} registros con sus respectivos cargos`
       );
     } catch (error: any) {
       // Manejo específico para error 404
       if (error.response && error.response.status === 404) {
         setError(
-          'No se han encontrado prefacturas para el ciclo y periodo elegidos',
+          'No se han encontrado prefacturas para el ciclo y periodo elegidos'
         );
         setData([]);
         toast.error(
@@ -300,7 +300,7 @@ export default function RevisarCalculoFacturaComponent({
           {
             description: 'Verifique que el ciclo y periodo sean correctos',
             duration: 5000,
-          },
+          }
         );
       } else {
         setError(`Error: ${error.message || 'Error desconocido'}`);
@@ -309,7 +309,7 @@ export default function RevisarCalculoFacturaComponent({
           toast.error(
             `Error ${error.response.status}: ${
               error.response.data?.mensaje || 'Error en la consulta'
-            }`,
+            }`
           );
         } else if (error.request) {
           toast.error('No se recibió respuesta del servidor');
@@ -355,7 +355,7 @@ export default function RevisarCalculoFacturaComponent({
         toast.error(
           `Error ${error.response.status}: ${
             error.response.data?.mensaje || 'Error al lanzar el cálculo'
-          }`,
+          }`
         );
       } else if (error.request) {
         toast.error('No se recibió respuesta del servidor');
@@ -409,7 +409,7 @@ export default function RevisarCalculoFacturaComponent({
           {
             description: 'Los cálculos aceptados se están procesando',
             duration: 4000,
-          },
+          }
         );
       }
 
@@ -466,25 +466,25 @@ export default function RevisarCalculoFacturaComponent({
   }, [cicloId]);
 
   return (
-    <div className="min-h-screen ">
-      <div className="container mx-auto p-2 space-y-3">
+    <div className='min-h-screen '>
+      <div className='container mx-auto p-2 space-y-3'>
         {/* Header modernizado */}
-        <div className="flex items-center gap-3 justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100">
+        <div className='flex items-center gap-3 justify-between'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
               Revisar Cálculo Factura
             </h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className='flex items-center gap-3'>
             <Dialog>
               <DialogTrigger>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50"
+                  variant='outline'
+                  size='sm'
+                  className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
                 >
-                  <Info className="w-4 h-4 mr-1 text-yellow-600" />
-                  <span className="text-yellow-600 text-sm">Información</span>
+                  <Info className='w-4 h-4 mr-1 text-yellow-600' />
+                  <span className='text-yellow-600 text-sm'>Información</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -499,10 +499,10 @@ export default function RevisarCalculoFacturaComponent({
             </Dialog>
             {periodoAbierto && periodoAbierto.length > 0 && (
               <Badge
-                variant="outline"
-                className="bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800"
+                variant='outline'
+                className='bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800'
               >
-                <CalendarIcon className="w-3 h-3 mr-1" />
+                <CalendarIcon className='w-3 h-3 mr-1' />
                 Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                 {periodoAbierto[0].anio}
               </Badge>
@@ -511,28 +511,28 @@ export default function RevisarCalculoFacturaComponent({
         </div>
         {/* Indicador de estado del timer */}
         {timerActive && (
-          <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-amber-200 dark:border-amber-800">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+          <Card className='border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-amber-200 dark:border-amber-800'>
+            <CardContent className='p-6'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-4'>
+                  <div className='w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center'>
+                    <Clock className='w-6 h-6 text-amber-600 dark:text-amber-400' />
                   </div>
                   <div>
-                    <h4 className="text-xl font-semibold text-amber-800 dark:text-amber-200">
+                    <h4 className='text-xl font-semibold text-amber-800 dark:text-amber-200'>
                       Cálculo en preparación
                     </h4>
-                    <p className="text-amber-600 dark:text-amber-400">
+                    <p className='text-amber-600 dark:text-amber-400'>
                       Espere {timerCountdown} segundos antes de ver los
                       resultados
                     </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-amber-700 dark:text-amber-300">
+                <div className='text-right'>
+                  <div className='text-3xl font-bold text-amber-700 dark:text-amber-300'>
                     {timerCountdown}s
                   </div>
-                  <div className="text-sm text-amber-600 dark:text-amber-400">
+                  <div className='text-sm text-amber-600 dark:text-amber-400'>
                     Tiempo restante
                   </div>
                 </div>
@@ -542,17 +542,17 @@ export default function RevisarCalculoFacturaComponent({
         )}
         {/* Indicador de cálculo preparado */}
         {isCalculoPreparado && !timerActive && (
-          <Card className="border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-emerald-200 dark:border-emerald-800">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+          <Card className='border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-emerald-200 dark:border-emerald-800'>
+            <CardContent className='p-6'>
+              <div className='flex items-center gap-4'>
+                <div className='w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center'>
+                  <CheckCircle className='w-6 h-6 text-emerald-600 dark:text-emerald-400' />
                 </div>
                 <div>
-                  <h4 className="text-xl font-semibold text-emerald-800 dark:text-emerald-200">
+                  <h4 className='text-xl font-semibold text-emerald-800 dark:text-emerald-200'>
                     Cálculo preparado
                   </h4>
-                  <p className="text-emerald-600 dark:text-emerald-400">
+                  <p className='text-emerald-600 dark:text-emerald-400'>
                     Ya puede hacer clic en "Ver Cálculo Facturas" para ver los
                     resultados
                   </p>
@@ -562,68 +562,68 @@ export default function RevisarCalculoFacturaComponent({
           </Card>
         )}
         {/* Filtros de Búsqueda */}
-        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
+        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className="flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
+              className='flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
-              <div className="flex items-center gap-4">
-                <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
-                  <FileSpreadsheet className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className='flex items-center gap-4'>
+                <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
+                  <FileSpreadsheet className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
                     Listado de Precalculos
                   </CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
+                  <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
                     Revisa los precalculos de facturación
                   </CardDescription>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant='ghost' size='icon' className='h-8 w-8'>
                 {isFiltersOpen ? (
-                  <ChevronUp className="h-5 w-5 text-slate-500" />
+                  <ChevronUp className='h-5 w-5 text-slate-500' />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-slate-500" />
+                  <ChevronDown className='h-5 w-5 text-slate-500' />
                 )}
               </Button>
             </div>
 
             <CollapsibleContent>
-              <CardContent className="px-4 pb-4 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              <CardContent className='px-4 pb-4 space-y-4'>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-6 w-full'>
                   {/* Periodo */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <div className='space-y-2'>
+                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
+                      <CalendarIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                       Periodo actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-50 dark:from-blue-900/20 dark:to-blue-900/20 border border-blue-200 dark:border-blue-800">
-                        <div className="w-10 h-10 bg-blue-100 dark:bg-blue-800/50 rounded-lg flex items-center justify-center">
-                          <CalendarIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <div className='flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-50 dark:from-blue-900/20 dark:to-blue-900/20 border border-blue-200 dark:border-blue-800'>
+                        <div className='w-10 h-10 bg-blue-100 dark:bg-blue-800/50 rounded-lg flex items-center justify-center'>
+                          <CalendarIcon className='w-5 h-5 text-blue-600 dark:text-blue-400' />
                         </div>
                         <div>
-                          <span className="font-semibold text-blue-800 dark:text-blue-200">
+                          <span className='font-semibold text-blue-800 dark:text-blue-200'>
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">
+                          <p className='text-xs text-blue-600 dark:text-blue-400 mt-0.5'>
                             Periodo activo para facturación
                           </p>
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800">
-                        <div className="w-10 h-10 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex items-center justify-center">
-                          <AlertCircleIcon className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                      <div className='flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800'>
+                        <div className='w-10 h-10 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex items-center justify-center'>
+                          <AlertCircleIcon className='w-5 h-5 text-amber-600 dark:text-amber-400' />
                         </div>
                         <div>
-                          <span className="font-medium text-amber-800 dark:text-amber-200">
+                          <span className='font-medium text-amber-800 dark:text-amber-200'>
                             No hay periodo abierto
                           </span>
-                          <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                          <p className='text-xs text-amber-600 dark:text-amber-400 mt-0.5'>
                             Contacta al administrador
                           </p>
                         </div>
@@ -632,26 +632,26 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
 
                   {/* Ciclo de facturación */}
-                  <div className="space-y-2">
+                  <div className='space-y-2'>
                     <Label
-                      htmlFor="ciclo"
-                      className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                      htmlFor='ciclo'
+                      className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'
                     >
-                      <FileTextIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <FileTextIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                       Ciclo de facturación
                     </Label>
 
                     <Select value={cicloId} onValueChange={setCicloId}>
                       <SelectTrigger
-                        id="ciclo"
-                        className="h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-blue-400/20 w-full"
+                        id='ciclo'
+                        className='h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-blue-400/20 w-full'
                       >
-                        <SelectValue placeholder="Selecciona un ciclo de facturación" />
+                        <SelectValue placeholder='Selecciona un ciclo de facturación' />
                       </SelectTrigger>
                       <SelectContent>
                         {ciclosFacturacionActivos &&
                         ciclosFacturacionActivos.length > 0 ? (
-                          ciclosFacturacionActivos.map((ciclo) => {
+                          ciclosFacturacionActivos.map(ciclo => {
                             // Determinar el valor correcto para el API (1 o 2)
                             let valorCiclo = '1';
                             if (
@@ -665,11 +665,11 @@ export default function RevisarCalculoFacturaComponent({
                               <SelectItem
                                 key={ciclo.diaFacturacion}
                                 value={valorCiclo}
-                                className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                                className='hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
                               >
-                                <div className="flex items-center gap-2">
-                                  <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                  <span className="font-medium">
+                                <div className='flex items-center gap-2'>
+                                  <div className='w-2 h-2 rounded-full bg-emerald-500'></div>
+                                  <span className='font-medium'>
                                     {ciclo.descripcion}
                                   </span>
                                 </div>
@@ -679,23 +679,23 @@ export default function RevisarCalculoFacturaComponent({
                         ) : (
                           <>
                             <SelectItem
-                              value="1"
-                              className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                              value='1'
+                              className='hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
                             >
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                <span className="font-medium">
+                              <div className='flex items-center gap-2'>
+                                <div className='w-2 h-2 rounded-full bg-emerald-500'></div>
+                                <span className='font-medium'>
                                   Ciclo día 15
                                 </span>
                               </div>
                             </SelectItem>
                             <SelectItem
-                              value="2"
-                              className="hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                              value='2'
+                              className='hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
                             >
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                <span className="font-medium">
+                              <div className='flex items-center gap-2'>
+                                <div className='w-2 h-2 rounded-full bg-emerald-500'></div>
+                                <span className='font-medium'>
                                   Ciclo día 30
                                 </span>
                               </div>
@@ -708,46 +708,46 @@ export default function RevisarCalculoFacturaComponent({
                 </div>
 
                 {/* Botones de acción */}
-                <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
-                  <div className="flex gap-3">
+                <div className='flex flex-wrap justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-700'>
+                  <div className='flex gap-3'>
                     <Button
                       onClick={handleClearFilters}
-                      variant="outline"
+                      variant='outline'
                       disabled={isLoading}
-                      className="gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+                      className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
                     >
-                      <Eraser className="h-4 w-4" />
+                      <Eraser className='h-4 w-4' />
                       Limpiar
                     </Button>
                     <Button
                       onClick={handleRefreshData}
-                      variant="outline"
+                      variant='outline'
                       disabled={
                         isLoading ||
                         !cicloId ||
                         !isCalculoPreparado ||
                         timerActive
                       }
-                      className="gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+                      className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
                     >
-                      <RefreshCw className="h-4 w-4" />
+                      <RefreshCw className='h-4 w-4' />
                       Actualizar
                     </Button>
                   </div>
-                  <div className="flex gap-3">
+                  <div className='flex gap-3'>
                     <Button
                       onClick={handleLanzarCalculoFacturas}
                       disabled={isLoading || !cicloId || timerActive}
-                      className="gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+                      className='gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
                     >
                       {isLaunchingCalculo ? (
                         <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                           Preparando...
                         </>
                       ) : (
                         <>
-                          <SearchIcon className="h-4 w-4" />
+                          <SearchIcon className='h-4 w-4' />
                           Preparar Cálculo
                         </>
                       )}
@@ -760,16 +760,16 @@ export default function RevisarCalculoFacturaComponent({
                         !isCalculoPreparado ||
                         timerActive
                       }
-                      className="gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
+                      className='gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white'
                     >
                       {isLoading ? (
                         <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                           Cargando...
                         </>
                       ) : (
                         <>
-                          <FileTextIcon className="h-4 w-4" />
+                          <FileTextIcon className='h-4 w-4' />
                           Ver Cálculo Facturas
                         </>
                       )}
@@ -779,16 +779,16 @@ export default function RevisarCalculoFacturaComponent({
                       disabled={
                         isAcceptingCalculo || selectedContratos.length === 0
                       }
-                      className="gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white"
+                      className='gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white'
                     >
                       {isAcceptingCalculo ? (
                         <>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                           Aceptando...
                         </>
                       ) : (
                         <>
-                          <SettingsIcon className="h-4 w-4" />
+                          <SettingsIcon className='h-4 w-4' />
                           Aceptar Cálculo ({selectedContratos.length})
                         </>
                       )}
@@ -800,53 +800,53 @@ export default function RevisarCalculoFacturaComponent({
           </Collapsible>
         </Card>
         {/* Resultados de la búsqueda */}
-        <Card className="border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50">
-          <CardHeader className="border-b border-slate-200 dark:border-slate-700">
-            <div className="flex items-center gap-4">
-              <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800">
-                <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
+          <CardHeader className='border-b border-slate-200 dark:border-slate-700'>
+            <div className='flex items-center gap-4'>
+              <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
+                <TrendingUp className='w-4 h-4 text-blue-600 dark:text-blue-400' />
               </div>
               <div>
-                <CardTitle className="text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
                   Resultados de la búsqueda
                 </CardTitle>
-                <CardDescription className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
+                <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
                   Listado de contratos y sus cálculos de facturación
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className='p-6'>
             {isLoading ? (
-              <div className="flex justify-center items-center h-40">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="relative">
-                    <div className="w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800"></div>
-                    <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin"></div>
+              <div className='flex justify-center items-center h-40'>
+                <div className='flex flex-col items-center gap-4'>
+                  <div className='relative'>
+                    <div className='w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800'></div>
+                    <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin'></div>
                   </div>
-                  <div className="text-center">
-                    <p className="text-sky-700 dark:text-sky-300 font-medium">
+                  <div className='text-center'>
+                    <p className='text-sky-700 dark:text-sky-300 font-medium'>
                       Cargando resultados...
                     </p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className='text-xs text-muted-foreground mt-1'>
                       Por favor espere mientras procesamos su consulta
                     </p>
                   </div>
                 </div>
               </div>
             ) : error ? (
-              <div className="p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm">
-                    <AlertCircleIcon className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+              <div className='p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm'>
+                <div className='flex items-start gap-3'>
+                  <div className='p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm'>
+                    <AlertCircleIcon className='h-5 w-5 text-rose-600 dark:text-rose-400' />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-rose-800 dark:text-rose-200">
+                  <div className='flex-1'>
+                    <h4 className='font-semibold text-rose-800 dark:text-rose-200'>
                       {error.includes('No se han encontrado prefacturas')
                         ? 'No se encontraron prefacturas'
                         : 'Error al cargar los datos'}
                     </h4>
-                    <p className="text-sm text-rose-600 dark:text-rose-400 mt-1">
+                    <p className='text-sm text-rose-600 dark:text-rose-400 mt-1'>
                       {error.includes('No se han encontrado prefacturas')
                         ? 'No se han encontrado prefacturas para el ciclo y periodo elegidos. Verifique que el ciclo y periodo sean correctos.'
                         : 'Los datos no han sido cargados completamente. Recuerde que debe hacer clic en Preparar Cálculo Factura y luego en Ver Cálculo Facturas'}
@@ -854,9 +854,9 @@ export default function RevisarCalculoFacturaComponent({
 
                     <Button
                       onClick={() => setError(null)}
-                      variant="outline"
-                      size="sm"
-                      className="mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20"
+                      variant='outline'
+                      size='sm'
+                      className='mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20'
                     >
                       Cerrar
                     </Button>
@@ -864,45 +864,45 @@ export default function RevisarCalculoFacturaComponent({
                 </div>
               </div>
             ) : data.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground">
-                <div className="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full">
-                  <SearchIcon className="h-8 w-8 text-sky-500 dark:text-sky-400" />
+              <div className='flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground'>
+                <div className='p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full'>
+                  <SearchIcon className='h-8 w-8 text-sky-500 dark:text-sky-400' />
                 </div>
-                <div className="text-center">
-                  <p className="font-medium text-slate-700 dark:text-slate-300">
+                <div className='text-center'>
+                  <p className='font-medium text-slate-700 dark:text-slate-300'>
                     Realizar consulta de precálculos
                   </p>
-                  <p className="text-sm mt-1">
+                  <p className='text-sm mt-1'>
                     Selecciona un ciclo y haz clic en "Preparar Cálculo" para
                     ver los resultados
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className='space-y-4'>
                 {/* Estadísticas resumidas */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/30 dark:to-blue-900/30 rounded-lg border border-sky-200 dark:border-sky-800">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-sky-700 dark:text-sky-300">
+                <div className='grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/30 dark:to-blue-900/30 rounded-lg border border-sky-200 dark:border-sky-800'>
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-sky-700 dark:text-sky-300'>
                       {filteredData.length}
                     </div>
-                    <div className="text-xs text-sky-600 dark:text-sky-400 font-medium">
+                    <div className='text-xs text-sky-600 dark:text-sky-400 font-medium'>
                       {searchTerm ? 'Contratos Filtrados' : 'Total Contratos'}
                     </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-300'>
                       {filteredData.reduce(
                         (sum, item) => sum + (item.cargos?.length || 0),
-                        0,
+                        0
                       )}
                     </div>
-                    <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                    <div className='text-xs text-emerald-600 dark:text-emerald-400 font-medium'>
                       Total Cargos
                     </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-amber-700 dark:text-amber-300'>
                       {new Intl.NumberFormat('es-CL', {
                         style: 'currency',
                         currency: 'CLP',
@@ -910,41 +910,41 @@ export default function RevisarCalculoFacturaComponent({
                       }).format(
                         filteredData.reduce(
                           (sum, item) => sum + (item.totalFacturado || 0),
-                          0,
-                        ),
+                          0
+                        )
                       )}
                     </div>
-                    <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                    <div className='text-xs text-amber-600 dark:text-amber-400 font-medium'>
                       Total Facturado
                     </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                  <div className='text-center'>
+                    <div className='text-2xl font-bold text-purple-700 dark:text-purple-300'>
                       {filteredData
                         .reduce(
                           (sum, item) => sum + (item.consumoPeriodo || 0),
-                          0,
+                          0
                         )
                         .toLocaleString('es-CL')}
                     </div>
-                    <div className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+                    <div className='text-xs text-purple-600 dark:text-purple-400 font-medium'>
                       Total Consumo m³
                     </div>
                   </div>
                 </div>
 
                 {/* Barra de búsqueda */}
-                <div className="relative">
-                  <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <div className='relative'>
+                  <SearchIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
                   <Input
-                    type="text"
-                    placeholder="🔍 Buscar por contrato, nombre, RUT, dirección..."
+                    type='text'
+                    placeholder='🔍 Buscar por contrato, nombre, RUT, dirección...'
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20"
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className='pl-10 border-border/60 focus:border-sky-400 focus:ring-sky-400/20'
                   />
                   {searchTerm && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground">
+                    <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground'>
                       {filteredData.length} de {data.length}
                     </div>
                   )}
@@ -952,61 +952,61 @@ export default function RevisarCalculoFacturaComponent({
 
                 {/* Mostrar lecturaId seleccionados */}
                 {selectedContratos.length > 0 && (
-                  <div className="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md">
-                        <FileTextIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                  <div className='p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg'>
+                    <div className='flex items-center gap-2 mb-2'>
+                      <div className='p-1.5 bg-amber-100 dark:bg-amber-800/50 rounded-md'>
+                        <FileTextIcon className='h-4 w-4 text-amber-600 dark:text-amber-400' />
                       </div>
-                      <h4 className="font-semibold text-amber-800 dark:text-amber-200">
+                      <h4 className='font-semibold text-amber-800 dark:text-amber-200'>
                         Contratos Seleccionados ({selectedContratos.length})
                       </h4>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                      {selectedContratos.map((lecturaId) => (
+                    <div className='flex flex-wrap gap-2'>
+                      {selectedContratos.map(lecturaId => (
                         <Badge
                           key={lecturaId}
-                          variant="outline"
-                          className="bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-700"
+                          variant='outline'
+                          className='bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-700'
                         >
                           Lectura ID: {lecturaId}
                         </Badge>
                       ))}
                     </div>
-                    <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
+                    <p className='text-xs text-amber-600 dark:text-amber-400 mt-2'>
                       💡 Estos son los IDs de lectura que has seleccionado en la
                       tabla
                     </p>
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pb-3 border-b">
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md">
-                      <FileTextIcon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <div className='flex items-center justify-between pb-3 border-b'>
+                  <div className='flex items-center gap-2'>
+                    <div className='p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md'>
+                      <FileTextIcon className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
                     </div>
-                    <span className="font-medium text-emerald-700 dark:text-emerald-300">
+                    <span className='font-medium text-emerald-700 dark:text-emerald-300'>
                       {filteredData.length} registros{' '}
                       {searchTerm
                         ? `encontrados de ${data.length} total`
                         : 'encontrados'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className='flex items-center gap-4'>
+                    <div className='flex items-center gap-2 text-xs text-muted-foreground'>
                       <span>💡 Haz clic en</span>
-                      <ChevronRight className="h-3 w-3" />
+                      <ChevronRight className='h-3 w-3' />
                       <span>para ver el detalle de cargos</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900'>
                   <HierarchicalDataTable
                     columns={columns}
                     data={filteredData}
-                    onSelectionChange={(selectedContratos) => {
+                    onSelectionChange={selectedContratos => {
                       setSelectedContratos(
-                        selectedContratos.map((contrato) => contrato.lecturaId),
+                        selectedContratos.map(contrato => contrato.lecturaId)
                       );
                     }}
                   />

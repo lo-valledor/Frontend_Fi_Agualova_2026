@@ -1,6 +1,7 @@
 import React from 'react';
-import { Label } from '~/components/ui/label';
+
 import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 
 interface MedidorFieldProps {
   id: string;
@@ -41,13 +42,13 @@ export default function MedidorField({
   const colors = colorVariants[colorScheme];
 
   return (
-    <div className="space-y-2">
+    <div className='space-y-2'>
       <Label htmlFor={id} className={`text-sm ${colors.label} font-medium`}>
         {label}
       </Label>
       <Input
         id={id}
-        placeholder=""
+        placeholder=''
         value={value}
         readOnly
         className={`h-9 ${colors.input}`}

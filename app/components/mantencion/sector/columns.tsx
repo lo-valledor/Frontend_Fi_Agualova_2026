@@ -1,8 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Sectores } from '~/types/mantencion';
-import { Badge } from '~/components/ui/badge';
+
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { Sectores } from '~/types/mantencion';
 
 interface TableColumnsProps {
   onEdit: (sector: Sectores) => void;
@@ -16,14 +17,14 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nombre" />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
       const sector = row.original;
       return (
-        <div className="flex items-center space-x-3">
+        <div className='flex items-center space-x-3'>
           <div>
-            <div className="font-medium text-gray-900 dark:text-gray-100">
+            <div className='font-medium text-gray-900 dark:text-gray-100'>
               {sector.nombre}
             </div>
           </div>
@@ -36,12 +37,12 @@ export const columns = ({
   {
     accessorKey: 'zona',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Zona" />
+      <DataTableColumnHeader column={column} title='Zona' />
     ),
     cell: ({ row }) => {
       const zona = row.getValue('zona') as string;
       return (
-        <Badge variant="outline" className="font-medium">
+        <Badge variant='outline' className='font-medium'>
           {zona}
         </Badge>
       );
@@ -51,7 +52,7 @@ export const columns = ({
   {
     accessorKey: 'estado',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Estado" />
+      <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
       const estado = row.getValue('estado') as boolean;

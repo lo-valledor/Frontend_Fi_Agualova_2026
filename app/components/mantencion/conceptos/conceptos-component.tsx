@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { useRevalidator } from 'react-router';
-import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
+
+import React, { useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
+import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import type { ComboAsociadoConceptos, Conceptos } from '~/types/mantencion';
-import { DataTable } from '~/components/data-table/data-table';
+
 import { createColumns } from './columns';
 import ConceptoFormModal from './concepto-form-modal';
 
@@ -41,7 +45,7 @@ export default function ConceptosComponent({
   const handleDelete = async (concepto: Conceptos) => {
     if (
       window.confirm(
-        `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`,
+        `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`
       )
     ) {
       try {
@@ -61,7 +65,7 @@ export default function ConceptosComponent({
     toast.success(
       modalMode === 'add'
         ? 'Concepto creado exitosamente'
-        : 'Concepto actualizado exitosamente',
+        : 'Concepto actualizado exitosamente'
     );
     revalidator.revalidate();
   };
@@ -72,31 +76,28 @@ export default function ConceptosComponent({
   });
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Conceptos
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Conceptos
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los conceptos del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAdd}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Concepto
         </Button>
       </div>
 
       {/* Data Table */}
-      <Card>
-        <CardContent className="">
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable columns={columns} data={conceptos} />
         </CardContent>
       </Card>

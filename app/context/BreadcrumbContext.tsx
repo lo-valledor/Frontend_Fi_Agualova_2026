@@ -1,9 +1,9 @@
 // src/context/BreadcrumbContext.tsx
 import React, {
-  createContext,
-  useState,
-  useContext,
   type ReactNode,
+  createContext,
+  useContext,
+  useState,
 } from 'react';
 
 // Reutiliza la interfaz que ya tienes en SiteHeader
@@ -18,7 +18,7 @@ interface BreadcrumbContextType {
 }
 
 const BreadcrumbContext = createContext<BreadcrumbContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const BreadcrumbProvider = ({ children }: { children: ReactNode }) => {

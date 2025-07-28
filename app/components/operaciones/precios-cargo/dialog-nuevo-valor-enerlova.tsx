@@ -1,19 +1,21 @@
-import { Button } from '~/components/ui/button';
-import { Label } from '~/components/ui/label';
-import { Input } from '~/components/ui/input';
-import { Calendar, Loader2, Save, AlertCircle } from 'lucide-react';
+import { AlertCircle, Calendar, Loader2, Save } from 'lucide-react';
 import { toast } from 'sonner';
-import api from '~/lib/api';
-import { useState, useCallback, useMemo } from 'react';
+
+import { useCallback, useMemo, useState } from 'react';
+
+import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter,
 } from '~/components/ui/dialog';
-import { Alert, AlertDescription } from '~/components/ui/alert';
+import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import api from '~/lib/api';
 
 interface DialogNuevoValorEnerlovaProps {
   codigo: string;
@@ -94,12 +96,12 @@ export default function DialogNuevoValorEnerlova({
   // Manejador para actualizar el valor del input
   const handleInputChange = useCallback(
     (field: keyof typeof formValues, value: string | number) => {
-      setFormValues((prev) => ({
+      setFormValues(prev => ({
         ...prev,
         [field]: value,
       }));
     },
-    [],
+    []
   );
 
   // Manejador para enviar el formulario
@@ -124,7 +126,7 @@ export default function DialogNuevoValorEnerlova({
 
       const response = await api.post(
         '/ingresa-precio-cargo-enerlova',
-        payload,
+        payload
       );
 
       if (response.status === 200) {
@@ -143,137 +145,137 @@ export default function DialogNuevoValorEnerlova({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1.5">
-          <Calendar className="h-4 w-4" />
+        <Button variant='outline' size='sm' className='gap-1.5'>
+          <Calendar className='h-4 w-4' />
           Nuevo Valor
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold">
+          <DialogTitle className='text-xl font-semibold'>
             Nuevo Valor del Cargo
           </DialogTitle>
         </DialogHeader>
 
-        <div className="grid gap-4 py-3">
-          <div className="grid grid-cols-4 items-center gap-4">
+        <div className='grid gap-4 py-3'>
+          <div className='grid grid-cols-4 items-center gap-4'>
             <Label
-              htmlFor="codigo"
-              className="text-right font-medium text-muted-foreground"
+              htmlFor='codigo'
+              className='text-right font-medium text-muted-foreground'
             >
               Código
             </Label>
             <Input
-              id="codigo"
+              id='codigo'
               value={formValues.codigo}
               disabled
-              className="col-span-3 bg-muted/50"
+              className='col-span-3 bg-muted/50'
             />
           </div>
 
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className='grid grid-cols-4 items-center gap-4'>
             <Label
-              htmlFor="descripcion"
-              className="text-right font-medium text-muted-foreground"
+              htmlFor='descripcion'
+              className='text-right font-medium text-muted-foreground'
             >
               Descripción
             </Label>
             <Input
-              id="descripcion"
+              id='descripcion'
               value={formValues.descripcion}
               disabled
-              className="col-span-3 bg-muted/50"
+              className='col-span-3 bg-muted/50'
             />
           </div>
 
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className='grid grid-cols-4 items-center gap-4'>
             <Label
-              htmlFor="fecha_inicio"
-              className="text-right font-medium text-muted-foreground"
+              htmlFor='fecha_inicio'
+              className='text-right font-medium text-muted-foreground'
             >
               Fecha Inicio
             </Label>
-            <div className="col-span-3 relative">
+            <div className='col-span-3 relative'>
               <Input
-                id="fecha_inicio"
+                id='fecha_inicio'
                 value={formValues.fecha_inicio}
                 disabled
-                className="bg-muted/50 pl-9"
+                className='bg-muted/50 pl-9'
               />
-              <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Calendar className='absolute left-3 top-2.5 h-4 w-4 text-muted-foreground' />
             </div>
           </div>
 
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className='grid grid-cols-4 items-center gap-4'>
             <Label
-              htmlFor="fecha_fin"
-              className="text-right font-medium text-muted-foreground"
+              htmlFor='fecha_fin'
+              className='text-right font-medium text-muted-foreground'
             >
               Fecha Fin
             </Label>
-            <div className="col-span-3 relative">
+            <div className='col-span-3 relative'>
               <Input
-                type="date"
-                id="fecha_fin"
+                type='date'
+                id='fecha_fin'
                 value={formValues.fecha_fin}
-                onChange={(e) => handleInputChange('fecha_fin', e.target.value)}
-                className="pl-9"
+                onChange={e => handleInputChange('fecha_fin', e.target.value)}
+                className='pl-9'
               />
-              <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Calendar className='absolute left-3 top-2.5 h-4 w-4 text-muted-foreground' />
             </div>
           </div>
 
-          <div className="grid grid-cols-4 items-center gap-4">
+          <div className='grid grid-cols-4 items-center gap-4'>
             <Label
-              htmlFor="valor"
-              className="text-right font-medium text-muted-foreground"
+              htmlFor='valor'
+              className='text-right font-medium text-muted-foreground'
             >
               Valor
             </Label>
             <Input
-              id="valor"
-              type="number"
-              step="0.01"
-              min="0"
+              id='valor'
+              type='number'
+              step='0.01'
+              min='0'
               value={formValues.valor || ''}
-              onChange={(e) =>
+              onChange={e =>
                 handleInputChange('valor', parseFloat(e.target.value) || 0)
               }
-              className="col-span-3"
+              className='col-span-3'
             />
           </div>
 
           {validationErrors.length > 0 && (
-            <Alert variant="destructive" className="col-span-full mt-2">
-              <AlertCircle className="h-4 w-4" />
+            <Alert variant='destructive' className='col-span-full mt-2'>
+              <AlertCircle className='h-4 w-4' />
               <AlertDescription>{validationErrors[0]}</AlertDescription>
             </Alert>
           )}
         </div>
 
-        <DialogFooter className="sm:justify-end">
+        <DialogFooter className='sm:justify-end'>
           <Button
-            type="button"
-            variant="secondary"
+            type='button'
+            variant='secondary'
             onClick={() => setIsOpen(false)}
             disabled={isLoading}
           >
             Cancelar
           </Button>
           <Button
-            type="button"
+            type='button'
             onClick={handleSubmit}
             disabled={!isFormValid || isLoading}
-            className="gap-2"
+            className='gap-2'
           >
             {isLoading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className='h-4 w-4 animate-spin' />
                 Guardando...
               </>
             ) : (
               <>
-                <Save className="h-4 w-4" />
+                <Save className='h-4 w-4' />
                 Guardar
               </>
             )}

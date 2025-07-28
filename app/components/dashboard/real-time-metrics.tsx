@@ -1,9 +1,10 @@
 'use client';
 
-import type React from 'react';
-
-import { useEffect, useState } from 'react';
 import { Activity, Eye, MousePointer, Users } from 'lucide-react';
+
+import type React from 'react';
+import { useEffect, useState } from 'react';
+
 import {
   Card,
   CardContent,
@@ -55,12 +56,12 @@ export function RealTimeMetrics() {
   // Simular actualizaciones en tiempo real
   useEffect(() => {
     const interval = setInterval(() => {
-      setMetrics((prev) =>
-        prev.map((metric) => ({
+      setMetrics(prev =>
+        prev.map(metric => ({
           ...metric,
           value: metric.value + Math.floor(Math.random() * 10) - 5,
           change: Math.floor(Math.random() * 20) - 10,
-        })),
+        }))
       );
     }, 3000);
 
@@ -70,26 +71,26 @@ export function RealTimeMetrics() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5" />
+        <CardTitle className='flex items-center gap-2'>
+          <Activity className='h-5 w-5' />
           Métricas en Tiempo Real
         </CardTitle>
         <CardDescription>Datos actualizados cada 3 segundos</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
           {metrics.map((metric, index) => (
             <div
               key={index}
-              className="flex items-center gap-3 p-3 rounded-lg bg-muted/50"
+              className='flex items-center gap-3 p-3 rounded-lg bg-muted/50'
             >
               <div className={`p-2 rounded-lg bg-background ${metric.color}`}>
-                <metric.icon className="h-4 w-4" />
+                <metric.icon className='h-4 w-4' />
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{metric.label}</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold">
+              <div className='flex-1'>
+                <p className='text-sm font-medium'>{metric.label}</p>
+                <div className='flex items-center gap-2'>
+                  <span className='text-lg font-bold'>
                     {metric.label === 'Tasa de Actividad'
                       ? `${metric.value}%`
                       : metric.value.toLocaleString()}

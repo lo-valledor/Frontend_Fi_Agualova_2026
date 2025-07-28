@@ -29,23 +29,23 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
   });
   return (
-    <div className="w-fit max-w-full mx-auto overflow-x-auto">
-      <div className="rounded-md border shadow-sm border-border/60">
-        <Table className="table-auto">
+    <div className='w-fit max-w-full mx-auto overflow-x-auto'>
+      <div className='rounded-md border shadow-sm border-border/60'>
+        <Table className='table-auto'>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map(header => {
                   return (
                     <TableHead
                       key={header.id}
-                      className="px-3 py-2 whitespace-nowrap"
+                      className='px-3 py-2 whitespace-nowrap'
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
                   );
@@ -55,17 +55,17 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-muted/50 transition-colors"
+                  className='hover:bg-muted/50 transition-colors'
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-3 py-2">
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id} className='px-3 py-2'>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -75,7 +75,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-muted-foreground"
+                  className='h-24 text-center text-muted-foreground'
                 >
                   No hay datos disponibles.
                 </TableCell>

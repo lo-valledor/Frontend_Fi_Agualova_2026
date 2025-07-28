@@ -1,16 +1,17 @@
-import * as React from 'react';
 import {
-  ChevronRight,
-  Settings,
   BarChart3,
+  ChevronRight,
+  FileText,
+  Settings,
   Users,
   Wrench,
-  FileText,
 } from 'lucide-react';
-import { Link, useLocation } from 'react-router';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 
-import { SearchForm } from './search-form';
+import * as React from 'react';
+
+import { Link, useLocation } from 'react-router';
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -28,6 +29,8 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '~/components/ui/sidebar';
+
+import { SearchForm } from './search-form';
 
 const itemVariants = {
   hidden: {
@@ -254,11 +257,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     const searchLower = searchTerm.toLowerCase();
     return data.navMain
-      .map((section) => {
+      .map(section => {
         const filteredItems = section.items.filter(
-          (item) =>
+          item =>
             item.title.toLowerCase().includes(searchLower) ||
-            section.title.toLowerCase().includes(searchLower),
+            section.title.toLowerCase().includes(searchLower)
         );
 
         if (filteredItems.length === 0) {
@@ -281,7 +284,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       {/* Header mejorado con gradiente */}
-      <SidebarHeader className="border-b border-gradient-to-r from-blue-200/30 to-purple-200/30 dark:from-blue-800/30 dark:to-purple-800/30 pb-3 bg-gradient-to-br">
+      <SidebarHeader className='border-b border-sky-200 dark:border-sky-800'>
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -291,35 +294,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </motion.div>
       </SidebarHeader>
 
-      <SidebarContent className="gap-1 px-3 py-3 bg-gradient-to-b from-transparent to-slate-50/30 dark:to-slate-900/30">
+      <SidebarContent className='gap-1 px-3 py-3'>
         <AnimatePresence>
           {filteredNavMain.length > 0 ? (
             <motion.div
               variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className="space-y-2"
+              initial='hidden'
+              animate='visible'
+              className='space-y-2'
             >
               {filteredNavMain.map((item, index) => (
                 <motion.div
                   key={item.title}
                   variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
+                  initial='hidden'
+                  animate='visible'
                   transition={{ delay: index * 0.1 }}
                 >
                   <Collapsible
                     title={item.title}
                     defaultOpen
-                    className="group/collapsible"
+                    className='group/collapsible'
                   >
-                    <SidebarGroup className="mb-1">
+                    <SidebarGroup className='mb-1'>
                       <SidebarGroupLabel
                         asChild
-                        className="group/label text-sidebar-foreground/90 hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 hover:text-sidebar-accent-foreground text-sm font-semibold rounded-lg transition-all duration-300 border border-transparent hover:border-blue-200/50 dark:hover:border-blue-700/50"
+                        className='group/label text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm font-semibold rounded-lg transition-all duration-300 border border-transparent hover:border-sky-200/50 dark:hover:border-sky-700/50  '
                       >
-                        <CollapsibleTrigger className="w-full px-4 py-3 flex items-center justify-between group">
-                          <div className="flex items-center gap-3">
+                        <CollapsibleTrigger className='w-full px-4 py-3 flex items-center justify-between group'>
+                          <div className='flex items-center gap-3'>
                             {item.icon && (
                               <motion.div
                                 whileHover={{ scale: 1.1, rotate: 5 }}
@@ -329,12 +332,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                   stiffness: 400,
                                   damping: 17,
                                 }}
-                                className="flex h-6 w-6 items-center justify-center rounded-md bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-700 dark:text-blue-300 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300"
+                                className='flex h-6 w-6 items-center justify-center rounded-md bg-sky-500 text-white group-hover:from-sky-500/30 group-hover:to-sky-500/30 transition-all duration-300'
                               >
-                                <item.icon className="h-4 w-4" />
+                                <item.icon className='h-4 w-4' />
                               </motion.div>
                             )}
-                            <span className="truncate font-medium">
+                            <span className='truncate font-medium'>
                               {item.title}
                             </span>
                           </div>
@@ -342,22 +345,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             initial={{ rotate: 0 }}
                             whileHover={{ rotate: 90 }}
                             transition={{ duration: 0.2 }}
-                            className="group-data-[state=open]/collapsible:rotate-90 transition-transform duration-300"
+                            className='group-data-[state=open]/collapsible:rotate-90 transition-transform duration-300'
                           >
-                            <ChevronRight className="h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity" />
+                            <ChevronRight className='h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity' />
                           </motion.div>
                         </CollapsibleTrigger>
                       </SidebarGroupLabel>
 
-                      <CollapsibleContent className="overflow-hidden">
+                      <CollapsibleContent className='overflow-hidden'>
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.3, ease: 'easeInOut' }}
                         >
-                          <SidebarGroupContent className="pt-2 ml-2 border-l border-slate-200/50 dark:border-slate-700/50">
-                            <SidebarMenu className="space-y-1">
+                          <SidebarGroupContent className='pt-2 ml-2 border-l border-sky-200/50 dark:border-sky-700/50'>
+                            <SidebarMenu className='space-y-1'>
                               {item.items.map((menuItem, menuIndex) => (
                                 <motion.div
                                   key={menuItem.title}
@@ -369,7 +372,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                     <SidebarMenuButton
                                       asChild
                                       isActive={isActiveRoute(menuItem.url)}
-                                      className="rounded-lg transition-all duration-200 hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-purple-500/10 data-[active=true]:bg-gradient-to-r data-[active=true]:from-blue-500/20 data-[active=true]:to-purple-500/20 data-[active=true]:text-blue-900 dark:data-[active=true]:text-blue-100 data-[active=true]:border data-[active=true]:border-blue-200/50 dark:data-[active=true]:border-blue-700/50 hover:border hover:border-slate-200/50 dark:hover:border-slate-700/50 ml-4"
+                                      className='rounded-lg transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/10 hover:to-sky-500/10 data-[active=true]:bg-gradient-to-r data-[active=true]:from-sky-500/20 data-[active=true]:to-sky-500/20 data-[active=true]:text-sky-900 dark:data-[active=true]:text-sky-100 data-[active=true]:border data-[active=true]:border-sky-200/50 dark:data-[active=true]:border-sky-700/50 hover:border hover:border-sky-200/50 dark:hover:border-sky-700/50 ml-4'
                                     >
                                       <motion.div
                                         whileHover={{ x: 4 }}
@@ -378,21 +381,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                           stiffness: 400,
                                           damping: 17,
                                         }}
-                                        className="w-full"
+                                        className='w-full'
                                       >
                                         <Link
                                           to={menuItem.url}
-                                          className="px-3 py-2.5 text-sm font-medium flex items-center gap-2 w-full"
+                                          className='px-3 py-2.5 text-sm font-medium flex items-center gap-2 w-full'
                                         >
                                           <motion.div
-                                            className="w-1.5 h-1.5 rounded-full bg-current opacity-50"
+                                            className='w-1.5 h-1.5 rounded-full bg-current opacity-50'
                                             whileHover={{
                                               scale: 1.5,
                                               opacity: 1,
                                             }}
                                             transition={{ duration: 0.2 }}
                                           />
-                                          <span className="truncate">
+                                          <span className='truncate'>
                                             {menuItem.title}
                                           </span>
                                         </Link>
@@ -416,20 +419,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className="flex items-center justify-center py-12 text-center"
+              className='flex items-center justify-center py-12 text-center'
             >
-              <div className="space-y-3 max-w-[200px]">
+              <div className='space-y-3 max-w-[200px]'>
                 <motion.div
                   initial={{ rotate: 0 }}
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  className="mx-auto w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center"
+                  className='mx-auto w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center'
                 >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 opacity-50" />
+                  <div className='w-6 h-6 rounded-full bg-sky-500 opacity-50' />
                 </motion.div>
-                <div className="text-muted-foreground text-sm leading-relaxed">
+                <div className='text-muted-foreground text-sm leading-relaxed'>
                   No se encontraron resultados para{' '}
-                  <span className="font-medium text-blue-600 dark:text-blue-400">
+                  <span className='font-medium text-sky-600 dark:text-sky-400'>
                     "{searchTerm}"
                   </span>
                 </div>
@@ -437,7 +440,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSearchTerm('')}
-                  className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline bg-blue-50/50 dark:bg-blue-900/20 px-3 py-1.5 rounded-full border border-blue-200/50 dark:border-blue-800/50 transition-all duration-200"
+                  className='text-xs text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 hover:underline bg-sky-50/50 dark:bg-sky-900/20 px-3 py-1.5 rounded-full border border-sky-200/50 dark:border-sky-800/50 transition-all duration-200'
                 >
                   Limpiar búsqueda
                 </motion.button>

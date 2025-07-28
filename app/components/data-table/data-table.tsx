@@ -1,5 +1,10 @@
 import {
   type ColumnDef,
+  type ColumnFiltersState,
+  type PaginationState,
+  type RowSelectionState,
+  type SortingState,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -8,12 +13,11 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  type ColumnFiltersState,
-  type PaginationState,
-  type SortingState,
-  type VisibilityState,
-  type RowSelectionState,
 } from '@tanstack/react-table';
+import { Search } from 'lucide-react';
+
+import { useState } from 'react';
+
 import { Input } from '~/components/ui/input';
 import {
   Table,
@@ -23,8 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from '~/components/ui/table';
-import { Search } from 'lucide-react';
-import { useState } from 'react';
+
 import { DataTablePagination } from './data-table-pagination';
 
 interface DataTableAdvancedProps<TData, TValue> {
@@ -76,18 +79,18 @@ export function DataTable<TData, TValue>({
       globalFilter,
     },
     enableRowSelection: true,
-    getRowId: rowIdKey ? (row) => String(row[rowIdKey]) : undefined,
-    onRowSelectionChange: (updater) => {
+    getRowId: rowIdKey ? row => String(row[rowIdKey]) : undefined,
+    onRowSelectionChange: updater => {
       const newSelection =
         typeof updater === 'function' ? updater(rowSelection) : updater;
       setRowSelection(newSelection);
 
       if (onRowSelectionChange) {
         const selectedRows = Object.keys(newSelection)
-          .filter((key) => newSelection[key])
-          .map((key) => {
+          .filter(key => newSelection[key])
+          .map(key => {
             if (rowIdKey) {
-              return data.find((row) => String(row[rowIdKey]) === key) as TData;
+              return data.find(row => String(row[rowIdKey]) === key) as TData;
             }
             return data[parseInt(key)] as TData;
           })
@@ -109,35 +112,35 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       {/* Search */}
       {showSearch && (
-        <div className="flex justify-end">
-          <div className="relative w-full max-w-xs">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className='flex justify-end'>
+          <div className='relative w-full max-w-xs'>
+            <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
-              onChange={(event) => setGlobalFilter(event.target.value)}
-              className="w-full rounded-md border-border bg-background py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+              onChange={event => setGlobalFilter(event.target.value)}
+              className='w-full rounded-md border-border bg-background py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary'
             />
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className="rounded-lg border bg-card">
+      <div className='rounded-lg border bg-card'>
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-b bg-muted/50">
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold">
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id} className='border-b bg-muted/50'>
+                {headerGroup.headers.map(header => (
+                  <TableHead key={header.id} className='font-semibold'>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext(),
+                          header.getContext()
                         )}
                   </TableHead>
                 ))}
@@ -146,17 +149,17 @@ export function DataTable<TData, TValue>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map(row => (
                 <TableRow
                   key={row.id}
-                  className="hover:bg-muted/50 transition-colors"
+                  className='hover:bg-muted/50 transition-colors'
                   data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map(cell => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -166,7 +169,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className='h-24 text-center'
                 >
                   No se encontraron resultados.
                 </TableCell>

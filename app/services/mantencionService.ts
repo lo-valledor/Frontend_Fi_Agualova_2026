@@ -2,8 +2,8 @@ import api from '~/lib/api';
 import type {
   CiclosFacturacion,
   Claves,
-  Conceptos,
   ComboAsociadoConceptos,
+  Conceptos,
   Empalme,
   Marca,
   Nicho,
@@ -40,7 +40,9 @@ class MantencionService {
   /**
    * Obtiene ciclos de facturación
    */
-  async getCiclosFacturacion(): Promise<MantencionServiceResponse<CiclosFacturacion[]>> {
+  async getCiclosFacturacion(): Promise<
+    MantencionServiceResponse<CiclosFacturacion[]>
+  > {
     try {
       const response = await api.get('/buscarCiclo');
       return {
@@ -76,10 +78,12 @@ class MantencionService {
   /**
    * Obtiene conceptos con combo asociado
    */
-  async getConceptosData(): Promise<MantencionServiceResponse<{
-    conceptos: Conceptos[];
-    comboAsociadoConceptos: ComboAsociadoConceptos[];
-  }>> {
+  async getConceptosData(): Promise<
+    MantencionServiceResponse<{
+      conceptos: Conceptos[];
+      comboAsociadoConceptos: ComboAsociadoConceptos[];
+    }>
+  > {
     try {
       const [resConceptos, resComboAsociado] = await Promise.all([
         api.get('/buscarConceptos'),
@@ -89,7 +93,8 @@ class MantencionService {
       return {
         data: {
           conceptos: this.processApiResponse<Conceptos>(resConceptos),
-          comboAsociadoConceptos: this.processApiResponse<ComboAsociadoConceptos>(resComboAsociado),
+          comboAsociadoConceptos:
+            this.processApiResponse<ComboAsociadoConceptos>(resComboAsociado),
         },
         error: null,
       };
@@ -212,7 +217,9 @@ class MantencionService {
   /**
    * Obtiene tipos de contratos
    */
-  async getTiposContratos(): Promise<MantencionServiceResponse<TiposContrato[]>> {
+  async getTiposContratos(): Promise<
+    MantencionServiceResponse<TiposContrato[]>
+  > {
     try {
       const response = await api.get('/buscarTipoContrato');
       return {

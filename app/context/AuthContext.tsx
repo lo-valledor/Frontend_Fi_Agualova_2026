@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authService } from '../services/authService';
-import { useNavigate } from 'react-router';
 import { jwtDecode } from 'jwt-decode';
+
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import { useNavigate } from 'react-router';
+
+import { authService } from '../services/authService';
 
 export interface UserData {
   id: string;
@@ -17,7 +20,7 @@ interface AuthContextType {
   login: (
     usuario: string,
     contrasena: string,
-    redirectTo?: string,
+    redirectTo?: string
   ) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
@@ -102,7 +105,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             // Token expirado o inválido
             localStorage.removeItem('token');
             console.warn(
-              'Token expirado o inválido, removido del localStorage',
+              'Token expirado o inválido, removido del localStorage'
             );
           }
         } else {
@@ -155,7 +158,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (
     usuario: string,
     contrasena: string,
-    redirectTo?: string,
+    redirectTo?: string
   ) => {
     try {
       setLoading(true);
@@ -174,13 +177,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         //console.log('¿Token válido?', isValid);
         if (!isValid) {
           console.warn(
-            'Token posiblemente inválido, pero continuando con el login',
+            'Token posiblemente inválido, pero continuando con el login'
           );
         }
       } catch (validationError) {
         console.warn(
           'Error al validar token, pero continuando:',
-          validationError,
+          validationError
         );
       }
 

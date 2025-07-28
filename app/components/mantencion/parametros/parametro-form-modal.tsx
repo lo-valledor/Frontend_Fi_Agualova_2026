@@ -1,7 +1,12 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+
+import React from 'react';
+
+import { useForm } from 'react-hook-form';
+
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -20,10 +25,8 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { Textarea } from '~/components/ui/textarea';
 import { Switch } from '~/components/ui/switch';
-import { Button } from '~/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Textarea } from '~/components/ui/textarea';
 import type { Parametro } from '~/types/mantencion';
 
 const parametroSchema = z.object({
@@ -101,7 +104,7 @@ export default function ParametroFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className='sm:max-w-[500px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Parámetro' : 'Editar Parámetro'}
@@ -114,17 +117,17 @@ export default function ParametroFormModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name="descripcion"
+              name='descripcion'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Descripción</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="Ingrese la descripción del parámetro"
+                      placeholder='Ingrese la descripción del parámetro'
                       rows={3}
                     />
                   </FormControl>
@@ -134,15 +137,15 @@ export default function ParametroFormModal({
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name="valor"
+                name='valor'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Valor</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Ingrese el valor" />
+                      <Input {...field} placeholder='Ingrese el valor' />
                     </FormControl>
                     <FormDescription>Máximo 100 caracteres</FormDescription>
                     <FormMessage />
@@ -152,12 +155,12 @@ export default function ParametroFormModal({
 
               <FormField
                 control={form.control}
-                name="sigla"
+                name='sigla'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Sigla</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Ej: PAR, CONF" />
+                      <Input {...field} placeholder='Ej: PAR, CONF' />
                     </FormControl>
                     <FormDescription>Máximo 10 caracteres</FormDescription>
                     <FormMessage />
@@ -168,10 +171,10 @@ export default function ParametroFormModal({
 
             <FormField
               control={form.control}
-              name="estado"
+              name='estado'
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
+                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
+                  <div className='space-y-0.5'>
                     <FormLabel>Estado</FormLabel>
                     <FormDescription>
                       Indica si el parámetro está activo o inactivo
@@ -189,19 +192,19 @@ export default function ParametroFormModal({
 
             <DialogFooter>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={onClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear' : 'Actualizar'}
               </Button>
             </DialogFooter>

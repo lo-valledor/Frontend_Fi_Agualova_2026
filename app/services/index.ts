@@ -20,7 +20,10 @@ export { mantencionService } from './mantencionService';
 export { activityTracker } from './activityTracker';
 
 // Tipos de servicios
-export type { MonitorServiceResponse, MonitorBasicData } from './monitorService';
+export type {
+  MonitorServiceResponse,
+  MonitorBasicData,
+} from './monitorService';
 export type { AdministracionServiceResponse } from './administracionService';
 export type { OperacionesServiceResponse } from './operacionesService';
 export type { MantencionServiceResponse } from './mantencionService';

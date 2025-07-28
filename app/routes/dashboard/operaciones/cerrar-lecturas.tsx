@@ -1,9 +1,11 @@
 /* eslint-disable no-empty-pattern */
+import React from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CerrarLecturasComponent from '~/components/operaciones/cerrar-lecturas/cerrar-lecturas-component';
-import React from 'react';
-import type { Route } from './+types/cerrar-lecturas';
 import { operacionesService } from '~/services/operacionesService';
+
+import type { Route } from './+types/cerrar-lecturas';
 
 export function meta({}: Route.MetaArgs) {
   return [

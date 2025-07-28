@@ -1,8 +1,14 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+
+import React from 'react';
+
+import { Controller, useForm } from 'react-hook-form';
 import Select, { type StylesConfig } from 'react-select';
+
+import { useTheme } from '~/components/theme-provider';
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -22,10 +28,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
-import { Button } from '~/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import type { ComboAsociadoConceptos, Conceptos } from '~/types/mantencion';
-import { useTheme } from '~/components/theme-provider';
 
 const conceptoSchema = z.object({
   denominacion: z
@@ -76,7 +79,7 @@ export default function ConceptoFormModal({
   const { theme } = useTheme();
 
   const selectStyles: StylesConfig = {
-    control: (styles) => ({
+    control: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
       borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
@@ -85,7 +88,7 @@ export default function ConceptoFormModal({
         borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
       },
     }),
-    menu: (styles) => ({
+    menu: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
     }),
@@ -106,34 +109,34 @@ export default function ConceptoFormModal({
         backgroundColor: theme === 'dark' ? '#166534' : '#16A34A',
       },
     }),
-    singleValue: (styles) => ({
+    singleValue: styles => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
     }),
-    input: (styles) => ({
+    input: styles => ({
       ...styles,
       color: theme === 'dark' ? '#FFFFFF' : '#000000',
     }),
-    placeholder: (styles) => ({
+    placeholder: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
-    indicatorSeparator: (styles) => ({
+    indicatorSeparator: styles => ({
       ...styles,
       backgroundColor: theme === 'dark' ? '#334155' : '#E2E8F0',
     }),
-    dropdownIndicator: (styles) => ({
+    dropdownIndicator: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
       '&:hover': {
         color: theme === 'dark' ? '#CBD5E1' : '#374151',
       },
     }),
-    noOptionsMessage: (styles) => ({
+    noOptionsMessage: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
-    loadingMessage: (styles) => ({
+    loadingMessage: styles => ({
       ...styles,
       color: theme === 'dark' ? '#94A3B8' : '#6B7280',
     }),
@@ -172,7 +175,7 @@ export default function ConceptoFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className='sm:max-w-[600px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Concepto' : 'Editar Concepto'}
@@ -185,16 +188,16 @@ export default function ConceptoFormModal({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <FormField
                 control={form.control}
-                name="denominacion"
+                name='denominacion'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Denominación</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Ingrese la denominación" />
+                      <Input {...field} placeholder='Ingrese la denominación' />
                     </FormControl>
                     <FormDescription>Máximo 100 caracteres</FormDescription>
                     <FormMessage />
@@ -204,12 +207,12 @@ export default function ConceptoFormModal({
 
               <FormField
                 control={form.control}
-                name="unidad"
+                name='unidad'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unidad</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Ej: kWh, m3, unidades" />
+                      <Input {...field} placeholder='Ej: kWh, m3, unidades' />
                     </FormControl>
                     <FormDescription>Máximo 20 caracteres</FormDescription>
                     <FormMessage />
@@ -220,14 +223,14 @@ export default function ConceptoFormModal({
 
             <FormField
               control={form.control}
-              name="descripcion"
+              name='descripcion'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Descripción</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder="Ingrese la descripción del concepto"
+                      placeholder='Ingrese la descripción del concepto'
                       rows={3}
                     />
                   </FormControl>
@@ -237,13 +240,13 @@ export default function ConceptoFormModal({
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
                   Tipo
                 </label>
                 <Controller
-                  name="fijoVariable"
+                  name='fijoVariable'
                   control={form.control}
                   render={({ field }) => (
                     <Select
@@ -263,43 +266,43 @@ export default function ConceptoFormModal({
                         { value: 'FIJO', label: 'Fijo' },
                         { value: 'VARIABLE', label: 'Variable' },
                       ]}
-                      placeholder="Seleccione el tipo"
+                      placeholder='Seleccione el tipo'
                       isClearable
-                      className="mt-1"
+                      className='mt-1'
                       styles={selectStyles}
                     />
                   )}
                 />
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className='text-sm text-muted-foreground mt-1'>
                   Indica si el concepto es fijo o variable
                 </p>
                 {form.formState.errors.fijoVariable && (
-                  <p className="text-sm font-medium text-destructive mt-1">
+                  <p className='text-sm font-medium text-destructive mt-1'>
                     {form.formState.errors.fijoVariable.message}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <label className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'>
                   Asociado (Opcional)
                 </label>
                 <Controller
-                  name="asociadoId"
+                  name='asociadoId'
                   control={form.control}
                   render={({ field }) => (
                     <Select
                       value={
                         field.value
                           ? comboAsociadoConceptos.find(
-                              (a) => a.id === field.value,
+                              a => a.id === field.value
                             )
                             ? {
                                 value: comboAsociadoConceptos.find(
-                                  (a) => a.id === field.value,
+                                  a => a.id === field.value
                                 )!.id,
                                 label: comboAsociadoConceptos.find(
-                                  (a) => a.id === field.value,
+                                  a => a.id === field.value
                                 )!.descripcion,
                               }
                             : null
@@ -308,22 +311,22 @@ export default function ConceptoFormModal({
                       onChange={(selectedOption: any) =>
                         field.onChange(selectedOption?.value || undefined)
                       }
-                      options={comboAsociadoConceptos.map((asociado) => ({
+                      options={comboAsociadoConceptos.map(asociado => ({
                         value: asociado.id,
                         label: asociado.descripcion,
                       }))}
-                      placeholder="Seleccione el asociado"
+                      placeholder='Seleccione el asociado'
                       isClearable
-                      className="mt-1"
+                      className='mt-1'
                       styles={selectStyles}
                     />
                   )}
                 />
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className='text-sm text-muted-foreground mt-1'>
                   Seleccione un concepto asociado
                 </p>
                 {form.formState.errors.asociadoId && (
-                  <p className="text-sm font-medium text-destructive mt-1">
+                  <p className='text-sm font-medium text-destructive mt-1'>
                     {form.formState.errors.asociadoId.message}
                   </p>
                 )}
@@ -332,19 +335,19 @@ export default function ConceptoFormModal({
 
             <DialogFooter>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={onClose}
                 disabled={isLoading}
               >
                 Cancelar
               </Button>
               <Button
-                type="submit"
+                type='submit'
                 disabled={isLoading}
-                className="bg-sky-600 hover:bg-sky-700"
+                className='bg-sky-600 hover:bg-sky-700'
               >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear' : 'Actualizar'}
               </Button>
             </DialogFooter>

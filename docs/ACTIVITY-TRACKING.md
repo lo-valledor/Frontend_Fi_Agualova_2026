@@ -37,29 +37,32 @@ Se implementó un sistema de **debounce** que previene registros duplicados:
 ### Cómo Funciona
 
 ```typescript
-const trackPageView = useCallback((pageName: string) => {
-  const now = Date.now();
-  const lastPageView = lastPageViewRef.current;
+const trackPageView = useCallback(
+  (pageName: string) => {
+    const now = Date.now();
+    const lastPageView = lastPageViewRef.current;
 
-  // Verificar si ya se registró esta página recientemente
-  if (
-    lastPageView &&
-    lastPageView.page === pageName &&
-    now - lastPageView.timestamp < PAGE_DEBOUNCE_TIME
-  ) {
-    // Evitar registro duplicado
-    return;
-  }
+    // Verificar si ya se registró esta página recientemente
+    if (
+      lastPageView &&
+      lastPageView.page === pageName &&
+      now - lastPageView.timestamp < PAGE_DEBOUNCE_TIME
+    ) {
+      // Evitar registro duplicado
+      return;
+    }
 
-  // Registrar la nueva vista de página
-  logActivity('Ver página', 'Navegación', `Página: ${pageName}`);
+    // Registrar la nueva vista de página
+    logActivity('Ver página', 'Navegación', `Página: ${pageName}`);
 
-  // Actualizar la referencia
-  lastPageViewRef.current = {
-    page: pageName,
-    timestamp: now,
-  };
-}, [logActivity]);
+    // Actualizar la referencia
+    lastPageViewRef.current = {
+      page: pageName,
+      timestamp: now,
+    };
+  },
+  [logActivity]
+);
 ```
 
 ## Componentes Principales
@@ -97,7 +100,7 @@ const {
   trackFormAction,
   trackDataAction,
   clearPageViewHistory,
-  clearDataActionHistory
+  clearDataActionHistory,
 } = useActivityEvent();
 ```
 
@@ -132,7 +135,7 @@ function MiPagina() {
   const { trackPageView } = useActivityEvent();
 
   useEffect(() => {
-    trackPageView('Gestión de Clientes');
+    trackPageView(' Clientes');
   }, [trackPageView]);
 }
 ```
@@ -150,7 +153,7 @@ function MiFormulario() {
     trackFormAction(
       'Enviar',
       'Formulario Cliente',
-      `Datos: ${JSON.stringify(data)}`,
+      `Datos: ${JSON.stringify(data)}`
     );
   };
 }
@@ -332,7 +335,7 @@ export default function ClientesComponent() {
   const { trackPageView, trackDataAction } = useActivityEvent();
 
   useEffect(() => {
-    trackPageView('Gestión de Clientes');
+    trackPageView(' Clientes');
   }, [trackPageView]);
 
   const handleAddCliente = () => {
@@ -344,7 +347,7 @@ export default function ClientesComponent() {
     trackDataAction(
       'Abrir formulario',
       'Clientes',
-      `Editar cliente: ${cliente.rut}`,
+      `Editar cliente: ${cliente.rut}`
     );
     // Lógica del componente
   };

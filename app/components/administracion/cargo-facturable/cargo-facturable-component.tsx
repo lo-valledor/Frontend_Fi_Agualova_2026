@@ -1,14 +1,14 @@
 import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
+
 import React, { useState } from 'react';
+
+import { useRevalidator } from 'react-router';
+
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-  CardHeader,
-} from '~/components/ui/card';
+import { Card, CardContent } from '~/components/ui/card';
+import api from '~/lib/api';
 import type {
   ActualizarCargoFacturableProps,
   BuscarCargoFacturable,
@@ -17,11 +17,9 @@ import type {
   GetCombosTarifas,
   GetCombosTiposMedidor,
 } from '~/types/administracion';
-import { columns } from './columns';
+
 import CargoFacturableModalForm from './cargo-facturable-modal-form';
-import { useRevalidator } from 'react-router';
-import { toast } from 'sonner';
-import api from '~/lib/api';
+import { columns } from './columns';
 
 interface CargoFacturableComponentProps {
   cargos: BuscarCargoFacturable[];
@@ -59,7 +57,7 @@ export default function CargoFacturableComponent({
   };
 
   const handleSubmit = async (
-    data: CrearCargoFacturableProps | ActualizarCargoFacturableProps,
+    data: CrearCargoFacturableProps | ActualizarCargoFacturableProps
   ) => {
     console.log('Enviando datos:', data);
     try {
@@ -84,43 +82,33 @@ export default function CargoFacturableComponent({
     toast.success(
       modalMode === 'add'
         ? 'Cargo facturable creado exitosamente'
-        : 'Cargo facturable actualizado exitosamente',
+        : 'Cargo facturable actualizado exitosamente'
     );
   };
 
   return (
-    <div className="container mx-auto p-3 md:p-6 space-y-6">
+    <div className='container mx-auto p-3 md:p-6 space-y-6'>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100">
-              Gestión de Cargos Facturables
+      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+        <div className='space-y-1'>
+          <div className='flex items-center gap-3'>
+            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              Cargos Facturables
             </h1>
           </div>
-          <p className="text-muted-foreground">
-            Administra los cargos facturables del sistema de manera eficiente
-          </p>
         </div>
         <Button
           onClick={handleAddCargo}
-          className="bg-sky-600 hover:bg-sky-700 text-white"
+          className='bg-sky-600 hover:bg-sky-700 text-white'
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className='mr-2 h-4 w-4' />
           Agregar Cargo Facturable
         </Button>
       </div>
 
       {/* Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Cargos Facturables</CardTitle>
-          <CardDescription>
-            Visualiza y gestiona todos los cargos facturables registrados en el
-            sistema
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <CardContent className='relative'>
           <DataTable
             columns={columns({
               onEdit: handleEditCargo,

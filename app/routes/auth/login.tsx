@@ -1,9 +1,12 @@
 /* eslint-disable no-empty-pattern */
-import { LoginForm } from '~/components/auth/login-form';
-import { useAuth } from '~/context/AuthContext';
-import { Navigate } from 'react-router';
 import { useEffect, useState } from 'react';
+
+import { Navigate } from 'react-router';
+
+import { LoginForm } from '~/components/auth/login-form';
 import { ThemeProvider } from '~/components/theme-provider';
+import { useAuth } from '~/context/AuthContext';
+
 import type { Route } from './+types/login';
 
 export function meta({}: Route.MetaArgs) {
@@ -23,21 +26,21 @@ const Login = () => {
   }, []);
 
   if (isAuthenticated && !loading) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to='/dashboard' replace />;
   }
 
   return (
     <ThemeProvider>
       <div className="relative bg-[url('/fondo.jpg')] dark:bg-[url('/fondo-dark.jpg')] bg-cover bg-center flex min-h-svh w-full items-center justify-center p-6 md:p-10">
         {/* Overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-900/40 to-black/60 dark:from-sky-950/60 dark:to-black/80 backdrop-blur-sm"></div>
+        <div className='absolute inset-0 bg-gradient-to-br from-sky-900/40 to-black/60 dark:from-sky-950/60 dark:to-black/80 backdrop-blur-sm'></div>
 
         {/* Animated energy particles */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className='absolute inset-0 overflow-hidden'>
           {Array.from({ length: 12 }).map((_, i) => (
             <div
               key={i}
-              className="absolute w-2 h-2 rounded-full bg-sky-400/70 dark:bg-sky-500/70 animate-floatingParticle"
+              className='absolute w-2 h-2 rounded-full bg-sky-400/70 dark:bg-sky-500/70 animate-floatingParticle'
               style={{
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
@@ -54,16 +57,16 @@ const Login = () => {
             mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
         >
-          <div className="flex items-center gap-2">
-            <div className=" dark:bg-gray-800/90 p-2 rounded-full">
-              <img src="/logo-enerlova.png" alt="Enerlova" className="h-10" />
+          <div className='flex items-center gap-2'>
+            <div className=' dark:bg-gray-800/90 p-2 rounded-full'>
+              <img src='/logo-enerlova.png' alt='Enerlova' className='h-10' />
             </div>
-            <span className="text-white text-xl font-bold">Enerlova</span>
+            <span className='text-white text-xl font-bold'>Enerlova</span>
           </div>
         </div>
 
         {/* Main content */}
-        <div className="relative w-full max-w-md mx-auto">
+        <div className='relative w-full max-w-md mx-auto'>
           <LoginForm />
 
           {/* Footer */}

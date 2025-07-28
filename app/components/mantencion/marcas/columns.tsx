@@ -1,9 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import type { Marca } from '~/types/mantencion';
 
-import { Badge } from '~/components/ui/badge';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
+import { Badge } from '~/components/ui/badge';
+import type { Marca } from '~/types/mantencion';
 
 interface TableColumnsProps {
   onEdit: (marca: Marca) => void;
@@ -17,13 +17,13 @@ export const columns = ({
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Código" />
+      <DataTableColumnHeader column={column} title='Código' />
     ),
     cell: ({ row }) => {
       const codigo = row.getValue('codigo') as string;
       return (
-        <div className="flex items-center">
-          <Badge variant="outline" className="font-mono">
+        <div className='flex items-center'>
+          <Badge variant='outline' className='font-mono'>
             {codigo}
           </Badge>
         </div>
@@ -35,11 +35,11 @@ export const columns = ({
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Nombre" />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
       const nombre = row.getValue('nombre') as string;
-      return <div className="max-w-[200px] truncate font-medium">{nombre}</div>;
+      return <div className='max-w-[200px] truncate font-medium'>{nombre}</div>;
     },
     enableSorting: true,
   },

@@ -1,14 +1,16 @@
 /* eslint-disable no-empty-pattern */
 import React from 'react';
-import type { Route } from './+types/parametros';
-import { mantencionService } from '~/services/mantencionService';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import ParametrosComponent from '~/components/mantencion/parametros/parametros-component';
+import { mantencionService } from '~/services/mantencionService';
+
+import type { Route } from './+types/parametros';
 
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Parámetros' },
-    { name: 'description', content: 'Gestión de Parámetros del sistema' },
+    { name: 'description', content: ' Parámetros del sistema' },
   ];
 }
 
