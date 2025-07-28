@@ -3,11 +3,10 @@ import {
   CheckCircle,
   Clock,
   History,
-  Info,
   PlusCircleIcon,
 } from 'lucide-react';
 
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { DataTable } from '~/components/data-table/data-table';
@@ -20,14 +19,6 @@ import {
   CardHeader,
   CardTitle,
 } from '~/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
 import {
   Tooltip,
   TooltipContent,
@@ -91,34 +82,16 @@ export default function AbrirPeriodoFacturacion({
       <div className='container mx-auto p-2 space-y-3'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
-        {/* Header modernizado */}
-        <div className='flex items-center gap-3 justify-between'>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-              Período Facturación
-            </h1>
-          </div>
-          <div className='flex items-center gap-3'>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
-                >
-                  <Info className='w-4 h-4 mr-1 text-yellow-600' />
-                  <span className='text-yellow-600 text-sm'>Información</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Información</DialogTitle>
-                  <DialogDescription>
-                    Gestión y control de períodos de facturación del sistema
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+        {/* Modern Header */}
+        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
+          <div className='flex-1'>
+            <div className='flex items-center gap-3 justify-between'>
+              <div className='flex items-center gap-3'>
+                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
+                  Período Facturación
+                </h1>
+              </div>
+            </div>
           </div>
         </div>
 

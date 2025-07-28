@@ -5,7 +5,6 @@ import {
   ChevronUp,
   Eraser,
   FileTextIcon,
-  Info,
   SearchIcon,
   UsersIcon,
 } from 'lucide-react';
@@ -22,14 +21,6 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
 import {
   Select,
@@ -168,39 +159,23 @@ export default function PrepararLecturasComponent({
   return (
     <div className='min-h-screen '>
       <div className='container mx-auto p-2 space-y-3'>
-        {/* Header modernizado */}
-        <div className='flex items-center gap-3 justify-between'>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-              Preparar Lecturas
-            </h1>
-          </div>
-          <div className='flex items-center gap-3'>
-            <Dialog>
-              <DialogTrigger>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
-                >
-                  <Info className='w-4 h-4 mr-1 text-yellow-600' />
-                  <span className='text-yellow-600 text-sm'>Información</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Información</DialogTitle>
-                  <DialogDescription>
-                    Preparación y asignación de lecturas para el periodo actual
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-            <DialogLecturasPendientes
-              data={lecturasPendientes || undefined}
-              isLoading={false}
-              onRefresh={() => Promise.resolve(undefined)}
-            />
+        {/* Modern Header */}
+        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
+          <div className='flex-1'>
+            <div className='flex items-center gap-3 justify-between'>
+              <div className='flex items-center gap-3'>
+                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
+                  Precios Cargo
+                </h1>
+              </div>
+              <div className='flex items-center gap-3'>
+                <DialogLecturasPendientes
+                  data={lecturasPendientes || undefined}
+                  isLoading={false}
+                  onRefresh={() => Promise.resolve(undefined)}
+                />
+              </div>
+            </div>
           </div>
         </div>
 

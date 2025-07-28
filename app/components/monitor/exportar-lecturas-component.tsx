@@ -1,4 +1,5 @@
 import {
+  AlertCircle,
   Calendar,
   CheckSquare,
   ChevronDown,
@@ -7,15 +8,13 @@ import {
   Eraser,
   Filter,
   Hash,
-  Info,
   Loader2,
   MapPin,
   X,
 } from 'lucide-react';
-import { AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { Alert, AlertDescription } from '~/components/ui/alert';
@@ -24,24 +23,18 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
+
+
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import {
+  Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select';
-import { Select } from '~/components/ui/select';
 import api from '~/lib/api';
 import { type Periodo, type Sector } from '~/types/monitor';
 
@@ -249,31 +242,11 @@ export default function ExportarLecturasComponent({
           <div className='flex-1'>
             <div className='flex items-center gap-3 justify-between'>
               <div className='flex items-center gap-3'>
-                <h1 className='text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-100 dark:to-sky-100 bg-clip-text text-transparent'>
+                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
                   Exportar Lecturas
                 </h1>
               </div>
-              <Dialog>
-                <DialogTrigger>
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
-                  >
-                    <Info className='w-4 h-4 mr-1 text-yellow-600' />
-                    <span className='text-yellow-600 text-sm'>Información</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Información</DialogTitle>
-                    <DialogDescription>
-                      Configura tus filtros y exporta las lecturas de medidores
-                      en formato Excel para análisis detallado
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
+
             </div>
           </div>
         </div>

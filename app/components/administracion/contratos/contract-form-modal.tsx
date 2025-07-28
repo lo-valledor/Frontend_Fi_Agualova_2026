@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import { Building2, List, MapPin, Search, User, Users } from 'lucide-react';
 
 import type React from 'react';

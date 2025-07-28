@@ -1,12 +1,6 @@
-import {
-  ChevronDown,
-  ChevronUp,
-  Download,
-  FileArchive,
-  Info,
-} from 'lucide-react';
+import { ChevronDown, ChevronUp, Download, FileArchive } from 'lucide-react';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 import {
@@ -20,14 +14,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
 import api from '~/lib/api';
 
@@ -111,34 +97,16 @@ export default function CrearArchivosSapComponent() {
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30'>
       <div className='container mx-auto p-2 space-y-3'>
-        {/* Header modernizado */}
-        <div className='flex items-center gap-3 justify-between'>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-              Crear Archivos SAP
-            </h1>
-          </div>
-          <div className='flex items-center gap-3'>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
-                >
-                  <Info className='w-4 h-4 mr-1 text-yellow-600' />
-                  <span className='text-yellow-600 text-sm'>Información</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Información</DialogTitle>
-                  <DialogDescription>
-                    creación de archivos para SAP
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+        {/* Modern Header */}
+        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
+          <div className='flex-1'>
+            <div className='flex items-center gap-3 justify-between'>
+              <div className='flex items-center gap-3'>
+                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
+                  Crear Archivo SAP
+                </h1>
+              </div>
+            </div>
           </div>
         </div>
 

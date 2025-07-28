@@ -9,7 +9,6 @@ import {
   Eraser,
   FileSpreadsheet,
   FileTextIcon,
-  Info,
   RefreshCw,
   SearchIcon,
   SettingsIcon,
@@ -17,7 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -30,14 +29,6 @@ import {
 } from '~/components/ui/card';
 // Removido useOperaciones ya que los datos vienen como props
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import {
@@ -468,45 +459,16 @@ export default function RevisarCalculoFacturaComponent({
   return (
     <div className='min-h-screen '>
       <div className='container mx-auto p-2 space-y-3'>
-        {/* Header modernizado */}
-        <div className='flex items-center gap-3 justify-between'>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-              Revisar Cálculo Factura
-            </h1>
-          </div>
-          <div className='flex items-center gap-3'>
-            <Dialog>
-              <DialogTrigger>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
-                >
-                  <Info className='w-4 h-4 mr-1 text-yellow-600' />
-                  <span className='text-yellow-600 text-sm'>Información</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Información</DialogTitle>
-                  <DialogDescription>
-                    Revisa y verifica los cálculos de facturación para los
-                    clientes
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-            {periodoAbierto && periodoAbierto.length > 0 && (
-              <Badge
-                variant='outline'
-                className='bg-sky-50 text-sky-600 border-sky-200 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800'
-              >
-                <CalendarIcon className='w-3 h-3 mr-1' />
-                Periodo: {periodoAbierto[0].mes.toString().padStart(2, '0')}/
-                {periodoAbierto[0].anio}
-              </Badge>
-            )}
+        {/* Modern Header */}
+        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
+          <div className='flex-1'>
+            <div className='flex items-center gap-3 justify-between'>
+              <div className='flex items-center gap-3'>
+                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
+                  Revisar Cálculo Factura
+                </h1>
+              </div>
+            </div>
           </div>
         </div>
         {/* Indicador de estado del timer */}

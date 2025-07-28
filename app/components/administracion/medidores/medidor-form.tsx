@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Calendar,
@@ -55,32 +56,51 @@ import type {
 } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
 
-// Estilos para react-select con tema claro y oscuro
+// Estilos personalizados para react-select
 const selectStyles: StylesConfig = {
   control: (provided, state) => ({
     ...provided,
-    backgroundColor: 'hsl(var(--card))',
+    backgroundColor: 'hsl(var(--background))',
     borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
     boxShadow: state.isFocused ? '0 0 0 1px hsl(var(--ring))' : 'none',
-    minHeight: '44px',
     '&:hover': {
-      borderColor: 'hsl(var(--ring))',
+      borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--input))',
     },
+    borderRadius: 'var(--radius)',
+    minHeight: '44px',
+    height: '44px',
   }),
   menu: provided => ({
     ...provided,
-    backgroundColor: 'hsl(var(--card))',
-    border: '1px solid hsl(var(--border))',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '6px',
     boxShadow:
-      '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+      '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    zIndex: 9999,
+  }),
+  menuList: provided => ({
+    ...provided,
+    backgroundColor: '#ffffff',
+    padding: '4px',
+    maxHeight: '200px',
   }),
   option: (provided, state) => ({
     ...provided,
-    backgroundColor: state.isFocused ? 'hsl(var(--accent))' : 'transparent',
-    color: 'hsl(var(--foreground))',
+    backgroundColor: state.isSelected
+      ? '#0ea5e9'
+      : state.isFocused
+        ? '#f1f5f9'
+        : 'transparent',
+    color: state.isSelected ? '#ffffff' : '#1e293b',
     '&:hover': {
-      backgroundColor: 'hsl(var(--accent))',
+      backgroundColor: state.isSelected ? '#0ea5e9' : '#f1f5f9',
+      color: state.isSelected ? '#ffffff' : '#1e293b',
     },
+    cursor: 'pointer',
+    padding: '8px 12px',
+    borderRadius: '4px',
+    margin: '1px 0',
   }),
   singleValue: provided => ({
     ...provided,
@@ -89,14 +109,18 @@ const selectStyles: StylesConfig = {
   input: provided => ({
     ...provided,
     color: 'hsl(var(--foreground))',
+    margin: '0px',
   }),
   placeholder: provided => ({
     ...provided,
     color: 'hsl(var(--muted-foreground))',
   }),
-  menuList: provided => ({
+  indicatorSeparator: () => ({
+    display: 'none',
+  }),
+  valueContainer: provided => ({
     ...provided,
-    backgroundColor: 'hsl(var(--card))',
+    padding: '0 12px',
   }),
 };
 
@@ -567,12 +591,11 @@ export function MedidorFormModal({
       onSubmit(submitData, 'edit');
     } else {
       // Intentar diferentes campos para encontrar la marca
-      const marcaEncontrada = marcas.find(
-        m => m.codigo === data.marcaCodigo || m.nombre === data.marcaCodigo
-      );
-      // El backend espera el código de la marca, no el ID
-      const marcaId = marcaEncontrada?.codigo ?? data.marcaCodigo;
-      console.log('Debug marcaId (crear):', {
+      // Buscar la marca por código para obtener el ID
+      const marcaEncontrada = marcas.find(m => m.codigo === data.marcaCodigo);
+      const marcaId = marcaEncontrada?.id ?? 0; // Usar el ID numérico, no el código
+
+      console.log('Debug marcaId (editar):', {
         marcaCodigo: data.marcaCodigo,
         marcaEncontrada: marcaEncontrada,
         marcaIdEnviado: marcaId,
@@ -616,7 +639,24 @@ export function MedidorFormModal({
       };
       delete (submitData as any).marcaCodigo;
 
-      const submitDataFinal = submitData as unknown as CrearMedidorProps;
+      const fechaInicioFormateada = fechaInicio;
+      const fechaPrimeraLecturaFormateada = data.fechaPrimeraLectura || '';
+
+      const submitDataFinal = {
+        codigoMedidor: Number(medidor?.codigo),
+        marcaId: Number(marcaId), // Convertir a número
+        tipoId: Number(data.tipoId),
+        modelo: data.modelo,
+        serie: data.serie,
+        estadoId: Number(data.estadoId),
+        fechaInicio: fechaInicioFormateada,
+        digitos: Number(data.digitos),
+        multiplicar: Number(data.multiplicar),
+        subempalmeCodigo: data.subempalmeCodigo || '',
+        primeraLectura: data.primeraLectura || '',
+        fechaPrimeraLectura: fechaPrimeraLecturaFormateada,
+        horaPrimeraLectura: data.horaPrimeraLectura || '',
+      };
 
       // Console.log para debug
       console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
@@ -689,7 +729,7 @@ export function MedidorFormModal({
       );
       console.log('================================================');
 
-      onSubmit(submitDataFinal, 'add');
+      onSubmit(submitDataFinal as any, mode);
     }
   };
 

@@ -1,21 +1,20 @@
 import {
+  AlertCircle,
   Calendar,
   ChevronDown,
   ChevronUp,
   Eraser,
   Filter,
   Hash,
-  Info,
   KeyRound,
   ListFilter,
   MapPin,
   Search,
   Settings2,
 } from 'lucide-react';
-import { AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { LoadingSpinner } from '~/components/loading-spinner';
@@ -40,15 +39,6 @@ import {
 } from '~/hooks/use-monitor';
 import { cn } from '~/lib/utils';
 import { type Clave, type Periodo, type Sector } from '~/types/monitor';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../ui/dialog';
 
 interface MonitorLecturasComponentProps {
   periodos: Periodo[];
@@ -164,34 +154,9 @@ const MonitorLecturasComponent = ({
           <div className='flex-1'>
             <div className='items-center gap-3 grid grid-cols-2 mb-2'>
               <div className='col-span-1'>
-                <h1 className='text-3xl font-bold bg-gradient-to-r from-blue-600 to-sky-600 dark:from-blue-100 dark:to-sky-100 bg-clip-text text-transparent'>
+                <h1 className='text-3xl font-bold text-sky-900 dark:text-sky-100'>
                   Monitor de Lecturas
                 </h1>
-              </div>
-              <div className='flex items-center gap-3 justify-end w-full'>
-                <Dialog>
-                  <DialogTrigger>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      className='text-muted-foreground hover:text-foreground hover:bg-yellow-100 dark:hover:bg-yellow-800/50'
-                    >
-                      <Info className='w-4 h-4 mr-1 text-yellow-600' />
-                      <span className='text-yellow-600 text-sm'>
-                        Información
-                      </span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Información</DialogTitle>
-                      <DialogDescription>
-                        Selecciona un sector y configura tus filtros para
-                        monitorear las lecturas de medidores en tiempo real
-                      </DialogDescription>
-                    </DialogHeader>
-                  </DialogContent>
-                </Dialog>
               </div>
             </div>
           </div>
