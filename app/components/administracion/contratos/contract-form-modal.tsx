@@ -1,5 +1,6 @@
 /* eslint-disable unused-imports/no-unused-vars */
 import { Building2, List, MapPin, Search, User, Users } from 'lucide-react';
+import { toast } from 'sonner';
 
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -79,6 +80,7 @@ export function ContractFormModal({
   const [modalLocal, setModalLocal] = useState(false);
   const [modalMadres, setModalMadres] = useState(false);
   const [modalComuna, setModalComuna] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Estados para las búsquedas
   const [busquedaPropietario, setBusquedaPropietario] = useState('');
@@ -105,6 +107,43 @@ export function ContractFormModal({
     madre: '',
   });
 
+  // Función para formatear fechas de forma segura
+  const formatDateForInput = (dateString: string): string => {
+    if (!dateString) return '';
+    try {
+      // Si la fecha ya está en formato yyyy-MM-dd, usarla directamente
+      if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+        return dateString;
+      }
+
+      // Si es una fecha ISO, extraer solo la parte de la fecha
+      if (dateString.includes('T')) {
+        const datePart = dateString.split('T')[0];
+        if (/^\d{4}-\d{2}-\d{2}$/.test(datePart)) {
+          return datePart;
+        }
+      }
+
+      // Si es formato dd-MM-yyyy, convertir a yyyy-MM-dd
+      if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+        const [day, month, year] = dateString.split('-');
+        return `${year}-${month}-${day}`;
+      }
+
+      // Intentar crear una fecha válida y formatearla
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        return date.toISOString().split('T')[0];
+      }
+
+      console.warn('Formato de fecha no reconocido:', dateString);
+      return '';
+    } catch (error) {
+      console.error('Error al formatear fecha:', error);
+      return '';
+    }
+  };
+
   useEffect(() => {
     if (contract && mode === 'edit') {
       // Buscar los IDs correspondientes a los nombres de tipoContrato y tarifa
@@ -121,11 +160,9 @@ export function ContractFormModal({
         nombrePropietario: contract.nombrePropietario,
         nombreCliente: contract.nombreCliente,
         local: contract.local,
-        fechaInicio: contract.fechaInicio.split('T')[0], // Format for date input
+        fechaInicio: formatDateForInput(contract.fechaInicio),
         activo: contract.activo,
-        fechaTermino: contract.fechaTermino
-          ? contract.fechaTermino.split('T')[0]
-          : '',
+        fechaTermino: formatDateForInput(contract.fechaTermino),
         comunaEnvio: contract.comunaEnvio,
         direccionEnvio: contract.direccionEnvio,
         limiteInvierno: contract.limiteInvierno,
@@ -229,62 +266,52 @@ export function ContractFormModal({
     setBusquedaComuna('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Función para formatear fecha a yyyy-MM-dd (formato requerido por el backend)
+  const formatDateToBackend = (dateString: string): string => {
+    if (!dateString) return '';
+    // Mantener formato yyyy-MM-dd como espera el backend
+    return dateString;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validaciones de campos requeridos
     if (!formData.fechaInicio) {
-      alert('La fecha de inicio es obligatoria');
+      toast.error('La fecha de inicio es obligatoria');
       return;
     }
 
     if (!formData.tipoContrato) {
-      alert('El tipo de contrato es obligatorio');
+      toast.error('El tipo de contrato es obligatorio');
       return;
     }
 
     if (!formData.tarifa) {
-      alert('La tarifa es obligatoria');
+      toast.error('La tarifa es obligatoria');
       return;
     }
 
     if (!formData.nombrePropietario) {
-      alert('El nombre del propietario es obligatorio');
+      toast.error('El nombre del propietario es obligatorio');
       return;
     }
 
     if (!formData.nombreCliente) {
-      alert('El nombre del cliente es obligatorio');
+      toast.error('El nombre del cliente es obligatorio');
       return;
     }
 
     if (!formData.local) {
-      alert('El local es obligatorio');
+      toast.error('El local es obligatorio');
       return;
     }
 
-    // Convertir fecha de yyyy-MM-dd a dd-MM-yyyy
-    const fechaInicio = formData.fechaInicio
-      ? new Date(formData.fechaInicio + 'T00:00:00')
-          .toLocaleDateString('es-ES', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })
-          .split('/')
-          .join('-')
-      : '';
+    setIsSubmitting(true);
 
-    const fechaTermino = formData.fechaTermino
-      ? new Date(formData.fechaTermino + 'T00:00:00')
-          .toLocaleDateString('es-ES', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })
-          .split('/')
-          .join('-')
-      : '';
+    // Formatear fechas a yyyy-MM-dd (formato requerido por el backend)
+    const fechaInicio = formatDateToBackend(formData.fechaInicio);
+    const fechaTermino = formatDateToBackend(formData.fechaTermino);
 
     // Preparar los datos según el modo (crear o editar)
     const submitData = {
@@ -332,6 +359,15 @@ export function ContractFormModal({
     );
     console.log('================================');
 
+    // Log específico del JSON que se envía al endpoint
+    console.log('🚀 JSON ENVIADO AL ENDPOINT:');
+    console.log(JSON.stringify(submitData, null, 2));
+    console.log(
+      '📡 Tamaño del payload:',
+      JSON.stringify(submitData).length,
+      'bytes'
+    );
+
     // Nota sobre el error del backend
     if (mode === 'add') {
       console.warn(
@@ -342,8 +378,16 @@ export function ContractFormModal({
       );
     }
 
-    onSubmit(submitData);
-    onClose();
+    try {
+      // Enviar los datos al componente padre para que maneje la llamada al servidor
+      await onSubmit(submitData);
+      onClose();
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error);
+      toast.error('Error al procesar el formulario. Intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (
@@ -753,14 +797,29 @@ export function ContractFormModal({
             </div>
 
             <DialogFooter className='gap-2 pt-4'>
-              <Button type='button' variant='outline' onClick={onClose}>
+              <Button
+                type='button'
+                variant='outline'
+                onClick={onClose}
+                disabled={isSubmitting}
+              >
                 Cancelar
               </Button>
               <Button
                 type='submit'
                 className='bg-sky-600 hover:bg-sky-700 text-white'
+                disabled={isSubmitting}
               >
-                {mode === 'add' ? 'Crear' : 'Actualizar'}
+                {isSubmitting ? (
+                  <>
+                    <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
+                    {mode === 'add' ? 'Creando...' : 'Actualizando...'}
+                  </>
+                ) : mode === 'add' ? (
+                  'Crear'
+                ) : (
+                  'Actualizar'
+                )}
               </Button>
             </DialogFooter>
           </form>

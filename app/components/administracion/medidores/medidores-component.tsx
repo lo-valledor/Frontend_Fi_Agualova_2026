@@ -8,7 +8,6 @@ import { LoadingSpinner } from '~/components/loading-spinner';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import api from '~/lib/api';
-import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
 import type {
   ActualizarMedidorProps,
   CrearMedidorProps,
@@ -16,6 +15,7 @@ import type {
 } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
 
+import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
 import { columns } from './columns';
 import { DeleteConfirmationDialog } from './delete-confirm-dialog';
 import { MedidorFormModal } from './medidor-form';

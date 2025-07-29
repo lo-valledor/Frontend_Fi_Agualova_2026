@@ -39,7 +39,7 @@ export default function ClientesComponent({
   giros,
   comunas,
 }: ClientesComponentProps) {
-  const [clients] = useState<GetClientes[]>(clientes);
+  const [clients, setClients] = useState<GetClientes[]>(clientes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState<GetClientesByRut>();
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -127,19 +127,59 @@ export default function ClientesComponent({
     }
   };
 
-  const handleClienteSuccess = () => {
+  const handleClienteSuccess = (clienteData: any, mode: 'add' | 'edit') => {
     trackDataAction(
-      modalMode === 'add' ? 'Crear' : 'Actualizar',
+      mode === 'add' ? 'Crear' : 'Actualizar',
       'Clientes',
-      modalMode === 'add'
+      mode === 'add'
         ? 'Cliente creado exitosamente'
         : 'Cliente actualizado exitosamente'
     );
+
+    // Actualizar el estado local
+    if (mode === 'add') {
+      // Crear nuevo cliente para la lista
+      const newCliente: GetClientes = {
+        rut: clienteData.rut,
+        nombreCompleto: clienteData.esEmpresa
+          ? clienteData.nombre
+          : `${clienteData.nombre} ${clienteData.apellido}`.trim(),
+        esEmpresa: clienteData.esEmpresa,
+        direccion: clienteData.direccion,
+        comuna: '', // Se llenará cuando se recargue desde el servidor
+        contacto: clienteData.contacto,
+        telefono: clienteData.telefono || '',
+        email: clienteData.correo || '',
+        codigoComuna: clienteData.codComuna,
+      };
+      setClients(prev => [...prev, newCliente]);
+    } else if (mode === 'edit' && selectedCliente) {
+      // Actualizar cliente existente
+      setClients(prev =>
+        prev.map(cliente =>
+          cliente.rut === selectedCliente.rut
+            ? {
+                ...cliente,
+                nombreCompleto: clienteData.esEmpresa
+                  ? clienteData.nombre
+                  : `${clienteData.nombre} ${clienteData.apellido}`.trim(),
+                esEmpresa: clienteData.esEmpresa,
+                direccion: clienteData.direccion,
+                contacto: clienteData.contacto,
+                telefono: clienteData.telefono || '',
+                email: clienteData.correo || '',
+                codigoComuna: clienteData.codComuna,
+              }
+            : cliente
+        )
+      );
+    }
+
     revalidator.revalidate();
     setIsModalOpen(false);
     setSelectedCliente(undefined); // Limpiar cliente seleccionado
     toast.success(
-      modalMode === 'add'
+      mode === 'add'
         ? 'Cliente creado exitosamente'
         : 'Cliente actualizado exitosamente'
     );
@@ -310,6 +350,7 @@ export default function ClientesComponent({
         mode={modalMode}
         giros={giros}
         comunas={comunas}
+        existingClients={clients.map(client => client.rut)}
       />
     </div>
   );

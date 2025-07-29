@@ -1,53 +1,104 @@
-import React from 'react';
+import { Loader2, Zap } from 'lucide-react';
 
-import { Card, CardContent } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '~/components/ui/card';
 
-export default function HydrateFallback() {
+interface HydrateFallbackProps {
+  title?: string;
+  description?: string;
+  showRetry?: boolean;
+  onRetry?: () => void;
+}
+
+export function HydrateFallback({
+  title = 'Cargando aplicación...',
+  description = 'Estamos preparando todo para ti. Esto solo tomará un momento.',
+  showRetry = false,
+  onRetry,
+}: HydrateFallbackProps) {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50 dark:from-slate-950 dark:to-emerald-950/30 flex items-center justify-center p-4'>
-      <Card className='w-full max-w-md border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-        <CardContent className='p-8'>
-          <div className='flex flex-col items-center gap-6 text-center'>
-            {/* Logo o ícono */}
-            <div className='w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg'>
-              <div className='w-8 h-8 bg-white rounded-lg flex items-center justify-center'>
-                <div className='w-4 h-4 bg-emerald-600 rounded-sm'></div>
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4'>
+      <div className='w-full max-w-md'>
+        <Card className='border-0 shadow-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm'>
+          <CardHeader className='text-center pb-4'>
+            <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg'>
+              <Zap className='h-8 w-8 text-white' />
+            </div>
+            <CardTitle className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+              {title}
+            </CardTitle>
+            <CardDescription className='text-slate-600 dark:text-slate-400'>
+              {description}
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className='space-y-6'>
+            {/* Loading Animation */}
+            <div className='flex justify-center'>
+              <div className='relative'>
+                <div className='h-12 w-12 rounded-full border-4 border-slate-200 dark:border-slate-700'></div>
+                <div className='absolute top-0 left-0 h-12 w-12 rounded-full border-4 border-transparent border-t-blue-600 dark:border-t-blue-400 animate-spin'></div>
               </div>
             </div>
 
-            {/* Título */}
+            {/* Progress Bar */}
             <div className='space-y-2'>
-              <h2 className='text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-100 dark:to-teal-100 bg-clip-text text-transparent'>
-                Enerlova
-              </h2>
-              <p className='text-sm text-muted-foreground'>
-                Cargando módulo...
-              </p>
+              <div className='flex justify-between text-sm text-slate-600 dark:text-slate-400'>
+                <span>Inicializando módulos...</span>
+                <span className='font-mono'>75%</span>
+              </div>
+              <div className='h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden'>
+                <div
+                  className='h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-pulse'
+                  style={{ width: '75%' }}
+                ></div>
+              </div>
             </div>
 
-            {/* Spinner */}
-            <div className='relative'>
-              <div className='w-12 h-12 rounded-full border-4 border-emerald-200 dark:border-emerald-800'></div>
-              <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin'></div>
+            {/* Status Messages */}
+            <div className='space-y-2 text-sm'>
+              <div className='flex items-center gap-2 text-slate-600 dark:text-slate-400'>
+                <div className='h-2 w-2 rounded-full bg-green-500 animate-pulse'></div>
+                <span>Cargando componentes UI</span>
+              </div>
+              <div className='flex items-center gap-2 text-slate-600 dark:text-slate-400'>
+                <div className='h-2 w-2 rounded-full bg-blue-500 animate-pulse'></div>
+                <span>Inicializando servicios</span>
+              </div>
+              <div className='flex items-center gap-2 text-slate-600 dark:text-slate-400'>
+                <div className='h-2 w-2 rounded-full bg-yellow-500 animate-pulse'></div>
+                <span>Preparando datos</span>
+              </div>
             </div>
 
-            {/* Mensaje de estado */}
-            <div className='space-y-1'>
-              <p className='text-sm font-medium text-emerald-700 dark:text-emerald-300'>
-                Inicializando aplicación
-              </p>
-              <p className='text-xs text-muted-foreground'>
-                Por favor espere mientras cargamos los recursos necesarios
-              </p>
-            </div>
+            {/* Retry Button */}
+            {showRetry && onRetry && (
+              <div className='pt-4'>
+                <Button onClick={onRetry} variant='outline' className='w-full'>
+                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                  Reintentar
+                </Button>
+              </div>
+            )}
 
-            {/* Indicador de progreso */}
-            <div className='w-full bg-emerald-100 dark:bg-emerald-900/30 rounded-full h-2'>
-              <div className='bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full animate-pulse'></div>
+            {/* Tips */}
+            <div className='text-xs text-slate-500 dark:text-slate-500 text-center pt-4 border-t border-slate-200 dark:border-slate-700'>
+              <p>
+                💡 Tip: Si la carga toma más de 30 segundos, intenta recargar la
+                página
+              </p>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
+
+export default HydrateFallback;

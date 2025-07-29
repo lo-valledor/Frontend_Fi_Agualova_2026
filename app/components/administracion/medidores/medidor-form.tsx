@@ -242,20 +242,10 @@ export function MedidorFormModal({
 
   // Función para seleccionar subempalme
   const handleSelectSubempalme = (subempalme: SubempalmeOption) => {
-    console.log('Subempalme seleccionado:', subempalme);
     form.setValue('subempalmeId', subempalme.id);
     form.setValue('subempalmeCodigo', subempalme.codigo);
     setModalSubempalmes(false);
     setBusquedaSubempalme('');
-
-    // Debug para verificar que se establecieron correctamente
-    setTimeout(() => {
-      const currentValues = form.getValues();
-      console.log('Valores del formulario después de seleccionar subempalme:', {
-        subempalmeId: currentValues.subempalmeId,
-        subempalmeCodigo: currentValues.subempalmeCodigo,
-      });
-    }, 100);
   };
 
   // Filtrar subempalmes
@@ -325,20 +315,6 @@ export function MedidorFormModal({
               tipoDisponible.includes('trifasico'))
           );
         });
-
-        // Debug para entender el problema del tipo
-        console.log('Debug tipo medidor:', {
-          medidorTipo: medidor.tipo,
-          tiposDisponibles: tipos,
-          tipoEncontrado: tipoSeleccionado,
-          tipoId: tipoSeleccionado?.id ?? 0,
-        });
-
-        // Debug adicional para ver los tipos disponibles
-        console.log(
-          'Tipos disponibles:',
-          tipos.map(t => ({ id: t.id, nombre: t.nombre }))
-        );
 
         // Reset del formulario con un pequeño delay para asegurar que los datos estén cargados
         setTimeout(() => {
@@ -416,22 +392,7 @@ export function MedidorFormModal({
       );
       // El backend espera el código de la marca, no el ID
       const marcaId = marcaEncontrada?.codigo ?? data.marcaCodigo;
-      console.log('Debug marcaId:', {
-        marcaCodigo: data.marcaCodigo,
-        marcaEncontrada: marcaEncontrada,
-        marcaIdEnviado: marcaId,
-        codigoMarca: marcaEncontrada?.codigo,
-      });
 
-      // Debug adicional para ver la estructura de las marcas
-      console.log('Primeras 3 marcas del array:', marcas.slice(0, 3));
-      console.log('Buscando marca con codigo:', data.marcaCodigo);
-      console.log(
-        'Todas las marcas que contienen "E246":',
-        marcas.filter(
-          m => m.codigo?.includes('E246') || m.nombre?.includes('E246')
-        )
-      );
       const estadoId = getEstadoIdFromString(medidor.estado);
 
       // Convertir fecha de yyyy-MM-dd a dd-MM-yyyy
@@ -475,9 +436,6 @@ export function MedidorFormModal({
       // El subempalmeCodigo se maneja por separado con el endpoint modificar-subempalme
       // No lo incluimos en el payload principal
       delete (submitData as any).subempalmeCodigo;
-      console.log(
-        'ℹ️ SubempalmeCodigo removido del payload principal - se maneja por separado'
-      );
 
       // Asegurar que los campos numéricos sean realmente números
       submitData.codigoMedidor = Number(submitData.codigoMedidor);
@@ -492,7 +450,6 @@ export function MedidorFormModal({
         submitData.primeraLectura.trim() === ''
       ) {
         submitData.primeraLectura = '0';
-        console.log('⚠️ PrimeraLectura vacía - enviando "0"');
       }
 
       if (
@@ -504,113 +461,17 @@ export function MedidorFormModal({
         const hora = fechaActual.getHours().toString().padStart(2, '0');
         const minutos = fechaActual.getMinutes().toString().padStart(2, '0');
         submitData.fechaPrimeraLectura = `${submitData.fechaInicio} ${hora}:${minutos}`;
-        console.log(
-          '⚠️ FechaPrimeraLectura vacía - usando fechaInicio con hora actual'
-        );
       } else {
         // Si ya tiene fecha, asegurar que tenga el formato correcto con hora
         if (!submitData.fechaPrimeraLectura.includes(':')) {
           submitData.fechaPrimeraLectura = `${submitData.fechaPrimeraLectura} 00:00`;
-          console.log('⚠️ FechaPrimeraLectura sin hora - agregando 00:00');
         }
       }
 
-      console.log('⚠️ Campos numéricos convertidos a Number()');
-
-      // Opción para probar sin subempalmeCodigo (descomentar si es necesario)
-      // console.log('⚠️ PRUEBA: Enviando sin subempalmeCodigo');
-      // delete (submitData as any).subempalmeCodigo;
-
-      // Console.log para debug
-      console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
-      console.log('Modo:', mode);
-      console.log('Endpoint: PUT /medidor/modificar');
-      console.log('Payload esperado por el backend:', {
-        codigoMedidor: 'number',
-        marcaId: 'string',
-        modelo: 'string',
-        serie: 'string',
-        estadoId: 'number',
-        fechaInicio: 'string',
-        digitos: 'number',
-        multiplicar: 'number',
-        tipoId: 'number',
-        subempalmeCodigo: 'string',
-        primeraLectura: 'string',
-        fechaPrimeraLectura: 'string',
-      });
-      console.log('Datos originales del formulario:', data);
-      console.log('Subempalme Código que se enviará:', data.subempalmeCodigo);
-
-      // Debug detallado de cada campo
-      console.log('=== DEBUG DETALLADO DE CAMPOS ===');
-      console.log(
-        'codigoMedidor:',
-        typeof submitData.codigoMedidor,
-        submitData.codigoMedidor
-      );
-      console.log('marcaId:', typeof submitData.marcaId, submitData.marcaId);
-      console.log('modelo:', typeof submitData.modelo, submitData.modelo);
-      console.log('serie:', typeof submitData.serie, submitData.serie);
-      console.log('estadoId:', typeof submitData.estadoId, submitData.estadoId);
-      console.log(
-        'fechaInicio:',
-        typeof submitData.fechaInicio,
-        submitData.fechaInicio
-      );
-      console.log('digitos:', typeof submitData.digitos, submitData.digitos);
-      console.log(
-        'multiplicar:',
-        typeof submitData.multiplicar,
-        submitData.multiplicar
-      );
-      console.log('tipoId:', typeof submitData.tipoId, submitData.tipoId);
-      console.log(
-        'subempalmeCodigo:',
-        typeof submitData.subempalmeCodigo,
-        submitData.subempalmeCodigo
-      );
-      console.log(
-        'primeraLectura:',
-        typeof submitData.primeraLectura,
-        submitData.primeraLectura
-      );
-      console.log(
-        'fechaPrimeraLectura:',
-        typeof submitData.fechaPrimeraLectura,
-        submitData.fechaPrimeraLectura
-      );
-      console.log('================================================');
-
-      console.log(
-        'JSON transformado enviado:',
-        JSON.stringify(submitData, null, 2)
-      );
-      console.log('================================================');
-
       onSubmit(submitData, 'edit');
     } else {
-      // Intentar diferentes campos para encontrar la marca
-      // Buscar la marca por código para obtener el ID
       const marcaEncontrada = marcas.find(m => m.codigo === data.marcaCodigo);
-      const marcaId = marcaEncontrada?.id ?? 0; // Usar el ID numérico, no el código
-
-      console.log('Debug marcaId (editar):', {
-        marcaCodigo: data.marcaCodigo,
-        marcaEncontrada: marcaEncontrada,
-        marcaIdEnviado: marcaId,
-        codigoMarca: marcaEncontrada?.codigo,
-      });
-
-      // Debug adicional para ver la estructura de las marcas
-      console.log('Primeras 3 marcas del array:', marcas.slice(0, 3));
-      console.log('Buscando marca con codigo:', data.marcaCodigo);
-      console.log(
-        'Todas las marcas que contienen "E246":',
-        marcas.filter(
-          m => m.codigo?.includes('E246') || m.nombre?.includes('E246')
-        )
-      );
+      const marcaId = marcaEncontrada?.id ?? 0;
 
       // Convertir fecha de yyyy-MM-dd a dd-MM-yyyy
       const fechaInicio = data.fechaInicio
@@ -657,77 +518,6 @@ export function MedidorFormModal({
         fechaPrimeraLectura: fechaPrimeraLecturaFormateada,
         horaPrimeraLectura: data.horaPrimeraLectura || '',
       };
-
-      // Console.log para debug
-      console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
-      console.log('Modo:', mode);
-      console.log(
-        'Endpoint:',
-        mode === 'add' ? 'POST /medidor/crear' : 'PUT /medidor/modificar'
-      );
-      console.log('Datos originales del formulario:', data);
-      console.log('Subempalme Código que se enviará:', data.subempalmeCodigo);
-
-      // Debug detallado de cada campo
-      console.log('=== DEBUG DETALLADO DE CAMPOS ===');
-      console.log(
-        'marcaId:',
-        typeof submitDataFinal.marcaId,
-        submitDataFinal.marcaId
-      );
-      console.log(
-        'modelo:',
-        typeof submitDataFinal.modelo,
-        submitDataFinal.modelo
-      );
-      console.log(
-        'serie:',
-        typeof submitDataFinal.serie,
-        submitDataFinal.serie
-      );
-      console.log(
-        'estadoId:',
-        typeof submitDataFinal.estadoId,
-        submitDataFinal.estadoId
-      );
-      console.log(
-        'fechaInicio:',
-        typeof submitDataFinal.fechaInicio,
-        submitDataFinal.fechaInicio
-      );
-      console.log(
-        'digitos:',
-        typeof submitDataFinal.digitos,
-        submitDataFinal.digitos
-      );
-      console.log(
-        'multiplicar:',
-        typeof submitDataFinal.multiplicar,
-        submitDataFinal.multiplicar
-      );
-      console.log(
-        'tipoId:',
-        typeof submitDataFinal.tipoId,
-        submitDataFinal.tipoId
-      );
-
-      console.log(
-        'primeraLectura:',
-        typeof submitDataFinal.primeraLectura,
-        submitDataFinal.primeraLectura
-      );
-      console.log(
-        'fechaPrimeraLectura:',
-        typeof submitDataFinal.fechaPrimeraLectura,
-        submitDataFinal.fechaPrimeraLectura
-      );
-      console.log('================================================');
-
-      console.log(
-        'JSON transformado enviado:',
-        JSON.stringify(submitDataFinal, null, 2)
-      );
-      console.log('================================================');
 
       onSubmit(submitDataFinal as any, mode);
     }

@@ -1,4 +1,3 @@
-// src/components/SessionExpired.tsx
 import React, { useEffect } from 'react';
 
 import { useNavigate } from 'react-router';
@@ -22,15 +21,12 @@ const SessionExpired: React.FC<SessionExpiredProps> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    //console.log('SessionExpired component mounted');
-
     // Limpiar el sessionStorage y localStorage
     sessionStorage.removeItem('token');
     localStorage.removeItem('token');
 
     // Redirigir automáticamente al login después de un breve delay
     const timer = setTimeout(() => {
-      //console.log('Redirecting to login...');
       navigate('/auth/login', { replace: true });
     }, 2000); // 2 segundos para mostrar el mensaje
 
@@ -38,11 +34,8 @@ const SessionExpired: React.FC<SessionExpiredProps> = ({
   }, [navigate]);
 
   const handleLogin = () => {
-    //console.log('Manual login button clicked');
     navigate('/auth/login', { replace: true });
   };
-
-  //console.log('SessionExpired component rendering');
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900'>

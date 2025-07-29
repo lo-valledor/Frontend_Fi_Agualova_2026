@@ -96,6 +96,56 @@ pnpm start
 
 ## 🐳 Despliegue con Docker
 
+### Gestión de Entornos
+
+El proyecto incluye configuración separada para entornos de desarrollo y producción:
+
+#### Entorno de Desarrollo
+
+```bash
+# Usar script de gestión (recomendado)
+.\scripts\manage-environments.ps1 dev
+
+# O manualmente
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+#### Entorno de Producción
+
+```bash
+# Usar script de gestión (recomendado)
+.\scripts\manage-environments.ps1 prod
+
+# O manualmente
+docker-compose up -d
+```
+
+#### Scripts de Gestión
+
+Para facilitar el manejo de entornos, se incluyen scripts automatizados:
+
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\manage-environments.ps1 dev    # Desarrollo con hot reload
+.\scripts\manage-environments.ps1 prod   # Producción
+.\scripts\manage-environments.ps1 stop   # Detener todos
+.\scripts\manage-environments.ps1 help   # Ver ayuda
+```
+
+**Linux/macOS (Bash):**
+
+```bash
+./scripts/manage-environments.sh dev     # Desarrollo con hot reload
+./scripts/manage-environments.sh prod    # Producción
+./scripts/manage-environments.sh stop    # Detener todos
+./scripts/manage-environments.sh help    # Ver ayuda
+```
+
+> 📖 **Documentación completa**: Ver [Gestión de Entornos](docs/ENVIRONMENT-MANAGEMENT.md)
+
+### Configuración Manual
+
 ```bash
 # Construir imagen
 docker build -t enerlova-app .

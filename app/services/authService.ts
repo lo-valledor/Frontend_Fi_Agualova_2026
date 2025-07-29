@@ -16,12 +16,10 @@ interface LoginResponse {
 export const authService = {
   login: async (credentials: LoginDto): Promise<string> => {
     try {
-      //console.log('Intentando login con:', { usuario: credentials.usuario });
       const response = await axiosInstance.post<LoginResponse>(
         '/login',
         credentials
       );
-      //console.log('Respuesta del servidor:', response.status, response.data);
 
       if (!response.data?.token) {
         throw new Error('No se recibió token del servidor');
@@ -49,7 +47,6 @@ export const authService = {
       await axiosInstance.post('/logout');
       localStorage.removeItem('token');
       toast.success('Cierre de sesión exitoso');
-      // No podemos usar navigate aquí, la redirección debe hacerse en el componente
     } catch (_error) {
       toast.error('Error al cerrar sesión');
     }

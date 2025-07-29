@@ -23,8 +23,6 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Checkbox } from '~/components/ui/checkbox';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-
-
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { ScrollArea } from '~/components/ui/scroll-area';
@@ -246,7 +244,6 @@ export default function ExportarLecturasComponent({
                   Exportar Lecturas
                 </h1>
               </div>
-
             </div>
           </div>
         </div>

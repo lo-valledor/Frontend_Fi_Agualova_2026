@@ -1,7 +1,7 @@
 import { type PaginationState } from '@tanstack/react-table';
 import { Gauge, Loader2, RotateCcw, Settings } from 'lucide-react';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { LoadingSpinner } from '~/components/loading-spinner';
@@ -160,7 +160,7 @@ export default function MonitorNichos({
   if (isLoading) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
-        <LoadingState message='Cargando datos de nichos...' />
+        <LoadingState title='Cargando datos de nichos...' />
       </div>
     );
   }

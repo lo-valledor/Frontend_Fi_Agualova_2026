@@ -1,7 +1,7 @@
 import { Building2, List, Save, Search, User, X, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import Select, { type StylesConfig } from 'react-select';
@@ -125,10 +125,8 @@ export function AcometidaForm({
       );
 
       if (!contratoExiste) {
-        console.log(
-          '⚠️ Contrato de acometida no encontrado en lista disponible - omitiendo del selector'
-        );
         // No agregamos el contrato como opción temporal
+        return [];
       }
     }
 
@@ -243,13 +241,8 @@ export function AcometidaForm({
         comboNichos.find(n => n.nombre === acometida.nichoDescripcion)?.id ||
         '';
 
-      // Verificar si el contrato existe en la lista
-      const contratoExiste = contratosDisponibles.find(
-        c => c.contratoId === acometida.contratoId
-      );
-
-      // Solo establecer contratoId si el contrato está disponible
-      const contratoId = contratoExiste ? acometida.contratoId : '';
+      // Siempre establecer el contratoId original, independientemente de si está en la lista
+      const contratoId = acometida.contratoId || '';
 
       form.reset({
         ubicacion: acometida.ubicacion || '',
@@ -259,14 +252,7 @@ export function AcometidaForm({
         codigo: acometida.codigo || '',
         limitePotencia: acometida.limitePotencia?.toString() || '0',
       });
-
-      // Verificar que se estableció correctamente
-      setTimeout(() => {
-        const contratoActual = form.getValues('contratoId');
-        console.log('ContratoId establecido en el form:', contratoActual);
-      }, 100);
     } else {
-      console.log('Creando nueva acometida');
       form.reset({
         ubicacion: '',
         empalmeId: '',
@@ -315,11 +301,16 @@ export function AcometidaForm({
         return;
       }
 
-      // En edición, permitir contratoId vacío si el contrato no está disponible
+      // En creación, el contratoId es obligatorio
       if (!isEdit && (!contratoId || contratoId.length === 0)) {
         toast.error('Debe seleccionar un contrato');
         return;
       }
+
+      // En edición, si no hay contratoId en el formulario, usar el original
+      const contratoIdFinal = isEdit
+        ? contratoId || acometida?.contratoId || ''
+        : contratoId;
 
       if (isEdit && acometida) {
         const submitData: ActualizarAcometidaProps = {
@@ -327,23 +318,21 @@ export function AcometidaForm({
           ubicacion: data.ubicacion.trim(),
           empalmeId,
           nichoId,
-          contratoId: contratoId || '', // Permitir vacío en edición
+          contratoId: contratoIdFinal,
           limitePotencia,
         };
 
-        console.log('Datos para actualizar:', submitData);
         await onSubmit(submitData);
       } else {
         const submitData: CrearAcometidaProps = {
           ubicacion: data.ubicacion.trim(),
           empalmeId,
           nichoId,
-          contratoId,
+          contratoId: contratoIdFinal,
           codigo,
           limitePotencia,
         };
 
-        console.log('Datos para crear:', submitData);
         await onSubmit(submitData);
       }
 
@@ -379,7 +368,6 @@ export function AcometidaForm({
 
     // Si estamos editando y el contrato anterior no estaba disponible,
     // ahora que se seleccionó uno nuevo, el campo se mostrará automáticamente
-    console.log('Contrato seleccionado:', contratoId);
   };
 
   return (

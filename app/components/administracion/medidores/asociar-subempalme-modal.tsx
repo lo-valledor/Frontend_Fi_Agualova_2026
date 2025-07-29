@@ -1,4 +1,5 @@
 import { Gauge, Search } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
@@ -77,15 +78,10 @@ export function AsociarSubempalmeModal({
         subempalmeId: subempalmeId,
       };
 
-      console.log('=== ASOCIANDO SUBEMPALME ===');
-      console.log('Endpoint: PUT /modificar-subempalme');
-      console.log('Payload:', JSON.stringify(payload, null, 2));
-
       const response = await api.put('/modificar-subempalme', payload);
 
       if (response.status === 200) {
-        console.log('✅ Subempalme asociado correctamente');
-        alert('Subempalme asociado correctamente al medidor');
+        toast.success('Subempalme asociado correctamente');
         onSuccess(); // Recargar la lista de medidores
         onClose();
         setBusquedaSubempalme('');

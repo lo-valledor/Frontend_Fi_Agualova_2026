@@ -46,6 +46,7 @@ export default function ProfilePage() {
     apellidos: '',
     departamento: 0,
     activo: true,
+    nuevaContrasena: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -60,6 +61,7 @@ export default function ProfilePage() {
         apellidos: userData.apellidos,
         departamento: userData.departamento,
         activo: userData.activo,
+        nuevaContrasena: '',
       });
     }
   }, [userData]);
@@ -77,12 +79,47 @@ export default function ProfilePage() {
   const handleSave = async () => {
     if (!userData) return;
 
+    // Validar que se proporcione la contraseña actual solo si se quiere cambiar la contraseña
+    if (formData.nuevaContrasena?.trim() && !formData.contrasena.trim()) {
+      toast.error(
+        'Debes ingresar tu contraseña actual para cambiar la contraseña'
+      );
+      return;
+    }
+
     try {
-      await updateProfile(formData);
+      // Preparar datos para enviar
+      const dataToUpdate: ActualizarUsuarioProps = {
+        nombreDeUsuario: formData.nombreDeUsuario,
+        nombres: formData.nombres,
+        apellidos: formData.apellidos,
+        departamento: formData.departamento,
+        activo: formData.activo,
+        // Solo incluir contraseña si se proporcionó (para cambio de contraseña)
+        contrasena: formData.contrasena || '',
+        // Solo incluir nuevaContrasena si se proporcionó
+        ...(formData.nuevaContrasena?.trim() && {
+          nuevaContrasena: formData.nuevaContrasena,
+        }),
+      };
+
+      await updateProfile(dataToUpdate);
       toast.success('Perfil actualizado exitosamente');
       setIsEditing(false);
-    } catch (_error) {
-      toast.error('Error al actualizar el perfil');
+
+      // Limpiar contraseñas después de guardar
+      setFormData(prev => ({
+        ...prev,
+        contrasena: '',
+        nuevaContrasena: '',
+      }));
+    } catch (error: any) {
+      console.error('Error al actualizar perfil:', error);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Error al actualizar el perfil';
+      toast.error(errorMessage);
     }
   };
 
@@ -95,6 +132,7 @@ export default function ProfilePage() {
         apellidos: userData.apellidos,
         departamento: userData.departamento,
         activo: userData.activo,
+        nuevaContrasena: '',
       });
     }
     setIsEditing(false);
@@ -285,29 +323,34 @@ export default function ProfilePage() {
                   Contraseña Actual
                 </Label>
                 {isEditing ? (
-                  <div className='relative'>
-                    <Input
-                      id='contrasena'
-                      type={showPassword ? 'text' : 'password'}
-                      value={formData.contrasena}
-                      onChange={e =>
-                        handleInputChange('contrasena', e.target.value)
-                      }
-                      placeholder='Ingresa tu contraseña actual'
-                    />
-                    <Button
-                      type='button'
-                      variant='ghost'
-                      size='sm'
-                      className='absolute right-0 top-0 h-full px-3 hover:bg-transparent'
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOff className='h-4 w-4' />
-                      ) : (
-                        <Eye className='h-4 w-4' />
-                      )}
-                    </Button>
+                  <div className='space-y-2'>
+                    <div className='relative'>
+                      <Input
+                        id='contrasena'
+                        type={showPassword ? 'text' : 'password'}
+                        value={formData.contrasena}
+                        onChange={e =>
+                          handleInputChange('contrasena', e.target.value)
+                        }
+                        placeholder='Solo requerida para cambiar contraseña'
+                      />
+                      <Button
+                        type='button'
+                        variant='ghost'
+                        size='sm'
+                        className='absolute right-0 top-0 h-full px-3 hover:bg-transparent'
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <EyeOff className='h-4 w-4' />
+                        ) : (
+                          <Eye className='h-4 w-4' />
+                        )}
+                      </Button>
+                    </div>
+                    <p className='text-xs text-muted-foreground'>
+                      Solo necesaria si deseas cambiar tu contraseña
+                    </p>
                   </div>
                 ) : (
                   <p className='text-sm text-muted-foreground py-2'>••••••••</p>
@@ -325,6 +368,10 @@ export default function ProfilePage() {
                     <Input
                       id='nuevaContrasena'
                       type={showNewPassword ? 'text' : 'password'}
+                      value={formData.nuevaContrasena || ''}
+                      onChange={e =>
+                        handleInputChange('nuevaContrasena', e.target.value)
+                      }
                       placeholder='Deja vacío para mantener la actual'
                     />
                     <Button

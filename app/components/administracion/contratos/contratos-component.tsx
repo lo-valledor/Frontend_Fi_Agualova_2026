@@ -1,4 +1,5 @@
 import { FileText, Plus } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useState } from 'react';
 
@@ -6,9 +7,11 @@ import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
+import { administracionService } from '~/services/administracionService';
 import type {
   ContratanteProps,
   ContratoFormData,
+  CrearContratoProps,
   GetComunas,
   GetContratos,
   GetContratosClientes,
@@ -18,6 +21,7 @@ import type {
   GetMadres,
   GetPropietario,
   GetRegiones,
+  ModificarContratoProps,
 } from '~/types/administracion';
 import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
@@ -117,45 +121,161 @@ export default function ContratosComponent({
     setIsDetailsModalOpen(true);
   };
 
-  const handleSubmitContract = (formData: ContratoFormData) => {
+  const handleSubmitContract = async (formData: ContratoFormData) => {
     // Validar que fechaInicio no esté vacío
     if (!formData.fechaInicio) {
-      console.error('Fecha de inicio es obligatoria');
+      toast.error('La fecha de inicio es obligatoria');
       return;
     }
 
+    // Función para convertir fecha de forma segura
+    // Función para formatear fecha a yyyy-MM-dd (formato requerido por el backend)
+    const formatDateToBackend = (dateString: string): string => {
+      if (!dateString) return '';
+
+      try {
+        console.log('Procesando fecha para formato yyyy-MM-dd:', dateString);
+
+        // Regex para detectar formatos de fecha
+        const dateRegexYMD = /^\d{4}-\d{2}-\d{2}$/; // yyyy-MM-dd
+        const dateRegexDMY = /^\d{2}-\d{2}-\d{4}$/; // dd-MM-yyyy
+
+        let normalizedDate: string;
+
+        if (dateRegexYMD.test(dateString)) {
+          // Ya está en formato yyyy-MM-dd
+          normalizedDate = dateString;
+          console.log('Fecha ya en formato yyyy-MM-dd:', normalizedDate);
+        } else if (dateRegexDMY.test(dateString)) {
+          // Formato dd-MM-yyyy - convertir a yyyy-MM-dd
+          const [day, month, year] = dateString.split('-');
+          normalizedDate = `${year}-${month}-${day}`;
+          console.log(
+            'Fecha convertida de dd-MM-yyyy a yyyy-MM-dd:',
+            normalizedDate
+          );
+        } else {
+          console.error('Formato de fecha inválido:', dateString);
+          return '';
+        }
+
+        console.log('Fecha final formateada:', normalizedDate);
+        return normalizedDate;
+      } catch (error) {
+        console.error('Error al convertir fecha:', error);
+        return '';
+      }
+    };
+
     try {
+      // Preparar los datos según el modo (crear o editar)
+      const submitData = {
+        // Campos base requeridos por la API
+        tipoContrato: parseInt(formData.tipoContrato) || 0,
+        tarifa: parseInt(formData.tarifa) || 0,
+        propietario: formData.nombrePropietario,
+        cliente: formData.nombreCliente,
+        localId: formData.local,
+        fechaInicio: formatDateToBackend(formData.fechaInicio), // Formatear a yyyy-MM-dd
+        activo: formData.activo,
+        direccion: formData.direccionEnvio,
+        comuna: formData.comunaEnvio,
+        limite: formData.limiteInvierno,
+        ciclo: 1, // Valor fijo para "Ciclo Día 15"
+        potencia: formData.potenciaContratada,
+        madre: formData.madre,
+        lugar: formData.local,
+        sinCorte: formData.liberadoCorte ? 1 : 0,
+
+        // Campos específicos para crear
+        ...(modalMode === 'add' && {
+          guardaCliente: formData.nombreCliente,
+          esMadre: formData.madre ? 'S' : 'N',
+        }),
+
+        // Campos específicos para editar
+        ...(modalMode === 'edit' && {
+          codigo: selectedContract?.codigoContrato || '',
+          fechaTermino: formatDateToBackend(formData.fechaTermino),
+        }),
+      };
+
+      // Console.log para debug
+      console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
+      console.log('Modo:', modalMode);
+      console.log(
+        'Endpoint:',
+        modalMode === 'add' ? 'POST /contrato/crear' : 'PUT /contrato/modificar'
+      );
+      console.log('Datos originales del formulario:', formData);
+      console.log(
+        'JSON transformado enviado:',
+        JSON.stringify(submitData, null, 2)
+      );
+      console.log('================================');
+
+      // Llamar al servicio correspondiente
+      let response;
       if (modalMode === 'add') {
+        response = await administracionService.crearContrato(
+          submitData as CrearContratoProps
+        );
+      } else {
+        response = await administracionService.modificarContrato(
+          submitData as ModificarContratoProps
+        );
+      }
+
+      // Manejar la respuesta
+      if (response.error) {
+        toast.error(`Error: ${response.error}`);
+        console.error('Error en la respuesta del servidor:', response.error);
+        return;
+      }
+
+      // Éxito
+      toast.success(
+        modalMode === 'add'
+          ? 'Contrato creado exitosamente'
+          : 'Contrato modificado exitosamente'
+      );
+
+      // Actualizar la lista local (opcional, ya que se puede recargar desde el servidor)
+      if (modalMode === 'add' && response.data) {
         const newContract: GetContratos = {
-          codigoContrato: `CTR-2024-${String(contracts.length + 1).padStart(3, '0')}`,
-          acometida: `ACO-${String(contracts.length + 1).padStart(3, '0')}`,
+          codigoContrato:
+            response.data.codigoContrato ||
+            `CTR-2024-${String(contracts.length + 1).padStart(3, '0')}`,
+          acometida:
+            response.data.acometida ||
+            `ACO-${String(contracts.length + 1).padStart(3, '0')}`,
           ...formData,
-          fechaInicio: new Date(formData.fechaInicio).toISOString(),
-          fechaTermino: formData.fechaTermino
-            ? new Date(formData.fechaTermino).toISOString()
-            : '',
+          fechaInicio: formData.fechaInicio,
+          fechaTermino: formData.fechaTermino || '',
         };
         setContracts(prev => [...prev, newContract]);
-      } else if (selectedContract) {
+      } else if (modalMode === 'edit' && selectedContract) {
         setContracts(prev =>
           prev.map(contract =>
             contract.codigoContrato === selectedContract.codigoContrato
               ? {
                   ...contract,
                   ...formData,
-                  fechaInicio: new Date(formData.fechaInicio).toISOString(),
-                  fechaTermino: formData.fechaTermino
-                    ? new Date(formData.fechaTermino).toISOString()
-                    : '',
+                  fechaInicio: formData.fechaInicio,
+                  fechaTermino: formData.fechaTermino || '',
                 }
               : contract
           )
         );
       }
+
+      // Cerrar el modal
+      setIsModalOpen(false);
+      setSelectedContract(null);
     } catch (error) {
-      console.error('Error al procesar las fechas:', error);
-      alert(
-        'Error al procesar las fechas. Verifica que las fechas sean válidas.'
+      console.error('Error al procesar el contrato:', error);
+      toast.error(
+        'Error al procesar el contrato. Verifica los datos e intenta nuevamente.'
       );
     }
   };

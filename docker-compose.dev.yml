@@ -1,0 +1,46 @@
+# docker-compose.dev.yml - Entorno de Desarrollo
+version: '3.8'
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: development-server # Usar el target de servidor de desarrollo
+      args:
+        VITE_API_URL: http://192.168.1.139:8081/Enerlova
+        NODE_ENV: development
+    ports:
+      - '3000:5173' # Puerto de desarrollo
+    volumes:
+      - .:/app
+      - /app/node_modules # Preservar node_modules del contenedor
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://192.168.1.139:8081/Enerlova
+    networks:
+      - enerlova-dev-network
+    restart: unless-stopped
+
+  # Alternativa: Frontend con nginx para desarrollo (sin hot reload)
+  frontend-dev-nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: development-nginx # Usar el target de nginx para desarrollo
+      args:
+        VITE_API_URL: http://192.168.1.139:8081/Enerlova
+        NODE_ENV: development
+    ports:
+      - '3001:3000' # Puerto alternativo para nginx de desarrollo
+    environment:
+      - NODE_ENV=development
+    networks:
+      - enerlova-dev-network
+    restart: unless-stopped
+    profiles:
+      - nginx-dev # Perfil opcional para usar nginx en desarrollo
+
+networks:
+  enerlova-dev-network:
+    driver: bridge

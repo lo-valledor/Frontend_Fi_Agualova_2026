@@ -10,6 +10,7 @@ import type {
   ComboSectores,
   ContratanteProps,
   ContratosDisponibles,
+  CrearContratoProps,
   GeCombosConceptos,
   GetCargoTipoContrato,
   GetClientes,
@@ -27,6 +28,7 @@ import type {
   GetMedidores,
   GetPropietario,
   GetRegiones,
+  ModificarContratoProps,
   Usuarios,
 } from '~/types/administracion';
 import type {
@@ -410,6 +412,54 @@ class AdministracionService {
       return {
         data: null,
         error: error instanceof Error ? error.message : 'Error desconocido',
+      };
+    }
+  }
+
+  /**
+   * Crear un nuevo contrato
+   */
+  async crearContrato(
+    contratoData: CrearContratoProps
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.post('/contrato/crear', contratoData);
+      return {
+        data: response.data,
+        error: null,
+      };
+    } catch (error: any) {
+      console.error('Error al crear contrato:', error);
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al crear el contrato',
+      };
+    }
+  }
+
+  /**
+   * Modificar un contrato existente
+   */
+  async modificarContrato(
+    contratoData: ModificarContratoProps
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put('/contrato/modificar', contratoData);
+      return {
+        data: response.data,
+        error: null,
+      };
+    } catch (error: any) {
+      console.error('Error al modificar contrato:', error);
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al modificar el contrato',
       };
     }
   }

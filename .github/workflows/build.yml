@@ -1,9 +1,9 @@
-name: SonarQube Scan
+name: SonarQube Scan - Production Only
 
 on:
   push:
     branches:
-      - main
+      - main # Solo se ejecuta en la rama principal de producción
 
 jobs:
   sonar:

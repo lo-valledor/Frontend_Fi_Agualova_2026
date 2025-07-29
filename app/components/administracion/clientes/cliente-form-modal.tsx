@@ -7,10 +7,11 @@ import {
   MapPin,
   Phone,
   User,
+  XCircle,
 } from 'lucide-react';
 import { z } from 'zod';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import Select, { type StylesConfig } from 'react-select';
@@ -42,29 +43,45 @@ import type {
   GetGiros,
 } from '~/types/administracion';
 
-const clienteSchema = z.object({
-  rut: z.string().min(1, 'El RUT es requerido'),
-  nombre: z.string().min(1, 'El nombre es requerido'),
-  apellido: z.string(),
-  esEmpresa: z.boolean(),
-  direccion: z.string().min(1, 'La dirección es requerida'),
-  codComuna: z.string().min(1, 'La comuna es requerida'),
-  contacto: z.string().min(1, 'El contacto es requerido'),
-  telefono: z.string().min(1, 'El teléfono es requerido'),
-  correo: z.string().email('Correo electrónico inválido'),
-  codigoGiro: z.string().min(1, 'El código de giro es requerido'),
-});
+// Función para crear schema dinámico con validación de RUT
+const createClienteSchema = (existingClients: string[], currentRut?: string) =>
+  z.object({
+    rut: z
+      .string()
+      .min(1, 'El RUT es requerido')
+      .refine(
+        rut => {
+          // En modo edición, permitir el RUT actual
+          if (currentRut && rut === currentRut) return true;
+          // En modo creación, verificar que no exista
+          return !existingClients.includes(rut);
+        },
+        {
+          message: 'Este RUT ya está registrado en el sistema',
+        }
+      ),
+    nombre: z.string().min(1, 'El nombre es requerido'),
+    apellido: z.string(),
+    esEmpresa: z.boolean(),
+    direccion: z.string().min(1, 'La dirección es requerida'),
+    codComuna: z.string().min(1, 'La comuna es requerida'),
+    contacto: z.string().min(1, 'El contacto es requerido'),
+    telefono: z.string().optional(),
+    correo: z.string().optional(),
+    codigoGiro: z.string().min(1, 'El código de giro es requerido'),
+  });
 
-type ClienteFormData = z.infer<typeof clienteSchema>;
+type ClienteFormData = z.infer<ReturnType<typeof createClienteSchema>>;
 
 interface ClienteFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (clienteData: ClienteFormData, mode: 'add' | 'edit') => void;
   cliente?: GetClientesByRut;
   mode: 'add' | 'edit';
   giros: GetGiros[];
   comunas: GetComunas[];
+  existingClients: string[]; // Lista de RUTs existentes para validación
 }
 
 export default function ClienteFormModal({
@@ -75,7 +92,11 @@ export default function ClienteFormModal({
   mode,
   giros,
   comunas,
+  existingClients,
 }: ClienteFormModalProps) {
+  // Crear schema dinámico basado en clientes existentes
+  const clienteSchema = createClienteSchema(existingClients, cliente?.rut);
+
   const form = useForm<ClienteFormData>({
     resolver: zodResolver(clienteSchema),
     defaultValues: {
@@ -92,6 +113,36 @@ export default function ClienteFormModal({
     },
   });
   const { theme } = useTheme();
+  const [rutValidationStatus, setRutValidationStatus] = useState<
+    'idle' | 'checking' | 'valid' | 'invalid'
+  >('idle');
+
+  // Función para validar RUT en tiempo real
+  const validateRut = (rut: string) => {
+    if (!rut) {
+      setRutValidationStatus('idle');
+      return;
+    }
+
+    // En modo edición, permitir el RUT actual
+    if (cliente?.rut && rut === cliente.rut) {
+      setRutValidationStatus('valid');
+      return;
+    }
+
+    // Verificar si el RUT ya existe
+    if (existingClients.includes(rut)) {
+      setRutValidationStatus('invalid');
+    } else {
+      setRutValidationStatus('valid');
+    }
+  };
+
+  // Validar RUT cuando cambie el valor del campo
+  useEffect(() => {
+    const rutValue = form.watch('rut');
+    validateRut(rutValue);
+  }, [form.watch('rut'), existingClients, cliente?.rut]);
 
   const selectStyles: StylesConfig = {
     control: styles => ({
@@ -197,7 +248,7 @@ export default function ClienteFormModal({
       } else {
         await api.put(`/cliente/modificar`, { ...data, id: cliente?.rut });
       }
-      onSuccess();
+      onSuccess(data, mode);
       onClose();
     } catch (error) {
       console.error('Error al guardar cliente:', error);
@@ -248,13 +299,36 @@ export default function ClienteFormModal({
                         RUT
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder='12345678-9'
-                          {...field}
-                          className='h-11'
-                        />
+                        <div className='relative'>
+                          <Input
+                            placeholder='12345678-9'
+                            {...field}
+                            className={`h-11 pr-10 ${
+                              rutValidationStatus === 'valid'
+                                ? 'border-green-500 focus:border-green-500'
+                                : rutValidationStatus === 'invalid'
+                                  ? 'border-red-500 focus:border-red-500'
+                                  : ''
+                            }`}
+                          />
+                          {rutValidationStatus === 'valid' && (
+                            <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
+                              <CheckCircle2 className='h-5 w-5 text-green-500' />
+                            </div>
+                          )}
+                          {rutValidationStatus === 'invalid' && (
+                            <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
+                              <XCircle className='h-5 w-5 text-red-500' />
+                            </div>
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
+                      {rutValidationStatus === 'invalid' && (
+                        <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
+                          Este RUT ya está registrado en el sistema
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
@@ -382,13 +456,13 @@ export default function ClienteFormModal({
                             instanceId='comuna-select'
                             options={comunas.map(comuna => ({
                               value: comuna.codigo,
-                              label: `${comuna.nombre} (${comuna.region})`,
+                              label: `${comuna.nombre} (${comuna.codigo})`,
                             }))}
                             value={
                               comunaActual
                                 ? {
                                     value: comunaActual.codigo,
-                                    label: `${comunaActual.nombre} (${comunaActual.region})`,
+                                    label: `${comunaActual.nombre} (${comunaActual.codigo})`,
                                   }
                                 : null
                             }

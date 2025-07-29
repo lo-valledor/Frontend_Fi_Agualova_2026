@@ -103,9 +103,6 @@ export const useDebugInfo = () => {
 
       setDebugInfo(info);
 
-      // Log automático en consola
-      //console.log('🔍 DEBUG INFO:', info);
-
       if (proxyInfo.detected) {
         console.warn('⚠️ POSIBLE INTERFERENCIA DETECTADA:');
         proxyInfo.evidence.forEach(e => console.warn(`  - ${e}`));
