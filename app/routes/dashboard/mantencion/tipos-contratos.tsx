@@ -1,11 +1,14 @@
 /* eslint-disable no-empty-pattern */
-import React from 'react';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { MantencionHydrateFallback } from '~/components/mantencion/mantencion-hydrate-fallback';
 import TiposContratosComponent from '~/components/mantencion/tipos-contratos/tipos-contratos-component';
 import { mantencionService } from '~/services/mantencionService';
 
 import type { Route } from './+types/tipos-contratos';
+
+export function hydrateFallback() {
+  return <MantencionHydrateFallback />;
+}
 
 export function meta({}: Route.MetaArgs) {
   return [

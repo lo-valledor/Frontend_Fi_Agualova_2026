@@ -110,7 +110,7 @@ export function ContractFiltersComponent({
             <Separator />
 
             {/* Filtros principales */}
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
               {/* Tipo de Contrato */}
               <div className='space-y-2'>
                 <Label
@@ -221,7 +221,7 @@ export function ContractFiltersComponent({
             </div>
 
             {/* Segunda fila de filtros */}
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
               {/* Estado Activo */}
               <div className='space-y-2'>
                 <Label
@@ -279,7 +279,7 @@ export function ContractFiltersComponent({
                   Rango de Fecha de Término
                 </Label>
               </div>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
                 <div className='space-y-2'>
                   <Label
                     htmlFor='fechaTerminoDesde'
@@ -326,12 +326,12 @@ export function ContractFiltersComponent({
                     <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                       Filtros activos:
                     </span>
-                    <div className='flex flex-wrap gap-2'>
+                    <div className='flex flex-wrap gap-1 sm:gap-2'>
                       {filters.tipoContrato &&
                         filters.tipoContrato !== 'all' && (
                           <Badge
                             variant='outline'
-                            className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800'
+                            className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800 text-xs sm:text-sm'
                           >
                             Tipo: {filters.tipoContrato}
                             <Button
@@ -350,7 +350,7 @@ export function ContractFiltersComponent({
                         filters.cicloFacturacion !== 'all' && (
                           <Badge
                             variant='outline'
-                            className='bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+                            className='bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs sm:text-sm'
                           >
                             Ciclo: {filters.cicloFacturacion}
                             <Button
@@ -368,7 +368,7 @@ export function ContractFiltersComponent({
                       {filters.tarifa && filters.tarifa !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800'
+                          className='bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs sm:text-sm'
                         >
                           Tarifa: {filters.tarifa}
                           <Button
@@ -384,7 +384,7 @@ export function ContractFiltersComponent({
                       {filters.comuna && filters.comuna !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800'
+                          className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs sm:text-sm'
                         >
                           Comuna: {filters.comuna}
                           <Button
@@ -400,7 +400,7 @@ export function ContractFiltersComponent({
                       {filters.activo && filters.activo !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800'
+                          className='bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs sm:text-sm'
                         >
                           Estado:{' '}
                           {filters.activo === 'true' ? 'Activo' : 'Inactivo'}
@@ -418,7 +418,7 @@ export function ContractFiltersComponent({
                         filters.liberadoCorte !== 'all' && (
                           <Badge
                             variant='outline'
-                            className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800'
+                            className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800 text-xs sm:text-sm'
                           >
                             Liberado:{' '}
                             {filters.liberadoCorte === 'true' ? 'Sí' : 'No'}
@@ -438,7 +438,7 @@ export function ContractFiltersComponent({
                         filters.fechaTerminoHasta) && (
                         <Badge
                           variant='outline'
-                          className='bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800'
+                          className='bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800 text-xs sm:text-sm'
                         >
                           Fechas: {filters.fechaTerminoDesde || '...'} -{' '}
                           {filters.fechaTerminoHasta || '...'}

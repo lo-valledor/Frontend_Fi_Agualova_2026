@@ -1,7 +1,6 @@
 /* eslint-disable no-empty-pattern */
-import React from 'react';
-
 import AcometidaComponent from '~/components/administracion/acometida/acometida-component';
+import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
 
@@ -54,4 +53,8 @@ export default function Acometida({ loaderData }: Route.ComponentProps) {
       />
     </div>
   );
+}
+
+export function hydrateFallback() {
+  return <AdministracionHydrateFallback />;
 }

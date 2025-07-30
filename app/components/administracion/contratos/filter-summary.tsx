@@ -1,4 +1,4 @@
-import { Filter, TrendingDown, TrendingUp } from 'lucide-react';
+import { Download, Filter, TrendingDown, TrendingUp } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Card, CardContent } from '~/components/ui/card';
@@ -54,6 +54,10 @@ export function FilterSummary({
               {activeFilters} filtro{activeFilters !== 1 ? 's' : ''} aplicado
               {activeFilters !== 1 ? 's' : ''}
             </Badge>
+            <div className='flex items-center gap-1 text-xs text-muted-foreground'>
+              <Download className='h-3 w-3' />
+              <span>Exportables</span>
+            </div>
           </div>
         </div>
       </CardContent>

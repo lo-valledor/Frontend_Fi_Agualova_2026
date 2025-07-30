@@ -5,10 +5,10 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronUp,
-  Clock,
   Eraser,
   FileSpreadsheet,
   FileTextIcon,
+  InfoIcon,
   RefreshCw,
   SearchIcon,
   SettingsIcon,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -31,58 +31,27 @@ import {
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '~/components/ui/select';
-import api from '~/lib/api';
-import {
-  type CalculoPrefacturaCargoResponse,
-  type CalculoPrefacturaCompleto,
-  type CalculoPrefacturaDetalle,
-  type Ciclo,
-  type PeriodoAbierto,
-} from '~/types/operaciones';
+// Import hooks
+import { useCalculoFactura } from '~/hooks/operaciones/use-calculo-factura';
+import { useCalculoProceso } from '~/hooks/operaciones/use-calculo-proceso';
+import { type Ciclo, type PeriodoAbierto } from '~/types/operaciones';
 
 import { columns } from './columnsPrecalculo';
 import { HierarchicalDataTable } from './hierarchical-data-table';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
-  ciclosFacturacionActivos,
+  ciclosFacturacionActivos: _ciclosFacturacionActivos,
 }: {
   periodoAbierto: PeriodoAbierto[];
   ciclosFacturacionActivos: Ciclo[];
 }) {
-  // Estados para el formulario
-  const [cicloId, setCicloId] = useState<string>('');
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [filteredData, setFilteredData] = useState<CalculoPrefacturaCompleto[]>(
-    []
-  );
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLaunchingCalculo, setIsLaunchingCalculo] = useState(false);
-  const [isAcceptingCalculo, setIsAcceptingCalculo] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<CalculoPrefacturaCompleto[]>([]);
-  const [selectedContratos, setSelectedContratos] = useState<number[]>([]);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  // Fijamos el ciclo como día 15 (valor '1' para la API)
+  const cicloId = '1';
 
-  // Estados para el timer de preparación
-  const [isCalculoPreparado, setIsCalculoPreparado] = useState(false);
-  const [timerCountdown, setTimerCountdown] = useState(0);
-  const [timerActive, setTimerActive] = useState(false);
-  const [, setPreparacionTimestamp] = useState<number | null>(null);
-
-  // Los datos vienen como props, no necesitamos el hook
-
-  // Estados de carga
-
-  // Formateo del periodo para la API (MMAAAA)
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
       const { mes, anio } = periodoAbierto[0];
@@ -91,340 +60,77 @@ export default function RevisarCalculoFacturaComponent({
     return '';
   }, [periodoAbierto]);
 
-  // Timer effect para controlar el countdown
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  // Usar los hooks personalizados
+  const {
+    isLaunching,
+    isAccepting,
+    selectedContratos,
+    setSelectedContratos,
+    isCalculoPreparado,
+    handleLanzarCalculo,
+    handleAceptarCalculo,
+    setIsCalculoPreparado,
+  } = useCalculoProceso({
+    periodoFormateado,
+    cicloId,
+    onCalculoAceptado: () => {
+      // Refrescar datos después de aceptar cálculo
+      handleRevisarCalculo();
+    },
+  });
 
-    if (timerActive && timerCountdown > 0) {
-      interval = setInterval(() => {
-        setTimerCountdown(prev => {
-          if (prev <= 1) {
-            setTimerActive(false);
-            setPreparacionTimestamp(null);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
+  const {
+    data,
+    filteredData,
+    isLoading,
+    error,
+    searchTerm,
+    setSearchTerm,
+    handleRevisarCalculo,
+    setData,
+  } = useCalculoFactura({
+    periodoFormateado,
+    cicloId,
+    isCalculoPreparado,
+  });
 
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [timerActive, timerCountdown]);
+  // Tutorial: Función para manejar la preparación del cálculo con tutorial
+  const handlePreparacionConTutorial = async () => {
+    await handleLanzarCalculo();
 
-  // Los datos vienen como props, no necesitamos cargar ciclos
-
-  // Filtrar datos en tiempo real
-  useEffect(() => {
-    if (!searchTerm) {
-      setFilteredData(data);
-    } else {
-      const filtered = data.filter(item => {
-        const searchLower = searchTerm.toLowerCase();
-        return (
-          item.contratoId.toString().toLowerCase().includes(searchLower) ||
-          item.nombreCliente.toLowerCase().includes(searchLower) ||
-          item.rutCliente.toLowerCase().includes(searchLower) ||
-          item.direccion.toLowerCase().includes(searchLower) ||
-          item.comuna.toLowerCase().includes(searchLower) ||
-          item.sector.toLowerCase().includes(searchLower)
-        );
+    // Mostrar mensaje tutorial después de preparar
+    if (isCalculoPreparado) {
+      toast.success('¡Paso 1 completado! Cálculo preparado exitosamente', {
+        description: 'Ahora haz clic en "Ver Cálculo Facturas" para continuar',
+        duration: 6000,
       });
-      setFilteredData(filtered);
     }
-  }, [data, searchTerm]);
-
-  // Función para convertir el ciclo seleccionado al formato esperado por la API
-  const obtenerCicloParaAPI = (cicloId: string): string => {
-    // Si el ciclo es la cadena "1" o "2", lo devolvemos tal cual
-    if (cicloId === '1' || cicloId === '2') {
-      return cicloId;
-    }
-
-    // Si el ciclo contiene "15", devolvemos "1"
-    if (cicloId.includes('15')) {
-      return '1';
-    }
-
-    // Si el ciclo contiene "30", devolvemos "2"
-    if (cicloId.includes('30')) {
-      return '2';
-    }
-
-    // Por defecto, devolvemos el ciclo original
-    return cicloId;
   };
 
-  // Función para iniciar el timer de preparación
-  const iniciarTimerPreparacion = () => {
-    const tiempoEspera = Math.floor(Math.random() * 11) + 10; // 10-20 segundos
-    setTimerCountdown(tiempoEspera);
-    setTimerActive(true);
-    setIsCalculoPreparado(true);
-    setPreparacionTimestamp(Date.now());
-
-    toast.success(
-      `Cálculo preparado. Puede ver los resultados en ${tiempoEspera} segundos.`,
-      {
-        description:
-          'Espere el tiempo indicado antes de hacer clic en "Ver Cálculo Facturas"',
-        duration: 4000,
-      }
-    );
-  };
-
-  // Función para manejar la búsqueda/revisión
-  const handleRevisarCalculo = async () => {
-    if (!periodoFormateado) {
-      toast.error('No hay un periodo abierto disponible');
-      return;
-    }
-
-    if (!cicloId) {
-      toast.error('Debe seleccionar un ciclo de facturación');
-      return;
-    }
-
+  // Tutorial: Función para manejar la revisión con tutorial
+  const handleRevisarConTutorial = async () => {
     if (!isCalculoPreparado) {
-      toast.error(
-        'Haga clic en "Ver Cálculo Facturas" para ver los resultados'
-      );
-      return;
-    }
-
-    if (timerActive && timerCountdown > 0) {
-      toast.error(
-        `Debe esperar ${timerCountdown} segundos antes de ver los resultados`
-      );
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // Convertir el cicloId al formato esperado por la API
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
-
-      // Construir parámetros para la API
-      const requestParams: Record<string, string> = {
-        cicloId: cicloParaAPI,
-        periodo: periodoFormateado,
-      };
-
-      // Petición 1: Obtener encabezados
-      const encabezadoResponse = await api.get(
-        '/calculo-prefactura-encabezado',
-        {
-          params: requestParams,
-        }
-      );
-
-      // Los encabezados vienen directamente como array
-      const encabezados = encabezadoResponse.data as CalculoPrefacturaDetalle[];
-
-      if (!Array.isArray(encabezados)) {
-        throw new Error('La respuesta de encabezados no es un array válido');
-      }
-
-      if (encabezados.length === 0) {
-        setData([]);
-        toast.info(
-          'No se encontraron prefacturas para el ciclo y periodo elegidos'
-        );
-        return;
-      }
-
-      const cargosResponse = await api.get('/calculo-prefactura-cargos', {
-        params: {
-          cicloId: cicloParaAPI,
-          periodo: periodoFormateado,
-        },
+      toast.info('Tutorial: Primero debes preparar el cálculo', {
+        description: 'Haz clic en "Preparar Cálculo" para comenzar',
+        duration: 5000,
       });
-
-      const cargosData =
-        cargosResponse.data as CalculoPrefacturaCargoResponse[];
-
-      if (!Array.isArray(cargosData)) {
-        throw new Error('La respuesta de cargos no es un array válido');
-      }
-
-      // Combinar encabezados con cargos
-      const datosCombinados: CalculoPrefacturaCompleto[] = encabezados.map(
-        encabezado => {
-          // Buscar los cargos correspondientes a este contrato
-          const cargosContrato = cargosData.find(
-            cargo => cargo.contratoId === encabezado.contratoId
-          );
-
-          // Calcular el total facturado sumando todos los subtotales de los cargos
-          const totalFacturado =
-            cargosContrato?.cargos.reduce(
-              (suma, cargo) => suma + cargo.subtotal,
-              0
-            ) || 0;
-
-          return {
-            ...encabezado,
-            cargos: cargosContrato?.cargos || [],
-            totalFacturado,
-          };
-        }
-      );
-
-      setData(datosCombinados);
-      toast.success(
-        `Se encontraron ${datosCombinados.length} registros con sus respectivos cargos`
-      );
-    } catch (error: any) {
-      // Manejo específico para error 404
-      if (error.response && error.response.status === 404) {
-        setError(
-          'No se han encontrado prefacturas para el ciclo y periodo elegidos'
-        );
-        setData([]);
-        toast.error(
-          'No se han encontrado prefacturas para el ciclo y periodo elegidos',
-          {
-            description: 'Verifique que el ciclo y periodo sean correctos',
-            duration: 5000,
-          }
-        );
-      } else {
-        setError(`Error: ${error.message || 'Error desconocido'}`);
-
-        if (error.response) {
-          toast.error(
-            `Error ${error.response.status}: ${
-              error.response.data?.mensaje || 'Error en la consulta'
-            }`
-          );
-        } else if (error.request) {
-          toast.error('No se recibió respuesta del servidor');
-        } else {
-          toast.error(`Error: ${error.message}`);
-        }
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleLanzarCalculoFacturas = async () => {
-    if (!periodoFormateado) {
-      toast.error('No hay un periodo abierto disponible');
       return;
     }
 
-    if (!cicloId) {
-      toast.error('Debe seleccionar un ciclo de facturación');
-      return;
-    }
+    await handleRevisarCalculo();
 
-    try {
-      setIsLaunchingCalculo(true);
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
-      const cicloInt = parseInt(cicloParaAPI);
-
-      // Enviamos los datos como números en el body, no como params
-      const requestBody = {
-        cicloFacturacion: cicloInt,
-        periodoFacturable: periodoFormateado,
-      };
-
-      const res = await api.post('lanzar-calculo-facturacion', requestBody);
-
-      // Iniciar el timer después de preparar el cálculo
-      iniciarTimerPreparacion();
-
-      return res;
-    } catch (error: any) {
-      if (error.response) {
-        toast.error(
-          `Error ${error.response.status}: ${
-            error.response.data?.mensaje || 'Error al lanzar el cálculo'
-          }`
-        );
-      } else if (error.request) {
-        toast.error('No se recibió respuesta del servidor');
-      } else {
-        toast.error(`Error: ${error.message}`);
-      }
-    } finally {
-      setIsLaunchingCalculo(false);
-    }
-  };
-
-  const handleAceptarCalculo = async () => {
-    if (!periodoFormateado) {
-      toast.error('No hay un periodo abierto disponible');
-      return;
-    }
-
-    if (selectedContratos.length === 0) {
-      toast.error('Debe seleccionar al menos un contrato para aceptar');
-      return;
-    }
-
-    try {
-      setIsAcceptingCalculo(true);
-      setError(null);
-
-      // Procesar cada lecturaId individualmente
-      let successCount = 0;
-      let errorCount = 0;
-
-      for (const lecturaId of selectedContratos) {
-        try {
-          const requestBody = {
-            lecturaId: lecturaId,
-            periodoId: periodoFormateado,
-          };
-
-          await api.post('generar-detalle-factura', requestBody);
-          successCount++;
-        } catch (_error) {
-          errorCount++;
-        }
-      }
-
-      // Mostrar resultado final
-      if (successCount > 0) {
-        toast.success(
-          `Se aceptaron ${successCount} cálculos correctamente${
-            errorCount > 0 ? ` (${errorCount} con errores)` : ''
-          }. Recuerde revisar la aplicación de facturación para realizar los cobros`,
-          {
-            description: 'Los cálculos aceptados se están procesando',
-            duration: 4000,
-          }
-        );
-      }
-
-      if (errorCount > 0 && successCount === 0) {
-        toast.error(`Error al procesar ${errorCount} cálculos`);
-      }
-
-      // Limpiar selecciones después de procesar
-      setSelectedContratos([]);
-    } catch (error: any) {
-      setError(`Error: ${error.message || 'Error desconocido'}`);
-      toast.error('Error al procesar los cálculos seleccionados');
-    } finally {
-      setIsAcceptingCalculo(false);
+    // Mostrar mensaje tutorial después de ver resultados
+    if (data.length > 0) {
+      toast.success('¡Paso 2 completado! Resultados cargados', {
+        description:
+          'Ahora puedes seleccionar contratos y hacer clic en "Aceptar Cálculo"',
+        duration: 6000,
+      });
     }
   };
 
   // Función para actualizar los datos
   const handleRefreshData = async () => {
-    if (!cicloId) {
-      toast.error('Selecciona un ciclo antes de actualizar');
-      return;
-    }
-
     if (!isCalculoPreparado) {
       toast.error('Debe preparar el cálculo primero');
       return;
@@ -434,27 +140,13 @@ export default function RevisarCalculoFacturaComponent({
     await handleRevisarCalculo();
   };
 
-  // Función para limpiar filtros
+  // Función para limpiar filtros y reiniciar
   const handleClearFilters = () => {
-    setCicloId('');
     setSearchTerm('');
-    setError(null);
     setData([]);
-    setFilteredData([]);
     setIsCalculoPreparado(false);
-    setTimerActive(false);
-    setTimerCountdown(0);
-    setPreparacionTimestamp(null);
+    setSelectedContratos([]);
   };
-
-  useEffect(() => {
-    setIsCalculoPreparado(false);
-    setTimerActive(false);
-    setTimerCountdown(0);
-    setData([]);
-    setFilteredData([]);
-    setPreparacionTimestamp(null);
-  }, [cicloId]);
 
   return (
     <div className='min-h-screen '>
@@ -471,58 +163,89 @@ export default function RevisarCalculoFacturaComponent({
             </div>
           </div>
         </div>
-        {/* Indicador de estado del timer */}
-        {timerActive && (
-          <Card className='border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-amber-200 dark:border-amber-800'>
-            <CardContent className='p-6'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-4'>
-                  <div className='w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center'>
-                    <Clock className='w-6 h-6 text-amber-600 dark:text-amber-400' />
-                  </div>
-                  <div>
-                    <h4 className='text-xl font-semibold text-amber-800 dark:text-amber-200'>
-                      Cálculo en preparación
-                    </h4>
-                    <p className='text-amber-600 dark:text-amber-400'>
-                      Espere {timerCountdown} segundos antes de ver los
-                      resultados
-                    </p>
-                  </div>
+        {/* Minimalist Tutorial Guide */}
+        <Card className='border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/10'>
+          <Collapsible open={isTutorialOpen} onOpenChange={setIsTutorialOpen}>
+            <div
+              className='flex items-center justify-between p-3 cursor-pointer hover:bg-blue-100/50 dark:hover:bg-blue-900/20 transition-colors'
+              onClick={() => setIsTutorialOpen(!isTutorialOpen)}
+            >
+              <div className='flex items-center gap-3'>
+                <div className='w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center'>
+                  <InfoIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                 </div>
-                <div className='text-right'>
-                  <div className='text-3xl font-bold text-amber-700 dark:text-amber-300'>
-                    {timerCountdown}s
-                  </div>
-                  <div className='text-sm text-amber-600 dark:text-amber-400'>
-                    Tiempo restante
-                  </div>
+                <span className='text-sm font-medium text-blue-800 dark:text-blue-200'>
+                  📚 Tutorial: 3 pasos para gestionar cálculos
+                </span>
+                <div className='flex items-center gap-1 ml-2'>
+                  <div
+                    className={`w-2 h-2 rounded-full ${isCalculoPreparado ? 'bg-emerald-500' : 'bg-gray-300'}`}
+                  />
+                  <div
+                    className={`w-2 h-2 rounded-full ${data.length > 0 ? 'bg-emerald-500' : 'bg-gray-300'}`}
+                  />
+                  <div
+                    className={`w-2 h-2 rounded-full ${selectedContratos.length > 0 ? 'bg-amber-500' : 'bg-gray-300'}`}
+                  />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
-        {/* Indicador de cálculo preparado */}
-        {isCalculoPreparado && !timerActive && (
-          <Card className='border-0 shadow-xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-emerald-200 dark:border-emerald-800'>
-            <CardContent className='p-6'>
-              <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center'>
-                  <CheckCircle className='w-6 h-6 text-emerald-600 dark:text-emerald-400' />
+              <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
+                {isTutorialOpen ? (
+                  <ChevronUp className='h-4 w-4 text-blue-600' />
+                ) : (
+                  <ChevronDown className='h-4 w-4 text-blue-600' />
+                )}
+              </Button>
+            </div>
+            <CollapsibleContent>
+              <div className='px-3 pb-3 space-y-2'>
+                <div className='flex items-center gap-2 text-xs'>
+                  <div
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${isCalculoPreparado ? 'bg-emerald-500 text-white' : 'bg-blue-500 text-white'}`}
+                  >
+                    1
+                  </div>
+                  <span className='text-blue-700 dark:text-blue-300 font-medium'>
+                    Preparar Cálculo
+                  </span>
+                  {isCalculoPreparado && (
+                    <span className='text-emerald-600 text-xs'>✓</span>
+                  )}
                 </div>
-                <div>
-                  <h4 className='text-xl font-semibold text-emerald-800 dark:text-emerald-200'>
-                    Cálculo preparado
-                  </h4>
-                  <p className='text-emerald-600 dark:text-emerald-400'>
-                    Ya puede hacer clic en "Ver Cálculo Facturas" para ver los
-                    resultados
-                  </p>
+                <div className='flex items-center gap-2 text-xs'>
+                  <div
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${data.length > 0 ? 'bg-emerald-500 text-white' : 'bg-gray-400 text-white'}`}
+                  >
+                    2
+                  </div>
+                  <span
+                    className={`font-medium ${data.length > 0 ? 'text-emerald-700 dark:text-emerald-300' : 'text-gray-500'}`}
+                  >
+                    Ver Cálculo Facturas
+                  </span>
+                  {data.length > 0 && (
+                    <span className='text-emerald-600 text-xs'>✓</span>
+                  )}
+                </div>
+                <div className='flex items-center gap-2 text-xs'>
+                  <div
+                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${selectedContratos.length > 0 ? 'bg-amber-500 text-white' : 'bg-gray-400 text-white'}`}
+                  >
+                    3
+                  </div>
+                  <span
+                    className={`font-medium ${selectedContratos.length > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-gray-500'}`}
+                  >
+                    Aceptar Cálculo ({selectedContratos.length} seleccionados)
+                  </span>
+                  {selectedContratos.length > 0 && (
+                    <span className='text-amber-600 text-xs'>✓</span>
+                  )}
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </CollapsibleContent>
+          </Collapsible>
+        </Card>
         {/* Filtros de Búsqueda */}
         <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
@@ -593,79 +316,33 @@ export default function RevisarCalculoFacturaComponent({
                     )}
                   </div>
 
-                  {/* Ciclo de facturación */}
+                  {/* Ciclo de facturación fijo */}
                   <div className='space-y-2'>
                     <Label
                       htmlFor='ciclo'
                       className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'
                     >
                       <FileTextIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                      Ciclo de facturación
+                      Ciclo de facturación (normado)
                     </Label>
 
-                    <Select value={cicloId} onValueChange={setCicloId}>
-                      <SelectTrigger
-                        id='ciclo'
-                        className='h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-blue-400/20 w-full'
-                      >
-                        <SelectValue placeholder='Selecciona un ciclo de facturación' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {ciclosFacturacionActivos &&
-                        ciclosFacturacionActivos.length > 0 ? (
-                          ciclosFacturacionActivos.map(ciclo => {
-                            // Determinar el valor correcto para el API (1 o 2)
-                            let valorCiclo = '1';
-                            if (
-                              ciclo.diaFacturacion === '30' ||
-                              ciclo.descripcion.includes('30')
-                            ) {
-                              valorCiclo = '2';
-                            }
-
-                            return (
-                              <SelectItem
-                                key={ciclo.diaFacturacion}
-                                value={valorCiclo}
-                                className='hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
-                              >
-                                <div className='flex items-center gap-2'>
-                                  <div className='w-2 h-2 rounded-full bg-emerald-500'></div>
-                                  <span className='font-medium'>
-                                    {ciclo.descripcion}
-                                  </span>
-                                </div>
-                              </SelectItem>
-                            );
-                          })
-                        ) : (
-                          <>
-                            <SelectItem
-                              value='1'
-                              className='hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
-                            >
-                              <div className='flex items-center gap-2'>
-                                <div className='w-2 h-2 rounded-full bg-emerald-500'></div>
-                                <span className='font-medium'>
-                                  Ciclo día 15
-                                </span>
-                              </div>
-                            </SelectItem>
-                            <SelectItem
-                              value='2'
-                              className='hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
-                            >
-                              <div className='flex items-center gap-2'>
-                                <div className='w-2 h-2 rounded-full bg-emerald-500'></div>
-                                <span className='font-medium'>
-                                  Ciclo día 30
-                                </span>
-                              </div>
-                            </SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
+                    <div className='flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border border-emerald-200 dark:border-emerald-800'>
+                      <div className='w-10 h-10 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg flex items-center justify-center'>
+                        <CheckCircle className='w-5 h-5 text-emerald-600 dark:text-emerald-400' />
+                      </div>
+                      <div className='flex-1'>
+                        <Input
+                          id='ciclo'
+                          value='Ciclo día 15 (Único ciclo normado)'
+                          disabled
+                          className='h-12 bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 font-medium cursor-not-allowed'
+                        />
+                      </div>
+                    </div>
+                    <p className='text-xs text-emerald-600 dark:text-emerald-400 mt-1'>
+                      ✅ El ciclo día 15 es el único ciclo de facturación
+                      autorizado por normativa
+                    </p>
                   </div>
                 </div>
 
@@ -684,12 +361,7 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       onClick={handleRefreshData}
                       variant='outline'
-                      disabled={
-                        isLoading ||
-                        !cicloId ||
-                        !isCalculoPreparado ||
-                        timerActive
-                      }
+                      disabled={isLoading || !isCalculoPreparado}
                       className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
                     >
                       <RefreshCw className='h-4 w-4' />
@@ -698,11 +370,11 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
                   <div className='flex gap-3'>
                     <Button
-                      onClick={handleLanzarCalculoFacturas}
-                      disabled={isLoading || !cicloId || timerActive}
+                      onClick={handlePreparacionConTutorial}
+                      disabled={isLaunching}
                       className='gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
                     >
-                      {isLaunchingCalculo ? (
+                      {isLaunching ? (
                         <>
                           <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                           Preparando...
@@ -710,18 +382,13 @@ export default function RevisarCalculoFacturaComponent({
                       ) : (
                         <>
                           <SearchIcon className='h-4 w-4' />
-                          Preparar Cálculo
+                          Paso 1: Preparar Cálculo
                         </>
                       )}
                     </Button>
                     <Button
-                      onClick={handleRevisarCalculo}
-                      disabled={
-                        isLaunchingCalculo ||
-                        !cicloId ||
-                        !isCalculoPreparado ||
-                        timerActive
-                      }
+                      onClick={handleRevisarConTutorial}
+                      disabled={isLoading || !isCalculoPreparado}
                       className='gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white'
                     >
                       {isLoading ? (
@@ -732,18 +399,16 @@ export default function RevisarCalculoFacturaComponent({
                       ) : (
                         <>
                           <FileTextIcon className='h-4 w-4' />
-                          Ver Cálculo Facturas
+                          Paso 2: Ver Cálculo Facturas
                         </>
                       )}
                     </Button>
                     <Button
                       onClick={handleAceptarCalculo}
-                      disabled={
-                        isAcceptingCalculo || selectedContratos.length === 0
-                      }
+                      disabled={isAccepting || selectedContratos.length === 0}
                       className='gap-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white'
                     >
-                      {isAcceptingCalculo ? (
+                      {isAccepting ? (
                         <>
                           <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                           Aceptando...
@@ -751,7 +416,7 @@ export default function RevisarCalculoFacturaComponent({
                       ) : (
                         <>
                           <SettingsIcon className='h-4 w-4' />
-                          Aceptar Cálculo ({selectedContratos.length})
+                          Paso 3: Aceptar Cálculo ({selectedContratos.length})
                         </>
                       )}
                     </Button>
@@ -815,7 +480,7 @@ export default function RevisarCalculoFacturaComponent({
                     </p>
 
                     <Button
-                      onClick={() => setError(null)}
+                      onClick={() => window.location.reload()}
                       variant='outline'
                       size='sm'
                       className='mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20'
@@ -966,9 +631,9 @@ export default function RevisarCalculoFacturaComponent({
                   <HierarchicalDataTable
                     columns={columns}
                     data={filteredData}
-                    onSelectionChange={selectedContratos => {
+                    onSelectionChange={selectedItems => {
                       setSelectedContratos(
-                        selectedContratos.map(contrato => contrato.lecturaId)
+                        selectedItems.map(item => item.lecturaId)
                       );
                     }}
                   />

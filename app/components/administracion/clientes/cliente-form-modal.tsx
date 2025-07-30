@@ -257,7 +257,7 @@ export default function ClienteFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+      <DialogContent className='w-[95vw] sm:max-w-[600px] lg:max-w-[700px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader className='space-y-3'>
           <DialogTitle className='text-2xl font-semibold flex items-center gap-2'>
             {mode === 'add' ? (
@@ -288,7 +288,7 @@ export default function ClienteFormModal({
                 <h3 className='text-lg font-medium'>Información Básica</h3>
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
                   name='rut'
@@ -413,7 +413,7 @@ export default function ClienteFormModal({
                 </h3>
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
                   name='direccion'
@@ -490,7 +490,7 @@ export default function ClienteFormModal({
                 <h3 className='text-lg font-medium'>Información de Contacto</h3>
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
                   name='contacto'
@@ -564,7 +564,7 @@ export default function ClienteFormModal({
                 <h3 className='text-lg font-medium'>Información de Giro</h3>
               </div>
 
-              <div className='grid grid-cols-1 gap-6'>
+              <div className='grid grid-cols-1 gap-4 sm:gap-6'>
                 <Controller
                   control={form.control}
                   name='codigoGiro'

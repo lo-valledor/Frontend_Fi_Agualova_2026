@@ -86,16 +86,18 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2'>
-          <div className='p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md'>
-            <FileText className='h-4 w-4 text-sky-600 dark:text-sky-400' />
+        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+          <div className='p-1 sm:p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md flex-shrink-0'>
+            <FileText className='h-3 w-3 sm:h-4 sm:w-4 text-sky-600 dark:text-sky-400' />
           </div>
-          <span className='font-mono text-sm'>
+          <span className='font-mono text-xs sm:text-sm truncate'>
             {row.original.codigoContrato}
           </span>
         </div>
       );
     },
+    minSize: 120,
+    maxSize: 180,
   },
   {
     accessorKey: 'nombreCliente',
@@ -103,21 +105,29 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Cliente / Propietario' />
     ),
     cell: ({ row }) => (
-      <div className='space-y-1'>
-        <div className='flex items-center gap-2'>
-          <User className='h-4 w-4 text-slate-500' />
-          <span className='text-sm font-medium'>
+      <div className='space-y-1 min-w-0 max-w-[200px] lg:max-w-none'>
+        <div className='flex items-center gap-1 sm:gap-2'>
+          <User className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
+          <span
+            className='text-xs sm:text-sm font-medium truncate'
+            title={row.original.nombreCliente}
+          >
             {row.original.nombreCliente}
           </span>
         </div>
-        <div className='flex items-center gap-2'>
-          <Building className='h-4 w-4 text-slate-500' />
-          <span className='text-sm text-muted-foreground'>
+        <div className='flex items-center gap-1 sm:gap-2'>
+          <Building className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
+          <span
+            className='text-xs sm:text-sm text-muted-foreground truncate'
+            title={row.original.nombrePropietario}
+          >
             {row.original.nombrePropietario}
           </span>
         </div>
       </div>
     ),
+    minSize: 180,
+    maxSize: 250,
   },
   {
     accessorKey: 'tipoContrato',
@@ -125,8 +135,20 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Tipo' />
     ),
     cell: ({ row }) => {
-      return <Badge variant='outline'>{row.original.tipoContrato}</Badge>;
+      return (
+        <Badge
+          variant='outline'
+          className='text-xs px-1 sm:px-2'
+          title={row.original.tipoContrato}
+        >
+          <span className='truncate max-w-[80px] sm:max-w-none'>
+            {row.original.tipoContrato}
+          </span>
+        </Badge>
+      );
     },
+    minSize: 100,
+    maxSize: 140,
   },
   {
     accessorKey: 'tarifa',
@@ -134,8 +156,20 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Tarifa' />
     ),
     cell: ({ row }) => {
-      return <Badge variant='secondary'>{row.original.tarifa}</Badge>;
+      return (
+        <Badge
+          variant='secondary'
+          className='text-xs px-1 sm:px-2'
+          title={row.original.tarifa}
+        >
+          <span className='truncate max-w-[80px] sm:max-w-none'>
+            {row.original.tarifa}
+          </span>
+        </Badge>
+      );
     },
+    minSize: 100,
+    maxSize: 140,
   },
 
   {
@@ -145,12 +179,19 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2'>
-          <Store className='h-4 w-4 text-slate-500' />
-          <span className='text-sm'>{row.original.local}</span>
+        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+          <Store className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
+          <span
+            className='text-xs sm:text-sm truncate max-w-[120px] lg:max-w-none'
+            title={row.original.local}
+          >
+            {row.original.local}
+          </span>
         </div>
       );
     },
+    minSize: 120,
+    maxSize: 180,
   },
   {
     accessorKey: 'fechaInicio',
@@ -159,14 +200,16 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2'>
-          <Calendar className='h-4 w-4 text-slate-500' />
-          <span className='text-sm'>
+        <div className='flex items-center gap-1 sm:gap-2'>
+          <Calendar className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
+          <span className='text-xs sm:text-sm whitespace-nowrap'>
             {formatDateToSpanish(row.original.fechaInicio)}
           </span>
         </div>
       );
     },
+    minSize: 110,
+    maxSize: 140,
   },
   {
     accessorKey: 'activo',
@@ -185,15 +228,23 @@ export const columns = ({
     cell: ({ row }) => {
       const fechaTermino = formatDateToSpanish(row.original.fechaTermino);
       if (fechaTermino === 'N/A' || fechaTermino === 'Fecha inválida') {
-        return <Badge variant='outline'>Indefinido</Badge>;
+        return (
+          <Badge variant='outline' className='text-xs px-1 sm:px-2'>
+            Indefinido
+          </Badge>
+        );
       }
       return (
-        <div className='flex items-center gap-2'>
-          <Calendar className='h-4 w-4 text-slate-500' />
-          <span className='text-sm'>{fechaTermino}</span>
+        <div className='flex items-center gap-1 sm:gap-2'>
+          <Calendar className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
+          <span className='text-xs sm:text-sm whitespace-nowrap'>
+            {fechaTermino}
+          </span>
         </div>
       );
     },
+    minSize: 110,
+    maxSize: 140,
   },
   {
     accessorKey: 'cicloFacturacion',
@@ -204,13 +255,18 @@ export const columns = ({
       return (
         <Badge
           variant='outline'
-          className='bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800'
+          className='bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs px-1 sm:px-2'
+          title={row.original.cicloFacturacion}
         >
-          <Repeat className='mr-2 h-3.5 w-3.5' />
-          {row.original.cicloFacturacion}
+          <Repeat className='mr-1 h-3 w-3 sm:mr-2 sm:h-3.5 sm:w-3.5 flex-shrink-0' />
+          <span className='truncate max-w-[60px] sm:max-w-none'>
+            {row.original.cicloFacturacion}
+          </span>
         </Badge>
       );
     },
+    minSize: 120,
+    maxSize: 160,
   },
   {
     accessorKey: 'potenciaContratada',
@@ -219,33 +275,41 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2'>
-          <Zap className='h-4 w-4 text-amber-500' />
-          <span className='text-sm font-semibold'>
+        <div className='flex items-center gap-1 sm:gap-2'>
+          <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0' />
+          <span className='text-xs sm:text-sm font-semibold whitespace-nowrap'>
             {row.original.potenciaContratada}
           </span>
         </div>
       );
     },
+    minSize: 100,
+    maxSize: 130,
   },
   {
     accessorKey: 'liberadoCorte',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Liberado Corte' />
+      <DataTableColumnHeader column={column} title='Lib. Corte' />
     ),
     cell: ({ row }) => {
       return row.original.liberadoCorte ? (
         <Badge
           variant='outline'
-          className='bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+          className='bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs px-1 sm:px-2'
         >
-          <ShieldCheck className='mr-2 h-3.5 w-3.5' />
-          Liberado
+          <ShieldCheck className='mr-1 h-3 w-3 sm:mr-2 sm:h-3.5 sm:w-3.5 flex-shrink-0' />
+          <span className='hidden sm:inline'>Liberado</span>
+          <span className='sm:hidden'>Sí</span>
         </Badge>
       ) : (
-        <Badge variant='secondary'>No Liberado</Badge>
+        <Badge variant='secondary' className='text-xs px-1 sm:px-2'>
+          <span className='hidden sm:inline'>No Liberado</span>
+          <span className='sm:hidden'>No</span>
+        </Badge>
       );
     },
+    minSize: 100,
+    maxSize: 140,
   },
   {
     id: 'actions',
@@ -254,15 +318,19 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return (
-        <TableActions
-          onEdit={() => onEdit(row.original)}
-          onDelete={() => onDelete(row.original)}
-          onView={() => onViewDetails(row.original)}
-          item={row.original}
-          showView={true}
-        />
+        <div className='flex justify-center'>
+          <TableActions
+            onEdit={() => onEdit(row.original)}
+            onDelete={() => onDelete(row.original)}
+            onView={() => onViewDetails(row.original)}
+            item={row.original}
+            showView={true}
+          />
+        </div>
       );
     },
+    minSize: 80,
+    maxSize: 100,
   },
 ];
 

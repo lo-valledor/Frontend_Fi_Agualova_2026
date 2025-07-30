@@ -1,10 +1,13 @@
 /* eslint-disable no-empty-pattern */
-import React from 'react';
-
+import { MonitorHydrateFallback } from '~/components/monitor/monitor-hydrate-fallback';
 import MonitorLecturasComponent from '~/components/monitor/monitor-lecturas-component';
 import { monitorService } from '~/services/monitorService';
 
 import type { Route } from './+types/monitor-lecturas';
+
+export function hydrateFallback() {
+  return <MonitorHydrateFallback />;
+}
 
 export function meta({}: Route.MetaArgs) {
   return [

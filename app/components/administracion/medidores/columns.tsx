@@ -18,28 +18,48 @@ const getTipoBadgeProps = (tipo: string) => {
     case 'trifásico':
     case 'trifasico':
       return {
-        icon: <Zap className='h-4 w-4 text-blue-500' />,
+        icon: (
+          <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0' />
+        ),
         variant: 'outline' as const,
-        className: 'border-blue-500 text-blue-600 dark:text-blue-400',
+        className:
+          'border-blue-500 text-blue-600 dark:text-blue-400 text-xs sm:text-sm px-1 sm:px-2',
+        shortText: 'Tri',
+        fullText: 'Trifásico',
       };
     case 'monofásico':
     case 'monofasico':
       return {
-        icon: <Zap className='h-4 w-4 text-emerald-500' />,
+        icon: (
+          <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-emerald-500 flex-shrink-0' />
+        ),
         variant: 'outline' as const,
-        className: 'border-emerald-500 text-emerald-600 dark:text-emerald-400',
+        className:
+          'border-emerald-500 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm px-1 sm:px-2',
+        shortText: 'Mono',
+        fullText: 'Monofásico',
       };
     case 'ambos':
       return {
-        icon: <Zap className='h-4 w-4 text-purple-500' />,
+        icon: (
+          <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-purple-500 flex-shrink-0' />
+        ),
         variant: 'outline' as const,
-        className: 'border-purple-500 text-purple-600 dark:text-purple-400',
+        className:
+          'border-purple-500 text-purple-600 dark:text-purple-400 text-xs sm:text-sm px-1 sm:px-2',
+        shortText: 'Ambos',
+        fullText: 'Ambos',
       };
     default:
       return {
-        icon: <Zap className='h-4 w-4 text-gray-500' />,
+        icon: (
+          <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0' />
+        ),
         variant: 'outline' as const,
-        className: 'border-gray-500 text-gray-600 dark:text-gray-400',
+        className:
+          'border-gray-500 text-gray-600 dark:text-gray-400 text-xs sm:text-sm px-1 sm:px-2',
+        shortText: 'N/A',
+        fullText: tipo,
       };
   }
 };
@@ -56,18 +76,26 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center space-x-3'>
-          <div>
-            <div className='font-medium text-gray-900 dark:text-gray-100'>
+        <div className='flex items-center space-x-2 sm:space-x-3 min-w-0'>
+          <div className='min-w-0 flex-1'>
+            <div
+              className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[120px] lg:max-w-[180px]'
+              title={medidor.serie}
+            >
               {medidor.serie}
             </div>
-            <div className='text-sm text-gray-500 dark:text-gray-400'>
-              Código: {medidor.codigo}
+            <div
+              className='text-xs text-gray-500 dark:text-gray-400 truncate'
+              title={`Código: ${medidor.codigo}`}
+            >
+              C: {medidor.codigo}
             </div>
           </div>
         </div>
       );
     },
+    minSize: 140,
+    maxSize: 200,
   },
   {
     accessorKey: 'marca',
@@ -77,33 +105,43 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center space-x-2'>
-          <CircuitBoard className='h-4 w-4 text-gray-500' />
-          <div>
-            <div className='font-medium text-gray-900 dark:text-gray-100'>
+        <div className='flex items-center space-x-1 sm:space-x-2 min-w-0'>
+          <CircuitBoard className='h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0' />
+          <div className='min-w-0 flex-1'>
+            <div
+              className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[140px]'
+              title={medidor.marca}
+            >
               {medidor.marca}
             </div>
-            <div className='text-sm text-gray-500 dark:text-gray-400'>
+            <div
+              className='text-xs text-gray-500 dark:text-gray-400 truncate max-w-[100px] lg:max-w-[140px]'
+              title={medidor.modelo}
+            >
               {medidor.modelo}
             </div>
           </div>
         </div>
       );
     },
+    minSize: 120,
+    maxSize: 160,
   },
   {
     accessorKey: 'fechaInicio',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Fecha de Inicio' />
+      <DataTableColumnHeader column={column} title='F. Inicio' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className='font-medium text-gray-900 dark:text-gray-100'>
+        <span className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm whitespace-nowrap'>
           {medidor.fechaInicio}
         </span>
       );
     },
+    minSize: 100,
+    maxSize: 130,
   },
   {
     accessorKey: 'digitos',
@@ -113,25 +151,29 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className='font-medium text-gray-900 dark:text-gray-100'>
+        <span className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm'>
           {medidor.digitos}
         </span>
       );
     },
+    minSize: 80,
+    maxSize: 100,
   },
   {
     accessorKey: 'multiplicar',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Multiplicar' />
+      <DataTableColumnHeader column={column} title='Mult.' />
     ),
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className='font-medium text-gray-900 dark:text-gray-100'>
+        <span className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm'>
           {medidor.multiplicar}
         </span>
       );
     },
+    minSize: 70,
+    maxSize: 90,
   },
   {
     accessorKey: 'tipo',
@@ -140,16 +182,20 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       const tipo = row.getValue('tipo') as string;
-      const { icon, variant, className } = getTipoBadgeProps(tipo);
+      const { icon, variant, className, shortText, fullText } =
+        getTipoBadgeProps(tipo);
       return (
-        <div className='flex items-center space-x-2'>
+        <div className='flex items-center space-x-1 sm:space-x-2'>
           {icon}
-          <Badge variant={variant} className={className}>
-            {tipo}
+          <Badge variant={variant} className={className} title={fullText}>
+            <span className='hidden sm:inline'>{tipo}</span>
+            <span className='sm:hidden'>{shortText}</span>
           </Badge>
         </div>
       );
     },
+    minSize: 100,
+    maxSize: 130,
   },
   {
     accessorKey: 'codigoAcometida',
@@ -159,16 +205,21 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center space-x-2'>
-          <CircuitBoard className='h-4 w-4 text-gray-500' />
-          <div>
-            <div className='font-medium text-gray-900 dark:text-gray-100'>
+        <div className='flex items-center space-x-1 sm:space-x-2 min-w-0'>
+          <CircuitBoard className='h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0' />
+          <div className='min-w-0 flex-1'>
+            <div
+              className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[120px]'
+              title={medidor.codigoAcometida}
+            >
               {medidor.codigoAcometida}
             </div>
           </div>
         </div>
       );
     },
+    minSize: 110,
+    maxSize: 140,
   },
   {
     accessorKey: 'ubicacion',
@@ -176,13 +227,18 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Ubicación' />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center space-x-2'>
-        <MapPin className='h-4 w-4 text-gray-500' />
-        <span className='font-medium text-gray-900 dark:text-gray-100'>
+      <div className='flex items-center space-x-1 sm:space-x-2 min-w-0'>
+        <MapPin className='h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0' />
+        <span
+          className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[140px]'
+          title={row.getValue('ubicacion')}
+        >
           {row.getValue('ubicacion')}
         </span>
       </div>
     ),
+    minSize: 120,
+    maxSize: 160,
   },
   {
     accessorKey: 'estado',
@@ -192,6 +248,8 @@ export const columns = ({
     cell: ({ row }) => {
       return <EstadoBadge estado={row.getValue('estado')} />;
     },
+    minSize: 100,
+    maxSize: 120,
   },
   {
     id: 'actions',
@@ -201,16 +259,16 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center justify-center gap-1 sm:gap-2'>
           <Button
             size='sm'
             variant='outline'
             onClick={() => onEdit(medidor)}
-            className='h-8 w-8 p-0'
+            className='h-7 w-7 sm:h-8 sm:w-8 p-0'
             title='Editar medidor'
           >
             <svg
-              className='h-4 w-4'
+              className='h-3 w-3 sm:h-4 sm:w-4'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -227,11 +285,11 @@ export const columns = ({
             size='sm'
             variant='secondary'
             onClick={() => onAsociarSubempalme(medidor)}
-            className='h-8 w-8 p-0'
+            className='h-7 w-7 sm:h-8 sm:w-8 p-0'
             title='Asociar subempalme'
           >
             <svg
-              className='h-4 w-4'
+              className='h-3 w-3 sm:h-4 sm:w-4'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'
@@ -247,5 +305,7 @@ export const columns = ({
         </div>
       );
     },
+    minSize: 100,
+    maxSize: 120,
   },
 ];

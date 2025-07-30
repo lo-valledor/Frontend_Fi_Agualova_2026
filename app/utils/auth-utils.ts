@@ -1,34 +1,45 @@
-// Utilidades para validar autenticación en clientLoaders
-export const checkAuthBeforeLoader = (): string => {
+import { jwtDecode } from 'jwt-decode';
+
+interface DecodedToken {
+  id: string;
+  username: string;
+  profileId: string;
+  fullName: string;
+  role: string;
+  iat: number;
+  exp: number;
+}
+
+export function getAuthenticatedUser(): DecodedToken | null {
   const token = localStorage.getItem('token');
+  console.log('🔑 Token obtenido del localStorage:', token ? 'Sí' : 'No');
+
   if (!token) {
-    console.log('No token found in clientLoader, skipping API calls');
-    throw new Error('No authentication token found');
+    console.log('❌ No hay token en localStorage');
+    return null;
   }
-  return token;
-};
 
-export const createUnauthenticatedLoaderResponse = (error: Error) => {
-  return {
-    error: error,
-    data: null,
-  };
-};
-
-// Wrapper para clientLoaders que necesitan autenticación
-export const withAuthCheck = async <T>(
-  loaderFunction: () => Promise<T>
-): Promise<T | { error: Error; data: null }> => {
   try {
-    checkAuthBeforeLoader();
-    return await loaderFunction();
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === 'No authentication token found'
-    ) {
-      return createUnauthenticatedLoaderResponse(error);
+    const decoded = jwtDecode<DecodedToken>(token);
+    console.log('🔓 Token decodificado:', decoded);
+
+    // Check if the token is expired
+    if (decoded.exp * 1000 < Date.now()) {
+      console.log('⏰ Token expirado, removiendo del localStorage');
+      localStorage.removeItem('token');
+      return null;
     }
-    throw error;
+
+    console.log('✅ Token válido, usuario autenticado:', {
+      id: decoded.id,
+      username: decoded.username,
+      role: decoded.role,
+    });
+
+    return decoded;
+  } catch (error) {
+    console.error('❌ Failed to decode token:', error);
+    localStorage.removeItem('token');
+    return null;
   }
-};
+}

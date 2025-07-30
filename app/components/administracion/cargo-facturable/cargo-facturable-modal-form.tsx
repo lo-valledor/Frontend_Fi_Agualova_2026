@@ -285,7 +285,7 @@ export default function CargoFacturableModalForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+      <DialogContent className='w-[95vw] sm:max-w-[700px] lg:max-w-[800px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader className='space-y-3'>
           <DialogTitle className='text-2xl font-semibold flex items-center gap-2'>
             {mode === 'add' ? (
@@ -318,7 +318,7 @@ export default function CargoFacturableModalForm({
                 <Info className='h-5 w-5 text-blue-600' />
                 <h3 className='text-lg font-medium'>Información Básica</h3>
               </div>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <FormField
                   control={form.control}
                   name='cuenta'
@@ -332,7 +332,7 @@ export default function CargoFacturableModalForm({
                         <Input
                           {...field}
                           placeholder='cta001'
-                          className='h-11'
+                          className='h-10 sm:h-11 text-sm sm:text-base'
                         />
                       </FormControl>
                       <FormMessage />
@@ -352,7 +352,7 @@ export default function CargoFacturableModalForm({
                         <Input
                           {...field}
                           placeholder='Código del cargo'
-                          className='h-11'
+                          className='h-10 sm:h-11 text-sm sm:text-base'
                         />
                       </FormControl>
                       <FormMessage />
@@ -373,7 +373,7 @@ export default function CargoFacturableModalForm({
                       <Input
                         {...field}
                         placeholder='Descripción detallada'
-                        className='h-11'
+                        className='h-10 sm:h-11 text-sm sm:text-base'
                       />
                     </FormControl>
                     <FormMessage />
@@ -388,7 +388,7 @@ export default function CargoFacturableModalForm({
                 <Tags className='h-5 w-5 text-purple-600' />
                 <h3 className='text-lg font-medium'>Clasificación</h3>
               </div>
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
                 <Controller
                   name='tipo'
                   control={form.control}
@@ -467,7 +467,7 @@ export default function CargoFacturableModalForm({
                   Asociaciones y Configuración
                 </h3>
               </div>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <Controller
                   name='conceptoId'
                   control={form.control}
@@ -550,7 +550,7 @@ export default function CargoFacturableModalForm({
                   control={form.control}
                   name='muestraValorEn0'
                   render={({ field }) => (
-                    <FormItem className='flex flex-row items-center justify-start space-x-3 space-y-0 rounded-md border p-4 bg-muted/30 mt-8'>
+                    <FormItem className='flex flex-row items-center justify-start space-x-3 space-y-0 rounded-md border p-3 sm:p-4 bg-muted/30 mt-6 sm:mt-8 sm:col-span-2'>
                       <FormControl>
                         <Checkbox
                           checked={field.value}
@@ -569,20 +569,20 @@ export default function CargoFacturableModalForm({
               </div>
             </div>
 
-            <DialogFooter className='pt-6 border-t'>
+            <DialogFooter className='flex flex-col sm:flex-row gap-2 sm:gap-0 pt-4 sm:pt-6 border-t'>
               <Button
                 type='button'
                 variant='outline'
                 onClick={onClose}
                 disabled={isLoading}
-                className='h-11 px-6'
+                className='h-10 sm:h-11 px-4 sm:px-6 w-full sm:w-auto order-2 sm:order-1'
               >
                 Cancelar
               </Button>
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='h-11 px-6 flex items-center gap-2'
+                className='h-10 sm:h-11 px-4 sm:px-6 flex items-center justify-center gap-2 w-full sm:w-auto order-1 sm:order-2'
               >
                 {isLoading ? (
                   <>

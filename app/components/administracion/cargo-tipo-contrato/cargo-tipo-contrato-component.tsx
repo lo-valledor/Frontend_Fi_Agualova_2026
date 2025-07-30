@@ -100,34 +100,44 @@ export default function CargoTipoContratoComponent({
   };
 
   return (
-    <div className='container mx-auto p-3 md:p-6 space-y-6'>
-      <div className='flex items-center justify-between'>
-        <div className='space-y-1'>
+    <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
+      <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0'>
+        <div className='space-y-2'>
           <div className='flex items-center gap-3'>
-            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
               Cargo Tipo Contrato
             </h1>
           </div>
+          <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
+            Gestiona las relaciones entre cargos y tipos de contrato del sistema
+          </p>
         </div>
         <Button
           onClick={handleAdd}
-          className='bg-sky-600 hover:bg-sky-700 text-white'
+          className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto'
+          size='sm'
         >
-          <Plus className='mr-2 h-4 w-4' />
-          Agregar Cargo Tipo Contrato
+          <Plus className='mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+          <span className='text-xs sm:text-sm'>
+            Agregar Cargo Tipo Contrato
+          </span>
         </Button>
       </div>
       <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-        <CardContent className='relative'>
+        <CardContent className='relative p-2 sm:p-4 lg:p-6'>
           {isLoading && (
             <div className='absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10'>
               <LoadingSpinner />
             </div>
           )}
-          <DataTable
-            columns={columns({ onEdit: handleEdit, onDelete: handleDelete })}
-            data={data}
-          />
+          <div className='overflow-x-auto'>
+            <DataTable
+              columns={columns({ onEdit: handleEdit, onDelete: handleDelete })}
+              data={data}
+              searchPlaceholder='Buscar por tipo de contrato, condición o descripción...'
+              defaultPageSize={10}
+            />
+          </div>
         </CardContent>
       </Card>
 

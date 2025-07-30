@@ -155,10 +155,10 @@ export function FormModal({
     name: 'cargoMonofasicoIds' | 'cargoTrifasicoIds' | 'cargoAmbosIds',
     title: string
   ) => (
-    <div className='space-y-4 rounded-lg border p-4'>
-      <h4 className='text-md font-medium'>{title}</h4>
-      <ScrollArea className='h-48'>
-        <div className='space-y-2 pr-4'>
+    <div className='space-y-3 sm:space-y-4 rounded-lg border p-3 sm:p-4'>
+      <h4 className='text-sm sm:text-md font-medium'>{title}</h4>
+      <ScrollArea className='h-36 sm:h-48'>
+        <div className='space-y-1 sm:space-y-2 pr-2 sm:pr-4'>
           {cargos.map(cargo => (
             <FormField
               key={cargo.id}
@@ -178,8 +178,8 @@ export function FormModal({
                       }}
                     />
                   </FormControl>
-                  <FormLabel className='font-normal w-full cursor-pointer'>
-                    {cargo.descripcion}
+                  <FormLabel className='font-normal w-full cursor-pointer text-xs sm:text-sm truncate'>
+                    <span title={cargo.descripcion}>{cargo.descripcion}</span>
                   </FormLabel>
                 </FormItem>
               )}
@@ -192,7 +192,7 @@ export function FormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-4xl max-h-[90vh]'>
+      <DialogContent className='w-[95vw] sm:max-w-4xl lg:max-w-5xl max-h-[90vh]'>
         <DialogHeader>
           <DialogTitle className='text-2xl font-semibold flex items-center gap-2'>
             {mode === 'add' ? (
@@ -259,7 +259,7 @@ export function FormModal({
                     Cargos por Tipo de Medidor
                   </h3>
                 </div>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
                   {renderCheckboxList(
                     'cargoMonofasicoIds',
                     'Cargos Monofásicos'
@@ -292,7 +292,7 @@ export function FormModal({
                   {fields.map((item, index) => (
                     <div
                       key={item.id}
-                      className='grid grid-cols-[1fr_1fr_1fr_auto] gap-4 items-start p-3 border rounded-lg'
+                      className='grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-3 sm:gap-4 items-start p-3 border rounded-lg'
                     >
                       <FormField
                         control={form.control}
@@ -368,32 +368,35 @@ export function FormModal({
                       <Button
                         type='button'
                         variant='destructive'
-                        size='icon'
+                        size='sm'
                         onClick={() => remove(index)}
-                        className='mt-8'
+                        className='mt-0 sm:mt-8 w-full sm:w-auto'
                       >
-                        <Trash2 className='h-4 w-4' />
+                        <Trash2 className='h-3 w-3 sm:h-4 sm:w-4' />
+                        <span className='ml-1 sm:hidden'>Eliminar</span>
                       </Button>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <DialogFooter className='pt-6 border-t'>
+              <DialogFooter className='flex flex-col sm:flex-row gap-2 sm:gap-0 pt-4 sm:pt-6 border-t'>
                 <Button
                   type='button'
                   variant='outline'
                   onClick={onClose}
-                  className='h-11 px-6'
+                  className='h-10 sm:h-11 px-4 sm:px-6 w-full sm:w-auto order-2 sm:order-1'
                 >
                   Cancelar
                 </Button>
                 <Button
                   type='submit'
-                  className='h-11 px-6 flex items-center gap-2'
+                  className='h-10 sm:h-11 px-4 sm:px-6 flex items-center justify-center gap-2 w-full sm:w-auto order-1 sm:order-2'
                 >
-                  <CheckCircle2 className='h-4 w-4' />
-                  Guardar Configuración
+                  <CheckCircle2 className='h-3 w-3 sm:h-4 sm:w-4' />
+                  <span className='text-xs sm:text-sm'>
+                    Guardar Configuración
+                  </span>
                 </Button>
               </DialogFooter>
             </form>

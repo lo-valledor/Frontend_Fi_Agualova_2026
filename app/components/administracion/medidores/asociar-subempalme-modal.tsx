@@ -103,7 +103,7 @@ export function AsociarSubempalmeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='min-w-6xl max-h-[80vh] overflow-hidden'>
+      <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
         <DialogHeader>
           <div className='flex items-center gap-3'>
             <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>

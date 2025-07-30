@@ -113,22 +113,27 @@ export default function CargoFacturableComponent({
   };
 
   return (
-    <div className='container mx-auto p-3 md:p-6 space-y-6'>
+    <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
       {/* Header */}
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-        <div className='space-y-1'>
+      <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0'>
+        <div className='space-y-2'>
           <div className='flex items-center gap-3'>
-            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
               Cargos Facturables
             </h1>
           </div>
+          <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
+            Gestiona los cargos facturables del sistema y aplica filtros
+            avanzados
+          </p>
         </div>
         <Button
           onClick={handleAddCargo}
-          className='bg-sky-600 hover:bg-sky-700 text-white'
+          className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto'
+          size='sm'
         >
-          <Plus className='mr-2 h-4 w-4' />
-          Agregar Cargo Facturable
+          <Plus className='mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+          <span className='text-xs sm:text-sm'>Agregar Cargo Facturable</span>
         </Button>
       </div>
 
@@ -152,14 +157,18 @@ export default function CargoFacturableComponent({
 
       {/* Table */}
       <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-        <CardContent className='relative'>
-          <DataTable
-            columns={columns({
-              onEdit: handleEditCargo,
-              editingCargoId,
-            })}
-            data={filteredCargos}
-          />
+        <CardContent className='relative p-2 sm:p-4 lg:p-6'>
+          <div className='overflow-x-auto'>
+            <DataTable
+              columns={columns({
+                onEdit: handleEditCargo,
+                editingCargoId,
+              })}
+              data={filteredCargos}
+              searchPlaceholder='Buscar por cuenta, código, descripción...'
+              defaultPageSize={10}
+            />
+          </div>
         </CardContent>
       </Card>
 

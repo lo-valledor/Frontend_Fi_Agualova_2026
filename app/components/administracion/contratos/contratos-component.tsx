@@ -33,6 +33,7 @@ import {
 } from './contract-filters';
 import { ContractFormModal } from './contract-form-modal';
 import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
+import { ExportButtons } from './export-buttons';
 import { FilterSummary } from './filter-summary';
 
 export default function ContratosComponent({
@@ -300,23 +301,37 @@ export default function ContratosComponent({
   });
 
   return (
-    <div className='container mx-auto p-3 md:p-6 space-y-6'>
+    <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
       {/* Header */}
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-        <div className='space-y-1'>
+      <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0'>
+        <div className='space-y-2'>
           <div className='flex items-center gap-3'>
-            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
               Contratos
             </h1>
           </div>
+          <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
+            Gestiona los contratos del sistema y exporta los datos según tus
+            necesidades
+          </p>
         </div>
-        <Button
-          onClick={handleAddContract}
-          className='bg-sky-600 hover:bg-sky-700 text-white'
-        >
-          <Plus className='mr-2 h-4 w-4' />
-          Agregar Contrato
-        </Button>
+        <div className='flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3 lg:flex-row'>
+          <div className='order-2 sm:order-1'>
+            <ExportButtons
+              allContratos={contracts}
+              filteredContratos={filteredContracts}
+              isFiltered={filterStats.isFiltered}
+            />
+          </div>
+          <Button
+            onClick={handleAddContract}
+            className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto order-1 sm:order-2'
+            size='sm'
+          >
+            <Plus className='mr-2 h-4 w-4' />
+            <span className='sm:inline'>Agregar Contrato</span>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -339,14 +354,16 @@ export default function ContratosComponent({
 
       {/* Table */}
       <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-        <CardContent className='relative'>
+        <CardContent className='relative p-2 sm:p-4 lg:p-6'>
           {filteredContracts.length === 0 ? (
-            <div className='flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400'>
-              <div className='flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
-                <FileText className='h-8 w-8 text-slate-400 dark:text-slate-500' />
+            <div className='flex flex-col items-center justify-center py-8 sm:py-12 text-slate-500 dark:text-slate-400'>
+              <div className='flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
+                <FileText className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400 dark:text-slate-500' />
               </div>
-              <p className='text-lg font-medium'>No se encontraron contratos</p>
-              <p className='text-sm'>
+              <p className='text-base sm:text-lg font-medium text-center'>
+                No se encontraron contratos
+              </p>
+              <p className='text-xs sm:text-sm text-center max-w-md px-4'>
                 {filterStats.isFiltered
                   ? 'No hay contratos que coincidan con los filtros aplicados'
                   : 'No hay contratos registrados en el sistema'}
@@ -354,14 +371,16 @@ export default function ContratosComponent({
             </div>
           ) : (
             <div className='space-y-4'>
-              {/* Tabla moderna */}
+              {/* Tabla moderna con scroll horizontal para móvil */}
               <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden'>
-                <DataTable
-                  columns={columnsData}
-                  data={filteredContracts}
-                  searchPlaceholder='Buscar por código, propietario o local...'
-                  defaultPageSize={15}
-                />
+                <div className='overflow-x-auto'>
+                  <DataTable
+                    columns={columnsData}
+                    data={filteredContracts}
+                    searchPlaceholder='Buscar por código, propietario o local...'
+                    defaultPageSize={10}
+                  />
+                </div>
               </div>
             </div>
           )}

@@ -193,48 +193,59 @@ export default function MedidoresComponent({
   }
 
   return (
-    <div className='container mx-auto p-3 md:p-6 space-y-6'>
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-        <div className='space-y-1'>
-          <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+    <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
+      <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0'>
+        <div className='space-y-2'>
+          <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
             Medidores
           </h1>
+          <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
+            Gestiona los medidores del sistema y exporta los datos
+          </p>
         </div>
-        <div className='flex gap-2'>
+        <div className='flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 lg:flex-row'>
           <Button
             variant='default'
             onClick={handleExportExcel}
             disabled={isExporting}
-            className='gap-1.5 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed'
+            size='sm'
+            className='gap-1.5 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto order-2 sm:order-1'
           >
             <Download
-              className={`h-3.5 w-3.5 ${isExporting ? 'animate-spin' : ''}`}
+              className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${isExporting ? 'animate-spin' : ''}`}
             />
-            {isExporting ? 'Exportando...' : 'Exportar Excel'}
+            <span className='text-xs sm:text-sm'>
+              {isExporting ? 'Exportando...' : 'Exportar Excel'}
+            </span>
           </Button>
           <Button
             onClick={handleAdd}
-            className='bg-sky-600 hover:bg-sky-700 text-white'
+            className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto order-1 sm:order-2'
+            size='sm'
           >
-            <Plus className='mr-2 h-4 w-4 text-white' />
-            Agregar Medidor
+            <Plus className='mr-2 h-3 w-3 sm:h-4 sm:w-4 text-white' />
+            <span className='text-xs sm:text-sm'>Agregar Medidor</span>
           </Button>
         </div>
       </div>
       <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-        <CardContent className='relative'>
+        <CardContent className='relative p-2 sm:p-4 lg:p-6'>
           {isFetching && (
             <div className='absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10'>
               <LoadingSpinner />
             </div>
           )}
-          <DataTable
-            columns={columns({
-              onEdit: handleEdit,
-              onAsociarSubempalme: handleAsociarSubempalme,
-            })}
-            data={medidores}
-          />
+          <div className='overflow-x-auto'>
+            <DataTable
+              columns={columns({
+                onEdit: handleEdit,
+                onAsociarSubempalme: handleAsociarSubempalme,
+              })}
+              data={medidores}
+              searchPlaceholder='Buscar por serie, marca o código...'
+              defaultPageSize={10}
+            />
+          </div>
         </CardContent>
       </Card>
 

@@ -1,6 +1,5 @@
 /* eslint-disable no-empty-pattern */
-import React from 'react';
-
+import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
 import CargoTipoContratoComponent from '~/components/administracion/cargo-tipo-contrato/cargo-tipo-contrato-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
@@ -42,4 +41,8 @@ export default function CargoTipoContrato({
       <CargoTipoContratoComponent cargoTipoContrato={cargoTipoContrato} />
     </div>
   );
+}
+
+export function hydrateFallback() {
+  return <AdministracionHydrateFallback />;
 }

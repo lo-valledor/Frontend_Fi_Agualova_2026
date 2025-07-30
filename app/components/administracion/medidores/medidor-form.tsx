@@ -526,7 +526,7 @@ export function MedidorFormModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+        <DialogContent className='w-[95vw] sm:max-w-[600px] lg:max-w-[700px] max-h-[90vh] overflow-y-auto'>
           <DialogHeader className='space-y-3'>
             <DialogTitle className='text-2xl font-bold flex items-center gap-3'>
               <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
@@ -549,7 +549,7 @@ export function MedidorFormModal({
                     Información del Medidor
                   </span>
                 </div>
-                <div className='grid grid-cols-2 gap-4 text-sm'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm'>
                   <div>
                     <span className='text-blue-700 dark:text-blue-300'>
                       Código:
@@ -617,7 +617,7 @@ export function MedidorFormModal({
                   <Gauge className='h-5 w-5 text-sky-600' />
                   <h3 className='text-lg font-medium'>Detalles del Medidor</h3>
                 </div>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                   <FormField
                     control={form.control}
                     name='serie'
@@ -772,7 +772,7 @@ export function MedidorFormModal({
                   <Power className='h-5 w-5 text-green-600' />
                   <h3 className='text-lg font-medium'>Configuración</h3>
                 </div>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                   <FormField
                     control={form.control}
                     name='digitos'
@@ -991,7 +991,7 @@ export function MedidorFormModal({
 
       {/* Modal de Selección de Subempalmes */}
       <Dialog open={modalSubempalmes} onOpenChange={setModalSubempalmes}>
-        <DialogContent className='min-w-6xl max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>

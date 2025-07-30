@@ -38,6 +38,14 @@ class UserService {
   async getUserById(
     userId: string | number
   ): Promise<UserServiceResponse<Usuarios>> {
+    if (!userId) {
+      return {
+        data: null,
+        error: 'ID de usuario es requerido',
+        fromCache: false,
+      };
+    }
+
     const userIdStr = userId.toString();
     const cacheKey = `user_${userIdStr}`;
 
@@ -157,6 +165,32 @@ class UserService {
       return {
         data: null,
         error: error.message || 'Error al obtener usuario',
+        fromCache: false,
+      };
+    }
+  }
+
+  /**
+   * Obtiene el perfil del usuario actualmente autenticado desde la API.
+   * La API identifica al usuario a través del token JWT enviado por el interceptor de Axios.
+   */
+  async getOwnProfile(): Promise<UserServiceResponse<Usuarios>> {
+    try {
+      // Asumimos que tienes un endpoint como '/me' o '/profile' que devuelve el usuario logueado
+      const response = await api.get('/me');
+      return {
+        data: response.data as Usuarios,
+        error: null,
+        fromCache: false,
+      };
+    } catch (error: any) {
+      // El interceptor de Axios manejará los 401/403, pero por si acaso...
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al obtener el perfil',
         fromCache: false,
       };
     }

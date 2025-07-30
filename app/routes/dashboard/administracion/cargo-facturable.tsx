@@ -1,6 +1,5 @@
 /* eslint-disable no-empty-pattern */
-import React from 'react';
-
+import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
 import CargoFacturableComponent from '~/components/administracion/cargo-facturable/cargo-facturable-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
@@ -46,4 +45,8 @@ export default function CargoFacturable({ loaderData }: Route.ComponentProps) {
       />
     </div>
   );
+}
+
+export function hydrateFallback() {
+  return <AdministracionHydrateFallback />;
 }

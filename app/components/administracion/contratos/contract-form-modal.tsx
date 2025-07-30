@@ -400,7 +400,7 @@ export function ContractFormModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+        <DialogContent className='w-[95vw] max-w-[900px] sm:w-full max-h-[90vh] overflow-y-auto'>
           <DialogHeader>
             <DialogTitle className='text-xl font-semibold'>
               {mode === 'add' ? 'Agregar Contrato' : 'Editar Contrato'}
@@ -418,7 +418,7 @@ export function ContractFormModal({
               <h3 className='text-sm font-medium text-sky-800 dark:text-sky-200'>
                 Información del Contrato
               </h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='tipoContrato'>Tipo de Contrato</Label>
                   <Select
@@ -473,7 +473,7 @@ export function ContractFormModal({
               <h3 className='text-sm font-medium text-emerald-800 dark:text-emerald-200'>
                 Información de Personas
               </h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
                   <Label
                     htmlFor='nombrePropietario'
@@ -488,7 +488,7 @@ export function ContractFormModal({
                       className='h-6 gap-1 text-xs'
                     >
                       <List className='h-3 w-3' />
-                      Buscar
+                      <span className='hidden sm:inline'>Buscar</span>
                     </Button>
                   </Label>
                   <Input
@@ -521,7 +521,7 @@ export function ContractFormModal({
               <h3 className='text-sm font-medium text-violet-800 dark:text-violet-200'>
                 Información de Ubicación
               </h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
                   <Label
                     htmlFor='local'
@@ -536,7 +536,7 @@ export function ContractFormModal({
                       className='h-6 gap-1 text-xs'
                     >
                       <List className='h-3 w-3' />
-                      Buscar
+                      <span className='hidden sm:inline'>Buscar</span>
                     </Button>
                   </Label>
                   <Input
@@ -561,7 +561,7 @@ export function ContractFormModal({
                       className='h-6 gap-1 text-xs'
                     >
                       <List className='h-3 w-3' />
-                      Buscar
+                      <span className='hidden sm:inline'>Buscar</span>
                     </Button>
                   </Label>
                   <Input
@@ -595,7 +595,7 @@ export function ContractFormModal({
               <h3 className='text-sm font-medium text-amber-800 dark:text-amber-200'>
                 Fechas y Configuración
               </h3>
-              <div className='grid grid-cols-2 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='fechaInicio'>Fecha de Inicio</Label>
                   <Input
@@ -620,7 +620,7 @@ export function ContractFormModal({
                   />
                 </div>
               </div>
-              <div className='grid grid-cols-3 gap-4'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
                 <div className='space-y-2'>
                   <Label htmlFor='limiteInvierno'>Límite Invierno (kWh)</Label>
                   <Input
@@ -696,7 +696,7 @@ export function ContractFormModal({
                 </div>
 
                 {/* Configuraciones de Estado */}
-                <div className='grid grid-cols-2 gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
                   <div className='flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/30 rounded-lg border'>
                     <div className='flex items-center gap-3'>
                       <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -784,7 +784,7 @@ export function ContractFormModal({
                     className='h-6 gap-1 text-xs'
                   >
                     <List className='h-3 w-3' />
-                    Buscar
+                    <span className='hidden sm:inline'>Buscar</span>
                   </Button>
                 </Label>
                 <Input
@@ -796,18 +796,19 @@ export function ContractFormModal({
               </div>
             </div>
 
-            <DialogFooter className='gap-2 pt-4'>
+            <DialogFooter className='flex-col sm:flex-row gap-2 pt-4'>
               <Button
                 type='button'
                 variant='outline'
                 onClick={onClose}
                 disabled={isSubmitting}
+                className='w-full sm:w-auto'
               >
                 Cancelar
               </Button>
               <Button
                 type='submit'
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto'
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -828,7 +829,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Propietarios */}
       <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-        <DialogContent className='min-w-6xl max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -863,8 +864,12 @@ export function ContractFormModal({
                     <TableRow>
                       <TableHead>RUT</TableHead>
                       <TableHead>Nombre</TableHead>
-                      <TableHead>Comuna</TableHead>
-                      <TableHead>Teléfono</TableHead>
+                      <TableHead className='hidden md:table-cell'>
+                        Comuna
+                      </TableHead>
+                      <TableHead className='hidden lg:table-cell'>
+                        Teléfono
+                      </TableHead>
                       <TableHead className='text-center'>Acción</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -901,8 +906,12 @@ export function ContractFormModal({
                             {p.nombre}
                           </div>
                         </TableCell>
-                        <TableCell>{p.comuna}</TableCell>
-                        <TableCell>{p.telefono}</TableCell>
+                        <TableCell className='hidden md:table-cell'>
+                          {p.comuna}
+                        </TableCell>
+                        <TableCell className='hidden lg:table-cell'>
+                          {p.telefono}
+                        </TableCell>
                         <TableCell className='text-center'>
                           <Button
                             size='sm'
@@ -924,7 +933,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Locales */}
       <Dialog open={modalLocal} onOpenChange={setModalLocal}>
-        <DialogContent className='min-w-6xl max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
@@ -959,9 +968,15 @@ export function ContractFormModal({
                     <TableRow>
                       <TableHead>Número Local</TableHead>
                       <TableHead>Empresa</TableHead>
-                      <TableHead>Propietario</TableHead>
-                      <TableHead>Sector</TableHead>
-                      <TableHead>Estado</TableHead>
+                      <TableHead className='hidden md:table-cell'>
+                        Propietario
+                      </TableHead>
+                      <TableHead className='hidden lg:table-cell'>
+                        Sector
+                      </TableHead>
+                      <TableHead className='hidden sm:table-cell'>
+                        Estado
+                      </TableHead>
                       <TableHead className='text-center'>Acción</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -998,9 +1013,13 @@ export function ContractFormModal({
                             {l.empresa}
                           </div>
                         </TableCell>
-                        <TableCell>{l.propietario}</TableCell>
-                        <TableCell>{l.sector}</TableCell>
-                        <TableCell>
+                        <TableCell className='hidden md:table-cell'>
+                          {l.propietario}
+                        </TableCell>
+                        <TableCell className='hidden lg:table-cell'>
+                          {l.sector}
+                        </TableCell>
+                        <TableCell className='hidden sm:table-cell'>
                           <Badge
                             variant={
                               l.estadoHabilitado === 'Sí'
@@ -1032,7 +1051,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Madres */}
       <Dialog open={modalMadres} onOpenChange={setModalMadres}>
-        <DialogContent className='min-w-6xl max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
@@ -1065,11 +1084,17 @@ export function ContractFormModal({
                 <Table>
                   <TableHeader className='bg-muted/50'>
                     <TableRow>
-                      <TableHead>Código Contrato</TableHead>
+                      <TableHead>Código</TableHead>
                       <TableHead>Propietario</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Local</TableHead>
-                      <TableHead>Tipo Contrato</TableHead>
+                      <TableHead className='hidden md:table-cell'>
+                        Cliente
+                      </TableHead>
+                      <TableHead className='hidden lg:table-cell'>
+                        Local
+                      </TableHead>
+                      <TableHead className='hidden sm:table-cell'>
+                        Tipo
+                      </TableHead>
                       <TableHead className='text-center'>Acción</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -1106,9 +1131,13 @@ export function ContractFormModal({
                             {m.nombrePropietario}
                           </div>
                         </TableCell>
-                        <TableCell>{m.nombreCliente}</TableCell>
-                        <TableCell>{m.numeroLocal}</TableCell>
-                        <TableCell>
+                        <TableCell className='hidden md:table-cell'>
+                          {m.nombreCliente}
+                        </TableCell>
+                        <TableCell className='hidden lg:table-cell'>
+                          {m.numeroLocal}
+                        </TableCell>
+                        <TableCell className='hidden sm:table-cell'>
                           <Badge variant='secondary'>{m.tipoContrato}</Badge>
                         </TableCell>
                         <TableCell className='text-center'>
@@ -1132,7 +1161,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Comunas */}
       <Dialog open={modalComuna} onOpenChange={setModalComuna}>
-        <DialogContent className='min-w-6xl max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
@@ -1167,7 +1196,9 @@ export function ContractFormModal({
                     <TableRow>
                       <TableHead>Código</TableHead>
                       <TableHead>Nombre</TableHead>
-                      <TableHead>Región</TableHead>
+                      <TableHead className='hidden md:table-cell'>
+                        Región
+                      </TableHead>
                       <TableHead className='text-center'>Acción</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -1204,7 +1235,9 @@ export function ContractFormModal({
                             {c.nombre}
                           </div>
                         </TableCell>
-                        <TableCell>{c.region}</TableCell>
+                        <TableCell className='hidden md:table-cell'>
+                          {c.region}
+                        </TableCell>
                         <TableCell className='text-center'>
                           <Button
                             size='sm'

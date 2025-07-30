@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
 import ClientesComponent from '~/components/administracion/clientes/clientes-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
@@ -33,4 +34,8 @@ export default function Clientes({ loaderData }: Route.ComponentProps) {
       <ClientesComponent clientes={clientes} giros={giros} comunas={comunas} />
     </div>
   );
+}
+
+export function hydrateFallback() {
+  return <AdministracionHydrateFallback />;
 }

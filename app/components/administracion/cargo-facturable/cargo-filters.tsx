@@ -133,7 +133,7 @@ export function CargoFiltersComponent({
             <Separator />
 
             {/* Filtros principales */}
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
               {/* Tipo */}
               <div className='space-y-2'>
                 <Label
@@ -218,7 +218,7 @@ export function CargoFiltersComponent({
             </div>
 
             {/* Segunda fila de filtros */}
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
               {/* Concepto */}
               <div className='space-y-2'>
                 <Label
@@ -305,17 +305,18 @@ export function CargoFiltersComponent({
               <div className='space-y-3'>
                 <Separator />
                 <div className='flex items-center justify-between'>
-                  <div className='flex items-center gap-2'>
+                  <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
                     <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                       Filtros activos:
                     </span>
-                    <div className='flex flex-wrap gap-2'>
+                    <div className='flex flex-wrap gap-1 sm:gap-2'>
                       {filters.tipo && filters.tipo !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800'
+                          className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800 text-xs'
                         >
-                          Tipo: {filters.tipo}
+                          <span className='hidden sm:inline'>Tipo: </span>
+                          {filters.tipo}
                           <Button
                             variant='ghost'
                             size='sm'
@@ -330,9 +331,12 @@ export function CargoFiltersComponent({
                         filters.fijoVariable !== 'all' && (
                           <Badge
                             variant='outline'
-                            className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800'
+                            className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs'
                           >
-                            Modalidad: {filters.fijoVariable}
+                            <span className='hidden sm:inline'>
+                              Modalidad:{' '}
+                            </span>
+                            {filters.fijoVariable}
                             <Button
                               variant='ghost'
                               size='sm'
@@ -349,9 +353,12 @@ export function CargoFiltersComponent({
                         filters.periodicoEventual !== 'all' && (
                           <Badge
                             variant='outline'
-                            className='bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800'
+                            className='bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs'
                           >
-                            Frecuencia: {filters.periodicoEventual}
+                            <span className='hidden sm:inline'>
+                              Frecuencia:{' '}
+                            </span>
+                            {filters.periodicoEventual}
                             <Button
                               variant='ghost'
                               size='sm'
@@ -367,9 +374,15 @@ export function CargoFiltersComponent({
                       {filters.concepto && filters.concepto !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800'
+                          className='bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs'
                         >
-                          Concepto: {filters.concepto}
+                          <span className='hidden sm:inline'>Concepto: </span>
+                          <span
+                            className='truncate max-w-[100px] sm:max-w-none'
+                            title={filters.concepto}
+                          >
+                            {filters.concepto}
+                          </span>
                           <Button
                             variant='ghost'
                             size='sm'
@@ -383,9 +396,15 @@ export function CargoFiltersComponent({
                       {filters.tarifa && filters.tarifa !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800'
+                          className='bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs'
                         >
-                          Tarifa: {filters.tarifa}
+                          <span className='hidden sm:inline'>Tarifa: </span>
+                          <span
+                            className='truncate max-w-[100px] sm:max-w-none'
+                            title={filters.tarifa}
+                          >
+                            {filters.tarifa}
+                          </span>
                           <Button
                             variant='ghost'
                             size='sm'
@@ -399,9 +418,17 @@ export function CargoFiltersComponent({
                       {filters.tipoMedidor && filters.tipoMedidor !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800'
+                          className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800 text-xs'
                         >
-                          Tipo Medidor: {filters.tipoMedidor}
+                          <span className='hidden sm:inline'>
+                            Tipo Medidor:{' '}
+                          </span>
+                          <span
+                            className='truncate max-w-[100px] sm:max-w-none'
+                            title={filters.tipoMedidor}
+                          >
+                            {filters.tipoMedidor}
+                          </span>
                           <Button
                             variant='ghost'
                             size='sm'
@@ -420,10 +447,10 @@ export function CargoFiltersComponent({
                     variant='outline'
                     size='sm'
                     onClick={onClearFilters}
-                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400'
+                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 w-full sm:w-auto mt-2 sm:mt-0'
                   >
-                    <RotateCcw className='h-4 w-4 mr-1' />
-                    Limpiar Filtros
+                    <RotateCcw className='h-3 w-3 sm:h-4 sm:w-4 mr-1' />
+                    <span className='text-xs sm:text-sm'>Limpiar Filtros</span>
                   </Button>
                 </div>
               </div>

@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Select, { type StylesConfig } from 'react-select';
 
 import { useTheme } from '~/components/theme-provider';
@@ -48,10 +48,6 @@ import type {
 interface SelectOption {
   value: string;
   label: string;
-}
-
-interface ContratoSelectOption extends SelectOption {
-  data: ContratosDisponibles;
 }
 
 // Interface principal del componente
@@ -109,29 +105,6 @@ export function AcometidaForm({
     value: nicho.id,
     label: nicho.nombre,
   }));
-
-  const contratoOptions: ContratoSelectOption[] = useMemo(() => {
-    const opciones = contratosDisponibles.map(contrato => ({
-      value: contrato.contratoId,
-      label: `${contrato.contratoId} - ${contrato.clienteNombre} ${contrato.clienteApellidos}`,
-      data: contrato,
-    }));
-
-    // Si estamos editando y el contrato no está en la lista, NO lo agregamos
-    // Esto evita mostrar contratos que no están disponibles para acometidas
-    if (isEdit && acometida?.contratoId) {
-      const contratoExiste = opciones.find(
-        opt => opt.value === acometida.contratoId
-      );
-
-      if (!contratoExiste) {
-        // No agregamos el contrato como opción temporal
-        return [];
-      }
-    }
-
-    return opciones;
-  }, [contratosDisponibles, isEdit, acometida]);
 
   // Verificar si el contrato actual está disponible
   const contratoActualDisponible = useMemo(() => {
@@ -222,10 +195,6 @@ export function AcometidaForm({
       `${c.contratoId} ${c.clienteNombre} ${c.clienteApellidos} ${c.empresa} ${c.local}`.toLowerCase();
     return texto.includes(busquedaContrato.toLowerCase());
   });
-
-  const contratoSeleccionado = contratoOptions.find(
-    c => c.value === form.watch('contratoId')
-  );
 
   const empalmeSeleccionado = comboEmpalmes.find(
     e => e.id === form.watch('empalmeId')
@@ -366,14 +335,22 @@ export function AcometidaForm({
     setModalContratos(false);
     setBusquedaContrato('');
 
-    // Si estamos editando y el contrato anterior no estaba disponible,
-    // ahora que se seleccionó uno nuevo, el campo se mostrará automáticamente
+    // Mostrar mensaje de confirmación
+    const contrato = contratosDisponibles.find(
+      c => c.contratoId === contratoId
+    );
+    if (contrato) {
+      toast.success('Contrato seleccionado correctamente', {
+        description: `${contrato.clienteNombre} ${contrato.clienteApellidos} - ${contrato.empresa}`,
+        duration: 3000,
+      });
+    }
   };
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className='min-w-3xl max-h-[95vh] min-h-[80vh] overflow-y-auto'>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-4xl max-h-[95vh] min-h-[80vh] overflow-y-auto'>
           <DialogHeader className='space-y-2'>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
@@ -402,7 +379,7 @@ export function AcometidaForm({
                 <h3 className='text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600'>
                   📋 Información Básica
                 </h3>
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                   <FormField
                     control={form.control}
                     name='codigo'
@@ -451,80 +428,39 @@ export function AcometidaForm({
                   📄 Contrato Asociado
                 </h3>
 
-                {/* Mostrar campo de contrato solo si no estamos editando o si el contrato está disponible */}
+                {/* Campo de contrato mejorado */}
                 {!isEdit || contratoActualDisponible ? (
                   <FormField
                     control={form.control}
                     name='contratoId'
-                    render={() => (
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='flex items-center justify-between text-sm font-medium'>
+                        <FormLabel className='text-sm font-medium'>
                           Contrato *
-                          <Button
-                            type='button'
-                            size='sm'
-                            variant='outline'
-                            onClick={() => setModalContratos(true)}
-                            className='h-8 gap-2 text-xs'
-                          >
-                            <List className='h-3 w-3' />
-                            Ver Todos
-                          </Button>
                         </FormLabel>
-                        <Controller
-                          control={form.control}
-                          name='contratoId'
-                          render={({
-                            field: { onChange, value, ...field },
-                          }) => (
-                            <div className='space-y-2'>
-                              <Select
-                                {...field}
-                                options={contratoOptions.slice(0, 50)}
-                                styles={selectStyles}
-                                placeholder='Buscar y seleccionar contrato...'
-                                isSearchable
-                                filterOption={(option, inputValue) => {
-                                  if (!inputValue) return true;
-                                  const searchValue = inputValue.toLowerCase();
-                                  return (
-                                    option.value
-                                      .toLowerCase()
-                                      .includes(searchValue) ||
-                                    option.label
-                                      .toLowerCase()
-                                      .includes(searchValue) ||
-                                    option.data?.empresa
-                                      ?.toLowerCase()
-                                      .includes(searchValue) ||
-                                    option.data?.local
-                                      ?.toLowerCase()
-                                      .includes(searchValue)
-                                  );
-                                }}
-                                value={
-                                  contratoOptions.find(
-                                    option => option.value === value
-                                  ) || null
-                                }
-                                onChange={option =>
-                                  onChange(option?.value || '')
-                                }
-                                noOptionsMessage={({ inputValue }) =>
-                                  inputValue
-                                    ? `No se encontraron contratos para "${inputValue}"`
-                                    : 'Escriba para buscar contratos...'
-                                }
-                                menuPlacement='auto'
-                                maxMenuHeight={280}
-                              />
-                              <p className='text-xs text-slate-500 dark:text-slate-400'>
-                                💡 Busque por ID, cliente, empresa o local. Use
-                                el botón "Ver Todos" para más opciones.
-                              </p>
-                            </div>
-                          )}
-                        />
+                        <FormControl>
+                          <div className='flex gap-2'>
+                            <Input
+                              placeholder='ID del contrato (ej: CON-12345)'
+                              className='h-12 text-base flex-1'
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                            <Button
+                              type='button'
+                              variant='outline'
+                              onClick={() => setModalContratos(true)}
+                              className='h-12 px-4 gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20'
+                            >
+                              <Search className='h-4 w-4' />
+                              Buscar
+                            </Button>
+                          </div>
+                        </FormControl>
+                        <p className='text-xs text-slate-500 dark:text-slate-400'>
+                          💡 Escriba el ID del contrato o use "Buscar" para
+                          explorar la lista completa
+                        </p>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -579,17 +515,22 @@ export function AcometidaForm({
                   </div>
                 )}
 
-                {/* Información del contrato seleccionado - solo si hay datos disponibles */}
-                {contratoSeleccionado &&
-                  contratoSeleccionado.data.clienteNombre && (
+                {/* Información del contrato seleccionado - buscar por ID */}
+                {(() => {
+                  const contratoEncontrado = contratosDisponibles.find(
+                    c => c.contratoId === form.watch('contratoId')
+                  );
+                  if (!contratoEncontrado) return null;
+
+                  return (
                     <div
                       className={`p-3 rounded-lg border ${
-                        contratoSeleccionado.data.estadoActivo === false
+                        contratoEncontrado.estadoActivo === false
                           ? 'bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
                           : 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800'
                       }`}
                     >
-                      {contratoSeleccionado.data.estadoActivo === false && (
+                      {contratoEncontrado.estadoActivo === false && (
                         <div className='mb-2 flex items-center gap-2 text-amber-700 dark:text-amber-300'>
                           <svg
                             className='h-4 w-4'
@@ -607,11 +548,22 @@ export function AcometidaForm({
                           </span>
                         </div>
                       )}
-                      <div className='grid grid-cols-2 gap-3 text-xs'>
+                      <div className='flex items-center gap-2 mb-3'>
+                        <div className='p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md'>
+                          <User className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
+                        </div>
+                        <span className='text-sm font-medium text-emerald-700 dark:text-emerald-300'>
+                          Contrato verificado
+                        </span>
+                        <Badge variant='outline' className='font-mono text-xs'>
+                          {contratoEncontrado.contratoId}
+                        </Badge>
+                      </div>
+                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs'>
                         <div>
                           <span
                             className={`font-medium ${
-                              contratoSeleccionado.data.estadoActivo === false
+                              contratoEncontrado.estadoActivo === false
                                 ? 'text-amber-700 dark:text-amber-300'
                                 : 'text-emerald-700 dark:text-emerald-300'
                             }`}
@@ -619,15 +571,15 @@ export function AcometidaForm({
                             Cliente:
                           </span>
                           <p className='text-slate-600 dark:text-slate-400'>
-                            {contratoSeleccionado.data.clienteNombre ||
+                            {contratoEncontrado.clienteNombre ||
                               'No disponible'}{' '}
-                            {contratoSeleccionado.data.clienteApellidos || ''}
+                            {contratoEncontrado.clienteApellidos || ''}
                           </p>
                         </div>
                         <div>
                           <span
                             className={`font-medium ${
-                              contratoSeleccionado.data.estadoActivo === false
+                              contratoEncontrado.estadoActivo === false
                                 ? 'text-amber-700 dark:text-amber-300'
                                 : 'text-emerald-700 dark:text-emerald-300'
                             }`}
@@ -635,14 +587,13 @@ export function AcometidaForm({
                             Empresa:
                           </span>
                           <p className='text-slate-600 dark:text-slate-400'>
-                            {contratoSeleccionado.data.empresa ||
-                              'No disponible'}
+                            {contratoEncontrado.empresa || 'No disponible'}
                           </p>
                         </div>
                         <div>
                           <span
                             className={`font-medium ${
-                              contratoSeleccionado.data.estadoActivo === false
+                              contratoEncontrado.estadoActivo === false
                                 ? 'text-amber-700 dark:text-amber-300'
                                 : 'text-emerald-700 dark:text-emerald-300'
                             }`}
@@ -650,13 +601,13 @@ export function AcometidaForm({
                             Local:
                           </span>
                           <p className='text-slate-600 dark:text-slate-400'>
-                            {contratoSeleccionado.data.local || 'No disponible'}
+                            {contratoEncontrado.local || 'No disponible'}
                           </p>
                         </div>
                         <div>
                           <span
                             className={`font-medium ${
-                              contratoSeleccionado.data.estadoActivo === false
+                              contratoEncontrado.estadoActivo === false
                                 ? 'text-amber-700 dark:text-amber-300'
                                 : 'text-emerald-700 dark:text-emerald-300'
                             }`}
@@ -664,13 +615,13 @@ export function AcometidaForm({
                             Tarifa:
                           </span>
                           <p className='text-slate-600 dark:text-slate-400'>
-                            {contratoSeleccionado.data.tarifa ||
-                              'No disponible'}
+                            {contratoEncontrado.tarifa || 'No disponible'}
                           </p>
                         </div>
                       </div>
                     </div>
-                  )}
+                  );
+                })()}
               </div>
 
               {/* Configuración Técnica */}
@@ -678,10 +629,10 @@ export function AcometidaForm({
                 <h3 className='text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600'>
                   ⚡ Configuración Técnica
                 </h3>
-                <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                  <Controller
-                    name='empalmeId'
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
+                  <FormField
                     control={form.control}
+                    name='empalmeId'
                     render={({ field: { onChange, value, ...field } }) => (
                       <FormItem>
                         <FormLabel className='text-sm font-medium'>
@@ -708,9 +659,9 @@ export function AcometidaForm({
                     )}
                   />
 
-                  <Controller
-                    name='nichoId'
+                  <FormField
                     control={form.control}
+                    name='nichoId'
                     render={({ field: { onChange, value, ...field } }) => (
                       <FormItem>
                         <FormLabel className='text-sm font-medium'>
@@ -814,7 +765,7 @@ export function AcometidaForm({
 
       {/* Modal de Selección de Contratos */}
       <Dialog open={modalContratos} onOpenChange={setModalContratos}>
-        <DialogContent className='min-w-6xl max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -843,77 +794,115 @@ export function AcometidaForm({
               />
             </div>
 
-            {/* Tabla de contratos */}
-            <div className='border rounded-lg overflow-hidden'>
-              <ScrollArea className='h-[50vh]'>
-                <Table>
-                  <TableHeader className='bg-muted/50'>
-                    <TableRow>
-                      <TableHead>ID Contrato</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Empresa</TableHead>
-                      <TableHead>Local</TableHead>
-                      <TableHead>Tarifa</TableHead>
-                      <TableHead className='text-center'>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {contratosFiltrados.length === 0 && (
+            {/* Tabla de contratos con scroll horizontal */}
+            <div className='border rounded-lg overflow-hidden bg-white dark:bg-slate-900'>
+              <div className='overflow-x-auto'>
+                <ScrollArea className='h-[50vh] w-full'>
+                  <Table className='min-w-[800px]'>
+                    <TableHeader className='bg-muted/50 sticky top-0'>
                       <TableRow>
-                        <TableCell
-                          colSpan={6}
-                          className='text-center py-8 text-muted-foreground'
-                        >
-                          <div className='flex flex-col items-center gap-2'>
-                            <Search className='h-8 w-8 opacity-50' />
-                            <p>
-                              No se encontraron contratos con los criterios de
-                              búsqueda.
-                            </p>
-                          </div>
-                        </TableCell>
+                        <TableHead className='min-w-[140px]'>
+                          ID Contrato
+                        </TableHead>
+                        <TableHead className='min-w-[200px]'>Cliente</TableHead>
+                        <TableHead className='min-w-[180px]'>Empresa</TableHead>
+                        <TableHead className='min-w-[120px]'>Local</TableHead>
+                        <TableHead className='min-w-[100px]'>Tarifa</TableHead>
+                        <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50'>
+                          Acción
+                        </TableHead>
                       </TableRow>
-                    )}
-                    {contratosFiltrados.map(c => (
-                      <TableRow
-                        key={c.contratoId}
-                        className='hover:bg-muted/50 transition-colors'
-                      >
-                        <TableCell>
-                          <Badge variant='outline' className='font-mono'>
-                            {c.contratoId}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className='font-medium'>
-                          <div className='flex items-center gap-2'>
-                            <User className='h-4 w-4 text-muted-foreground' />
-                            {c.clienteNombre} {c.clienteApellidos}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className='flex items-center gap-2'>
-                            <Building2 className='h-4 w-4 text-muted-foreground' />
-                            {c.empresa}
-                          </div>
-                        </TableCell>
-                        <TableCell>{c.local}</TableCell>
-                        <TableCell>
-                          <Badge variant='secondary'>{c.tarifa}</Badge>
-                        </TableCell>
-                        <TableCell className='text-center'>
-                          <Button
-                            size='sm'
-                            onClick={() => handleSelectContrato(c.contratoId)}
-                            className='bg-emerald-600 hover:bg-emerald-700 text-white'
+                    </TableHeader>
+                    <TableBody>
+                      {contratosFiltrados.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={6}
+                            className='text-center py-12 text-muted-foreground'
                           >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </ScrollArea>
+                            <div className='flex flex-col items-center gap-3'>
+                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                                <Search className='h-8 w-8 opacity-50' />
+                              </div>
+                              <div className='space-y-1'>
+                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                  No se encontraron contratos
+                                </p>
+                                <p className='text-sm'>
+                                  {busquedaContrato
+                                    ? `No hay resultados para "${busquedaContrato}"`
+                                    : 'Escriba en el campo de búsqueda para filtrar contratos'}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {contratosFiltrados.map(c => (
+                        <TableRow
+                          key={c.contratoId}
+                          className='hover:bg-muted/50 transition-colors'
+                        >
+                          <TableCell>
+                            <Badge
+                              variant='outline'
+                              className='font-mono text-xs'
+                            >
+                              {c.contratoId}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className='font-medium'>
+                            <div className='flex items-center gap-2'>
+                              <User className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                              <div className='min-w-0'>
+                                <p className='truncate'>
+                                  {c.clienteNombre} {c.clienteApellidos}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className='flex items-center gap-2'>
+                              <Building2 className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                              <p className='truncate'>{c.empresa}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <p className='truncate'>{c.local}</p>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant='secondary' className='text-xs'>
+                              {c.tarifa}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900'>
+                            <Button
+                              size='sm'
+                              onClick={() => handleSelectContrato(c.contratoId)}
+                              className='bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-3 text-xs'
+                            >
+                              Seleccionar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </ScrollArea>
+              </div>
+
+              {/* Información de resultados */}
+              {contratosFiltrados.length > 0 && (
+                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                  <span>
+                    Mostrando {contratosFiltrados.length} de{' '}
+                    {contratosDisponibles.length} contratos
+                  </span>
+                  <span className='hidden sm:inline'>
+                    💡 Desplácese horizontalmente para ver más columnas
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>

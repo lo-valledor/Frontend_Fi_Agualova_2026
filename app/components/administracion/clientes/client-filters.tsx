@@ -371,7 +371,7 @@ export function ClientFiltersComponent({
                       {filters.tieneEmail && filters.tieneEmail !== 'all' && (
                         <Badge
                           variant='outline'
-                          className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800'
+                          className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800 text-xs sm:text-sm'
                         >
                           Email: {filters.tieneEmail === 'true' ? 'Con' : 'Sin'}
                           <Button

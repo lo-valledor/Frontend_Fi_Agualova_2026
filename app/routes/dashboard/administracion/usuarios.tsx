@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
 import UsuariosComponent from '~/components/administracion/usuarios/usuarios-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
@@ -35,4 +36,8 @@ export default function Usuarios({ loaderData }: { loaderData: LoaderData }) {
       <UsuariosComponent usuarios={usuarios} />
     </div>
   );
+}
+
+export function hydrateFallback() {
+  return <AdministracionHydrateFallback />;
 }

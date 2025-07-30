@@ -3,6 +3,7 @@ import {
   ChevronRight,
   FileText,
   Settings,
+  Settings2,
   Users,
   Wrench,
 } from 'lucide-react';
@@ -239,6 +240,21 @@ const data = {
         {
           title: 'Ver Facturas',
           url: '/dashboard/reportes/ver-facturas',
+        },
+      ],
+    },
+    {
+      title: 'Configuración	',
+      url: '#',
+      icon: Settings2,
+      items: [
+        {
+          title: 'Roles y Permisos',
+          url: '/dashboard/configuracion/roles-permisos',
+        },
+        {
+          title: 'Perfil',
+          url: '/dashboard/configuracion/perfil',
         },
       ],
     },
