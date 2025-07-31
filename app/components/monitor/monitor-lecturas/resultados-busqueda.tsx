@@ -49,13 +49,6 @@ import {
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '~/components/ui/sheet';
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -219,20 +212,20 @@ const MeterCard = ({
     <Card
       className={`overflow-hidden transition-all duration-300 hover:shadow-md border-l-4 ${status.borderColor}`}
     >
-      <CardContent className='p-2'>
+      <CardContent className='p-2 sm:p-3'>
         <div className='flex justify-between items-start'>
-          <div className='flex items-center gap-1'>
+          <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
             <StatusIndicator status={status} size='sm' />
-            <div>
-              <div className='font-medium text-xs'>{medidor.nSerie}</div>
+            <div className='min-w-0'>
+              <div className='font-medium text-xs truncate'>{medidor.nSerie}</div>
               <div className='text-[10px] text-muted-foreground'>
                 ID: {medidor.id}
               </div>
             </div>
           </div>
 
-          <Sheet>
-            <SheetTrigger asChild>
+          <Dialog>
+            <DialogTrigger asChild>
               <Button
                 variant='ghost'
                 size='sm'
@@ -247,33 +240,35 @@ const MeterCard = ({
               >
                 <Eye className='h-3 w-3' />
               </Button>
-            </SheetTrigger>
-            <SheetContent className='overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl'>
-              <SheetHeader className='border-b'>
-                <SheetTitle>
-                  <div className='flex items-center gap-3 rounded-lg p-4'>
+            </DialogTrigger>
+            <DialogContent className='max-w-[95vw] w-full max-h-[95vh] h-auto sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-hidden flex flex-col'>
+              <DialogHeader className='shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6'>
+                <DialogTitle className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
+                  <div className='flex items-center gap-2 sm:gap-3'>
                     <div
-                      className={`p-2 rounded-lg ${status.bgColor} text-white`}
+                      className={`p-1.5 sm:p-2 rounded-lg ${status.bgColor} text-white`}
                     >
                       {status.icon}
                     </div>
                     <div>
-                      <h2 className='text-xl font-semibold tracking-tight'>
+                      <h2 className='text-lg sm:text-xl font-semibold tracking-tight'>
                         Detalle de Lectura
                       </h2>
-                      <p className='text-sm text-muted-foreground mt-1'>
+                      <p className='text-xs sm:text-sm text-muted-foreground mt-1'>
                         ID: {medidor.id} | Medidor: {medidor.nSerie}
                       </p>
                     </div>
-                    <Badge className={status.bgColor}>{status.label}</Badge>
                   </div>
-                </SheetTitle>
-              </SheetHeader>
-              <div className='pt-2'>
-                <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
+                  <Badge className={`${status.bgColor} text-xs sm:text-sm`}>{status.label}</Badge>
+                </DialogTitle>
+              </DialogHeader>
+              <div className='flex-1 overflow-y-auto'>
+                <div className='p-3 sm:p-6'>
+                  <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
+                </div>
               </div>
-            </SheetContent>
-          </Sheet>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className='mt-2 grid grid-cols-2 gap-1 text-xs'>
@@ -331,8 +326,8 @@ const MeterRowDetailed = ({
   return (
     <div
       className={cn(
-        'group grid items-center gap-4 p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 border-l-4',
-        'grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]',
+        'group grid items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 border-l-4',
+        'grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]',
         status.borderColor
       )}
     >
@@ -342,11 +337,25 @@ const MeterRowDetailed = ({
         <div className='min-w-0'>
           <div className='font-medium text-sm truncate'>{medidor.nSerie}</div>
           <div className='text-xs text-muted-foreground'>ID: {medidor.id}</div>
+          {/* Mobile-only additional info */}
+          <div className='sm:hidden flex items-center gap-2 mt-1'>
+            <Badge
+              variant='outline'
+              className={cn(
+                'text-xs',
+                status.borderColor,
+                status.textColor
+              )}
+            >
+              <span className='mr-1'>{status.icon}</span>
+              <span className='truncate'>{medidor.clave || status.label}</span>
+            </Badge>
+          </div>
         </div>
       </div>
 
       {/* Lectura */}
-      <div className='text-left'>
+      <div className='hidden sm:block text-left'>
         <div className='text-xs text-muted-foreground'>Lectura</div>
         <div className='font-semibold text-sm'>
           {medidor.ultimaLectura || '-'}
@@ -354,13 +363,13 @@ const MeterRowDetailed = ({
       </div>
 
       {/* Consumo */}
-      <div className='text-left'>
+      <div className='hidden sm:block text-left'>
         <div className='text-xs text-muted-foreground'>Consumo</div>
         <div className='font-semibold text-sm'>{medidor.consumo || '0'}</div>
       </div>
 
       {/* Fecha */}
-      <div className='min-w-0 text-left'>
+      <div className='hidden sm:block min-w-0 text-left'>
         <div className='text-xs text-muted-foreground'>Fecha</div>
         <div className='text-sm font-medium truncate'>
           {medidor.fechaLectura
@@ -374,7 +383,7 @@ const MeterRowDetailed = ({
       </div>
 
       {/* Estado */}
-      <div className='flex justify-start'>
+      <div className='hidden sm:flex justify-start'>
         <Badge
           variant='outline'
           className={cn(
@@ -390,8 +399,8 @@ const MeterRowDetailed = ({
 
       {/* Acción */}
       <div className='flex justify-end'>
-        <Sheet>
-          <SheetTrigger asChild>
+        <Dialog>
+          <DialogTrigger asChild>
             <Button
               variant='ghost'
               size='sm'
@@ -406,33 +415,35 @@ const MeterRowDetailed = ({
             >
               <Eye className='h-4 w-4' />
             </Button>
-          </SheetTrigger>
-          <SheetContent className='overflow-y-auto w-full sm:max-w-xl md:max-w-2xl lg:max-w-4xl'>
-            <SheetHeader className='border-b'>
-              <SheetTitle>
-                <div className='flex items-center gap-3 rounded-lg p-4'>
+          </DialogTrigger>
+          <DialogContent className='max-w-[95vw] w-full max-h-[95vh] h-auto sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-hidden flex flex-col'>
+            <DialogHeader className='shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6'>
+              <DialogTitle className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
+                <div className='flex items-center gap-2 sm:gap-3'>
                   <div
-                    className={cn('p-2 rounded-lg text-white', status.bgColor)}
+                    className={cn('p-1.5 sm:p-2 rounded-lg text-white', status.bgColor)}
                   >
                     {status.icon}
                   </div>
                   <div>
-                    <h2 className='text-xl font-semibold tracking-tight'>
+                    <h2 className='text-lg sm:text-xl font-semibold tracking-tight'>
                       Detalle de Lectura
                     </h2>
-                    <p className='text-sm text-muted-foreground mt-1'>
+                    <p className='text-xs sm:text-sm text-muted-foreground mt-1'>
                       ID: {medidor.id} | Medidor: {medidor.nSerie}
                     </p>
                   </div>
-                  <Badge className={status.bgColor}>{status.label}</Badge>
                 </div>
-              </SheetTitle>
-            </SheetHeader>
-            <div className='pt-2'>
-              <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
+                <Badge className={cn(status.bgColor, 'text-xs sm:text-sm')}>{status.label}</Badge>
+              </DialogTitle>
+            </DialogHeader>
+            <div className='flex-1 overflow-y-auto'>
+              <div className='p-3 sm:p-6'>
+                <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
+              </div>
             </div>
-          </SheetContent>
-        </Sheet>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
@@ -771,101 +782,101 @@ export default function ResultadosBusqueda({
         <div className='space-y-6'>
           {/* Quick Stats Summary (if we have data) */}
           {results.nichos.length > 0 && (
-            <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4'>
+            <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4'>
               {(() => {
                 const stats = calculateTotalStats(results.nichos);
                 return (
                   <>
                     <Card>
-                      <CardContent className='flex items-center justify-between p-6'>
+                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
                         <div>
-                          <p className='text-sm font-medium text-muted-foreground'>
-                            Total Medidores
+                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
+                            <span className='hidden sm:inline'>Total </span>Medidores
                           </p>
-                          <h3 className='text-2xl font-bold mt-1'>
+                          <h3 className='text-lg sm:text-2xl font-bold mt-1'>
                             {stats.total}
                           </h3>
                         </div>
-                        <Grid3X3 className='h-8 w-8 text-muted-foreground' />
+                        <Grid3X3 className='h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground' />
                       </CardContent>
                     </Card>
 
                     <Card className='border-red-200 dark:border-red-900'>
-                      <CardContent className='flex items-center justify-between p-6'>
+                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
                         <div>
-                          <p className='text-sm font-medium text-muted-foreground'>
+                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
                             Críticos
                           </p>
-                          <h3 className='text-2xl font-bold mt-1 text-red-600 dark:text-red-400'>
+                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-red-600 dark:text-red-400'>
                             {stats.critical}
                           </h3>
                         </div>
-                        <div className='h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center'>
-                          <AlertCircle className='h-5 w-5 text-red-500' />
+                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center'>
+                          <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-red-500' />
                         </div>
                       </CardContent>
                     </Card>
 
                     <Card className='border-orange-200 dark:border-orange-900'>
-                      <CardContent className='flex items-center justify-between p-6'>
+                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
                         <div>
-                          <p className='text-sm font-medium text-muted-foreground'>
+                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
                             Relevantes
                           </p>
-                          <h3 className='text-2xl font-bold mt-1 text-orange-600 dark:text-orange-400'>
+                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-orange-600 dark:text-orange-400'>
                             {stats.warning}
                           </h3>
                         </div>
-                        <div className='h-8 w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center'>
-                          <AlertTriangle className='h-5 w-5 text-orange-500' />
+                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center'>
+                          <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
                         </div>
                       </CardContent>
                     </Card>
 
                     <Card className='border-yellow-200 dark:border-yellow-900'>
-                      <CardContent className='flex items-center justify-between p-6'>
+                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
                         <div>
-                          <p className='text-sm font-medium text-muted-foreground'>
+                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
                             Informativos
                           </p>
-                          <h3 className='text-2xl font-bold mt-1 text-yellow-600 dark:text-yellow-400'>
+                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-yellow-600 dark:text-yellow-400'>
                             {stats.info}
                           </h3>
                         </div>
-                        <div className='h-8 w-8 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center'>
-                          <Info className='h-5 w-5 text-yellow-500' />
+                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center'>
+                          <Info className='h-4 w-4 sm:h-5 sm:w-5 text-yellow-500' />
                         </div>
                       </CardContent>
                     </Card>
 
                     <Card className='border-gray-200 dark:border-gray-900'>
-                      <CardContent className='flex items-center justify-between p-6'>
+                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
                         <div>
-                          <p className='text-sm font-medium text-muted-foreground'>
+                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
                             Sin Lectura
                           </p>
-                          <h3 className='text-2xl font-bold mt-1 text-gray-600 dark:text-gray-400'>
+                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-gray-600 dark:text-gray-400'>
                             {stats.sinlec}
                           </h3>
                         </div>
-                        <div className='h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center'>
-                          <Info className='h-5 w-5 text-gray-500' />
+                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center'>
+                          <Info className='h-4 w-4 sm:h-5 sm:w-5 text-gray-500' />
                         </div>
                       </CardContent>
                     </Card>
 
                     <Card className='border-green-200 dark:border-green-900'>
-                      <CardContent className='flex items-center justify-between p-6'>
+                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
                         <div>
-                          <p className='text-sm font-medium text-muted-foreground'>
+                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
                             Correctas
                           </p>
-                          <h3 className='text-2xl font-bold mt-1 text-green-600 dark:text-green-400'>
+                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-green-600 dark:text-green-400'>
                             {stats.normal}
                           </h3>
                         </div>
-                        <div className='h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
-                          <RefreshCw className='h-5 w-5 text-green-500' />
+                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
+                          <RefreshCw className='h-4 w-4 sm:h-5 sm:w-5 text-green-500' />
                         </div>
                       </CardContent>
                     </Card>
@@ -1215,7 +1226,7 @@ export default function ResultadosBusqueda({
                                       )}
                                     </div>
                                   ) : (
-                                    <div className='grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2'>
+                                    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2 sm:gap-3'>
                                       {fila.medidores.map(
                                         (medidor: Medidor) => {
                                           if (

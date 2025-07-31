@@ -168,41 +168,41 @@ export function AdminAnalytics() {
   };
 
   return (
-    <div className='grid gap-4 md:grid-cols-2'>
+    <div className='grid gap-3 sm:gap-4 sm:grid-cols-1 lg:grid-cols-2'>
       {/* Contratos por Tipo */}
       <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <FileText className='h-5 w-5 text-blue-500' />
+        <CardHeader className='p-3 sm:p-6'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <FileText className='h-4 w-4 sm:h-5 sm:w-5 text-blue-500' />
             Contratos por Tipo
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm'>
             Distribución de contratos según su tipo de servicio
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className='p-3 sm:p-6'>
           {analyticsData.loading ? (
-            <div className='space-y-3'>
+            <div className='space-y-2 sm:space-y-3'>
               {[1, 2, 3].map(i => (
                 <div key={i} className='flex justify-between items-center'>
-                  <div className='h-4 bg-muted animate-pulse rounded w-24'></div>
-                  <div className='h-6 bg-muted animate-pulse rounded w-16'></div>
+                  <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-20 sm:w-24'></div>
+                  <div className='h-5 sm:h-6 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className='space-y-3'>
+            <div className='space-y-2 sm:space-y-3'>
               {Object.entries(analyticsData.contratosPorTipo)
                 .sort(([, a], [, b]) => b - a)
                 .map(([tipo, cantidad], index) => (
                   <div key={tipo} className='flex justify-between items-center'>
-                    <div className='flex items-center gap-2'>
+                    <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                       <div
-                        className={`w-3 h-3 rounded-full ${getColorForIndex(index)}`}
+                        className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
                       ></div>
-                      <span className='text-sm font-medium'>{tipo}</span>
+                      <span className='text-xs sm:text-sm font-medium truncate'>{tipo}</span>
                     </div>
-                    <div className='text-xl font-bold'>
+                    <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                       <NumberFlow
                         value={cantidad}
                         plugins={[continuous]}
@@ -218,33 +218,33 @@ export function AdminAnalytics() {
 
       {/* Clientes por Tipo */}
       <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Users className='h-5 w-5 text-green-500' />
+        <CardHeader className='p-3 sm:p-6'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <Users className='h-4 w-4 sm:h-5 sm:w-5 text-green-500' />
             Clientes por Tipo
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm'>
             Clasificación entre empresas y personas naturales
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className='p-3 sm:p-6'>
           {analyticsData.loading ? (
-            <div className='space-y-4'>
+            <div className='space-y-3 sm:space-y-4'>
               {[1, 2].map(i => (
                 <div key={i} className='flex justify-between items-center'>
-                  <div className='h-4 bg-muted animate-pulse rounded w-20'></div>
-                  <div className='h-6 bg-muted animate-pulse rounded w-16'></div>
+                  <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-16 sm:w-20'></div>
+                  <div className='h-5 sm:h-6 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className='space-y-4'>
+            <div className='space-y-3 sm:space-y-4'>
               <div className='flex justify-between items-center'>
-                <div className='flex items-center gap-2'>
-                  <Building className='h-4 w-4 text-blue-500' />
-                  <span className='text-sm font-medium'>Empresas</span>
+                <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+                  <Building className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0' />
+                  <span className='text-xs sm:text-sm font-medium'>Empresas</span>
                 </div>
-                <div className='text-xl font-bold'>
+                <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                   <NumberFlow
                     value={analyticsData.clientesPorTipo.empresa}
                     plugins={[continuous]}
@@ -253,11 +253,11 @@ export function AdminAnalytics() {
                 </div>
               </div>
               <div className='flex justify-between items-center'>
-                <div className='flex items-center gap-2'>
-                  <User className='h-4 w-4 text-orange-500' />
-                  <span className='text-sm font-medium'>Personas</span>
+                <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+                  <User className='h-3 w-3 sm:h-4 sm:w-4 text-orange-500 flex-shrink-0' />
+                  <span className='text-xs sm:text-sm font-medium'>Personas</span>
                 </div>
-                <div className='text-xl font-bold'>
+                <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                   <NumberFlow
                     value={analyticsData.clientesPorTipo.persona}
                     plugins={[continuous]}
@@ -272,52 +272,52 @@ export function AdminAnalytics() {
 
       {/* Medidores por Tipo y Estado */}
       <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Activity className='h-5 w-5 text-purple-500' />
+        <CardHeader className='p-3 sm:p-6'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <Activity className='h-4 w-4 sm:h-5 sm:w-5 text-purple-500' />
             Medidores por Tipo y Estado
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm'>
             Distribución de medidores según tipo y estado operativo
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className='p-3 sm:p-6'>
           {analyticsData.loading ? (
-            <div className='space-y-4'>
-              <div className='space-y-2'>
-                <div className='h-4 bg-muted animate-pulse rounded w-20'></div>
+            <div className='space-y-3 sm:space-y-4'>
+              <div className='space-y-1 sm:space-y-2'>
+                <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-16 sm:w-20'></div>
                 <div className='space-y-1'>
                   {[1, 2].map(i => (
                     <div key={i} className='flex justify-between'>
-                      <div className='h-3 bg-muted animate-pulse rounded w-16'></div>
-                      <div className='h-3 bg-muted animate-pulse rounded w-8'></div>
+                      <div className='h-2 sm:h-3 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
+                      <div className='h-2 sm:h-3 bg-muted animate-pulse rounded w-6 sm:w-8'></div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           ) : (
-            <div className='space-y-4'>
+            <div className='space-y-3 sm:space-y-4'>
               {/* Por Tipo */}
               <div>
-                <h4 className='text-sm font-semibold mb-2 flex items-center gap-1'>
-                  <Settings className='h-3 w-3' />
+                <h4 className='text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2 flex items-center gap-1'>
+                  <Settings className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
                   Por Tipo
                 </h4>
-                <div className='space-y-2'>
+                <div className='space-y-1.5 sm:space-y-2'>
                   {Object.entries(analyticsData.medidoresPorTipo)
                     .sort(([, a], [, b]) => b - a)
                     .slice(0, 3)
                     .map(([tipo, cantidad], index) => (
                       <div
                         key={tipo}
-                        className='flex justify-between items-center text-sm'
+                        className='flex justify-between items-center text-xs sm:text-sm'
                       >
-                        <div className='flex items-center gap-2'>
+                        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                           <div
-                            className={`w-2 h-2 rounded-full ${getColorForIndex(index)}`}
+                            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
                           ></div>
-                          <span>{tipo}</span>
+                          <span className='truncate'>{tipo}</span>
                         </div>
                         <NumberFlow
                           value={cantidad}
@@ -331,21 +331,21 @@ export function AdminAnalytics() {
 
               {/* Por Estado */}
               <div>
-                <h4 className='text-sm font-semibold mb-2 flex items-center gap-1'>
-                  <CheckCircle className='h-3 w-3' />
+                <h4 className='text-xs sm:text-sm font-semibold mb-1.5 sm:mb-2 flex items-center gap-1'>
+                  <CheckCircle className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
                   Por Estado
                 </h4>
-                <div className='space-y-2'>
+                <div className='space-y-1.5 sm:space-y-2'>
                   {Object.entries(analyticsData.medidoresPorEstado)
                     .sort(([, a], [, b]) => b - a)
                     .map(([estado, cantidad]) => (
                       <div
                         key={estado}
-                        className='flex justify-between items-center text-sm'
+                        className='flex justify-between items-center text-xs sm:text-sm'
                       >
                         <Badge
                           variant={getBadgeVariant(estado)}
-                          className='text-xs'
+                          className='text-xs px-1.5 sm:px-2 py-0.5 truncate max-w-[100px] sm:max-w-none'
                         >
                           {estado}
                         </Badge>
@@ -365,27 +365,27 @@ export function AdminAnalytics() {
 
       {/* Acometidas por Sector */}
       <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Power className='h-5 w-5 text-orange-500' />
+        <CardHeader className='p-3 sm:p-6'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <Power className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
             Acometidas por Sector
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm'>
             Distribución geográfica de puntos de suministro
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className='p-3 sm:p-6'>
           {analyticsData.loading ? (
-            <div className='space-y-3'>
+            <div className='space-y-2 sm:space-y-3'>
               {[1, 2, 3, 4].map(i => (
                 <div key={i} className='flex justify-between items-center'>
-                  <div className='h-4 bg-muted animate-pulse rounded w-28'></div>
-                  <div className='h-6 bg-muted animate-pulse rounded w-12'></div>
+                  <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-24 sm:w-28'></div>
+                  <div className='h-5 sm:h-6 bg-muted animate-pulse rounded w-10 sm:w-12'></div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className='space-y-3'>
+            <div className='space-y-2 sm:space-y-3'>
               {Object.entries(analyticsData.acometidasPorSector)
                 .sort(([, a], [, b]) => b - a)
                 .map(([sector, cantidad], index) => (
@@ -393,13 +393,13 @@ export function AdminAnalytics() {
                     key={sector}
                     className='flex justify-between items-center'
                   >
-                    <div className='flex items-center gap-2'>
+                    <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                       <div
-                        className={`w-3 h-3 rounded-full ${getColorForIndex(index)}`}
+                        className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
                       ></div>
-                      <span className='text-sm font-medium'>{sector}</span>
+                      <span className='text-xs sm:text-sm font-medium truncate'>{sector}</span>
                     </div>
-                    <div className='text-xl font-bold'>
+                    <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                       <NumberFlow
                         value={cantidad}
                         plugins={[continuous]}

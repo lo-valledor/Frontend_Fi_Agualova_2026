@@ -24,42 +24,44 @@ export function SiteHeader() {
   const { user } = useAuth();
 
   return (
-    <header className='group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear'>
-      <div className='flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6'>
-        <SidebarTrigger className='-ml-1' />
+    <header className='group-has-data-[collapsible=icon]/sidebar-wrapper:h-10 sm:group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-10 sm:h-12 shrink-0 items-center gap-1 sm:gap-2 border-b transition-[width,height] ease-linear'>
+      <div className='flex w-full items-center gap-1 px-2 sm:px-4 lg:gap-2 lg:px-6'>
+        <SidebarTrigger className='-ml-0.5 sm:-ml-1 h-6 w-6 sm:h-8 sm:w-8' />
         <Separator
           orientation='vertical'
-          className='mx-2 data-[orientation=vertical]:h-4'
+          className='mx-1 sm:mx-2 data-[orientation=vertical]:h-3 sm:data-[orientation=vertical]:h-4'
         />
         <div className='flex justify-between w-full items-center'>
-          <h1 className='text-base font-medium'>
+          <h1 className='text-sm sm:text-base font-medium'>
             <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbLink href='/dashboard'>Dashboard</BreadcrumbLink>
-                <BreadcrumbSeparator />
+              <BreadcrumbList className='text-xs sm:text-sm'>
+                <BreadcrumbLink href='/dashboard' className='truncate max-w-[60px] sm:max-w-none'>Dashboard</BreadcrumbLink>
+                <BreadcrumbSeparator className='hidden sm:block' />
                 {/* Renderiza los items del contexto */}
                 {breadcrumbItems?.map((item, index) => (
                   <React.Fragment key={index}>
-                    <BreadcrumbItem></BreadcrumbItem>
-                    <BreadcrumbItem>
+                    <BreadcrumbItem className='hidden sm:block'></BreadcrumbItem>
+                    <BreadcrumbItem className={index === breadcrumbItems.length - 1 ? 'block' : 'hidden sm:block'}>
                       {item.href ? (
-                        <BreadcrumbLink href={item.href}>
+                        <BreadcrumbLink href={item.href} className='truncate max-w-[100px] sm:max-w-none'>
                           {item.label}
                         </BreadcrumbLink>
                       ) : (
-                        <BreadcrumbPage>{item.label}</BreadcrumbPage>
+                        <BreadcrumbPage className='truncate max-w-[100px] sm:max-w-none'>{item.label}</BreadcrumbPage>
                       )}
                     </BreadcrumbItem>
                     {index < (breadcrumbItems?.length || 0) - 1 && (
-                      <BreadcrumbSeparator />
+                      <BreadcrumbSeparator className='hidden sm:block' />
                     )}
                   </React.Fragment>
                 ))}
               </BreadcrumbList>
             </Breadcrumb>
           </h1>
-          <div className='flex items-center gap-2 ml-auto'>
-            <ModeToggle />
+          <div className='flex items-center gap-1 sm:gap-2 ml-auto'>
+            <div className='hidden sm:block'>
+              <ModeToggle />
+            </div>
             {user && (
               <NavUser
                 user={{

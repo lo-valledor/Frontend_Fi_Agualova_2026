@@ -94,15 +94,15 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
   if (loading) {
     return (
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
         {[...Array(4)].map((_, i) => (
           <div
             key={i}
-            className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-4 animate-pulse'
+            className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-3 sm:p-4 animate-pulse'
           >
-            <div className='h-4 bg-gray-200 dark:bg-slate-700 rounded w-1/2 mb-2'></div>
-            <div className='h-3 bg-gray-200 dark:bg-slate-700 rounded w-3/4 mb-4'></div>
-            <div className='h-8 bg-gray-200 dark:bg-slate-700 rounded w-1/3'></div>
+            <div className='h-3 sm:h-4 bg-gray-200 dark:bg-slate-700 rounded w-1/2 mb-2'></div>
+            <div className='h-2 sm:h-3 bg-gray-200 dark:bg-slate-700 rounded w-3/4 mb-3 sm:mb-4'></div>
+            <div className='h-6 sm:h-8 bg-gray-200 dark:bg-slate-700 rounded w-1/3'></div>
           </div>
         ))}
       </div>
@@ -112,9 +112,9 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
   if (!summary) {
     return (
       <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80'>
-        <div className='text-center py-8'>
-          <Activity className='h-12 w-12 mx-auto mb-3 opacity-50' />
-          <p className='text-gray-500 dark:text-gray-400'>
+        <div className='text-center py-6 sm:py-8'>
+          <Activity className='h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 opacity-50' />
+          <p className='text-sm sm:text-base text-gray-500 dark:text-gray-400'>
             No hay datos de actividad disponibles
           </p>
         </div>
@@ -123,56 +123,56 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
   }
 
   return (
-    <div className='space-y-8'>
+    <div className='space-y-6 sm:space-y-8'>
       {/* Métricas principales */}
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
         {/* Card métrica */}
-        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-4 flex flex-col gap-2'>
+        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-3 sm:p-4 flex flex-col gap-2'>
           <div className='flex items-center justify-between'>
             <span className='text-xs font-medium text-muted-foreground'>
               Total Acciones
             </span>
-            <Activity className='h-4 w-4 text-muted-foreground' />
+            <Activity className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
           </div>
-          <div className='text-2xl font-bold'>{summary.totalActions}</div>
+          <div className='text-xl sm:text-2xl font-bold'>{summary.totalActions}</div>
           <span className='text-xs text-muted-foreground'>
             Todas las actividades registradas
           </span>
         </div>
-        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-4 flex flex-col gap-2'>
+        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-3 sm:p-4 flex flex-col gap-2'>
           <div className='flex items-center justify-between'>
             <span className='text-xs font-medium text-muted-foreground'>
               Última Actividad
             </span>
-            <Clock className='h-4 w-4 text-muted-foreground' />
+            <Clock className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
           </div>
-          <div className='text-sm font-medium'>
+          <div className='text-xs sm:text-sm font-medium'>
             {summary.lastActivity ? formatTimeAgo(summary.lastActivity) : 'N/A'}
           </div>
           <span className='text-xs text-muted-foreground'>
             Actividad más reciente
           </span>
         </div>
-        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-4 flex flex-col gap-2'>
+        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-3 sm:p-4 flex flex-col gap-2'>
           <div className='flex items-center justify-between'>
             <span className='text-xs font-medium text-muted-foreground'>
               Usuarios Activos
             </span>
-            <Users className='h-4 w-4 text-muted-foreground' />
+            <Users className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
           </div>
-          <div className='text-2xl font-bold'>{topUsers.length}</div>
+          <div className='text-xl sm:text-2xl font-bold'>{topUsers.length}</div>
           <span className='text-xs text-muted-foreground'>
             Usuarios con actividad reciente
           </span>
         </div>
-        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-4 flex flex-col gap-2'>
+        <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-3 sm:p-4 flex flex-col gap-2'>
           <div className='flex items-center justify-between'>
             <span className='text-xs font-medium text-muted-foreground'>
               Módulos Usados
             </span>
-            <BarChart3 className='h-4 w-4 text-muted-foreground' />
+            <BarChart3 className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
           </div>
-          <div className='text-2xl font-bold'>
+          <div className='text-xl sm:text-2xl font-bold'>
             {Object.keys(summary.mostUsedModules).length}
           </div>
           <span className='text-xs text-muted-foreground'>
@@ -183,14 +183,14 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
       {/* Módulos más utilizados */}
       <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80'>
-        <div className='p-4'>
+        <div className='p-3 sm:p-4'>
           <div className='flex items-center gap-2 mb-2'>
-            <TrendingUp className='h-5 w-5 opacity-70' />
-            <span className='font-semibold text-sm'>
+            <TrendingUp className='h-4 w-4 sm:h-5 sm:w-5 opacity-70' />
+            <span className='font-semibold text-xs sm:text-sm'>
               Módulos Más Utilizados
             </span>
           </div>
-          <div className='space-y-2'>
+          <div className='space-y-1 sm:space-y-2'>
             {Object.entries(summary.mostUsedModules)
               .sort(([, a], [, b]) => b - a)
               .slice(0, 5)
@@ -201,12 +201,12 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
                 >
                   <Badge
                     variant='outline'
-                    className={getModuleColor(module) + ' text-xs px-2 py-0.5'}
+                    className={getModuleColor(module) + ' text-xs px-1 sm:px-2 py-0.5'}
                   >
-                    {module}
+                    <span className='truncate max-w-[80px] sm:max-w-none'>{module}</span>
                   </Badge>
-                  <div className='text-right'>
-                    <div className='text-base font-semibold'>{count}</div>
+                  <div className='text-right flex-shrink-0'>
+                    <div className='text-sm sm:text-base font-semibold'>{count}</div>
                     <div className='text-xs text-muted-foreground'>
                       acciones
                     </div>
@@ -219,30 +219,30 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
 
       {/* Usuarios más activos */}
       <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80'>
-        <div className='p-4'>
+        <div className='p-3 sm:p-4'>
           <div className='flex items-center gap-2 mb-2'>
-            <Users className='h-5 w-5 opacity-70' />
-            <span className='font-semibold text-sm'>Usuarios Más Activos</span>
+            <Users className='h-4 w-4 sm:h-5 sm:w-5 opacity-70' />
+            <span className='font-semibold text-xs sm:text-sm'>Usuarios Más Activos</span>
           </div>
-          <div className='space-y-2'>
+          <div className='space-y-1 sm:space-y-2'>
             {topUsers.map((user, index) => (
               <div
                 key={user.userId}
                 className='flex items-center justify-between p-2 rounded-lg border border-border dark:border-slate-800 bg-muted/50 dark:bg-slate-800/40'
               >
-                <div className='flex items-center gap-2'>
-                  <div className='w-7 h-7 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-xs font-medium'>
+                <div className='flex items-center gap-2 min-w-0'>
+                  <div className='w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center text-xs font-medium flex-shrink-0'>
                     {index + 1}
                   </div>
-                  <div>
-                    <div className='font-medium text-sm'>{user.username}</div>
+                  <div className='min-w-0'>
+                    <div className='font-medium text-xs sm:text-sm truncate'>{user.username}</div>
                     <div className='text-xs text-muted-foreground'>
                       Usuario activo
                     </div>
                   </div>
                 </div>
-                <div className='text-right'>
-                  <div className='text-base font-semibold'>{user.actions}</div>
+                <div className='text-right flex-shrink-0'>
+                  <div className='text-sm sm:text-base font-semibold'>{user.actions}</div>
                   <div className='text-xs text-muted-foreground'>acciones</div>
                 </div>
               </div>
@@ -257,7 +257,7 @@ export const ActivityStats: React.FC<ActivityStatsProps> = ({
           variant='ghost'
           size='sm'
           onClick={loadStats}
-          className='rounded-full px-4'
+          className='rounded-full px-3 sm:px-4 text-xs sm:text-sm'
         >
           Actualizar Estadísticas
         </Button>

@@ -232,33 +232,34 @@ export default function ExportarLecturasComponent({
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 to-sky-50 dark:from-slate-950 dark:to-sky-950/30'>
-      <div className='container mx-auto p-2 space-y-3'>
+      <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-3 sm:space-y-4'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
-        {/* Modern Header */}
-        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
-          <div className='flex-1'>
-            <div className='flex items-center gap-3 justify-between'>
-              <div className='flex items-center gap-3'>
-                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-                  Exportar Lecturas
-                </h1>
-              </div>
+        {/* Modern Header - Responsive */}
+        <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0 py-1 border-b border-slate-200 dark:border-slate-700'>
+          <div className='space-y-2'>
+            <div className='flex items-center gap-3'>
+              <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-sky-900 dark:text-sky-100'>
+                Exportar Lecturas
+              </h1>
             </div>
+            <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
+              Exporta lecturas de medidores en formato Excel con filtros personalizados
+            </p>
           </div>
         </div>
 
         {/* Main Control Panel */}
         <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-          <CardContent className='p-4 space-y-4'>
+          <CardContent className='p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
             {/* Período Selection - Required */}
             <div className='space-y-3'>
               <div className='flex items-center gap-2'>
-                <div className='w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center'>
-                  <Calendar className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
+                <div className='w-6 h-6 sm:w-8 sm:h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center'>
+                  <Calendar className='w-3 h-3 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400' />
                 </div>
                 <div className='flex-1'>
-                  <h3 className='font-semibold text-base text-slate-900 dark:text-slate-100'>
+                  <h3 className='font-semibold text-sm sm:text-base text-slate-900 dark:text-slate-100'>
                     Período de Exportación
                   </h3>
                   <p className='text-xs text-muted-foreground'>
@@ -278,7 +279,7 @@ export default function ExportarLecturasComponent({
                     setSelectedPeriodo(periodo || null);
                   }}
                 >
-                  <SelectTrigger className='w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'>
+                  <SelectTrigger className='w-full bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 h-10 sm:h-11'>
                     <SelectValue placeholder='Seleccionar Periodo' />
                   </SelectTrigger>
                   <SelectContent>
@@ -296,21 +297,21 @@ export default function ExportarLecturasComponent({
               </div>
             </div>
 
-            {/* Export Action */}
-            <div className='flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t'>
-              <div className='flex items-center gap-2'>
+            {/* Export Action - Responsive */}
+            <div className='flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 pt-3 border-t'>
+              <div className='flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2'>
                 <Button
                   variant='ghost'
                   size='sm'
                   onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                  className='text-muted-foreground hover:text-foreground'
+                  className='text-muted-foreground hover:text-foreground h-8 sm:h-9'
                 >
-                  <Filter className='w-4 h-4 mr-1' />
-                  <span className='text-sm'>Filtros Opcionales</span>
+                  <Filter className='w-3 h-3 sm:w-4 sm:h-4 mr-1' />
+                  <span className='text-xs sm:text-sm'>Filtros Opcionales</span>
                   {isFiltersOpen ? (
-                    <ChevronUp className='w-4 h-4 ml-1' />
+                    <ChevronUp className='w-3 h-3 sm:w-4 sm:h-4 ml-1' />
                   ) : (
-                    <ChevronDown className='w-4 h-4 ml-1' />
+                    <ChevronDown className='w-3 h-3 sm:w-4 sm:h-4 ml-1' />
                   )}
                 </Button>
 
@@ -319,10 +320,10 @@ export default function ExportarLecturasComponent({
                     variant='ghost'
                     size='sm'
                     onClick={handleLimpiarFiltros}
-                    className='text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20'
+                    className='text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950/20 h-8 sm:h-9'
                   >
-                    <Eraser className='w-4 h-4 mr-1' />
-                    <span className='text-sm'>Limpiar Filtros</span>
+                    <Eraser className='w-3 h-3 sm:w-4 sm:h-4 mr-1' />
+                    <span className='text-xs sm:text-sm'>Limpiar Filtros</span>
                   </Button>
                 )}
               </div>
@@ -330,17 +331,17 @@ export default function ExportarLecturasComponent({
               <Button
                 onClick={handleExportar}
                 disabled={!selectedPeriodo || isExporting}
-                className='bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200'
+                className='bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-4 sm:px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200 h-9 sm:h-10 w-full sm:w-auto'
               >
                 {isExporting ? (
                   <>
-                    <Loader2 className='w-4 h-4 mr-2 animate-spin' />
-                    <span className='text-sm'>Exportando...</span>
+                    <Loader2 className='w-3 h-3 sm:w-4 sm:h-4 mr-2 animate-spin' />
+                    <span className='text-xs sm:text-sm'>Exportando...</span>
                   </>
                 ) : (
                   <>
-                    <Download className='w-4 h-4 mr-2' />
-                    <span className='text-sm'>Exportar a Excel</span>
+                    <Download className='w-3 h-3 sm:w-4 sm:h-4 mr-2' />
+                    <span className='text-xs sm:text-sm'>Exportar a Excel</span>
                   </>
                 )}
               </Button>
@@ -353,11 +354,11 @@ export default function ExportarLecturasComponent({
                   {/* Sectores Filter */}
                   <div className='space-y-3'>
                     <div className='flex items-center gap-2'>
-                      <div className='w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center'>
-                        <MapPin className='w-3 h-3 text-blue-600 dark:text-blue-400' />
+                      <div className='w-5 h-5 sm:w-6 sm:h-6 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center'>
+                        <MapPin className='w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600 dark:text-blue-400' />
                       </div>
                       <div>
-                        <h4 className='font-medium text-sm text-slate-900 dark:text-slate-100'>
+                        <h4 className='font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100'>
                           Sectores
                         </h4>
                         <p className='text-[10px] text-muted-foreground'>
@@ -366,7 +367,7 @@ export default function ExportarLecturasComponent({
                       </div>
                     </div>
 
-                    <ScrollArea className='h-28 rounded-lg border bg-slate-50 dark:bg-slate-900/50 p-2'>
+                    <ScrollArea className='h-24 sm:h-28 rounded-lg border bg-slate-50 dark:bg-slate-900/50 p-2'>
                       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2'>
                         {sectores?.map(sector => (
                           <div
@@ -428,11 +429,11 @@ export default function ExportarLecturasComponent({
                   {/* Estados Filter */}
                   <div className='space-y-3'>
                     <div className='flex items-center gap-2'>
-                      <div className='w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center'>
-                        <CheckSquare className='w-3 h-3 text-purple-600 dark:text-purple-400' />
+                      <div className='w-5 h-5 sm:w-6 sm:h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center'>
+                        <CheckSquare className='w-2.5 h-2.5 sm:w-3 sm:h-3 text-purple-600 dark:text-purple-400' />
                       </div>
                       <div>
-                        <h4 className='font-medium text-sm text-slate-900 dark:text-slate-100'>
+                        <h4 className='font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100'>
                           Estados de Lectura
                         </h4>
                         <p className='text-[10px] text-muted-foreground'>
@@ -453,7 +454,7 @@ export default function ExportarLecturasComponent({
                         />
                         <Label
                           htmlFor='estado-normal'
-                          className='cursor-pointer font-medium'
+                          className='cursor-pointer font-medium text-xs sm:text-sm'
                         >
                           Lectura Normal
                         </Label>
@@ -469,7 +470,7 @@ export default function ExportarLecturasComponent({
                         />
                         <Label
                           htmlFor='estado-facturado'
-                          className='cursor-pointer font-medium'
+                          className='cursor-pointer font-medium text-xs sm:text-sm'
                         >
                           Facturado
                         </Label>
@@ -482,7 +483,7 @@ export default function ExportarLecturasComponent({
                           <Badge
                             key={estado}
                             variant='outline'
-                            className='bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-purple-200 dark:border-purple-700'
+                            className='bg-purple-50 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-purple-200 dark:border-purple-700 text-xs'
                           >
                             {estado === 2 ? 'Lectura Normal' : 'Facturado'}
                             <button
@@ -500,11 +501,11 @@ export default function ExportarLecturasComponent({
                   {/* Medidores Filter */}
                   <div className='space-y-3'>
                     <div className='flex items-center gap-2'>
-                      <div className='w-6 h-6 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center'>
-                        <Hash className='w-3 h-3 text-green-600 dark:text-green-400' />
+                      <div className='w-5 h-5 sm:w-6 sm:h-6 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center'>
+                        <Hash className='w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600 dark:text-green-400' />
                       </div>
                       <div>
-                        <h4 className='font-medium text-sm text-slate-900 dark:text-slate-100'>
+                        <h4 className='font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100'>
                           Medidores Específicos
                         </h4>
                         <p className='text-[10px] text-muted-foreground'>
@@ -513,7 +514,7 @@ export default function ExportarLecturasComponent({
                       </div>
                     </div>
 
-                    <div className='flex gap-2'>
+                    <div className='flex flex-col sm:flex-row gap-2'>
                       <Input
                         type='text'
                         placeholder='Ingrese número de serie del medidor'
@@ -525,13 +526,13 @@ export default function ExportarLecturasComponent({
                             handleAddMedidor();
                           }
                         }}
-                        className='flex-1 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                        className='flex-1 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 h-10 sm:h-11 text-xs sm:text-sm'
                       />
                       <Button
                         onClick={handleAddMedidor}
                         disabled={!medidorInput.trim()}
                         variant='outline'
-                        className='border-green-200 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/20'
+                        className='border-green-200 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-950/20 h-10 sm:h-11 text-xs sm:text-sm'
                       >
                         Agregar
                       </Button>

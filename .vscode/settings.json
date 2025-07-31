@@ -48,5 +48,6 @@
     "typescriptreact"
   ],
   "eslint.workingDirectories": ["."],
-  "eslint.format.enable": true
+  "eslint.format.enable": true,
+  "claudeCodeChat.permissions.yoloMode": true
 }

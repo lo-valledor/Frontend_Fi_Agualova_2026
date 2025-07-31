@@ -269,36 +269,36 @@ const AdminAnalyticsComponent = () => {
     analyticsData.clientesPorTipo.persona;
 
   return (
-    <div className='grid gap-4 md:grid-cols-2'>
+    <div className='grid gap-4 sm:grid-cols-1 lg:grid-cols-2'>
       {/* Contratos por Tipo */}
       <Card className='flex flex-col'>
-        <CardHeader className='items-center pb-0'>
-          <CardTitle className='flex items-center gap-2'>
-            <FileText className='h-5 w-5 text-blue-500' />
+        <CardHeader className='items-center pb-2 sm:pb-0'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <FileText className='h-4 w-4 sm:h-5 sm:w-5 text-blue-500' />
             Contratos por Tipo
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm text-center'>
             Distribución de contratos según su tipo de servicio
           </CardDescription>
         </CardHeader>
         <CardContent className='flex-1 pb-0'>
           {analyticsData.loading ? (
-            <div className='flex items-center justify-center h-[250px]'>
+            <div className='flex items-center justify-center h-[200px] sm:h-[250px]'>
               <div className='space-y-3 w-full'>
                 {[1, 2, 3].map(i => (
                   <div key={i} className='flex justify-between items-center'>
-                    <div className='h-4 bg-muted animate-pulse rounded w-24'></div>
-                    <div className='h-6 bg-muted animate-pulse rounded w-16'></div>
+                    <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-20 sm:w-24'></div>
+                    <div className='h-4 sm:h-6 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className='flex items-center gap-4'>
+            <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
               {/* Gráfico Donut */}
               <ChartContainer
                 config={contratosChartConfig}
-                className='mx-auto aspect-square max-h-[200px] min-h-[150px]'
+                className='mx-auto aspect-square max-h-[150px] sm:max-h-[200px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
               >
                 <PieChart>
                   <ChartTooltip
@@ -346,22 +346,22 @@ const AdminAnalyticsComponent = () => {
               </ChartContainer>
 
               {/* Lista de datos */}
-              <div className='space-y-2 flex-1 min-w-0'>
+              <div className='space-y-1 sm:space-y-2 flex-1 min-w-0 w-full sm:w-auto'>
                 {chartContratosData.slice(0, 4).map(item => (
                   <div
                     key={item.tipo}
-                    className='flex justify-between items-center'
+                    className='flex justify-between items-center p-2 sm:p-0'
                   >
                     <div className='flex items-center gap-2 min-w-0'>
                       <div
-                        className='w-3 h-3 rounded-full flex-shrink-0'
+                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0'
                         style={{ backgroundColor: item.fill }}
                       ></div>
-                      <span className='text-sm font-medium truncate'>
+                      <span className='text-xs sm:text-sm font-medium truncate'>
                         {item.tipo}
                       </span>
                     </div>
-                    <div className='text-lg font-bold flex-shrink-0'>
+                    <div className='text-sm sm:text-lg font-bold flex-shrink-0'>
                       <NumberFlow
                         value={item.cantidad}
                         plugins={[continuous]}
@@ -378,33 +378,33 @@ const AdminAnalyticsComponent = () => {
 
       {/* Clientes por Tipo */}
       <Card className='flex flex-col'>
-        <CardHeader className='items-center pb-0'>
-          <CardTitle className='flex items-center gap-2'>
-            <Users className='h-5 w-5 text-green-500' />
+        <CardHeader className='items-center pb-2 sm:pb-0'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <Users className='h-4 w-4 sm:h-5 sm:w-5 text-green-500' />
             Clientes por Tipo
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm text-center'>
             Clasificación entre empresas y personas naturales
           </CardDescription>
         </CardHeader>
         <CardContent className='flex-1 pb-0'>
           {analyticsData.loading ? (
-            <div className='flex items-center justify-center h-[250px]'>
-              <div className='space-y-4 w-full'>
+            <div className='flex items-center justify-center h-[200px] sm:h-[250px]'>
+              <div className='space-y-3 sm:space-y-4 w-full'>
                 {[1, 2].map(i => (
                   <div key={i} className='flex justify-between items-center'>
-                    <div className='h-4 bg-muted animate-pulse rounded w-20'></div>
-                    <div className='h-6 bg-muted animate-pulse rounded w-16'></div>
+                    <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-16 sm:w-20'></div>
+                    <div className='h-4 sm:h-6 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className='flex items-center gap-4'>
+            <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
               {/* Gráfico Donut */}
               <ChartContainer
                 config={clientesChartConfig}
-                className='mx-auto aspect-square max-h-[200px] min-h-[150px]'
+                className='mx-auto aspect-square max-h-[150px] sm:max-h-[200px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
               >
                 <PieChart>
                   <ChartTooltip
@@ -452,23 +452,23 @@ const AdminAnalyticsComponent = () => {
               </ChartContainer>
 
               {/* Lista de datos */}
-              <div className='space-y-4 flex-1'>
+              <div className='space-y-3 sm:space-y-4 flex-1 w-full sm:w-auto'>
                 {chartClientesData.map(item => (
                   <div
                     key={item.tipo}
-                    className='flex justify-between items-center'
+                    className='flex justify-between items-center p-2 sm:p-0'
                   >
                     <div className='flex items-center gap-2'>
                       {item.tipo === 'empresas' ? (
-                        <Building className='h-4 w-4 text-blue-500' />
+                        <Building className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500' />
                       ) : (
-                        <User className='h-4 w-4 text-orange-500' />
+                        <User className='h-3 w-3 sm:h-4 sm:w-4 text-orange-500' />
                       )}
-                      <span className='text-sm font-medium'>
+                      <span className='text-xs sm:text-sm font-medium'>
                         {item.tipo === 'empresas' ? 'Empresas' : 'Personas'}
                       </span>
                     </div>
-                    <div className='text-lg font-bold'>
+                    <div className='text-sm sm:text-lg font-bold'>
                       <NumberFlow
                         value={item.cantidad}
                         plugins={[continuous]}
@@ -485,57 +485,57 @@ const AdminAnalyticsComponent = () => {
 
       {/* Medidores por Tipo y Estado */}
       <Card>
-        <CardHeader>
-          <CardTitle className='flex items-center gap-2'>
-            <Activity className='h-5 w-5 text-purple-500' />
+        <CardHeader className='pb-3 sm:pb-6'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <Activity className='h-4 w-4 sm:h-5 sm:w-5 text-purple-500' />
             Medidores por Tipo y Estado
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm'>
             Distribución de medidores según tipo y estado operativo
           </CardDescription>
         </CardHeader>
         <CardContent>
           {analyticsData.loading ? (
-            <div className='space-y-4'>
+            <div className='space-y-3 sm:space-y-4'>
               <div className='space-y-2'>
-                <div className='h-4 bg-muted animate-pulse rounded w-20'></div>
+                <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-16 sm:w-20'></div>
                 <div className='space-y-1'>
                   {[1, 2].map(i => (
                     <div key={i} className='flex justify-between'>
-                      <div className='h-3 bg-muted animate-pulse rounded w-16'></div>
-                      <div className='h-3 bg-muted animate-pulse rounded w-8'></div>
+                      <div className='h-2 sm:h-3 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
+                      <div className='h-2 sm:h-3 bg-muted animate-pulse rounded w-6 sm:w-8'></div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
           ) : (
-            <div className='space-y-4'>
+            <div className='space-y-3 sm:space-y-4'>
               {/* Por Tipo */}
               <div>
-                <h4 className='text-sm font-semibold mb-2 flex items-center gap-1'>
+                <h4 className='text-xs sm:text-sm font-semibold mb-2 flex items-center gap-1'>
                   <Settings className='h-3 w-3' />
                   Por Tipo
                 </h4>
-                <div className='space-y-2'>
+                <div className='space-y-1 sm:space-y-2'>
                   {Object.entries(analyticsData.medidoresPorTipo)
                     .sort(([, a], [, b]) => b - a)
                     .slice(0, 3)
                     .map(([tipo, cantidad], index) => (
                       <div
                         key={tipo}
-                        className='flex justify-between items-center text-sm'
+                        className='flex justify-between items-center text-xs sm:text-sm p-1 sm:p-0'
                       >
-                        <div className='flex items-center gap-2'>
+                        <div className='flex items-center gap-2 min-w-0'>
                           <div
                             className={`w-2 h-2 rounded-full ${getColorForIndex(index)}`}
                           ></div>
-                          <span>{tipo}</span>
+                          <span className='truncate'>{tipo}</span>
                         </div>
                         <NumberFlow
                           value={cantidad}
                           plugins={[continuous]}
-                          className='tabular-nums font-medium'
+                          className='tabular-nums font-medium flex-shrink-0'
                         />
                       </div>
                     ))}
@@ -544,28 +544,28 @@ const AdminAnalyticsComponent = () => {
 
               {/* Por Estado */}
               <div>
-                <h4 className='text-sm font-semibold mb-2 flex items-center gap-1'>
+                <h4 className='text-xs sm:text-sm font-semibold mb-2 flex items-center gap-1'>
                   <CheckCircle className='h-3 w-3' />
                   Por Estado
                 </h4>
-                <div className='space-y-2'>
+                <div className='space-y-1 sm:space-y-2'>
                   {Object.entries(analyticsData.medidoresPorEstado)
                     .sort(([, a], [, b]) => b - a)
                     .map(([estado, cantidad]) => (
                       <div
                         key={estado}
-                        className='flex justify-between items-center text-sm'
+                        className='flex justify-between items-center text-xs sm:text-sm p-1 sm:p-0'
                       >
                         <Badge
                           variant={getBadgeVariant(estado)}
-                          className='text-xs'
+                          className='text-xs px-1 sm:px-2'
                         >
-                          {estado}
+                          <span className='truncate max-w-[80px] sm:max-w-none'>{estado}</span>
                         </Badge>
                         <NumberFlow
                           value={cantidad}
                           plugins={[continuous]}
-                          className='tabular-nums font-medium'
+                          className='tabular-nums font-medium flex-shrink-0'
                         />
                       </div>
                     ))}
@@ -578,33 +578,33 @@ const AdminAnalyticsComponent = () => {
 
       {/* Acometidas por Sector */}
       <Card className='flex flex-col'>
-        <CardHeader className='items-center pb-0'>
-          <CardTitle className='flex items-center gap-2'>
-            <Power className='h-5 w-5 text-orange-500' />
+        <CardHeader className='items-center pb-2 sm:pb-0'>
+          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
+            <Power className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
             Acometidas por Sector
           </CardTitle>
-          <CardDescription>
+          <CardDescription className='text-xs sm:text-sm text-center'>
             Distribución geográfica de puntos de suministro
           </CardDescription>
         </CardHeader>
         <CardContent className='flex-1 pb-0'>
           {analyticsData.loading ? (
-            <div className='flex items-center justify-center h-[250px]'>
+            <div className='flex items-center justify-center h-[200px] sm:h-[250px]'>
               <div className='space-y-3 w-full'>
                 {[1, 2, 3, 4].map(i => (
                   <div key={i} className='flex justify-between items-center'>
-                    <div className='h-4 bg-muted animate-pulse rounded w-28'></div>
-                    <div className='h-6 bg-muted animate-pulse rounded w-12'></div>
+                    <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-20 sm:w-28'></div>
+                    <div className='h-4 sm:h-6 bg-muted animate-pulse rounded w-8 sm:w-12'></div>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <div className='flex items-center gap-4'>
+            <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
               {/* Gráfico Donut */}
               <ChartContainer
                 config={acometidasChartConfig}
-                className='mx-auto aspect-square max-h-[200px] min-h-[150px]'
+                className='mx-auto aspect-square max-h-[150px] sm:max-h-[200px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
               >
                 <PieChart>
                   <ChartTooltip
@@ -655,22 +655,22 @@ const AdminAnalyticsComponent = () => {
               </ChartContainer>
 
               {/* Lista de datos */}
-              <div className='space-y-2 flex-1 min-w-0'>
+              <div className='space-y-1 sm:space-y-2 flex-1 min-w-0 w-full sm:w-auto'>
                 {chartAcometidasData.slice(0, 5).map(item => (
                   <div
                     key={item.sector}
-                    className='flex justify-between items-center'
+                    className='flex justify-between items-center p-2 sm:p-0'
                   >
                     <div className='flex items-center gap-2 min-w-0'>
                       <div
-                        className='w-3 h-3 rounded-full flex-shrink-0'
+                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0'
                         style={{ backgroundColor: item.fill }}
                       ></div>
-                      <span className='text-sm font-medium truncate'>
+                      <span className='text-xs sm:text-sm font-medium truncate'>
                         {item.sector}
                       </span>
                     </div>
-                    <div className='text-lg font-bold flex-shrink-0'>
+                    <div className='text-sm sm:text-lg font-bold flex-shrink-0'>
                       <NumberFlow
                         value={item.cantidad}
                         plugins={[continuous]}
@@ -821,21 +821,21 @@ export default function DashboardComponent({
   }, [periodoAbierto, lecturasPendientes, corte, limiteInvierno]);
 
   return (
-    <div className='flex flex-col gap-4 py-4 md:gap-6 md:py-6'>
+    <div className='flex flex-col gap-3 sm:gap-4 py-3 sm:py-4 lg:gap-6 lg:py-6'>
       {/* Contenido Principal */}
-      <div className='flex flex-1 flex-col gap-4 p-4 pt-0'>
+      <div className='flex flex-1 flex-col gap-3 sm:gap-4 p-2 sm:p-4 pt-0'>
         {/* Estadísticas Principales */}
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+        <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4'>
           {/* Período Actual */}
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
+              <CardTitle className='text-xs sm:text-sm font-medium'>
                 Período Actual
               </CardTitle>
-              <FileText className='h-4 w-4 text-muted-foreground' />
+              <FileText className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold font-mono'>
+              <div className='text-lg sm:text-2xl font-bold font-mono'>
                 {dashboardData.loading ? (
                   <span className='animate-pulse text-muted-foreground'>
                     ---
@@ -848,7 +848,7 @@ export default function DashboardComponent({
                     /{dashboardData.periodoActual.anio}
                   </span>
                 ) : (
-                  <span className='text-base text-red-500'>Sin período</span>
+                  <span className='text-sm sm:text-base text-red-500'>Sin período</span>
                 )}
               </div>
               <p className='text-xs text-muted-foreground'>
@@ -860,13 +860,13 @@ export default function DashboardComponent({
           {/* Lecturas Pendientes */}
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
+              <CardTitle className='text-xs sm:text-sm font-medium'>
                 Lecturas Pendientes
               </CardTitle>
-              <Activity className='h-4 w-4 text-muted-foreground' />
+              <Activity className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold font-mono'>
+              <div className='text-lg sm:text-2xl font-bold font-mono'>
                 {dashboardData.loading ? (
                   <span className='animate-pulse text-muted-foreground'>
                     ---
@@ -897,13 +897,13 @@ export default function DashboardComponent({
           {/* Límite de Invierno */}
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
+              <CardTitle className='text-xs sm:text-sm font-medium'>
                 Límite de Invierno
               </CardTitle>
-              <Snowflake className='h-4 w-4 text-muted-foreground' />
+              <Snowflake className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold font-mono'>
+              <div className='text-lg sm:text-2xl font-bold font-mono'>
                 {dashboardData.loading ? (
                   <span className='animate-pulse text-muted-foreground'>
                     ---
@@ -924,7 +924,7 @@ export default function DashboardComponent({
                       plugins={[continuous]}
                       className='tabular-nums'
                     />
-                    <span className='text-xl font-normal text-muted-foreground'>
+                    <span className='text-base sm:text-xl font-normal text-muted-foreground'>
                       {' '}
                       kWh
                     </span>
@@ -940,13 +940,13 @@ export default function DashboardComponent({
           {/* Totales Corte */}
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
+              <CardTitle className='text-xs sm:text-sm font-medium'>
                 Cortes Totales
               </CardTitle>
-              <Power className='h-4 w-4 text-muted-foreground' />
+              <Power className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold font-mono'>
+              <div className='text-lg sm:text-2xl font-bold font-mono'>
                 {dashboardData.loading ? (
                   <span className='animate-pulse text-muted-foreground'>
                     ---
@@ -968,11 +968,11 @@ export default function DashboardComponent({
                   />
                 )}
               </div>
-              <div className='flex gap-2 mt-1'>
-                <span className='text-xs px-2 py-1 bg-red-100 text-red-700 rounded dark:bg-red-900/30 dark:text-red-300'>
+              <div className='flex flex-col sm:flex-row gap-1 sm:gap-2 mt-1'>
+                <span className='text-xs px-2 py-1 bg-red-100 text-red-700 rounded dark:bg-red-900/30 dark:text-red-300 text-center'>
                   {displayData.totalesCorte.cortado} cortados
                 </span>
-                <span className='text-xs px-2 py-1 bg-green-100 text-green-700 rounded dark:bg-green-900/30 dark:text-green-300'>
+                <span className='text-xs px-2 py-1 bg-green-100 text-green-700 rounded dark:bg-green-900/30 dark:text-green-300 text-center'>
                   {displayData.totalesCorte.liberado} liberados
                 </span>
               </div>
@@ -982,27 +982,27 @@ export default function DashboardComponent({
 
         {/* Atajos Rápidos */}
         <Card>
-          <CardHeader>
-            <CardTitle>Atajos Rápidos</CardTitle>
-            <CardDescription>
+          <CardHeader className='pb-3 sm:pb-6'>
+            <CardTitle className='text-base sm:text-lg'>Atajos Rápidos</CardTitle>
+            <CardDescription className='text-xs sm:text-sm'>
               Accede rápidamente a las funciones más utilizadas
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+            <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
               {quickActions.map((action, index) => (
                 <Button
                   key={index}
                   variant='outline'
-                  className='h-auto flex-col items-start gap-2 p-4 text-left hover:bg-muted/50'
+                  className='h-auto flex-col items-start gap-2 p-3 sm:p-4 text-left hover:bg-muted/50'
                   asChild
                 >
                   <Link to={action.href}>
                     <div className={`rounded-lg p-2 ${action.color}`}>
-                      <action.icon className='h-4 w-4 text-white' />
+                      <action.icon className='h-3 w-3 sm:h-4 sm:w-4 text-white' />
                     </div>
                     <div>
-                      <div className='font-semibold'>{action.title}</div>
+                      <div className='font-semibold text-xs sm:text-sm'>{action.title}</div>
                       <div className='text-xs text-muted-foreground'>
                         {action.description}
                       </div>
@@ -1015,13 +1015,13 @@ export default function DashboardComponent({
         </Card>
 
         {/* Panel de Control de Administración */}
-        <div className='space-y-4'>
+        <div className='space-y-3 sm:space-y-4'>
           <div className='flex items-center justify-between'>
             <div>
-              <h2 className='text-lg font-semibold'>
+              <h2 className='text-base sm:text-lg font-semibold'>
                 Panel de Control de Administración
               </h2>
-              <p className='text-sm text-muted-foreground'>
+              <p className='text-xs sm:text-sm text-muted-foreground'>
                 Análisis detallado de contratos, clientes, medidores y
                 acometidas
               </p>

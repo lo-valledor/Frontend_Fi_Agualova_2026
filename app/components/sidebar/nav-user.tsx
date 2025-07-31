@@ -55,67 +55,67 @@ export function NavUser({ user }: NavUserProps) {
             >
               <SidebarMenuButton
                 size='lg'
-                className='group relative overflow-hidden rounded-lg transition-all duration-200 hover:bg-accent/50 active:bg-accent data-[state=open]:bg-accent'
+                className='group relative overflow-hidden rounded-lg transition-all duration-200 hover:bg-accent/50 active:bg-accent data-[state=open]:bg-accent px-2 sm:px-3 py-2 sm:py-3'
               >
                 <div className='absolute inset-0 bg-gradient-to-r from-sky-500/10 to-blue-500/10 opacity-0 transition-opacity group-hover:opacity-100' />
-                <Avatar className='h-9 w-9 rounded-lg ring-2 ring-border ring-offset-2 ring-offset-background transition-all duration-200 group-hover:ring-sky-500'>
+                <Avatar className='h-7 w-7 sm:h-9 sm:w-9 rounded-lg ring-2 ring-border ring-offset-1 sm:ring-offset-2 ring-offset-background transition-all duration-200 group-hover:ring-sky-500'>
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg bg-gradient-to-br from-sky-500 to-blue-500 text-white'>
+                  <AvatarFallback className='rounded-lg bg-gradient-to-br from-sky-500 to-blue-500 text-white text-xs sm:text-sm'>
                     {user.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div className='grid flex-1 text-left'>
-                  <span className='text-sm font-semibold tracking-tight text-foreground'>
+                <div className='grid flex-1 text-left min-w-0'>
+                  <span className='text-xs sm:text-sm font-semibold tracking-tight text-foreground truncate'>
                     {user.name}
                   </span>
-                  <span className='text-xs text-muted-foreground'>
+                  <span className='text-xs text-muted-foreground truncate'>
                     {user.role}
                   </span>
                 </div>
-                <ChevronsUpDown className='ml-auto h-4 w-4 text-muted-foreground transition-transform duration-200 group-hover:text-foreground group-data-[state=open]:rotate-180' />
+                <ChevronsUpDown className='ml-auto h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground transition-transform duration-200 group-hover:text-foreground group-data-[state=open]:rotate-180 flex-shrink-0' />
               </SidebarMenuButton>
             </motion.div>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className='w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg'
+            className='w-[--radix-dropdown-menu-trigger-width] min-w-48 sm:min-w-56 rounded-lg text-xs sm:text-sm'
             side={isMobile ? 'bottom' : 'right'}
             align='end'
             sideOffset={8}
           >
-            <DropdownMenuLabel className='font-normal'>
-              <div className='flex items-center gap-3 p-2'>
-                <Avatar className='h-9 w-9 rounded-lg'>
+            <DropdownMenuLabel className='font-normal p-1 sm:p-2'>
+              <div className='flex items-center gap-2 sm:gap-3 p-1 sm:p-2'>
+                <Avatar className='h-7 w-7 sm:h-9 sm:w-9 rounded-lg'>
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg bg-gradient-to-br from-sky-500 to-blue-500 text-white'>
+                  <AvatarFallback className='rounded-lg bg-gradient-to-br from-sky-500 to-blue-500 text-white text-xs sm:text-sm'>
                     {user.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div className='grid flex-1'>
-                  <span className='text-sm font-medium leading-none tracking-tight'>
+                <div className='grid flex-1 min-w-0'>
+                  <span className='text-xs sm:text-sm font-medium leading-none tracking-tight truncate'>
                     {user.name}
                   </span>
-                  <span className='text-xs text-muted-foreground'>
+                  <span className='text-xs text-muted-foreground truncate'>
                     {user.role}
                   </span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className='py-2 sm:py-2.5'>
               <Link
                 to='/dashboard/profile'
-                className='flex items-center gap-2 cursor-pointer'
+                className='flex items-center gap-1.5 sm:gap-2 cursor-pointer text-xs sm:text-sm'
               >
-                <User className='h-4 w-4' />
+                <User className='h-3 w-3 sm:h-4 sm:w-4' />
                 <span>Mi Perfil</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleSignOut}
-              className='gap-2 text-destructive focus:text-destructive'
+              className='gap-1.5 sm:gap-2 text-destructive focus:text-destructive py-2 sm:py-2.5 text-xs sm:text-sm'
             >
-              <LogOut className='h-4 w-4' />
+              <LogOut className='h-3 w-3 sm:h-4 sm:w-4' />
               <span>Cerrar Sesión</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

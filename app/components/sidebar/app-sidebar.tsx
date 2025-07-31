@@ -310,14 +310,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </motion.div>
       </SidebarHeader>
 
-      <SidebarContent className='gap-1 px-3 py-3'>
+      <SidebarContent className='gap-1 px-2 sm:px-3 py-2 sm:py-3'>
         <AnimatePresence>
           {filteredNavMain.length > 0 ? (
             <motion.div
               variants={containerVariants}
               initial='hidden'
               animate='visible'
-              className='space-y-2'
+              className='space-y-1 sm:space-y-2'
             >
               {filteredNavMain.map((item, index) => (
                 <motion.div
@@ -335,10 +335,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <SidebarGroup className='mb-1'>
                       <SidebarGroupLabel
                         asChild
-                        className='group/label text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-sm font-semibold rounded-lg transition-all duration-300 border border-transparent hover:border-sky-200/50 dark:hover:border-sky-700/50  '
+                        className='group/label text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-xs sm:text-sm font-semibold rounded-lg transition-all duration-300 border border-transparent hover:border-sky-200/50 dark:hover:border-sky-700/50'
                       >
-                        <CollapsibleTrigger className='w-full px-4 py-3 flex items-center justify-between group'>
-                          <div className='flex items-center gap-3'>
+                        <CollapsibleTrigger className='w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between group'>
+                          <div className='flex items-center gap-2 sm:gap-3'>
                             {item.icon && (
                               <motion.div
                                 whileHover={{ scale: 1.1, rotate: 5 }}
@@ -348,9 +348,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                   stiffness: 400,
                                   damping: 17,
                                 }}
-                                className='flex h-6 w-6 items-center justify-center rounded-md bg-sky-500 text-white group-hover:from-sky-500/30 group-hover:to-sky-500/30 transition-all duration-300'
+                                className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-md bg-sky-500 text-white group-hover:from-sky-500/30 group-hover:to-sky-500/30 transition-all duration-300'
                               >
-                                <item.icon className='h-4 w-4' />
+                                <item.icon className='h-3 w-3 sm:h-4 sm:w-4' />
                               </motion.div>
                             )}
                             <span className='truncate font-medium'>
@@ -363,7 +363,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             transition={{ duration: 0.2 }}
                             className='group-data-[state=open]/collapsible:rotate-90 transition-transform duration-300'
                           >
-                            <ChevronRight className='h-4 w-4 opacity-70 group-hover:opacity-100 transition-opacity' />
+                            <ChevronRight className='h-3 w-3 sm:h-4 sm:w-4 opacity-70 group-hover:opacity-100 transition-opacity' />
                           </motion.div>
                         </CollapsibleTrigger>
                       </SidebarGroupLabel>
@@ -375,8 +375,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.3, ease: 'easeInOut' }}
                         >
-                          <SidebarGroupContent className='pt-2 ml-2 border-l border-sky-200/50 dark:border-sky-700/50'>
-                            <SidebarMenu className='space-y-1'>
+                          <SidebarGroupContent className='pt-1 sm:pt-2 ml-1 sm:ml-2 border-l border-sky-200/50 dark:border-sky-700/50'>
+                            <SidebarMenu className='space-y-0.5 sm:space-y-1'>
                               {item.items.map((menuItem, menuIndex) => (
                                 <motion.div
                                   key={menuItem.title}
@@ -388,7 +388,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                     <SidebarMenuButton
                                       asChild
                                       isActive={isActiveRoute(menuItem.url)}
-                                      className='rounded-lg transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/10 hover:to-sky-500/10 data-[active=true]:bg-gradient-to-r data-[active=true]:from-sky-500/20 data-[active=true]:to-sky-500/20 data-[active=true]:text-sky-900 dark:data-[active=true]:text-sky-100 data-[active=true]:border data-[active=true]:border-sky-200/50 dark:data-[active=true]:border-sky-700/50 hover:border hover:border-sky-200/50 dark:hover:border-sky-700/50 ml-4'
+                                      className='rounded-lg transition-all duration-200 hover:bg-gradient-to-r hover:from-sky-500/10 hover:to-sky-500/10 data-[active=true]:bg-gradient-to-r data-[active=true]:from-sky-500/20 data-[active=true]:to-sky-500/20 data-[active=true]:text-sky-900 dark:data-[active=true]:text-sky-100 data-[active=true]:border data-[active=true]:border-sky-200/50 dark:data-[active=true]:border-sky-700/50 hover:border hover:border-sky-200/50 dark:hover:border-sky-700/50 ml-2 sm:ml-4'
                                     >
                                       <motion.div
                                         whileHover={{ x: 4 }}
@@ -401,10 +401,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                       >
                                         <Link
                                           to={menuItem.url}
-                                          className='px-3 py-2.5 text-sm font-medium flex items-center gap-2 w-full'
+                                          className='px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 w-full'
                                         >
                                           <motion.div
-                                            className='w-1.5 h-1.5 rounded-full bg-current opacity-50'
+                                            className='w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-current opacity-50'
                                             whileHover={{
                                               scale: 1.5,
                                               opacity: 1,
@@ -435,18 +435,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
-              className='flex items-center justify-center py-12 text-center'
+              className='flex items-center justify-center py-8 sm:py-12 text-center'
             >
-              <div className='space-y-3 max-w-[200px]'>
+              <div className='space-y-2 sm:space-y-3 max-w-[180px] sm:max-w-[200px] px-2'>
                 <motion.div
                   initial={{ rotate: 0 }}
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  className='mx-auto w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center'
+                  className='mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-sky-500/20 flex items-center justify-center'
                 >
-                  <div className='w-6 h-6 rounded-full bg-sky-500 opacity-50' />
+                  <div className='w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-sky-500 opacity-50' />
                 </motion.div>
-                <div className='text-muted-foreground text-sm leading-relaxed'>
+                <div className='text-muted-foreground text-xs sm:text-sm leading-relaxed'>
                   No se encontraron resultados para{' '}
                   <span className='font-medium text-sky-600 dark:text-sky-400'>
                     "{searchTerm}"
@@ -456,7 +456,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setSearchTerm('')}
-                  className='text-xs text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 hover:underline bg-sky-50/50 dark:bg-sky-900/20 px-3 py-1.5 rounded-full border border-sky-200/50 dark:border-sky-800/50 transition-all duration-200'
+                  className='text-xs text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 hover:underline bg-sky-50/50 dark:bg-sky-900/20 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-sky-200/50 dark:border-sky-800/50 transition-all duration-200'
                 >
                   Limpiar búsqueda
                 </motion.button>

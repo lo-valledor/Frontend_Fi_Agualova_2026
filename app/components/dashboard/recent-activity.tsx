@@ -138,18 +138,18 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
 
   if (loading) {
     return (
-      <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-4'>
-        <div className='flex items-center gap-2 mb-4'>
-          <Activity className='h-5 w-5 opacity-70' />
-          <span className='font-semibold text-sm'>Actividad Reciente</span>
+      <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80 p-3 sm:p-4'>
+        <div className='flex items-center gap-2 mb-3 sm:mb-4'>
+          <Activity className='h-4 w-4 sm:h-5 sm:w-5 opacity-70' />
+          <span className='font-semibold text-xs sm:text-sm'>Actividad Reciente</span>
         </div>
-        <div className='space-y-3'>
+        <div className='space-y-2 sm:space-y-3'>
           {[...Array(5)].map((_, i) => (
             <div key={i} className='flex items-center space-x-3 animate-pulse'>
-              <div className='w-8 h-8 bg-gray-200 dark:bg-slate-700 rounded-full'></div>
-              <div className='flex-1 space-y-2'>
-                <div className='h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4'></div>
-                <div className='h-3 bg-gray-200 dark:bg-slate-700 rounded w-1/2'></div>
+              <div className='w-6 h-6 sm:w-8 sm:h-8 bg-gray-200 dark:bg-slate-700 rounded-full'></div>
+              <div className='flex-1 space-y-1 sm:space-y-2'>
+                <div className='h-3 sm:h-4 bg-gray-200 dark:bg-slate-700 rounded w-3/4'></div>
+                <div className='h-2 sm:h-3 bg-gray-200 dark:bg-slate-700 rounded w-1/2'></div>
               </div>
             </div>
           ))}
@@ -160,27 +160,27 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
 
   return (
     <div className='rounded-2xl border border-border dark:border-slate-800 bg-white dark:bg-slate-900/80'>
-      <div className='p-4'>
+      <div className='p-3 sm:p-4'>
         <div className='flex items-center justify-between mb-2'>
           <div className='flex items-center gap-2'>
-            <Activity className='h-5 w-5 opacity-70' />
-            <span className='font-semibold text-sm'>Actividad Reciente</span>
+            <Activity className='h-4 w-4 sm:h-5 sm:w-5 opacity-70' />
+            <span className='font-semibold text-xs sm:text-sm'>Actividad Reciente</span>
           </div>
           <Button
             variant='ghost'
             size='sm'
             onClick={exportData}
-            className='rounded-full px-3'
+            className='rounded-full px-2 sm:px-3 text-xs sm:text-sm'
           >
             Exportar
           </Button>
         </div>
-        <div className='text-xs text-muted-foreground mb-4'>
+        <div className='text-xs text-muted-foreground mb-3 sm:mb-4'>
           Últimas actividades de los usuarios en las últimas 24 horas
         </div>
         {summary && (
-          <div className='mb-4 p-3 bg-muted/50 dark:bg-slate-800/40 rounded-lg'>
-            <div className='grid grid-cols-2 gap-4 text-xs'>
+          <div className='mb-3 sm:mb-4 p-2 sm:p-3 bg-muted/50 dark:bg-slate-800/40 rounded-lg'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-xs'>
               <div>
                 <span className='font-medium'>Total acciones:</span>{' '}
                 {summary.totalActions}
@@ -196,40 +196,40 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
         )}
 
         {activities.length === 0 ? (
-          <div className='text-center py-8 text-gray-500 dark:text-gray-400'>
-            <Activity className='h-12 w-12 mx-auto mb-3 opacity-50' />
-            <p>No hay actividad reciente</p>
+          <div className='text-center py-6 sm:py-8 text-gray-500 dark:text-gray-400'>
+            <Activity className='h-8 w-8 sm:h-12 sm:w-12 mx-auto mb-3 opacity-50' />
+            <p className='text-sm sm:text-base'>No hay actividad reciente</p>
           </div>
         ) : (
-          <div className='space-y-2'>
+          <div className='space-y-1 sm:space-y-2'>
             {activities.map(activity => (
               <div
                 key={activity.id}
-                className='flex items-start space-x-3 p-2 rounded-lg border border-border dark:border-slate-800 bg-muted/50 dark:bg-slate-800/40 hover:bg-muted transition-colors'
+                className='flex items-start space-x-2 sm:space-x-3 p-2 rounded-lg border border-border dark:border-slate-800 bg-muted/50 dark:bg-slate-800/40 hover:bg-muted transition-colors'
               >
                 <div className='flex-shrink-0'>
-                  <div className='w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center'>
+                  <div className='w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center'>
                     {getModuleIcon(activity.module)}
                   </div>
                 </div>
 
                 <div className='flex-1 min-w-0'>
-                  <div className='flex items-center justify-between'>
-                    <div className='flex items-center space-x-2'>
+                  <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0'>
+                    <div className='flex items-center space-x-1 sm:space-x-2 min-w-0'>
                       <Badge
                         variant='outline'
                         className={
                           getActionColor(activity.action) +
-                          ' text-xs px-2 py-0.5'
+                          ' text-xs px-1 sm:px-2 py-0.5'
                         }
                       >
-                        {activity.action}
+                        <span className='truncate max-w-[60px] sm:max-w-none'>{activity.action}</span>
                       </Badge>
-                      <span className='text-xs font-medium text-gray-900 dark:text-gray-100'>
+                      <span className='text-xs font-medium text-gray-900 dark:text-gray-100 truncate'>
                         {activity.module}
                       </span>
                     </div>
-                    <div className='flex items-center text-xs text-gray-500 dark:text-gray-400'>
+                    <div className='flex items-center text-xs text-gray-500 dark:text-gray-400 flex-shrink-0'>
                       <Clock className='h-3 w-3 mr-1' />
                       {formatTimestamp(activity.timestamp)}
                     </div>
@@ -237,8 +237,8 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
 
                   {showUserInfo && (
                     <div className='flex items-center mt-1 text-xs text-gray-600 dark:text-gray-300'>
-                      <User className='h-3 w-3 mr-1' />
-                      {activity.username}
+                      <User className='h-3 w-3 mr-1 flex-shrink-0' />
+                      <span className='truncate'>{activity.username}</span>
                     </div>
                   )}
 
@@ -254,11 +254,11 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
         )}
 
         {activities.length > 0 && (
-          <div className='mt-4 pt-4 border-t border-border dark:border-slate-800'>
+          <div className='mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border dark:border-slate-800'>
             <Button
               variant='ghost'
               size='sm'
-              className='w-full rounded-full'
+              className='w-full rounded-full text-xs sm:text-sm'
               onClick={loadActivities}
             >
               Actualizar
