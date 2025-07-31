@@ -1,10 +1,20 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm typecheck:*)",
-      "Bash(pnpm lint:*)",
-      "Bash(npm run typecheck:*)"
+      "Bash(pnpm build:*)"
     ],
     "deny": []
-  }
+  },
+  "hooks": [
+    {
+      "matcher": "Edit|Write",
+      "type": "command",
+      "command": "prettier --write \"$CLAUDE_FILE_PATHS\""
+    },
+    {
+      "matcher": "Edit",
+      "type": "command",
+      "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]]; then npx tsc --noEmit --skipLibCheck \"$CLAUDE_FILE_PATHS\" || echo '⚠️ TypeScript errors detected - please review'; fi"
+    }
+  ]
 }

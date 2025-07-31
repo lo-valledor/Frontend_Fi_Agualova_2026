@@ -1,4 +1,4 @@
-import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Home, LogOut, RefreshCw } from 'lucide-react';
 
 import React from 'react';
 
@@ -31,6 +31,16 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
 
   const handleGoHome = () => {
     window.location.href = '/dashboard';
+  };
+
+  const handleLogout = () => {
+    // Limpiar token y datos de autenticación
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    sessionStorage.clear();
+
+    // Redireccionar al login
+    window.location.href = '/auth/login';
   };
 
   return (
@@ -82,6 +92,14 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
               >
                 <Home className='h-4 w-4 mr-2' />
                 Ir al Inicio
+              </Button>
+              <Button
+                onClick={handleLogout}
+                variant='outline'
+                className='w-full border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20 dark:hover:text-red-300'
+              >
+                <LogOut className='h-4 w-4 mr-2' />
+                Cerrar Sesión
               </Button>
             </div>
 

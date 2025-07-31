@@ -1,5 +1,5 @@
 import { type PaginationState } from '@tanstack/react-table';
-import { Gauge, Loader2, RotateCcw, Settings } from 'lucide-react';
+import { Loader2, RotateCcw, Settings } from 'lucide-react';
 
 import { useCallback, useEffect, useState } from 'react';
 
@@ -8,7 +8,6 @@ import { LoadingSpinner } from '~/components/loading-spinner';
 import { EmptyState, LoadingState } from '~/components/loading-state';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -182,103 +181,104 @@ export default function MonitorNichos({
   };
 
   return (
-    <div className='space-y-3'>
-      <Card className='border-border/50 shadow-lg bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
-        <CardHeader className='pb-2 px-4 pt-3'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
-            <CardTitle className='text-base flex items-center gap-2 text-slate-800 dark:text-slate-200'>
-              <Gauge className='h-4 w-4 text-blue-600 dark:text-blue-400' />
-              Monitor de Medidores
-            </CardTitle>
-
-            <div className='flex flex-wrap items-center gap-1.5'>
-              <Badge
-                variant='secondary'
-                className='bg-sky-100/80 dark:bg-sky-900/30 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-700 font-medium text-xs py-0 px-2 h-5'
-              >
-                Nicho: {nicho}
-              </Badge>
-              <Badge
-                variant='secondary'
-                className='bg-amber-100/80 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 font-medium text-xs py-0 px-2 h-5'
-              >
-                Periodo: {periodo}
-              </Badge>
-              <Badge
-                variant='outline'
-                className='bg-slate-50/80 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 text-xs py-0 px-2 h-5'
-              >
-                {results.length} medidores
-              </Badge>
-
-              <Button
-                variant='outline'
-                size='sm'
-                className='gap-1.5 bg-muted/50 hover:bg-muted/80 transition-all duration-200 h-6 px-2 text-xs'
-                onClick={handleRefresh}
-                disabled={isRefreshing}
-              >
-                {isRefreshing ? (
-                  <Loader2 className='h-3 w-3 animate-spin' />
-                ) : (
-                  <RotateCcw className='h-3 w-3' />
-                )}
-                {isRefreshing ? 'Actualizando...' : 'Actualizar'}
-              </Button>
-            </div>
+    <div className='w-full h-full flex flex-col'>
+      {/* Header compacto para modal */}
+      <div className='flex-shrink-0 border-b border-border/40 pb-3 mb-4'>
+        <div className='flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2'>
+          <div className='flex flex-wrap items-center gap-1.5'>
+            <Badge
+              variant='secondary'
+              className='bg-sky-100/80 dark:bg-sky-900/30 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-700 font-medium text-xs py-0.5 px-2'
+            >
+              Nicho: {nicho}
+            </Badge>
+            <Badge
+              variant='secondary'
+              className='bg-amber-100/80 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 font-medium text-xs py-0.5 px-2'
+            >
+              Periodo: {periodo}
+            </Badge>
+            <Badge
+              variant='outline'
+              className='bg-slate-50/80 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 text-xs py-0.5 px-2'
+            >
+              {results.length} medidores
+            </Badge>
           </div>
-        </CardHeader>
 
-        <CardContent className='p-0'>
-          <div className='mt-4'>
-            {isLoading ? (
-              <LoadingSpinner />
+          <Button
+            variant='outline'
+            size='sm'
+            className='gap-1.5 bg-muted/50 hover:bg-muted/80 active:bg-muted/90 transition-all duration-200 h-7 px-2 text-xs self-start xs:self-auto tap-highlight-transparent touch-manipulation'
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+          >
+            {isRefreshing ? (
+              <Loader2 className='h-3 w-3 animate-spin' />
             ) : (
-              <DataTableNichos
-                columns={columnsNichos(columnProps)}
-                data={results}
-                columnGroups={columnGroups}
-                onRowClick={handleRowClick}
-                pagination={pagination}
-                onPaginationChange={setPagination}
-              />
+              <RotateCcw className='h-3 w-3' />
             )}
+            <span className='hidden xs:inline'>
+              {isRefreshing ? 'Actualizando...' : 'Actualizar'}
+            </span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Contenido de la tabla */}
+      <div className='flex-1 min-h-0 overflow-hidden'>
+        {isLoading ? (
+          <div className='flex items-center justify-center h-full min-h-[300px]'>
+            <LoadingSpinner />
           </div>
-        </CardContent>
-      </Card>
+        ) : (
+          <div className='h-full'>
+            <DataTableNichos
+              columns={columnsNichos(columnProps)}
+              data={results}
+              columnGroups={columnGroups}
+              onRowClick={handleRowClick}
+              pagination={pagination}
+              onPaginationChange={setPagination}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Diálogo responsive para editar/reaperturar medidor */}
       {selectedMedidor && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className='max-w-[95vw] w-full max-h-[95vh] h-auto lg:max-w-4xl xl:max-w-5xl overflow-auto flex flex-col'>
-            <DialogHeader className='shrink-0 pb-4 border-b border-border/40'>
-              <DialogTitle className='text-xl flex flex-col sm:flex-row sm:items-center gap-2 text-sky-800 dark:text-sky-200'>
+          <DialogContent className='max-w-[98vw] sm:max-w-[95vw] md:max-w-4xl lg:max-w-5xl xl:max-w-6xl max-h-[98vh] sm:max-h-[95vh] h-auto overflow-hidden flex flex-col'>
+            <DialogHeader className='shrink-0 pb-3 sm:pb-4 border-b border-border/40'>
+              <DialogTitle className='text-lg sm:text-xl flex flex-col sm:flex-row sm:items-center gap-2 text-sky-800 dark:text-sky-200'>
                 <div className='flex items-center gap-2'>
                   {selectedMedidor.Estado === 4 ? (
-                    <RotateCcw className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+                    <RotateCcw className='h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400' />
                   ) : (
-                    <Settings className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                    <Settings className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
                   )}
-                  {selectedMedidor.Estado === 4
-                    ? 'Reaperturar Medidor'
-                    : 'Editar Medidor'}
+                  <span className='text-base sm:text-lg'>
+                    {selectedMedidor.Estado === 4
+                      ? 'Reaperturar Medidor'
+                      : 'Editar Medidor'}
+                  </span>
                 </div>
                 <Badge
                   variant='outline'
-                  className='bg-sky-50/80 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-700 font-mono text-sm'
+                  className='bg-sky-50/80 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-700 font-mono text-xs sm:text-sm'
                 >
                   {selectedMedidor.ME_NSerie}
                 </Badge>
               </DialogTitle>
-              <DialogDescription className='text-muted-foreground'>
+              <DialogDescription className='text-muted-foreground text-sm'>
                 Complete la información para{' '}
                 {selectedMedidor.Estado === 4 ? 'reaperturar' : 'actualizar'} la
                 medición del medidor seleccionado
               </DialogDescription>
             </DialogHeader>
 
-            <div>
-              <div className='p-6'>
+            <div className='flex-1 overflow-auto'>
+              <div className='p-3 sm:p-4 lg:p-6'>
                 <EditarMedidores
                   result={selectedMedidor}
                   onSuccess={() => handleSuccess(selectedMedidor.LM_ID)}

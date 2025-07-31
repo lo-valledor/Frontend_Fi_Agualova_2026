@@ -1,0 +1,43 @@
+# docker-compose.yml - Configuración para múltiples entornos
+version: '3.8'
+
+services:
+  # Entorno de producción (rama main)
+  frontend-prod:
+    build:
+      context: .
+      args:
+        VITE_API_URL: http://192.168.1.139:8081/Enerlova
+    ports:
+      - '8080:80'
+    container_name: enerlova-frontend-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+
+  # Entorno de desarrollo (rama develop)
+  frontend-dev:
+    build:
+      context: .
+      args:
+        VITE_API_URL: http://192.168.1.139:8082/Enerlova
+    ports:
+      - '3000:80'
+    container_name: enerlova-frontend-dev
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+
+  # Nginx proxy para enrutamiento (opcional)
+  nginx-proxy:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx-proxy.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend-prod
+      - frontend-dev
+    container_name: enerlova-proxy
+    restart: unless-stopped

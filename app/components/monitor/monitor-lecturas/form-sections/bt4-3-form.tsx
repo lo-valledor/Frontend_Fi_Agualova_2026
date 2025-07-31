@@ -3,9 +3,7 @@ import {
   AlertCircle,
   BarChart2,
   Calculator,
-  CalendarIcon,
   Check,
-  Clock,
   Gauge,
   Loader2,
   Zap,
@@ -20,7 +18,6 @@ import React, {
   useState,
 } from 'react';
 
-import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
@@ -706,27 +703,27 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   );
 
   return (
-    <div className='p-3 space-y-3'>
+    <div className='space-y-4'>
       {/* Energía Activa */}
-      <Card className='border border-slate-200/50 dark:border-slate-800/50 shadow-sm'>
-        <CardHeader className='pb-2'>
-          <CardTitle className='flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base font-semibold'>
-            <div className='p-1.5 bg-blue-50 dark:bg-blue-950/50 rounded-lg'>
-              <Zap className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+      <Card className='border-0 shadow-none bg-transparent'>
+        <CardHeader className='px-0 pb-2'>
+          <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
+            <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
+              <Zap className='h-3 w-3 text-blue-600 dark:text-blue-400' />
             </div>
-            <div>
-              <p className='text-base font-semibold'>Energía Activa</p>
-              <p className='text-xs text-slate-500 dark:text-slate-400 font-normal'>
-                Lectura y validación del consumo activo
-              </p>
-            </div>
+            <span>Energía Activa</span>
+            {isActivaValidated && (
+              <div className='h-4 w-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
+                <Check className='h-2.5 w-2.5 text-green-600 dark:text-green-400' />
+              </div>
+            )}
           </CardTitle>
         </CardHeader>
-        <CardContent className='space-y-2'>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-            <div className='space-y-1'>
-              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                <Gauge className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+        <CardContent className='px-0'>
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-3'>
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+                <Gauge className='h-3 w-3' />
                 Lectura Actual
               </Label>
               <Input
@@ -734,104 +731,83 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 value={inputActivaValue}
                 onChange={handleActivaInputChange}
                 max={maxValuePermitido}
-                className='bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-8'
+                className='h-8 font-mono text-sm'
               />
-              <small className='text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1'>
-                <span>⚠️</span>
-                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
-                dígitos)
-              </small>
+              <div className='text-xs text-muted-foreground'>
+                Máx: {maxValuePermitido.toLocaleString('es-CL')}
+              </div>
             </div>
 
-            <div className='space-y-1'>
-              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                <Calculator className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
-                Consumo Calculado
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+                <Calculator className='h-3 w-3' />
+                Consumo kWh
               </Label>
-              <div className='h-8 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100'>
+              <div className='h-8 px-3 flex items-center bg-muted/50 border rounded-md text-sm font-mono'>
                 {consumoActivaCalculado || '0'}
               </div>
-              <small className='text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1'>
-                <span>📊</span>
-                Anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
-              </small>
+              <div className='text-xs text-muted-foreground'>
+                Ant: {consumoAnterior.toLocaleString('es-CL')}
+              </div>
             </div>
 
-            <div className='flex items-center pt-4'>
+            <div className='flex items-end'>
               <Button
                 variant='outline'
                 onClick={validarLecturaActiva}
-                disabled={
-                  !inputActivaValue || isSubmitting || isActivaValidated
-                }
-                className='w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 h-8'
+                disabled={!inputActivaValue || isSubmitting || isActivaValidated}
+                className='w-full h-8 text-xs'
               >
                 {isActivaValidated ? (
                   <>
-                    <Check className='h-3 w-3 mr-1' />
+                    <Check className='h-3 w-3 mr-1.5' />
                     Validado
                   </>
                 ) : (
-                  <>
-                    <Check className='h-3 w-3 mr-1' />
-                    Validar
-                  </>
+                  'Validar'
                 )}
               </Button>
             </div>
           </div>
 
-          {/* Alertas para Energía Activa */}
-          {Number(consumoActivaCalculado) < 0 && (
-            <Alert variant='destructive' className='py-2'>
-              <AlertCircle className='h-3 w-3' />
-              <AlertDescription className='text-xs'>
-                El consumo de energía activa es negativo, por favor verifique la
-                lectura.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {Number(consumoActivaCalculado) === 0 && inputActivaValue && (
-            <Alert className='border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-2'>
-              <AlertCircle className='h-3 w-3 text-amber-600 dark:text-amber-400' />
-              <AlertDescription className='text-amber-700 dark:text-amber-300 text-xs'>
-                El consumo de energía activa es cero, verifique la lectura.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {isActivaValidated && (
-            <Alert className='border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-2'>
-              <Check className='h-3 w-3 text-green-600 dark:text-green-400' />
-              <AlertDescription className='text-green-700 dark:text-green-300 text-xs'>
-                Lectura de energía activa validada correctamente.
-              </AlertDescription>
-            </Alert>
-          )}
+          {/* Estados compactos para Energía Activa */}
+          <div className='space-y-2 mt-3'>
+            {Number(consumoActivaCalculado) < 0 && (
+              <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Consumo negativo - Verifique la lectura
+              </div>
+            )}
+            {Number(consumoActivaCalculado) === 0 && inputActivaValue && (
+              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Consumo cero - Verifique la lectura
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
       {/* Energía Reactiva */}
-      <Card className='border border-slate-200/50 dark:border-slate-800/50 shadow-sm'>
-        <CardHeader className='pb-2'>
-          <CardTitle className='flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base font-semibold'>
-            <div className='p-1.5 bg-emerald-50 dark:bg-emerald-950/50 rounded-lg'>
-              <Activity className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
+      <Card className='border-0 shadow-none bg-transparent'>
+        <CardHeader className='px-0 pb-2'>
+          <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
+            <div className='h-5 w-5 rounded bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center'>
+              <Activity className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
             </div>
-            <div>
-              <p className='text-base font-semibold'>Energía Reactiva</p>
-              <p className='text-xs text-slate-500 dark:text-slate-400 font-normal'>
-                Lectura y validación del consumo reactivo
-              </p>
-            </div>
+            <span>Energía Reactiva</span>
+            {isReactivaValidated && (
+              <div className='h-4 w-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
+                <Check className='h-2.5 w-2.5 text-green-600 dark:text-green-400' />
+              </div>
+            )}
           </CardTitle>
         </CardHeader>
-        <CardContent className='space-y-2'>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-            <div className='space-y-1'>
-              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                <Gauge className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
+        <CardContent className='px-0'>
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-3'>
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+                <Gauge className='h-3 w-3' />
                 Lectura Actual
               </Label>
               <Input
@@ -839,229 +815,170 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 value={inputReactivaValue}
                 onChange={handleReactivaInputChange}
                 max={maxValuePermitido}
-                className='bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-8'
+                className='h-8 font-mono text-sm'
               />
-              <small className='text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1'>
-                <span>⚠️</span>
-                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
-                dígitos)
-              </small>
+              <div className='text-xs text-muted-foreground'>
+                Máx: {maxValuePermitido.toLocaleString('es-CL')}
+              </div>
             </div>
 
-            <div className='space-y-1'>
-              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                <Calculator className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
-                Consumo Calculado
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+                <Calculator className='h-3 w-3' />
+                Consumo kVArh
               </Label>
-              <div className='h-8 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100'>
+              <div className='h-8 px-3 flex items-center bg-muted/50 border rounded-md text-sm font-mono'>
                 {consumoReactivaCalculado || '0'}
               </div>
-              <small className='text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1'>
-                <span>📊</span>
-                Anterior: {consumoAnterior.toLocaleString('es-CL')} kWh
-              </small>
+              <div className='text-xs text-muted-foreground'>
+                Ant: {consumoAnterior.toLocaleString('es-CL')}
+              </div>
             </div>
 
-            <div className='flex items-center pt-4'>
+            <div className='flex items-end'>
               <Button
                 variant='outline'
                 onClick={validarLecturaReactiva}
-                disabled={
-                  !inputReactivaValue || isSubmitting || isReactivaValidated
-                }
-                className='w-full border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 h-8'
+                disabled={!inputReactivaValue || isSubmitting || isReactivaValidated}
+                className='w-full h-8 text-xs'
               >
                 {isReactivaValidated ? (
                   <>
-                    <Check className='h-3 w-3 mr-1' />
+                    <Check className='h-3 w-3 mr-1.5' />
                     Validado
                   </>
                 ) : (
-                  <>
-                    <Check className='h-3 w-3 mr-1' />
-                    Validar
-                  </>
+                  'Validar'
                 )}
               </Button>
             </div>
           </div>
 
-          {/* Alertas para Energía Reactiva */}
-          {Number(consumoReactivaCalculado) < 0 && (
-            <Alert variant='destructive' className='py-2'>
-              <AlertCircle className='h-3 w-3' />
-              <AlertDescription className='text-xs'>
-                El consumo de energía reactiva es negativo, por favor verifique
-                la lectura.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {Number(consumoReactivaCalculado) === 0 && inputReactivaValue && (
-            <Alert className='border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-2'>
-              <AlertCircle className='h-3 w-3 text-amber-600 dark:text-amber-400' />
-              <AlertDescription className='text-amber-700 dark:text-amber-300 text-xs'>
-                El consumo de energía reactiva es cero, verifique la lectura.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          {isReactivaValidated && (
-            <Alert className='border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-2'>
-              <Check className='h-3 w-3 text-green-600 dark:text-green-400' />
-              <AlertDescription className='text-green-700 dark:text-green-300 text-xs'>
-                Lectura de energía reactiva validada correctamente.
-              </AlertDescription>
-            </Alert>
-          )}
+          {/* Estados compactos para Energía Reactiva */}
+          <div className='space-y-2 mt-3'>
+            {Number(consumoReactivaCalculado) < 0 && (
+              <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Consumo negativo - Verifique la lectura
+              </div>
+            )}
+            {Number(consumoReactivaCalculado) === 0 && inputReactivaValue && (
+              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Consumo cero - Verifique la lectura
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
       {/* Datos de Demanda */}
-      <Card className='border border-slate-200/50 dark:border-slate-800/50 shadow-sm'>
-        <CardHeader className='pb-2'>
-          <CardTitle className='flex items-center gap-2 text-slate-900 dark:text-slate-100 text-base font-semibold'>
-            <div className='p-1.5 bg-amber-50 dark:bg-amber-950/50 rounded-lg'>
-              <BarChart2 className='h-4 w-4 text-amber-600 dark:text-amber-400' />
+      <Card className='border-0 shadow-none bg-transparent'>
+        <CardHeader className='px-0 pb-2'>
+          <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
+            <div className='h-5 w-5 rounded bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center'>
+              <BarChart2 className='h-3 w-3 text-amber-600 dark:text-amber-400' />
             </div>
-            <div>
-              <p className='text-base font-semibold'>Datos de Demanda</p>
-              <p className='text-xs text-slate-500 dark:text-slate-400 font-normal'>
-                Configuración de demandas punta y suministrada
-              </p>
-            </div>
+            <span>Demandas kW</span>
+            {(!isActivaValidated || !isReactivaValidated) && (
+              <div className='text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded'>
+                Requiere validación previa
+              </div>
+            )}
           </CardTitle>
-          {!isActivaValidated || !isReactivaValidated ? (
-            <Alert variant='destructive' className='mt-2 py-2'>
-              <AlertCircle className='h-3 w-3' />
-              <AlertDescription className='text-xs'>
-                Los datos de demanda se habilitarán una vez validadas las
-                lecturas de energía activa y reactiva.
-              </AlertDescription>
-            </Alert>
-          ) : null}
         </CardHeader>
-        <CardContent className='space-y-4'>
-          {/* Demanda Punta */}
-          <div className='p-3 bg-blue-50/30 dark:bg-blue-950/20 rounded-lg border border-blue-200/30 dark:border-blue-800/30'>
-            <div className='flex items-center gap-1 mb-2'>
-              <BarChart2 className='h-3 w-3 text-blue-600 dark:text-blue-400' />
-              <span className='text-sm font-semibold text-blue-800 dark:text-blue-200'>
+        <CardContent className='px-0 space-y-3'>
+          <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+            {/* Demanda Punta */}
+            <div className='space-y-2'>
+              <div className='flex items-center gap-1.5 text-sm font-medium text-blue-700 dark:text-blue-400'>
+                <BarChart2 className='h-3 w-3' />
                 Demanda Punta
-              </span>
-            </div>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-              <div className='space-y-1'>
-                <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide'>
-                  Valor (kW)
-                </Label>
-                <Input
-                  type='number'
-                  step='0.01'
-                  placeholder='0.00'
-                  value={demandaData.dp.toString()}
-                  onChange={e => {
-                    const val = parseFloat(e.target.value);
-                    if (val < 0)
-                      return toast.error(
-                        'No se permiten valores negativos en Demanda Punta'
-                      );
-                    handleDemandaChange('dp', val || 0);
-                  }}
-                  disabled={!isActivaValidated || !isReactivaValidated}
-                  className='bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono h-8'
-                  max={maxValuePermitido}
-                />
               </div>
-
-              <div className='space-y-1'>
-                <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                  <CalendarIcon className='h-3 w-3' />
-                  Fecha
-                </Label>
-                <Input
-                  type='date'
-                  value={demandaData.dpFecha || ''}
-                  onChange={e => handleDemandaChange('dpFecha', e.target.value)}
-                  disabled={!isActivaValidated || !isReactivaValidated}
-                  className='bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 h-8'
-                  max={new Date().toISOString().slice(0, 10)}
-                />
-              </div>
-
-              <div className='space-y-1'>
-                <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                  <Clock className='h-3 w-3' />
-                  Hora
-                </Label>
-                <Input
-                  type='time'
-                  value={demandaData.dpHora || ''}
-                  onChange={e => handleDemandaChange('dpHora', e.target.value)}
-                  disabled={!isActivaValidated || !isReactivaValidated}
-                  className='bg-white dark:bg-slate-900/30 border-blue-200 dark:border-blue-800 font-mono h-8'
-                />
+              <div className='grid grid-cols-3 gap-2'>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Valor kW</Label>
+                  <Input
+                    type='number'
+                    step='0.01'
+                    placeholder='0.00'
+                    value={demandaData.dp.toString()}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      if (val < 0) return toast.error('No se permiten valores negativos');
+                      handleDemandaChange('dp', val || 0);
+                    }}
+                    disabled={!isActivaValidated || !isReactivaValidated}
+                    className='h-8 font-mono text-sm'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Fecha</Label>
+                  <Input
+                    type='date'
+                    value={demandaData.dpFecha || ''}
+                    onChange={e => handleDemandaChange('dpFecha', e.target.value)}
+                    disabled={!isActivaValidated || !isReactivaValidated}
+                    className='h-8 text-sm'
+                    max={new Date().toISOString().slice(0, 10)}
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Hora</Label>
+                  <Input
+                    type='time'
+                    value={demandaData.dpHora || ''}
+                    onChange={e => handleDemandaChange('dpHora', e.target.value)}
+                    disabled={!isActivaValidated || !isReactivaValidated}
+                    className='h-8 font-mono text-sm'
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Demanda Suministrada */}
-          <div className='p-3 bg-emerald-50/30 dark:bg-emerald-950/20 rounded-lg border border-emerald-200/30 dark:border-emerald-800/30'>
-            <div className='flex items-center gap-1 mb-2'>
-              <BarChart2 className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
-              <span className='text-sm font-semibold text-emerald-800 dark:text-emerald-200'>
+            {/* Demanda Suministrada */}
+            <div className='space-y-2'>
+              <div className='flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400'>
+                <BarChart2 className='h-3 w-3' />
                 Demanda Suministrada
-              </span>
-            </div>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-              <div className='space-y-1'>
-                <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide'>
-                  Valor (kW)
-                </Label>
-                <Input
-                  type='number'
-                  step='0.01'
-                  placeholder='0.00'
-                  value={demandaData.ds.toString()}
-                  onChange={e => {
-                    const val = parseFloat(e.target.value);
-                    if (val < 0)
-                      return toast.error(
-                        'No se permiten valores negativos en Demanda Suministrada'
-                      );
-                    handleDemandaChange('ds', val || 0);
-                  }}
-                  disabled={!isActivaValidated || !isReactivaValidated}
-                  className='bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono h-8'
-                />
               </div>
-
-              <div className='space-y-1'>
-                <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                  <CalendarIcon className='h-3 w-3' />
-                  Fecha
-                </Label>
-                <Input
-                  type='date'
-                  value={demandaData.dsFecha || ''}
-                  onChange={e => handleDemandaChange('dsFecha', e.target.value)}
-                  disabled={!isActivaValidated || !isReactivaValidated}
-                  className='bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 h-8'
-                />
-              </div>
-
-              <div className='space-y-1'>
-                <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                  <Clock className='h-3 w-3' />
-                  Hora
-                </Label>
-                <Input
-                  type='time'
-                  value={demandaData.dsHora || ''}
-                  onChange={e => handleDemandaChange('dsHora', e.target.value)}
-                  disabled={!isActivaValidated || !isReactivaValidated}
-                  className='bg-white dark:bg-slate-900/30 border-emerald-200 dark:border-emerald-800 font-mono h-8'
-                />
+              <div className='grid grid-cols-3 gap-2'>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Valor kW</Label>
+                  <Input
+                    type='number'
+                    step='0.01'
+                    placeholder='0.00'
+                    value={demandaData.ds.toString()}
+                    onChange={e => {
+                      const val = parseFloat(e.target.value);
+                      if (val < 0) return toast.error('No se permiten valores negativos');
+                      handleDemandaChange('ds', val || 0);
+                    }}
+                    disabled={!isActivaValidated || !isReactivaValidated}
+                    className='h-8 font-mono text-sm'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Fecha</Label>
+                  <Input
+                    type='date'
+                    value={demandaData.dsFecha || ''}
+                    onChange={e => handleDemandaChange('dsFecha', e.target.value)}
+                    disabled={!isActivaValidated || !isReactivaValidated}
+                    className='h-8 text-sm'
+                  />
+                </div>
+                <div>
+                  <Label className='text-xs text-muted-foreground'>Hora</Label>
+                  <Input
+                    type='time'
+                    value={demandaData.dsHora || ''}
+                    onChange={e => handleDemandaChange('dsHora', e.target.value)}
+                    disabled={!isActivaValidated || !isReactivaValidated}
+                    className='h-8 font-mono text-sm'
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -1081,7 +998,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 !demandaData.dsHora ||
                 isSubmitting
               }
-              className='bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-6 h-8 text-white'
+              className='px-6 h-8 text-xs'
             >
               {isSubmitting ? (
                 <>
@@ -1091,7 +1008,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               ) : (
                 <>
                   <Check className='mr-2 h-3 w-3' />
-                  Guardar Lecturas
+                  Guardar
                 </>
               )}
             </Button>

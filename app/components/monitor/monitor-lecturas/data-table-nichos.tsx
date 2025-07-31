@@ -9,7 +9,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DataTablePagination } from '~/components/data-table/data-table-pagination';
 import {
@@ -36,6 +36,62 @@ interface DataTableNichosProps<TData, TValue> {
   onPaginationChange: React.Dispatch<React.SetStateAction<PaginationState>>;
 }
 
+// Configuración de visibilidad responsiva para columnas
+const responsiveColumnVisibility = {
+  // En mobile (< 640px) solo mostrar columnas esenciales
+  mobile: [
+    'numero',
+    'numero_serie', 
+    'consumo_energia_activa',
+    'acciones'
+  ],
+  // En tablet portrait (640px - 768px) agregar algunas columnas
+  tabletPortrait: [
+    'numero',
+    'local',
+    'numero_serie',
+    'energia_activa',
+    'consumo_energia_activa',
+    'acciones'
+  ],
+  // En tablet landscape (768px - 1024px) agregar más columnas
+  tablet: [
+    'numero',
+    'local',
+    'numero_serie',
+    'energia_activa_anterior',
+    'energia_activa',
+    'consumo_energia_activa',
+    'energia_reactiva',
+    'consumo_energia_reactiva',
+    'demanda_punta',
+    'acciones'
+  ],
+  // En desktop pequeño (1024px - 1440px) casi todas las columnas
+  desktopSmall: [
+    'numero',
+    'local',
+    'tarifa',
+    'numero_serie',
+    'constante',
+    'anio_anterior',
+    'mes_anterior',
+    'energia_activa_anterior',
+    'energia_activa',
+    'consumo_energia_activa',
+    'energia_reactiva_anterior',
+    'energia_reactiva',
+    'consumo_energia_reactiva',
+    'demanda_punta',
+    'fecha_demanda_punta',
+    'demanda_suministrada',
+    'fecha_demanda_suministrada',
+    'acciones'
+  ],
+  // En desktop (> 1440px) mostrar todas las columnas
+  desktop: [] // vacío significa mostrar todas
+};
+
 export function DataTableNichos<TData, TValue>({
   columns,
   data,
@@ -45,10 +101,64 @@ export function DataTableNichos<TData, TValue>({
   onPaginationChange,
 }: DataTableNichosProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [screenSize, setScreenSize] = useState<'mobile' | 'tabletPortrait' | 'tablet' | 'desktopSmall' | 'desktop'>('desktop');
+
+  // Hook para detectar el tamaño de pantalla con breakpoints mejorados
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 640) {
+        setScreenSize('mobile');
+      } else if (width < 768) {
+        setScreenSize('tabletPortrait');
+      } else if (width < 1024) {
+        setScreenSize('tablet');
+      } else if (width < 1440) {
+        setScreenSize('desktopSmall');
+      } else {
+        setScreenSize('desktop');
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Filtrar columnas según el tamaño de pantalla
+  const getVisibleColumns = () => {
+    if (screenSize === 'desktop') {
+      return columns; // Mostrar todas las columnas
+    }
+    
+    const visibleColumnIds = responsiveColumnVisibility[screenSize] || [];
+    return columns.filter(column => 
+      visibleColumnIds.includes(column.id as string)
+    );
+  };
+
+  const visibleColumns = getVisibleColumns();
+
+  // Filtrar grupos de columnas según las columnas visibles
+  const getVisibleColumnGroups = () => {
+    if (screenSize === 'desktop') {
+      return columnGroups;
+    }
+    
+    const visibleColumnIds = responsiveColumnVisibility[screenSize] || [];
+    return columnGroups
+      .map(group => ({
+        ...group,
+        columns: group.columns.filter(colId => visibleColumnIds.includes(colId))
+      }))
+      .filter(group => group.columns.length > 0);
+  };
+
+  const visibleColumnGroups = getVisibleColumnGroups();
 
   const table = useReactTable({
     data,
-    columns,
+    columns: visibleColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
@@ -62,7 +172,7 @@ export function DataTableNichos<TData, TValue>({
 
   // Función para renderizar encabezados agrupados
   const renderGroupedHeaders = () => {
-    if (!columnGroups || columnGroups.length === 0) {
+    if (!visibleColumnGroups || visibleColumnGroups.length === 0) {
       return null;
     }
 
@@ -73,7 +183,7 @@ export function DataTableNichos<TData, TValue>({
     > = {};
 
     // Preparar grupos y contar spans
-    columnGroups.forEach(group => {
+    visibleColumnGroups.forEach(group => {
       groupedRow[group.id] = {
         span: 0,
         title: group.title,
@@ -90,10 +200,17 @@ export function DataTableNichos<TData, TValue>({
     });
 
     return (
-      <TableRow className='border-b border-border/20 h-8'>
+      <TableRow className={cn(
+        'border-b border-border/20',
+        // Altura adaptativa para headers agrupados
+        screenSize === 'mobile' && 'h-10',
+        screenSize === 'tabletPortrait' && 'h-10',
+        screenSize === 'tablet' && 'h-9',
+        (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'h-8'
+      )}>
         {headerGroup.headers.map(header => {
           // Buscar si esta columna es la primera de algún grupo
-          const group = columnGroups.find(
+          const group = visibleColumnGroups.find(
             g =>
               g.columns.includes(header.column.id) &&
               g.columns[0] === header.column.id
@@ -115,7 +232,7 @@ export function DataTableNichos<TData, TValue>({
           }
 
           // Si no es la primera columna de ningún grupo, verificar si pertenece a algún grupo
-          const belongsToGroup = columnGroups.some(
+          const belongsToGroup = visibleColumnGroups.some(
             g =>
               g.columns.includes(header.column.id) &&
               g.columns[0] !== header.column.id
@@ -139,103 +256,156 @@ export function DataTableNichos<TData, TValue>({
     <div className='space-y-3'>
       <div className='rounded-lg border border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
         <div className='relative overflow-hidden'>
-          <div className='overflow-x-auto'>
-            <Table>
-              <TableHeader className='bg-muted/40'>
-                {renderGroupedHeaders()}
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className='border-b border-border/40 h-8'
-                  >
-                    {headerGroup.headers.map(header => {
-                      const meta = header.column.columnDef.meta as
-                        | { className?: string }
-                        | undefined;
-                      return (
-                        <TableHead
-                          key={header.id}
-                          className={cn(
-                            'text-center text-xs font-medium h-8 border-r border-border/20 last:border-r-0 py-1 px-2',
-                            meta?.className
-                          )}
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map(row => (
+          {/* Contenedor con scroll horizontal mejorado */}
+          <div className='overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-muted/10 hover:scrollbar-thumb-muted-foreground/50 transition-colors'>
+            {/* Tabla con ancho mínimo adaptivo */}
+            <div 
+              className={cn(
+                'w-full relative',
+                screenSize === 'mobile' && 'min-w-[450px]',
+                screenSize === 'tabletPortrait' && 'min-w-[600px]',
+                screenSize === 'tablet' && 'min-w-[800px]',
+                screenSize === 'desktopSmall' && 'min-w-[1200px]',
+                screenSize === 'desktop' && 'min-w-[1400px]'
+              )}
+            >
+              <Table>
+                <TableHeader className='bg-muted/40 sticky top-0 z-10'>
+                  {renderGroupedHeaders()}
+                  {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                      className={cn(
-                        'text-center text-xs transition-colors cursor-pointer h-9',
-                        'hover:bg-muted/50 active:bg-muted/70',
-                        'border-b border-border/20 last:border-b-0'
-                      )}
-                      onClick={() => onRowClick?.(row.original)}
+                      key={headerGroup.id}
+                      className='border-b border-border/40 h-8'
                     >
-                      {row.getVisibleCells().map(cell => {
-                        const meta = cell.column.columnDef.meta as
+                      {headerGroup.headers.map(header => {
+                        const meta = header.column.columnDef.meta as
                           | { className?: string }
                           | undefined;
                         return (
-                          <TableCell
-                            key={cell.id}
+                          <TableHead
+                            key={header.id}
                             className={cn(
-                              'py-1.5 px-2 border-r border-border/10 last:border-r-0',
+                              'text-center text-xs font-medium border-r border-border/20 last:border-r-0 whitespace-nowrap',
+                              // Altura y padding adaptativo para headers
+                              screenSize === 'mobile' && 'h-10 py-2 px-1',
+                              screenSize === 'tabletPortrait' && 'h-10 py-2 px-1.5',
+                              screenSize === 'tablet' && 'h-9 py-1.5 px-2',
+                              (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'h-8 py-1 px-2',
                               meta?.className
                             )}
                           >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </TableHead>
                         );
                       })}
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className='h-24 text-center text-muted-foreground'
-                    >
-                      <div className='flex flex-col items-center justify-center space-y-1'>
-                        <div className='text-xl'>📊</div>
-                        <p className='text-xs font-medium'>
-                          No se encontraron resultados
-                        </p>
-                        <p className='text-xs text-muted-foreground/70'>
-                          Intente ajustar los filtros de búsqueda
-                        </p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map(row => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && 'selected'}
+                        className={cn(
+                          'text-center text-xs transition-colors cursor-pointer',
+                          'hover:bg-muted/50 active:bg-muted/70 tap-highlight-transparent',
+                          'border-b border-border/20 last:border-b-0',
+                          // Altura adaptativa según el dispositivo
+                          screenSize === 'mobile' && 'h-10',
+                          screenSize === 'tabletPortrait' && 'h-10',
+                          screenSize === 'tablet' && 'h-9',
+                          (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'h-8'
+                        )}
+                        onClick={() => onRowClick?.(row.original)}
+                      >
+                        {row.getVisibleCells().map(cell => {
+                          const meta = cell.column.columnDef.meta as
+                            | { className?: string }
+                            | undefined;
+                          return (
+                            <TableCell
+                              key={cell.id}
+                              className={cn(
+                                'border-r border-border/10 last:border-r-0 whitespace-nowrap text-xs',
+                                // Padding adaptativo para mejor experiencia táctil
+                                screenSize === 'mobile' && 'py-2 px-1',
+                                screenSize === 'tabletPortrait' && 'py-2 px-1.5',
+                                screenSize === 'tablet' && 'py-1.5 px-2',
+                                (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'py-1 px-2',
+                                meta?.className
+                              )}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={visibleColumns.length}
+                        className='h-24 text-center text-muted-foreground'
+                      >
+                        <div className='flex flex-col items-center justify-center space-y-1'>
+                          <div className='text-xl'>📊</div>
+                          <p className='text-xs font-medium'>
+                            No se encontraron resultados
+                          </p>
+                          <p className='text-xs text-muted-foreground/70'>
+                            Intente ajustar los filtros de búsqueda
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
+          
+          {/* Indicadores de scroll horizontal */}
+          {(screenSize === 'mobile' || screenSize === 'tabletPortrait') && (
+            <>
+              {/* Indicador de scroll derecha */}
+              <div className='absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-end pr-1'>
+                <div className='text-muted-foreground/60 text-xs animate-pulse'>→</div>
+              </div>
+              {/* Indicador de scroll izquierda (se muestra al hacer scroll) */}
+              <div className='absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-start pl-1 opacity-0 transition-opacity'>
+                <div className='text-muted-foreground/60 text-xs'>←</div>
+              </div>
+            </>
+          )}
+          
+          {/* Sombra de scroll para tablets */}
+          {screenSize === 'tablet' && (
+            <>
+              <div className='absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-background/70 to-transparent pointer-events-none z-10' />
+              <div className='absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-background/70 to-transparent pointer-events-none z-10 opacity-0 transition-opacity' />
+            </>
+          )}
         </div>
       </div>
 
-      {/* Paginación compacta */}
-      <div className='flex items-center justify-between px-2'>
-        <div className='flex items-center text-xs text-muted-foreground'>
-          Mostrando {table.getRowModel().rows.length} de {data.length} registros
+      {/* Paginación responsiva */}
+      <div className='flex flex-col sm:flex-row items-center justify-between gap-2 px-2 py-1'>
+        <div className='flex items-center text-xs text-muted-foreground order-2 sm:order-1'>
+          <span className='hidden sm:inline'>Mostrando </span>
+          {table.getRowModel().rows.length} de {data.length} registros
         </div>
-        <DataTablePagination table={table} />
+        <div className='order-1 sm:order-2'>
+          <DataTablePagination table={table} />
+        </div>
       </div>
     </div>
   );

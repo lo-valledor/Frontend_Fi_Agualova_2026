@@ -30,7 +30,7 @@ export const columnsNichos = ({
     ),
     meta: {
       className:
-        'sticky left-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm min-w-[50px]',
+        'sticky left-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm min-w-[50px] max-w-[50px]',
     },
   },
   {
@@ -375,7 +375,7 @@ export const columnsNichos = ({
     header: 'Acción',
     meta: {
       className:
-        'sticky right-0 z-20 bg-purple-50/90 dark:bg-purple-900/30 backdrop-blur-sm min-w-[120px]',
+        'sticky right-0 z-20 bg-purple-50/90 dark:bg-purple-900/30 backdrop-blur-sm min-w-[120px] max-w-[120px]',
     },
   },
 ];

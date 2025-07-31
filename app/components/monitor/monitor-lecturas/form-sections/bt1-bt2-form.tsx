@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { useActivityEvent } from '~/components/activity-tracker-hoc';
-import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
@@ -377,28 +376,24 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   );
 
   return (
-    <div className='p-2 space-y-2'>
-      <Card className='border border-slate-200/50 dark:border-slate-800/50 shadow-sm'>
-        <CardHeader className='pb-1'>
-          <CardTitle className='flex items-center gap-1.5 text-slate-900 dark:text-slate-100 text-sm font-semibold'>
-            <div className='p-1 bg-blue-50 dark:bg-blue-950/50 rounded-md'>
-              <Gauge className='h-3.5 w-3.5 text-blue-600 dark:text-blue-400' />
+    <div className='space-y-3'>
+      <Card className='border-0 shadow-none bg-transparent'>
+        <CardHeader className='px-0 pb-2'>
+          <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
+            <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
+              <Gauge className='h-3 w-3 text-blue-600 dark:text-blue-400' />
             </div>
-            <div>
-              <p className='text-sm font-semibold'>
-                Datos de Lectura y Consumo
-              </p>
-              <p className='text-xs text-slate-500 dark:text-slate-400 font-normal'>
-                Formulario para medidores BT-1 y BT-2
-              </p>
+            <span>Lectura BT-1/BT-2</span>
+            <div className='text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded'>
+              {digito} dígitos
             </div>
           </CardTitle>
         </CardHeader>
-        <CardContent className='space-y-1.5'>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-2'>
-            <div className='space-y-1'>
-              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                <Gauge className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+        <CardContent className='px-0 space-y-3'>
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-3'>
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+                <Gauge className='h-3 w-3' />
                 Lectura Actual
               </Label>
               <Input
@@ -406,86 +401,75 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
                 value={inputValue}
                 onChange={handleInputChange}
                 max={maxValuePermitido}
-                className='bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 font-mono h-7'
+                className='h-8 font-mono text-sm'
               />
-              <small className='text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1'>
-                <span>⚠️</span>
-                Máximo: {maxValuePermitido.toLocaleString('es-CL')} ({digito}{' '}
-                dígitos)
-              </small>
+              <div className='text-xs text-muted-foreground'>
+                Máx: {maxValuePermitido.toLocaleString('es-CL')}
+              </div>
             </div>
 
-            <div className='space-y-1'>
-              <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1'>
-                <Calculator className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
-                Consumo Calculado
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+                <Calculator className='h-3 w-3' />
+                Consumo kWh
               </Label>
-              <div className='h-7 px-2 flex items-center bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-md text-sm font-mono text-slate-900 dark:text-slate-100'>
+              <div className='h-8 px-3 flex items-center bg-muted/50 border rounded-md text-sm font-mono'>
                 {consumoCalculado || '0'}
               </div>
-              <small className='text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1'>
-                <span>📊</span>
-                Anterior:{' '}
-                {result.LM_ConsumoMesAnterior?.toLocaleString() || '0'} kWh
-              </small>
+              <div className='text-xs text-muted-foreground'>
+                Ant: {result.LM_ConsumoMesAnterior?.toLocaleString() || '0'}
+              </div>
             </div>
 
-            <div className='flex items-center pt-4'>
+            <div className='flex items-end'>
               <Button
                 variant='outline'
                 onClick={validarLectura}
                 disabled={!inputValue || isSubmitting || isValidated}
-                className='w-full border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 h-7 text-xs'
+                className='w-full h-8 text-xs'
               >
                 {isValidated ? (
                   <>
-                    <Check className='h-3 w-3 mr-1' />
+                    <Check className='h-3 w-3 mr-1.5' />
                     Validado
                   </>
                 ) : (
-                  <>
-                    <Check className='h-3 w-3 mr-1' />
-                    Validar
-                  </>
+                  'Validar'
                 )}
               </Button>
             </div>
           </div>
 
-          {/* Alertas */}
-          {Number(consumoCalculado) < 0 && (
-            <Alert variant='destructive' className='py-1.5'>
-              <AlertCircle className='h-3 w-3' />
-              <AlertDescription className='text-xs'>
-                El consumo es negativo, por favor verifique la lectura.
-              </AlertDescription>
-            </Alert>
-          )}
+          {/* Estados y alertas compactas */}
+          <div className='space-y-2'>
+            {Number(consumoCalculado) < 0 && (
+              <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Consumo negativo - Verifique la lectura
+              </div>
+            )}
 
-          {Number(consumoCalculado) === 0 && inputValue && (
-            <Alert className='border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20 py-1.5'>
-              <AlertCircle className='h-3 w-3 text-amber-600 dark:text-amber-400' />
-              <AlertDescription className='text-amber-700 dark:text-amber-300 text-xs'>
-                El consumo es cero, verifique la lectura.
-              </AlertDescription>
-            </Alert>
-          )}
+            {Number(consumoCalculado) === 0 && inputValue && (
+              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Consumo cero - Verifique la lectura
+              </div>
+            )}
 
-          {isValidated && (
-            <Alert className='border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 py-1.5'>
-              <Check className='h-3 w-3 text-green-600 dark:text-green-400' />
-              <AlertDescription className='text-green-700 dark:text-green-300 text-xs'>
-                Lectura validada correctamente, puede proceder a guardar.
-              </AlertDescription>
-            </Alert>
-          )}
+            {isValidated && (
+              <div className='flex items-center gap-2 text-xs text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/20 px-2 py-1 rounded'>
+                <Check className='h-3 w-3' />
+                Lectura validada - Puede guardar
+              </div>
+            )}
+          </div>
 
           {/* Botón Guardar */}
-          <div className='flex justify-end pt-1'>
+          <div className='flex justify-end'>
             <Button
               onClick={guardarLectura}
               disabled={!isValidated || isSubmitting}
-              className='bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 px-4 h-7 text-xs text-white'
+              className='px-4 h-8 text-xs'
             >
               {isSubmitting ? (
                 <>
@@ -495,7 +479,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
               ) : (
                 <>
                   <Check className='mr-1.5 h-3 w-3' />
-                  Guardar Lectura
+                  Guardar
                 </>
               )}
             </Button>

@@ -1,9 +1,8 @@
 import { AlertCircle, FileText, Key, Loader2, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Label } from '~/components/ui/label';
@@ -27,7 +26,7 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
   const [selectedClave, setSelectedClave] = useState('0');
   const [descripcionReapertura, setDescripcionReapertura] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, _setIsOpen] = useState(true);
 
   useEffect(() => {
     if (!isOpen) {
@@ -127,71 +126,66 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
   };
 
   return (
-    <div className='p-6 space-y-6'>
-      {/* Alerta informativa */}
-      <Alert className='border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20'>
-        <AlertCircle className='h-4 w-4 text-amber-600 dark:text-amber-400' />
-        <AlertDescription className='text-amber-700 dark:text-amber-300'>
-          Esta medición ya ha sido cerrada. Para reabrirla, debe seleccionar un
-          motivo de reapertura y proporcionar una descripción detallada.
-        </AlertDescription>
-      </Alert>
+    <div className='space-y-3'>
+      {/* Alerta informativa compacta */}
+      <div className='flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-lg border border-amber-200 dark:border-amber-800'>
+        <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+        <span>
+          Medición cerrada. Seleccione un motivo y proporcione una descripción
+          para reabrirla.
+        </span>
+      </div>
 
-      {/* Card principal */}
-      <Card className='border border-slate-200/50 dark:border-slate-800/50 shadow-sm'>
-        <CardHeader className='pb-4'>
-          <CardTitle className='flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold'>
-            <div className='p-2 bg-orange-50 dark:bg-orange-950/50 rounded-lg'>
-              <RotateCcw className='h-5 w-5 text-orange-600 dark:text-orange-400' />
+      {/* Formulario compacto */}
+      <Card className='border-0 shadow-none bg-transparent'>
+        <CardHeader className='px-0 pb-2'>
+          <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
+            <div className='h-5 w-5 rounded bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center'>
+              <RotateCcw className='h-3 w-3 text-orange-600 dark:text-orange-400' />
             </div>
-            <div>
-              <p className='text-lg font-semibold'>Reapertura de Medición</p>
-              <p className='text-sm text-slate-500 dark:text-slate-400 font-normal'>
-                Seleccione motivo y proporcione descripción
-              </p>
-            </div>
+            <span>Reapertura de Medición</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className='space-y-6'>
+        <CardContent className='px-0 space-y-3'>
           {/* Motivo de reapertura */}
-          <div className='space-y-2'>
-            <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2'>
-              <Key className='h-4 w-4 text-orange-600 dark:text-orange-400' />
+          <div className='space-y-1.5'>
+            <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+              <Key className='h-3 w-3' />
               Motivo de reapertura
             </Label>
             <Select value={selectedClave} onValueChange={setSelectedClave}>
-              <SelectTrigger className='bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800'>
+              <SelectTrigger className='h-8'>
                 <SelectValue placeholder='Seleccione un motivo' />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='0'>Seleccione un motivo</SelectItem>
                 <SelectItem value='27'>
-                  EELD - ERROR EN LA DIGITACIÓN
+                  EELD - Error en la digitación
                 </SelectItem>
-                <SelectItem value='28'>EEEC - ERROR EN EL CIERRE</SelectItem>
-                <SelectItem value='29'>EELC - ERROR EN LA CONEXIÓN</SelectItem>
+                <SelectItem value='28'>EEEC - Error en el cierre</SelectItem>
+                <SelectItem value='29'>EELC - Error en la conexión</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Descripción detallada */}
-          <div className='space-y-2'>
-            <Label className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide flex items-center gap-2'>
-              <FileText className='h-4 w-4 text-orange-600 dark:text-orange-400' />
+          <div className='space-y-1.5'>
+            <Label className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'>
+              <FileText className='h-3 w-3' />
               Descripción detallada
             </Label>
             <Textarea
-              placeholder='Explique con detalle por qué necesita reaperturar esta medición (mínimo 10 caracteres).'
+              placeholder='Explique el motivo de la reapertura (mínimo 10 caracteres)'
               value={descripcionReapertura}
               onChange={e => setDescripcionReapertura(e.target.value)}
-              className='bg-slate-50 dark:bg-slate-900/30 border-slate-200 dark:border-slate-800 min-h-24 resize-none'
+              className='min-h-20 resize-none text-sm'
             />
-            <div className='flex justify-between text-xs text-slate-500 dark:text-slate-400'>
+            <div className='flex justify-between text-xs text-muted-foreground'>
               <span>Mínimo 10 caracteres</span>
               <span
                 className={
                   descripcionReapertura.length < 10
-                    ? 'text-red-500'
+                    ? 'text-destructive'
                     : 'text-green-600'
                 }
               >
@@ -201,37 +195,27 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
           </div>
 
           {/* Botón de acción */}
-          <div className='pt-4'>
+          <div className='flex justify-end pt-2'>
             <Button
               onClick={handleReaperturaMedicion}
               disabled={isSubmitting}
-              className='w-full bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500'
+              className='px-4 h-8 text-xs bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500'
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className='h-4 w-4 animate-spin mr-2' />
+                  <Loader2 className='h-3 w-3 animate-spin mr-1.5' />
                   Procesando...
                 </>
               ) : (
                 <>
-                  <RotateCcw className='h-4 w-4 mr-2' />
-                  Reabrir Medición
+                  <RotateCcw className='h-3 w-3 mr-1.5' />
+                  Reabrir
                 </>
               )}
             </Button>
           </div>
         </CardContent>
       </Card>
-
-      {/* Modal de reapertura */}
-      <div className='hidden'>
-        <input
-          type='checkbox'
-          checked={isOpen}
-          onChange={e => setIsOpen(e.target.checked)}
-          style={{ display: 'none' }}
-        />
-      </div>
     </div>
   );
 }

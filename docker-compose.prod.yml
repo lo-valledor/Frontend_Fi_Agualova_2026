@@ -1,0 +1,22 @@
+# docker-compose.prod.yml - Entorno de producción
+version: '3.8'
+
+services:
+  frontend-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://192.168.1.139:8081/Enerlova
+    ports:
+      - '8080:80'
+    container_name: enerlova-frontend-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - enerlova-network
+
+networks:
+  enerlova-network:
+    driver: bridge

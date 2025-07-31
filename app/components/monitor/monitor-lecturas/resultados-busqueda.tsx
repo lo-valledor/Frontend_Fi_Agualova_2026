@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import ClockLoader from 'react-spinners/ClockLoader';
 
@@ -217,7 +217,9 @@ const MeterCard = ({
           <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
             <StatusIndicator status={status} size='sm' />
             <div className='min-w-0'>
-              <div className='font-medium text-xs truncate'>{medidor.nSerie}</div>
+              <div className='font-medium text-xs truncate'>
+                {medidor.nSerie}
+              </div>
               <div className='text-[10px] text-muted-foreground'>
                 ID: {medidor.id}
               </div>
@@ -259,12 +261,17 @@ const MeterCard = ({
                       </p>
                     </div>
                   </div>
-                  <Badge className={`${status.bgColor} text-xs sm:text-sm`}>{status.label}</Badge>
+                  <Badge className={`${status.bgColor} text-xs sm:text-sm`}>
+                    {status.label}
+                  </Badge>
                 </DialogTitle>
               </DialogHeader>
               <div className='flex-1 overflow-y-auto'>
                 <div className='p-3 sm:p-6'>
-                  <DetallesMedidor lecturaId={medidor.id} onSuccess={onRefresh} />
+                  <DetallesMedidor
+                    lecturaId={medidor.id}
+                    onSuccess={onRefresh}
+                  />
                 </div>
               </div>
             </DialogContent>
@@ -341,11 +348,7 @@ const MeterRowDetailed = ({
           <div className='sm:hidden flex items-center gap-2 mt-1'>
             <Badge
               variant='outline'
-              className={cn(
-                'text-xs',
-                status.borderColor,
-                status.textColor
-              )}
+              className={cn('text-xs', status.borderColor, status.textColor)}
             >
               <span className='mr-1'>{status.icon}</span>
               <span className='truncate'>{medidor.clave || status.label}</span>
@@ -421,7 +424,10 @@ const MeterRowDetailed = ({
               <DialogTitle className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
                 <div className='flex items-center gap-2 sm:gap-3'>
                   <div
-                    className={cn('p-1.5 sm:p-2 rounded-lg text-white', status.bgColor)}
+                    className={cn(
+                      'p-1.5 sm:p-2 rounded-lg text-white',
+                      status.bgColor
+                    )}
                   >
                     {status.icon}
                   </div>
@@ -434,7 +440,9 @@ const MeterRowDetailed = ({
                     </p>
                   </div>
                 </div>
-                <Badge className={cn(status.bgColor, 'text-xs sm:text-sm')}>{status.label}</Badge>
+                <Badge className={cn(status.bgColor, 'text-xs sm:text-sm')}>
+                  {status.label}
+                </Badge>
               </DialogTitle>
             </DialogHeader>
             <div className='flex-1 overflow-y-auto'>
@@ -787,99 +795,123 @@ export default function ResultadosBusqueda({
                 const stats = calculateTotalStats(results.nichos);
                 return (
                   <>
-                    <Card>
-                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
-                        <div>
-                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
-                            <span className='hidden sm:inline'>Total </span>Medidores
-                          </p>
-                          <h3 className='text-lg sm:text-2xl font-bold mt-1'>
-                            {stats.total}
-                          </h3>
-                        </div>
-                        <Grid3X3 className='h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground' />
-                      </CardContent>
-                    </Card>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Card className='cursor-help hover:shadow-md transition-shadow'>
+                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
+                              <Grid3X3 className='h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mb-2' />
+                              <h3 className='text-lg sm:text-2xl font-bold'>
+                                {stats.total}
+                              </h3>
+                            </CardContent>
+                          </Card>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Total Medidores</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
-                    <Card className='border-red-200 dark:border-red-900'>
-                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
-                        <div>
-                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
-                            Críticos
-                          </p>
-                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-red-600 dark:text-red-400'>
-                            {stats.critical}
-                          </h3>
-                        </div>
-                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center'>
-                          <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-red-500' />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Card className='border-red-200 dark:border-red-900 cursor-help hover:shadow-md transition-shadow'>
+                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
+                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-2'>
+                                <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-red-500' />
+                              </div>
+                              <h3 className='text-lg sm:text-2xl font-bold text-red-600 dark:text-red-400'>
+                                {stats.critical}
+                              </h3>
+                            </CardContent>
+                          </Card>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Críticos</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
-                    <Card className='border-orange-200 dark:border-orange-900'>
-                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
-                        <div>
-                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
-                            Relevantes
-                          </p>
-                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-orange-600 dark:text-orange-400'>
-                            {stats.warning}
-                          </h3>
-                        </div>
-                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center'>
-                          <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Card className='border-orange-200 dark:border-orange-900 cursor-help hover:shadow-md transition-shadow'>
+                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
+                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-2'>
+                                <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
+                              </div>
+                              <h3 className='text-lg sm:text-2xl font-bold text-orange-600 dark:text-orange-400'>
+                                {stats.warning}
+                              </h3>
+                            </CardContent>
+                          </Card>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Relevantes</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
-                    <Card className='border-yellow-200 dark:border-yellow-900'>
-                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
-                        <div>
-                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
-                            Informativos
-                          </p>
-                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-yellow-600 dark:text-yellow-400'>
-                            {stats.info}
-                          </h3>
-                        </div>
-                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center'>
-                          <Info className='h-4 w-4 sm:h-5 sm:w-5 text-yellow-500' />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Card className='border-yellow-200 dark:border-yellow-900 cursor-help hover:shadow-md transition-shadow'>
+                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
+                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-2'>
+                                <Info className='h-4 w-4 sm:h-5 sm:w-5 text-yellow-500' />
+                              </div>
+                              <h3 className='text-lg sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400'>
+                                {stats.info}
+                              </h3>
+                            </CardContent>
+                          </Card>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Informativos</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
-                    <Card className='border-gray-200 dark:border-gray-900'>
-                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
-                        <div>
-                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
-                            Sin Lectura
-                          </p>
-                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-gray-600 dark:text-gray-400'>
-                            {stats.sinlec}
-                          </h3>
-                        </div>
-                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center'>
-                          <Info className='h-4 w-4 sm:h-5 sm:w-5 text-gray-500' />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Card className='border-gray-200 dark:border-gray-900 cursor-help hover:shadow-md transition-shadow'>
+                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
+                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center mb-2'>
+                                <Info className='h-4 w-4 sm:h-5 sm:w-5 text-gray-500' />
+                              </div>
+                              <h3 className='text-lg sm:text-2xl font-bold text-gray-600 dark:text-gray-400'>
+                                {stats.sinlec}
+                              </h3>
+                            </CardContent>
+                          </Card>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Sin Lectura</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
 
-                    <Card className='border-green-200 dark:border-green-900'>
-                      <CardContent className='flex items-center justify-between p-3 sm:p-6'>
-                        <div>
-                          <p className='text-xs sm:text-sm font-medium text-muted-foreground'>
-                            Correctas
-                          </p>
-                          <h3 className='text-lg sm:text-2xl font-bold mt-1 text-green-600 dark:text-green-400'>
-                            {stats.normal}
-                          </h3>
-                        </div>
-                        <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
-                          <RefreshCw className='h-4 w-4 sm:h-5 sm:w-5 text-green-500' />
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Card className='border-green-200 dark:border-green-900 cursor-help hover:shadow-md transition-shadow'>
+                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
+                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-2'>
+                                <RefreshCw className='h-4 w-4 sm:h-5 sm:w-5 text-green-500' />
+                              </div>
+                              <h3 className='text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400'>
+                                {stats.normal}
+                              </h3>
+                            </CardContent>
+                          </Card>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Correctas</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </>
                 );
               })()}
@@ -904,7 +936,7 @@ export default function ResultadosBusqueda({
             {/* Modern Horizontal Tabs */}
             <div className='space-y-4'>
               <ScrollArea className='w-full'>
-                <div className='flex gap-1 p-1 bg-muted/30 rounded-xl border backdrop-blur-sm'>
+                <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-1 p-1 bg-muted/30 rounded-xl border backdrop-blur-sm'>
                   {results.nichos.map((nicho: NichoBusqueda, index: number) => {
                     const stats = calculateNichoStats(nicho);
                     const isActive = index === selectedNichoIndex;
@@ -916,36 +948,36 @@ export default function ResultadosBusqueda({
                             <button
                               onClick={() => handleNichoChange(index)}
                               className={cn(
-                                'flex items-center gap-2 px-4 py-3 rounded-lg transition-all duration-200 min-w-fit whitespace-nowrap text-sm font-medium',
+                                'flex flex-col items-center gap-1 px-2 py-2 md:px-3 md:py-3 rounded-lg transition-all duration-200 text-xs md:text-sm font-medium',
                                 'hover:bg-background/60 hover:shadow-sm',
                                 isActive
                                   ? 'bg-background shadow-sm border text-sky-700 dark:text-sky-300 font-semibold'
                                   : 'text-muted-foreground hover:text-foreground'
                               )}
                             >
-                              <span className='font-medium'>
+                              <span className='font-medium text-center leading-tight'>
                                 {nicho.nombre}
                               </span>
 
                               {/* Status indicators */}
-                              <div className='flex items-center gap-1'>
+                              <div className='flex items-center justify-center gap-1 flex-wrap'>
                                 {stats.critical > 0 && (
-                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-red-500 rounded-full'>
+                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-red-500 rounded-full'>
                                     {stats.critical}
                                   </span>
                                 )}
                                 {stats.warning > 0 && (
-                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-orange-500 rounded-full'>
+                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-orange-500 rounded-full'>
                                     {stats.warning}
                                   </span>
                                 )}
                                 {stats.info > 0 && (
-                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-slate-700 bg-yellow-400 rounded-full'>
+                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-slate-700 bg-yellow-400 rounded-full'>
                                     {stats.info}
                                   </span>
                                 )}
                                 {stats.sinlec > 0 && (
-                                  <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-gray-500 rounded-full'>
+                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-gray-500 rounded-full'>
                                     {stats.sinlec}
                                   </span>
                                 )}
@@ -954,7 +986,7 @@ export default function ResultadosBusqueda({
                                   stats.warning === 0 &&
                                   stats.info === 0 &&
                                   stats.sinlec === 0 && (
-                                    <span className='inline-flex items-center justify-center h-5 w-5 text-xs font-bold text-white bg-green-500 rounded-full'>
+                                    <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-green-500 rounded-full'>
                                       {stats.normal}
                                     </span>
                                   )}
@@ -1124,20 +1156,32 @@ export default function ResultadosBusqueda({
                           Ingresar Lecturas
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className='min-w-full h-auto overflow-y-auto'>
-                        <DialogTitle>
-                          <div className='text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500'>
-                            <Gauge className='h-5 w-5 text-sky-700 dark:text-sky-500' />
-                            Monitor de Medidores
+                      <DialogContent className='max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto overflow-hidden flex flex-col'>
+                        <DialogHeader className='shrink-0 pb-2 sm:pb-3 lg:pb-4 border-b border-border/40 px-3 sm:px-4 lg:px-6'>
+                          <DialogTitle>
+                            <div className='text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500'>
+                              <Gauge className='h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-sky-700 dark:text-sky-500' />
+                              <span className='truncate'>Monitor de Medidores</span>
+                              {/* Indicador de responsive */}
+                              <div className='hidden sm:flex items-center gap-1 ml-auto'>
+                                <div className='text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full'>
+                                  {results.nichos[selectedNichoIndex]?.nombre}
+                                </div>
+                              </div>
+                            </div>
+                          </DialogTitle>
+                        </DialogHeader>
+                        <div className='flex-1 overflow-hidden min-h-0'>
+                          <div className='h-full p-2 sm:p-3 lg:p-4 xl:p-6'>
+                            <MonitorNichos
+                              periodo={periodo}
+                              nicho={
+                                results.nichos[selectedNichoIndex].nombre
+                              }
+                              onSuccess={handleNichoModalSuccess}
+                            />
                           </div>
-                        </DialogTitle>
-                        <ScrollArea className='h-[calc(100vh-200px)]'>
-                          <MonitorNichos
-                            periodo={periodo}
-                            nicho={results.nichos[selectedNichoIndex].nombre}
-                            onSuccess={handleNichoModalSuccess}
-                          />
-                        </ScrollArea>
+                        </div>
                       </DialogContent>
                     </Dialog>
                   </div>

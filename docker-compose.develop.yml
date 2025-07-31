@@ -1,0 +1,22 @@
+# docker-compose.develop.yml - Entorno de desarrollo
+version: '3.8'
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://192.168.1.139:8082/Enerlova
+    ports:
+      - '3000:80'
+    container_name: enerlova-frontend-dev
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+    networks:
+      - enerlova-dev-network
+
+networks:
+  enerlova-dev-network:
+    driver: bridge

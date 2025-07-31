@@ -1,14 +1,13 @@
 import {
+  AlertCircle,
   Gauge,
   IdCard,
-  Info,
   Key,
   PlugIcon,
   TrendingUp,
   Zap,
 } from 'lucide-react';
 
-import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -36,55 +35,55 @@ export default function InformacionMedidor({
   lecturaId,
 }: InformacionMedidorProps) {
   return (
-    <Card className='border border-slate-200/50 dark:border-slate-800/50 shadow-sm'>
-      <CardHeader className='pb-4'>
-        <CardTitle className='flex items-center gap-3 text-slate-900 dark:text-slate-100 text-lg font-semibold'>
-          <div className='p-2 bg-blue-50 dark:bg-blue-950/50 rounded-lg'>
-            <Gauge className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+    <Card className='border-0 shadow-none bg-transparent'>
+      <CardHeader className='px-0 pb-2'>
+        <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
+          <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
+            <Gauge className='h-3 w-3 text-blue-600 dark:text-blue-400' />
           </div>
-          Información del Medidor
+          <span>Información del Medidor</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className='px-0 space-y-3'>
         {error ? (
-          <Alert variant='destructive' className='mb-4'>
-            <Info className='h-4 w-4' />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-lg border border-red-200 dark:border-red-800'>
+            <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+            <span>{error}</span>
+          </div>
         ) : (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
             {/* Medidor */}
-            <div className='group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors'>
-              <div className='flex items-center gap-3 mb-2'>
-                <IdCard className='h-4 w-4 text-blue-600 dark:text-blue-400' />
-                <span className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide'>
+            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+              <div className='flex items-center gap-2 mb-1.5'>
+                <IdCard className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                   Medidor
                 </span>
               </div>
-              <p className='font-mono text-lg font-semibold text-slate-900 dark:text-slate-100'>
+              <p className='font-mono text-sm font-semibold text-foreground truncate'>
                 {data[0]?.ME_NSerie || '-'}
               </p>
             </div>
 
             {/* Tipo */}
-            <div className='group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors'>
-              <div className='flex items-center gap-3 mb-2'>
-                <Zap className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
-                <span className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide'>
+            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+              <div className='flex items-center gap-2 mb-1.5'>
+                <Zap className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
+                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                   Tipo
                 </span>
               </div>
-              <p className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+              <p className='text-sm font-semibold text-foreground truncate'>
                 {data[0]?.TM_Descripcion || '-'}
               </p>
             </div>
 
             {/* Tarifa */}
-            <div className='group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors'>
-              <div className='flex items-center justify-between mb-2'>
-                <div className='flex items-center gap-3'>
-                  <Key className='h-4 w-4 text-amber-600 dark:text-amber-400' />
-                  <span className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide'>
+            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+              <div className='flex items-center justify-between mb-1.5'>
+                <div className='flex items-center gap-2 min-w-0'>
+                  <Key className='h-3 w-3 text-amber-600 dark:text-amber-400' />
+                  <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                     Tarifa
                   </span>
                 </div>
@@ -94,26 +93,26 @@ export default function InformacionMedidor({
                       <Button
                         variant='outline'
                         size='sm'
-                        className='h-7 px-2 text-xs'
+                        className='h-6 px-2 text-xs flex-shrink-0'
                       >
                         <TrendingUp className='h-3 w-3 mr-1' />
-                        Detalle
+                        <span className='hidden sm:inline'>Detalle</span>
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className='min-w-[950px] max-h-[90vh] overflow-y-auto'>
+                    <DialogContent className='max-w-[98vw] sm:max-w-[95vw] md:max-w-4xl lg:max-w-5xl xl:max-w-6xl max-h-[98vh] sm:max-h-[95vh] overflow-hidden'>
                       <DialogHeader>
                         <DialogTitle>
-                          <div className='flex items-center gap-3'>
-                            <h1 className='text-xl font-bold text-slate-900 dark:text-slate-100'>
+                          <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
+                            <span className='text-lg font-semibold text-foreground'>
                               Detalle Lectura BT-4.3
-                            </h1>
-                            <Badge variant='outline' className='font-mono'>
+                            </span>
+                            <Badge variant='outline' className='font-mono text-xs self-start sm:self-auto'>
                               ID: {lecturaId}
                             </Badge>
                           </div>
                         </DialogTitle>
                       </DialogHeader>
-                      <ScrollArea className='h-screen overflow-y-auto'>
+                      <ScrollArea className='flex-1 overflow-auto'>
                         <DetalleLecturaBT43
                           lecturaId={lecturaId}
                           etapa1={data}
@@ -123,33 +122,33 @@ export default function InformacionMedidor({
                   </Dialog>
                 )}
               </div>
-              <p className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+              <p className='text-sm font-semibold text-foreground truncate'>
                 {data[0]?.TF_Codigo || '-'}
               </p>
             </div>
 
             {/* Constante */}
-            <div className='group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors'>
-              <div className='flex items-center gap-3 mb-2'>
-                <Gauge className='h-4 w-4 text-purple-600 dark:text-purple-400' />
-                <span className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide'>
+            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+              <div className='flex items-center gap-2 mb-1.5'>
+                <Gauge className='h-3 w-3 text-purple-600 dark:text-purple-400' />
+                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                   Constante
                 </span>
               </div>
-              <p className='font-mono text-lg font-semibold text-slate-900 dark:text-slate-100'>
+              <p className='font-mono text-sm font-semibold text-foreground truncate'>
                 {data[0]?.ME_ConstanteMultiplicar || '-'}
               </p>
             </div>
 
             {/* Subempalme */}
-            <div className='group p-4 bg-slate-50/50 dark:bg-slate-900/20 rounded-xl border border-slate-200/50 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors'>
-              <div className='flex items-center gap-3 mb-2'>
-                <PlugIcon className='h-4 w-4 text-orange-600 dark:text-orange-400' />
-                <span className='text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wide'>
+            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+              <div className='flex items-center gap-2 mb-1.5'>
+                <PlugIcon className='h-3 w-3 text-orange-600 dark:text-orange-400' />
+                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                   Subempalme
                 </span>
               </div>
-              <p className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+              <p className='text-sm font-semibold text-foreground truncate'>
                 {data[0]?.SE_Codigo || '-'}
               </p>
             </div>
