@@ -19,7 +19,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       const id = row.getValue('ctId') as string;
       return (
         <div className='flex items-center'>
-          <Badge variant='outline' className='font-mono text-xs'>
+          <Badge variant='outline' className='font-mono text-xs sm:text-xs'>
             {id}
           </Badge>
         </div>
@@ -35,7 +35,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const codigo = row.getValue('seCodigo') as string;
       return (
-        <div className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+        <div className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
           {codigo}
         </div>
       );
@@ -50,7 +50,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const serie = row.getValue('meNSerie') as string;
       return (
-        <div className='font-mono text-sm text-slate-600 dark:text-slate-400'>
+        <div className='font-mono text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
           {serie}
         </div>
       );
@@ -65,7 +65,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const rut = row.getValue('clRut') as string;
       return (
-        <div className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+        <div className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
           {rut}
         </div>
       );
@@ -80,7 +80,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const razonSocial = row.getValue('clRazonSocialCompleto') as string;
       return (
-        <div className='max-w-[200px] truncate font-medium text-slate-900 dark:text-slate-100'>
+        <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100'>
           {razonSocial}
         </div>
       );
@@ -95,7 +95,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const descripcion = row.getValue('niDescripcion') as string;
       return (
-        <div className='max-w-[150px] truncate text-sm text-slate-600 dark:text-slate-400'>
+        <div className='max-w-[100px] sm:max-w-[150px] truncate text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
           {descripcion}
         </div>
       );
@@ -110,7 +110,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const seccion = row.getValue('secDescripcion') as string;
       return (
-        <div className='text-sm text-slate-600 dark:text-slate-400'>
+        <div className='text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
           {seccion}
         </div>
       );
@@ -170,9 +170,12 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       return (
         <Badge
           variant={config.variant}
-          className={cn('text-xs font-medium', config.className)}
+          className={cn('text-xs font-medium px-1 sm:px-2', config.className)}
         >
-          {config.label}
+          <span className='hidden sm:inline'>{config.label}</span>
+          <span className='sm:hidden'>
+            {estado === 'NULL' ? 'Pend.' : estado === '1' ? 'Lib.' : estado === '2' ? 'Cort.' : estado === '3' ? 'Rep.' : config.label}
+          </span>
         </Badge>
       );
     },
@@ -189,7 +192,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         <div className='text-center'>
           <Badge
             variant='outline'
-            className='font-mono text-xs bg-slate-50 dark:bg-slate-800'
+            className='font-mono text-xs bg-slate-50 dark:bg-slate-800 px-1 sm:px-2'
           >
             {documentos}
           </Badge>
@@ -214,7 +217,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
 
       return (
         <div className='text-right'>
-          <span className='font-mono text-sm font-medium text-slate-900 dark:text-slate-100'>
+          <span className='font-mono text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100'>
             {formattedDeuda}
           </span>
         </div>
@@ -235,7 +238,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       };
 
       return (
-        <div className='flex items-center justify-center gap-1'>
+        <div className='flex items-center justify-center gap-0.5 sm:gap-1'>
           <ReposicionSolicitadaDialog
             acometida={acometida}
             onSuccess={handleSuccess}

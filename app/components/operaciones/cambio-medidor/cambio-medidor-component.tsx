@@ -407,7 +407,7 @@ export default function CambioMedidorComponent() {
                 <Button
                   onClick={nextStep}
                   disabled={!detalleMedidorAntiguo.medidorId || isLoading}
-                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-sm sm:text-base py-2 sm:py-3'
                 >
                   Siguiente <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
@@ -443,13 +443,13 @@ export default function CambioMedidorComponent() {
                 <Button
                   variant='outline'
                   onClick={prevStep}
-                  className='border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300'
+                  className='border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-sm sm:text-base py-2 sm:py-3'
                 >
                   <ArrowLeft className='mr-2 h-4 w-4' /> Anterior
                 </Button>
                 <Button
                   onClick={nextStep}
-                  className='bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600'
+                  className='bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-600 text-sm sm:text-base py-2 sm:py-3'
                 >
                   Siguiente <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
@@ -497,14 +497,14 @@ export default function CambioMedidorComponent() {
                 <Button
                   variant='outline'
                   onClick={prevStep}
-                  className='border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300'
+                  className='border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-sm sm:text-base py-2 sm:py-3'
                 >
                   <ArrowLeft className='mr-2 h-4 w-4' /> Anterior
                 </Button>
                 <Button
                   onClick={nextStep}
                   disabled={!detalleMedidorNuevo.numero_serie || isLoading}
-                  className='bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600'
+                  className='bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 text-sm sm:text-base py-2 sm:py-3'
                 >
                   Siguiente <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
@@ -533,36 +533,36 @@ export default function CambioMedidorComponent() {
               </CardHeader>
               <CardContent className='pt-6'>
                 <div className='space-y-6'>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                  <div className='grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6'>
                     <Card className='border-amber-200 dark:border-amber-800'>
-                      <CardHeader className='bg-amber-50 dark:bg-amber-950/30'>
-                        <CardTitle className='text-amber-800 dark:text-amber-200'>
+                      <CardHeader className='bg-amber-50 dark:bg-amber-950/30 p-3 sm:p-6'>
+                        <CardTitle className='text-amber-800 dark:text-amber-200 text-base sm:text-lg'>
                           Medidor Antiguo
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className='pt-4'>
-                        <div className='space-y-2'>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                      <CardContent className='pt-3 sm:pt-4 p-3 sm:p-6'>
+                        <div className='space-y-2 sm:space-y-3'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Acometida:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorAntiguo.acometidaDetalle}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Número de Serie:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorAntiguo.numeroMedidor}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Última Lectura:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorAntiguo.ultimaLectura}
                             </span>
                           </div>
@@ -570,58 +570,58 @@ export default function CambioMedidorComponent() {
                       </CardContent>
                     </Card>
                     <Card className='border-emerald-200 dark:border-emerald-800'>
-                      <CardHeader className='bg-emerald-50 dark:bg-emerald-950/30'>
-                        <CardTitle className='text-emerald-800 dark:text-emerald-200'>
+                      <CardHeader className='bg-emerald-50 dark:bg-emerald-950/30 p-3 sm:p-6'>
+                        <CardTitle className='text-emerald-800 dark:text-emerald-200 text-base sm:text-lg'>
                           Medidor Nuevo
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className='pt-4'>
-                        <div className='space-y-2'>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                      <CardContent className='pt-3 sm:pt-4 p-3 sm:p-6'>
+                        <div className='space-y-2 sm:space-y-3'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Número de Serie:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorNuevo.numero_serie}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Tipo de Medidor:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorNuevo.tipo_medidor}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Constante:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorNuevo.constante_multiplicar}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Marca:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorNuevo.marca}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Modelo:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorNuevo.modelo}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-muted-foreground'>
+                          <div className='flex flex-col sm:flex-row sm:justify-between gap-1 sm:gap-0'>
+                            <span className='text-muted-foreground text-xs sm:text-sm'>
                               Estado:
                             </span>
-                            <span className='font-medium'>
+                            <span className='font-medium text-sm sm:text-base break-words'>
                               {detalleMedidorNuevo.estado_medidor === 1
                                 ? 'Activo'
                                 : 'Inactivo'}
@@ -634,15 +634,16 @@ export default function CambioMedidorComponent() {
 
                   {/* Campos adicionales para la API */}
                   <Card className='border-blue-200 dark:border-blue-800'>
-                    <CardHeader className='bg-blue-50 dark:bg-blue-950/30'>
-                      <CardTitle className='text-blue-800 dark:text-blue-200'>
+                    <CardHeader className='bg-blue-50 dark:bg-blue-950/30 p-3 sm:p-6'>
+                      <CardTitle className='text-blue-800 dark:text-blue-200 text-base sm:text-lg flex items-center'>
+                        <FileText className='mr-2 h-4 w-4 sm:h-5 sm:w-5' />
                         Información Adicional
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className='pt-6'>
-                      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div className='space-y-2'>
-                          <Label htmlFor='valor-primera-lectura'>
+                    <CardContent className='pt-3 sm:pt-6 p-3 sm:p-6'>
+                      <div className='grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4'>
+                        <div className='space-y-1 sm:space-y-2'>
+                          <Label htmlFor='valor-primera-lectura' className='text-xs sm:text-sm'>
                             Valor Primera Lectura
                           </Label>
                           <Input
@@ -654,11 +655,11 @@ export default function CambioMedidorComponent() {
                             onChange={e =>
                               setValorPrimeraLectura(e.target.value)
                             }
-                            className='bg-background'
-                          />{' '}
+                            className='bg-background text-sm sm:text-base h-9 sm:h-10'
+                          />
                         </div>
-                        <div className='space-y-2'>
-                          <Label htmlFor='fecha-primera-lectura'>
+                        <div className='space-y-1 sm:space-y-2'>
+                          <Label htmlFor='fecha-primera-lectura' className='text-xs sm:text-sm'>
                             Fecha de Primera Lectura
                           </Label>
                           <Input
@@ -668,11 +669,11 @@ export default function CambioMedidorComponent() {
                             onChange={e =>
                               setFechaPrimeraLectura(e.target.value)
                             }
-                            className='bg-background'
+                            className='bg-background text-sm sm:text-base h-9 sm:h-10'
                           />
                         </div>
-                        <div className='space-y-2'>
-                          <Label htmlFor='codigo-contrato'>
+                        <div className='space-y-1 sm:space-y-2 lg:col-span-2'>
+                          <Label htmlFor='codigo-contrato' className='text-xs sm:text-sm'>
                             Código de Contrato (Opcional)
                           </Label>
                           <Input
@@ -681,11 +682,11 @@ export default function CambioMedidorComponent() {
                             placeholder='Código del contrato'
                             value={codigoContrato}
                             onChange={e => setCodigoContrato(e.target.value)}
-                            className='bg-background'
+                            className='bg-background text-sm sm:text-base h-9 sm:h-10'
                           />
                         </div>
                       </div>
-                    </CardContent>{' '}
+                    </CardContent>
                   </Card>
                 </div>
               </CardContent>
@@ -693,14 +694,14 @@ export default function CambioMedidorComponent() {
                 <Button
                   variant='outline'
                   onClick={prevStep}
-                  className='border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300'
+                  className='border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-sm sm:text-base py-2 sm:py-3'
                 >
                   <ArrowLeft className='mr-2 h-4 w-4' /> Anterior
                 </Button>
                 <Button
                   onClick={handleCambioMedidor}
                   disabled={!isFormValid || isLoading}
-                  className='bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
+                  className='bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-sm sm:text-base py-2 sm:py-3'
                 >
                   {isLoading ? (
                     <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
@@ -720,14 +721,15 @@ export default function CambioMedidorComponent() {
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 dark:from-slate-950 dark:to-purple-950/30'>
-      <div className='container mx-auto p-2 space-y-3'>
+      <div className='container mx-auto p-2 sm:p-4 space-y-3 sm:space-y-6'>
         {/* Modern Header */}
-        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
+        <div className='flex items-center gap-2 sm:gap-3 py-2 sm:py-4 border-b border-slate-200 dark:border-slate-700'>
           <div className='flex-1'>
-            <div className='flex items-center gap-3 justify-between'>
-              <div className='flex items-center gap-3'>
-                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-                  Cambio Medidor
+            <div className='flex items-center gap-2 sm:gap-3 justify-between'>
+              <div className='flex items-center gap-2 sm:gap-3'>
+                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
+                  <span className='hidden sm:inline'>Cambio Medidor</span>
+                  <span className='sm:hidden'>Cambio Med.</span>
                 </h1>
               </div>
             </div>
@@ -735,25 +737,28 @@ export default function CambioMedidorComponent() {
         </div>
 
         {/* Stepper */}
-        <div className='mb-8'>
-          <div className='flex items-center justify-between mb-4'>
-            <div className='flex items-center'>
+        <div className='mb-4 sm:mb-8'>
+          <div className='flex items-center justify-between mb-3 sm:mb-4 overflow-x-auto'>
+            <div className='flex items-center min-w-0'>
               <div
-                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full ${
                   currentStep >= 1
                     ? 'bg-purple-600 text-white'
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {currentStep > 1 ? (
-                  <CheckCircle2 className='h-5 w-5' />
+                  <CheckCircle2 className='h-3 w-3 sm:h-5 sm:w-5' />
                 ) : (
-                  <span>1</span>
+                  <span className='text-xs sm:text-sm'>1</span>
                 )}
               </div>
-              <div className='ml-2 text-sm font-medium'>Medidor Antiguo</div>
+              <div className='ml-1 sm:ml-2 text-xs sm:text-sm font-medium truncate'>
+                <span className='hidden sm:inline'>Medidor Antiguo</span>
+                <span className='sm:hidden'>Antiguo</span>
+              </div>
             </div>
-            <div className='flex-1 h-0.5 mx-4 bg-muted'>
+            <div className='flex-1 h-0.5 mx-2 sm:mx-4 bg-muted min-w-[20px]'>
               <div
                 className='h-full bg-sky-600'
                 style={{
@@ -761,23 +766,26 @@ export default function CambioMedidorComponent() {
                 }}
               ></div>
             </div>
-            <div className='flex items-center'>
+            <div className='flex items-center min-w-0'>
               <div
-                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full ${
                   currentStep >= 2
                     ? 'bg-amber-600 text-white'
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {currentStep > 2 ? (
-                  <CheckCircle2 className='h-5 w-5' />
+                  <CheckCircle2 className='h-3 w-3 sm:h-5 sm:w-5' />
                 ) : (
-                  <span>2</span>
+                  <span className='text-xs sm:text-sm'>2</span>
                 )}
               </div>
-              <div className='ml-2 text-sm font-medium'>Detalles Antiguo</div>
+              <div className='ml-1 sm:ml-2 text-xs sm:text-sm font-medium truncate'>
+                <span className='hidden sm:inline'>Detalles Antiguo</span>
+                <span className='sm:hidden'>Detalles</span>
+              </div>
             </div>
-            <div className='flex-1 h-0.5 mx-4 bg-muted'>
+            <div className='flex-1 h-0.5 mx-2 sm:mx-4 bg-muted min-w-[20px]'>
               <div
                 className='h-full bg-amber-600'
                 style={{
@@ -785,23 +793,26 @@ export default function CambioMedidorComponent() {
                 }}
               ></div>
             </div>
-            <div className='flex items-center'>
+            <div className='flex items-center min-w-0'>
               <div
-                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full ${
                   currentStep >= 3
                     ? 'bg-emerald-600 text-white'
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
                 {currentStep > 3 ? (
-                  <CheckCircle2 className='h-5 w-5' />
+                  <CheckCircle2 className='h-3 w-3 sm:h-5 sm:w-5' />
                 ) : (
-                  <span>3</span>
+                  <span className='text-xs sm:text-sm'>3</span>
                 )}
               </div>
-              <div className='ml-2 text-sm font-medium'>Medidor Nuevo</div>
+              <div className='ml-1 sm:ml-2 text-xs sm:text-sm font-medium truncate'>
+                <span className='hidden sm:inline'>Medidor Nuevo</span>
+                <span className='sm:hidden'>Nuevo</span>
+              </div>
             </div>
-            <div className='flex-1 h-0.5 mx-4 bg-muted'>
+            <div className='flex-1 h-0.5 mx-2 sm:mx-4 bg-muted min-w-[20px]'>
               <div
                 className='h-full bg-emerald-600'
                 style={{
@@ -809,20 +820,23 @@ export default function CambioMedidorComponent() {
                 }}
               ></div>
             </div>
-            <div className='flex items-center'>
+            <div className='flex items-center min-w-0'>
               <div
-                className={`flex items-center justify-center w-8 h-8 rounded-full ${
+                className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full ${
                   currentStep >= 4
                     ? 'bg-indigo-600 text-white'
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
-                <span>4</span>
+                <span className='text-xs sm:text-sm'>4</span>
               </div>
-              <div className='ml-2 text-sm font-medium'>Confirmar</div>
+              <div className='ml-1 sm:ml-2 text-xs sm:text-sm font-medium truncate'>
+                <span className='hidden sm:inline'>Confirmar</span>
+                <span className='sm:hidden'>Conf.</span>
+              </div>
             </div>
           </div>
-          <Progress value={(currentStep / totalSteps) * 100} className='h-2' />
+          <Progress value={(currentStep / totalSteps) * 100} className='h-1.5 sm:h-2' />
         </div>
 
         {/* Contenido del paso actual */}

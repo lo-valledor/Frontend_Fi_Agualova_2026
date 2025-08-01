@@ -109,54 +109,52 @@ export default function DialogAbrirPeriodo({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='w-[95vw] max-w-md mx-auto'>
         <DialogHeader>
-          <DialogTitle className='text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-3'>
-            <div className='p-2 bg-background rounded-lg border shadow-sm'>
-              <CalendarRange className='h-5 w-5 text-sky-600 dark:text-sky-400' />
-            </div>
-            Confirmar Apertura de Periodo
+          <DialogTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
+            <CalendarRange className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
+            Confirmar Apertura
           </DialogTitle>
-          <DialogDescription className='text-sm text-muted-foreground'>
-            ¿Está seguro que desea abrir el periodo de facturación para el mes y
-            año seleccionado?
+          <DialogDescription className='text-xs sm:text-sm text-muted-foreground'>
+            ¿Está seguro que desea abrir el periodo para el mes y año seleccionado?
           </DialogDescription>
         </DialogHeader>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 py-4'>
-          <div className='space-y-1.5'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 py-3'>
+          <div className='space-y-1'>
             <Label
               htmlFor='mes-inicio'
-              className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'
+              className='text-xs font-medium text-muted-foreground flex items-center gap-1'
             >
-              <CalendarIcon className='h-3.5 w-3.5' /> Mes de Inicio
+              <CalendarIcon className='h-3 w-3' /> Mes
             </Label>
             <Input
               id='mes-inicio'
               value={meses[parseInt(selectedMonth) - 1]}
               disabled
-              className='bg-muted/50 border-border/70 text-muted-foreground'
+              className='bg-muted/50 border-border/70 text-muted-foreground h-9 text-xs sm:text-sm'
             />
           </div>
-          <div className='space-y-1.5'>
+          <div className='space-y-1'>
             <Label
               htmlFor='anio-inicio'
-              className='text-xs font-medium text-muted-foreground flex items-center gap-1.5'
+              className='text-xs font-medium text-muted-foreground flex items-center gap-1'
             >
-              <CalendarRange className='h-3.5 w-3.5' /> Año de Inicio
+              <CalendarRange className='h-3 w-3' /> Año
             </Label>
             <Input
               id='anio-inicio'
               value={selectedYear}
               disabled
-              className='bg-muted/50 border-border/70 text-muted-foreground'
+              className='bg-muted/50 border-border/70 text-muted-foreground h-9 text-xs sm:text-sm'
             />
           </div>
         </div>
-        <DialogFooter className='gap-2'>
+        <DialogFooter className='flex-col sm:flex-row gap-2'>
           <Button
             variant='ghost'
             onClick={() => onOpenChange(false)}
-            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted'
+            size='sm'
+            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted order-2 sm:order-1'
           >
             Cancelar
           </Button>
@@ -164,17 +162,18 @@ export default function DialogAbrirPeriodo({
             variant='default'
             onClick={handleAbrirPeriodo}
             disabled={isLoading || !selectedMonth || !selectedYear}
-            className='gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+            size='sm'
+            className='gap-1 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 order-1 sm:order-2'
           >
             {isLoading ? (
               <>
-                <Loader2 className='w-4 h-4 animate-spin' />
-                Procesando...
+                <Loader2 className='w-3 h-3 sm:w-4 sm:h-4 animate-spin' />
+                <span className='text-xs sm:text-sm'>Procesando...</span>
               </>
             ) : (
               <>
-                <CalendarRange className='w-4 h-4' />
-                Abrir Periodo
+                <CalendarRange className='w-3 h-3 sm:w-4 sm:h-4' />
+                <span className='text-xs sm:text-sm'>Abrir</span>
               </>
             )}
           </Button>

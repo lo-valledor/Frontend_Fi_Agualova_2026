@@ -42,8 +42,8 @@ export default function MedidorField({
   const colors = colorVariants[colorScheme];
 
   return (
-    <div className='space-y-2'>
-      <Label htmlFor={id} className={`text-sm ${colors.label} font-medium`}>
+    <div className='space-y-1 sm:space-y-2'>
+      <Label htmlFor={id} className={`text-xs sm:text-sm ${colors.label} font-medium`}>
         {label}
       </Label>
       <Input
@@ -51,7 +51,7 @@ export default function MedidorField({
         placeholder=''
         value={value}
         readOnly
-        className={`h-9 ${colors.input}`}
+        className={`h-8 sm:h-9 text-sm sm:text-base ${colors.input}`}
       />
     </div>
   );

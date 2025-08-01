@@ -26,7 +26,7 @@ export default function DetalleMedidorAntiguo({
         />
 
         <CollapsibleContent>
-          <CardContent className='p-4 md:p-6 pt-4'>
+          <CardContent className='p-3 sm:p-4 md:p-6 pt-3 sm:pt-4'>
             <MedidorFieldsGroup
               data={detalleMedidorAntiguo}
               colorScheme='amber'

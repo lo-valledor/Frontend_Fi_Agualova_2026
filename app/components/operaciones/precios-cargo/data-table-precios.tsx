@@ -101,25 +101,25 @@ export function DataTablePrecios<TData, TValue>({
   };
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-3 sm:space-y-4'>
       {/* Search */}
       {showSearch && (
         <div className='flex justify-end'>
-          <div className='relative w-full max-w-sm'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
+          <div className='relative w-full max-w-xs sm:max-w-sm'>
+            <Search className='absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3 sm:h-4 sm:w-4' />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
               onChange={e => table.setGlobalFilter(e.target.value)}
-              className='pl-10 w-full bg-white dark:bg-slate-800'
+              className='pl-8 sm:pl-10 w-full bg-white dark:bg-slate-800 h-8 sm:h-10 text-xs sm:text-sm'
             />
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className='rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden shadow-lg'>
-        <Table>
+      <div className='rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-x-auto shadow-lg'>
+        <Table className='min-w-full'>
           <TableHeader>
             {/* Headers agrupados */}
             {columnGroups.length > 0 && (
@@ -128,7 +128,7 @@ export function DataTablePrecios<TData, TValue>({
                   <TableHead
                     key={group.id}
                     colSpan={getColumnSpan(group.id)}
-                    className={`text-center font-bold text-sm py-3 border-r last:border-r-0 ${
+                    className={`text-center font-bold text-xs sm:text-sm py-2 sm:py-3 border-r last:border-r-0 ${
                       group.className || 'bg-slate-600 text-white'
                     }`}
                   >
@@ -149,7 +149,7 @@ export function DataTablePrecios<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={`font-semibold text-xs py-2 border-r last:border-r-0 ${
+                      className={`font-semibold text-xs py-1 sm:py-2 px-1 sm:px-3 border-r last:border-r-0 ${
                         group ? 'bg-slate-100 dark:bg-slate-700/50' : ''
                       }`}
                       style={{
@@ -157,6 +157,7 @@ export function DataTablePrecios<TData, TValue>({
                           header.getSize() !== 150
                             ? header.getSize()
                             : undefined,
+                        minWidth: '60px',
                       }}
                     >
                       {header.isPlaceholder
@@ -187,7 +188,7 @@ export function DataTablePrecios<TData, TValue>({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`py-3 px-3 text-sm border-r last:border-r-0 ${
+                        className={`py-2 sm:py-3 px-1 sm:px-3 text-xs sm:text-sm border-r last:border-r-0 ${
                           group ? 'border-slate-200 dark:border-slate-700' : ''
                         }`}
                       >
@@ -204,7 +205,7 @@ export function DataTablePrecios<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center text-slate-500 dark:text-slate-400'
+                  className='h-16 sm:h-24 text-center text-slate-500 dark:text-slate-400 text-xs sm:text-sm'
                 >
                   No se encontraron resultados.
                 </TableCell>

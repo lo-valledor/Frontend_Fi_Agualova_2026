@@ -50,11 +50,11 @@ export default function TablaLecturasPendientes({
 
   return (
     <div className='space-y-4'>
-      <div className='flex justify-between items-center'>
+      <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0'>
         {data && !data.sinPendientes && (
-          <div className='flex items-center gap-2'>
-            <AlertCircleIcon className='h-4 w-4 text-amber-500' />
-            <span className='text-sm text-muted-foreground'>
+          <div className='flex items-center gap-2 w-full sm:w-auto'>
+            <AlertCircleIcon className='h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0' />
+            <span className='text-xs sm:text-sm text-muted-foreground'>
               {data.mensaje}
             </span>
           </div>
@@ -64,16 +64,17 @@ export default function TablaLecturasPendientes({
           <Button
             variant='outline'
             size='sm'
-            className='gap-1.5 ml-auto'
+            className='gap-1 sm:gap-1.5 ml-auto w-full sm:w-auto text-xs sm:text-sm px-2 sm:px-3'
             onClick={onRefresh}
             disabled={isLoading}
           >
             {isLoading ? (
-              <Loader2 className='h-3.5 w-3.5 animate-spin' />
+              <Loader2 className='h-3 w-3 sm:h-3.5 sm:w-3.5 animate-spin' />
             ) : (
-              <RefreshCwIcon className='h-3.5 w-3.5' />
+              <RefreshCwIcon className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
             )}
-            Actualizar
+            <span className='hidden sm:inline'>Actualizar</span>
+            <span className='sm:hidden'>Act</span>
           </Button>
         )}
       </div>
@@ -82,16 +83,17 @@ export default function TablaLecturasPendientes({
         <Table>
           <TableHeader>
             <TableRow className='bg-muted/40 hover:bg-muted/60'>
-              <TableHead className='text-xs font-medium text-muted-foreground'>
+              <TableHead className='text-xs font-medium text-muted-foreground px-2 sm:px-4'>
                 Sector
               </TableHead>
-              <TableHead className='text-xs font-medium text-muted-foreground'>
+              <TableHead className='text-xs font-medium text-muted-foreground px-2 sm:px-4'>
                 Nicho
               </TableHead>
-              <TableHead className='text-xs font-medium text-muted-foreground'>
-                Cantidad
+              <TableHead className='text-xs font-medium text-muted-foreground px-2 sm:px-4'>
+                <span className='hidden sm:inline'>Cantidad</span>
+                <span className='sm:hidden'>Cant</span>
               </TableHead>
-              <TableHead className='text-xs font-medium text-muted-foreground'>
+              <TableHead className='text-xs font-medium text-muted-foreground px-2 sm:px-4'>
                 Estado
               </TableHead>
             </TableRow>
@@ -99,27 +101,32 @@ export default function TablaLecturasPendientes({
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={4} className='text-center'>
-                  <Loader2 className='mx-auto h-6 w-6 animate-spin' />
-                  <span className='mt-2 block text-xs'>Cargando...</span>
+                <TableCell colSpan={4} className='text-center py-6 sm:py-8'>
+                  <div className='flex items-center justify-center gap-2'>
+                    <Loader2 className='h-4 w-4 sm:h-6 sm:w-6 animate-spin' />
+                    <span className='text-xs sm:text-sm'>Cargando...</span>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : !data || data.sinPendientes ? (
               <TableRow>
-                <TableCell colSpan={4} className='text-center'>
-                  <Info className='mx-auto h-5 w-5 text-muted-foreground' />
-                  <span className='mt-2 block text-xs'>
-                    No hay lecturas pendientes
-                  </span>
+                <TableCell colSpan={4} className='text-center py-6 sm:py-8'>
+                  <div className='flex flex-col items-center gap-2'>
+                    <Info className='h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground' />
+                    <span className='text-xs sm:text-sm'>
+                      <span className='hidden sm:inline'>No hay lecturas pendientes</span>
+                      <span className='sm:hidden'>Sin pendientes</span>
+                    </span>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
               data.detalles.map((item, index) => (
                 <TableRow key={index} className='hover:bg-muted/30'>
-                  <TableCell>{item.sector}</TableCell>
-                  <TableCell>{item.nicho}</TableCell>
-                  <TableCell>{item.cantidad}</TableCell>
-                  <TableCell>{renderEstadoBadge(item.estado)}</TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>{item.sector}</TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>{item.nicho}</TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>{item.cantidad}</TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3'>{renderEstadoBadge(item.estado)}</TableCell>
                 </TableRow>
               ))
             )}
@@ -130,14 +137,16 @@ export default function TablaLecturasPendientes({
             data.detalles.length > 0 && (
               <TableFooter className='bg-muted/30'>
                 <TableRow>
-                  <TableCell colSpan={2} className='text-xs font-medium'>
-                    Periodo: {data.periodo}
+                  <TableCell colSpan={2} className='text-xs font-medium px-2 sm:px-4 py-2 sm:py-3'>
+                    <span className='hidden sm:inline'>Periodo: {data.periodo}</span>
+                    <span className='sm:hidden'>Per: {data.periodo}</span>
                   </TableCell>
                   <TableCell
                     colSpan={2}
-                    className='text-xs font-medium text-right'
+                    className='text-xs font-medium text-right px-2 sm:px-4 py-2 sm:py-3'
                   >
-                    Total pendientes: {data.totalPendientes}
+                    <span className='hidden sm:inline'>Total pendientes: {data.totalPendientes}</span>
+                    <span className='sm:hidden'>Total: {data.totalPendientes}</span>
                   </TableCell>
                 </TableRow>
               </TableFooter>

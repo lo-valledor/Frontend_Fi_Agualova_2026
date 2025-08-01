@@ -78,37 +78,37 @@ export function ReposicionSolicitadaDialog({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <AlertDialogContent className='sm:max-w-md rounded-xl border border-sky-200/40 bg-white/95 backdrop-blur-sm dark:border-sky-800/40 dark:bg-gray-900/95'>
+      <AlertDialogContent className='mx-4 sm:max-w-md rounded-xl border border-sky-200/40 bg-white/95 backdrop-blur-sm dark:border-sky-800/40 dark:bg-gray-900/95'>
         <AlertDialogHeader>
-          <AlertDialogTitle className='flex items-center gap-2 text-sky-900 dark:text-sky-100'>
-            <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white'>
-              <Undo2 className='h-3 w-3' />
+          <AlertDialogTitle className='flex items-center gap-2 text-sky-900 dark:text-sky-100 text-base sm:text-lg'>
+            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white flex-shrink-0'>
+              <Undo2 className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
             </div>
-            ¿Solicitar Reposición?
+            <span className='truncate'>¿Solicitar Reposición?</span>
           </AlertDialogTitle>
-          <AlertDialogDescription className='text-sky-700 dark:text-sky-300'>
-            <div className='space-y-2'>
+          <AlertDialogDescription className='text-sky-700 dark:text-sky-300 text-sm sm:text-base'>
+            <div className='space-y-2 sm:space-y-3'>
               <p>
                 Esta acción solicitará la reposición para la acometida{' '}
-                <span className='font-mono font-medium'>{acometida}</span>.
+                <span className='font-mono font-medium text-xs sm:text-sm break-all'>{acometida}</span>.
               </p>
-              <div className='flex items-start gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800'>
-                <AlertTriangle className='h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' />
-                <p className='text-sm text-amber-700 dark:text-amber-300'>
+              <div className='flex items-start gap-2 p-2 sm:p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800'>
+                <AlertTriangle className='h-3 w-3 sm:h-4 sm:w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' />
+                <p className='text-xs sm:text-sm text-amber-700 dark:text-amber-300'>
                   Esta acción no se puede deshacer una vez confirmada.
                 </p>
               </div>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isSubmitting}>
+        <AlertDialogFooter className='flex-col sm:flex-row gap-2 sm:gap-0'>
+          <AlertDialogCancel disabled={isSubmitting} className='w-full sm:w-auto text-sm sm:text-base'>
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className='bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white'
+            className='w-full sm:w-auto bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white text-sm sm:text-base'
           >
             {isSubmitting ? 'Procesando...' : 'Confirmar'}
           </AlertDialogAction>

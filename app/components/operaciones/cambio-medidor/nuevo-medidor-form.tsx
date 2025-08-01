@@ -25,29 +25,30 @@ export default function NuevoMedidorForm({
     <Card className='rounded-xl border border-emerald-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-emerald-800/40 dark:bg-gray-900/50'>
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className='w-full'>
         <CollapsibleTrigger asChild>
-          <div className='flex justify-between items-center p-4 cursor-pointer hover:bg-emerald-50/50 rounded-t-xl dark:hover:bg-emerald-900/20'>
-            <div className='flex items-center gap-3'>
-              <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm'>
-                <Zap className='h-4 w-4' />
+          <div className='flex justify-between items-center p-3 sm:p-4 cursor-pointer hover:bg-emerald-50/50 rounded-t-xl dark:hover:bg-emerald-900/20'>
+            <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+              <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm'>
+                <Zap className='h-3 w-3 sm:h-4 sm:w-4' />
               </div>
-              <div>
-                <h3 className='text-lg font-semibold text-emerald-900 dark:text-emerald-100'>
+              <div className='min-w-0'>
+                <h3 className='text-base sm:text-lg font-semibold text-emerald-900 dark:text-emerald-100 truncate'>
                   Nuevo Medidor
                 </h3>
-                <p className='text-sm text-emerald-700 dark:text-emerald-300'>
-                  Buscar el nuevo medidor a instalar
+                <p className='text-xs sm:text-sm text-emerald-700 dark:text-emerald-300 truncate'>
+                  <span className='hidden sm:inline'>Buscar el nuevo medidor a instalar</span>
+                  <span className='sm:hidden'>Buscar nuevo medidor</span>
                 </p>
               </div>
             </div>
             <Button
               variant='ghost'
               size='icon'
-              className='h-8 w-8 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-900/50'
+              className='h-6 w-6 sm:h-8 sm:w-8 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-900/50 flex-shrink-0'
             >
               {isOpen ? (
-                <ChevronUp className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                <ChevronUp className='h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400' />
               ) : (
-                <ChevronDown className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                <ChevronDown className='h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400' />
               )}
               <span className='sr-only'>Abrir/Cerrar panel</span>
             </Button>
@@ -55,12 +56,12 @@ export default function NuevoMedidorForm({
         </CollapsibleTrigger>
 
         <CollapsibleContent>
-          <CardContent className='p-4 md:p-6 pt-4'>
-            <div className='space-y-4'>
-              <div className='space-y-2'>
+          <CardContent className='p-3 sm:p-4 md:p-6 pt-3 sm:pt-4'>
+            <div className='space-y-3 sm:space-y-4'>
+              <div className='space-y-1 sm:space-y-2'>
                 <Label
                   htmlFor='nuevo-serie'
-                  className='text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                  className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
                 >
                   Número de Serie
                 </Label>
@@ -70,7 +71,7 @@ export default function NuevoMedidorForm({
                     placeholder='Ingrese el número de serie del nuevo medidor'
                     value={medidorNuevo.numeroSerie}
                     onChange={onMedidorChange}
-                    className='rounded-r-none focus-visible:ring-1 border-emerald-200 focus-visible:ring-emerald-500 dark:border-emerald-800'
+                    className='rounded-r-none focus-visible:ring-1 border-emerald-200 focus-visible:ring-emerald-500 dark:border-emerald-800 text-sm sm:text-base h-9 sm:h-10'
                   />
                   <Button
                     type='button'
@@ -81,25 +82,25 @@ export default function NuevoMedidorForm({
                         target: { id: 'nuevo-serie', value: '' },
                       } as React.ChangeEvent<HTMLInputElement>);
                     }}
-                    className='rounded-l-none border-l-0 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-900/50'
+                    className='rounded-l-none border-l-0 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-900/50 h-9 sm:h-10 w-9 sm:w-10'
                   >
-                    <X className='h-4 w-4' />
+                    <X className='h-3 w-3 sm:h-4 sm:w-4' />
                   </Button>
                 </div>
               </div>
 
-              <div className='flex items-center gap-3 mt-4'>
+              <div className='flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4'>
                 <Button
                   variant='default'
                   size='sm'
                   onClick={onBuscar}
                   disabled={isLoading}
-                  className='h-9 gap-1.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-sm'
+                  className='h-8 sm:h-9 gap-1 sm:gap-1.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-sm text-sm sm:text-base px-3 sm:px-4'
                 >
                   {isLoading ? (
-                    <div className='h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                    <div className='h-3 w-3 sm:h-3.5 sm:w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent' />
                   ) : (
-                    <Search className='h-3.5 w-3.5' />
+                    <Search className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
                   )}
                   Buscar
                 </Button>

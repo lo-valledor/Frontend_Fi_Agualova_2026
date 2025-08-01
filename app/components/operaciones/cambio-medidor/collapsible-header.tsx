@@ -65,19 +65,21 @@ export default function CollapsibleHeader({
   return (
     <CollapsibleTrigger asChild>
       <div
-        className={`flex justify-between items-center p-4 cursor-pointer border-b ${colors.container}`}
+        className={`flex justify-between items-center p-3 sm:p-4 cursor-pointer border-b ${colors.container}`}
       >
-        <div className='flex items-center gap-3'>
-          <div
-            className={`flex h-8 w-8 items-center justify-center rounded-full ${colors.iconBg} text-white shadow-sm`}
+        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+          {/* <div
+            className={`flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full ${colors.iconBg} text-white shadow-sm flex-shrink-0`}
           >
-            {icon}
-          </div>
-          <div>
-            <CardTitle className={`text-lg font-semibold ${colors.title}`}>
+            {React.cloneElement(icon as React.ReactElement, {
+              className: 'h-3 w-3 sm:h-4 sm:w-4'
+            })}
+          </div> */}
+          <div className='min-w-0'>
+            <CardTitle className={`text-sm sm:text-lg font-semibold ${colors.title} truncate`}>
               {title}
             </CardTitle>
-            <CardDescription className={`text-sm ${colors.description}`}>
+            <CardDescription className={`text-xs sm:text-sm ${colors.description} truncate`}>
               {description}
             </CardDescription>
           </div>
@@ -85,12 +87,12 @@ export default function CollapsibleHeader({
         <Button
           variant='ghost'
           size='icon'
-          className={`h-8 w-8 rounded-full ${colors.button}`}
+          className={`h-6 w-6 sm:h-8 sm:w-8 rounded-full ${colors.button} flex-shrink-0`}
         >
           {isOpen ? (
-            <ChevronUp className={`h-5 w-5 ${colors.chevron}`} />
+            <ChevronUp className={`h-4 w-4 sm:h-5 sm:w-5 ${colors.chevron}`} />
           ) : (
-            <ChevronDown className={`h-5 w-5 ${colors.chevron}`} />
+            <ChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 ${colors.chevron}`} />
           )}
           <span className='sr-only'>Abrir/Cerrar panel</span>
         </Button>

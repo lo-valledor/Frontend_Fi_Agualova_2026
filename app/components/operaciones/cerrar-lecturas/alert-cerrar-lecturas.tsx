@@ -103,34 +103,49 @@ export default function AlertCerrarLecturas({
           <CircleX className='h-4 w-4 mr-1' /> Cerrar
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
-        <DialogHeader>
-          <DialogTitle className='text-xl font-semibold text-red-700 dark:text-red-300 flex items-center gap-2'>
-            <AlertTriangle className='h-5 w-5' />
-            Confirmar Cierre de Lecturas
+      <DialogContent className='max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto'>
+        <DialogHeader className='pb-3 sm:pb-4'>
+          <DialogTitle className='text-lg sm:text-xl font-semibold text-red-700 dark:text-red-300 flex items-center gap-2'>
+            <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5' />
+            <span className='hidden sm:inline'>Confirmar Cierre de Lecturas</span>
+            <span className='sm:hidden'>Confirmar Cierre</span>
           </DialogTitle>
         </DialogHeader>
-        <DialogDescription className='space-y-4 py-4'>
-          <div className='bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4'>
-            <p className='text-sm text-red-700 dark:text-red-300 font-medium'>
-              Estás por cerrar{' '}
-              <span className='font-bold'>{totalLecturas}</span> lecturas para{' '}
-              <span className='font-bold'>{selectedRows.length}</span> nicho(s)
-              del ciclo <span className='font-bold'>{cicloFact}</span> del
-              periodo <span className='font-bold'>{periodo}</span>.
+        <DialogDescription className='space-y-3 sm:space-y-4 py-3 sm:py-4'>
+          <div className='bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-3 sm:p-4'>
+            <p className='text-xs sm:text-sm text-red-700 dark:text-red-300 font-medium leading-relaxed'>
+              <span className='hidden sm:inline'>
+                Estás por cerrar{' '}
+                <span className='font-bold'>{totalLecturas}</span> lecturas para{' '}
+                <span className='font-bold'>{selectedRows.length}</span> nicho(s)
+                del ciclo <span className='font-bold'>{cicloFact}</span> del
+                periodo <span className='font-bold'>{periodo}</span>.
+              </span>
+              <span className='sm:hidden'>
+                Cerrar <span className='font-bold'>{totalLecturas}</span> lecturas de{' '}
+                <span className='font-bold'>{selectedRows.length}</span> nicho(s),
+                ciclo <span className='font-bold'>{cicloFact}</span>, período <span className='font-bold'>{periodo}</span>.
+              </span>
             </p>
-            <p className='text-sm text-red-700 dark:text-red-300 mt-2'>
-              Esta acción es <span className='font-bold'>irreversible</span> y
-              afectará la facturación de los usuarios.
+            <p className='text-xs sm:text-sm text-red-700 dark:text-red-300 mt-2'>
+              <span className='hidden sm:inline'>
+                Esta acción es <span className='font-bold'>irreversible</span> y
+                afectará la facturación de los usuarios.
+              </span>
+              <span className='sm:hidden'>
+                Acción <span className='font-bold'>irreversible</span>.
+                Afecta facturación.
+              </span>
             </p>
           </div>
-          <p className='text-sm font-medium'>
-            ¿Estás seguro de que deseas continuar?
+          <p className='text-xs sm:text-sm font-medium'>
+            <span className='hidden sm:inline'>¿Estás seguro de que deseas continuar?</span>
+            <span className='sm:hidden'>¿Continuar?</span>
           </p>
         </DialogDescription>
-        <DialogFooter className='sm:justify-end'>
+        <DialogFooter className='flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4'>
           <DialogClose asChild>
-            <Button variant='outline' disabled={isLoading}>
+            <Button variant='outline' disabled={isLoading} size='sm' className='w-full sm:w-auto order-2 sm:order-1'>
               Cancelar
             </Button>
           </DialogClose>
@@ -138,16 +153,20 @@ export default function AlertCerrarLecturas({
             variant='destructive'
             onClick={handleSubmit}
             disabled={isLoading || selectedRows.length === 0}
+            size='sm'
+            className='w-full sm:w-auto order-1 sm:order-2'
           >
             {isLoading ? (
               <>
-                <Loader2 className='h-4 w-4 mr-1 animate-spin' />
-                Procesando...
+                <Loader2 className='h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 animate-spin' />
+                <span className='hidden sm:inline'>Procesando...</span>
+                <span className='sm:hidden'>...</span>
               </>
             ) : (
               <>
-                <CircleX className='h-4 w-4 mr-1' />
-                Confirmar Cierre
+                <CircleX className='h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2' />
+                <span className='hidden sm:inline'>Confirmar Cierre</span>
+                <span className='sm:hidden'>Confirmar</span>
               </>
             )}
           </Button>

@@ -16,27 +16,27 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
     ),
     accessorKey: 'CD_ID',
     cell: ({ row }) => (
-      <div className='font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400 text-right pr-2'>
+      <div className='font-mono text-xs sm:text-sm font-medium text-emerald-600 dark:text-emerald-400 text-right pr-1'>
         {row.getValue('CD_ID')}
       </div>
     ),
-    size: 80,
+    size: 60,
   },
   {
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Código Enerlova'
+        title='Código'
         className='text-blue-700 dark:text-blue-300 font-semibold'
       />
     ),
     accessorKey: 'cd_codigoenerlova',
     cell: ({ row }) => (
-      <div className='font-mono text-sm text-blue-600 dark:text-blue-400'>
+      <div className='font-mono text-xs sm:text-sm text-blue-600 dark:text-blue-400'>
         {row.getValue('cd_codigoenerlova')}
       </div>
     ),
-    size: 120,
+    size: 100,
   },
   {
     header: ({ column }) => (
@@ -48,11 +48,11 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
     ),
     accessorKey: 'CD_Descripcion',
     cell: ({ row }) => (
-      <div className='text-sm text-slate-900 dark:text-slate-100 max-w-lg'>
+      <div className='text-xs sm:text-sm text-slate-900 dark:text-slate-100 max-w-[150px] sm:max-w-lg truncate'>
         {row.getValue('CD_Descripcion')}
       </div>
     ),
-    size: 400,
+    size: 200,
   },
   {
     header: ({ column }) => (
@@ -64,17 +64,17 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
     ),
     accessorKey: 'valor',
     cell: ({ row }) => (
-      <div className='text-sm font-mono font-medium text-green-600 dark:text-green-400 text-right pr-2'>
+      <div className='text-xs sm:text-sm font-mono font-medium text-green-600 dark:text-green-400 text-right pr-1'>
         {row.getValue('valor')}
       </div>
     ),
-    size: 120,
+    size: 90,
   },
   {
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Días Restantes'
+        title='Días'
         className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
       />
     ),
@@ -86,7 +86,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
 
       return (
         <div
-          className={`text-sm font-medium text-right pr-2 ${
+          className={`text-xs sm:text-sm font-medium text-right pr-1 ${
             isUrgent
               ? 'text-red-600 dark:text-red-400'
               : isWarning
@@ -94,17 +94,19 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
                 : 'text-green-600 dark:text-green-400'
           }`}
         >
-          {dias} días
+          <span className='hidden sm:inline'>{dias} días</span>
+          <span className='sm:hidden'>{dias}d</span>
         </div>
       );
     },
-    size: 120,
+    size: 80,
   },
   {
     id: 'actions',
     header: () => (
-      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold'>
-        Detalles
+      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm'>
+        <span className='hidden sm:inline'>Detalles</span>
+        <span className='sm:hidden'>Det.</span>
       </div>
     ),
     cell: ({ row }) => {
@@ -115,7 +117,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
         </div>
       );
     },
-    size: 100,
+    size: 80,
     enableSorting: false,
   },
 ];

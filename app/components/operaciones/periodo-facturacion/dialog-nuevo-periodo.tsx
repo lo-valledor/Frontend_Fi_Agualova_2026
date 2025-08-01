@@ -83,30 +83,28 @@ export default function DialogNuevoPeriodo({
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className='sm:max-w-md'>
+        <DialogContent className='w-[95vw] max-w-md mx-auto'>
           <DialogHeader>
-            <DialogTitle className='text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-3'>
-              <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg shadow-sm'>
-                <CalendarDaysIcon className='h-5 w-5 text-sky-600 dark:text-sky-400' />
-              </div>
+            <DialogTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
+              <CalendarDaysIcon className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
               Añadir Nuevo Periodo
             </DialogTitle>
-            <DialogDescription className='text-sm text-muted-foreground'>
-              Selecciona el mes y año para crear un nuevo período de facturación
+            <DialogDescription className='text-xs sm:text-sm text-muted-foreground'>
+              Selecciona el mes y año para crear un nuevo período
             </DialogDescription>
           </DialogHeader>
 
-          <div className='space-y-4 py-4'>
+          <div className='space-y-3 py-3'>
             {/* Mes de Inicio */}
-            <div className='space-y-2'>
+            <div className='space-y-1'>
               <Label
                 htmlFor='mes-inicio'
-                className='text-sm font-medium text-muted-foreground'
+                className='text-xs sm:text-sm font-medium text-muted-foreground'
               >
                 Mes de Inicio
               </Label>
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                <SelectTrigger id='mes-inicio' className='w-full'>
+                <SelectTrigger id='mes-inicio' className='w-full h-9'>
                   <SelectValue placeholder='Selecciona un Mes' />
                 </SelectTrigger>
                 <SelectContent>
@@ -120,15 +118,15 @@ export default function DialogNuevoPeriodo({
             </div>
 
             {/* Año */}
-            <div className='space-y-2'>
+            <div className='space-y-1'>
               <Label
                 htmlFor='year'
-                className='text-sm font-medium text-muted-foreground'
+                className='text-xs sm:text-sm font-medium text-muted-foreground'
               >
                 Año
               </Label>
               <Select value={selectedYear} onValueChange={setSelectedYear}>
-                <SelectTrigger id='year' className='w-full'>
+                <SelectTrigger id='year' className='w-full h-9'>
                   <SelectValue placeholder='Selecciona el Año' />
                 </SelectTrigger>
                 <SelectContent>
@@ -142,30 +140,33 @@ export default function DialogNuevoPeriodo({
             </div>
           </div>
 
-          <DialogFooter className='gap-2'>
+          <DialogFooter className='flex-col sm:flex-row gap-2'>
             <Button
               onClick={handleClearFilters}
               variant='outline'
-              className='gap-2'
+              size='sm'
+              className='gap-1 w-full sm:w-auto order-3 sm:order-1'
             >
-              <Eraser className='h-4 w-4' />
-              Limpiar
+              <Eraser className='h-3 w-3' />
+              <span className='text-xs sm:text-sm'>Limpiar</span>
             </Button>
             <Button
               variant='ghost'
+              size='sm'
               onClick={handleClose}
-              className='text-muted-foreground hover:text-muted-foreground hover:bg-muted'
+              className='w-full sm:w-auto text-muted-foreground hover:text-muted-foreground hover:bg-muted order-2'
             >
-              Cancelar
+              <span className='text-xs sm:text-sm'>Cancelar</span>
             </Button>
             <Button
               variant='default'
+              size='sm'
               onClick={handleOpenPeriodo}
               disabled={!selectedMonth || !selectedYear}
-              className='gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+              className='gap-1 w-full sm:w-auto bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 order-1 sm:order-3'
             >
-              <PlusCircleIcon className='h-4 w-4' />
-              Continuar
+              <PlusCircleIcon className='h-3 w-3' />
+              <span className='text-xs sm:text-sm'>Continuar</span>
             </Button>
           </DialogFooter>
         </DialogContent>

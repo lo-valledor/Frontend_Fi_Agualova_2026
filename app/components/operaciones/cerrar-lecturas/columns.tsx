@@ -57,9 +57,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'sectorId',
     header: () => (
-      <div className='flex items-center justify-center gap-2 font-semibold'>
-        <MapPin className='w-4 h-4 text-blue-500' />
-        <span>Sector</span>
+      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <MapPin className='w-3 h-3 sm:w-4 sm:h-4 text-blue-500' />
+        <span className='hidden sm:inline'>Sector</span>
+        <span className='sm:hidden'>Sect</span>
       </div>
     ),
     accessorKey: 'sectorId',
@@ -81,8 +82,8 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'nichoId',
     header: () => (
-      <div className='flex items-center justify-center gap-2 font-semibold'>
-        <Hash className='w-4 h-4 text-slate-500' />
+      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <Hash className='w-3 h-3 sm:w-4 sm:h-4 text-slate-500' />
         <span>ID</span>
       </div>
     ),
@@ -105,9 +106,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'nichoDescripcion',
     header: () => (
-      <div className='flex items-center gap-2 font-semibold'>
-        <ClipboardList className='w-4 h-4 text-sky-500' />
-        <span>Descripción del Nicho</span>
+      <div className='flex items-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <ClipboardList className='w-3 h-3 sm:w-4 sm:h-4 text-sky-500' />
+        <span className='hidden md:inline'>Descripción del Nicho</span>
+        <span className='md:hidden'>Descripción</span>
       </div>
     ),
     accessorKey: 'nichoDescripcion',
@@ -135,9 +137,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'cantidadSinLectura',
     header: () => (
-      <div className='flex items-center justify-center gap-2 font-semibold'>
-        <Ban className='w-4 h-4 text-gray-500' />
-        <span>Sin Lectura</span>
+      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <Ban className='w-3 h-3 sm:w-4 sm:h-4 text-gray-500' />
+        <span className='hidden sm:inline'>Sin Lectura</span>
+        <span className='sm:hidden'>Sin</span>
       </div>
     ),
     accessorKey: 'cantidadSinLectura',
@@ -168,9 +171,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'cantidadLecturasOK',
     header: () => (
-      <div className='flex items-center justify-center gap-2 font-semibold'>
-        <CheckCircle className='w-4 h-4 text-green-500' />
-        <span>Lecturas OK</span>
+      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <CheckCircle className='w-3 h-3 sm:w-4 sm:h-4 text-green-500' />
+        <span className='hidden sm:inline'>Lecturas OK</span>
+        <span className='sm:hidden'>OK</span>
       </div>
     ),
     accessorKey: 'cantidadLecturasOK',
@@ -193,9 +197,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'cantidadClaveRoja',
     header: () => (
-      <div className='flex items-center justify-center gap-2 font-semibold'>
-        <AlertCircle className='w-4 h-4 text-red-500' />
-        <span>Clave Crítica</span>
+      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <AlertCircle className='w-3 h-3 sm:w-4 sm:h-4 text-red-500' />
+        <span className='hidden sm:inline'>Clave Crítica</span>
+        <span className='sm:hidden'>Crítica</span>
       </div>
     ),
     accessorKey: 'cantidadClaveRoja',
@@ -224,9 +229,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'cantidadClaveNaranja',
     header: () => (
-      <div className='flex items-center justify-center gap-2 font-semibold'>
-        <AlertTriangle className='w-4 h-4 text-orange-500' />
-        <span>Clave Alerta</span>
+      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <AlertTriangle className='w-3 h-3 sm:w-4 sm:h-4 text-orange-500' />
+        <span className='hidden sm:inline'>Clave Alerta</span>
+        <span className='sm:hidden'>Alerta</span>
       </div>
     ),
     accessorKey: 'cantidadClaveNaranja',
@@ -257,9 +263,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
   {
     id: 'cantidadCorregidas',
     header: () => (
-      <div className='flex items-center justify-center gap-2 font-semibold'>
-        <Zap className='w-4 h-4 text-purple-500' />
-        <span>Corregidas</span>
+      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
+        <Zap className='w-3 h-3 sm:w-4 sm:h-4 text-purple-500' />
+        <span className='hidden sm:inline'>Corregidas</span>
+        <span className='sm:hidden'>Correg</span>
       </div>
     ),
     accessorKey: 'cantidadCorregidas',

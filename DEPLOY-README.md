@@ -99,14 +99,46 @@ Cada entorno tiene su configuración específica:
     └── deploy-development.yml
 ```
 
-## 🚀 CI/CD Automático
+## 🚀 CI/CD Automático (Temporalmente Deshabilitado)
 
-### GitHub Actions
+> ⚠️ **IMPORTANTE**: Los workflows automáticos están actualmente **deshabilitados** y en modo standby.
 
-El proyecto incluye workflows automáticos:
+### Estado Actual de GitHub Actions
 
-1. **Push a `main`** → Despliega automáticamente a **producción** (puerto 8080)
-2. **Push a `develop`** → Despliega automáticamente a **desarrollo** (puerto 3000)
+Los workflows de despliegue automático están **pausados** para evitar depliegues no deseados:
+
+- ❌ **Push a `main`** → No despliega automáticamente
+- ❌ **Push a `develop`** → No despliega automáticamente
+- ✅ **Ejecución manual** → Disponible desde GitHub Actions tab
+
+### Cómo ejecutar manualmente (si es necesario)
+
+1. Ve a tu repositorio en GitHub
+2. Haz clic en la pestaña **Actions**
+3. Selecciona el workflow que quieras ejecutar:
+   - `Deploy to Production`
+   - `Deploy to Development`
+4. Haz clic en **Run workflow**
+5. Selecciona la rama y ejecuta
+
+### Para reactivar automáticamente (cuando esté listo)
+
+Edita los archivos en `.github/workflows/` y:
+
+1. **Descomenta** las líneas:
+
+   ```yaml
+   # on:
+   #   push:
+   #     branches: [ main ]  # o [ develop ]
+   ```
+
+2. **Comenta** las líneas:
+   ```yaml
+   on:
+     workflow_dispatch:
+       # ... resto del bloque
+   ```
 
 ### Configurar Secrets en GitHub
 

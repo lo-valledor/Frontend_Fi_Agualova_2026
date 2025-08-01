@@ -1,10 +1,27 @@
 name: Deploy to Development
 
+# Workflows temporalmente deshabilitados - en standby
+# Los depliegues automáticos están pausados
+# Para habilitar, descomenta el bloque 'on' de abajo y comenta el 'workflow_dispatch'
+
+# on:
+#   push:
+#     branches: [ develop ]
+#   pull_request:
+#     branches: [ develop ]
+
+# Trigger manual únicamente - usar Actions tab en GitHub
 on:
-  push:
-    branches: [develop]
-  pull_request:
-    branches: [develop]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment to development'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 jobs:
   deploy-development:

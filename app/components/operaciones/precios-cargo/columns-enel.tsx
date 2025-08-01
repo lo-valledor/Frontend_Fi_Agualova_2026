@@ -21,27 +21,27 @@ export const columns = (
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-sm font-medium text-slate-900 dark:text-slate-100'>
+      <div className='font-mono text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100'>
         {row.getValue('codigo')}
       </div>
     ),
-    size: 120,
+    size: 100,
   },
   {
     accessorKey: 'codigoener',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Código Enerlova'
+        title='Cód. Enerlova'
         className='text-slate-700 dark:text-slate-300 font-semibold'
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-sm text-slate-700 dark:text-slate-400'>
+      <div className='font-mono text-xs sm:text-sm text-slate-700 dark:text-slate-400'>
         {row.getValue('codigoener')}
       </div>
     ),
-    size: 140,
+    size: 120,
   },
   {
     accessorKey: 'descripcion',
@@ -53,66 +53,66 @@ export const columns = (
       />
     ),
     cell: ({ row }) => (
-      <div className='text-sm text-slate-900 dark:text-slate-100 max-w-xs truncate'>
+      <div className='text-xs sm:text-sm text-slate-900 dark:text-slate-100 max-w-[150px] sm:max-w-xs truncate'>
         {row.getValue('descripcion')}
       </div>
     ),
-    size: 250,
+    size: 200,
   },
   {
     accessorKey: 'valor',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Valor Anterior 1'
+        title='Ant. 1'
         className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => (
-      <div className='text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2'>
+      <div className='text-xs sm:text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-1'>
         {row.getValue('valor')}
       </div>
     ),
-    size: 140,
+    size: 80,
   },
   {
     accessorKey: 'valor2',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Valor Anterior 2'
+        title='Ant. 2'
         className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => (
-      <div className='text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2'>
+      <div className='text-xs sm:text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-1'>
         {row.getValue('valor2')}
       </div>
     ),
-    size: 140,
+    size: 80,
   },
   {
     accessorKey: 'valor3',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Valor Anterior 3'
+        title='Ant. 3'
         className='text-orange-700 dark:text-orange-300 font-semibold justify-end'
       />
     ),
     cell: ({ row }) => (
-      <div className='text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-2'>
+      <div className='text-xs sm:text-sm font-mono text-orange-600 dark:text-orange-400 text-right pr-1'>
         {row.getValue('valor3')}
       </div>
     ),
-    size: 140,
+    size: 80,
   },
   {
     accessorKey: 'valoractual',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Valor Actual 1'
+        title='Act. 1'
         className='text-green-700 dark:text-green-300 font-semibold justify-end'
       />
     ),
@@ -134,7 +134,7 @@ export const columns = (
 
       return (
         <div
-          className={`text-sm font-mono text-right pr-2 ${
+          className={`text-xs sm:text-sm font-mono text-right pr-1 ${
             isNoValue
               ? 'text-red-600 dark:text-red-400'
               : 'text-green-600 dark:text-green-400'
@@ -144,14 +144,14 @@ export const columns = (
         </div>
       );
     },
-    size: 140,
+    size: 90,
   },
   {
     accessorKey: 'valoractual2',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Valor Actual 2'
+        title='Act. 2'
         className='text-green-700 dark:text-green-300 font-semibold justify-end'
       />
     ),
@@ -173,7 +173,7 @@ export const columns = (
 
       return (
         <div
-          className={`text-sm font-mono text-right pr-2 ${
+          className={`text-xs sm:text-sm font-mono text-right pr-1 ${
             isNoValue
               ? 'text-red-600 dark:text-red-400'
               : 'text-green-600 dark:text-green-400'
@@ -183,14 +183,14 @@ export const columns = (
         </div>
       );
     },
-    size: 140,
+    size: 90,
   },
   {
     accessorKey: 'valoractual3',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Valor Actual 3'
+        title='Act. 3'
         className='text-green-700 dark:text-green-300 font-semibold justify-end'
       />
     ),
@@ -212,7 +212,7 @@ export const columns = (
 
       return (
         <div
-          className={`text-sm font-mono text-right pr-2 ${
+          className={`text-xs sm:text-sm font-mono text-right pr-1 ${
             isNoValue
               ? 'text-red-600 dark:text-red-400'
               : 'text-green-600 dark:text-green-400'
@@ -222,12 +222,12 @@ export const columns = (
         </div>
       );
     },
-    size: 140,
+    size: 90,
   },
   {
     id: 'actions',
     header: () => (
-      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold'>
+      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm'>
         Estado
       </div>
     ),
@@ -253,15 +253,15 @@ export const columns = (
           ) : (
             <Badge
               variant='outline'
-              className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'
+              className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 text-xs px-1 py-0'
             >
-              ✓ Actualizado
+              ✓ <span className='hidden sm:inline'>Actualizado</span>
             </Badge>
           )}
         </div>
       );
     },
-    size: 140,
+    size: 100,
     enableSorting: false,
   },
 ];

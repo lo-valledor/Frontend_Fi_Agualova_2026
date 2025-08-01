@@ -116,67 +116,69 @@ export function DataTable<TData, TValue>({
       {/* Search */}
       {showSearch && (
         <div className='flex justify-end'>
-          <div className='relative w-full max-w-xs'>
-            <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+          <div className='relative w-full max-w-xs sm:max-w-sm'>
+            <Search className='absolute left-2 sm:left-3 top-1/2 h-3 w-3 sm:h-4 sm:w-4 -translate-y-1/2 text-muted-foreground' />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
               onChange={event => setGlobalFilter(event.target.value)}
-              className='w-full rounded-md border-border bg-background py-2 pl-9 pr-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary'
+              className='w-full rounded-md border-border bg-background py-1.5 sm:py-2 pl-7 sm:pl-9 pr-3 sm:pr-4 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-primary'
             />
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className='rounded-lg border bg-card'>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='border-b bg-muted/50'>
-                {headerGroup.headers.map(header => (
-                  <TableHead key={header.id} className='font-semibold'>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  className='hover:bg-muted/50 transition-colors'
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+      <div className='rounded-lg border bg-card overflow-hidden'>
+        <div className='overflow-x-auto'>
+          <Table className='min-w-full'>
+            <TableHeader>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className='border-b bg-muted/50'>
+                  {headerGroup.headers.map(header => (
+                    <TableHead key={header.id} className='font-semibold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap'>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
-                >
-                  No se encontraron resultados.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow
+                    key={row.id}
+                    className='hover:bg-muted/50 transition-colors'
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell key={cell.id} className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className='h-16 sm:h-24 text-center text-xs sm:text-sm'
+                  >
+                    No se encontraron resultados.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
       {/* Advanced Pagination */}

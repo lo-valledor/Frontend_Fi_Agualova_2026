@@ -21,9 +21,9 @@ export default function MedidorFieldsGroup({
   colorScheme = 'amber',
 }: MedidorFieldsGroupProps) {
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+    <div className='grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6'>
       {/* Primera columna */}
-      <div className='space-y-4'>
+      <div className='space-y-3 sm:space-y-4'>
         <MedidorField
           id='acometida-detalle'
           label='Acometida'
@@ -51,7 +51,7 @@ export default function MedidorFieldsGroup({
       </div>
 
       {/* Segunda columna */}
-      <div className='space-y-4'>
+      <div className='space-y-3 sm:space-y-4'>
         <MedidorField
           id='numero-medidor'
           label='Número de Medidor'

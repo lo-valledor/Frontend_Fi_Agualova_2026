@@ -240,40 +240,42 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
         <Button
           variant='outline'
           size='sm'
-          className='gap-1.5 bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800/40'
+          className='gap-1 sm:gap-1.5 bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800/40 text-xs sm:text-sm px-2 sm:px-3'
         >
-          <EyeIcon className='h-3.5 w-3.5' />
-          Ver Detalle
+          <EyeIcon className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
+          <span className='hidden sm:inline'>Ver Detalle</span>
+          <span className='sm:hidden'>Ver</span>
         </Button>
       </SheetTrigger>
-      <SheetContent className='sm:max-w-[800px] p-0'>
-        <SheetHeader className='px-6 py-4 border-b border-border/60 bg-muted/40'>
-          <SheetTitle className='text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
-            <InfoIcon className='h-5 w-5 text-sky-600 dark:text-sky-400' />
-            Detalle de Precios de Cargo
+      <SheetContent className='w-[95vw] sm:max-w-[800px] p-0 max-h-[95vh] overflow-hidden'>
+        <SheetHeader className='px-3 sm:px-6 py-3 sm:py-4 border-b border-border/60 bg-muted/40'>
+          <SheetTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
+            <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
+            <span className='hidden sm:inline'>Detalle de Precios de Cargo</span>
+            <span className='sm:hidden'>Detalle Precios</span>
           </SheetTitle>
         </SheetHeader>
 
-        <div className='px-6 py-4'>
-          <ScrollArea className='h-[calc(100vh-200px)] pr-4 -mr-4'>
+        <div className='px-3 sm:px-6 py-3 sm:py-4'>
+          <ScrollArea className='h-[calc(95vh-180px)] sm:h-[calc(100vh-200px)] pr-2 sm:pr-4 -mr-2 sm:-mr-4'>
             {isLoading ? (
-              <div className='flex justify-center items-center h-60'>
-                <Loader2 className='h-8 w-8 animate-spin text-sky-600 dark:text-sky-400' />
+              <div className='flex justify-center items-center h-40 sm:h-60'>
+                <Loader2 className='h-6 w-6 sm:h-8 sm:w-8 animate-spin text-sky-600 dark:text-sky-400' />
               </div>
             ) : data && data.length > 0 ? (
-              <div className='space-y-6'>
+              <div className='space-y-4 sm:space-y-6'>
                 <Card>
-                  <CardHeader className='pb-2'>
-                    <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2'>
+                  <CardHeader className='pb-2 px-3 sm:px-6 pt-3 sm:pt-6'>
+                    <div className='flex flex-col gap-3 sm:gap-2'>
                       <div>
-                        <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
+                        <CardTitle className='text-base sm:text-lg text-sky-800 dark:text-sky-200'>
                           Histórico de Precios
                         </CardTitle>
-                        <CardDescription>
+                        <CardDescription className='text-xs sm:text-sm'>
                           Evolución de precios del cargo a lo largo del tiempo
                         </CardDescription>
                       </div>
-                      <div className='w-full sm:w-auto'>
+                      <div className='w-full'>
                         <Tabs
                           defaultValue='todo'
                           value={periodoSeleccionado}
@@ -282,25 +284,25 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                           }
                           className='w-full'
                         >
-                          <TabsList className='grid grid-cols-4 w-full'>
-                            <TabsTrigger value='todo'>Todo</TabsTrigger>
-                            <TabsTrigger value='1año'>1 Año</TabsTrigger>
-                            <TabsTrigger value='6meses'>6 Meses</TabsTrigger>
-                            <TabsTrigger value='3meses'>3 Meses</TabsTrigger>
+                          <TabsList className='grid grid-cols-4 w-full h-8 sm:h-10'>
+                            <TabsTrigger value='todo' className='text-xs sm:text-sm px-1 sm:px-3'>Todo</TabsTrigger>
+                            <TabsTrigger value='1año' className='text-xs sm:text-sm px-1 sm:px-3'>1 Año</TabsTrigger>
+                            <TabsTrigger value='6meses' className='text-xs sm:text-sm px-1 sm:px-3'>6M</TabsTrigger>
+                            <TabsTrigger value='3meses' className='text-xs sm:text-sm px-1 sm:px-3'>3M</TabsTrigger>
                           </TabsList>
                         </Tabs>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className='h-auto'>
+                  <CardContent className='h-auto px-3 sm:px-6 pb-3 sm:pb-6'>
                     {/* Información del último valor */}
-                    <div className='mb-4 p-3 bg-muted/30 rounded-md border border-border/40'>
-                      <div className='flex flex-col sm:flex-row sm:justify-between gap-2'>
+                    <div className='mb-3 sm:mb-4 p-2 sm:p-3 bg-muted/30 rounded-md border border-border/40'>
+                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4'>
                         <div>
                           <p className='text-xs text-muted-foreground'>
                             Cargo actual
                           </p>
-                          <p className='font-medium'>
+                          <p className='font-medium text-sm sm:text-base truncate'>
                             {ultimoValor?.descripcion}
                           </p>
                         </div>
@@ -308,17 +310,17 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                           <p className='text-xs text-muted-foreground'>
                             Último valor
                           </p>
-                          <p className='font-semibold text-lg text-sky-700 dark:text-sky-300'>
+                          <p className='font-semibold text-base sm:text-lg text-sky-700 dark:text-sky-300'>
                             {formatearValor(ultimoValor?.valor || 0)}
                           </p>
                         </div>
                       </div>
-                      <div className='flex flex-col sm:flex-row sm:justify-between gap-2 mt-2'>
+                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mt-2'>
                         <div>
                           <p className='text-xs text-muted-foreground'>
                             Vigencia desde
                           </p>
-                          <p className='font-mono text-sm'>
+                          <p className='font-mono text-xs sm:text-sm'>
                             {ultimoValor?.fecha_inicio}
                           </p>
                         </div>
@@ -326,7 +328,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                           <p className='text-xs text-muted-foreground'>
                             Vigencia hasta
                           </p>
-                          <p className='font-mono text-sm'>
+                          <p className='font-mono text-xs sm:text-sm'>
                             {ultimoValor?.fecha_fin}
                           </p>
                         </div>
@@ -334,17 +336,17 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                     </div>
 
                     {/* Gráfico */}
-                    <div className='h-[400px]'>
+                    <div className='h-[250px] sm:h-[400px]'>
                       {datosGrafico.length > 0 ? (
                         <ChartContainer config={chartConfig}>
                           <LineChart
                             accessibilityLayer
                             data={datosGrafico}
                             margin={{
-                              top: 10,
-                              right: 10,
-                              left: 10,
-                              bottom: 20,
+                              top: 5,
+                              right: 5,
+                              left: 5,
+                              bottom: 15,
                             }}
                           >
                             <CartesianGrid
@@ -356,8 +358,8 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               dataKey='fecha_inicio'
                               tickLine={false}
                               axisLine={false}
-                              tickMargin={8}
-                              tick={{ fontSize: 12 }}
+                              tickMargin={4}
+                              tick={{ fontSize: 10 }}
                               tickFormatter={value => {
                                 // Simplificar la fecha para el eje X (solo mostrar mes-año)
                                 const partes = value.split('-');
@@ -372,8 +374,8 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                             <YAxis
                               tickLine={false}
                               axisLine={false}
-                              tickMargin={8}
-                              tick={{ fontSize: 12 }}
+                              tickMargin={4}
+                              tick={{ fontSize: 10 }}
                               tickFormatter={value =>
                                 value.toLocaleString('es-CL')
                               }
@@ -412,7 +414,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                           </LineChart>
                         </ChartContainer>
                       ) : (
-                        <div className='flex items-center justify-center h-full text-muted-foreground'>
+                        <div className='flex items-center justify-center h-full text-muted-foreground text-xs sm:text-sm text-center px-2'>
                           No hay datos disponibles para el período seleccionado
                         </div>
                       )}
@@ -421,15 +423,15 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                 </Card>
               </div>
             ) : (
-              <div className='text-center py-12 text-muted-foreground'>
+              <div className='text-center py-8 sm:py-12 text-muted-foreground text-xs sm:text-sm'>
                 No hay datos disponibles para este cargo
               </div>
             )}
           </ScrollArea>
         </div>
 
-        <div className='flex gap-2 justify-end px-6 py-4 border-t border-border/60 bg-muted/20'>
-          <div className=''>
+        <div className='flex flex-col sm:flex-row gap-2 justify-end px-3 sm:px-6 py-3 sm:py-4 border-t border-border/60 bg-muted/20'>
+          <div className='order-2 sm:order-1'>
             {nuevaFechaInicio && ultimoValor && (
               <DialogNuevoValorEnerlova
                 codigo={codigo.toString()}
@@ -447,7 +449,8 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
           <Button
             variant='ghost'
             onClick={() => setIsOpen(false)}
-            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted'
+            size='sm'
+            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted order-1 sm:order-2 w-full sm:w-auto text-xs sm:text-sm'
           >
             Cerrar
           </Button>

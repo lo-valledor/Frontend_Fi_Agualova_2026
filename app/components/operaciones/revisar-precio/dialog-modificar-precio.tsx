@@ -201,100 +201,104 @@ export default function DialogModificarPrecio({
         <Button
           variant='ghost'
           size='sm'
-          className='h-8 px-3 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors'
+          className='h-8 px-2 sm:px-3 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-xs sm:text-sm'
           disabled={!isAuthorized}
         >
-          <Edit3 className='h-4 w-4 mr-1' />
-          Modificar
+          <Edit3 className='h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1' />
+          <span className='hidden sm:inline'>Modificar</span>
+          <span className='sm:hidden'>Mod</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-lg'>
-        <DialogHeader className='space-y-3'>
-          <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center'>
-              <PencilIcon className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+      <DialogContent className='max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto'>
+        <DialogHeader className='space-y-2 sm:space-y-3'>
+          <div className='flex items-center gap-2 sm:gap-3'>
+            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center'>
+              <PencilIcon className='h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400' />
             </div>
             <div>
-              <DialogTitle className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-                Modificar Precio
+              <DialogTitle className='text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100'>
+                <span className='hidden sm:inline'>Modificar Precio</span>
+                <span className='sm:hidden'>Modificar</span>
               </DialogTitle>
-              <DialogDescription className='text-slate-600 dark:text-slate-400'>
-                Modifica el valor del cargo y especifica el motivo del cambio
+              <DialogDescription className='text-slate-600 dark:text-slate-400 text-xs sm:text-sm'>
+                <span className='hidden sm:inline'>Modifica el valor del cargo y especifica el motivo del cambio</span>
+                <span className='sm:hidden'>Modifica el valor y motivo</span>
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <div className='space-y-6 py-4'>
+        <div className='space-y-4 sm:space-y-6 py-2 sm:py-4'>
           {descripcion && (
-            <div className='space-y-2'>
-              <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+            <div className='space-y-1 sm:space-y-2'>
+              <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
                 Descripción
               </Label>
-              <div className='bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg text-sm border border-slate-200 dark:border-slate-700'>
+              <div className='bg-slate-50 dark:bg-slate-800/50 p-2 sm:p-3 rounded-lg text-xs sm:text-sm border border-slate-200 dark:border-slate-700'>
                 {descripcion}
               </div>
             </div>
           )}
 
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-2'>
-              <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+            <div className='space-y-1 sm:space-y-2'>
+              <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
                 Índice
               </Label>
               <Input
                 type='text'
                 value={indice}
                 disabled
-                className='bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400'
+                className='bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 h-8 sm:h-10 text-xs sm:text-sm'
               />
             </div>
 
-            <div className='space-y-2'>
-              <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+            <div className='space-y-1 sm:space-y-2'>
+              <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
                 Valor Actual
               </Label>
               <Input
                 type='text'
                 value={valorActual}
                 disabled
-                className='bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400'
+                className='bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 h-8 sm:h-10 text-xs sm:text-sm'
               />
             </div>
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1 sm:space-y-2'>
             <Label
               htmlFor='valor'
-              className='text-sm font-medium text-slate-700 dark:text-slate-300'
+              className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'
             >
               Nuevo Valor
             </Label>
             <Input
               id='valor'
               type='number'
-              placeholder='Ingrese el nuevo valor'
+              placeholder='Nuevo valor'
               value={valor}
               onChange={e => setValor(e.target.value)}
               min='0'
               step='0.01'
-              className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+              className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 h-8 sm:h-10 text-xs sm:text-sm'
             />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1 sm:space-y-2'>
             <Label
               htmlFor='motivo'
-              className='text-sm font-medium text-slate-700 dark:text-slate-300'
+              className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'
             >
-              Motivo de la Modificación
+              <span className='hidden sm:inline'>Motivo de la Modificación</span>
+              <span className='sm:hidden'>Motivo</span>
             </Label>
             <Textarea
               id='motivo'
-              placeholder='Especifique el motivo de la modificación'
+              placeholder='Motivo de la modificación'
               value={motivo}
               onChange={e => setMotivo(e.target.value)}
-              className='min-h-[80px] bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+              className='min-h-[60px] sm:min-h-[80px] bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-xs sm:text-sm'
             />
           </div>
 
@@ -309,28 +313,31 @@ export default function DialogModificarPrecio({
           )}
         </div>
 
-        <DialogFooter className='flex gap-3'>
+        <DialogFooter className='flex flex-col sm:flex-row gap-2 sm:gap-3'>
           <Button
             variant='outline'
             onClick={() => setIsOpen(false)}
             disabled={isLoading}
-            className='flex-1'
+            size='sm'
+            className='flex-1 order-2 sm:order-1 text-xs sm:text-sm'
           >
             Cancelar
           </Button>
           <Button
             onClick={handleConfirmar}
             disabled={isLoading}
-            className='bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white flex-1'
+            size='sm'
+            className='bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white flex-1 order-1 sm:order-2 text-xs sm:text-sm'
           >
             {isLoading ? (
               <>
-                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                Procesando...
+                <Loader2 className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin' />
+                <span className='hidden sm:inline'>Procesando...</span>
+                <span className='sm:hidden'>...</span>
               </>
             ) : (
               <>
-                <CheckCircle className='mr-2 h-4 w-4' />
+                <CheckCircle className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                 Actualizar
               </>
             )}

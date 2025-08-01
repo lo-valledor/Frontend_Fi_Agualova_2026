@@ -79,56 +79,50 @@ export default function AbrirPeriodoFacturacion({
 
   return (
     <div className='min-h-screen'>
-      <div className='container mx-auto p-2 space-y-3'>
+      <div className='container mx-auto p-2 space-y-2'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Modern Header */}
-        <div className='flex items-center gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
+        <div className='flex items-center gap-2 py-1 border-b border-slate-200 dark:border-slate-700'>
           <div className='flex-1'>
-            <div className='flex items-center gap-3 justify-between'>
-              <div className='flex items-center gap-3'>
-                <h1 className='text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-                  Período Facturación
-                </h1>
-              </div>
-            </div>
+            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
+              Período Facturación
+            </h1>
           </div>
         </div>
 
         {/* Status Card */}
         {periodoAbierto ? (
           <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
-            <CardHeader className='pb-3'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-3'>
-                  <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
-                    <Clock className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                  </div>
+            <CardHeader className='pb-2'>
+              <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3'>
+                <div className='flex items-center gap-2'>
+                  <Clock className='w-4 h-4 text-blue-600 dark:text-blue-400' />
                   <div>
-                    <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
+                    <CardTitle className='text-base sm:text-lg text-slate-900 dark:text-slate-100'>
                       Período Activo
                     </CardTitle>
-                    <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
+                    <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-xs sm:text-sm'>
                       <span className='font-semibold text-blue-600 dark:text-blue-400'>
                         {periodoAbierto.pf_descripcion}
                       </span>{' '}
-                      está abierto para operaciones
+                      está abierto
                     </CardDescription>
                   </div>
                 </div>
                 <TooltipProvider>
                   <Tooltip delayDuration={100}>
                     <TooltipTrigger asChild>
-                      <div className='inline-block'>
+                      <div className='inline-block w-full sm:w-auto'>
                         <Button
                           onClick={() => setIsOpenDialog(true)}
                           disabled={!!periodoAbierto}
                           variant='outline'
                           size='sm'
-                          className='gap-2 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                          className='gap-2 w-full sm:w-auto bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed'
                         >
                           <PlusCircleIcon className='h-3 w-3' />
-                          <span className='text-sm'>Nuevo Período</span>
+                          <span className='text-xs sm:text-sm'>Nuevo Período</span>
                         </Button>
                       </div>
                     </TooltipTrigger>
@@ -169,16 +163,16 @@ export default function AbrirPeriodoFacturacion({
         ) : (
           <Card className='border-0 shadow-lg bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/50 dark:to-green-950/50 backdrop-blur-sm border-emerald-200/50 dark:border-emerald-800/50'>
             <CardContent className='p-4'>
-              <div className='flex items-center justify-between'>
+              <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4'>
                 <div className='flex items-center gap-3'>
                   <div className='w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center'>
                     <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
                   </div>
                   <div>
-                    <AlertTitle className='text-lg text-emerald-800 dark:text-emerald-300 font-semibold'>
+                    <AlertTitle className='text-base sm:text-lg text-emerald-800 dark:text-emerald-300 font-semibold'>
                       Sistema Disponible
                     </AlertTitle>
-                    <AlertDescription className='text-emerald-700 dark:text-emerald-400 mt-1 text-sm'>
+                    <AlertDescription className='text-emerald-700 dark:text-emerald-400 mt-1 text-xs sm:text-sm'>
                       No hay períodos abiertos. Puede crear un nuevo período de
                       facturación. Todas las operaciones se registrarán en el
                       nuevo período.
@@ -188,10 +182,10 @@ export default function AbrirPeriodoFacturacion({
                 <Button
                   onClick={() => setIsOpenDialog(true)}
                   size='sm'
-                  className='gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200'
+                  className='gap-2 w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200'
                 >
                   <PlusCircleIcon className='h-3 w-3' />
-                  <span className='text-sm'>Crear Período</span>
+                  <span className='text-xs sm:text-sm'>Crear Período</span>
                 </Button>
               </div>
             </CardContent>
@@ -200,18 +194,15 @@ export default function AbrirPeriodoFacturacion({
 
         {/* History Table */}
         <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
-          <CardHeader className='border-b border-slate-200 dark:border-slate-700'>
-            <div className='flex items-center gap-4'>
-              <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
-                <History className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-              </div>
+          <CardHeader className='pb-2'>
+            <div className='flex items-center gap-2'>
+              <History className='w-4 h-4 text-slate-600 dark:text-slate-400' />
               <div>
-                <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
+                <CardTitle className='text-base sm:text-lg text-slate-900 dark:text-slate-100'>
                   Historial de Períodos
                 </CardTitle>
-                <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
-                  Visualiza todos los períodos de facturación del sistema (
-                  {periodos.length} períodos)
+                <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-xs sm:text-sm'>
+                  Gestión completa de períodos
                 </CardDescription>
               </div>
             </div>
@@ -232,35 +223,50 @@ export default function AbrirPeriodoFacturacion({
             ) : (
               <div className='space-y-4'>
                 {/* Estadísticas rápidas */}
-                <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
-                  <div className='bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-3 border border-emerald-200/40 dark:border-emerald-800/40'>
-                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-300'>
-                      {
-                        periodos.filter(p => p.epf_descripcion === 'Abierto')
-                          .length
-                      }
-                    </div>
-                    <div className='text-xs text-emerald-600 dark:text-emerald-400 font-medium'>
-                      Períodos Abiertos
-                    </div>
-                  </div>
-                  <div className='bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-lg p-3 border border-red-200/40 dark:border-red-800/40'>
-                    <div className='text-2xl font-bold text-red-700 dark:text-red-300'>
-                      {
-                        periodos.filter(p => p.epf_descripcion === 'Cerrado')
-                          .length
-                      }
-                    </div>
-                    <div className='text-xs text-red-600 dark:text-red-400 font-medium'>
-                      Períodos Cerrados
+                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'>
+                  <div className='bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-2 border border-emerald-200/40 dark:border-emerald-800/40'>
+                    <div className='flex items-center gap-2'>
+                      <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
+                      <div>
+                        <div className='text-base sm:text-xl font-bold text-emerald-700 dark:text-emerald-300'>
+                          {
+                            periodos.filter(p => p.epf_descripcion === 'Abierto')
+                              .length
+                          }
+                        </div>
+                        <div className='text-xs text-emerald-600 dark:text-emerald-400 font-medium'>
+                          Períodos Abiertos
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className='bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/20 dark:to-gray-900/20 rounded-lg p-3 border border-slate-200/40 dark:border-slate-800/40'>
-                    <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
-                      {periodos.length}
+                  <div className='bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-lg p-2 border border-red-200/40 dark:border-red-800/40'>
+                    <div className='flex items-center gap-2'>
+                      <Clock className='w-4 h-4 text-red-600 dark:text-red-400' />
+                      <div>
+                        <div className='text-base sm:text-xl font-bold text-red-700 dark:text-red-300'>
+                          {
+                            periodos.filter(p => p.epf_descripcion === 'Cerrado')
+                              .length
+                          }
+                        </div>
+                        <div className='text-xs text-red-600 dark:text-red-400 font-medium'>
+                          Períodos Cerrados
+                        </div>
+                      </div>
                     </div>
-                    <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
-                      Total Períodos
+                  </div>
+                  <div className='bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/20 dark:to-gray-900/20 rounded-lg p-2 border border-slate-200/40 dark:border-slate-800/40'>
+                    <div className='flex items-center gap-2'>
+                      <History className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                      <div>
+                        <div className='text-base sm:text-xl font-bold text-slate-700 dark:text-slate-300'>
+                          {periodos.length}
+                        </div>
+                        <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
+                          Total Períodos
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

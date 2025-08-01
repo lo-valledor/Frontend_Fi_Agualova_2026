@@ -91,24 +91,24 @@ export function CorteRegistradoDialog({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <DialogContent className='sm:max-w-md rounded-xl border border-rose-200/40 bg-white/95 backdrop-blur-sm dark:border-rose-800/40 dark:bg-gray-900/95'>
+      <DialogContent className='mx-4 sm:max-w-md rounded-xl border border-rose-200/40 bg-white/95 backdrop-blur-sm dark:border-rose-800/40 dark:bg-gray-900/95'>
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-2 text-rose-900 dark:text-rose-100'>
-            <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white'>
-              <Scissors className='h-3 w-3' />
+          <DialogTitle className='flex items-center gap-2 text-rose-900 dark:text-rose-100 text-base sm:text-lg'>
+            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white flex-shrink-0'>
+              <Scissors className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
             </div>
-            Registrar Corte
+            <span className='truncate'>Registrar Corte</span>
           </DialogTitle>
-          <DialogDescription className='text-rose-700 dark:text-rose-300'>
+          <DialogDescription className='text-rose-700 dark:text-rose-300 text-sm sm:text-base'>
             Complete los datos para registrar el corte de la acometida{' '}
-            <span className='font-mono font-medium'>{acometida}</span>.
+            <span className='font-mono font-medium text-xs sm:text-sm break-all'>{acometida}</span>.
           </DialogDescription>
         </DialogHeader>
-        <div className='grid gap-4 py-4'>
-          <div className='grid grid-cols-4 items-center gap-4'>
+        <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='fecha'
-              className='text-right flex items-center gap-1'
+              className='sm:text-right flex items-center gap-1 text-sm sm:text-base'
             >
               <Calendar className='h-3 w-3' />
               Fecha
@@ -118,13 +118,13 @@ export function CorteRegistradoDialog({
               value={fecha}
               onChange={e => setFecha(e.target.value)}
               placeholder='dd-MM-yyyy'
-              className='col-span-3'
+              className='sm:col-span-3 text-sm sm:text-base h-9 sm:h-10'
             />
           </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='hora'
-              className='text-right flex items-center gap-1'
+              className='sm:text-right flex items-center gap-1 text-sm sm:text-base'
             >
               <Clock className='h-3 w-3' />
               Hora
@@ -134,13 +134,13 @@ export function CorteRegistradoDialog({
               value={hora}
               onChange={e => setHora(e.target.value)}
               placeholder='HH:mm:ss'
-              className='col-span-3'
+              className='sm:col-span-3 text-sm sm:text-base h-9 sm:h-10'
             />
           </div>
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='periodo'
-              className='text-right flex items-center gap-1'
+              className='sm:text-right flex items-center gap-1 text-sm sm:text-base'
             >
               <Hash className='h-3 w-3' />
               Periodo
@@ -150,7 +150,7 @@ export function CorteRegistradoDialog({
               value={periodo}
               onChange={e => setPeriodo(e.target.value)}
               placeholder='MMAAAA'
-              className='col-span-3'
+              className='sm:col-span-3 text-sm sm:text-base h-9 sm:h-10'
             />
           </div>
         </div>
@@ -159,7 +159,7 @@ export function CorteRegistradoDialog({
             type='submit'
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className='bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white'
+            className='w-full sm:w-auto bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-sm sm:text-base'
           >
             {isSubmitting ? 'Guardando...' : 'Guardar'}
           </Button>

@@ -78,56 +78,52 @@ export default function CerrarPeriodo({
           variant='outline'
           size='sm'
           className={cn(
-            'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30 gap-1.5 w-full',
+            'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30 gap-1 w-full',
             className
           )}
         >
-          <XCircle className='h-4 w-4' />
-          Cerrar Periodo
+          <XCircle className='h-3 w-3 sm:h-4 sm:w-4' />
+          <span className='text-xs sm:text-sm'>Cerrar</span>
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className='w-[95vw] max-w-md mx-auto'>
         <AlertDialogHeader>
-          <div className='flex items-center gap-3'>
-            <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-lg shadow-sm'>
-              <AlertCircle className='h-5 w-5 text-red-600 dark:text-red-400' />
-            </div>
+          <div className='flex items-center gap-2'>
+            <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-red-600 dark:text-red-400' />
             <div>
-              <AlertDialogTitle className='text-lg font-semibold text-red-800 dark:text-red-200'>
-                Cerrar periodo de facturación
+              <AlertDialogTitle className='text-base sm:text-lg font-semibold text-red-800 dark:text-red-200'>
+                Cerrar Período
               </AlertDialogTitle>
-              <AlertDialogDescription className='text-sm text-muted-foreground'>
-                Esta acción cerrará el periodo de facturación {periodoId}.
-                ¿Estás seguro de que deseas continuar?
+              <AlertDialogDescription className='text-xs sm:text-sm text-muted-foreground'>
+                Esta acción cerrará el período {periodoId}. ¿Continuar?
               </AlertDialogDescription>
             </div>
           </div>
         </AlertDialogHeader>
 
-        <div className='bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-md p-3 my-2'>
-          <p className='text-sm text-red-700 dark:text-red-300'>
-            Al cerrar el periodo, no se podrán realizar más operaciones en él a
-            menos que sea reabierto por un usuario autorizado.
+        <div className='bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-md p-2 my-2'>
+          <p className='text-xs sm:text-sm text-red-700 dark:text-red-300'>
+            Al cerrar el período, no se podrán realizar más operaciones a menos que sea reabierto.
           </p>
         </div>
 
-        <AlertDialogFooter className='gap-2 pt-2'>
-          <AlertDialogCancel className='text-muted-foreground hover:text-muted-foreground hover:bg-muted'>
+        <AlertDialogFooter className='flex-col sm:flex-row gap-2 pt-2'>
+          <AlertDialogCancel className='text-muted-foreground hover:text-muted-foreground hover:bg-muted order-2 sm:order-1 text-xs sm:text-sm'>
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleCerrarPeriodo}
-            className='gap-2 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800'
+            className='gap-1 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800 order-1 sm:order-2'
           >
             {isLoading ? (
               <>
-                <Loader2 className='h-4 w-4 animate-spin' />
-                Procesando...
+                <Loader2 className='h-3 w-3 sm:h-4 sm:w-4 animate-spin' />
+                <span className='text-xs sm:text-sm'>Procesando...</span>
               </>
             ) : (
               <>
-                <XCircle className='h-4 w-4' />
-                Cerrar Periodo
+                <XCircle className='h-3 w-3 sm:h-4 sm:w-4' />
+                <span className='text-xs sm:text-sm'>Cerrar</span>
               </>
             )}
           </AlertDialogAction>

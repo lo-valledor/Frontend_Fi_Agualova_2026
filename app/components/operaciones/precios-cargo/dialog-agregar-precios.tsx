@@ -67,64 +67,67 @@ export default function DialogAgregarPrecios({
         <Button
           variant='outline'
           size='sm'
-          className='gap-1.5 bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800/40'
+          className='gap-1 sm:gap-1.5 bg-sky-50 dark:bg-sky-900/20 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-800/40 text-xs sm:text-sm px-2 sm:px-3'
         >
-          <PlusCircle className='h-3.5 w-3.5' />
-          Agregar
+          <PlusCircle className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
+          <span className='hidden sm:inline'>Agregar</span>
+          <span className='sm:hidden'>+</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle className='text-lg font-semibold text-sky-800 dark:text-sky-200'>
-            Agregar Precios de Cargo
+          <DialogTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200'>
+            <span className='hidden sm:inline'>Agregar Precios de Cargo</span>
+            <span className='sm:hidden'>Agregar Precios</span>
           </DialogTitle>
         </DialogHeader>
-        <div className='grid gap-4 py-3'>
-          <div className='space-y-1.5'>
+        <div className='grid gap-3 sm:gap-4 py-2 sm:py-3'>
+          <div className='space-y-1 sm:space-y-1.5'>
             <Label className='text-xs font-medium text-muted-foreground'>
               Valor 1{' '}
             </Label>
             <Input
               type='number'
               step='0.01'
-              placeholder='Ingrese el precio 1'
+              placeholder='Precio 1'
               value={valores.valor1}
               onChange={e => setValores({ ...valores, valor1: e.target.value })}
-              className='bg-background border-border/70'
+              className='bg-background border-border/70 h-8 sm:h-10 text-xs sm:text-sm'
             />
           </div>
-          <div className='space-y-1.5'>
+          <div className='space-y-1 sm:space-y-1.5'>
             <Label className='text-xs font-medium text-muted-foreground'>
               Valor 2{' '}
             </Label>
             <Input
               type='number'
               step='0.01'
-              placeholder='Ingrese el precio 2'
+              placeholder='Precio 2'
               value={valores.valor2}
               onChange={e => setValores({ ...valores, valor2: e.target.value })}
-              className='bg-background border-border/70'
+              className='bg-background border-border/70 h-8 sm:h-10 text-xs sm:text-sm'
             />
           </div>
-          <div className='space-y-1.5'>
+          <div className='space-y-1 sm:space-y-1.5'>
             <Label className='text-xs font-medium text-muted-foreground'>
               Valor 3{' '}
             </Label>
             <Input
               type='number'
               step='0.01'
-              placeholder='Ingrese el precio 3'
+              placeholder='Precio 3'
               value={valores.valor3}
               onChange={e => setValores({ ...valores, valor3: e.target.value })}
-              className='bg-background border-border/70'
+              className='bg-background border-border/70 h-8 sm:h-10 text-xs sm:text-sm'
             />
           </div>
         </div>
-        <DialogFooter className='gap-2'>
+        <DialogFooter className='flex-col sm:flex-row gap-2'>
           <Button
             variant='ghost'
             onClick={() => setIsOpen(false)}
-            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted'
+            size='sm'
+            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted w-full sm:w-auto text-xs sm:text-sm order-2 sm:order-1'
           >
             Cancelar
           </Button>
@@ -132,17 +135,20 @@ export default function DialogAgregarPrecios({
             type='submit'
             onClick={handleSubmit}
             disabled={isLoading}
-            className='gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+            size='sm'
+            className='gap-1 sm:gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 w-full sm:w-auto text-xs sm:text-sm order-1 sm:order-2'
           >
             {isLoading ? (
               <>
-                <Loader2 className='w-4 h-4 animate-spin' />
-                Agregando...
+                <Loader2 className='w-3 h-3 sm:w-4 sm:h-4 animate-spin' />
+                <span className='hidden sm:inline'>Agregando...</span>
+                <span className='sm:hidden'>...</span>
               </>
             ) : (
               <>
-                <PlusCircle className='h-4 w-4' />
-                Agregar Valores
+                <PlusCircle className='h-3 w-3 sm:h-4 sm:w-4' />
+                <span className='hidden sm:inline'>Agregar Valores</span>
+                <span className='sm:hidden'>Agregar</span>
               </>
             )}
           </Button>

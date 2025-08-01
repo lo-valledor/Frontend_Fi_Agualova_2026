@@ -145,23 +145,24 @@ export default function DialogNuevoValorEnerlova({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant='outline' size='sm' className='gap-1.5'>
-          <Calendar className='h-4 w-4' />
-          Nuevo Valor
+        <Button variant='outline' size='sm' className='gap-1 sm:gap-1.5'>
+          <Calendar className='h-3 w-3 sm:h-4 sm:w-4' />
+          <span className='hidden sm:inline'>Nuevo Valor</span>
+          <span className='sm:hidden'>Nuevo</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className='sm:max-w-md'>
+      <DialogContent className='sm:max-w-md max-w-[95vw] max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle className='text-xl font-semibold'>
+          <DialogTitle className='text-lg sm:text-xl font-semibold'>
             Nuevo Valor del Cargo
           </DialogTitle>
         </DialogHeader>
 
-        <div className='grid gap-4 py-3'>
-          <div className='grid grid-cols-4 items-center gap-4'>
+        <div className='grid gap-3 sm:gap-4 py-2 sm:py-3'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='codigo'
-              className='text-right font-medium text-muted-foreground'
+              className='text-left sm:text-right font-medium text-muted-foreground text-sm'
             >
               Código
             </Label>
@@ -169,14 +170,14 @@ export default function DialogNuevoValorEnerlova({
               id='codigo'
               value={formValues.codigo}
               disabled
-              className='col-span-3 bg-muted/50'
+              className='sm:col-span-3 bg-muted/50 text-sm h-9'
             />
           </div>
 
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='descripcion'
-              className='text-right font-medium text-muted-foreground'
+              className='text-left sm:text-right font-medium text-muted-foreground text-sm'
             >
               Descripción
             </Label>
@@ -184,51 +185,51 @@ export default function DialogNuevoValorEnerlova({
               id='descripcion'
               value={formValues.descripcion}
               disabled
-              className='col-span-3 bg-muted/50'
+              className='sm:col-span-3 bg-muted/50 text-sm h-9'
             />
           </div>
 
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='fecha_inicio'
-              className='text-right font-medium text-muted-foreground'
+              className='text-left sm:text-right font-medium text-muted-foreground text-sm'
             >
               Fecha Inicio
             </Label>
-            <div className='col-span-3 relative'>
+            <div className='sm:col-span-3 relative'>
               <Input
                 id='fecha_inicio'
                 value={formValues.fecha_inicio}
                 disabled
-                className='bg-muted/50 pl-9'
+                className='bg-muted/50 pl-8 sm:pl-9 text-sm h-9'
               />
-              <Calendar className='absolute left-3 top-2.5 h-4 w-4 text-muted-foreground' />
+              <Calendar className='absolute left-2 sm:left-3 top-2 sm:top-2.5 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
             </div>
           </div>
 
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='fecha_fin'
-              className='text-right font-medium text-muted-foreground'
+              className='text-left sm:text-right font-medium text-muted-foreground text-sm'
             >
               Fecha Fin
             </Label>
-            <div className='col-span-3 relative'>
+            <div className='sm:col-span-3 relative'>
               <Input
                 type='date'
                 id='fecha_fin'
                 value={formValues.fecha_fin}
                 onChange={e => handleInputChange('fecha_fin', e.target.value)}
-                className='pl-9'
+                className='pl-8 sm:pl-9 text-sm h-9'
               />
-              <Calendar className='absolute left-3 top-2.5 h-4 w-4 text-muted-foreground' />
+              <Calendar className='absolute left-2 sm:left-3 top-2 sm:top-2.5 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
             </div>
           </div>
 
-          <div className='grid grid-cols-4 items-center gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-4 items-start sm:items-center gap-2 sm:gap-4'>
             <Label
               htmlFor='valor'
-              className='text-right font-medium text-muted-foreground'
+              className='text-left sm:text-right font-medium text-muted-foreground text-sm'
             >
               Valor
             </Label>
@@ -241,7 +242,7 @@ export default function DialogNuevoValorEnerlova({
               onChange={e =>
                 handleInputChange('valor', parseFloat(e.target.value) || 0)
               }
-              className='col-span-3'
+              className='sm:col-span-3 text-sm h-9'
             />
           </div>
 
@@ -253,12 +254,14 @@ export default function DialogNuevoValorEnerlova({
           )}
         </div>
 
-        <DialogFooter className='sm:justify-end'>
+        <DialogFooter className='flex-col sm:flex-row gap-2 sm:gap-0 sm:justify-end'>
           <Button
             type='button'
             variant='secondary'
             onClick={() => setIsOpen(false)}
             disabled={isLoading}
+            size='sm'
+            className='w-full sm:w-auto'
           >
             Cancelar
           </Button>
@@ -266,17 +269,18 @@ export default function DialogNuevoValorEnerlova({
             type='button'
             onClick={handleSubmit}
             disabled={!isFormValid || isLoading}
-            className='gap-2'
+            size='sm'
+            className='gap-1 sm:gap-2 w-full sm:w-auto'
           >
             {isLoading ? (
               <>
-                <Loader2 className='h-4 w-4 animate-spin' />
-                Guardando...
+                <Loader2 className='h-3 w-3 sm:h-4 sm:w-4 animate-spin' />
+                <span className='text-xs sm:text-sm'>Guardando...</span>
               </>
             ) : (
               <>
-                <Save className='h-4 w-4' />
-                Guardar
+                <Save className='h-3 w-3 sm:h-4 sm:w-4' />
+                <span className='text-xs sm:text-sm'>Guardar</span>
               </>
             )}
           </Button>

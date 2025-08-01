@@ -88,23 +88,23 @@ export function MarcarLiberarDialog({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <DialogContent className='sm:max-w-md rounded-xl border border-emerald-200/40 bg-white/95 backdrop-blur-sm dark:border-emerald-800/40 dark:bg-gray-900/95'>
+      <DialogContent className='mx-4 sm:max-w-md rounded-xl border border-emerald-200/40 bg-white/95 backdrop-blur-sm dark:border-emerald-800/40 dark:bg-gray-900/95'>
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-2 text-emerald-900 dark:text-emerald-100'>
-            <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white'>
-              <Unlock className='h-3 w-3' />
+          <DialogTitle className='flex items-center gap-2 text-emerald-900 dark:text-emerald-100 text-base sm:text-lg'>
+            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white flex-shrink-0'>
+              <Unlock className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
             </div>
-            Marcar como Liberado
+            <span className='truncate'>Marcar como Liberado</span>
           </DialogTitle>
-          <DialogDescription className='text-emerald-700 dark:text-emerald-300'>
+          <DialogDescription className='text-emerald-700 dark:text-emerald-300 text-sm sm:text-base'>
             Ingrese un comentario para la liberación de la acometida{' '}
-            <span className='font-mono font-medium'>{acometida}</span>.
+            <span className='font-mono font-medium text-xs sm:text-sm break-all'>{acometida}</span>.
           </DialogDescription>
         </DialogHeader>
-        <div className='grid gap-4 py-4'>
+        <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>
           <div className='space-y-2'>
-            <Label htmlFor='comentario' className='flex items-center gap-1'>
-              <MessageSquare className='h-3 w-3' />
+            <Label htmlFor='comentario' className='flex items-center gap-1 text-sm sm:text-base'>
+              <MessageSquare className='h-3 w-3 sm:h-3 sm:w-3' />
               Comentario
             </Label>
             <Textarea
@@ -112,7 +112,7 @@ export function MarcarLiberarDialog({
               value={comentario}
               onChange={e => setComentario(e.target.value)}
               placeholder='Comentario obligatorio para liberación...'
-              className='min-h-[100px] resize-none'
+              className='min-h-[80px] sm:min-h-[100px] resize-none text-sm sm:text-base'
               maxLength={500}
             />
             <div className='text-xs text-slate-500 dark:text-slate-400 text-right'>
@@ -125,7 +125,7 @@ export function MarcarLiberarDialog({
             type='submit'
             onClick={handleSubmit}
             disabled={!comentario.trim() || isSubmitting}
-            className='bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white'
+            className='w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white text-sm sm:text-base'
           >
             {isSubmitting ? 'Guardando...' : 'Guardar'}
           </Button>
