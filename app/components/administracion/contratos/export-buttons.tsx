@@ -1,4 +1,7 @@
-import { ExportAllButton, ExportFilteredButton } from '~/components/shared/export-button';
+import {
+  ExportAllButton,
+  ExportFilteredButton,
+} from '~/components/shared/export-button';
 import { useExportContratos } from '~/hooks/administracion/use-export-contratos-new';
 import type { GetContratos } from '~/types/administracion';
 

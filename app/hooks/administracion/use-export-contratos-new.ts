@@ -3,7 +3,8 @@ import { useExportData } from '~/hooks/shared/use-export-data';
 import type { GetContratos } from '~/types/administracion';
 
 export function useExportContratos() {
-  const { isExporting, exportData, formatDateForExport } = useExportData<GetContratos>();
+  const { isExporting, exportData, formatDateForExport } =
+    useExportData<GetContratos>();
 
   // Definir las columnas para exportación de contratos
   const contractColumns: ExportColumn[] = [
@@ -38,17 +39,19 @@ export function useExportContratos() {
     {
       key: 'fechaInicio',
       header: 'Fecha Inicio',
-      formatter: (value: string | null | undefined) => formatDateForExport(value),
+      formatter: (value: string | null | undefined) =>
+        formatDateForExport(value),
     },
     {
       key: 'activo',
       header: 'Estado',
-      formatter: (value: boolean) => value ? 'Activo' : 'Inactivo',
+      formatter: (value: boolean) => (value ? 'Activo' : 'Inactivo'),
     },
     {
       key: 'fechaTermino',
       header: 'Fecha Término',
-      formatter: (value: string | null | undefined) => formatDateForExport(value),
+      formatter: (value: string | null | undefined) =>
+        formatDateForExport(value),
     },
     {
       key: 'comunaEnvio',
@@ -77,7 +80,7 @@ export function useExportContratos() {
     {
       key: 'liberadoCorte',
       header: 'Liberado Corte',
-      formatter: (value: boolean) => value ? 'Sí' : 'No',
+      formatter: (value: boolean) => (value ? 'Sí' : 'No'),
     },
   ];
 
@@ -86,15 +89,11 @@ export function useExportContratos() {
     allData: GetContratos[],
     format: 'csv' | 'xlsx' = 'xlsx'
   ) => {
-    await exportData(
-      allData,
-      contractColumns,
-      {
-        format,
-        filename: 'contratos_completos',
-        includeHeaders: true,
-      }
-    );
+    await exportData(allData, contractColumns, {
+      format,
+      filename: 'contratos_completos',
+      includeHeaders: true,
+    });
   };
 
   // Función para exportar contratos filtrados
@@ -102,15 +101,11 @@ export function useExportContratos() {
     filteredData: GetContratos[],
     format: 'csv' | 'xlsx' = 'xlsx'
   ) => {
-    await exportData(
-      filteredData,
-      contractColumns,
-      {
-        format,
-        filename: 'contratos_filtrados',
-        includeHeaders: true,
-      }
-    );
+    await exportData(filteredData, contractColumns, {
+      format,
+      filename: 'contratos_filtrados',
+      includeHeaders: true,
+    });
   };
 
   return {

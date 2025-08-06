@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, Download, FileArchive } from 'lucide-react';
+import { ChevronDown, Download, FileArchive } from 'lucide-react';
 
 import { useState } from 'react';
 
@@ -95,62 +95,58 @@ export default function CrearArchivosSapComponent() {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30'>
-      <div className='container mx-auto p-2 sm:p-4 space-y-3'>
-        {/* Modern Header */}
-        <div className='flex items-center gap-2 sm:gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
-          <div className='flex-1'>
-            <div className='flex items-center gap-2 sm:gap-3 justify-between'>
-              <div className='flex items-center gap-2 sm:gap-3'>
-                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100 truncate'>
-                  Crear Archivo SAP
-                </h1>
-              </div>
-            </div>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+              Archivos SAP
+            </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Generación y descarga de archivos CSV para integración con SAP
+            </p>
           </div>
         </div>
 
-        {/* Sección Principal */}
-        <div className='grid grid-cols-1 gap-4 sm:gap-6'>
+        <div className='space-y-4'>
           {/* Panel de Configuración */}
-          <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-            <Collapsible
-              open={isConfigOpen}
-              onOpenChange={setIsConfigOpen}
-              className='w-full'
-            >
+          <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
+            <Collapsible open={isConfigOpen} onOpenChange={setIsConfigOpen}>
               <CollapsibleTrigger asChild>
-                <div className='flex justify-between items-center p-3 sm:p-4 cursor-pointer hover:bg-blue-50/50 rounded-t-xl dark:hover:bg-blue-900/20'>
-                  <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
-                    <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm'>
-                      <FileArchive className='h-3 w-3 sm:h-4 sm:w-4' />
+                <div className='p-3 border-b border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-3'>
+                      <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
+                        <FileArchive className='h-4 w-4' />
+                      </div>
+                      <div>
+                        <CardTitle className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                          Descarga de Archivos
+                        </CardTitle>
+                        <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                          Haz clic en los botones para descargar los archivos
+                        </CardDescription>
+                      </div>
                     </div>
-                    <div className='min-w-0 flex-1'>
-                      <CardTitle className='text-base sm:text-lg font-semibold text-sky-900 dark:text-sky-100 truncate'>
-                        Descarga de Archivos
-                      </CardTitle>
-                      <CardDescription className='text-xs sm:text-sm text-sky-700 dark:text-sky-300'>
-                        Haz clic en los botones para descargar los archivos
-                      </CardDescription>
-                    </div>
+                    <ChevronDown
+                      className={`h-5 w-5 text-slate-600 dark:text-slate-400 transition-transform duration-200 ${
+                        isConfigOpen ? 'rotate-180' : ''
+                      }`}
+                    />
                   </div>
-                  {isConfigOpen ? (
-                    <ChevronUp className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
-                  ) : (
-                    <ChevronDown className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
-                  )}
                 </div>
               </CollapsibleTrigger>
 
               <CollapsibleContent>
-                <CardContent className='p-3 sm:p-4 space-y-4 sm:space-y-6'>
+                <CardContent className='p-4 space-y-4'>
                   {/* Archivo de Encabezado */}
-                  <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-lg border border-sky-200/40 bg-sky-50/30 dark:border-sky-800/40 dark:bg-sky-900/20'>
-                    <div className='space-y-1 min-w-0 flex-1'>
-                      <Label className='text-xs sm:text-sm font-medium text-sky-900 dark:text-sky-100'>
+                  <div className='flex items-center justify-between gap-4 p-4 rounded-lg border border-slate-200/60 bg-slate-50/50 dark:border-slate-700/60 dark:bg-slate-800/50'>
+                    <div className='space-y-1 flex-1'>
+                      <Label className='text-sm font-medium text-slate-900 dark:text-slate-100'>
                         Archivo de Encabezado Factura
                       </Label>
-                      <p className='text-xs text-sky-700 dark:text-sky-300'>
+                      <p className='text-sm text-slate-600 dark:text-slate-400'>
                         Archivo CSV con los encabezados de facturas para SAP
                       </p>
                     </div>
@@ -158,20 +154,20 @@ export default function CrearArchivosSapComponent() {
                       variant='default'
                       size='sm'
                       onClick={handleDescargarEncabezado}
-                      className='gap-1 sm:gap-1.5 h-8 sm:h-9 text-xs sm:text-sm bg-sky-600 hover:bg-sky-700 text-white shadow-sm w-full sm:w-auto'
+                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
                     >
-                      <Download className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
+                      <Download className='h-4 w-4' />
                       Descargar
                     </Button>
                   </div>
 
                   {/* Archivo Detalle */}
-                  <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 rounded-lg border border-sky-200/40 bg-sky-50/30 dark:border-sky-800/40 dark:bg-sky-900/20'>
-                    <div className='space-y-1 min-w-0 flex-1'>
-                      <Label className='text-xs sm:text-sm font-medium text-sky-900 dark:text-sky-100'>
+                  <div className='flex items-center justify-between gap-4 p-4 rounded-lg border border-slate-200/60 bg-slate-50/50 dark:border-slate-700/60 dark:bg-slate-800/50'>
+                    <div className='space-y-1 flex-1'>
+                      <Label className='text-sm font-medium text-slate-900 dark:text-slate-100'>
                         Archivo Detalle Factura
                       </Label>
-                      <p className='text-xs text-sky-700 dark:text-sky-300'>
+                      <p className='text-sm text-slate-600 dark:text-slate-400'>
                         Archivo CSV con los detalles de facturas para SAP
                       </p>
                     </div>
@@ -179,9 +175,9 @@ export default function CrearArchivosSapComponent() {
                       variant='default'
                       size='sm'
                       onClick={handleDescargarDetalle}
-                      className='gap-1 sm:gap-1.5 h-8 sm:h-9 text-xs sm:text-sm bg-sky-600 hover:bg-sky-700 text-white shadow-sm w-full sm:w-auto'
+                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
                     >
-                      <Download className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
+                      <Download className='h-4 w-4' />
                       Descargar
                     </Button>
                   </div>

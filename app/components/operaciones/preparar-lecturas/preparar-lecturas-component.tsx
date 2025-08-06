@@ -157,45 +157,41 @@ export default function PrepararLecturasComponent({
   };
 
   return (
-    <div className='min-h-screen '>
-      <div className='container mx-auto p-2 space-y-3'>
-        {/* Modern Header */}
-        <div className='flex items-center gap-2 py-1 border-b border-slate-200 dark:border-slate-700'>
-          <div className='flex-1'>
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-              <div className='flex items-center gap-3'>
-                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-                  <span className='hidden sm:inline'>Preparar Lecturas</span>
-                  <span className='sm:hidden'>Prep. Lecturas</span>
-                </h1>
-              </div>
-              <div className='flex items-center gap-3 self-start sm:self-auto'>
-                <DialogLecturasPendientes
-                  data={lecturasPendientes || undefined}
-                  isLoading={false}
-                  onRefresh={() => Promise.resolve(undefined)}
-                />
-              </div>
-            </div>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+              Preparación de Lecturas
+            </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestión de asignación de sectores para lectura
+            </p>
           </div>
+          <DialogLecturasPendientes
+            data={lecturasPendientes || undefined}
+            isLoading={false}
+            onRefresh={() => Promise.resolve(undefined)}
+          />
         </div>
 
         {/* Filtros de Búsqueda */}
-        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
+        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className='flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
+              className='flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
-              <div className='flex items-center gap-4'>
-                <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
-                  <SearchIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+              <div className='flex items-center gap-3'>
+                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
+                  <SearchIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
                 </div>
                 <div>
-                  <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
+                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
                     Criterios de Búsqueda
                   </CardTitle>
-                  <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
+                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
                     Selecciona criterios para preparar lecturas
                   </CardDescription>
                 </div>
@@ -210,43 +206,40 @@ export default function PrepararLecturasComponent({
             </div>
 
             <CollapsibleContent>
-              <CardContent className='px-4 pb-4 space-y-4'>
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 w-full'>
+              <CardContent className='p-3 space-y-4'>
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 w-full'>
                   {/* Periodo */}
                   <div className='space-y-2'>
                     <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
-                      <CalendarIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+                      <CalendarIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
                       Periodo actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className='flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-gradient-to-r from-blue-50 to-blue-50 dark:from-blue-900/20 dark:to-blue-900/20 border border-blue-200 dark:border-blue-800'>
-                        <div className='w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-800/50 rounded-lg flex items-center justify-center flex-shrink-0'>
-                          <CalendarIcon className='w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400' />
+                      <div className='flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
+                        <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                          <CalendarIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
                         </div>
                         <div>
-                          <span className='font-semibold text-blue-800 dark:text-blue-200 text-sm sm:text-base'>
+                          <span className='font-medium text-slate-900 dark:text-slate-100 text-sm'>
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className='text-xs text-blue-600 dark:text-blue-400 mt-0.5'>
-                            <span className='hidden sm:inline'>Periodo activo para facturación</span>
-                            <span className='sm:hidden'>Periodo activo</span>
+                          <p className='text-xs text-slate-600 dark:text-slate-400'>
+                            Periodo activo para facturación
                           </p>
                         </div>
                       </div>
                     ) : (
-                      <div className='flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800'>
-                        <div className='w-8 h-8 sm:w-10 sm:h-10 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex items-center justify-center flex-shrink-0'>
-                          <AlertCircleIcon className='w-4 h-4 sm:w-5 sm:h-5 text-amber-600 dark:text-amber-400' />
+                      <div className='flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200/60 dark:border-amber-700/60'>
+                        <div className='w-8 h-8 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex items-center justify-center'>
+                          <AlertCircleIcon className='w-4 h-4 text-amber-600 dark:text-amber-400' />
                         </div>
                         <div>
-                          <span className='font-medium text-amber-800 dark:text-amber-200 text-sm sm:text-base'>
-                            <span className='hidden sm:inline'>No hay periodo abierto</span>
-                            <span className='sm:hidden'>Sin periodo</span>
+                          <span className='font-medium text-amber-800 dark:text-amber-200 text-sm'>
+                            No hay periodo abierto
                           </span>
-                          <p className='text-xs text-amber-600 dark:text-amber-400 mt-0.5'>
-                            <span className='hidden sm:inline'>Contacta al administrador</span>
-                            <span className='sm:hidden'>Contactar admin</span>
+                          <p className='text-xs text-amber-600 dark:text-amber-400'>
+                            Contacta al administrador
                           </p>
                         </div>
                       </div>
@@ -259,7 +252,7 @@ export default function PrepararLecturasComponent({
                       htmlFor='ciclo'
                       className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'
                     >
-                      <FileTextIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+                      <FileTextIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
                       Ciclo de facturación
                     </Label>
                     <Select
@@ -268,7 +261,7 @@ export default function PrepararLecturasComponent({
                     >
                       <SelectTrigger
                         id='ciclo'
-                        className='h-10 sm:h-12 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:border-blue-400 focus:ring-blue-400/20 w-full text-sm'
+                        className='h-10 bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 focus:border-sky-400 focus:ring-sky-400/20'
                       >
                         <SelectValue placeholder='Selecciona un ciclo de facturación' />
                       </SelectTrigger>
@@ -279,14 +272,9 @@ export default function PrepararLecturasComponent({
                               <SelectItem
                                 key={opcion.id}
                                 value={opcion.id.toString()}
-                                className='hover:bg-emerald-50 dark:hover:bg-emerald-900/20'
+                                className='hover:bg-slate-50 dark:hover:bg-slate-800'
                               >
-                                <div className='flex items-center gap-2'>
-                                  <div className='w-2 h-2 rounded-full bg-emerald-500'></div>
-                                  <span className='font-medium'>
-                                    {opcion.descripcion}
-                                  </span>
-                                </div>
+                                {opcion.descripcion}
                               </SelectItem>
                             )
                           )}
@@ -296,12 +284,12 @@ export default function PrepararLecturasComponent({
                 </div>
 
                 {/* Botones de acción */}
-                <div className='flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4 border-t border-slate-200 dark:border-slate-700'>
+                <div className='flex justify-end gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60'>
                   <Button
                     onClick={handleClearFilters}
                     variant='outline'
                     disabled={isLoadingAsignacion}
-                    className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800 w-full sm:w-auto'
+                    className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
                     size='sm'
                   >
                     <Eraser className='h-4 w-4' />
@@ -314,12 +302,11 @@ export default function PrepararLecturasComponent({
                       !cicloSeleccionado ||
                       !periodoFormateado
                     }
-                    className='gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white w-full sm:w-auto'
+                    className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
                     size='sm'
                   >
                     <SearchIcon className='h-4 w-4' />
-                    <span className='hidden sm:inline'>{isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}</span>
-                    <span className='sm:hidden'>{isLoadingAsignacion ? '...' : 'Buscar'}</span>
+                    {isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}
                   </Button>
                 </div>
               </CardContent>
@@ -328,17 +315,17 @@ export default function PrepararLecturasComponent({
         </Card>
 
         {/* Resultados de la búsqueda */}
-        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
-          <CardHeader className='border-b border-slate-200 dark:border-slate-700'>
-            <div className='flex items-center gap-4'>
-              <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
-                <UsersIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+          <CardHeader className='p-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+            <div className='flex items-center gap-3'>
+              <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
+                <UsersIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
               </div>
               <div>
-                <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
+                <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
                   Asignación de Sectores
                 </CardTitle>
-                <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
+                <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
                   {asignacionSectores.length > 0
                     ? `${asignacionSectores.length} sectores encontrados`
                     : 'No hay sectores asignados'}
@@ -346,42 +333,39 @@ export default function PrepararLecturasComponent({
               </div>
             </div>
           </CardHeader>
-          <CardContent className='p-6'>
+          <CardContent className='p-3'>
             {isLoadingAsignacion ? (
-              <div className='flex justify-center items-center h-64'>
-                <div className='flex flex-col items-center gap-4'>
-                  <div className='relative'>
-                    <div className='w-16 h-16 rounded-full border-4 border-emerald-200 dark:border-emerald-800'></div>
-                    <div className='absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin'></div>
-                  </div>
+              <div className='flex justify-center items-center h-48'>
+                <div className='flex flex-col items-center gap-3'>
+                  <div className='w-8 h-8 animate-spin rounded-full border-2 border-slate-300 border-t-sky-600 dark:border-slate-600 dark:border-t-sky-400'></div>
                   <div className='text-center'>
-                    <p className='text-emerald-700 dark:text-emerald-300 font-medium'>
+                    <p className='text-slate-700 dark:text-slate-300 font-medium text-sm'>
                       Buscando sectores...
                     </p>
-                    <p className='text-sm text-muted-foreground mt-1'>
-                      Por favor espere mientras procesamos su consulta
+                    <p className='text-xs text-slate-500 dark:text-slate-400'>
+                      Por favor espere
                     </p>
                   </div>
                 </div>
               </div>
             ) : error ? (
-              <div className='p-6 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-200 dark:border-red-800'>
+              <div className='p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-700/60'>
                 <div className='flex items-start gap-3'>
-                  <div className='w-10 h-10 bg-red-100 dark:bg-red-900/50 rounded-lg flex items-center justify-center'>
-                    <AlertCircleIcon className='w-5 h-5 text-red-600 dark:text-red-400' />
+                  <div className='w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-lg flex items-center justify-center'>
+                    <AlertCircleIcon className='w-4 h-4 text-red-600 dark:text-red-400' />
                   </div>
                   <div className='flex-1'>
-                    <h4 className='font-semibold text-red-800 dark:text-red-200'>
+                    <h4 className='font-medium text-red-800 dark:text-red-200 text-sm'>
                       Error al cargar los datos
                     </h4>
-                    <p className='mt-2 text-red-700 dark:text-red-300 text-sm leading-relaxed'>
+                    <p className='mt-1 text-red-700 dark:text-red-300 text-xs'>
                       {error}
                     </p>
                     <Button
                       onClick={() => setError(null)}
                       variant='outline'
                       size='sm'
-                      className='mt-3 border-red-200 hover:bg-red-50 dark:border-red-700 dark:hover:bg-red-900/20'
+                      className='mt-2 border-red-200 hover:bg-red-50 dark:border-red-700 dark:hover:bg-red-900/20'
                     >
                       Cerrar
                     </Button>
@@ -389,31 +373,28 @@ export default function PrepararLecturasComponent({
                 </div>
               </div>
             ) : asignacionSectores.length === 0 ? (
-              <div className='flex flex-col items-center justify-center h-64 gap-4'>
-                <div className='w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center'>
-                  <SearchIcon className='w-8 h-8 text-emerald-500 dark:text-emerald-400' />
+              <div className='flex flex-col items-center justify-center h-48 gap-3'>
+                <div className='w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                  <SearchIcon className='w-6 h-6 text-slate-500 dark:text-slate-400' />
                 </div>
                 <div className='text-center'>
-                  <p className='font-medium text-slate-700 dark:text-slate-300'>
+                  <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
                     Realizar consulta de sectores
                   </p>
-                  <p className='text-sm text-muted-foreground mt-1'>
-                    Selecciona un ciclo y haz clic en "Buscar Sectores" para ver
-                    los resultados
+                  <p className='text-xs text-slate-500 dark:text-slate-400'>
+                    Selecciona un ciclo y haz clic en "Buscar Sectores"
                   </p>
                 </div>
               </div>
             ) : (
               <div className='space-y-4'>
-                <div className='flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700'>
-                  <div className='flex items-center gap-2'>
-                    <div className='w-8 h-8 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center'>
-                      <UsersIcon className='w-4 h-4 text-teal-600 dark:text-teal-400' />
-                    </div>
-                    <span className='font-medium text-teal-700 dark:text-teal-300'>
-                      {asignacionSectores.length} sectores encontrados
-                    </span>
+                <div className='flex items-center gap-2 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+                  <div className='w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                    <UsersIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
                   </div>
+                  <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                    {asignacionSectores.length} sectores encontrados
+                  </span>
                 </div>
                 <TablaAsignacionSectores
                   data={asignacionSectores}

@@ -3,7 +3,6 @@ import {
   BarChart3,
   CheckCircle2,
   ChevronDown,
-  ChevronUp,
   Download,
   FileText,
   ListChecks,
@@ -208,152 +207,144 @@ export default function CorteReposicionComponent({
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-red-50 dark:from-slate-950 dark:to-red-950/30'>
-      <div className='container mx-auto p-2 sm:p-4 space-y-3 sm:space-y-4'>
-        {/* Modern Header */}
-        <div className='flex items-center gap-2 sm:gap-3 py-1 sm:py-2 border-b border-slate-200 dark:border-slate-700'>
-          <div className='flex-1'>
-            <div className='flex items-center gap-2 sm:gap-3 justify-between'>
-              <div className='flex items-center gap-2 sm:gap-3'>
-                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-                  <span className='hidden sm:inline'>Corte y Reposición</span>
-                  <span className='sm:hidden'>Corte/Reposición</span>
-                </h1>
-              </div>
-            </div>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+              Corte y Reposición
+            </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestión integral de procesos de corte y reposición de servicios
+            </p>
           </div>
         </div>
 
-        {/* Sección Principal */}
-        <div className='grid grid-cols-1 gap-3 sm:gap-4 lg:gap-6'>
-          {/* Panel de Revisión */}
-          <Card className='rounded-xl border border-sky-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-sky-800/40 dark:bg-gray-900/50'>
-            <Collapsible
-              open={isRevisionOpen}
-              onOpenChange={setIsRevisionOpen}
-              className='w-full'
-            >
+        <div className='space-y-4'>
+          {/* Panel de Revisión modernizado */}
+          <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
+            <Collapsible open={isRevisionOpen} onOpenChange={setIsRevisionOpen}>
               <CollapsibleTrigger asChild>
-                <div className='flex justify-between items-center p-3 sm:p-4 cursor-pointer hover:bg-sky-50/50 rounded-t-xl dark:hover:bg-sky-900/20'>
-                  <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-                    <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white shadow-sm flex-shrink-0'>
-                      <ListChecks className='h-3 w-3 sm:h-4 sm:w-4' />
+                <div className='p-3 border-b border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-3'>
+                      <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
+                        <ListChecks className='h-4 w-4' />
+                      </div>
+                      <div>
+                        <CardTitle className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                          Panel de Revisión
+                        </CardTitle>
+                        <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                          Herramientas de gestión y control
+                        </CardDescription>
+                      </div>
                     </div>
-                    <div className='min-w-0'>
-                      <CardTitle className='text-sm sm:text-lg font-semibold text-sky-900 dark:text-sky-100 truncate'>
-                        Revisión
-                      </CardTitle>
-                      <CardDescription className='text-xs sm:text-sm text-sky-700 dark:text-sky-300 truncate'>
-                        <span className='hidden sm:inline'>Acciones de gestión y operaciones</span>
-                        <span className='sm:hidden'>Gestión</span>
-                      </CardDescription>
-                    </div>
+                    <ChevronDown
+                      className={`h-5 w-5 text-slate-600 dark:text-slate-400 transition-transform duration-200 ${
+                        isRevisionOpen ? 'rotate-180' : ''
+                      }`}
+                    />
                   </div>
-                  {isRevisionOpen ? (
-                    <ChevronUp className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400 flex-shrink-0' />
-                  ) : (
-                    <ChevronDown className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400 flex-shrink-0' />
-                  )}
                 </div>
               </CollapsibleTrigger>
               <CollapsibleContent>
-                <CardContent className='p-3 sm:p-4 space-y-4 sm:space-y-6'>
+                <CardContent className='p-4 space-y-6'>
                   {/* Botones de Acción modernizados */}
-                  <div className='grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3 sm:justify-center'>
+                  <div className='flex flex-wrap gap-3 justify-center'>
                     <Button
                       variant='outline'
                       size='sm'
                       onClick={handleBuscar}
                       disabled={isSearching}
-                      className='gap-1 sm:gap-1.5 border-sky-200 hover:bg-sky-50 text-sky-700 dark:border-sky-800 dark:hover:bg-sky-900/30 dark:text-sky-300 h-8 sm:h-9 text-xs sm:text-sm'
+                      className='gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300'
                     >
                       {isSearching ? (
-                        <Loader2 className='h-3 w-3 sm:h-3.5 sm:w-3.5 animate-spin' />
+                        <Loader2 className='h-4 w-4 animate-spin' />
                       ) : (
-                        <Search className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
+                        <Search className='h-4 w-4' />
                       )}
-                      <span className='hidden sm:inline'>Buscar</span>
-                      <span className='sm:hidden'>Buscar</span>
+                      Buscar
                     </Button>
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button
                           variant='outline'
                           size='sm'
-                          className='gap-1 sm:gap-1.5 border-sky-200 hover:bg-sky-50 text-sky-700 dark:border-sky-800 dark:hover:bg-sky-900/30 dark:text-sky-300 h-8 sm:h-9 text-xs sm:text-sm'
+                          className='gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300'
                         >
-                          <BarChart3 className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
-                          <span className='hidden sm:inline'>Ver Totales</span>
-                          <span className='sm:hidden'>Totales</span>
+                          <BarChart3 className='h-4 w-4' />
+                          Ver Totales
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className='sm:max-w-md rounded-xl border border-amber-200/40 bg-white/95 backdrop-blur-sm dark:border-amber-800/40 dark:bg-gray-900/95'>
+                      <DialogContent className='sm:max-w-md border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'>
                         <DialogHeader>
-                          <DialogTitle className='flex items-center gap-2 text-sky-900 dark:text-sky-100'>
-                            <div className='flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-blue-500 text-white'>
-                              <BarChart3 className='h-3 w-3' />
+                          <DialogTitle className='flex items-center gap-2 text-slate-900 dark:text-slate-100'>
+                            <div className='flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
+                              <BarChart3 className='h-4 w-4' />
                             </div>
                             Totales de Corte y Reposición
                           </DialogTitle>
-                          <DialogDescription className='text-sky-700 dark:text-sky-300'>
+                          <DialogDescription className='text-slate-600 dark:text-slate-400'>
                             Resumen de estados de corte y reposición
                           </DialogDescription>
                         </DialogHeader>
                         <div className='py-4'>
-                          <Table className='border-collapse border border-amber-200 dark:border-amber-800 rounded-lg overflow-hidden'>
+                          <Table className='border border-slate-200 dark:border-slate-700'>
                             <TableBody>
-                              <TableRow className='border border-amber-200/60 hover:bg-amber-50/50 dark:border-amber-800/60 dark:hover:bg-amber-900/20'>
-                                <TableCell className='py-2 font-medium text-amber-900 dark:text-amber-100'>
+                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
+                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
                                   Pendiente
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-amber-600 dark:text-amber-400'>
+                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-amber-800 dark:text-amber-200'>
+                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
                                   {getCantidadPorCodigo('NULL')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='border border-amber-200/60 hover:bg-amber-50/50 dark:border-amber-800/60 dark:hover:bg-amber-900/20'>
-                                <TableCell className='py-2 font-medium text-amber-900 dark:text-amber-100'>
+                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
+                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
                                   Liberado
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-amber-600 dark:text-amber-400'>
+                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-amber-800 dark:text-amber-200'>
+                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
                                   {getCantidadPorCodigo('1')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='border border-amber-200/60 hover:bg-amber-50/50 dark:border-amber-800/60 dark:hover:bg-amber-900/20'>
-                                <TableCell className='py-2 font-medium text-amber-900 dark:text-amber-100'>
+                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
+                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
                                   Cortado
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-amber-600 dark:text-amber-400'>
+                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-amber-800 dark:text-amber-200'>
+                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
                                   {getCantidadPorCodigo('2')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='border border-amber-200/60 hover:bg-amber-50/50 dark:border-amber-800/60 dark:hover:bg-amber-900/20'>
-                                <TableCell className='py-2 font-medium text-amber-900 dark:text-amber-100'>
+                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
+                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
                                   Reposición Solicitada
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-amber-600 dark:text-amber-400'>
+                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-amber-800 dark:text-amber-200'>
+                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
                                   {getCantidadPorCodigo('3')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='bg-gradient-to-r from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 border border-amber-300 dark:border-amber-700 font-bold'>
-                                <TableCell className='py-2 text-amber-900 dark:text-amber-100'>
+                              <TableRow className='bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 font-bold'>
+                                <TableCell className='py-2 text-slate-900 dark:text-slate-100'>
                                   TOTAL
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-amber-700 dark:text-amber-300'>
+                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right text-amber-900 dark:text-amber-100'>
+                                <TableCell className='py-2 text-right text-slate-900 dark:text-slate-100'>
                                   {getCantidadPorCodigo('TOTAL')}
                                 </TableCell>
                               </TableRow>
@@ -367,51 +358,46 @@ export default function CorteReposicionComponent({
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcel}
-                      className='gap-1 sm:gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm h-8 sm:h-9 text-xs sm:text-sm'
+                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
                     >
-                      <Download className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
-                      <span className='hidden sm:inline'>Exportar Excel</span>
-                      <span className='sm:hidden'>Excel</span>
+                      <Download className='h-4 w-4' />
+                      Exportar Excel
                     </Button>
                     <Button
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcelCorte}
-                      className='gap-1 sm:gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm h-8 sm:h-9 text-xs sm:text-sm'
+                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
                     >
-                      <Download className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
-                      <span className='hidden sm:inline'>Exportar Excel Corte</span>
-                      <span className='sm:hidden'>Excel C.</span>
+                      <Download className='h-4 w-4' />
+                      Exportar Excel Corte
                     </Button>
                     <Button
                       variant='default'
                       size='sm'
                       onClick={handleActivarActualizacion}
-                      className='gap-1 sm:gap-1.5 bg-purple-600 hover:bg-purple-700 text-white shadow-sm h-8 sm:h-9 text-xs sm:text-sm'
+                      className='gap-1.5 bg-slate-600 hover:bg-slate-700 text-white'
                     >
-                      <ArrowUpToLine className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
-                      <span className='hidden sm:inline'>Activar Actualización</span>
-                      <span className='sm:hidden'>Activar</span>
+                      <ArrowUpToLine className='h-4 w-4' />
+                      Activar Actualización
                     </Button>
                     <Button
                       variant='default'
                       size='sm'
                       onClick={handleIniciar}
-                      className='gap-1 sm:gap-1.5 bg-blue-600 hover:bg-blue-700 text-white shadow-sm h-8 sm:h-9 text-xs sm:text-sm'
+                      className='gap-1.5 bg-slate-600 hover:bg-slate-700 text-white'
                     >
-                      <Play className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
-                      <span className='hidden sm:inline'>Iniciar</span>
-                      <span className='sm:hidden'>Iniciar</span>
+                      <Play className='h-4 w-4' />
+                      Iniciar
                     </Button>
                     <Button
                       variant='default'
                       size='sm'
                       onClick={handleFinalizar}
-                      className='gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 text-white shadow-sm h-8 sm:h-9 text-xs sm:text-sm'
+                      className='gap-1.5 bg-slate-600 hover:bg-slate-700 text-white'
                     >
-                      <CheckCircle2 className='h-3 w-3 sm:h-3.5 sm:w-3.5' />
-                      <span className='hidden sm:inline'>Finalizar</span>
-                      <span className='sm:hidden'>Finalizar</span>
+                      <CheckCircle2 className='h-4 w-4' />
+                      Finalizar
                     </Button>
                   </div>
                 </CardContent>
@@ -420,30 +406,28 @@ export default function CorteReposicionComponent({
           </Card>
 
           {/* Panel de Datos de Mantenedor modernizado */}
-          <Card className='rounded-xl border border-slate-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-slate-800/40 dark:bg-gray-900/50'>
-            <div className='p-3 sm:p-4 border-b border-slate-200/40 bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/20 dark:to-gray-900/20 dark:border-slate-800/40 rounded-t-xl'>
-              <div className='flex items-center gap-2 sm:gap-3'>
-                <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-sm flex-shrink-0'>
-                  <FileText className='h-3 w-3 sm:h-4 sm:w-4' />
+          <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
+            <div className='p-4 border-b border-slate-200/60 dark:border-slate-700/60'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
+                  <FileText className='h-4 w-4' />
                 </div>
-                <div className='min-w-0'>
-                  <h3 className='text-sm sm:text-lg font-semibold text-sky-900 dark:text-sky-100 truncate'>
-                    <span className='hidden sm:inline'>Mantenedor de Revisión de Corte</span>
-                    <span className='sm:hidden'>Mantenedor</span>
+                <div>
+                  <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                    Mantenedor de Revisión de Corte
                   </h3>
-                  <p className='text-xs sm:text-sm text-sky-600 dark:text-sky-400 truncate'>
-                    <span className='hidden sm:inline'>Listado de registros de mantenimiento (</span>
-                    <span className='sm:hidden'>(</span>
+                  <p className='text-sm text-slate-600 dark:text-slate-400'>
+                    Listado de registros de mantenimiento (
                     {mantenedorCorteData.length} registros)
                   </p>
                 </div>
               </div>
             </div>
-            <div className='p-3 sm:p-4'>
+            <div className='p-4'>
               {mantenedorCorteData.length === 0 ? (
-                <div className='flex flex-col items-center justify-center py-12 text-sky-500 dark:text-sky-400'>
-                  <div className='flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
-                    <FileText className='h-8 w-8 text-sky-400 dark:text-sky-500' />
+                <div className='flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400'>
+                  <div className='flex h-16 w-16 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 mb-4'>
+                    <FileText className='h-8 w-8 text-slate-400 dark:text-slate-500' />
                   </div>
                   <p className='text-lg font-medium'>
                     No se encontraron registros
@@ -453,46 +437,45 @@ export default function CorteReposicionComponent({
                   </p>
                 </div>
               ) : (
-                <div className='space-y-3 sm:space-y-4'>
+                <div className='space-y-4'>
                   {/* Estadísticas rápidas */}
-                  <div className='grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4'>
-                    <div className='bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg p-2 sm:p-3 border border-amber-200/40 dark:border-amber-800/40'>
-                      <div className='text-lg sm:text-2xl font-bold text-amber-700 dark:text-amber-300'>
+                  <div className='grid grid-cols-2 lg:grid-cols-4 gap-3'>
+                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
+                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
                         {getCantidadPorCodigo('NULL')}
                       </div>
-                      <div className='text-xs text-amber-600 dark:text-amber-400 font-medium'>
+                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
                         Pendientes
                       </div>
                     </div>
-                    <div className='bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-lg p-2 sm:p-3 border border-emerald-200/40 dark:border-emerald-800/40'>
-                      <div className='text-lg sm:text-2xl font-bold text-emerald-700 dark:text-emerald-300'>
+                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
+                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
                         {getCantidadPorCodigo('1')}
                       </div>
-                      <div className='text-xs text-emerald-600 dark:text-emerald-400 font-medium'>
+                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
                         Liberados
                       </div>
                     </div>
-                    <div className='bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-lg p-2 sm:p-3 border border-red-200/40 dark:border-red-800/40'>
-                      <div className='text-lg sm:text-2xl font-bold text-red-700 dark:text-red-300'>
+                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
+                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
                         {getCantidadPorCodigo('2')}
                       </div>
-                      <div className='text-xs text-red-600 dark:text-red-400 font-medium'>
+                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
                         Cortados
                       </div>
                     </div>
-                    <div className='bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-900/20 dark:to-blue-900/20 rounded-lg p-2 sm:p-3 border border-sky-200/40 dark:border-sky-800/40'>
-                      <div className='text-lg sm:text-2xl font-bold text-sky-700 dark:text-sky-300'>
+                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
+                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
                         {getCantidadPorCodigo('3')}
                       </div>
-                      <div className='text-xs text-sky-600 dark:text-sky-400 font-medium'>
-                        <span className='hidden sm:inline'>Reposición Solicitada</span>
-                        <span className='sm:hidden'>Reposición</span>
+                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
+                        Reposición Solicitada
                       </div>
                     </div>
                   </div>
 
                   {/* Tabla moderna */}
-                  <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden'>
+                  <div className='border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden'>
                     <DataTable
                       columns={columns}
                       data={mantenedorCorteData}

@@ -82,40 +82,39 @@ export default function AnularFacturaImpresaComponent() {
   };
 
   return (
-    <div className=''>
-      <div className='container mx-auto p-2 sm:p-4 space-y-3'>
-        {/* Modern Header */}
-        <div className='flex items-center gap-2 sm:gap-3 py-1 border-b border-slate-200 dark:border-slate-700'>
-          <div className='flex-1'>
-            <div className='flex items-center gap-2 sm:gap-3 justify-between'>
-              <div className='flex items-center gap-2 sm:gap-3'>
-                <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100 truncate'>
-                  Anular Factura
-                </h1>
-              </div>
-            </div>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+              Anular Factura
+            </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestión de anulación de facturas impresas
+            </p>
           </div>
         </div>
 
-        {/* Alert modernizado */}
+        {/* Alert */}
         {showAlert && (
           <Alert
             variant={
               alertMessage.includes('correctamente') ? 'default' : 'destructive'
             }
-            className={`rounded-xl border-l-4 shadow-sm ${
+            className={`border border-slate-200/60 dark:border-slate-700/60 shadow-sm ${
               alertMessage.includes('correctamente')
-                ? 'border-l-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/40 dark:border-emerald-800/40'
-                : 'border-l-red-500 bg-red-50/50 dark:bg-red-950/20 border-red-200/40 dark:border-red-800/40'
+                ? 'bg-emerald-50/50 dark:bg-emerald-950/20'
+                : 'bg-red-50/50 dark:bg-red-950/20'
             }`}
           >
             {alertMessage.includes('correctamente') ? (
-              <CheckCircle2 className='h-3 w-3 sm:h-4 sm:w-4 text-emerald-600 dark:text-emerald-400' />
+              <CheckCircle2 className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
             ) : (
-              <AlertCircle className='h-3 w-3 sm:h-4 sm:w-4 text-red-600 dark:text-red-400' />
+              <AlertCircle className='h-4 w-4 text-red-600 dark:text-red-400' />
             )}
             <AlertTitle
-              className={`text-sm sm:text-base ${
+              className={`text-base ${
                 alertMessage.includes('correctamente')
                   ? 'text-emerald-900 dark:text-emerald-100'
                   : 'text-red-900 dark:text-red-100'
@@ -124,7 +123,7 @@ export default function AnularFacturaImpresaComponent() {
               {alertMessage.includes('correctamente') ? 'Completado' : 'Error'}
             </AlertTitle>
             <AlertDescription
-              className={`text-xs sm:text-sm ${
+              className={`text-sm ${
                 alertMessage.includes('correctamente')
                   ? 'text-emerald-700 dark:text-emerald-300'
                   : 'text-red-700 dark:text-red-300'
@@ -135,30 +134,30 @@ export default function AnularFacturaImpresaComponent() {
           </Alert>
         )}
 
-        {/* Main Form modernizado */}
-        <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-          <CardHeader className='bg-sky-50 dark:bg-sky-950/30 border-b border-sky-200 dark:border-sky-800 p-4 sm:p-6'>
-            <div className='flex items-center gap-2 sm:gap-3'>
-              <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-sky-500 text-white shadow-sm'>
-                <FileX className='h-3 w-3 sm:h-4 sm:w-4' />
+        {/* Main Form */}
+        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+          <CardHeader className='border-b border-slate-200/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/50 p-4'>
+            <div className='flex items-center gap-3'>
+              <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                <FileX className='w-4 h-4 text-slate-600 dark:text-slate-400' />
               </div>
-              <div className='min-w-0 flex-1'>
-                <CardTitle className='text-base sm:text-lg font-semibold text-sky-900 dark:text-sky-100 truncate'>
+              <div>
+                <CardTitle className='text-base text-slate-900 dark:text-slate-100'>
                   Información de la Factura
                 </CardTitle>
-                <CardDescription className='text-xs sm:text-sm text-sky-700 dark:text-sky-300'>
+                <CardDescription className='text-slate-600 dark:text-slate-400 text-xs'>
                   Complete los datos necesarios para procesar la anulación
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
 
-          <CardContent className='p-4 sm:p-6 space-y-4 sm:space-y-6'>
+          <CardContent className='p-4 space-y-4'>
             {/* Número de Factura */}
             <div className='space-y-2'>
               <Label
                 htmlFor='numeroFactura'
-                className='text-xs sm:text-sm font-medium text-sky-800 dark:text-sky-200'
+                className='text-sm font-medium text-slate-700 dark:text-slate-300'
               >
                 Número de Factura
               </Label>
@@ -169,7 +168,7 @@ export default function AnularFacturaImpresaComponent() {
                   placeholder='Ej: FAC001234'
                   value={numeroFactura}
                   onChange={e => setNumeroFactura(e.target.value)}
-                  className='pr-10 h-9 sm:h-10 text-sm sm:text-base border-sky-200 focus:border-sky-400 focus-visible:ring-sky-500 dark:border-sky-800 dark:focus:border-sky-500'
+                  className='pr-10'
                 />
                 {numeroFactura && (
                   <Button
@@ -177,23 +176,23 @@ export default function AnularFacturaImpresaComponent() {
                     variant='ghost'
                     size='sm'
                     onClick={() => setNumeroFactura('')}
-                    className='absolute right-0 top-0 h-full px-3 text-sky-400 hover:text-sky-600 dark:text-sky-500 dark:hover:text-sky-400'
+                    className='absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-400'
                   >
-                    <X className='h-3 w-3 sm:h-4 sm:w-4' />
+                    <X className='h-4 w-4' />
                   </Button>
                 )}
               </div>
             </div>
 
-            <Separator className='bg-sky-200/60 dark:bg-sky-800/60' />
+            <Separator className='bg-slate-200/60 dark:bg-slate-700/60' />
 
             {/* Configuración de Anulación */}
             <div className='space-y-4'>
-              <Label className='text-xs sm:text-sm font-medium text-sky-800 dark:text-sky-200'>
+              <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
                 Configuración de Anulación
               </Label>
 
-              <div className='flex items-start space-x-2 sm:space-x-3 p-3 sm:p-4 border border-sky-200/40 dark:border-sky-800/40 rounded-lg bg-sky-50/30 dark:bg-sky-900/20'>
+              <div className='flex items-start space-x-3 p-3 border border-slate-200 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-slate-800/50'>
                 <Switch
                   id='conTomaLectura'
                   checked={conTomaLectura}
@@ -203,13 +202,13 @@ export default function AnularFacturaImpresaComponent() {
                 <div className='space-y-1'>
                   <Label
                     htmlFor='conTomaLectura'
-                    className='text-xs sm:text-sm font-medium cursor-pointer text-sky-900 dark:text-sky-100'
+                    className='text-sm font-medium cursor-pointer text-slate-900 dark:text-slate-100'
                   >
                     {conTomaLectura
                       ? 'Con nueva toma de lectura'
                       : 'Sin nueva toma de lectura'}
                   </Label>
-                  <p className='text-xs text-sky-700 dark:text-sky-300 leading-relaxed'>
+                  <p className='text-xs text-slate-600 dark:text-slate-400 leading-relaxed'>
                     {conTomaLectura
                       ? 'Se realizará una nueva lectura del medidor antes de la refacturación'
                       : 'Se mantendrá la última lectura registrada para la refacturación'}
@@ -223,9 +222,9 @@ export default function AnularFacturaImpresaComponent() {
               <Button
                 variant='outline'
                 onClick={handleClearForm}
-                className='flex-1 h-9 sm:h-10 text-sm sm:text-base border-sky-200 dark:border-sky-800 text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-900/50'
+                className='flex-1'
               >
-                <RotateCcw className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+                <RotateCcw className='mr-2 h-4 w-4' />
                 Limpiar
               </Button>
 
@@ -236,47 +235,47 @@ export default function AnularFacturaImpresaComponent() {
                 <DialogTrigger asChild>
                   <Button
                     disabled={!numeroFactura || isLoading}
-                    className='flex-1 h-9 sm:h-10 text-sm sm:text-base bg-sky-600 hover:bg-sky-700 text-white shadow-sm'
+                    className='flex-1 bg-sky-600 hover:bg-sky-700 text-white'
                   >
-                    <Trash2 className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+                    <Trash2 className='mr-2 h-4 w-4' />
                     Anular Factura
                   </Button>
                 </DialogTrigger>
 
-                <DialogContent className='mx-2 sm:mx-0 sm:max-w-md rounded-xl border border-amber-200/40 bg-white/95 backdrop-blur-sm dark:border-amber-800/40 dark:bg-gray-900/95'>
+                <DialogContent className='sm:max-w-md'>
                   <DialogHeader className='text-center'>
-                    <div className='flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-sky-100 dark:bg-sky-900/30 rounded-full mb-3 sm:mb-4 border border-sky-200 dark:border-sky-800'>
-                      <AlertCircle className='h-5 w-5 sm:h-6 sm:w-6 text-sky-600 dark:text-sky-400' />
+                    <div className='flex items-center justify-center w-12 h-12 mx-auto bg-slate-100 dark:bg-slate-800 rounded-lg mb-4'>
+                      <AlertCircle className='h-6 w-6 text-slate-600 dark:text-slate-400' />
                     </div>
-                    <DialogTitle className='text-base sm:text-lg font-semibold text-sky-900 dark:text-sky-100'>
+                    <DialogTitle className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
                       Confirmar Anulación
                     </DialogTitle>
-                    <DialogDescription className='text-sm sm:text-base text-sky-700 dark:text-sky-300'>
+                    <DialogDescription className='text-sm text-slate-600 dark:text-slate-400'>
                       ¿Está seguro que desea anular la factura{' '}
-                      <strong className='text-sky-900 dark:text-sky-100 break-all'>
+                      <strong className='text-slate-900 dark:text-slate-100 break-all'>
                         {numeroFactura}
                       </strong>
                       ? Esta acción no se puede deshacer.
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className='flex flex-col-reverse sm:flex-row gap-3 mt-4 sm:mt-6'>
+                  <div className='flex flex-col-reverse sm:flex-row gap-3 mt-6'>
                     <Button
                       variant='outline'
                       onClick={() => setShowConfirmDialog(false)}
-                      className='flex-1 h-9 sm:h-10 text-sm sm:text-base border-sky-200 hover:bg-sky-50 dark:border-sky-800 dark:hover:bg-sky-900/50'
+                      className='flex-1'
                     >
                       Cancelar
                     </Button>
                     <Button
                       onClick={handleAnular}
                       disabled={isLoading}
-                      className='flex-1 h-9 sm:h-10 text-sm sm:text-base bg-sky-600 hover:bg-sky-700 text-white shadow-sm'
+                      className='flex-1 bg-sky-600 hover:bg-sky-700 text-white'
                     >
                       {isLoading ? (
-                        <RotateCcw className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin' />
+                        <RotateCcw className='mr-2 h-4 w-4 animate-spin' />
                       ) : (
-                        <Trash2 className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
+                        <Trash2 className='mr-2 h-4 w-4' />
                       )}
                       {isLoading ? 'Procesando...' : 'Confirmar Anulación'}
                     </Button>

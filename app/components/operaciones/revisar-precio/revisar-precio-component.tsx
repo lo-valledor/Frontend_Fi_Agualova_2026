@@ -103,6 +103,13 @@ export default function RevisarPrecioComponent({
     setContrasena(e.target.value);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && contrasena && !isLoading) {
+      e.preventDefault();
+      validarUsuario();
+    }
+  };
+
   const validarUsuario = async () => {
     try {
       const data = {
@@ -449,19 +456,22 @@ export default function RevisarPrecioComponent({
   }
 
   return (
-    <div className='min-h-screen '>
-      <div className='container mx-auto p-1 space-y-2'>
-        {/* Modern Header */}
-        <div className='flex items-center gap-2 py-0.5 border-b border-slate-200 dark:border-slate-700'>
-          <div className='flex-1'>
-            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
-              Revisar Precio
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+              Revisar Precios
             </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestión y validación de precios del sistema
+            </p>
           </div>
         </div>
 
         {/* Validación de Usuario */}
-        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50 pb-2'>
+        <Card className='bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
           <Collapsible
             open={isValidacionOpen}
             onOpenChange={setIsValidacionOpen}
@@ -470,12 +480,12 @@ export default function RevisarPrecioComponent({
               className='flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
               onClick={() => setIsValidacionOpen(!isValidacionOpen)}
             >
-              <div className='flex items-center gap-4'>
-                <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center border border-blue-200 dark:border-blue-800'>
-                  <Shield className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+              <div className='flex items-center gap-3'>
+                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
+                  <Shield className='w-4 h-4 text-sky-600 dark:text-sky-400' />
                 </div>
                 <div>
-                  <CardTitle className='text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2'>
+                  <CardTitle className='text-md text-slate-900 dark:text-slate-100'>
                     Validación de Usuario
                   </CardTitle>
                   <CardDescription className='text-slate-600 dark:text-slate-400 mt-1 text-sm'>
@@ -487,7 +497,7 @@ export default function RevisarPrecioComponent({
                 {isAuthorized && (
                   <Badge
                     variant='outline'
-                    className='bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                    className='bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
                   >
                     ✓ Autorizado
                   </Badge>
@@ -503,19 +513,22 @@ export default function RevisarPrecioComponent({
             </div>
 
             <CollapsibleContent>
-              <CardContent className='px-4 pb-4 space-y-4'>
+              <CardContent className='p-3 space-y-4'>
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 items-end'>
                   <div className='space-y-2 w-full lg:col-span-2'>
                     <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
-                      <KeyIcon className='w-4 h-4' />
-                      <span className='hidden sm:inline'>Contraseña de autorización</span>
+                      <KeyIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <span className='hidden sm:inline'>
+                        Contraseña de autorización
+                      </span>
                       <span className='sm:hidden'>Contraseña</span>
                     </Label>
                     <Input
                       type='password'
                       value={contrasena}
                       onChange={handleContrasenaChange}
-                      className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 h-10'
+                      onKeyDown={handleKeyDown}
+                      className='bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 h-10'
                       placeholder='Ingresa tu contraseña'
                     />
                   </div>
@@ -523,12 +536,16 @@ export default function RevisarPrecioComponent({
                     <Button
                       onClick={validarUsuario}
                       disabled={isLoading || !contrasena}
-                      className='bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white flex-1 h-10'
+                      className='bg-sky-600 hover:bg-sky-700 text-white flex-1 h-10'
                       size='sm'
                     >
                       <CheckCircleIcon className='w-4 h-4 mr-2' />
-                      <span className='hidden sm:inline'>{isLoading ? 'Validando...' : 'Autorizar'}</span>
-                      <span className='sm:hidden'>{isLoading ? '...' : 'Auth'}</span>
+                      <span className='hidden sm:inline'>
+                        {isLoading ? 'Validando...' : 'Autorizar'}
+                      </span>
+                      <span className='sm:hidden'>
+                        {isLoading ? '...' : 'Auth'}
+                      </span>
                     </Button>
                   </div>
                 </div>
@@ -539,11 +556,15 @@ export default function RevisarPrecioComponent({
                     <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                       <div className='space-y-1'>
                         <h3 className='font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base'>
-                          <span className='hidden sm:inline'>Confirmación de Cambios</span>
+                          <span className='hidden sm:inline'>
+                            Confirmación de Cambios
+                          </span>
                           <span className='sm:hidden'>Confirmación</span>
                         </h3>
                         <p className='text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-                          <span className='hidden sm:inline'>Registros seleccionados: </span>
+                          <span className='hidden sm:inline'>
+                            Registros seleccionados:{' '}
+                          </span>
                           <span className='sm:hidden'>Seleccionados: </span>
                           {selectedEnelRows.length +
                             selectedEnerlovaRows.length}
@@ -557,39 +578,54 @@ export default function RevisarPrecioComponent({
                           (selectedEnelRows.length === 0 &&
                             selectedEnerlovaRows.length === 0)
                         }
-                        className='bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white w-full sm:w-auto'
+                        className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto'
                         size='sm'
                       >
                         <AlertCircleIcon className='w-4 h-4 mr-2' />
-                        <span className='hidden sm:inline'>{isConfirming ? 'Procesando...' : 'Confirmar Cambios'}</span>
-                        <span className='sm:hidden'>{isConfirming ? '...' : 'Confirmar'}</span>
+                        <span className='hidden sm:inline'>
+                          {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
+                        </span>
+                        <span className='sm:hidden'>
+                          {isConfirming ? '...' : 'Confirmar'}
+                        </span>
                       </Button>
                     </div>
 
                     {/* Detalle de selección */}
                     {(selectedEnelRows.length > 0 ||
                       selectedEnerlovaRows.length > 0) && (
-                      <div className='p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg'>
+                      <div className='p-3 sm:p-4 bg-slate-50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-700/60 rounded-lg'>
                         <div className='flex items-center gap-2 mb-2'>
-                          <Users className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                          <span className='text-xs sm:text-sm font-medium text-blue-800 dark:text-blue-300'>
-                            <span className='hidden sm:inline'>Resumen de selección:</span>
+                          <Users className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                          <span className='text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-300'>
+                            <span className='hidden sm:inline'>
+                              Resumen de selección:
+                            </span>
                             <span className='sm:hidden'>Resumen:</span>
                           </span>
                         </div>
-                        <div className='text-xs text-blue-700 dark:text-blue-400 space-y-1'>
+                        <div className='text-xs text-slate-700 dark:text-slate-400 space-y-1'>
                           {selectedEnelRows.length > 0 && (
                             <p>
-                              • {selectedEnelRows.length} 
-                              <span className='hidden sm:inline'> registros en Valores Compañía de Electricidad</span>
+                              • {selectedEnelRows.length}
+                              <span className='hidden sm:inline'>
+                                {' '}
+                                registros en Valores Compañía de Electricidad
+                              </span>
                               <span className='sm:hidden'> valores Enel</span>
                             </p>
                           )}
                           {selectedEnerlovaRows.length > 0 && (
                             <p>
                               • {selectedEnerlovaRows.length}
-                              <span className='hidden sm:inline'> registros en Precios por Ciclo de Facturación</span>
-                              <span className='sm:hidden'> precios Enerlova</span>
+                              <span className='hidden sm:inline'>
+                                {' '}
+                                registros en Precios por Ciclo de Facturación
+                              </span>
+                              <span className='sm:hidden'>
+                                {' '}
+                                precios Enerlova
+                              </span>
                             </p>
                           )}
                         </div>
@@ -601,7 +637,7 @@ export default function RevisarPrecioComponent({
 
               {/* Footer de autorización */}
               {isAuthorized && userData && (
-                <CardFooter className='bg-emerald-50 dark:bg-emerald-900/20 border-t border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 py-4 px-6'>
+                <CardFooter className='bg-sky-50 dark:bg-sky-900/20 border-t border-sky-200/60 dark:border-sky-800/60 text-sky-700 dark:text-sky-300 py-3 px-3'>
                   <div className='flex items-center gap-2'>
                     <CheckCircleIcon className='h-4 w-4' />
                     <span className='text-sm font-medium'>
@@ -615,13 +651,13 @@ export default function RevisarPrecioComponent({
         </Card>
 
         {/* Tablas de Precios con Tabs */}
-        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
-          <CardContent className='pb-2'>
+        <Card className='bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+          <CardContent className='p-3'>
             <Tabs defaultValue='enel' className='w-full'>
               <TabsList className='w-full justify-start rounded-none border-b bg-transparent p-0'>
                 <TabsTrigger
                   value='enel'
-                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 shadow-none transition-none data-[state=active]:border-sky-500 data-[state=active]:text-sky-600 dark:data-[state=active]:text-sky-400 data-[state=active]:shadow-none'
                 >
                   <Building2 className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                   <span className='hidden sm:inline'>Valores Enel</span>
@@ -629,7 +665,7 @@ export default function RevisarPrecioComponent({
                 </TabsTrigger>
                 <TabsTrigger
                   value='enerlova'
-                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400 shadow-none transition-none data-[state=active]:border-sky-500 data-[state=active]:text-sky-600 dark:data-[state=active]:text-sky-400 data-[state=active]:shadow-none'
                 >
                   <BarChartIcon className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                   <span className='hidden sm:inline'>Precios Enerlova</span>
@@ -637,33 +673,39 @@ export default function RevisarPrecioComponent({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value='enel' className='space-y-2 pt-3 sm:pt-4'>
+              <TabsContent value='enel' className='space-y-4 pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div>
                     <h3 className='text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100'>
-                      <span className='hidden sm:inline'>Valores Compañía de Electricidad</span>
+                      <span className='hidden sm:inline'>
+                        Valores Compañía de Electricidad
+                      </span>
                       <span className='sm:hidden'>Valores Enel</span>
                     </h3>
                     <p className='text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-                      <span className='hidden sm:inline'>Revisión de precios para el período activo</span>
+                      <span className='hidden sm:inline'>
+                        Revisión de precios para el período activo
+                      </span>
                       <span className='sm:hidden'>Período activo</span>
                     </p>
                   </div>
                   <Badge
                     variant='outline'
-                    className='bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 self-start sm:self-auto'
+                    className='bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200/60 dark:border-slate-700/60 self-start sm:self-auto'
                   >
                     <CalendarIcon className='w-3 h-3 mr-1' />
                     {isPeriodoLoading ? (
                       <Skeleton className='h-4 w-20' />
                     ) : dataPeriodoAbierto && dataPeriodoAbierto.length > 0 ? (
-                      <span className='text-xs sm:text-sm'>{dataPeriodoAbierto[0].descripcion}</span>
+                      <span className='text-xs sm:text-sm'>
+                        {dataPeriodoAbierto[0].descripcion}
+                      </span>
                     ) : (
                       'Sin período'
                     )}
                   </Badge>
                 </div>
-                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900'>
+                <div className='rounded-lg border border-slate-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900'>
                   <DataTable
                     columns={configuredColumnsEnel}
                     data={dataConsultarPreciosUno}
@@ -675,24 +717,32 @@ export default function RevisarPrecioComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value='enerlova' className='space-y-2 pt-3 sm:pt-4'>
+              <TabsContent value='enerlova' className='space-y-4 pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div>
                     <h3 className='text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100'>
-                      <span className='hidden sm:inline'>Precios por Ciclo de Facturación</span>
+                      <span className='hidden sm:inline'>
+                        Precios por Ciclo de Facturación
+                      </span>
                       <span className='sm:hidden'>Precios Enerlova</span>
                     </h3>
                     <p className='text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-                      <span className='hidden sm:inline'>Precios de ENERLOVA según ciclo de facturación</span>
-                      <span className='sm:hidden'>Según ciclo de facturación</span>
+                      <span className='hidden sm:inline'>
+                        Precios de ENERLOVA según ciclo de facturación
+                      </span>
+                      <span className='sm:hidden'>
+                        Según ciclo de facturación
+                      </span>
                     </p>
                   </div>
                   <Badge
                     variant='outline'
-                    className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800 self-start sm:self-auto'
+                    className='bg-slate-50 dark:bg-slate-900/20 text-slate-700 dark:text-slate-300 border-slate-200/60 dark:border-slate-700/60 self-start sm:self-auto'
                   >
                     <ClockIcon className='w-3 h-3 mr-1' />
-                    <span className='text-xs sm:text-sm'>Ciclo {cicloSeleccionado}</span>
+                    <span className='text-xs sm:text-sm'>
+                      Ciclo {cicloSeleccionado}
+                    </span>
                   </Badge>
                 </div>
 
@@ -700,8 +750,10 @@ export default function RevisarPrecioComponent({
                 <div className='flex flex-col lg:flex-row gap-2 lg:gap-3 items-start lg:items-end'>
                   <div className='space-y-2 flex-1 w-full'>
                     <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
-                      <ClockIcon className='w-3 h-3 sm:w-4 sm:h-4' />
-                      <span className='hidden sm:inline'>Ciclo de Facturación</span>
+                      <ClockIcon className='w-3 h-3 sm:w-4 sm:h-4 text-sky-600 dark:text-sky-400' />
+                      <span className='hidden sm:inline'>
+                        Ciclo de Facturación
+                      </span>
                       <span className='sm:hidden'>Ciclo</span>
                     </Label>
                     {isCiclosLoading ? (
@@ -712,7 +764,7 @@ export default function RevisarPrecioComponent({
                         onValueChange={handleCicloChange}
                         disabled={isPeriodoLoading}
                       >
-                        <SelectTrigger className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 h-9 sm:h-10 text-sm'>
+                        <SelectTrigger className='bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 h-9 sm:h-10 text-sm'>
                           <SelectValue placeholder='Selecciona un ciclo' />
                         </SelectTrigger>
                         <SelectContent>
@@ -721,14 +773,25 @@ export default function RevisarPrecioComponent({
                               <SelectItem
                                 key={ciclo.diaFacturacion}
                                 value={ciclo.diaFacturacion}
+                                className='text-slate-900 dark:text-slate-100'
                               >
                                 {ciclo.descripcion}
                               </SelectItem>
                             ))
                           ) : (
                             <>
-                              <SelectItem value='15'>Ciclo día 15</SelectItem>
-                              <SelectItem value='30'>Ciclo día 30</SelectItem>
+                              <SelectItem
+                                value='15'
+                                className='text-slate-900 dark:text-slate-100'
+                              >
+                                Ciclo día 15
+                              </SelectItem>
+                              <SelectItem
+                                value='30'
+                                className='text-slate-900 dark:text-slate-100'
+                              >
+                                Ciclo día 30
+                              </SelectItem>
                             </>
                           )}
                         </SelectContent>
@@ -738,7 +801,7 @@ export default function RevisarPrecioComponent({
                 </div>
 
                 {/* Tabla de precios Enerlova */}
-                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900'>
+                <div className='rounded-lg border border-slate-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900'>
                   <DataTable
                     columns={configuredColumnsEnerlova}
                     data={dataConsultarPreciosDos}

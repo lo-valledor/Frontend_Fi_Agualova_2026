@@ -39,7 +39,7 @@ export default function MedidoresComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  
+
   const { medidorColumns } = useExportMedidores();
   // Tipos de medidores hardcodeados como placeholder
   const [tipos] = useState([
@@ -126,50 +126,51 @@ export default function MedidoresComponent({
 
   if (isFetching && medidores.length === 0) {
     return (
-      <div className='container mx-auto p-2 sm:p-4 lg:p-6'>
-        <div className='flex items-center justify-center py-12 sm:py-20'>
-          <LoadingSpinner />
+      <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+        <div className='container mx-auto p-3'>
+          <div className='flex items-center justify-center py-12 sm:py-20'>
+            <LoadingSpinner />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
-      {/* Header mejorado con mejor responsividad */}
-      <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0'>
-        <div className='space-y-2'>
-          <div className='flex items-center gap-2 sm:gap-3'>
-            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
               Medidores
             </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestiona los medidores del sistema
+            </p>
           </div>
-          <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
-            Gestiona los medidores del sistema y exporta los datos
-          </p>
+          <div className='flex items-center gap-2'>
+            <ExportButton
+               data={medidores}
+               columns={medidorColumns}
+               filename="medidores"
+               variant="default"
+               size="sm"
+               className="gap-1.5 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+             />
+            <Button
+              onClick={handleAdd}
+              className='bg-sky-600 hover:bg-sky-700 text-white'
+              size='sm'
+            >
+              <Plus className='mr-2 h-4 w-4' />
+              Agregar Medidor
+            </Button>
+          </div>
         </div>
-        <div className='flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 lg:flex-row'>
-          <ExportButton
-             data={medidores}
-             columns={medidorColumns}
-             filename="medidores"
-             variant="default"
-             size="sm"
-             className="gap-1.5 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto order-2 sm:order-1"
-           />
-          <Button
-            onClick={handleAdd}
-            className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto order-1 sm:order-2'
-            size='sm'
-          >
-            <Plus className='mr-2 h-3 w-3 sm:h-4 sm:w-4' />
-            <span className='text-xs sm:text-sm'>Agregar Medidor</span>
-          </Button>
-        </div>
-      </div>
 
-      {/* Tabla con mejor responsividad */}
-      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        {/* Tabla */}
+        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
         <CardContent className='relative p-2 sm:p-4 lg:p-6'>
           {isFetching && (
             <div className='absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10'>
@@ -187,40 +188,41 @@ export default function MedidoresComponent({
               defaultPageSize={10}
             />
           </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Modales */}
-      {isModalOpen && (
-        <MedidorFormModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleSubmit}
-          medidor={selectedMedidor}
-          mode={modalMode}
-          isLoading={isLoading}
-          marcas={marcas}
-          tipos={tipos}
-        />
-      )}
+        {/* Modales */}
+        {isModalOpen && (
+          <MedidorFormModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            onSubmit={handleSubmit}
+            medidor={selectedMedidor}
+            mode={modalMode}
+            isLoading={isLoading}
+            marcas={marcas}
+            tipos={tipos}
+          />
+        )}
 
-      {isDeleteDialogOpen && (
-        <DeleteConfirmationDialog
-          isOpen={isDeleteDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
-          onConfirm={handleConfirmDelete}
-          medidor={selectedMedidor}
-        />
-      )}
+        {isDeleteDialogOpen && (
+          <DeleteConfirmationDialog
+            isOpen={isDeleteDialogOpen}
+            onClose={() => setIsDeleteDialogOpen(false)}
+            onConfirm={handleConfirmDelete}
+            medidor={selectedMedidor}
+          />
+        )}
 
-      {isAsociarModalOpen && (
-        <AsociarSubempalmeModal
-          isOpen={isAsociarModalOpen}
-          onClose={() => setIsAsociarModalOpen(false)}
-          medidor={selectedMedidor}
-          onSuccess={refetchMedidores}
-        />
-      )}
+        {isAsociarModalOpen && (
+          <AsociarSubempalmeModal
+            isOpen={isAsociarModalOpen}
+            onClose={() => setIsAsociarModalOpen(false)}
+            medidor={selectedMedidor}
+            onSuccess={refetchMedidores}
+          />
+        )}
+      </div>
     </div>
   );
 }

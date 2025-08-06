@@ -96,70 +96,70 @@ export default function AcometidaComponent({
   };
 
   return (
-    <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
-      {/* Header */}
-      <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0'>
-        <div className='space-y-2'>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
               Acometidas
             </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestiona las acometidas eléctricas del sistema
+            </p>
           </div>
-          <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
-            Gestiona las acometidas eléctricas del sistema y exporta los datos
-          </p>
+          <div className='flex gap-2'>
+            <ExportButton
+               data={acometidas}
+               columns={acometidaColumns}
+               filename="acometidas"
+               variant="outline"
+               size="sm"
+               className=""
+             />
+            <Button
+              onClick={handleAddAcometida}
+              className='bg-sky-600 hover:bg-sky-700 text-white'
+              size='sm'
+            >
+              <Plus className='mr-2 h-4 w-4' />
+              Agregar Acometida
+            </Button>
+          </div>
         </div>
-        <div className='flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 lg:flex-row'>
-          <ExportButton
-             data={acometidas}
-             columns={acometidaColumns}
-             filename="acometidas"
-             variant="default"
-             size="sm"
-             className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto order-2 sm:order-1"
-           />
-          <Button
-            onClick={handleAddAcometida}
-            className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto order-1 sm:order-2'
-            size='sm'
-          >
-            <Plus className='mr-2 h-3 w-3 sm:h-4 sm:w-4' />
-            <span className='text-xs sm:text-sm'>Agregar Acometida</span>
-          </Button>
-        </div>
+
+        {/* Table */}
+        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+          <CardContent className='p-4'>
+            <div className='overflow-x-auto'>
+              <DataTable
+                columns={columns({
+                  onEdit: handleEditAcometida,
+                })}
+                data={acometidas}
+                searchPlaceholder='Buscar por código, ubicación o contrato...'
+                defaultPageSize={10}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Modal Form */}
+        <AcometidaForm
+          isOpen={isModalOpen}
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingAcometidaId(null);
+          }}
+          onSubmit={handleSubmitForm}
+          acometida={selectedAcometida}
+          isLoading={false}
+          comboEmpalmes={comboEmpalmes}
+          comboNichos={comboNichos}
+          contratosDisponibles={contratosDisponibles}
+          comboSectores={comboSectores}
+        />
       </div>
-
-      {/* Table */}
-      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-        <CardContent className='relative p-2 sm:p-4 lg:p-6'>
-          <div className='overflow-x-auto'>
-            <DataTable
-              columns={columns({
-                onEdit: handleEditAcometida,
-              })}
-              data={acometidas}
-              searchPlaceholder='Buscar por código, ubicación o contrato...'
-              defaultPageSize={10}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Modal Form */}
-      <AcometidaForm
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingAcometidaId(null);
-        }}
-        onSubmit={handleSubmitForm}
-        acometida={selectedAcometida}
-        isLoading={false}
-        comboEmpalmes={comboEmpalmes}
-        comboNichos={comboNichos}
-        contratosDisponibles={contratosDisponibles}
-        comboSectores={comboSectores}
-      />
     </div>
   );
 }

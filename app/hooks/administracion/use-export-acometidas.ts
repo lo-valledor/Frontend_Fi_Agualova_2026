@@ -63,15 +63,11 @@ export function useExportAcometidas() {
     format: 'csv' | 'xlsx' = 'xlsx',
     filename: string = 'acometidas'
   ) => {
-    await exportData(
-      data,
-      acometidaColumns,
-      {
-        format,
-        filename,
-        includeHeaders: true,
-      }
-    );
+    await exportData(data, acometidaColumns, {
+      format,
+      filename,
+      includeHeaders: true,
+    });
   };
 
   return {

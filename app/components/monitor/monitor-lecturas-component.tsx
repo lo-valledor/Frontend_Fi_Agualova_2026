@@ -145,16 +145,19 @@ const MonitorLecturasComponent = ({
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-blue-950/30'>
-      <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-3 sm:space-y-4'>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Modern Header */}
-        <div className='flex items-center gap-3 py-2 sm:py-4 border-b border-slate-200 dark:border-slate-700'>
-          <div className='flex-1'>
-            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold text-sky-900 dark:text-sky-100'>
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
               Monitor de Lecturas
             </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestion, ingreso y visualización de lecturas hechas a medidores
+            </p>
           </div>
         </div>
 
@@ -189,7 +192,7 @@ const MonitorLecturasComponent = ({
                       }
                       onClick={() => setSelectedSector(sector)}
                       className={cn(
-                        'h-auto p-3 sm:p-4 transition-all duration-200 hover:scale-105 text-center min-h-[60px] sm:min-h-[70px]',
+                        'h-auto sm:p-4 transition-all duration-200 hover:scale-105 text-center',
                         selectedSector?.sectorId === sector.sectorId
                           ? 'bg-gradient-to-r from-blue-500 to-sky-600 text-white shadow-lg border-0'
                           : 'hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-700 dark:text-slate-300'
@@ -206,7 +209,9 @@ const MonitorLecturasComponent = ({
               ) : (
                 <div className='text-center py-8 sm:py-12 text-muted-foreground'>
                   <Settings2 className='w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 opacity-50' />
-                  <p className='text-sm sm:text-base'>No hay sectores disponibles</p>
+                  <p className='text-sm sm:text-base'>
+                    No hay sectores disponibles
+                  </p>
                 </div>
               )}
             </div>

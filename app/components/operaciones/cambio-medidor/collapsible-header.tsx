@@ -55,7 +55,6 @@ const colorVariants = {
 
 export default function CollapsibleHeader({
   isOpen,
-  icon,
   title,
   description,
   colorScheme,
@@ -76,10 +75,14 @@ export default function CollapsibleHeader({
             })}
           </div> */}
           <div className='min-w-0'>
-            <CardTitle className={`text-sm sm:text-lg font-semibold ${colors.title} truncate`}>
+            <CardTitle
+              className={`text-sm sm:text-lg font-semibold ${colors.title} truncate`}
+            >
               {title}
             </CardTitle>
-            <CardDescription className={`text-xs sm:text-sm ${colors.description} truncate`}>
+            <CardDescription
+              className={`text-xs sm:text-sm ${colors.description} truncate`}
+            >
               {description}
             </CardDescription>
           </div>
@@ -92,7 +95,9 @@ export default function CollapsibleHeader({
           {isOpen ? (
             <ChevronUp className={`h-4 w-4 sm:h-5 sm:w-5 ${colors.chevron}`} />
           ) : (
-            <ChevronDown className={`h-4 w-4 sm:h-5 sm:w-5 ${colors.chevron}`} />
+            <ChevronDown
+              className={`h-4 w-4 sm:h-5 sm:w-5 ${colors.chevron}`}
+            />
           )}
           <span className='sr-only'>Abrir/Cerrar panel</span>
         </Button>

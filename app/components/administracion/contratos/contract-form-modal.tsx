@@ -345,39 +345,6 @@ export function ContractFormModal({
       }),
     } as any; // Usar any temporalmente para evitar conflictos de tipos
 
-    // Console.log para debug
-    console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
-    console.log('Modo:', mode);
-    console.log(
-      'Endpoint:',
-      mode === 'add' ? 'POST /contrato/crear' : 'PUT /contrato/modificar'
-    );
-    console.log('Datos originales del formulario:', formData);
-    console.log(
-      'JSON transformado enviado:',
-      JSON.stringify(submitData, null, 2)
-    );
-    console.log('================================');
-
-    // Log específico del JSON que se envía al endpoint
-    console.log('🚀 JSON ENVIADO AL ENDPOINT:');
-    console.log(JSON.stringify(submitData, null, 2));
-    console.log(
-      '📡 Tamaño del payload:',
-      JSON.stringify(submitData).length,
-      'bytes'
-    );
-
-    // Nota sobre el error del backend
-    if (mode === 'add') {
-      console.warn(
-        '⚠️ NOTA: El backend tiene un error conocido en CrearContratoAsync (línea 49)'
-      );
-      console.warn(
-        'Error: IndexOutOfRangeException - Revisar consulta SQL en ContratoService.cs'
-      );
-    }
-
     try {
       // Enviar los datos al componente padre para que maneje la llamada al servidor
       await onSubmit(submitData);
@@ -400,7 +367,7 @@ export function ContractFormModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className='w-[95vw] max-w-[900px] sm:w-full max-h-[90vh] overflow-y-auto'>
+        <DialogContent className=' min-w-full max-h-[90vh] overflow-y-auto'>
           <DialogHeader>
             <DialogTitle className='text-xl font-semibold'>
               {mode === 'add' ? 'Agregar Contrato' : 'Editar Contrato'}
@@ -829,7 +796,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Propietarios */}
       <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
+        <DialogContent className='min-w-full max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -933,7 +900,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Locales */}
       <Dialog open={modalLocal} onOpenChange={setModalLocal}>
-        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
+        <DialogContent className='min-w-full max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>

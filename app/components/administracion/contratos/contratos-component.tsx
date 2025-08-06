@@ -301,38 +301,34 @@ export default function ContratosComponent({
   });
 
   return (
-    <div className='container mx-auto p-2 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
-      {/* Header */}
-      <div className='flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0'>
-        <div className='space-y-2'>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
               Contratos
             </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestiona los contratos del sistema
+            </p>
           </div>
-          <p className='text-xs sm:text-sm text-muted-foreground max-w-2xl'>
-            Gestiona los contratos del sistema y exporta los datos según tus
-            necesidades
-          </p>
-        </div>
-        <div className='flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3 lg:flex-row'>
-          <div className='order-2 sm:order-1'>
+          <div className='flex items-center gap-2'>
             <ExportButtons
               allContratos={contracts}
               filteredContratos={filteredContracts}
               isFiltered={filterStats.isFiltered}
             />
+            <Button
+              onClick={handleAddContract}
+              className='bg-sky-600 hover:bg-sky-700 text-white'
+              size='sm'
+            >
+              <Plus className='mr-2 h-4 w-4' />
+              Agregar Contrato
+            </Button>
           </div>
-          <Button
-            onClick={handleAddContract}
-            className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto order-1 sm:order-2'
-            size='sm'
-          >
-            <Plus className='mr-2 h-4 w-4' />
-            <span className='sm:inline'>Agregar Contrato</span>
-          </Button>
         </div>
-      </div>
 
       {/* Stats Cards */}
 
@@ -352,8 +348,8 @@ export default function ContratosComponent({
         isFiltered={filterStats.isFiltered}
       />
 
-      {/* Table */}
-      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        {/* Table */}
+        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
         <CardContent className='relative p-2 sm:p-4 lg:p-6'>
           {filteredContracts.length === 0 ? (
             <div className='flex flex-col items-center justify-center py-8 sm:py-12 text-slate-500 dark:text-slate-400'>
@@ -410,11 +406,12 @@ export default function ContratosComponent({
         contract={selectedContract}
       />
 
-      <ContractDetailsModal
-        isOpen={isDetailsModalOpen}
-        onClose={() => setIsDetailsModalOpen(false)}
-        contract={selectedContract}
-      />
+        <ContractDetailsModal
+          isOpen={isDetailsModalOpen}
+          onClose={() => setIsDetailsModalOpen(false)}
+          contract={selectedContract}
+        />
+      </div>
     </div>
   );
 }

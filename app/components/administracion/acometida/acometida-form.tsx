@@ -25,7 +25,6 @@ import {
   FormMessage,
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { ScrollArea } from '~/components/ui/scroll-area';
 import {
   Table,
   TableBody,
@@ -782,7 +781,7 @@ export function AcometidaForm({
             </div>
           </DialogHeader>
 
-          <div className='space-y-4'>
+          <div className='space-y-4 overflow-auto'>
             {/* Barra de búsqueda */}
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
@@ -795,25 +794,24 @@ export function AcometidaForm({
             </div>
 
             {/* Tabla de contratos con scroll horizontal */}
-            <div className='border rounded-lg overflow-hidden bg-white dark:bg-slate-900'>
-              <div className='overflow-x-auto'>
-                <ScrollArea className='h-[50vh] w-full'>
-                  <Table className='min-w-[800px]'>
-                    <TableHeader className='bg-muted/50 sticky top-0'>
-                      <TableRow>
-                        <TableHead className='min-w-[140px]'>
-                          ID Contrato
-                        </TableHead>
-                        <TableHead className='min-w-[200px]'>Cliente</TableHead>
-                        <TableHead className='min-w-[180px]'>Empresa</TableHead>
-                        <TableHead className='min-w-[120px]'>Local</TableHead>
-                        <TableHead className='min-w-[100px]'>Tarifa</TableHead>
-                        <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50'>
-                          Acción
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
+            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+              <div className='h-full overflow-auto'>
+                <Table className='min-w-[800px] relative'>
+                  <TableHeader className='bg-muted/50 sticky top-0 z-10'>
+                    <TableRow>
+                      <TableHead className='min-w-[140px]'>
+                        ID Contrato
+                      </TableHead>
+                      <TableHead className='min-w-[200px]'>Cliente</TableHead>
+                      <TableHead className='min-w-[180px]'>Empresa</TableHead>
+                      <TableHead className='min-w-[120px]'>Local</TableHead>
+                      <TableHead className='min-w-[100px]'>Tarifa</TableHead>
+                      <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50 z-20'>
+                        Acción
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                       {contratosFiltrados.length === 0 && (
                         <TableRow>
                           <TableCell
@@ -875,7 +873,7 @@ export function AcometidaForm({
                               {c.tarifa}
                             </Badge>
                           </TableCell>
-                          <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900'>
+                          <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
                             <Button
                               size='sm'
                               onClick={() => handleSelectContrato(c.contratoId)}
@@ -888,8 +886,7 @@ export function AcometidaForm({
                       ))}
                     </TableBody>
                   </Table>
-                </ScrollArea>
-              </div>
+                </div>
 
               {/* Información de resultados */}
               {contratosFiltrados.length > 0 && (
