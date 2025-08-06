@@ -103,19 +103,19 @@ export function AsociarSubempalmeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
-        <DialogHeader>
+      <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[90vh] overflow-hidden'>
+        <DialogHeader className='space-y-3 pb-4'>
           <div className='flex items-center gap-3'>
             <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
               <Gauge className='h-5 w-5 text-blue-600 dark:text-blue-400' />
             </div>
-            <div>
-              <DialogTitle className='text-xl font-semibold'>
+            <div className='min-w-0 flex-1'>
+              <DialogTitle className='text-lg sm:text-xl font-semibold'>
                 Asociar Subempalme al Medidor
               </DialogTitle>
-              <DialogDescription>
+              <DialogDescription className='text-sm sm:text-base mt-1'>
                 Seleccione el subempalme que desea asociar al medidor{' '}
-                <span className='font-mono font-semibold'>
+                <span className='font-mono font-semibold text-blue-600 dark:text-blue-400'>
                   {medidor?.codigo}
                 </span>
               </DialogDescription>
@@ -124,30 +124,44 @@ export function AsociarSubempalmeModal({
         </DialogHeader>
 
         <div className='space-y-4'>
-          {/* Barra de búsqueda */}
+          {/* Barra de búsqueda mejorada */}
           <div className='relative'>
             <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
             <Input
               placeholder='Buscar subempalmes por código, ubicación, empalme o nicho...'
               value={busquedaSubempalme}
               onChange={e => setBusquedaSubempalme(e.target.value)}
-              className='h-11 pl-10'
+              className='h-11 pl-10 text-sm sm:text-base'
             />
           </div>
 
-          {/* Tabla de subempalmes */}
+          {/* Tabla de subempalmes con mejor responsividad */}
           <div className='border rounded-lg overflow-hidden'>
-            <ScrollArea className='h-[50vh]'>
+            <ScrollArea className='h-[50vh] sm:h-[60vh]'>
               <Table>
                 <TableHeader className='bg-muted/50'>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Código</TableHead>
-                    <TableHead>Ubicación</TableHead>
-                    <TableHead>Contrato ID</TableHead>
-                    <TableHead>Empalme</TableHead>
-                    <TableHead>Nicho</TableHead>
-                    <TableHead className='text-center'>Acción</TableHead>
+                    <TableHead className='text-xs sm:text-sm font-medium'>
+                      ID
+                    </TableHead>
+                    <TableHead className='text-xs sm:text-sm font-medium'>
+                      Código
+                    </TableHead>
+                    <TableHead className='text-xs sm:text-sm font-medium hidden sm:table-cell'>
+                      Ubicación
+                    </TableHead>
+                    <TableHead className='text-xs sm:text-sm font-medium hidden lg:table-cell'>
+                      Contrato ID
+                    </TableHead>
+                    <TableHead className='text-xs sm:text-sm font-medium hidden md:table-cell'>
+                      Empalme
+                    </TableHead>
+                    <TableHead className='text-xs sm:text-sm font-medium hidden lg:table-cell'>
+                      Nicho
+                    </TableHead>
+                    <TableHead className='text-xs sm:text-sm font-medium text-center'>
+                      Acción
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -159,7 +173,7 @@ export function AsociarSubempalmeModal({
                       >
                         <div className='flex flex-col items-center gap-2'>
                           <div className='h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent' />
-                          <p>Cargando subempalmes...</p>
+                          <p className='text-sm'>Cargando subempalmes...</p>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -173,7 +187,7 @@ export function AsociarSubempalmeModal({
                         >
                           <div className='flex flex-col items-center gap-2'>
                             <Search className='h-8 w-8 opacity-50' />
-                            <p>
+                            <p className='text-sm'>
                               No se encontraron subempalmes con los criterios de
                               búsqueda.
                             </p>
@@ -186,35 +200,57 @@ export function AsociarSubempalmeModal({
                       key={subempalme.id}
                       className='hover:bg-muted/50 transition-colors'
                     >
-                      <TableCell>
-                        <Badge variant='outline' className='font-mono'>
+                      <TableCell className='text-xs sm:text-sm'>
+                        <Badge variant='outline' className='font-mono text-xs'>
                           {subempalme.id}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant='secondary' className='font-mono'>
+                      <TableCell className='text-xs sm:text-sm'>
+                        <Badge
+                          variant='secondary'
+                          className='font-mono text-xs'
+                        >
                           {subempalme.codigo}
                         </Badge>
                       </TableCell>
-                      <TableCell className='font-medium'>
+                      <TableCell className='font-medium text-xs sm:text-sm hidden sm:table-cell'>
                         <div className='flex items-center gap-2'>
-                          <Gauge className='h-4 w-4 text-muted-foreground' />
-                          {subempalme.ubicacion}
+                          <Gauge className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
+                          <span
+                            className='truncate max-w-[120px] lg:max-w-[150px]'
+                            title={subempalme.ubicacion}
+                          >
+                            {subempalme.ubicacion}
+                          </span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <Badge variant='outline' className='font-mono'>
+                      <TableCell className='text-xs sm:text-sm hidden lg:table-cell'>
+                        <Badge variant='outline' className='font-mono text-xs'>
                           {subempalme.contratoId}
                         </Badge>
                       </TableCell>
-                      <TableCell>{subempalme.descripcionEmpalme}</TableCell>
-                      <TableCell>{subempalme.descripcionNicho}</TableCell>
+                      <TableCell className='text-xs sm:text-sm hidden md:table-cell'>
+                        <span
+                          className='truncate max-w-[100px] lg:max-w-[120px] block'
+                          title={subempalme.descripcionEmpalme}
+                        >
+                          {subempalme.descripcionEmpalme}
+                        </span>
+                      </TableCell>
+                      <TableCell className='text-xs sm:text-sm hidden lg:table-cell'>
+                        <span
+                          className='truncate max-w-[100px] lg:max-w-[120px] block'
+                          title={subempalme.descripcionNicho}
+                        >
+                          {subempalme.descripcionNicho}
+                        </span>
+                      </TableCell>
                       <TableCell className='text-center'>
                         <Button
                           size='sm'
                           onClick={() => handleAsociarSubempalme(subempalme.id)}
                           disabled={isAsociando}
-                          className='bg-blue-600 hover:bg-blue-700 text-white'
+                          className='bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3'
                         >
                           {isAsociando ? 'Asociando...' : 'Asociar'}
                         </Button>

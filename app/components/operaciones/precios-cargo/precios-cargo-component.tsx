@@ -138,9 +138,9 @@ export default function PreciosCargoComponent({
 
   return (
     <div className='min-h-screen'>
-      <div className='container mx-auto p-2 space-y-2'>
+      <div className='container mx-auto p-1 space-y-1'>
         {/* Modern Header */}
-        <div className='flex items-center gap-2 py-1 border-b border-slate-200 dark:border-slate-700'>
+        <div className='flex items-center gap-2 py-0.5 border-b border-slate-200 dark:border-slate-700'>
           <div className='flex-1'>
             <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
               Precios Cargo
@@ -150,9 +150,9 @@ export default function PreciosCargoComponent({
 
         {/* Filtros */}
         <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
-          <CardContent className='p-3 sm:pb-3'>
+          <CardContent className='p-2 sm:pb-2'>
             {/* Filtros principales */}
-            <div className='space-y-3'>
+            <div className='space-y-2'>
               <div className='flex items-center gap-2'>
                 <Calendar className='w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400' />
                 <div className='flex-1'>
@@ -180,7 +180,7 @@ export default function PreciosCargoComponent({
               </div>
 
               {/* Período seleccionado visible */}
-              <div className='flex items-center gap-2 sm:gap-4 p-2 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg'>
+              <div className='flex items-center gap-2 sm:gap-4 p-1 sm:p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg'>
                 <div className='flex items-center gap-2'>
                   <Calendar className='w-3 h-3 sm:w-4 sm:h-4 text-blue-600 dark:text-blue-400' />
                   <span className='text-xs sm:text-sm font-medium text-blue-800 dark:text-blue-300'>
@@ -199,8 +199,8 @@ export default function PreciosCargoComponent({
             {/* Filtros expandibles */}
             <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
               <CollapsibleContent>
-                <div className='border-t pt-3'>
-                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                <div className='border-t pt-2'>
+                  <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
                     {/* Mes */}
                     <div className='space-y-1 w-full'>
                       <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
@@ -253,7 +253,7 @@ export default function PreciosCargoComponent({
                   </div>
 
                   {/* Acciones */}
-                  <div className='flex flex-col sm:flex-row gap-2 items-center justify-between pt-3 border-t'>
+                  <div className='flex flex-col sm:flex-row gap-2 items-center justify-between pt-2 border-t'>
                     <Button
                       variant='ghost'
                       size='sm'
@@ -291,27 +291,27 @@ export default function PreciosCargoComponent({
 
         {/* Tablas de Precios con Tabs */}
         <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
-          <CardContent className='p-2 sm:p-3 pb-3'>
+          <CardContent className='p-1 sm:p-2 pb-2'>
             <Tabs defaultValue='enel' className='w-full'>
               <TabsList className='w-full justify-start rounded-none border-b bg-transparent p-0 overflow-x-auto'>
                 <TabsTrigger
                   value='enel'
-                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap'
                 >
                   <Building2 className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                   <span className='hidden sm:inline'>Precios </span>Enel
                 </TabsTrigger>
                 <TabsTrigger
                   value='enerlova'
-                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none whitespace-nowrap'
                 >
                   <BarChart className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                   <span className='hidden sm:inline'>Precios </span>Enerlova
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value='enel' className='space-y-3 sm:space-y-4 pt-4 sm:pt-6'>
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+              <TabsContent value='enel' className='space-y-2 pt-3 sm:pt-4'>
+                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
                   <div className='flex-1'>
                     <h3 className='text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100'>
                       Precios de Cargo - Enel
@@ -388,7 +388,7 @@ export default function PreciosCargoComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value='enerlova' className='space-y-3 sm:space-y-4 pt-4 sm:pt-6'>
+              <TabsContent value='enerlova' className='space-y-2 pt-3 sm:pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div className='flex-1'>
                     <h3 className='text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100'>

@@ -42,7 +42,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
     },
     enableSorting: false,
     enableHiding: false,
-    size: 50,
+    size: 40,
   },
   {
     accessorKey: 'codigo',
@@ -54,11 +54,11 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-sm font-medium text-blue-600 dark:text-blue-400'>
+      <div className='font-mono text-xs font-medium text-blue-600 dark:text-blue-400'>
         {row.getValue('codigo')}
       </div>
     ),
-    size: 120,
+    size: 100,
   },
   {
     accessorKey: 'codigoEner',
@@ -70,11 +70,11 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-sm text-purple-600 dark:text-purple-400'>
+      <div className='font-mono text-xs text-purple-600 dark:text-purple-400'>
         {row.getValue('codigoEner')}
       </div>
     ),
-    size: 140,
+    size: 100,
   },
   {
     accessorKey: 'descripcion',
@@ -86,11 +86,11 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='text-sm text-slate-900 dark:text-slate-100 max-w-xs'>
+      <div className='text-xs text-slate-900 dark:text-slate-100 max-w-xs truncate'>
         {row.getValue('descripcion')}
       </div>
     ),
-    size: 300,
+    size: 250,
   },
   {
     accessorKey: 'valor',
@@ -116,12 +116,12 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       };
 
       return (
-        <div className='text-sm font-mono font-medium text-green-600 dark:text-green-400'>
-          {formatValue(value)}
-        </div>
-      );
+          <div className='text-xs font-mono font-medium text-green-600 dark:text-green-400'>
+            {formatValue(value)}
+          </div>
+        );
     },
-    size: 120,
+      size: 100,
   },
   {
     accessorKey: 'confirmacion',
@@ -139,7 +139,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       if (confirmacion === 'Confirmado') {
         return (
           <div className='flex items-center justify-center'>
-            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1'>
+            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1 text-xs px-2 py-1'>
               <CheckCircle className='w-3 h-3' />
               Confirmado
             </Badge>
@@ -148,7 +148,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       } else if (indice === '') {
         return (
           <div className='flex items-center justify-center'>
-            <Badge className='bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800 flex items-center gap-1'>
+            <Badge className='bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800 flex items-center gap-1 text-xs px-2 py-1'>
               <Ban className='w-3 h-3' />
               Inhabilitado
             </Badge>
@@ -159,7 +159,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
           <div className='flex items-center justify-center'>
             <Badge
               variant='outline'
-              className='bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 flex items-center gap-1'
+              className='bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 flex items-center gap-1 text-xs px-2 py-1'
             >
               <AlertTriangle className='w-3 h-3' />
               Pendiente

@@ -97,15 +97,15 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className='space-y-2'>
       <div className='rounded-md border'>
-        <Table>
+        <Table className='text-sm'>
           <TableHeader>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className='py-2'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -123,11 +123,11 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className='h-16 text-center'
                 >
                   <div className='flex justify-center items-center'>
-                    <Loader2 className='h-6 w-6 animate-spin text-sky-600 dark:text-sky-400' />
-                    <span className='ml-2 text-muted-foreground'>
+                    <Loader2 className='h-5 w-5 animate-spin text-sky-600 dark:text-sky-400' />
+                    <span className='ml-2 text-muted-foreground text-sm'>
                       Actualizando datos...
                     </span>
                   </div>
@@ -140,7 +140,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className='py-2'>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -153,9 +153,9 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className='h-16 text-center'
                 >
-                  No results.
+                  <span className='text-sm text-muted-foreground'>No results.</span>
                 </TableCell>
               </TableRow>
             )}

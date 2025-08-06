@@ -1,225 +1,539 @@
-# Enerlova - Sistema de Gestión Energética
+# ⚡ ENERLOVA - Sistema Integral de Gestión Energética
 
-Sistema integral de gestión para empresas de distribución eléctrica, diseñado para administrar el ciclo completo de facturación, desde la lectura de medidores hasta la generación de facturas.
+<div align="center">
+  <img src="public/logo-enerlova.png" alt="Enerlova Logo" width="200"/>
 
-## 🚀 Características Principales
+[![React](https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![React Router](https://img.shields.io/badge/React_Router-7.5.3-CA4245?style=for-the-badge&logo=react-router)](https://reactrouter.com/)
+[![Vite](https://img.shields.io/badge/Vite-6.3.3-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
 
-### 📊 **Monitor de Lecturas**
+</div>
 
-- Visualización y lecturas de medidores por sector y período
-- Soporte para diferentes tipos de tarifas (BT-1, BT-2, BT-4.3)
-- Análisis de consumo energético con estadísticas detalladas
-- Validación automática de lecturas con claves de control
-- Exportación de datos de lecturas
+---
 
-### ⚙️ **Operaciones**
+## 📋 Descripción
 
-- ** Períodos**: Apertura y cierre de períodos de facturación
-- **Preparación de Lecturas**: Asignación de sectores y validación de pendientes
-- **Cálculo de Facturas**: Revisión y aceptación de cálculos prefactura
-- **Cambio de Medidores**: reemplazos y reaperturas
-- **Corte y Reposición**: Control de servicios suspendidos
-- **Precios y Cargos**: Administración de tarifas y conceptos facturables
-- **Integración SAP**: Generación de archivos para sistemas externos
+**Enerlova** es un sistema integral de gestión energética desarrollado para empresas de distribución eléctrica. Administra el ciclo completo de facturación, desde la lectura de medidores hasta la generación de facturas, con integración a sistemas externos como SAP.
 
-### 👥 **Administración**
+### 🎯 Características Principales
 
-- ** Usuarios**: Control de acceso y perfiles
-- **Clientes**: Registro y mantenimiento de información de clientes
-- **Contratos**: Administración de contratos de suministro
-- **Medidores**: Control de equipos de medición
-- **Acometidas**: conexiones eléctricas
-- **Cargos Facturables**: Configuración de conceptos de cobro
+- ⚡ **Gestión completa del ciclo de facturación eléctrica**
+- 📊 **Monitoreo en tiempo real de lecturas de medidores**
+- 👥 **Administración de contratos y clientes**
+- ⚙️ **Operaciones de corte y reposición de servicios**
+- 🔗 **Integración con sistemas externos (SAP)**
+- 🛠️ **Mantención de parámetros del sistema**
+- 📱 **Interfaz responsive optimizada para móviles**
+- 🌙 **Modo oscuro/claro**
+- 🔐 **Autenticación JWT segura**
 
-### 🔧 **Mantención**
+---
 
-- **Parámetros del Sistema**: Configuración de variables operativas
-- **Tarifas**: Definición de estructuras tarifarias
-- **Conceptos**: conceptos facturables
-- **Ciclos de Facturación**: Configuración de períodos
-- **Zonas y Sectores**: Organización territorial
-- **Nichos y Empalmes**: Infraestructura de distribución
-- **Marcas de Medidores**: Catálogo de equipos
+## 🚀 Inicio Rápido
 
-## 🛠️ Tecnologías Utilizadas
-
-- **Frontend**: React 19, React Router 7, TypeScript
-- **UI/UX**: Tailwind CSS, Radix UI, Lucide React
-- **Formularios**: React Hook Form, Zod validation
-- **Tablas**: TanStack Table con paginación avanzada
-- **Gráficos**: Recharts para visualizaciones
-- **Notificaciones**: Sonner toast
-- **Autenticación**: JWT con manejo de sesiones
-- **HTTP Client**: Axios con interceptores
-- **Desarrollo**: Vite, ESLint, Prettier
-
-## 📦 Instalación
-
-### Prerrequisitos
-
-- Node.js 18+
-- pnpm (recomendado) o npm
-
-### Configuración
+### 📋 Prerrequisitos
 
 ```bash
-# Clonar el repositorio
-git clone <repository-url>
-cd res
+# Verificar versiones requeridas
+node --version    # >= 18.0.0
+pnpm --version    # >= 8.0.0
+git --version     # Cualquier versión reciente
+```
 
-# Instalar dependencias
+### ⚡ Instalación
+
+```bash
+# 1. Clonar el repositorio
+git clone <repository-url>
+cd enerlova/res
+
+# 2. Instalar dependencias
 pnpm install
 
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con las configuraciones del backend
-```
+# 3. Configurar variables de entorno
+echo "VITE_API_URL=http://192.168.1.139:8081/Enerlova" > .env
 
-## 🚀 Desarrollo
-
-```bash
-# Iniciar servidor de desarrollo
+# 4. Iniciar servidor de desarrollo
 pnpm dev
-
-# La aplicación estará disponible en http://localhost:5173
 ```
 
-## 🏗️ Construcción para Producción
+### 🌐 Acceso
 
-```bash
-# Crear build de producción
-pnpm build
+- **Frontend**: http://localhost:5173
+- **Login**: Usar credenciales del sistema backend
 
-# Iniciar servidor de producción
-pnpm start
+---
+
+## 🏗️ Arquitectura
+
+### 📊 Stack Tecnológico
+
+#### Frontend Core
+
+| Tecnología       | Versión | Propósito               |
+| ---------------- | ------- | ----------------------- |
+| **React**        | 19.1.0  | Framework principal     |
+| **React Router** | 7.5.3   | Enrutamiento file-based |
+| **TypeScript**   | 5.8.3   | Tipado estático         |
+| **Vite**         | 6.3.3   | Build tool y dev server |
+
+#### UI/UX
+
+| Tecnología       | Versión | Propósito                   |
+| ---------------- | ------- | --------------------------- |
+| **Tailwind CSS** | 4.1.4   | Framework CSS utility-first |
+| **Radix UI**     | ~1.x    | Componentes accesibles      |
+| **Lucide React** | 0.513.0 | Iconografía                 |
+| **Next Themes**  | 0.4.6   | Gestión de temas            |
+
+#### Gestión de Datos
+
+| Tecnología          | Versión | Propósito              |
+| ------------------- | ------- | ---------------------- |
+| **Axios**           | 1.9.0   | Cliente HTTP           |
+| **React Hook Form** | 7.56.4  | Manejo de formularios  |
+| **Zod**             | 3.25.36 | Validación de esquemas |
+| **TanStack Table**  | 8.21.3  | Tablas avanzadas       |
+
+### 🔄 Arquitectura en Capas
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    PRESENTATION LAYER                       │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   Routes    │ │ Components  │ │   Hooks     │          │
+│  │ (Pages)     │ │ (UI Logic)  │ │ (State)     │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                     BUSINESS LAYER                          │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │  Services   │ │   Context   │ │   Utils     │          │
+│  │ (API Logic) │ │ (Global)    │ │ (Helpers)   │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                       DATA LAYER                            │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐          │
+│  │   Axios     │ │   Types     │ │   Storage   │          │
+│  │ (HTTP)      │ │ (TS Defs)   │ │ (Local)     │          │
+│  └─────────────┘ └─────────────┘ └─────────────┘          │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## 🐳 Despliegue con Docker
-
-### Gestión de Entornos
-
-El proyecto incluye configuración separada para entornos de desarrollo y producción:
-
-#### Entorno de Desarrollo
-
-```bash
-# Usar script de gestión (recomendado)
-.\scripts\manage-environments.ps1 dev
-
-# O manualmente
-docker-compose -f docker-compose.dev.yml up -d
-```
-
-#### Entorno de Producción
-
-```bash
-# Usar script de gestión (recomendado)
-.\scripts\manage-environments.ps1 prod
-
-# O manualmente
-docker-compose up -d
-```
-
-#### Scripts de Gestión
-
-Para facilitar el manejo de entornos, se incluyen scripts automatizados:
-
-**Windows (PowerShell):**
-
-```powershell
-.\scripts\manage-environments.ps1 dev    # Desarrollo con hot reload
-.\scripts\manage-environments.ps1 prod   # Producción
-.\scripts\manage-environments.ps1 stop   # Detener todos
-.\scripts\manage-environments.ps1 help   # Ver ayuda
-```
-
-**Linux/macOS (Bash):**
-
-```bash
-./scripts/manage-environments.sh dev     # Desarrollo con hot reload
-./scripts/manage-environments.sh prod    # Producción
-./scripts/manage-environments.sh stop    # Detener todos
-./scripts/manage-environments.sh help    # Ver ayuda
-```
-
-> 📖 **Documentación completa**: Ver [Gestión de Entornos](docs/ENVIRONMENT-MANAGEMENT.md)
-
-### Configuración Manual
-
-```bash
-# Construir imagen
-docker build -t enerlova-app .
-
-# Ejecutar contenedor
-docker run -p 3000:3000 enerlova-app
-```
-
-### Plataformas de Despliegue Soportadas
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+---
 
 ## 📁 Estructura del Proyecto
 
 ```
-app/
-├── components/          # Componentes React reutilizables
-│   ├── administracion/  # Módulo de administración
-│   ├── mantencion/      # Módulo de mantención
-│   ├── monitor/         # Módulo de monitoreo
-│   ├── operaciones/     # Módulo de operaciones
-│   └── ui/             # Componentes de interfaz base
-├── hooks/              # Custom hooks
-├── routes/             # Páginas y rutas
-├── services/           # Servicios de API
-├── types/              # Definiciones TypeScript
-└── utils/              # Utilidades y helpers
+enerlova/res/
+├── 📁 app/                          # Código fuente principal
+│   ├── 📁 assets/                   # Recursos estáticos
+│   ├── 📁 components/              # Componentes React
+│   │   ├── 📁 administracion/      # Módulo administración
+│   │   │   ├── 📁 acometida/       # Gestión acometidas
+│   │   │   ├── 📁 clientes/        # Gestión clientes
+│   │   │   ├── 📁 contratos/       # Gestión contratos
+│   │   │   ├── 📁 medidores/       # Gestión medidores
+│   │   │   └── 📁 usuarios/        # Gestión usuarios
+│   │   ├── 📁 auth/               # Autenticación
+│   │   ├── 📁 dashboard/          # Dashboard principal
+│   │   ├── 📁 data-table/         # Tablas reutilizables
+│   │   ├── 📁 mantencion/         # Módulo mantención
+│   │   │   ├── 📁 ciclos-facturacion/
+│   │   │   ├── 📁 conceptos/
+│   │   │   ├── 📁 parametros/
+│   │   │   ├── 📁 tarifas/
+│   │   │   └── 📁 zonas/
+│   │   ├── 📁 monitor/            # Módulo monitoreo
+│   │   │   └── 📁 monitor-lecturas/
+│   │   ├── 📁 operaciones/        # Módulo operaciones
+│   │   │   ├── 📁 anular-factura-impresa/
+│   │   │   ├── 📁 cambio-medidor/
+│   │   │   ├── 📁 corte-reposicion/
+│   │   │   ├── 📁 crear-archivos-sap/
+│   │   │   └── 📁 periodo-facturacion/
+│   │   ├── 📁 sidebar/            # Navegación lateral
+│   │   └── 📁 ui/                 # Componentes base UI
+│   ├── 📁 context/                # Contextos React
+│   ├── 📁 hooks/                  # Custom hooks
+│   ├── 📁 lib/                    # Librerías y utilidades
+│   ├── 📁 routes/                 # Definición de rutas
+│   ├── 📁 services/              # Servicios API
+│   ├── 📁 types/                 # Definiciones TypeScript
+│   └── 📁 utils/                 # Utilidades específicas
+├── 📁 docs/                      # Documentación
+├── 📁 public/                    # Archivos públicos
+├── 📁 scripts/                   # Scripts deployment
+├── package.json                  # Dependencias
+├── tsconfig.json                # Configuración TypeScript
+├── vite.config.ts               # Configuración Vite
+├── docker-compose.yml           # Docker producción
+└── Dockerfile                   # Imagen Docker
 ```
-
-## 🔐 Autenticación y Seguridad
-
-- Sistema de autenticación JWT
-- Control de acceso basado en roles
-- Manejo automático de expiración de sesiones
-- Interceptores para renovación de tokens
-- Protección de rutas sensibles
-
-## 📊 Funcionalidades Avanzadas
-
-### Análisis de Actividad
-
-- Tracking de acciones de usuarios
-- Métricas de uso del sistema
-- Reportes de actividad
-
-### Estados
-
-- Estados de carga optimizados
-- Manejo de errores centralizado
-- Feedback visual para usuarios
-
-### Responsive Design
-
-- Interfaz adaptativa para móviles
-- Componentes optimizados para diferentes pantallas
-- Navegación intuitiva
-
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abrir un Pull Request
-
-## 📝 Licencia
-
-Este proyecto es privado y confidencial. Todos los derechos reservados.
 
 ---
 
-**Desarrollado con ❤️ para la gestión eficiente de sistemas energéticos**
+## 🎯 Módulos del Sistema
+
+### 📊 Monitor
+
+**Ruta**: `/dashboard/monitor`
+
+- Monitoreo de lecturas de medidores
+- Exportación de datos de lecturas
+- Visualización en tiempo real
+
+### ⚙️ Operaciones
+
+**Ruta**: `/dashboard/operaciones`
+
+- Ciclo completo de facturación
+- Corte y reposición de servicios
+- Cambio de medidores
+- Anulación de facturas
+- Creación de archivos SAP
+- Preparación y cierre de lecturas
+
+### 👥 Administración
+
+**Ruta**: `/dashboard/administracion`
+
+- Gestión de usuarios y permisos
+- Administración de clientes
+- Gestión de contratos
+- Configuración de medidores
+- Gestión de acometidas
+
+### 🛠️ Mantención
+
+**Ruta**: `/dashboard/mantencion`
+
+- Configuración de parámetros del sistema
+- Gestión de tarifas y conceptos
+- Configuración de zonas y sectores
+- Mantención de ciclos de facturación
+- Gestión de tipos de contratos
+
+---
+
+## 🛠️ Comandos de Desarrollo
+
+### Desarrollo Local
+
+```bash
+# Servidor de desarrollo
+pnpm dev
+
+# Build para producción
+pnpm build
+
+# Verificación de tipos
+pnpm typecheck
+
+# Preview del build
+pnpm preview
+```
+
+### Calidad de Código
+
+```bash
+# Linting
+pnpm lint
+pnpm lint:fix
+
+# Formateo
+pnpm format
+pnpm format:check
+
+# Pipeline completo
+pnpm ci
+```
+
+### Docker
+
+```bash
+# Producción
+docker-compose up -d
+
+# Desarrollo
+docker-compose -f docker-compose.dev.yml up -d
+
+# Ambos entornos
+docker-compose -f docker-compose.multi.yml up -d
+```
+
+---
+
+## 🚀 Despliegue
+
+### 📦 Entornos Disponibles
+
+| Entorno        | Rama      | Puerto | API URL                            |
+| -------------- | --------- | ------ | ---------------------------------- |
+| **Producción** | `main`    | 8080   | http://192.168.1.139:8081/Enerlova |
+| **Desarrollo** | `develop` | 3000   | http://192.168.1.139:8082/Enerlova |
+
+### 🔧 Scripts de Despliegue
+
+#### Linux/Mac
+
+```bash
+# Dar permisos
+chmod +x deploy.sh
+
+# Desplegar producción
+./deploy.sh prod
+
+# Desplegar desarrollo
+./deploy.sh dev
+
+# Ver estado
+./deploy.sh status
+```
+
+#### Windows PowerShell
+
+```powershell
+# Desplegar producción
+.\deploy.ps1 prod
+
+# Desplegar desarrollo
+.\deploy.ps1 dev
+
+# Ver estado
+.\deploy.ps1 status
+```
+
+### 🐳 Docker Manual
+
+```bash
+# Producción
+docker-compose -f docker-compose.prod.yml up --build -d
+
+# Desarrollo
+docker-compose -f docker-compose.develop.yml up --build -d
+```
+
+---
+
+## 🔧 Configuración
+
+### Variables de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+# API Backend
+VITE_API_URL=http://192.168.1.139:8081/Enerlova
+
+# Opcional: Configuraciones adicionales
+VITE_APP_NAME=Enerlova
+VITE_APP_VERSION=1.0.0
+```
+
+### Configuración de Desarrollo
+
+#### ESLint
+
+```javascript
+// eslint.config.js
+export default [
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
+    plugins: {
+      react,
+      'unused-imports': unusedImports,
+    },
+    rules: {
+      'unused-imports/no-unused-imports': 'error',
+      'react/react-in-jsx-scope': 'off',
+    },
+  },
+];
+```
+
+#### Prettier
+
+```json
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "plugins": ["prettier-plugin-tailwindcss"]
+}
+```
+
+---
+
+## 🧪 Testing
+
+### Estructura de Testing
+
+```bash
+# Ejecutar tests (cuando estén configurados)
+npm test
+
+# Coverage
+npm run test:coverage
+
+# Tests E2E
+npm run test:e2e
+```
+
+### Patrones de Testing
+
+- **Unit Tests**: Componentes individuales
+- **Integration Tests**: Flujos de usuario
+- **E2E Tests**: Casos de uso completos
+
+---
+
+## 📚 Documentación Adicional
+
+- 📖 **[Documentación Completa](docs/PROJECT-DOCUMENTATION.md)** - Guía detallada del proyecto
+- 🏗️ **[Arquitectura](docs/ARCHITECTURE.md)** - Patrones y diseño del sistema
+- 🚀 **[Guía de Inicio Rápido](docs/QUICK-START.md)** - Configuración en 5 minutos
+- 🔗 **[API Services](docs/API-SERVICES-STRUCTURE.md)** - Estructura de servicios
+- 🐳 **[Despliegue](DEPLOY-README.md)** - Guía de deployment
+- 📊 **[Tracking de Actividad](docs/ACTIVITY-TRACKING.md)** - Sistema de monitoreo
+- 👤 **[User Profile Hook](docs/USER-PROFILE-HOOK.md)** - Gestión de perfiles
+
+---
+
+## 🤝 Contribución
+
+### Flujo de Desarrollo
+
+1. **Fork** del repositorio
+2. **Crear** rama feature: `git checkout -b feature/nueva-funcionalidad`
+3. **Commit** cambios: `git commit -m 'feat: agregar nueva funcionalidad'`
+4. **Push** a la rama: `git push origin feature/nueva-funcionalidad`
+5. **Crear** Pull Request
+
+### Convenciones
+
+#### Commits
+
+```bash
+# Tipos de commit
+feat:     # Nueva funcionalidad
+fix:      # Corrección de bug
+docs:     # Documentación
+style:    # Formateo, sin cambios de código
+refactor: # Refactorización
+test:     # Tests
+chore:    # Mantención
+```
+
+#### Nomenclatura
+
+- **Componentes**: PascalCase (`UserProfile.tsx`)
+- **Hooks**: camelCase con prefijo `use` (`useUserProfile.ts`)
+- **Servicios**: camelCase con sufijo `Service` (`userService.ts`)
+- **Tipos**: PascalCase con sufijo `Type` (`UserType.ts`)
+
+---
+
+## 🐛 Solución de Problemas
+
+### Errores Comunes
+
+#### Error de Conexión API
+
+```bash
+# Verificar variable de entorno
+echo $VITE_API_URL
+
+# Verificar conectividad
+curl http://192.168.1.139:8081/Enerlova/health
+```
+
+#### Error de Compilación TypeScript
+
+```bash
+# Limpiar y reinstalar
+rm -rf node_modules .react-router
+pnpm install
+pnpm typecheck
+```
+
+#### Error de Docker
+
+---
+
+## 🐛 Solución de Problemas
+
+### Errores Comunes
+
+#### Error de Conexión API
+
+```bash
+# Verificar variable de entorno
+echo $VITE_API_URL
+
+# Verificar conectividad
+curl http://192.168.1.139:8081/Enerlova/health
+```
+
+#### Error de Compilación TypeScript
+
+```bash
+# Limpiar y reinstalar
+rm -rf node_modules .react-router
+pnpm install
+pnpm typecheck
+```
+
+#### Error de Docker
+
+```bash
+# Limpiar contenedores
+docker-compose down
+docker system prune -f
+docker-compose up -d --build
+```
+
+### Logs y Debugging
+
+```bash
+# Ver logs de desarrollo
+pnpm dev --debug
+
+# Ver logs de Docker
+docker-compose logs -f
+
+# Verificar estado de contenedores
+docker ps
+```
+
+---
+
+## 📞 Soporte
+
+### Recursos de Ayuda
+
+- 🐛 **Errores**: Revisar consola del navegador
+- 🔐 **Autenticación**: Verificar token en localStorage
+- 📡 **API**: Verificar Network tab en DevTools
+- 🎨 **UI**: Componentes siguen patrón shadcn/ui
+
+### Contacto
+
+Para soporte técnico o consultas sobre el proyecto, contactar al equipo de desarrollo.
+
+---
+
+## 📄 Licencia
+
+Este proyecto es propiedad de la empresa y está sujeto a las políticas internas de desarrollo de software.
+
+---
+
+<div align="center">
+  <p><em>Enerlova - 2025</em></p>
+</div>

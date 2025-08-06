@@ -101,7 +101,7 @@ export function DataTablePrecios<TData, TValue>({
   };
 
   return (
-    <div className='space-y-3 sm:space-y-4'>
+    <div className='space-y-2'>
       {/* Search */}
       {showSearch && (
         <div className='flex justify-end'>
@@ -128,7 +128,7 @@ export function DataTablePrecios<TData, TValue>({
                   <TableHead
                     key={group.id}
                     colSpan={getColumnSpan(group.id)}
-                    className={`text-center font-bold text-xs sm:text-sm py-2 sm:py-3 border-r last:border-r-0 ${
+                    className={`text-center font-bold text-xs sm:text-sm py-1 sm:py-2 border-r last:border-r-0 ${
                       group.className || 'bg-slate-600 text-white'
                     }`}
                   >
@@ -149,7 +149,7 @@ export function DataTablePrecios<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={`font-semibold text-xs py-1 sm:py-2 px-1 sm:px-3 border-r last:border-r-0 ${
+                      className={`font-semibold text-xs py-0.5 sm:py-1 px-1 sm:px-2 border-r last:border-r-0 ${
                         group ? 'bg-slate-100 dark:bg-slate-700/50' : ''
                       }`}
                       style={{
@@ -188,7 +188,7 @@ export function DataTablePrecios<TData, TValue>({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`py-2 sm:py-3 px-1 sm:px-3 text-xs sm:text-sm border-r last:border-r-0 ${
+                        className={`py-1 sm:py-2 px-1 sm:px-2 text-xs sm:text-sm border-r last:border-r-0 ${
                           group ? 'border-slate-200 dark:border-slate-700' : ''
                         }`}
                       >
@@ -205,7 +205,7 @@ export function DataTablePrecios<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-16 sm:h-24 text-center text-slate-500 dark:text-slate-400 text-xs sm:text-sm'
+                  className='h-12 sm:h-16 text-center text-slate-500 dark:text-slate-400 text-xs sm:text-sm'
                 >
                   No se encontraron resultados.
                 </TableCell>

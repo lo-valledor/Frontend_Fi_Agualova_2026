@@ -526,15 +526,17 @@ export function MedidorFormModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className='w-[95vw] sm:max-w-[600px] lg:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+        <DialogContent className='w-[95vw] sm:max-w-[600px] lg:max-w-[700px] xl:max-w-[800px] max-h-[90vh] overflow-y-auto'>
           <DialogHeader className='space-y-3'>
-            <DialogTitle className='text-2xl font-bold flex items-center gap-3'>
+            <DialogTitle className='text-xl sm:text-2xl font-bold flex items-center gap-2 sm:gap-3'>
               <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
-                <Gauge className='h-6 w-6 text-sky-600 dark:text-sky-400' />
+                <Gauge className='h-5 w-5 sm:h-6 sm:w-6 text-sky-600 dark:text-sky-400' />
               </div>
-              {mode === 'add' ? 'Crear Nuevo Medidor' : 'Editar Medidor'}
+              <span className='text-lg sm:text-xl lg:text-2xl'>
+                {mode === 'add' ? 'Crear Nuevo Medidor' : 'Editar Medidor'}
+              </span>
             </DialogTitle>
-            <DialogDescription className='text-base text-muted-foreground'>
+            <DialogDescription className='text-sm sm:text-base text-muted-foreground'>
               {mode === 'add'
                 ? 'Complete la información para registrar un nuevo medidor.'
                 : 'Modifique la información del medidor.'}
@@ -542,14 +544,14 @@ export function MedidorFormModal({
 
             {/* Información adicional para edición */}
             {mode === 'edit' && medidor && (
-              <div className='bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800'>
-                <div className='flex items-center gap-2 mb-2'>
+              <div className='bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-lg border border-blue-200 dark:border-blue-800'>
+                <div className='flex items-center gap-2 mb-2 sm:mb-3'>
                   <Gauge className='h-4 w-4 text-blue-600' />
-                  <span className='font-medium text-blue-900 dark:text-blue-100'>
+                  <span className='font-medium text-blue-900 dark:text-blue-100 text-sm sm:text-base'>
                     Información del Medidor
                   </span>
                 </div>
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 lg:gap-4 text-xs sm:text-sm'>
                   <div>
                     <span className='text-blue-700 dark:text-blue-300'>
                       Código:
@@ -562,7 +564,7 @@ export function MedidorFormModal({
                     <span className='text-blue-700 dark:text-blue-300'>
                       Ubicación:
                     </span>
-                    <span className='ml-2 text-blue-900 dark:text-blue-100'>
+                    <span className='ml-2 text-blue-900 dark:text-blue-100 truncate block'>
                       {medidor.ubicacion}
                     </span>
                   </div>
@@ -610,14 +612,16 @@ export function MedidorFormModal({
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleFormSubmit)}
-              className='space-y-8 pt-4'
+              className='space-y-6 sm:space-y-8 pt-4'
             >
-              <div className='space-y-6'>
+              <div className='space-y-4 sm:space-y-6'>
                 <div className='flex items-center gap-2 pb-2 border-b'>
-                  <Gauge className='h-5 w-5 text-sky-600' />
-                  <h3 className='text-lg font-medium'>Detalles del Medidor</h3>
+                  <Gauge className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600' />
+                  <h3 className='text-base sm:text-lg font-medium'>
+                    Detalles del Medidor
+                  </h3>
                 </div>
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6'>
                   <FormField
                     control={form.control}
                     name='serie'
@@ -767,12 +771,14 @@ export function MedidorFormModal({
                 </div>
               </div>
 
-              <div className='space-y-6'>
+              <div className='space-y-4 sm:space-y-6'>
                 <div className='flex items-center gap-2 pb-2 border-b'>
-                  <Power className='h-5 w-5 text-green-600' />
-                  <h3 className='text-lg font-medium'>Configuración</h3>
+                  <Power className='h-4 w-4 sm:h-5 sm:w-5 text-green-600' />
+                  <h3 className='text-base sm:text-lg font-medium'>
+                    Configuración
+                  </h3>
                 </div>
-                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6'>
                   <FormField
                     control={form.control}
                     name='digitos'
@@ -961,19 +967,19 @@ export function MedidorFormModal({
                 </div>
               </div>
 
-              <DialogFooter className='pt-6 border-t'>
+              <DialogFooter className='pt-4 sm:pt-6 border-t flex flex-col sm:flex-row gap-2 sm:gap-0'>
                 <Button
                   type='button'
                   variant='outline'
                   onClick={onClose}
-                  className='h-11 px-6'
+                  className='h-10 sm:h-11 px-4 sm:px-6 w-full sm:w-auto order-2 sm:order-1'
                   disabled={isLoading}
                 >
                   Cancelar
                 </Button>
                 <Button
                   type='submit'
-                  className='h-11 px-6 flex items-center gap-2'
+                  className='h-10 sm:h-11 px-4 sm:px-6 flex items-center gap-2 w-full sm:w-auto order-1 sm:order-2'
                   disabled={isLoading}
                 >
                   <CheckCircle2 className='h-4 w-4' />
@@ -991,17 +997,17 @@ export function MedidorFormModal({
 
       {/* Modal de Selección de Subempalmes */}
       <Dialog open={modalSubempalmes} onOpenChange={setModalSubempalmes}>
-        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
-          <DialogHeader>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[90vh] overflow-hidden'>
+          <DialogHeader className='space-y-3 pb-4'>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
                 <Gauge className='h-5 w-5 text-purple-600 dark:text-purple-400' />
               </div>
-              <div>
-                <DialogTitle className='text-xl font-semibold'>
+              <div className='min-w-0 flex-1'>
+                <DialogTitle className='text-lg sm:text-xl font-semibold'>
                   Seleccionar Subempalme
                 </DialogTitle>
-                <DialogDescription>
+                <DialogDescription className='text-sm sm:text-base mt-1'>
                   Explore y seleccione el subempalme que desea asociar
                 </DialogDescription>
               </div>
@@ -1009,30 +1015,44 @@ export function MedidorFormModal({
           </DialogHeader>
 
           <div className='space-y-4'>
-            {/* Barra de búsqueda */}
+            {/* Barra de búsqueda mejorada */}
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
               <Input
                 placeholder='Buscar por código, ubicación, empalme o nicho...'
                 value={busquedaSubempalme}
                 onChange={e => setBusquedaSubempalme(e.target.value)}
-                className='h-11 pl-10'
+                className='h-11 pl-10 text-sm sm:text-base'
               />
             </div>
 
-            {/* Tabla de subempalmes */}
+            {/* Tabla de subempalmes con mejor responsividad */}
             <div className='border rounded-lg overflow-hidden'>
-              <ScrollArea className='h-[50vh]'>
+              <ScrollArea className='h-[50vh] sm:h-[60vh]'>
                 <Table>
                   <TableHeader className='bg-muted/50'>
                     <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Ubicación</TableHead>
-                      <TableHead>Contrato ID</TableHead>
-                      <TableHead>Empalme</TableHead>
-                      <TableHead>Nicho</TableHead>
-                      <TableHead className='text-center'>Acción</TableHead>
+                      <TableHead className='text-xs sm:text-sm font-medium'>
+                        ID
+                      </TableHead>
+                      <TableHead className='text-xs sm:text-sm font-medium'>
+                        Código
+                      </TableHead>
+                      <TableHead className='text-xs sm:text-sm font-medium hidden sm:table-cell'>
+                        Ubicación
+                      </TableHead>
+                      <TableHead className='text-xs sm:text-sm font-medium hidden lg:table-cell'>
+                        Contrato ID
+                      </TableHead>
+                      <TableHead className='text-xs sm:text-sm font-medium hidden md:table-cell'>
+                        Empalme
+                      </TableHead>
+                      <TableHead className='text-xs sm:text-sm font-medium hidden lg:table-cell'>
+                        Nicho
+                      </TableHead>
+                      <TableHead className='text-xs sm:text-sm font-medium text-center'>
+                        Acción
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1044,7 +1064,7 @@ export function MedidorFormModal({
                         >
                           <div className='flex flex-col items-center gap-2'>
                             <div className='h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent' />
-                            <p>Cargando subempalmes...</p>
+                            <p className='text-sm'>Cargando subempalmes...</p>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -1058,7 +1078,7 @@ export function MedidorFormModal({
                           >
                             <div className='flex flex-col items-center gap-2'>
                               <Search className='h-8 w-8 opacity-50' />
-                              <p>
+                              <p className='text-sm'>
                                 No se encontraron subempalmes con los criterios
                                 de búsqueda.
                               </p>
@@ -1071,34 +1091,62 @@ export function MedidorFormModal({
                         key={subempalme.id}
                         className='hover:bg-muted/50 transition-colors'
                       >
-                        <TableCell>
-                          <Badge variant='outline' className='font-mono'>
+                        <TableCell className='text-xs sm:text-sm'>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
                             {subempalme.id}
                           </Badge>
                         </TableCell>
-                        <TableCell>
-                          <Badge variant='secondary' className='font-mono'>
+                        <TableCell className='text-xs sm:text-sm'>
+                          <Badge
+                            variant='secondary'
+                            className='font-mono text-xs'
+                          >
                             {subempalme.codigo}
                           </Badge>
                         </TableCell>
-                        <TableCell className='font-medium'>
+                        <TableCell className='font-medium text-xs sm:text-sm hidden sm:table-cell'>
                           <div className='flex items-center gap-2'>
-                            <Gauge className='h-4 w-4 text-muted-foreground' />
-                            {subempalme.ubicacion}
+                            <Gauge className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
+                            <span
+                              className='truncate max-w-[120px] lg:max-w-[150px]'
+                              title={subempalme.ubicacion}
+                            >
+                              {subempalme.ubicacion}
+                            </span>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <Badge variant='outline' className='font-mono'>
+                        <TableCell className='text-xs sm:text-sm hidden lg:table-cell'>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
                             {subempalme.contratoId}
                           </Badge>
                         </TableCell>
-                        <TableCell>{subempalme.descripcionEmpalme}</TableCell>
-                        <TableCell>{subempalme.descripcionNicho}</TableCell>
+                        <TableCell className='text-xs sm:text-sm hidden md:table-cell'>
+                          <span
+                            className='truncate max-w-[100px] lg:max-w-[120px] block'
+                            title={subempalme.descripcionEmpalme}
+                          >
+                            {subempalme.descripcionEmpalme}
+                          </span>
+                        </TableCell>
+                        <TableCell className='text-xs sm:text-sm hidden lg:table-cell'>
+                          <span
+                            className='truncate max-w-[100px] lg:max-w-[120px] block'
+                            title={subempalme.descripcionNicho}
+                          >
+                            {subempalme.descripcionNicho}
+                          </span>
+                        </TableCell>
                         <TableCell className='text-center'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectSubempalme(subempalme)}
-                            className='bg-purple-600 hover:bg-purple-700 text-white'
+                            className='bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3'
                           >
                             Seleccionar
                           </Button>

@@ -1,4 +1,4 @@
-import { Download, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useState } from 'react';
@@ -6,8 +6,10 @@ import { useState } from 'react';
 import { useRevalidator } from 'react-router';
 
 import { DataTable } from '~/components/data-table/data-table';
+import { ExportButton } from '~/components/shared/export-button';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
+import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
 import api from '~/lib/api';
 import type {
   Acometida,
@@ -43,9 +45,9 @@ export default function AcometidaComponent({
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [, setEditingAcometidaId] = useState<number | null>(null);
-  const [isExporting, setIsExporting] = useState(false);
 
   const revalidator = useRevalidator();
+  const { acometidaColumns } = useExportAcometidas();
 
   const handleAddAcometida = () => {
     setSelectedAcometida(null);
@@ -73,70 +75,7 @@ export default function AcometidaComponent({
     );
   };
 
-  const handleExportExcel = async () => {
-    if (isExporting) return; // Prevenir múltiples clicks
 
-    setIsExporting(true);
-    try {
-      toast.info('Generando archivo Excel...');
-
-      const response = await api.get('exportar-excel', {
-        responseType: 'blob', // Esto es crucial para archivos binarios
-        timeout: 30000, // 30 segundos timeout
-        headers: {
-          Accept:
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        },
-      });
-
-      // Verificar que la respuesta es válida
-      if (!response.data || (response.data as Blob).size === 0) {
-        throw new Error('El archivo exportado está vacío');
-      }
-
-      const blob = new Blob([response.data as BlobPart], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      });
-
-      // Crear nombre de archivo con timestamp
-      const now = new Date();
-      const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-');
-      const fileName = `acometidas_${timestamp}.xlsx`;
-
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      a.style.display = 'none'; // Asegurar que no sea visible
-
-      // Agregar al DOM, hacer click y remover
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      // Limpiar URL después de un tiempo
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-      }, 100);
-
-      toast.success(`Archivo exportado: ${fileName}`);
-    } catch (error: any) {
-      // Manejo más específico de errores
-      if (error.code === 'ECONNABORTED') {
-        toast.error('La exportación tardó demasiado. Intente nuevamente.');
-      } else if (error.response?.status === 404) {
-        toast.error('Endpoint de exportación no encontrado');
-      } else if (error.response?.status === 500) {
-        toast.error('Error interno del servidor al generar el archivo');
-      } else if (error.message.includes('Network Error')) {
-        toast.error('Error de conexión. Verifique su internet.');
-      } else {
-        toast.error('Error al exportar Excel. Intente nuevamente.');
-      }
-    } finally {
-      setIsExporting(false);
-    }
-  };
 
   const handleSubmitForm = async (
     data: CrearAcometidaProps | ActualizarAcometidaProps
@@ -171,20 +110,14 @@ export default function AcometidaComponent({
           </p>
         </div>
         <div className='flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 lg:flex-row'>
-          <Button
-            variant='default'
-            onClick={handleExportExcel}
-            disabled={isExporting}
-            size='sm'
-            className='bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto order-2 sm:order-1'
-          >
-            <Download
-              className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${isExporting ? 'animate-spin' : ''}`}
-            />
-            <span className='text-xs sm:text-sm'>
-              {isExporting ? 'Exportando...' : 'Exportar Excel'}
-            </span>
-          </Button>
+          <ExportButton
+             data={acometidas}
+             columns={acometidaColumns}
+             filename="acometidas"
+             variant="default"
+             size="sm"
+             className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto order-2 sm:order-1"
+           />
           <Button
             onClick={handleAddAcometida}
             className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto order-1 sm:order-2'

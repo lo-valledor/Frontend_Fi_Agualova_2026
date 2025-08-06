@@ -8,7 +8,6 @@ import {
   Eraser,
   FileSpreadsheet,
   FileTextIcon,
-  InfoIcon,
   RefreshCw,
   SearchIcon,
   SettingsIcon,
@@ -48,7 +47,6 @@ export default function RevisarCalculoFacturaComponent({
 }) {
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
-  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
   // Fijamos el ciclo como día 15 (valor '1' para la API)
   const cicloId = '1';
 
@@ -94,41 +92,6 @@ export default function RevisarCalculoFacturaComponent({
     isCalculoPreparado,
   });
 
-  // Tutorial: Función para manejar la preparación del cálculo con tutorial
-  const handlePreparacionConTutorial = async () => {
-    await handleLanzarCalculo();
-
-    // Mostrar mensaje tutorial después de preparar
-    if (isCalculoPreparado) {
-      toast.success('¡Paso 1 completado! Cálculo preparado exitosamente', {
-        description: 'Ahora haz clic en "Ver Cálculo Facturas" para continuar',
-        duration: 6000,
-      });
-    }
-  };
-
-  // Tutorial: Función para manejar la revisión con tutorial
-  const handleRevisarConTutorial = async () => {
-    if (!isCalculoPreparado) {
-      toast.info('Tutorial: Primero debes preparar el cálculo', {
-        description: 'Haz clic en "Preparar Cálculo" para comenzar',
-        duration: 5000,
-      });
-      return;
-    }
-
-    await handleRevisarCalculo();
-
-    // Mostrar mensaje tutorial después de ver resultados
-    if (data.length > 0) {
-      toast.success('¡Paso 2 completado! Resultados cargados', {
-        description:
-          'Ahora puedes seleccionar contratos y hacer clic en "Aceptar Cálculo"',
-        duration: 6000,
-      });
-    }
-  };
-
   // Función para actualizar los datos
   const handleRefreshData = async () => {
     if (!isCalculoPreparado) {
@@ -160,89 +123,7 @@ export default function RevisarCalculoFacturaComponent({
             </h1>
           </div>
         </div>
-        {/* Minimalist Tutorial Guide */}
-        <Card className='border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/10'>
-          <Collapsible open={isTutorialOpen} onOpenChange={setIsTutorialOpen}>
-            <div
-              className='flex items-center justify-between p-3 cursor-pointer hover:bg-blue-100/50 dark:hover:bg-blue-900/20 transition-colors'
-              onClick={() => setIsTutorialOpen(!isTutorialOpen)}
-            >
-              <div className='flex items-center gap-3'>
-                <div className='w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center'>
-                  <InfoIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                </div>
-                <span className='text-sm font-medium text-blue-800 dark:text-blue-200'>
-                  📚 Tutorial: 3 pasos para gestionar cálculos
-                </span>
-                <div className='flex items-center gap-1 ml-2'>
-                  <div
-                    className={`w-2 h-2 rounded-full ${isCalculoPreparado ? 'bg-emerald-500' : 'bg-gray-300'}`}
-                  />
-                  <div
-                    className={`w-2 h-2 rounded-full ${data.length > 0 ? 'bg-emerald-500' : 'bg-gray-300'}`}
-                  />
-                  <div
-                    className={`w-2 h-2 rounded-full ${selectedContratos.length > 0 ? 'bg-amber-500' : 'bg-gray-300'}`}
-                  />
-                </div>
-              </div>
-              <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
-                {isTutorialOpen ? (
-                  <ChevronUp className='h-4 w-4 text-blue-600' />
-                ) : (
-                  <ChevronDown className='h-4 w-4 text-blue-600' />
-                )}
-              </Button>
-            </div>
-            <CollapsibleContent>
-              <div className='px-3 pb-3 space-y-2'>
-                <div className='flex items-center gap-2 text-xs'>
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${isCalculoPreparado ? 'bg-emerald-500 text-white' : 'bg-blue-500 text-white'}`}
-                  >
-                    1
-                  </div>
-                  <span className='text-blue-700 dark:text-blue-300 font-medium'>
-                    Preparar Cálculo
-                  </span>
-                  {isCalculoPreparado && (
-                    <span className='text-emerald-600 text-xs'>✓</span>
-                  )}
-                </div>
-                <div className='flex items-center gap-2 text-xs'>
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${data.length > 0 ? 'bg-emerald-500 text-white' : 'bg-gray-400 text-white'}`}
-                  >
-                    2
-                  </div>
-                  <span
-                    className={`font-medium ${data.length > 0 ? 'text-emerald-700 dark:text-emerald-300' : 'text-gray-500'}`}
-                  >
-                    Ver Cálculo Facturas
-                  </span>
-                  {data.length > 0 && (
-                    <span className='text-emerald-600 text-xs'>✓</span>
-                  )}
-                </div>
-                <div className='flex items-center gap-2 text-xs'>
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${selectedContratos.length > 0 ? 'bg-amber-500 text-white' : 'bg-gray-400 text-white'}`}
-                  >
-                    3
-                  </div>
-                  <span
-                    className={`font-medium ${selectedContratos.length > 0 ? 'text-amber-700 dark:text-amber-300' : 'text-gray-500'}`}
-                  >
-                    Aceptar Cálculo ({selectedContratos.length} seleccionados)
-                  </span>
-                  {selectedContratos.length > 0 && (
-                    <span className='text-amber-600 text-xs'>✓</span>
-                  )}
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </Card>
+
         {/* Filtros de Búsqueda */}
         <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
@@ -292,7 +173,9 @@ export default function RevisarCalculoFacturaComponent({
                             {periodoAbierto[0].anio}
                           </span>
                           <p className='text-xs text-blue-600 dark:text-blue-400 mt-0.5'>
-                            <span className='hidden sm:inline'>Periodo activo para facturación</span>
+                            <span className='hidden sm:inline'>
+                              Periodo activo para facturación
+                            </span>
                             <span className='sm:hidden'>Periodo activo</span>
                           </p>
                         </div>
@@ -304,11 +187,15 @@ export default function RevisarCalculoFacturaComponent({
                         </div>
                         <div>
                           <span className='font-medium text-amber-800 dark:text-amber-200 text-sm sm:text-base'>
-                            <span className='hidden sm:inline'>No hay periodo abierto</span>
+                            <span className='hidden sm:inline'>
+                              No hay periodo abierto
+                            </span>
                             <span className='sm:hidden'>Sin periodo</span>
                           </span>
                           <p className='text-xs text-amber-600 dark:text-amber-400 mt-0.5'>
-                            <span className='hidden sm:inline'>Contacta al administrador</span>
+                            <span className='hidden sm:inline'>
+                              Contacta al administrador
+                            </span>
                             <span className='sm:hidden'>Contactar admin</span>
                           </p>
                         </div>
@@ -372,11 +259,11 @@ export default function RevisarCalculoFacturaComponent({
                       <span className='sm:hidden'>Act</span>
                     </Button>
                   </div>
-                  
+
                   {/* Botones principales del proceso */}
                   <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3'>
                     <Button
-                      onClick={handlePreparacionConTutorial}
+                      onClick={handleLanzarCalculo}
                       disabled={isLaunching}
                       className='gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
                       size='sm'
@@ -384,20 +271,24 @@ export default function RevisarCalculoFacturaComponent({
                       {isLaunching ? (
                         <>
                           <div className='h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          <span className='hidden sm:inline'>Preparando...</span>
+                          <span className='hidden sm:inline'>
+                            Preparando...
+                          </span>
                           <span className='sm:hidden'>...</span>
                         </>
                       ) : (
                         <>
                           <SearchIcon className='h-3 w-3 sm:h-4 sm:w-4' />
-                          <span className='hidden sm:inline'>Paso 1: Preparar Cálculo</span>
-                          <span className='sm:hidden'>1. Preparar</span>
+                          <span className='hidden sm:inline'>
+                            Preparar Cálculo
+                          </span>
+                          <span className='sm:hidden'>Preparar</span>
                         </>
                       )}
                     </Button>
-                    
+
                     <Button
-                      onClick={handleRevisarConTutorial}
+                      onClick={handleRevisarCalculo}
                       disabled={isLoading || !isCalculoPreparado}
                       className='gap-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white'
                       size='sm'
@@ -411,12 +302,14 @@ export default function RevisarCalculoFacturaComponent({
                       ) : (
                         <>
                           <FileTextIcon className='h-3 w-3 sm:h-4 sm:w-4' />
-                          <span className='hidden sm:inline'>Paso 2: Ver Cálculo Facturas</span>
-                          <span className='sm:hidden'>2. Ver Cálculo</span>
+                          <span className='hidden sm:inline'>
+                            Ver Cálculo Facturas
+                          </span>
+                          <span className='sm:hidden'>Ver Cálculo</span>
                         </>
                       )}
                     </Button>
-                    
+
                     <Button
                       onClick={handleAceptarCalculo}
                       disabled={isAccepting || selectedContratos.length === 0}
@@ -432,8 +325,12 @@ export default function RevisarCalculoFacturaComponent({
                       ) : (
                         <>
                           <SettingsIcon className='h-3 w-3 sm:h-4 sm:w-4' />
-                          <span className='hidden sm:inline'>Paso 3: Aceptar Cálculo ({selectedContratos.length})</span>
-                          <span className='sm:hidden'>3. Aceptar ({selectedContratos.length})</span>
+                          <span className='hidden sm:inline'>
+                            Aceptar Cálculo ({selectedContratos.length})
+                          </span>
+                          <span className='sm:hidden'>
+                            Aceptar ({selectedContratos.length})
+                          </span>
                         </>
                       )}
                     </Button>
@@ -443,6 +340,7 @@ export default function RevisarCalculoFacturaComponent({
             </CollapsibleContent>
           </Collapsible>
         </Card>
+
         {/* Resultados de la búsqueda */}
         <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
           <CardHeader className='border-b border-slate-200 dark:border-slate-700'>
@@ -514,12 +412,19 @@ export default function RevisarCalculoFacturaComponent({
                 </div>
                 <div className='text-center'>
                   <p className='font-medium text-slate-700 dark:text-slate-300 text-sm sm:text-base'>
-                    <span className='hidden sm:inline'>Realizar consulta de precálculos</span>
+                    <span className='hidden sm:inline'>
+                      Realizar consulta de precálculos
+                    </span>
                     <span className='sm:hidden'>Realizar consulta</span>
                   </p>
                   <p className='text-xs sm:text-sm mt-1'>
-                    <span className='hidden sm:inline'>Selecciona un ciclo y haz clic en "Preparar Cálculo" para ver los resultados</span>
-                    <span className='sm:hidden'>Haz clic en "Preparar Cálculo"</span>
+                    <span className='hidden sm:inline'>
+                      Selecciona un ciclo y haz clic en "Preparar Cálculo" para
+                      ver los resultados
+                    </span>
+                    <span className='sm:hidden'>
+                      Haz clic en "Preparar Cálculo"
+                    </span>
                   </p>
                 </div>
               </div>
@@ -532,7 +437,9 @@ export default function RevisarCalculoFacturaComponent({
                       {filteredData.length}
                     </div>
                     <div className='text-xs text-sky-600 dark:text-sky-400 font-medium'>
-                      <span className='hidden sm:inline'>{searchTerm ? 'Contratos Filtrados' : 'Total Contratos'}</span>
+                      <span className='hidden sm:inline'>
+                        {searchTerm ? 'Contratos Filtrados' : 'Total Contratos'}
+                      </span>
                       <span className='sm:hidden'>Contratos</span>
                     </div>
                   </div>
@@ -607,8 +514,12 @@ export default function RevisarCalculoFacturaComponent({
                         <FileTextIcon className='h-3 w-3 sm:h-4 sm:w-4 text-amber-600 dark:text-amber-400' />
                       </div>
                       <h4 className='font-semibold text-amber-800 dark:text-amber-200 text-sm sm:text-base'>
-                        <span className='hidden sm:inline'>Contratos Seleccionados ({selectedContratos.length})</span>
-                        <span className='sm:hidden'>Seleccionados ({selectedContratos.length})</span>
+                        <span className='hidden sm:inline'>
+                          Contratos Seleccionados ({selectedContratos.length})
+                        </span>
+                        <span className='sm:hidden'>
+                          Seleccionados ({selectedContratos.length})
+                        </span>
                       </h4>
                     </div>
                     <div className='flex flex-wrap gap-1 sm:gap-2'>
@@ -618,13 +529,18 @@ export default function RevisarCalculoFacturaComponent({
                           variant='outline'
                           className='bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-700 text-xs px-1 sm:px-2'
                         >
-                          <span className='hidden sm:inline'>Lectura ID: {lecturaId}</span>
+                          <span className='hidden sm:inline'>
+                            Lectura ID: {lecturaId}
+                          </span>
                           <span className='sm:hidden'>{lecturaId}</span>
                         </Badge>
                       ))}
                     </div>
                     <p className='text-xs text-amber-600 dark:text-amber-400 mt-2'>
-                      <span className='hidden sm:inline'>💡 Estos son los IDs de lectura que has seleccionado en la tabla</span>
+                      <span className='hidden sm:inline'>
+                        💡 Estos son los IDs de lectura que has seleccionado en
+                        la tabla
+                      </span>
                       <span className='sm:hidden'>💡 IDs seleccionados</span>
                     </p>
                   </div>
@@ -652,7 +568,9 @@ export default function RevisarCalculoFacturaComponent({
                       <span className='hidden sm:inline'>💡 Haz clic en</span>
                       <span className='sm:hidden'>💡</span>
                       <ChevronRight className='h-3 w-3' />
-                      <span className='hidden sm:inline'>para ver el detalle de cargos</span>
+                      <span className='hidden sm:inline'>
+                        para ver el detalle de cargos
+                      </span>
                       <span className='sm:hidden'>detalle</span>
                     </div>
                   </div>

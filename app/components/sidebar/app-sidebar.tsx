@@ -252,10 +252,6 @@ const data = {
           title: 'Roles y Permisos',
           url: '/dashboard/configuracion/roles-permisos',
         },
-        {
-          title: 'Perfil',
-          url: '/dashboard/configuracion/perfil',
-        },
       ],
     },
   ],

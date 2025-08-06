@@ -39,7 +39,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     },
     enableSorting: false,
     enableHiding: false,
-    size: 50,
+    size: 40,
   },
   {
     accessorKey: 'codigo',
@@ -51,11 +51,11 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-sm font-medium text-emerald-600 dark:text-emerald-400'>
+      <div className='font-mono text-xs font-medium text-blue-600 dark:text-blue-400'>
         {row.getValue('codigo')}
       </div>
     ),
-    size: 120,
+      size: 120,
   },
   {
     accessorKey: 'codigoEner',
@@ -67,11 +67,11 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-sm text-blue-600 dark:text-blue-400'>
+      <div className='font-mono text-xs text-purple-600 dark:text-purple-400'>
         {row.getValue('codigoEner')}
       </div>
     ),
-    size: 140,
+    size: 100,
   },
   {
     accessorKey: 'descripcion',
@@ -83,11 +83,11 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='text-sm text-slate-900 dark:text-slate-100 max-w-sm'>
+      <div className='text-xs text-slate-900 dark:text-slate-100 max-w-xs truncate'>
         {row.getValue('descripcion')}
       </div>
     ),
-    size: 300,
+    size: 250,
   },
   {
     accessorKey: 'valor',
@@ -113,12 +113,12 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       };
 
       return (
-        <div className='text-sm font-mono font-medium text-green-600 dark:text-green-400'>
-          {formatValue(value)}
-        </div>
-      );
+          <div className='text-xs font-mono font-medium text-green-600 dark:text-green-400'>
+            {formatValue(value)}
+          </div>
+        );
     },
-    size: 120,
+      size: 100,
   },
   {
     accessorKey: 'confirmacion',
@@ -135,14 +135,14 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       return (
         <div className='flex items-center justify-center'>
           {confirmacion === 'Confirmado' ? (
-            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1'>
+            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1 text-xs px-2 py-1'>
               <CheckCircle className='w-3 h-3' />
               Confirmado
             </Badge>
           ) : (
             <Badge
               variant='outline'
-              className='bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 flex items-center gap-1'
+              className='bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800 flex items-center gap-1 text-xs px-2 py-1'
             >
               <AlertTriangle className='w-3 h-3' />
               Pendiente
@@ -166,10 +166,10 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       return (
         <div className='flex items-center justify-center'>
           {confirmacion === 'Confirmado' ? (
-            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1'>
-              <CheckCircle className='w-3 h-3' />
-              Confirmado
-            </Badge>
+            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1 text-xs px-2 py-1'>
+                <CheckCircle className='w-3 h-3' />
+                Confirmado
+              </Badge>
           ) : (
             <DialogModificarPrecio
               isAuthorized={true}

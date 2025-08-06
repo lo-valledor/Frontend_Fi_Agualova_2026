@@ -76,16 +76,19 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center space-x-2 sm:space-x-3 min-w-0'>
+        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+          <div className='p-1 sm:p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md flex-shrink-0'>
+            <CircuitBoard className='h-3 w-3 sm:h-4 sm:w-4 text-sky-600 dark:text-sky-400' />
+          </div>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[120px] lg:max-w-[180px]'
+              className='font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[120px] lg:max-w-[180px]'
               title={medidor.serie}
             >
               {medidor.serie}
             </div>
             <div
-              className='text-xs text-gray-500 dark:text-gray-400 truncate'
+              className='text-xs text-slate-500 dark:text-slate-400 font-mono truncate'
               title={`Código: ${medidor.codigo}`}
             >
               C: {medidor.codigo}
@@ -105,17 +108,19 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center space-x-1 sm:space-x-2 min-w-0'>
-          <CircuitBoard className='h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0' />
+        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+          <div className='p-1 sm:p-1.5 bg-violet-100 dark:bg-violet-900/30 rounded-md flex-shrink-0'>
+            <CircuitBoard className='h-3 w-3 sm:h-4 sm:w-4 text-violet-600 dark:text-violet-400' />
+          </div>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[140px]'
+              className='font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[140px]'
               title={medidor.marca}
             >
               {medidor.marca}
             </div>
             <div
-              className='text-xs text-gray-500 dark:text-gray-400 truncate max-w-[100px] lg:max-w-[140px]'
+              className='text-xs text-slate-500 dark:text-slate-400 truncate max-w-[100px] lg:max-w-[140px]'
               title={medidor.modelo}
             >
               {medidor.modelo}
@@ -135,9 +140,14 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm whitespace-nowrap'>
-          {medidor.fechaInicio}
-        </span>
+        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+          <div className='p-1 sm:p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md flex-shrink-0'>
+            <MapPin className='h-3 w-3 sm:h-4 sm:w-4 text-amber-600 dark:text-amber-400' />
+          </div>
+          <span className='font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm whitespace-nowrap'>
+            {medidor.fechaInicio}
+          </span>
+        </div>
       );
     },
     minSize: 100,
@@ -151,9 +161,14 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm'>
-          {medidor.digitos}
-        </span>
+        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+          <div className='p-1 sm:p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md flex-shrink-0'>
+            <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-emerald-600 dark:text-emerald-400' />
+          </div>
+          <span className='font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm'>
+            {medidor.digitos}
+          </span>
+        </div>
       );
     },
     minSize: 80,
@@ -167,9 +182,14 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <span className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm'>
-          {medidor.multiplicar}
-        </span>
+        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+          <div className='p-1 sm:p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-md flex-shrink-0'>
+            <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-orange-600 dark:text-orange-400' />
+          </div>
+          <span className='font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm'>
+            {medidor.multiplicar}
+          </span>
+        </div>
       );
     },
     minSize: 70,
@@ -185,7 +205,7 @@ export const columns = ({
       const { icon, variant, className, shortText, fullText } =
         getTipoBadgeProps(tipo);
       return (
-        <div className='flex items-center space-x-1 sm:space-x-2'>
+        <div className='flex items-center gap-1 sm:gap-2'>
           {icon}
           <Badge variant={variant} className={className} title={fullText}>
             <span className='hidden sm:inline'>{tipo}</span>
@@ -205,11 +225,13 @@ export const columns = ({
     cell: ({ row }) => {
       const medidor = row.original;
       return (
-        <div className='flex items-center space-x-1 sm:space-x-2 min-w-0'>
-          <CircuitBoard className='h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0' />
+        <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+          <div className='p-1 sm:p-1.5 bg-cyan-100 dark:bg-cyan-900/30 rounded-md flex-shrink-0'>
+            <CircuitBoard className='h-3 w-3 sm:h-4 sm:w-4 text-cyan-600 dark:text-cyan-400' />
+          </div>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[120px]'
+              className='font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[120px]'
               title={medidor.codigoAcometida}
             >
               {medidor.codigoAcometida}
@@ -227,10 +249,12 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Ubicación' />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center space-x-1 sm:space-x-2 min-w-0'>
-        <MapPin className='h-3 w-3 sm:h-4 sm:w-4 text-gray-500 flex-shrink-0' />
+      <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+        <div className='p-1 sm:p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md flex-shrink-0'>
+          <MapPin className='h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400' />
+        </div>
         <span
-          className='font-medium text-gray-900 dark:text-gray-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[140px]'
+          className='font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm truncate max-w-[100px] lg:max-w-[140px]'
           title={row.getValue('ubicacion')}
         >
           {row.getValue('ubicacion')}

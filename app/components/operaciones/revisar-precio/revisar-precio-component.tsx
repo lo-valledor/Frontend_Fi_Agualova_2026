@@ -450,9 +450,9 @@ export default function RevisarPrecioComponent({
 
   return (
     <div className='min-h-screen '>
-      <div className='container mx-auto p-2 space-y-3'>
+      <div className='container mx-auto p-1 space-y-2'>
         {/* Modern Header */}
-        <div className='flex items-center gap-2 py-1 border-b border-slate-200 dark:border-slate-700'>
+        <div className='flex items-center gap-2 py-0.5 border-b border-slate-200 dark:border-slate-700'>
           <div className='flex-1'>
             <h1 className='text-xl sm:text-2xl lg:text-3xl font-bold bg-clip-text text-sky-900 dark:text-sky-100'>
               Revisar Precio
@@ -461,13 +461,13 @@ export default function RevisarPrecioComponent({
         </div>
 
         {/* Validación de Usuario */}
-        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50 pb-3'>
+        <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50 pb-2'>
           <Collapsible
             open={isValidacionOpen}
             onOpenChange={setIsValidacionOpen}
           >
             <div
-              className='flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
+              className='flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
               onClick={() => setIsValidacionOpen(!isValidacionOpen)}
             >
               <div className='flex items-center gap-4'>
@@ -503,8 +503,8 @@ export default function RevisarPrecioComponent({
             </div>
 
             <CollapsibleContent>
-              <CardContent className='px-6 pb-6 space-y-6'>
-                <div className='grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 items-end'>
+              <CardContent className='px-4 pb-4 space-y-4'>
+                <div className='grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 items-end'>
                   <div className='space-y-2 w-full lg:col-span-2'>
                     <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
                       <KeyIcon className='w-4 h-4' />
@@ -535,7 +535,7 @@ export default function RevisarPrecioComponent({
 
                 {/* Resumen de selección y botón confirmar */}
                 {isAuthorized && (
-                  <div className='border-t pt-4 lg:pt-6 space-y-4'>
+                  <div className='border-t pt-3 lg:pt-4 space-y-3'>
                     <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                       <div className='space-y-1'>
                         <h3 className='font-medium text-slate-900 dark:text-slate-100 text-sm sm:text-base'>
@@ -616,12 +616,12 @@ export default function RevisarPrecioComponent({
 
         {/* Tablas de Precios con Tabs */}
         <Card className='border-0 shadow-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/50'>
-          <CardContent className='pb-3'>
+          <CardContent className='pb-2'>
             <Tabs defaultValue='enel' className='w-full'>
               <TabsList className='w-full justify-start rounded-none border-b bg-transparent p-0'>
                 <TabsTrigger
                   value='enel'
-                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-blue-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
                 >
                   <Building2 className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                   <span className='hidden sm:inline'>Valores Enel</span>
@@ -629,7 +629,7 @@ export default function RevisarPrecioComponent({
                 </TabsTrigger>
                 <TabsTrigger
                   value='enerlova'
-                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
+                  className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-emerald-500 data-[state=active]:text-foreground data-[state=active]:shadow-none'
                 >
                   <BarChartIcon className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
                   <span className='hidden sm:inline'>Precios Enerlova</span>
@@ -637,7 +637,7 @@ export default function RevisarPrecioComponent({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value='enel' className='space-y-3 sm:space-y-4 pt-4 sm:pt-6'>
+              <TabsContent value='enel' className='space-y-2 pt-3 sm:pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div>
                     <h3 className='text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100'>
@@ -675,7 +675,7 @@ export default function RevisarPrecioComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value='enerlova' className='space-y-3 sm:space-y-4 pt-4 sm:pt-6'>
+              <TabsContent value='enerlova' className='space-y-2 pt-3 sm:pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div>
                     <h3 className='text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100'>
@@ -697,7 +697,7 @@ export default function RevisarPrecioComponent({
                 </div>
 
                 {/* Selector de ciclo */}
-                <div className='flex flex-col lg:flex-row gap-3 lg:gap-4 items-start lg:items-end'>
+                <div className='flex flex-col lg:flex-row gap-2 lg:gap-3 items-start lg:items-end'>
                   <div className='space-y-2 flex-1 w-full'>
                     <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
                       <ClockIcon className='w-3 h-3 sm:w-4 sm:h-4' />
