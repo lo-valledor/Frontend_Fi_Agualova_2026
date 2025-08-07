@@ -143,7 +143,7 @@ export function ConfirmationDialog({
           <Button
             onClick={onConfirm}
             disabled={isSubmitting || (showClaveSelect && selectedClave === '0')}
-            className={`h-8 px-3 text-xs ${
+            className={`h-8 px-3 text-xs text-white ${
               isDestructive
                 ? 'bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500'
                 : alertColor === 'blue'

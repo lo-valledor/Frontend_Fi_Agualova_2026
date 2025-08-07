@@ -17,7 +17,6 @@ import {
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import { ScrollArea } from '~/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
@@ -796,7 +795,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Propietarios */}
       <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-        <DialogContent className='min-w-full max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -813,7 +812,8 @@ export function ContractFormModal({
             </div>
           </DialogHeader>
 
-          <div className='space-y-4'>
+          <div className='space-y-4 overflow-auto'>
+            {/* Barra de búsqueda */}
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
               <Input
@@ -824,20 +824,23 @@ export function ContractFormModal({
               />
             </div>
 
-            <div className='border rounded-lg overflow-hidden'>
-              <ScrollArea className='h-[50vh]'>
-                <Table>
-                  <TableHeader className='bg-muted/50'>
+            {/* Tabla de propietarios con scroll horizontal */}
+            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+              <div className='h-full overflow-auto'>
+                <Table className='min-w-[600px] relative'>
+                  <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                     <TableRow>
-                      <TableHead>RUT</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead className='hidden md:table-cell'>
+                      <TableHead className='min-w-[120px]'>RUT</TableHead>
+                      <TableHead className='min-w-[200px]'>Nombre</TableHead>
+                      <TableHead className='hidden md:table-cell min-w-[150px]'>
                         Comuna
                       </TableHead>
-                      <TableHead className='hidden lg:table-cell'>
+                      <TableHead className='hidden lg:table-cell min-w-[140px]'>
                         Teléfono
                       </TableHead>
-                      <TableHead className='text-center'>Acción</TableHead>
+                      <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50 z-20'>
+                        Acción
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -845,14 +848,22 @@ export function ContractFormModal({
                       <TableRow>
                         <TableCell
                           colSpan={5}
-                          className='text-center py-8 text-muted-foreground'
+                          className='text-center py-12 text-muted-foreground'
                         >
-                          <div className='flex flex-col items-center gap-2'>
-                            <Search className='h-8 w-8 opacity-50' />
-                            <p>
-                              No se encontraron propietarios con los criterios
-                              de búsqueda.
-                            </p>
+                          <div className='flex flex-col items-center gap-3'>
+                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <Search className='h-8 w-8 opacity-50' />
+                            </div>
+                            <div className='space-y-1'>
+                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                No se encontraron propietarios
+                              </p>
+                              <p className='text-sm'>
+                                {busquedaPropietario
+                                  ? `No hay resultados para "${busquedaPropietario}"`
+                                  : 'Escriba en el campo de búsqueda para filtrar propietarios'}
+                              </p>
+                            </div>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -863,27 +874,29 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono'>
+                          <Badge variant='outline' className='font-mono text-xs'>
                             {p.rut}
                           </Badge>
                         </TableCell>
                         <TableCell className='font-medium'>
                           <div className='flex items-center gap-2'>
-                            <User className='h-4 w-4 text-muted-foreground' />
-                            {p.nombre}
+                            <User className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <div className='min-w-0'>
+                              <p className='truncate'>{p.nombre}</p>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell className='hidden md:table-cell'>
-                          {p.comuna}
+                          <p className='truncate'>{p.comuna}</p>
                         </TableCell>
                         <TableCell className='hidden lg:table-cell'>
-                          {p.telefono}
+                          <p className='truncate'>{p.telefono}</p>
                         </TableCell>
-                        <TableCell className='text-center'>
+                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectPropietario(p.rut)}
-                            className='bg-emerald-600 hover:bg-emerald-700 text-white'
+                            className='bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -892,7 +905,20 @@ export function ContractFormModal({
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
+              </div>
+
+              {/* Información de resultados */}
+              {propietariosFiltrados.length > 0 && (
+                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                  <span>
+                    Mostrando {propietariosFiltrados.length} de{' '}
+                    {propietario.length} propietarios
+                  </span>
+                  <span className='hidden sm:inline'>
+                    💡 Desplácese horizontalmente para ver más columnas
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
@@ -900,7 +926,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Locales */}
       <Dialog open={modalLocal} onOpenChange={setModalLocal}>
-        <DialogContent className='min-w-full max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
@@ -917,7 +943,8 @@ export function ContractFormModal({
             </div>
           </DialogHeader>
 
-          <div className='space-y-4'>
+          <div className='space-y-4 overflow-auto'>
+            {/* Barra de búsqueda */}
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
               <Input
@@ -928,23 +955,26 @@ export function ContractFormModal({
               />
             </div>
 
-            <div className='border rounded-lg overflow-hidden'>
-              <ScrollArea className='h-[50vh]'>
-                <Table>
-                  <TableHeader className='bg-muted/50'>
+            {/* Tabla de locales con scroll horizontal */}
+            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+              <div className='h-full overflow-auto'>
+                <Table className='min-w-[700px] relative'>
+                  <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                     <TableRow>
-                      <TableHead>Número Local</TableHead>
-                      <TableHead>Empresa</TableHead>
-                      <TableHead className='hidden md:table-cell'>
+                      <TableHead className='min-w-[120px]'>Número Local</TableHead>
+                      <TableHead className='min-w-[180px]'>Empresa</TableHead>
+                      <TableHead className='hidden md:table-cell min-w-[160px]'>
                         Propietario
                       </TableHead>
-                      <TableHead className='hidden lg:table-cell'>
+                      <TableHead className='hidden lg:table-cell min-w-[120px]'>
                         Sector
                       </TableHead>
-                      <TableHead className='hidden sm:table-cell'>
+                      <TableHead className='hidden sm:table-cell min-w-[100px]'>
                         Estado
                       </TableHead>
-                      <TableHead className='text-center'>Acción</TableHead>
+                      <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50 z-20'>
+                        Acción
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -952,14 +982,22 @@ export function ContractFormModal({
                       <TableRow>
                         <TableCell
                           colSpan={6}
-                          className='text-center py-8 text-muted-foreground'
+                          className='text-center py-12 text-muted-foreground'
                         >
-                          <div className='flex flex-col items-center gap-2'>
-                            <Search className='h-8 w-8 opacity-50' />
-                            <p>
-                              No se encontraron locales con los criterios de
-                              búsqueda.
-                            </p>
+                          <div className='flex flex-col items-center gap-3'>
+                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <Search className='h-8 w-8 opacity-50' />
+                            </div>
+                            <div className='space-y-1'>
+                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                No se encontraron locales
+                              </p>
+                              <p className='text-sm'>
+                                {busquedaLocal
+                                  ? `No hay resultados para "${busquedaLocal}"`
+                                  : 'Escriba en el campo de búsqueda para filtrar locales'}
+                              </p>
+                            </div>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -970,21 +1008,23 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono'>
+                          <Badge variant='outline' className='font-mono text-xs'>
                             {l.numeroLocal}
                           </Badge>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className='font-medium'>
                           <div className='flex items-center gap-2'>
-                            <Building2 className='h-4 w-4 text-muted-foreground' />
-                            {l.empresa}
+                            <Building2 className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <div className='min-w-0'>
+                              <p className='truncate'>{l.empresa}</p>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell className='hidden md:table-cell'>
-                          {l.propietario}
+                          <p className='truncate'>{l.propietario}</p>
                         </TableCell>
                         <TableCell className='hidden lg:table-cell'>
-                          {l.sector}
+                          <p className='truncate'>{l.sector}</p>
                         </TableCell>
                         <TableCell className='hidden sm:table-cell'>
                           <Badge
@@ -993,15 +1033,16 @@ export function ContractFormModal({
                                 ? 'default'
                                 : 'secondary'
                             }
+                            className='text-xs'
                           >
                             {l.estadoHabilitado}
                           </Badge>
                         </TableCell>
-                        <TableCell className='text-center'>
+                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectLocal(l.numeroLocal)}
-                            className='bg-blue-600 hover:bg-blue-700 text-white'
+                            className='bg-blue-600 hover:bg-blue-700 text-white h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -1010,7 +1051,20 @@ export function ContractFormModal({
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
+              </div>
+
+              {/* Información de resultados */}
+              {localesFiltrados.length > 0 && (
+                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                  <span>
+                    Mostrando {localesFiltrados.length} de{' '}
+                    {local.length} locales
+                  </span>
+                  <span className='hidden sm:inline'>
+                    💡 Desplácese horizontalmente para ver más columnas
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
@@ -1018,7 +1072,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Madres */}
       <Dialog open={modalMadres} onOpenChange={setModalMadres}>
-        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
@@ -1035,7 +1089,8 @@ export function ContractFormModal({
             </div>
           </DialogHeader>
 
-          <div className='space-y-4'>
+          <div className='space-y-4 overflow-auto'>
+            {/* Barra de búsqueda */}
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
               <Input
@@ -1046,23 +1101,26 @@ export function ContractFormModal({
               />
             </div>
 
-            <div className='border rounded-lg overflow-hidden'>
-              <ScrollArea className='h-[50vh]'>
-                <Table>
-                  <TableHeader className='bg-muted/50'>
+            {/* Tabla de contratos madre con scroll horizontal */}
+            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+              <div className='h-full overflow-auto'>
+                <Table className='min-w-[800px] relative'>
+                  <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                     <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Propietario</TableHead>
-                      <TableHead className='hidden md:table-cell'>
+                      <TableHead className='min-w-[120px]'>Código</TableHead>
+                      <TableHead className='min-w-[200px]'>Propietario</TableHead>
+                      <TableHead className='hidden md:table-cell min-w-[180px]'>
                         Cliente
                       </TableHead>
-                      <TableHead className='hidden lg:table-cell'>
+                      <TableHead className='hidden lg:table-cell min-w-[150px]'>
                         Local
                       </TableHead>
-                      <TableHead className='hidden sm:table-cell'>
+                      <TableHead className='hidden sm:table-cell min-w-[120px]'>
                         Tipo
                       </TableHead>
-                      <TableHead className='text-center'>Acción</TableHead>
+                      <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50 z-20'>
+                        Acción
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1070,14 +1128,22 @@ export function ContractFormModal({
                       <TableRow>
                         <TableCell
                           colSpan={6}
-                          className='text-center py-8 text-muted-foreground'
+                          className='text-center py-12 text-muted-foreground'
                         >
-                          <div className='flex flex-col items-center gap-2'>
-                            <Search className='h-8 w-8 opacity-50' />
-                            <p>
-                              No se encontraron contratos madre con los
-                              criterios de búsqueda.
-                            </p>
+                          <div className='flex flex-col items-center gap-3'>
+                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <Search className='h-8 w-8 opacity-50' />
+                            </div>
+                            <div className='space-y-1'>
+                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                No se encontraron contratos madre
+                              </p>
+                              <p className='text-sm'>
+                                {busquedaMadres
+                                  ? `No hay resultados para "${busquedaMadres}"`
+                                  : 'Escriba en el campo de búsqueda para filtrar contratos madre'}
+                              </p>
+                            </div>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -1088,30 +1154,34 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono'>
+                          <Badge variant='outline' className='font-mono text-xs'>
                             {m.codigoContrato}
                           </Badge>
                         </TableCell>
                         <TableCell className='font-medium'>
                           <div className='flex items-center gap-2'>
-                            <User className='h-4 w-4 text-muted-foreground' />
-                            {m.nombrePropietario}
+                            <User className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <div className='min-w-0'>
+                              <p className='truncate'>{m.nombrePropietario}</p>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell className='hidden md:table-cell'>
-                          {m.nombreCliente}
+                          <p className='truncate'>{m.nombreCliente}</p>
                         </TableCell>
                         <TableCell className='hidden lg:table-cell'>
-                          {m.numeroLocal}
+                          <p className='truncate'>{m.numeroLocal}</p>
                         </TableCell>
                         <TableCell className='hidden sm:table-cell'>
-                          <Badge variant='secondary'>{m.tipoContrato}</Badge>
+                          <Badge variant='secondary' className='text-xs'>
+                            {m.tipoContrato}
+                          </Badge>
                         </TableCell>
-                        <TableCell className='text-center'>
+                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectMadre(m.codigoContrato)}
-                            className='bg-purple-600 hover:bg-purple-700 text-white'
+                            className='bg-purple-600 hover:bg-purple-700 text-white h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -1120,7 +1190,20 @@ export function ContractFormModal({
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
+              </div>
+
+              {/* Información de resultados */}
+              {madresFiltradas.length > 0 && (
+                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                  <span>
+                    Mostrando {madresFiltradas.length} de{' '}
+                    {madres.length} contratos madre
+                  </span>
+                  <span className='hidden sm:inline'>
+                    💡 Desplácese horizontalmente para ver más columnas
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
@@ -1128,7 +1211,7 @@ export function ContractFormModal({
 
       {/* Modal de Selección de Comunas */}
       <Dialog open={modalComuna} onOpenChange={setModalComuna}>
-        <DialogContent className='w-[95vw] max-w-6xl sm:w-full max-h-[80vh] overflow-hidden'>
+        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
@@ -1145,7 +1228,8 @@ export function ContractFormModal({
             </div>
           </DialogHeader>
 
-          <div className='space-y-4'>
+          <div className='space-y-4 overflow-auto'>
+            {/* Barra de búsqueda */}
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
               <Input
@@ -1156,17 +1240,20 @@ export function ContractFormModal({
               />
             </div>
 
-            <div className='border rounded-lg overflow-hidden'>
-              <ScrollArea className='h-[50vh]'>
-                <Table>
-                  <TableHeader className='bg-muted/50'>
+            {/* Tabla de comunas con scroll horizontal */}
+            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+              <div className='h-full overflow-auto'>
+                <Table className='min-w-[500px] relative'>
+                  <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                     <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead className='hidden md:table-cell'>
+                      <TableHead className='min-w-[120px]'>Código</TableHead>
+                      <TableHead className='min-w-[200px]'>Nombre</TableHead>
+                      <TableHead className='hidden md:table-cell min-w-[160px]'>
                         Región
                       </TableHead>
-                      <TableHead className='text-center'>Acción</TableHead>
+                      <TableHead className='text-center min-w-[120px] sticky right-0 bg-muted/50 z-20'>
+                        Acción
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -1174,14 +1261,22 @@ export function ContractFormModal({
                       <TableRow>
                         <TableCell
                           colSpan={4}
-                          className='text-center py-8 text-muted-foreground'
+                          className='text-center py-12 text-muted-foreground'
                         >
-                          <div className='flex flex-col items-center gap-2'>
-                            <Search className='h-8 w-8 opacity-50' />
-                            <p>
-                              No se encontraron comunas con los criterios de
-                              búsqueda.
-                            </p>
+                          <div className='flex flex-col items-center gap-3'>
+                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <Search className='h-8 w-8 opacity-50' />
+                            </div>
+                            <div className='space-y-1'>
+                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                No se encontraron comunas
+                              </p>
+                              <p className='text-sm'>
+                                {busquedaComuna
+                                  ? `No hay resultados para "${busquedaComuna}"`
+                                  : 'Escriba en el campo de búsqueda para filtrar comunas'}
+                              </p>
+                            </div>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -1192,24 +1287,26 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono'>
+                          <Badge variant='outline' className='font-mono text-xs'>
                             {c.codigo}
                           </Badge>
                         </TableCell>
                         <TableCell className='font-medium'>
                           <div className='flex items-center gap-2'>
-                            <MapPin className='h-4 w-4 text-muted-foreground' />
-                            {c.nombre}
+                            <MapPin className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <div className='min-w-0'>
+                              <p className='truncate'>{c.nombre}</p>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell className='hidden md:table-cell'>
-                          {c.region}
+                          <p className='truncate'>{c.region}</p>
                         </TableCell>
-                        <TableCell className='text-center'>
+                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectComuna(c.codigo)}
-                            className='bg-orange-600 hover:bg-orange-700 text-white'
+                            className='bg-orange-600 hover:bg-orange-700 text-white h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -1218,7 +1315,20 @@ export function ContractFormModal({
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
+              </div>
+
+              {/* Información de resultados */}
+              {comunasFiltradas.length > 0 && (
+                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                  <span>
+                    Mostrando {comunasFiltradas.length} de{' '}
+                    {comuna.length} comunas
+                  </span>
+                  <span className='hidden sm:inline'>
+                    💡 Desplácese horizontalmente para ver más columnas
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>

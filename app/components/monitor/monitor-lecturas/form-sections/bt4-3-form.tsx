@@ -97,6 +97,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     dsFecha: '',
     dsHora: '',
   });
+  // Estados para inputs de demanda como strings para preservar formato
+  const [dpInputValue, setDpInputValue] = useState('');
+  const [dsInputValue, setDsInputValue] = useState('');
+  // Estados para validaciones de coma
+  const [showComaWarningDP, setShowComaWarningDP] = useState(false);
+  const [showComaWarningDS, setShowComaWarningDS] = useState(false);
   const [showConsumoExcesivoDPDialog, setShowConsumoExcesivoDPDialog] =
     useState(false);
   const [showConsumoExcesivoDSDialog, setShowConsumoExcesivoDSDialog] =
@@ -112,6 +118,11 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       dsFecha: '',
       dsHora: '',
     });
+    // Inicializar inputs de demanda
+    setDpInputValue('');
+    setDsInputValue('');
+    setShowComaWarningDP(false);
+    setShowComaWarningDS(false);
   }, []);
 
   // Calcular consumo de energía activa (función estable)
@@ -243,6 +254,80 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     [digito]
   );
 
+  // Detectar si el usuario probablemente olvidó una coma decimal
+  const detectarOlvidoComa = useCallback((value: string) => {
+    if (!value || value.length < 3) return false;
+
+    // Verificar si el valor es un número entero grande que podría necesitar coma
+    const numValue = parseFloat(value.replace(',', '.'));
+
+    // Si el valor es mayor a 99 y no tiene coma, podría ser un olvido
+    // Por ejemplo: 1201 podría ser 12,01
+    if (numValue > 99 && !value.includes(',') && !value.includes('.') && value.length >= 3) {
+      return true;
+    }
+
+    return false;
+  }, []);
+
+  // Convertir valor con coma a número
+  const convertirComANumero = useCallback((value: string) => {
+    if (!value) return 0;
+    return parseFloat(value.replace(',', '.')) || 0;
+  }, []);
+
+  // Manejar cambio en demanda punta
+  const handleDemandaPuntaChange = useCallback((value: string) => {
+    setDpInputValue(value);
+
+    // Validar que solo contenga números, coma o punto
+    if (value && !/^[\d,.-]*$/.test(value)) {
+      toast.error('Solo se permiten números y comas decimales en Demanda Punta');
+      return;
+    }
+
+    // Detectar posible olvido de coma
+    if (detectarOlvidoComa(value)) {
+      setShowComaWarningDP(true);
+    } else {
+      setShowComaWarningDP(false);
+    }
+
+    const numeroValue = convertirComANumero(value);
+    setDemandaData(prev => ({ ...prev, dp: numeroValue }));
+
+    // Verificar si la demanda es excesiva
+    if (numeroValue > 500) {
+      setTimeout(() => setShowConsumoExcesivoDPDialog(true), 100);
+    }
+  }, [detectarOlvidoComa, convertirComANumero]);
+
+  // Manejar cambio en demanda suministrada
+  const handleDemandaSuministradaChange = useCallback((value: string) => {
+    setDsInputValue(value);
+
+    // Validar que solo contenga números, coma o punto
+    if (value && !/^[\d,.-]*$/.test(value)) {
+      toast.error('Solo se permiten números y comas decimales en Demanda Suministrada');
+      return;
+    }
+
+    // Detectar posible olvido de coma
+    if (detectarOlvidoComa(value)) {
+      setShowComaWarningDS(true);
+    } else {
+      setShowComaWarningDS(false);
+    }
+
+    const numeroValue = convertirComANumero(value);
+    setDemandaData(prev => ({ ...prev, ds: numeroValue }));
+
+    // Verificar si la demanda es excesiva
+    if (numeroValue > 500) {
+      setTimeout(() => setShowConsumoExcesivoDSDialog(true), 100);
+    }
+  }, [detectarOlvidoComa, convertirComANumero]);
+
   // Detectar si el consumo de energía activa es excesivo
   const esConsumoActivaExcesivo = useCallback(() => {
     if (!consumoActivaCalculado || isNaN(Number(consumoActivaCalculado))) {
@@ -371,21 +456,13 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     [calcularConsumoReactiva, validarDigitos, maxValuePermitido, digito]
   );
 
-  // Actualizar datos de demanda
+  // Actualizar datos de demanda (solo para fecha y hora)
   const handleDemandaChange = useCallback(
-    (field: keyof typeof demandaData, value: string | number) => {
+    (field: 'dpFecha' | 'dpHora' | 'dsFecha' | 'dsHora', value: string) => {
       setDemandaData(prev => ({
         ...prev,
         [field]: value,
       }));
-
-      // Verificar si la demanda es excesiva después de actualizar
-      if (field === 'dp' && typeof value === 'number' && value > 500) {
-        setTimeout(() => setShowConsumoExcesivoDPDialog(true), 100);
-      }
-      if (field === 'ds' && typeof value === 'number' && value > 500) {
-        setTimeout(() => setShowConsumoExcesivoDSDialog(true), 100);
-      }
     },
     []
   );
@@ -899,18 +976,25 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 <div>
                   <Label className='text-xs text-muted-foreground'>Valor kW</Label>
                   <Input
-                    type='number'
-                    step='0.01'
-                    placeholder='0.00'
-                    value={demandaData.dp.toString()}
+                    type='text'
+                    placeholder='0,00'
+                    value={dpInputValue}
                     onChange={e => {
-                      const val = parseFloat(e.target.value);
-                      if (val < 0) return toast.error('No se permiten valores negativos');
-                      handleDemandaChange('dp', val || 0);
+                      const val = e.target.value;
+                      if (val && convertirComANumero(val) < 0) {
+                        return toast.error('No se permiten valores negativos');
+                      }
+                      handleDemandaPuntaChange(val);
                     }}
                     disabled={!isActivaValidated || !isReactivaValidated}
                     className='h-8 font-mono text-sm'
                   />
+                  {showComaWarningDP && (
+                    <div className='text-xs text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1'>
+                      <AlertCircle className='h-3 w-3' />
+                      ¿Olvidó la coma decimal? Ej: 12,01
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label className='text-xs text-muted-foreground'>Fecha</Label>
@@ -946,18 +1030,25 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                 <div>
                   <Label className='text-xs text-muted-foreground'>Valor kW</Label>
                   <Input
-                    type='number'
-                    step='0.01'
-                    placeholder='0.00'
-                    value={demandaData.ds.toString()}
+                    type='text'
+                    placeholder='0,00'
+                    value={dsInputValue}
                     onChange={e => {
-                      const val = parseFloat(e.target.value);
-                      if (val < 0) return toast.error('No se permiten valores negativos');
-                      handleDemandaChange('ds', val || 0);
+                      const val = e.target.value;
+                      if (val && convertirComANumero(val) < 0) {
+                        return toast.error('No se permiten valores negativos');
+                      }
+                      handleDemandaSuministradaChange(val);
                     }}
                     disabled={!isActivaValidated || !isReactivaValidated}
                     className='h-8 font-mono text-sm'
                   />
+                  {showComaWarningDS && (
+                    <div className='text-xs text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1'>
+                      <AlertCircle className='h-3 w-3' />
+                      ¿Olvidó la coma decimal? Ej: 12,01
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label className='text-xs text-muted-foreground'>Fecha</Label>

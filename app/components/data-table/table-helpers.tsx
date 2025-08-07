@@ -1,4 +1,5 @@
-import { Edit, Eye, Trash2 } from 'lucide-react';
+/* eslint-disable unused-imports/no-unused-vars */
+import { Edit, Eye } from 'lucide-react';
 
 import React from 'react';
 
@@ -45,15 +46,16 @@ export function TableActions({
       {showEdit && (
         <Button
           variant='outline'
-          size='icon'
+          size='sm'
           onClick={() => onEdit?.(item)}
           title='Editar'
           disabled={loadingEdit}
         >
           <Edit className={`h-4 w-4${loadingEdit ? ' animate-spin' : ''}`} />
+          Modificar
         </Button>
       )}
-      {showDelete && (
+      {/* {showDelete && (
         <Button
           variant='destructive'
           size='icon'
@@ -65,7 +67,7 @@ export function TableActions({
             className={`h-4 w-4${loadingDelete ? ' animate-spin' : ''}`}
           />
         </Button>
-      )}
+      )} */}
     </div>
   );
 }

@@ -57,46 +57,49 @@ export default function CiclosFacturacionComponent({
   };
 
   return (
-    <div className='container mx-auto p-3 md:p-6 space-y-6'>
-      {/* Header */}
-      <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-        <div className='space-y-1'>
-          <div className='flex items-center gap-3'>
-            <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
+        {/* Header */}
+        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <div>
+            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
               Ciclos de Facturación
             </h1>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              Gestiona los ciclos de facturación del sistema
+            </p>
           </div>
+          <Button
+            onClick={handleAddCiclo}
+            className='bg-sky-600 hover:bg-sky-700 text-white'
+          >
+            <Plus className='mr-2 h-4 w-4' />
+            Agregar Ciclo de Facturación
+          </Button>
         </div>
-        <Button
-          onClick={handleAddCiclo}
-          className='bg-sky-600 hover:bg-sky-700 text-white'
-        >
-          <Plus className='mr-2 h-4 w-4' />
-          Agregar Ciclo de Facturación
-        </Button>
+
+        {/* Table */}
+        <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+          <CardContent className='relative'>
+            <DataTable
+              columns={columns({
+                onEdit: handleEditCiclo,
+                onDelete: handleDeleteCiclo,
+              })}
+              data={ciclosFacturacion}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Modal */}
+        <CiclosFacturacionModalForm
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSuccess={handleCicloSuccess}
+          ciclo={selectedCiclo}
+          mode={modalMode}
+        />
       </div>
-
-      {/* Table */}
-      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-        <CardContent className='relative'>
-          <DataTable
-            columns={columns({
-              onEdit: handleEditCiclo,
-              onDelete: handleDeleteCiclo,
-            })}
-            data={ciclosFacturacion}
-          />
-        </CardContent>
-      </Card>
-
-      {/* Modal */}
-      <CiclosFacturacionModalForm
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={handleCicloSuccess}
-        ciclo={selectedCiclo}
-        mode={modalMode}
-      />
     </div>
   );
 }
