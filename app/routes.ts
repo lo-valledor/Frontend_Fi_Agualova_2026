@@ -115,6 +115,10 @@ export default [
             'routes/dashboard/reportes/consultar-contrato.tsx'
           ),
           route(
+            'consultar-contrato/contrato/:contratoId',
+            'routes/dashboard/reportes/consultar-contrato/contrato.tsx'
+          ),
+          route(
             'resumen-facturacion',
             'routes/dashboard/reportes/resumen-facturacion.tsx'
           ),
