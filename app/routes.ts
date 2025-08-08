@@ -130,6 +130,10 @@ export default [
             'roles-permisos',
             'routes/dashboard/configuracion/roles-permisos.tsx'
           ),
+          route(
+            'permisos-usuarios',
+            'routes/dashboard/configuracion/permisos-usuarios.tsx'
+          ),
         ]),
       ]),
     ]),
