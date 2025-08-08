@@ -1,14 +1,4 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import {
-  Building,
-  Calendar,
-  FileText,
-  Repeat,
-  ShieldCheck,
-  Store,
-  User,
-  Zap,
-} from 'lucide-react';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import {
@@ -87,9 +77,6 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-          <div className='p-1 sm:p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md flex-shrink-0'>
-            <FileText className='h-3 w-3 sm:h-4 sm:w-4 text-sky-600 dark:text-sky-400' />
-          </div>
           <span className='font-mono text-xs sm:text-sm truncate'>
             {row.original.codigoContrato}
           </span>
@@ -107,7 +94,6 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='space-y-1 min-w-0 max-w-[200px] lg:max-w-none'>
         <div className='flex items-center gap-1 sm:gap-2'>
-          <User className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
           <span
             className='text-xs sm:text-sm font-medium truncate'
             title={row.original.nombreCliente}
@@ -116,7 +102,6 @@ export const columns = ({
           </span>
         </div>
         <div className='flex items-center gap-1 sm:gap-2'>
-          <Building className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
           <span
             className='text-xs sm:text-sm text-muted-foreground truncate'
             title={row.original.nombrePropietario}
@@ -180,7 +165,6 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-          <Store className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
           <span
             className='text-xs sm:text-sm truncate max-w-[120px] lg:max-w-none'
             title={row.original.local}
@@ -201,7 +185,6 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className='flex items-center gap-1 sm:gap-2'>
-          <Calendar className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
           <span className='text-xs sm:text-sm whitespace-nowrap'>
             {formatDateToSpanish(row.original.fechaInicio)}
           </span>
@@ -236,7 +219,6 @@ export const columns = ({
       }
       return (
         <div className='flex items-center gap-1 sm:gap-2'>
-          <Calendar className='h-3 w-3 sm:h-4 sm:w-4 text-slate-500 flex-shrink-0' />
           <span className='text-xs sm:text-sm whitespace-nowrap'>
             {fechaTermino}
           </span>
@@ -258,7 +240,6 @@ export const columns = ({
           className='bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs px-1 sm:px-2'
           title={row.original.cicloFacturacion}
         >
-          <Repeat className='mr-1 h-3 w-3 sm:mr-2 sm:h-3.5 sm:w-3.5 flex-shrink-0' />
           <span className='truncate max-w-[60px] sm:max-w-none'>
             {row.original.cicloFacturacion}
           </span>
@@ -276,7 +257,6 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className='flex items-center gap-1 sm:gap-2'>
-          <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-amber-500 flex-shrink-0' />
           <span className='text-xs sm:text-sm font-semibold whitespace-nowrap'>
             {row.original.potenciaContratada}
           </span>
@@ -297,7 +277,6 @@ export const columns = ({
           variant='outline'
           className='bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs px-1 sm:px-2'
         >
-          <ShieldCheck className='mr-1 h-3 w-3 sm:mr-2 sm:h-3.5 sm:w-3.5 flex-shrink-0' />
           <span className='hidden sm:inline'>Liberado</span>
           <span className='sm:hidden'>Sí</span>
         </Badge>

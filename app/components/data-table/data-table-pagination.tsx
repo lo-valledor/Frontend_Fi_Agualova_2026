@@ -23,87 +23,75 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className='flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0 px-2 py-2'>
-      <div className='flex-1 text-xs sm:text-sm text-muted-foreground order-2 sm:order-1'>
-        <span className='hidden sm:inline'>
-          {table.getFilteredSelectedRowModel().rows.length} de{' '}
-          {table.getFilteredRowModel().rows.length} fila(s) seleccionada(s).
-        </span>
-        <span className='sm:hidden'>
-          {table.getFilteredSelectedRowModel().rows.length}/{table.getFilteredRowModel().rows.length} seleccionadas
-        </span>
+    <div className='flex items-center justify-between px-2 py-2'>
+      <div className='text-sm text-muted-foreground'>
+        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+          <span>
+            {table.getFilteredSelectedRowModel().rows.length} seleccionados
+          </span>
+        )}
       </div>
-      <div className='flex items-center space-x-2 sm:space-x-6 lg:space-x-8 order-1 sm:order-2'>
-        <div className='flex items-center space-x-1 sm:space-x-2'>
-          <p className='text-xs sm:text-sm font-medium hidden sm:block' lang='es'>
-            Filas por página
-          </p>
-          <p className='text-xs font-medium sm:hidden' lang='es'>
-            Filas
-          </p>
+      
+      <div className='flex items-center space-x-4'>
+        <div className='flex items-center space-x-2'>
+          <span className='text-sm'>Filas:</span>
           <Select
             value={`${table.getState().pagination.pageSize}`}
-            onValueChange={value => {
-              table.setPageSize(Number(value));
-            }}
+            onValueChange={value => table.setPageSize(Number(value))}
           >
-            <SelectTrigger className='h-7 sm:h-8 w-[60px] sm:w-[70px] text-xs sm:text-sm'>
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            <SelectTrigger className='h-8 w-16 text-sm'>
+              <SelectValue />
             </SelectTrigger>
             <SelectContent side='top'>
-              {[10, 20, 30, 40, 50].map(pageSize => (
-                <SelectItem key={pageSize} value={`${pageSize}`} className='text-xs sm:text-sm'>
+              {[10, 20, 50, 100].map(pageSize => (
+                <SelectItem key={pageSize} value={`${pageSize}`} className='text-sm'>
                   {pageSize}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <div className='flex w-[80px] sm:w-[100px] items-center justify-center text-xs sm:text-sm font-medium'>
-          <span className='hidden sm:inline'>
-            Página {table.getState().pagination.pageIndex + 1} de{' '}
-            {table.getPageCount()}
-          </span>
-          <span className='sm:hidden'>
-            {table.getState().pagination.pageIndex + 1}/{table.getPageCount()}
-          </span>
+
+        <div className='text-sm font-medium'>
+          Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
         </div>
-        <div className='flex items-center space-x-1 sm:space-x-2'>
+
+        <div className='flex items-center space-x-1'>
           <Button
             variant='outline'
-            className='hidden h-7 w-7 sm:h-8 sm:w-8 p-0 lg:flex'
+            size='sm'
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
+            className='h-8 w-8 p-0'
           >
-            <span className='sr-only'>Ir a la primera página</span>
-            <ChevronsLeft className='h-3 w-3 sm:h-4 sm:w-4' />
+            <ChevronsLeft className='h-4 w-4' />
           </Button>
           <Button
             variant='outline'
-            className='h-7 w-7 sm:h-8 sm:w-8 p-0'
+            size='sm'
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
+            className='h-8 w-8 p-0'
           >
-            <span className='sr-only'>Ir a la página anterior</span>
-            <ChevronLeft className='h-3 w-3 sm:h-4 sm:w-4' />
+            <ChevronLeft className='h-4 w-4' />
           </Button>
           <Button
             variant='outline'
-            className='h-7 w-7 sm:h-8 sm:w-8 p-0'
+            size='sm'
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
+            className='h-8 w-8 p-0'
           >
-            <span className='sr-only'>Ir a la página siguiente</span>
-            <ChevronRight className='h-3 w-3 sm:h-4 sm:w-4' />
+            <ChevronRight className='h-4 w-4' />
           </Button>
           <Button
             variant='outline'
-            className='hidden h-7 w-7 sm:h-8 sm:w-8 p-0 lg:flex'
+            size='sm'
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
+            className='h-8 w-8 p-0'
           >
-            <span className='sr-only'>Ir a la última página</span>
-            <ChevronsRight className='h-3 w-3 sm:h-4 sm:w-4' />
+            <ChevronsRight className='h-4 w-4' />
           </Button>
         </div>
       </div>

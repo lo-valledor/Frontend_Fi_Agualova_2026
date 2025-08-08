@@ -1,14 +1,4 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import {
-  Box,
-  Calendar,
-  DollarSign,
-  FileText,
-  Hash,
-  Settings,
-  Tag,
-  Zap,
-} from 'lucide-react';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
@@ -31,9 +21,6 @@ export const columns = ({
     ),
     cell: ({ row }) => (
       <div className='flex items-center gap-2 min-w-0'>
-        <div className='p-1 bg-sky-100 dark:bg-sky-900/30 rounded-md'>
-          <Hash className='h-3 w-3 sm:h-3.5 sm:w-3.5 text-sky-600 dark:text-sky-400' />
-        </div>
         <span
           className='font-mono text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100 truncate max-w-[100px] lg:max-w-[140px]'
           title={row.original.cuenta}
@@ -71,9 +58,6 @@ export const columns = ({
     ),
     cell: ({ row }) => (
       <div className='flex items-center gap-2 min-w-0'>
-        <div className='p-1 bg-blue-100 dark:bg-blue-900/30 rounded-md'>
-          <FileText className='h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-600 dark:text-blue-400' />
-        </div>
         <div
           className='font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100 truncate max-w-[150px] lg:max-w-[200px]'
           title={row.original.descripcion}
@@ -96,7 +80,6 @@ export const columns = ({
         className='flex items-center gap-1.5 bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs px-1 sm:px-2'
         title={row.original.tipo}
       >
-        <Settings className='w-3 h-3 sm:w-3.5 sm:h-3.5' />
         <span className='truncate max-w-[60px] sm:max-w-none'>
           {row.original.tipo}
         </span>
@@ -124,7 +107,6 @@ export const columns = ({
               : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200'
           }`}
         >
-          <Box className='w-3 h-3 sm:w-3.5 sm:h-3.5' />
           <span className='hidden sm:inline'>
             {esFijo ? 'Fijo' : 'Variable'}
           </span>
@@ -155,7 +137,6 @@ export const columns = ({
               : 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800'
           }`}
         >
-          <Calendar className='w-3 h-3 sm:w-3.5 sm:h-3.5' />
           <span className='hidden sm:inline'>
             {esPeriodico ? 'Periódico' : 'Eventual'}
           </span>
@@ -177,7 +158,6 @@ export const columns = ({
         className='flex items-center gap-1.5 bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800 text-xs px-1 sm:px-2'
         title={row.original.concepto}
       >
-        <DollarSign className='w-3 h-3 sm:w-3.5 sm:h-3.5' />
         <span className='truncate max-w-[80px] sm:max-w-none'>
           {row.original.concepto}
         </span>
@@ -197,7 +177,6 @@ export const columns = ({
         className='flex items-center gap-1.5 bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs px-1 sm:px-2'
         title={row.original.tarifa}
       >
-        <Tag className='w-3 h-3 sm:w-3.5 sm:h-3.5' />
         <span className='truncate max-w-[80px] sm:max-w-none'>
           {row.original.tarifa}
         </span>
@@ -217,7 +196,6 @@ export const columns = ({
         className='flex items-center gap-1.5 bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs px-1 sm:px-2'
         title={row.original.tipoMedidor}
       >
-        <Zap className='w-3 h-3 sm:w-3.5 sm:h-3.5' />
         <span className='truncate max-w-[80px] sm:max-w-none'>
           {row.original.tipoMedidor}
         </span>

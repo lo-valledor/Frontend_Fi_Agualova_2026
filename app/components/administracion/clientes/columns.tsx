@@ -1,5 +1,4 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Building2, Mail, MapPin, Phone, User } from 'lucide-react';
 import { format } from 'rut.js';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
@@ -28,13 +27,6 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='p-1 sm:p-1.5 bg-sky-100 dark:bg-sky-900/30 rounded-md flex-shrink-0'>
-            {row.original.esEmpresa ? (
-              <Building2 className='h-3 w-3 sm:h-4 sm:w-4 text-sky-600 dark:text-sky-400' />
-            ) : (
-              <User className='h-3 w-3 sm:h-4 sm:w-4 text-sky-600 dark:text-sky-400' />
-            )}
-          </div>
           <div className='min-w-0 flex-1'>
             <div
               className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
@@ -85,9 +77,6 @@ export const columns = ({
     ),
     cell: ({ row }) => (
       <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-        <div className='p-1 sm:p-1.5 bg-violet-100 dark:bg-violet-900/30 rounded-md flex-shrink-0'>
-          <MapPin className='h-3 w-3 sm:h-4 sm:w-4 text-violet-600 dark:text-violet-400' />
-        </div>
         <span
           className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[100px] lg:max-w-[160px]'
           title={row.getValue('direccion') || 'Sin dirección'}
@@ -106,9 +95,6 @@ export const columns = ({
     ),
     cell: ({ row }) => (
       <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-        <div className='p-1 sm:p-1.5 bg-cyan-100 dark:bg-cyan-900/30 rounded-md flex-shrink-0'>
-          <Building2 className='h-3 w-3 sm:h-4 sm:w-4 text-cyan-600 dark:text-cyan-400' />
-        </div>
         <span
           className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[80px] lg:max-w-[100px]'
           title={row.getValue('comuna') || 'Sin comuna'}
@@ -126,20 +112,17 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Teléfono' />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-        <div className='p-1 sm:p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md flex-shrink-0'>
-          <Phone className='h-3 w-3 sm:h-4 sm:w-4 text-amber-600 dark:text-amber-400' />
-        </div>
+      <div className='flex items-center gap-2'>
         <span
-          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm whitespace-nowrap'
+          className='font-mono text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap'
           title={row.getValue('telefono') || 'Sin teléfono'}
         >
           {row.getValue('telefono') || 'N/A'}
         </span>
       </div>
     ),
-    minSize: 120,
-    maxSize: 160,
+    minSize: 110,
+    maxSize: 130,
   },
   {
     accessorKey: 'contacto',
@@ -147,20 +130,17 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Contacto' />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-        <div className='p-1 sm:p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md flex-shrink-0'>
-          <User className='h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400' />
-        </div>
+      <div className='flex items-center gap-2'>
         <span
-          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[100px] lg:max-w-[120px]'
+          className='text-sm text-slate-700 dark:text-slate-300 truncate max-w-[120px]'
           title={row.getValue('contacto') || 'Sin contacto'}
         >
           {row.getValue('contacto') || 'N/A'}
         </span>
       </div>
     ),
-    minSize: 120,
-    maxSize: 160,
+    minSize: 110,
+    maxSize: 140,
   },
   {
     accessorKey: 'email',
@@ -168,20 +148,17 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Email' />
     ),
     cell: ({ row }) => (
-      <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-        <div className='p-1 sm:p-1.5 bg-purple-100 dark:bg-purple-900/30 rounded-md flex-shrink-0'>
-          <Mail className='h-3 w-3 sm:h-4 sm:w-4 text-purple-600 dark:text-purple-400' />
-        </div>
+      <div className='flex items-center gap-2'>
         <span
-          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+          className='font-mono text-sm text-slate-700 dark:text-slate-300 truncate max-w-[140px]'
           title={row.getValue('email') || 'Sin email'}
         >
           {row.getValue('email') || 'N/A'}
         </span>
       </div>
     ),
-    minSize: 140,
-    maxSize: 200,
+    minSize: 130,
+    maxSize: 170,
   },
   {
     id: 'actions',

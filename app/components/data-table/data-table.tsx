@@ -1,6 +1,5 @@
 import {
   type ColumnDef,
-  type ColumnFiltersState,
   type PaginationState,
   type RowSelectionState,
   type SortingState,
@@ -49,7 +48,7 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   searchPlaceholder = 'Buscar...',
-  defaultPageSize = 10,
+  defaultPageSize = 20,
   showSearch = true,
   onRowSelectionChange,
   rowIdKey,
@@ -59,7 +58,6 @@ export function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -74,7 +72,6 @@ export function DataTable<TData, TValue>({
       sorting,
       columnVisibility,
       rowSelection,
-      columnFilters,
       pagination,
       globalFilter,
     },
@@ -99,7 +96,6 @@ export function DataTable<TData, TValue>({
       }
     },
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
     onGlobalFilterChange: setGlobalFilter,
@@ -112,76 +108,77 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className='space-y-4'>
-      {/* Search */}
+    <div className='space-y-3'>
+      {/* Global Search */}
       {showSearch && (
-        <div className='flex justify-end'>
-          <div className='relative w-full max-w-xs sm:max-w-sm'>
-            <Search className='absolute left-2 sm:left-3 top-1/2 h-3 w-3 sm:h-4 sm:w-4 -translate-y-1/2 text-muted-foreground' />
+        <div className='flex justify-between items-center'>
+          <div className='text-sm text-muted-foreground'>
+            {table.getFilteredRowModel().rows.length} registros
+          </div>
+          <div className='relative w-64'>
+            <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
               onChange={event => setGlobalFilter(event.target.value)}
-              className='w-full rounded-md border-border bg-background py-1.5 sm:py-2 pl-7 sm:pl-9 pr-3 sm:pr-4 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-primary'
+              className='pl-8 h-8 text-sm'
             />
           </div>
         </div>
       )}
 
-      {/* Table */}
-      <div className='rounded-lg border bg-card overflow-hidden'>
-        <div className='overflow-x-auto'>
-          <Table className='min-w-full'>
-            <TableHeader>
-              {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className='border-b bg-muted/50'>
-                  {headerGroup.headers.map(header => (
-                    <TableHead key={header.id} className='font-semibold text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3 whitespace-nowrap'>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
+      {/* Compact Table */}
+      <div className='rounded-md border'>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map(headerGroup => (
+              <TableRow key={headerGroup.id} className='hover:bg-transparent'>
+                {headerGroup.headers.map(header => (
+                  <TableHead key={header.id} className='h-10 px-3 text-xs font-medium'>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map(row => (
+                <TableRow
+                  key={row.id}
+                  className='border-b hover:bg-muted/30'
+                  data-state={row.getIsSelected() && 'selected'}
+                >
+                  {row.getVisibleCells().map(cell => (
+                    <TableCell key={cell.id} className='h-10 px-3 py-1 text-sm'>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map(row => (
-                  <TableRow
-                    key={row.id}
-                    className='hover:bg-muted/50 transition-colors'
-                    data-state={row.getIsSelected() && 'selected'}
-                  >
-                    {row.getVisibleCells().map(cell => (
-                      <TableCell key={cell.id} className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className='h-16 sm:h-24 text-center text-xs sm:text-sm'
-                  >
-                    No se encontraron resultados.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-20 text-center text-sm text-muted-foreground'
+                >
+                  No se encontraron resultados.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
-      {/* Advanced Pagination */}
+      {/* Compact Pagination */}
       <DataTablePagination table={table} />
     </div>
   );

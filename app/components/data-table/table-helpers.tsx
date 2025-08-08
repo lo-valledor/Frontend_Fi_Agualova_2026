@@ -31,43 +31,31 @@ export function TableActions({
   loadingDelete?: boolean;
 }) {
   return (
-    <div className='flex gap-2'>
+    <div className='flex gap-1'>
       {showView && (
         <Button
-          variant='outline'
-          size='icon'
+          variant='ghost'
+          size='sm'
           onClick={() => onView?.(item)}
-          title='Ver Detalles'
+          title='Ver'
           disabled={loadingView}
+          className='h-8 w-8 p-0'
         >
-          <Eye className={`h-4 w-4${loadingView ? ' animate-spin' : ''}`} />
+          <Eye className='h-4 w-4' />
         </Button>
       )}
       {showEdit && (
         <Button
-          variant='outline'
+          variant='ghost'
           size='sm'
           onClick={() => onEdit?.(item)}
           title='Editar'
           disabled={loadingEdit}
+          className='h-8 w-8 p-0'
         >
-          <Edit className={`h-4 w-4${loadingEdit ? ' animate-spin' : ''}`} />
-          Modificar
+          <Edit className='h-4 w-4' />
         </Button>
       )}
-      {/* {showDelete && (
-        <Button
-          variant='destructive'
-          size='icon'
-          onClick={() => onDelete?.(item)}
-          title='Eliminar'
-          disabled={loadingDelete}
-        >
-          <Trash2
-            className={`h-4 w-4${loadingDelete ? ' animate-spin' : ''}`}
-          />
-        </Button>
-      )} */}
     </div>
   );
 }
