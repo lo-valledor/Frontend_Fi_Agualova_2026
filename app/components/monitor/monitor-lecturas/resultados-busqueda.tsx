@@ -20,7 +20,6 @@ import { useCallback, useEffect, useState } from 'react';
 
 import ClockLoader from 'react-spinners/ClockLoader';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
 import MonitorNichos from '~/components/monitor/monitor-lecturas/monitor-nichos';
 import { Alert, AlertDescription } from '~/components/ui/alert';
@@ -206,7 +205,6 @@ const MeterCard = ({
   onRefresh: any;
 }) => {
   const status = getMeterStatus(medidor.claveHtml);
-  const { trackDataAction } = useActivityEvent();
 
   return (
     <Card
@@ -228,18 +226,7 @@ const MeterCard = ({
 
           <Dialog>
             <DialogTrigger asChild>
-              <Button
-                variant='ghost'
-                size='sm'
-                className='h-6 w-6 p-0'
-                onClick={() => {
-                  trackDataAction(
-                    'Ver detalles',
-                    'Monitor de Lecturas',
-                    `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`
-                  );
-                }}
-              >
+              <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
                 <Eye className='h-3 w-3' />
               </Button>
             </DialogTrigger>
@@ -328,7 +315,6 @@ const MeterRowDetailed = ({
   onRefresh: any;
 }) => {
   const status = getMeterStatus(medidor.claveHtml);
-  const { trackDataAction } = useActivityEvent();
 
   return (
     <div
@@ -408,13 +394,6 @@ const MeterRowDetailed = ({
               variant='ghost'
               size='sm'
               className='h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity'
-              onClick={() => {
-                trackDataAction(
-                  'Ver detalles',
-                  'Monitor de Lecturas',
-                  `Medidor: ${medidor.nSerie} (ID: ${medidor.id})`
-                );
-              }}
             >
               <Eye className='h-4 w-4' />
             </Button>
@@ -493,12 +472,6 @@ export default function ResultadosBusqueda({
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
   const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
   const api = useApiWithLoadingBar();
-  const { trackPageView, trackDataAction } = useActivityEvent();
-
-  // Rastrear vista de página
-  useEffect(() => {
-    trackPageView('Monitor de Lecturas');
-  }, [trackPageView]);
 
   // Search function (same as before)
   const searchResults = async () => {
@@ -519,16 +492,8 @@ export default function ResultadosBusqueda({
       return;
     }
 
-    trackDataAction(
-      'Buscar',
-      'Monitor de Lecturas',
-      `Sector: ${sector}, Periodo: ${periodo}`
-    );
-
     setIsSearching(true);
     setSearchError(null);
-    // NO resetear los resultados inmediatamente para mantener la UI estable
-    // setResults({ nichos: [] });
 
     const params = new URLSearchParams({
       sector,
@@ -605,11 +570,6 @@ export default function ResultadosBusqueda({
 
   const handleRefresh = useCallback(() => {
     if (sector && periodo && stfechaini && stfechafin) {
-      trackDataAction(
-        'Refrescar',
-        'Monitor de Lecturas',
-        `Sector: ${sector}, Periodo: ${periodo}`
-      );
       // Incrementar el contador de refrescar para desencadenar la recarga
       setRefreshCounter(prev => prev + 1);
 
@@ -618,7 +578,7 @@ export default function ResultadosBusqueda({
     } else {
       toast.info('Seleccione Sector, Periodo y Fechas para refrescar.');
     }
-  }, [sector, periodo, stfechaini, stfechafin, trackDataAction]);
+  }, [sector, periodo, stfechaini, stfechafin]);
 
   useEffect(() => {
     if (triggerSearch > 0) {
@@ -650,21 +610,10 @@ export default function ResultadosBusqueda({
   }
 
   const handleNichoChange: HandleNichoChangeFn = index => {
-    const nichoName = results.nichos[index]?.nombre || `Nicho ${index + 1}`;
-    trackDataAction(
-      'Cambiar nicho',
-      'Monitor de Lecturas',
-      `Nicho: ${nichoName}`
-    );
     setSelectedNichoIndex(index);
   };
 
   const handleNichoModalSuccess = () => {
-    trackDataAction(
-      'Actualizar medidor',
-      'Monitor de Lecturas',
-      'Medidor actualizado exitosamente'
-    );
     // Mostrar notificación de éxito inmediatamente
     toast.success('Medidor actualizado correctamente');
     setNeedsNichoRefresh(true);
@@ -701,11 +650,11 @@ export default function ResultadosBusqueda({
                   <Grid3X3 className='h-4 w-4' />
                 )}
                 <span className='hidden sm:inline'>
-                  {viewMode === 'detailed'
-                    ? 'Lista'
-                    : viewMode === 'compact'
-                      ? 'Problemas'
-                      : 'Tarjetas'}
+                  {(() => {
+                    if (viewMode === 'detailed') return 'Lista';
+                    if (viewMode === 'compact') return 'Problemas';
+                    return 'Tarjetas';
+                  })()}
                 </span>
               </Button>
             </DropdownMenuTrigger>
@@ -713,11 +662,6 @@ export default function ResultadosBusqueda({
               <DropdownMenuItem
                 className={cn(viewMode === 'default' && 'bg-accent')}
                 onClick={() => {
-                  trackDataAction(
-                    'Cambiar vista',
-                    'Monitor de Lecturas',
-                    'Vista: Tarjetas'
-                  );
                   setViewMode('default');
                 }}
               >
@@ -726,11 +670,6 @@ export default function ResultadosBusqueda({
               <DropdownMenuItem
                 className={cn(viewMode === 'detailed' && 'bg-accent')}
                 onClick={() => {
-                  trackDataAction(
-                    'Cambiar vista',
-                    'Monitor de Lecturas',
-                    'Vista: Lista Compacta'
-                  );
                   setViewMode('detailed');
                 }}
               >
@@ -739,11 +678,6 @@ export default function ResultadosBusqueda({
               <DropdownMenuItem
                 className={cn(viewMode === 'compact' && 'bg-accent')}
                 onClick={() => {
-                  trackDataAction(
-                    'Cambiar vista',
-                    'Monitor de Lecturas',
-                    'Vista: Solo Problemas'
-                  );
                   setViewMode('compact');
                 }}
               >
@@ -1141,14 +1075,6 @@ export default function ResultadosBusqueda({
                           size='sm'
                           className='bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'
                           onClick={() => {
-                            const nichoName =
-                              results.nichos[selectedNichoIndex]?.nombre ||
-                              'Nicho';
-                            trackDataAction(
-                              'Abrir modal',
-                              'Monitor de Lecturas',
-                              `Ingresar lecturas - Nicho: ${nichoName}`
-                            );
                             setIsNichoModalOpen(true);
                           }}
                         >
@@ -1161,7 +1087,9 @@ export default function ResultadosBusqueda({
                           <DialogTitle>
                             <div className='text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500'>
                               <Gauge className='h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-sky-700 dark:text-sky-500' />
-                              <span className='truncate'>Monitor de Medidores</span>
+                              <span className='truncate'>
+                                Monitor de Medidores
+                              </span>
                               {/* Indicador de responsive */}
                               <div className='hidden sm:flex items-center gap-1 ml-auto'>
                                 <div className='text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full'>
@@ -1175,9 +1103,7 @@ export default function ResultadosBusqueda({
                           <div className='h-full p-2 sm:p-3 lg:p-4 xl:p-6'>
                             <MonitorNichos
                               periodo={periodo}
-                              nicho={
-                                results.nichos[selectedNichoIndex].nombre
-                              }
+                              nicho={results.nichos[selectedNichoIndex].nombre}
                               onSuccess={handleNichoModalSuccess}
                             />
                           </div>

@@ -74,7 +74,7 @@ export default function PreciosCargoComponent({
   initialMes,
   initialAnio,
   error,
-}: PreciosCargoComponentProps) {
+}: Readonly<PreciosCargoComponentProps>) {
   // Estados para filtros y datos
   const [mes, setMes] = useState(initialMes);
   const [anio, setAnio] = useState(initialAnio);
@@ -96,7 +96,8 @@ export default function PreciosCargoComponent({
       const response = await api.get('/consulta-precio-pago', { params });
       setTablaEnel(response.data as PreciosCargoEnel[]);
       toast.success('Búsqueda completada exitosamente');
-    } catch (error) {
+    } catch (_error) {
+      console.error(_error);
       toast.error('Error al buscar precios de cargo');
     } finally {
       setIsLoading(false);

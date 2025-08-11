@@ -25,7 +25,9 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   return result.data;
 }
 
-export default function CorteReposicion({ loaderData }: Route.ComponentProps) {
+export default function CorteReposicion({
+  loaderData,
+}: Readonly<Route.ComponentProps>) {
   const { totalesData, mantenedorCorteData } = loaderData;
 
   const pageBreadcrumbs = [

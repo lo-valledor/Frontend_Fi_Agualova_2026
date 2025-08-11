@@ -3,7 +3,6 @@ import { Loader2, RotateCcw, Settings } from 'lucide-react';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { EmptyState, LoadingState } from '~/components/loading-state';
 import { Badge } from '~/components/ui/badge';
@@ -26,11 +25,11 @@ export default function MonitorNichos({
   periodo,
   nicho,
   onSuccess,
-}: {
+}: Readonly<{
   periodo: string;
   nicho: string;
   onSuccess?: () => void;
-}) {
+}>) {
   const [isLoading, setIsLoading] = useState(true);
   const [results, setResults] = useState<MedidorNichoItem[]>([]);
   const [openDialogs, setOpenDialogs] = useState<Record<number, boolean>>({});
@@ -46,12 +45,6 @@ export default function MonitorNichos({
     pageIndex: 0,
     pageSize: 15,
   });
-  const { trackPageView, trackDataAction } = useActivityEvent();
-
-  // Rastrear vista de página
-  useEffect(() => {
-    trackPageView(`Monitor de Nichos - ${nicho}`);
-  }, [trackPageView, nicho]);
 
   const searchResults = useCallback(async () => {
     const params = new URLSearchParams({
@@ -62,11 +55,6 @@ export default function MonitorNichos({
     try {
       if (!isRefreshing) {
         setIsLoading(true);
-        trackDataAction(
-          'Cargar datos',
-          'Monitor de Nichos',
-          `Nicho: ${nicho}, Periodo: ${periodo}`
-        );
       }
       const response = await api.get('/lecturas-nicho', { params });
       setResults(response.data as MedidorNichoItem[]);
@@ -76,7 +64,7 @@ export default function MonitorNichos({
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, [periodo, nicho, isRefreshing, trackDataAction]);
+  }, [periodo, nicho, isRefreshing]);
 
   useEffect(() => {
     searchResults();
@@ -109,22 +97,12 @@ export default function MonitorNichos({
   const handleRowClick = (medidor: MedidorNichoItem) => {
     // Solo abrir el diálogo si no es Estado 5 (facturación) y no es el último editado
     if (medidor.Estado !== 5 && lastEditedId !== medidor.LM_ID) {
-      trackDataAction(
-        'Abrir edición',
-        'Monitor de Nichos',
-        `Medidor: ${medidor.ME_NSerie} (ID: ${medidor.LM_ID})`
-      );
       setSelectedMedidor(medidor);
       setIsDialogOpen(true);
     }
   };
 
   const handleSuccess = (id: number) => {
-    trackDataAction(
-      'Actualizar medidor',
-      'Monitor de Nichos',
-      `Medidor actualizado exitosamente (ID: ${id})`
-    );
     // Cerrar el diálogo
     setIsDialogOpen(false);
     setNeedsRefreshOnClose(true);
@@ -151,7 +129,6 @@ export default function MonitorNichos({
   };
 
   const handleRefresh = () => {
-    trackDataAction('Refrescar', 'Monitor de Nichos', `Nicho: ${nicho}`);
     setIsRefreshing(true);
     searchResults();
   };

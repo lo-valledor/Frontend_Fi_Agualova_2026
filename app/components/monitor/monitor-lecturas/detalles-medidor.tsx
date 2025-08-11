@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import api from '~/lib/api';
@@ -23,10 +22,10 @@ import InformacionMedidor from './detalles-medidor/informacion-medidor';
 export default function DetallesMedidor({
   lecturaId,
   onSuccess,
-}: {
+}: Readonly<{
   lecturaId: number;
   onSuccess?: () => void;
-}) {
+}>) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [etapaErrors, setEtapaErrors] = useState<Record<number, string>>({});
@@ -34,7 +33,6 @@ export default function DetallesMedidor({
   const [etapa2Data, setEtapa2Data] = useState<EtapaDos[]>([]);
   const [etapa3Data, setEtapa3Data] = useState<EtapaTres[]>([]);
   const [etapa4Data, setEtapa4Data] = useState<EtapaCuatro[]>([]);
-  const { trackDataAction } = useActivityEvent();
 
   const fetchAllEtapas = async () => {
     setIsLoading(true);
@@ -82,7 +80,15 @@ export default function DetallesMedidor({
 
           // Si es un error 404, establecer un mensaje específico
           if (result.reason?.response?.status === 404) {
-            newEtapaErrors[etapa] =
+            // Mensajes específicos para cada etapa
+            const etapaMessages = {
+              1: 'No hay información del medidor disponible',
+              2: 'No hay datos de lectura registrados',
+              3: 'No hay claves de lectura ingresadas aún',
+              4: 'No hay análisis de consumo disponible'
+            };
+            
+            newEtapaErrors[etapa] = etapaMessages[etapa as keyof typeof etapaMessages] ||
               result.reason.response.data ||
               `No hay datos disponibles para la etapa ${etapa}`;
           } else {
@@ -112,12 +118,12 @@ export default function DetallesMedidor({
 
       // Si todas las etapas fallaron, establecer un error general
       if (Object.keys(newEtapaErrors).length === 4) {
-        toast.error('No se pudieron cargar los datos del medidor');
+        // Error silencioso - el UI ya muestra el estado de error apropiadamente
         setError('No se pudieron cargar los datos del medidor');
       }
     } catch (error) {
       console.error('Error general al obtener datos:', error);
-      toast.error('Error al obtener los datos del medidor');
+      // Error silencioso - el estado de error se muestra en la UI
       setError('Error al obtener los datos del medidor');
     } finally {
       setIsLoading(false);
@@ -126,11 +132,6 @@ export default function DetallesMedidor({
 
   const handleAceptarLectura = async () => {
     try {
-      trackDataAction(
-        'Aceptar lectura',
-        'Detalles Medidor',
-        `Lectura ID: ${lecturaId}`
-      );
       const response = await api.post('/aceptar-lectura-medidor', {
         idLectura: lecturaId,
       });
@@ -142,11 +143,11 @@ export default function DetallesMedidor({
           onSuccess();
         }
       } else {
-        toast.error('Error al aceptar la lectura');
+        toast.error('No se pudo aceptar la lectura con clave crítica');
       }
     } catch (_error) {
       //console.error('Error al aceptar la lectura:', error); // eslint-disable-line no-console
-      toast.error('Error al aceptar la lectura');
+      toast.error('No se pudo aceptar la lectura con clave crítica');
     }
   };
 

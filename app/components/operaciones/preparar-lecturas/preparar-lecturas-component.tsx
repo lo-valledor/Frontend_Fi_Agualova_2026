@@ -51,16 +51,16 @@ export default function PrepararLecturasComponent({
   isLoadingAsignacion,
   onRecargarAsignacionSectores,
 }: {
-  periodoAbierto: PeriodoAbierto[];
-  lecturasPendientes: ValidarSectoresPendientes | null;
-  sectores: ConsultarSectores[];
-  opcionesPreparar: OpcionesPrepararLecturas[];
-  asignacionSectores: ConsultarAsignacionSectores[];
-  setAsignacionSectores: React.Dispatch<
+  readonly periodoAbierto: PeriodoAbierto[];
+  readonly lecturasPendientes: ValidarSectoresPendientes | null;
+  readonly sectores: ConsultarSectores[];
+  readonly opcionesPreparar: OpcionesPrepararLecturas[];
+  readonly asignacionSectores: ConsultarAsignacionSectores[];
+  readonly setAsignacionSectores: React.Dispatch<
     React.SetStateAction<ConsultarAsignacionSectores[]>
   >;
-  isLoadingAsignacion: boolean;
-  onRecargarAsignacionSectores: (
+  readonly isLoadingAsignacion: boolean;
+  readonly onRecargarAsignacionSectores: (
     cicloFacturable: string,
     periodo: string
   ) => Promise<void>;
@@ -177,7 +177,7 @@ export default function PrepararLecturasComponent({
         </div>
 
         {/* Filtros de Búsqueda */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
               className='flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
@@ -230,15 +230,15 @@ export default function PrepararLecturasComponent({
                         </div>
                       </div>
                     ) : (
-                      <div className='flex items-center gap-3 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200/60 dark:border-amber-700/60'>
-                        <div className='w-8 h-8 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex items-center justify-center'>
-                          <AlertCircleIcon className='w-4 h-4 text-amber-600 dark:text-amber-400' />
+                      <div className='flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
+                        <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0'>
+                          <AlertCircleIcon className='w-4 h-4 text-slate-600 dark:text-slate-400' />
                         </div>
                         <div>
-                          <span className='font-medium text-amber-800 dark:text-amber-200 text-sm'>
+                          <span className='font-medium text-slate-900 dark:text-slate-100 text-sm'>
                             No hay periodo abierto
                           </span>
-                          <p className='text-xs text-amber-600 dark:text-amber-400'>
+                          <p className='text-xs text-slate-600 dark:text-slate-400 mt-0.5'>
                             Contacta al administrador
                           </p>
                         </div>
@@ -261,36 +261,34 @@ export default function PrepararLecturasComponent({
                     >
                       <SelectTrigger
                         id='ciclo'
-                        className='h-10 bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 focus:border-sky-400 focus:ring-sky-400/20'
+                        className='h-10 bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 focus:border-sky-400 focus:ring-sky-400/20 w-full text-sm'
                       >
                         <SelectValue placeholder='Selecciona un ciclo de facturación' />
                       </SelectTrigger>
                       <SelectContent>
-                        {opcionesPreparar &&
-                          opcionesPreparar.map(
-                            (opcion: OpcionesPrepararLecturas) => (
-                              <SelectItem
-                                key={opcion.id}
-                                value={opcion.id.toString()}
-                                className='hover:bg-slate-50 dark:hover:bg-slate-800'
-                              >
-                                {opcion.descripcion}
-                              </SelectItem>
-                            )
-                          )}
+                        {opcionesPreparar?.map(
+                          (opcion: OpcionesPrepararLecturas) => (
+                            <SelectItem
+                              key={opcion.id}
+                              value={opcion.id.toString()}
+                              className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                            >
+                              {opcion.descripcion}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
                 {/* Botones de acción */}
-                <div className='flex justify-end gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60'>
+                <div className='flex flex-col sm:flex-row justify-end gap-2 pt-3 border-t border-slate-200/60 dark:border-slate-700/60'>
                   <Button
                     onClick={handleClearFilters}
                     variant='outline'
                     disabled={isLoadingAsignacion}
                     className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
-                    size='sm'
                   >
                     <Eraser className='h-4 w-4' />
                     Limpiar
@@ -303,7 +301,6 @@ export default function PrepararLecturasComponent({
                       !periodoFormateado
                     }
                     className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
-                    size='sm'
                   >
                     <SearchIcon className='h-4 w-4' />
                     {isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}
@@ -334,84 +331,98 @@ export default function PrepararLecturasComponent({
             </div>
           </CardHeader>
           <CardContent className='p-3'>
-            {isLoadingAsignacion ? (
-              <div className='flex justify-center items-center h-48'>
-                <div className='flex flex-col items-center gap-3'>
-                  <div className='w-8 h-8 animate-spin rounded-full border-2 border-slate-300 border-t-sky-600 dark:border-slate-600 dark:border-t-sky-400'></div>
-                  <div className='text-center'>
-                    <p className='text-slate-700 dark:text-slate-300 font-medium text-sm'>
-                      Buscando sectores...
-                    </p>
-                    <p className='text-xs text-slate-500 dark:text-slate-400'>
-                      Por favor espere
-                    </p>
+            {(() => {
+              if (isLoadingAsignacion) {
+                return (
+                  <div className='flex justify-center items-center h-48'>
+                    <div className='flex flex-col items-center gap-3'>
+                      <div className='w-8 h-8 animate-spin rounded-full border-2 border-slate-300 border-t-sky-600 dark:border-slate-600 dark:border-t-sky-400'></div>
+                      <div className='text-center'>
+                        <p className='text-slate-700 dark:text-slate-300 font-medium text-sm'>
+                          Buscando sectores...
+                        </p>
+                        <p className='text-xs text-slate-500 dark:text-slate-400'>
+                          Por favor espere
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ) : error ? (
-              <div className='p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-700/60'>
-                <div className='flex items-start gap-3'>
-                  <div className='w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-lg flex items-center justify-center'>
-                    <AlertCircleIcon className='w-4 h-4 text-red-600 dark:text-red-400' />
+                );
+              }
+
+              if (error) {
+                return (
+                  <div className='p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-700/60'>
+                    <div className='flex items-start gap-3'>
+                      <div className='w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-lg flex items-center justify-center'>
+                        <AlertCircleIcon className='w-4 h-4 text-red-600 dark:text-red-400' />
+                      </div>
+                      <div className='flex-1'>
+                        <h4 className='font-medium text-red-800 dark:text-red-200 text-sm'>
+                          Error al cargar los datos
+                        </h4>
+                        <p className='mt-1 text-red-700 dark:text-red-300 text-xs'>
+                          {error}
+                        </p>
+                        <Button
+                          onClick={() => setError(null)}
+                          variant='outline'
+                          size='sm'
+                          className='mt-2 border-red-200 hover:bg-red-50 dark:border-red-700 dark:hover:bg-red-900/20'
+                        >
+                          Cerrar
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                  <div className='flex-1'>
-                    <h4 className='font-medium text-red-800 dark:text-red-200 text-sm'>
-                      Error al cargar los datos
-                    </h4>
-                    <p className='mt-1 text-red-700 dark:text-red-300 text-xs'>
-                      {error}
-                    </p>
-                    <Button
-                      onClick={() => setError(null)}
-                      variant='outline'
-                      size='sm'
-                      className='mt-2 border-red-200 hover:bg-red-50 dark:border-red-700 dark:hover:bg-red-900/20'
-                    >
-                      Cerrar
-                    </Button>
+                );
+              }
+
+              if (asignacionSectores.length === 0) {
+                return (
+                  <div className='flex flex-col items-center justify-center h-48 gap-3'>
+                    <div className='w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                      <SearchIcon className='w-6 h-6 text-slate-500 dark:text-slate-400' />
+                    </div>
+                    <div className='text-center'>
+                      <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                        Realizar consulta de sectores
+                      </p>
+                      <p className='text-xs text-slate-500 dark:text-slate-400'>
+                        Selecciona un ciclo y haz clic en "Buscar Sectores"
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ) : asignacionSectores.length === 0 ? (
-              <div className='flex flex-col items-center justify-center h-48 gap-3'>
-                <div className='w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                  <SearchIcon className='w-6 h-6 text-slate-500 dark:text-slate-400' />
-                </div>
-                <div className='text-center'>
-                  <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
-                    Realizar consulta de sectores
-                  </p>
-                  <p className='text-xs text-slate-500 dark:text-slate-400'>
-                    Selecciona un ciclo y haz clic en "Buscar Sectores"
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className='space-y-4'>
-                <div className='flex items-center gap-2 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-                  <div className='w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                    <UsersIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                );
+              }
+
+              return (
+                <div className='space-y-4'>
+                  <div className='flex items-center gap-2 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+                    <div className='w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                      <UsersIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                    </div>
+                    <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                      {asignacionSectores.length} sectores encontrados
+                    </span>
                   </div>
-                  <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
-                    {asignacionSectores.length} sectores encontrados
-                  </span>
+                  <TablaAsignacionSectores
+                    data={asignacionSectores}
+                    isLoading={isLoadingAsignacion}
+                    isAuthorized={true}
+                    sectores={sectores}
+                    periodo={periodoFormateado}
+                    cicloFacturable={obtenerCicloParaAPI(cicloSeleccionado)}
+                    onRecargarDatos={() =>
+                      onRecargarAsignacionSectores(
+                        obtenerCicloParaAPI(cicloSeleccionado),
+                        periodoFormateado
+                      )
+                    }
+                  />
                 </div>
-                <TablaAsignacionSectores
-                  data={asignacionSectores}
-                  isLoading={isLoadingAsignacion}
-                  isAuthorized={true}
-                  sectores={sectores}
-                  periodo={periodoFormateado}
-                  cicloFacturable={obtenerCicloParaAPI(cicloSeleccionado)}
-                  onRecargarDatos={() =>
-                    onRecargarAsignacionSectores(
-                      obtenerCicloParaAPI(cicloSeleccionado),
-                      periodoFormateado
-                    )
-                  }
-                />
-              </div>
-            )}
+              );
+            })()}
           </CardContent>
         </Card>
       </div>

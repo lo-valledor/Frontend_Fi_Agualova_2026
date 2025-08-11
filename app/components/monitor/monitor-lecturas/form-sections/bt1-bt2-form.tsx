@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
@@ -18,7 +17,7 @@ interface BT1BT2FormProps {
   onSuccess?: () => void;
 }
 
-export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
+export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
   // Valores fijos del medidor
   const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
   const valorAnterior = useMemo(
@@ -39,7 +38,6 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
   const [selectedClave, setSelectedClave] = useState('0');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
-  const { trackDataAction } = useActivityEvent();
 
   // Diálogos
   const [showMenorDialog, setShowMenorDialog] = useState(false);
@@ -207,12 +205,6 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       return;
     }
 
-    trackDataAction(
-      'Validar lectura',
-      'BT1-BT2 Form',
-      `Medidor: ${result.ME_NSerie}, Valor: ${inputValue}, Tipo: ${tipoLectura}`
-    );
-
     if (tipoLectura === 'menor') {
       setShowMenorDialog(true);
     } else if (tipoLectura === 'igual') {
@@ -228,7 +220,6 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     validarDigitos,
     maxValuePermitido,
     digito,
-    trackDataAction,
     result.ME_NSerie,
     esConsumoExcesivo,
   ]);
@@ -264,12 +255,6 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       }
       confirmed.current = true;
 
-      trackDataAction(
-        'Confirmar lectura',
-        'BT1-BT2 Form',
-        `Medidor: ${result.ME_NSerie}, Tipo: ${tipo}, Clave: ${selectedClave}`
-      );
-
       // Cerrar el diálogo correspondiente
       if (tipo === 'menor') {
         setShowMenorDialog(false);
@@ -281,28 +266,18 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
       setIsValidated(true);
       toast.success('Lectura validada correctamente');
     },
-    [selectedClave, trackDataAction, result.ME_NSerie]
+    [selectedClave, result.ME_NSerie]
   );
 
   // Confirmar lectura mayor
   const handleConfirmMayor = useCallback(() => {
-    trackDataAction(
-      'Confirmar lectura',
-      'BT1-BT2 Form',
-      `Medidor: ${result.ME_NSerie}, Tipo: mayor`
-    );
     setShowMayorDialog(false);
     setIsValidated(true);
     toast.success('Lectura validada correctamente');
-  }, [trackDataAction, result.ME_NSerie]);
+  }, [result.ME_NSerie]);
 
   // Confirmar consumo excesivo y continuar con validación normal
   const handleConfirmConsumoExcesivo = useCallback(() => {
-    trackDataAction(
-      'Confirmar consumo excesivo',
-      'BT1-BT2 Form',
-      `Medidor: ${result.ME_NSerie}, Consumo: ${consumoCalculado}`
-    );
     setShowConsumoExcesivoDialog(false);
 
     // Continuar con la validación normal según el tipo de lectura
@@ -313,7 +288,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     } else if (tipoLectura === 'mayor') {
       setShowMayorDialog(true);
     }
-  }, [trackDataAction, result.ME_NSerie, consumoCalculado, tipoLectura]);
+  }, [result.ME_NSerie, consumoCalculado, tipoLectura]);
 
   // Guardar la lectura
   const guardarLectura = useCallback(async () => {
@@ -328,11 +303,6 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
 
     try {
       setIsSubmitting(true);
-      trackDataAction(
-        'Guardar lectura',
-        'BT1-BT2 Form',
-        `Medidor: ${result.ME_NSerie}, Valor: ${data.vactual}, Consumo: ${data.consumo}`
-      );
       const response = await api.put('/actualizar-lectura-bt-1-bt-2', data);
 
       if (response.status === 200) {
@@ -353,7 +323,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [prepararDatosFormulario, onSuccess, trackDataAction, result.ME_NSerie]);
+  }, [prepararDatosFormulario, onSuccess, result.ME_NSerie]);
 
   const clavesMenorOptions = useMemo(
     () => [
@@ -421,7 +391,10 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
               </div>
             </div>
 
-            <div className='flex items-end'>
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground'>
+                &nbsp;
+              </Label>
               <Button
                 variant='outline'
                 onClick={validarLectura}
@@ -437,6 +410,7 @@ export function BT1BT2Form({ result, onSuccess }: BT1BT2FormProps) {
                   'Validar'
                 )}
               </Button>
+              <div className='text-xs text-transparent'>&nbsp;</div>
             </div>
           </div>
 

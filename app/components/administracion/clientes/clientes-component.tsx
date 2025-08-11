@@ -1,11 +1,10 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { DataTable } from '~/components/data-table/data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { Button } from '~/components/ui/button';
@@ -39,7 +38,7 @@ export default function ClientesComponent({
   clientes,
   giros,
   comunas,
-}: ClientesComponentProps) {
+}: Readonly<ClientesComponentProps>) {
   const [clients, setClients] = useState<GetClientes[]>(clientes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState<GetClientesByRut>();
@@ -67,76 +66,59 @@ export default function ClientesComponent({
     clients,
     filters
   );
-  const { trackPageView, trackDataAction } = useActivityEvent();
   const { clientColumns } = useExportClientes();
 
-  // Rastrear vista de página
-  useEffect(() => {
-    trackPageView(' Clientes');
-  }, [trackPageView]);
-
   const handleAddCliente = () => {
-    trackDataAction('Abrir formulario', 'Clientes', 'Crear nuevo cliente');
     setSelectedCliente(undefined);
     setModalMode('add');
     setIsModalOpen(true);
   };
 
-  const handleEditCliente = async (cliente: GetClientes) => {
-    try {
-      trackDataAction(
-        'Abrir formulario',
-        'Clientes',
-        `Editar cliente: ${cliente.rut}`
-      );
-      setEditingClienteRut(cliente.rut);
-      const clienteDetallado = await getClienteByRut(cliente.rut);
-      // Convertir GetClienteById a GetClientesByRut mapeando email a correo
-      const clienteConvertido: GetClientesByRut = {
-        ...(clienteDetallado as unknown as GetClientesByRut),
-        correo: clienteDetallado.email,
-      };
-      setSelectedCliente(clienteConvertido);
-      setModalMode('edit');
-      setIsModalOpen(true);
-    } catch (error) {
-      console.error('Error al cargar detalles del cliente:', error);
-      toast.error('Error al cargar los detalles del cliente');
-    } finally {
-      setEditingClienteRut(null);
-    }
+  const handleEditCliente = (cliente: GetClientes) => {
+    (async () => {
+      try {
+        setEditingClienteRut(cliente.rut);
+        const clienteDetallado = await getClienteByRut(cliente.rut);
+        // Convertir GetClienteById a GetClientesByRut mapeando email a correo
+        const clienteConvertido: GetClientesByRut = {
+          ...(clienteDetallado as unknown as GetClientesByRut),
+          correo: clienteDetallado.email,
+        };
+        setSelectedCliente(clienteConvertido);
+        setModalMode('edit');
+        setIsModalOpen(true);
+      } catch (error) {
+        console.error('Error al cargar detalles del cliente:', error);
+        toast.error('Error al cargar los detalles del cliente');
+      } finally {
+        setEditingClienteRut(null);
+      }
+    })();
   };
 
-  const handleDetailsCliente = async (cliente: GetClientes) => {
-    try {
-      trackDataAction('Ver detalles', 'Clientes', `Cliente: ${cliente.rut}`);
-      setDetailingClienteRut(cliente.rut);
-      const clienteDetallado = await getClienteByRut(cliente.rut);
-      // Convertir GetClienteById a GetClientesByRut mapeando email a correo
-      const clienteConvertido: GetClientesByRut = {
-        ...(clienteDetallado as unknown as GetClientesByRut),
-        correo: clienteDetallado.email,
-      };
-      setDetailedCliente(clienteConvertido);
-      setIsDetailsOpen(true);
-    } catch (error) {
-      console.error('Error al cargar detalles del cliente:', error);
-      toast.error('Error al cargar los detalles del cliente');
-      setIsDetailsOpen(false);
-    } finally {
-      setDetailingClienteRut(null);
-    }
+  const handleDetailsCliente = (cliente: GetClientes) => {
+    (async () => {
+      try {
+        setDetailingClienteRut(cliente.rut);
+        const clienteDetallado = await getClienteByRut(cliente.rut);
+        // Convertir GetClienteById a GetClientesByRut mapeando email a correo
+        const clienteConvertido: GetClientesByRut = {
+          ...(clienteDetallado as unknown as GetClientesByRut),
+          correo: clienteDetallado.email,
+        };
+        setDetailedCliente(clienteConvertido);
+        setIsDetailsOpen(true);
+      } catch (error) {
+        console.error('Error al cargar detalles del cliente:', error);
+        toast.error('Error al cargar los detalles del cliente');
+        setIsDetailsOpen(false);
+      } finally {
+        setDetailingClienteRut(null);
+      }
+    })();
   };
 
   const handleClienteSuccess = (clienteData: any, mode: 'add' | 'edit') => {
-    trackDataAction(
-      mode === 'add' ? 'Crear' : 'Actualizar',
-      'Clientes',
-      mode === 'add'
-        ? 'Cliente creado exitosamente'
-        : 'Cliente actualizado exitosamente'
-    );
-
     // Actualizar el estado local
     if (mode === 'add') {
       // Crear nuevo cliente para la lista
@@ -186,8 +168,6 @@ export default function ClientesComponent({
     );
   };
 
-
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedCliente(undefined); // Limpiar cliente seleccionado
@@ -225,10 +205,10 @@ export default function ClientesComponent({
             <ExportButton
               data={filteredClients}
               columns={clientColumns}
-              filename="clientes"
-              variant="outline"
-              size="sm"
-              className=""
+              filename='clientes'
+              variant='outline'
+              size='sm'
+              className=''
             />
             <Button
               onClick={handleAddCliente}
@@ -241,21 +221,21 @@ export default function ClientesComponent({
           </div>
         </div>
 
-      {/* Filters */}
-      <ClientFiltersComponent
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onClearFilters={handleClearFilters}
-        filterOptions={filterOptions}
-      />
+        {/* Filters */}
+        <ClientFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          filterOptions={filterOptions}
+        />
 
-      {/* Filter Summary */}
-      <FilterSummary
-        totalClients={clients.length}
-        filteredClients={filteredClients.length}
-        activeFilters={filterStats.activeFilters}
-        isFiltered={filterStats.isFiltered}
-      />
+        {/* Filter Summary */}
+        <FilterSummary
+          totalClients={clients.length}
+          filteredClients={filteredClients.length}
+          activeFilters={filterStats.activeFilters}
+          isFiltered={filterStats.isFiltered}
+        />
 
         {/* Table */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>

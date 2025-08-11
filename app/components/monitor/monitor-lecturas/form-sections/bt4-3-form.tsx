@@ -263,7 +263,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
     // Si el valor es mayor a 99 y no tiene coma, podría ser un olvido
     // Por ejemplo: 1201 podría ser 12,01
-    if (numValue > 99 && !value.includes(',') && !value.includes('.') && value.length >= 3) {
+    if (
+      numValue > 99 &&
+      !value.includes(',') &&
+      !value.includes('.') &&
+      value.length >= 3
+    ) {
       return true;
     }
 
@@ -277,56 +282,66 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   }, []);
 
   // Manejar cambio en demanda punta
-  const handleDemandaPuntaChange = useCallback((value: string) => {
-    setDpInputValue(value);
+  const handleDemandaPuntaChange = useCallback(
+    (value: string) => {
+      setDpInputValue(value);
 
-    // Validar que solo contenga números, coma o punto
-    if (value && !/^[\d,.-]*$/.test(value)) {
-      toast.error('Solo se permiten números y comas decimales en Demanda Punta');
-      return;
-    }
+      // Validar que solo contenga números, coma o punto
+      if (value && !/^[\d,.-]*$/.test(value)) {
+        toast.error(
+          'Solo se permiten números y comas decimales en Demanda Punta'
+        );
+        return;
+      }
 
-    // Detectar posible olvido de coma
-    if (detectarOlvidoComa(value)) {
-      setShowComaWarningDP(true);
-    } else {
-      setShowComaWarningDP(false);
-    }
+      // Detectar posible olvido de coma
+      if (detectarOlvidoComa(value)) {
+        setShowComaWarningDP(true);
+      } else {
+        setShowComaWarningDP(false);
+      }
 
-    const numeroValue = convertirComANumero(value);
-    setDemandaData(prev => ({ ...prev, dp: numeroValue }));
+      const numeroValue = convertirComANumero(value);
+      setDemandaData(prev => ({ ...prev, dp: numeroValue }));
 
-    // Verificar si la demanda es excesiva
-    if (numeroValue > 500) {
-      setTimeout(() => setShowConsumoExcesivoDPDialog(true), 100);
-    }
-  }, [detectarOlvidoComa, convertirComANumero]);
+      // Verificar si la demanda es excesiva
+      if (numeroValue > 500) {
+        setTimeout(() => setShowConsumoExcesivoDPDialog(true), 100);
+      }
+    },
+    [detectarOlvidoComa, convertirComANumero]
+  );
 
   // Manejar cambio en demanda suministrada
-  const handleDemandaSuministradaChange = useCallback((value: string) => {
-    setDsInputValue(value);
+  const handleDemandaSuministradaChange = useCallback(
+    (value: string) => {
+      setDsInputValue(value);
 
-    // Validar que solo contenga números, coma o punto
-    if (value && !/^[\d,.-]*$/.test(value)) {
-      toast.error('Solo se permiten números y comas decimales en Demanda Suministrada');
-      return;
-    }
+      // Validar que solo contenga números, coma o punto
+      if (value && !/^[\d,.-]*$/.test(value)) {
+        toast.error(
+          'Solo se permiten números y comas decimales en Demanda Suministrada'
+        );
+        return;
+      }
 
-    // Detectar posible olvido de coma
-    if (detectarOlvidoComa(value)) {
-      setShowComaWarningDS(true);
-    } else {
-      setShowComaWarningDS(false);
-    }
+      // Detectar posible olvido de coma
+      if (detectarOlvidoComa(value)) {
+        setShowComaWarningDS(true);
+      } else {
+        setShowComaWarningDS(false);
+      }
 
-    const numeroValue = convertirComANumero(value);
-    setDemandaData(prev => ({ ...prev, ds: numeroValue }));
+      const numeroValue = convertirComANumero(value);
+      setDemandaData(prev => ({ ...prev, ds: numeroValue }));
 
-    // Verificar si la demanda es excesiva
-    if (numeroValue > 500) {
-      setTimeout(() => setShowConsumoExcesivoDSDialog(true), 100);
-    }
-  }, [detectarOlvidoComa, convertirComANumero]);
+      // Verificar si la demanda es excesiva
+      if (numeroValue > 500) {
+        setTimeout(() => setShowConsumoExcesivoDSDialog(true), 100);
+      }
+    },
+    [detectarOlvidoComa, convertirComANumero]
+  );
 
   // Detectar si el consumo de energía activa es excesivo
   const esConsumoActivaExcesivo = useCallback(() => {
@@ -828,11 +843,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </div>
             </div>
 
-            <div className='flex items-end'>
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground'>
+                &nbsp;
+              </Label>
               <Button
                 variant='outline'
                 onClick={validarLecturaActiva}
-                disabled={!inputActivaValue || isSubmitting || isActivaValidated}
+                disabled={
+                  !inputActivaValue || isSubmitting || isActivaValidated
+                }
                 className='w-full h-8 text-xs'
               >
                 {isActivaValidated ? (
@@ -912,11 +932,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </div>
             </div>
 
-            <div className='flex items-end'>
+            <div className='space-y-1.5'>
+              <Label className='text-xs font-medium text-muted-foreground'>
+                &nbsp;
+              </Label>
               <Button
                 variant='outline'
                 onClick={validarLecturaReactiva}
-                disabled={!inputReactivaValue || isSubmitting || isReactivaValidated}
+                disabled={
+                  !inputReactivaValue || isSubmitting || isReactivaValidated
+                }
                 className='w-full h-8 text-xs'
               >
                 {isReactivaValidated ? (
@@ -974,7 +999,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </div>
               <div className='grid grid-cols-3 gap-2'>
                 <div>
-                  <Label className='text-xs text-muted-foreground'>Valor kW</Label>
+                  <Label className='text-xs text-muted-foreground'>
+                    Valor kW
+                  </Label>
                   <Input
                     type='text'
                     placeholder='0,00'
@@ -1001,7 +1028,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                   <Input
                     type='date'
                     value={demandaData.dpFecha || ''}
-                    onChange={e => handleDemandaChange('dpFecha', e.target.value)}
+                    onChange={e =>
+                      handleDemandaChange('dpFecha', e.target.value)
+                    }
                     disabled={!isActivaValidated || !isReactivaValidated}
                     className='h-8 text-sm'
                     max={new Date().toISOString().slice(0, 10)}
@@ -1012,7 +1041,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                   <Input
                     type='time'
                     value={demandaData.dpHora || ''}
-                    onChange={e => handleDemandaChange('dpHora', e.target.value)}
+                    onChange={e =>
+                      handleDemandaChange('dpHora', e.target.value)
+                    }
                     disabled={!isActivaValidated || !isReactivaValidated}
                     className='h-8 font-mono text-sm'
                   />
@@ -1028,7 +1059,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </div>
               <div className='grid grid-cols-3 gap-2'>
                 <div>
-                  <Label className='text-xs text-muted-foreground'>Valor kW</Label>
+                  <Label className='text-xs text-muted-foreground'>
+                    Valor kW
+                  </Label>
                   <Input
                     type='text'
                     placeholder='0,00'
@@ -1055,7 +1088,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                   <Input
                     type='date'
                     value={demandaData.dsFecha || ''}
-                    onChange={e => handleDemandaChange('dsFecha', e.target.value)}
+                    onChange={e =>
+                      handleDemandaChange('dsFecha', e.target.value)
+                    }
                     disabled={!isActivaValidated || !isReactivaValidated}
                     className='h-8 text-sm'
                   />
@@ -1065,7 +1100,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
                   <Input
                     type='time'
                     value={demandaData.dsHora || ''}
-                    onChange={e => handleDemandaChange('dsHora', e.target.value)}
+                    onChange={e =>
+                      handleDemandaChange('dsHora', e.target.value)
+                    }
                     disabled={!isActivaValidated || !isReactivaValidated}
                     className='h-8 font-mono text-sm'
                   />

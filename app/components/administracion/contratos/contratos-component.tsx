@@ -14,13 +14,9 @@ import type {
   CrearContratoProps,
   GetComunas,
   GetContratos,
-  GetContratosClientes,
-  GetFechaActual,
-  GetLimiteInvierno,
   GetLocal,
   GetMadres,
   GetPropietario,
-  GetRegiones,
   ModificarContratoProps,
 } from '~/types/administracion';
 import type { Tarifas, TiposContrato } from '~/types/mantencion';
@@ -46,18 +42,14 @@ export default function ContratosComponent({
   madres,
   comuna,
 }: {
-  contratos: GetContratos[];
-  regiones: GetRegiones[];
-  contratosClientes: GetContratosClientes[];
-  limiteInvierno: GetLimiteInvierno[];
-  fechaActual: GetFechaActual[];
-  tipoContrato: TiposContrato[];
-  tarifas: Tarifas[];
-  contratante: ContratanteProps[];
-  propietario: GetPropietario[];
-  local: GetLocal[];
-  madres: GetMadres[];
-  comuna: GetComunas[];
+  readonly contratos: GetContratos[];
+  readonly tipoContrato: TiposContrato[];
+  readonly tarifas: Tarifas[];
+  readonly contratante: ContratanteProps[];
+  readonly propietario: GetPropietario[];
+  readonly local: GetLocal[];
+  readonly madres: GetMadres[];
+  readonly comuna: GetComunas[];
 }) {
   const [contracts, setContracts] = useState<GetContratos[]>(contratos);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -170,36 +162,60 @@ export default function ContratosComponent({
 
     try {
       // Preparar los datos según el modo (crear o editar)
-      const submitData = {
-        // Campos base requeridos por la API
-        tipoContrato: parseInt(formData.tipoContrato) || 0,
-        tarifa: parseInt(formData.tarifa) || 0,
-        propietario: formData.nombrePropietario,
-        cliente: formData.nombreCliente,
-        localId: formData.local,
-        fechaInicio: formatDateToBackend(formData.fechaInicio), // Formatear a yyyy-MM-dd
-        activo: formData.activo,
-        direccion: formData.direccionEnvio,
-        comuna: formData.comunaEnvio,
-        limite: formData.limiteInvierno,
-        ciclo: 1, // Valor fijo para "Ciclo Día 15"
-        potencia: formData.potenciaContratada,
-        madre: formData.madre,
-        lugar: formData.local,
-        sinCorte: formData.liberadoCorte ? 1 : 0,
+      // Usar type assertion para acceder a las propiedades reales del formulario
+      const formDataAny = formData as any;
 
-        // Campos específicos para crear
-        ...(modalMode === 'add' && {
-          guardaCliente: formData.nombreCliente,
+      let submitData: any;
+
+      if (modalMode === 'add') {
+        // Datos para crear contrato
+        submitData = {
+          tipoContrato:
+            parseInt(formData.tipoContrato || formDataAny.tipoContrato) || 0,
+          tarifa: parseInt(formData.tarifa || formDataAny.tarifa) || 0,
+          propietario:
+            formDataAny.propietario || formData.nombrePropietario || '',
+          cliente: formDataAny.cliente || formData.nombreCliente || '',
+          localId: formDataAny.localId || formData.local || '',
+          fechaInicio: formatDateToBackend(formData.fechaInicio),
+          activo: formData.activo,
+          direccion: formDataAny.direccion || formData.direccionEnvio || '',
+          comuna: formDataAny.comuna || formData.comunaEnvio || '',
+          limite: formDataAny.limite || formData.limiteInvierno || 0,
+          ciclo: parseInt(formDataAny.ciclo || formData.cicloFacturacion) || 1,
+          potencia: formDataAny.potencia || formData.potenciaContratada || '',
+          guardaCliente: formDataAny.cliente || formData.nombreCliente || '',
           esMadre: formData.madre ? 'S' : 'N',
-        }),
-
-        // Campos específicos para editar
-        ...(modalMode === 'edit' && {
+          madre: formData.madre || '',
+          lugar: formDataAny.localId || formData.local || '',
+          sinCorte: formDataAny.sinCorte || (formData.liberadoCorte ? 1 : 0),
+        };
+      } else {
+        // Datos para editar contrato
+        submitData = {
           codigo: selectedContract?.codigoContrato || '',
-          fechaTermino: formatDateToBackend(formData.fechaTermino),
-        }),
-      };
+          tipoContrato:
+            parseInt(formData.tipoContrato || formDataAny.tipoContrato) || 0,
+          tarifa: parseInt(formData.tarifa || formDataAny.tarifa) || 0,
+          propietario:
+            formDataAny.propietario || formData.nombrePropietario || '',
+          cliente: formDataAny.cliente || formData.nombreCliente || '',
+          localId: formDataAny.localId || formData.local || '',
+          fechaInicio: formatDateToBackend(formData.fechaInicio),
+          activo: formData.activo,
+          fechaTermino: formData.fechaTermino
+            ? formatDateToBackend(formData.fechaTermino)
+            : null,
+          direccion: formDataAny.direccion || formData.direccionEnvio || '',
+          comuna: formDataAny.comuna || formData.comunaEnvio || '',
+          limite: formDataAny.limite || formData.limiteInvierno || 0,
+          ciclo: parseInt(formDataAny.ciclo || formData.cicloFacturacion) || 0,
+          potencia: formDataAny.potencia || formData.potenciaContratada || '',
+          madre: formData.madre || null,
+          lugar: formDataAny.localId || formData.local || '',
+          sinCorte: formDataAny.sinCorte || (formData.liberadoCorte ? 1 : 0),
+        };
+      }
 
       // Console.log para debug
       console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
@@ -330,81 +346,81 @@ export default function ContratosComponent({
           </div>
         </div>
 
-      {/* Stats Cards */}
+        {/* Stats Cards */}
 
-      {/* Filters */}
-      <ContractFiltersComponent
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onClearFilters={handleClearFilters}
-        filterOptions={filterOptions}
-      />
+        {/* Filters */}
+        <ContractFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          filterOptions={filterOptions}
+        />
 
-      {/* Filter Summary */}
-      <FilterSummary
-        totalContracts={contracts.length}
-        filteredContracts={filteredContracts.length}
-        activeFilters={filterStats.activeFilters}
-        isFiltered={filterStats.isFiltered}
-      />
+        {/* Filter Summary */}
+        <FilterSummary
+          totalContracts={contracts.length}
+          filteredContracts={filteredContracts.length}
+          activeFilters={filterStats.activeFilters}
+          isFiltered={filterStats.isFiltered}
+        />
 
         {/* Table */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
-        <CardContent className='relative p-2 sm:p-4 lg:p-6'>
-          {filteredContracts.length === 0 ? (
-            <div className='flex flex-col items-center justify-center py-8 sm:py-12 text-slate-500 dark:text-slate-400'>
-              <div className='flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
-                <FileText className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400 dark:text-slate-500' />
+          <CardContent className='relative p-2 sm:p-4 lg:p-6'>
+            {filteredContracts.length === 0 ? (
+              <div className='flex flex-col items-center justify-center py-8 sm:py-12 text-slate-500 dark:text-slate-400'>
+                <div className='flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
+                  <FileText className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400 dark:text-slate-500' />
+                </div>
+                <p className='text-base sm:text-lg font-medium text-center'>
+                  No se encontraron contratos
+                </p>
+                <p className='text-xs sm:text-sm text-center max-w-md px-4'>
+                  {filterStats.isFiltered
+                    ? 'No hay contratos que coincidan con los filtros aplicados'
+                    : 'No hay contratos registrados en el sistema'}
+                </p>
               </div>
-              <p className='text-base sm:text-lg font-medium text-center'>
-                No se encontraron contratos
-              </p>
-              <p className='text-xs sm:text-sm text-center max-w-md px-4'>
-                {filterStats.isFiltered
-                  ? 'No hay contratos que coincidan con los filtros aplicados'
-                  : 'No hay contratos registrados en el sistema'}
-              </p>
-            </div>
-          ) : (
-            <div className='space-y-4'>
-              {/* Tabla moderna con scroll horizontal para móvil */}
-              <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden'>
-                <div className='overflow-x-auto'>
-                  <DataTable
-                    columns={columnsData}
-                    data={filteredContracts}
-                    searchPlaceholder='Buscar por código, propietario o local...'
-                    defaultPageSize={10}
-                  />
+            ) : (
+              <div className='space-y-4'>
+                {/* Tabla moderna con scroll horizontal para móvil */}
+                <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden'>
+                  <div className='overflow-x-auto'>
+                    <DataTable
+                      columns={columnsData}
+                      data={filteredContracts}
+                      searchPlaceholder='Buscar por código, propietario o local...'
+                      defaultPageSize={10}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Modals */}
-      <ContractFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmitContract}
-        contract={selectedContract}
-        mode={modalMode}
-        tipoContrato={tipoContrato}
-        tarifas={tarifas}
-        contratante={contratante}
-        propietario={propietario}
-        local={local}
-        madres={madres}
-        comuna={comuna}
-      />
+        {/* Modals */}
+        <ContractFormModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleSubmitContract}
+          contract={selectedContract}
+          mode={modalMode}
+          tipoContrato={tipoContrato}
+          tarifas={tarifas}
+          contratante={contratante}
+          propietario={propietario}
+          local={local}
+          madres={madres}
+          comuna={comuna}
+        />
 
-      <DeleteConfirmationDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={handleConfirmDelete}
-        contract={selectedContract}
-      />
+        <DeleteConfirmationDialog
+          isOpen={isDeleteDialogOpen}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          onConfirm={handleConfirmDelete}
+          contract={selectedContract}
+        />
 
         <ContractDetailsModal
           isOpen={isDetailsModalOpen}

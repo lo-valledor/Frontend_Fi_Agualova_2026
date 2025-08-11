@@ -3,8 +3,6 @@ import { AlertCircle, History, Key } from 'lucide-react';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-
-
 import type { EtapaTres } from '~/types/monitor';
 
 interface ClavesLecturaProps {
@@ -17,25 +15,70 @@ export default function ClavesLectura({
   data,
   error,
   onAceptarLectura,
-}: ClavesLecturaProps) {
-  const isAceptarDisabled = data.length > 0 && data[0].CLA_Codigo === 'LEOK';
+}: Readonly<ClavesLecturaProps>) {
+  // El botón se habilita solo si hay claves críticas (diferente de LEOK)
+  // LEOK significa que la lectura ya está OK, otras claves indican problemas críticos
+  const hasClaveCritica = data.length > 0 && data[0].CLA_Codigo !== 'LEOK';
+
+  const renderErrorContent = () => {
+    if (error?.includes('claves de lectura ingresadas aún')) {
+      return (
+        <div className='p-6 sm:p-8 text-center'>
+          <div className='flex flex-col items-center justify-center space-y-3'>
+            <div className='text-4xl sm:text-5xl'>⏳</div>
+            <div className='space-y-1'>
+              <p className='font-medium text-sm sm:text-base text-foreground'>
+                Lectura pendiente
+              </p>
+              <p className='text-xs sm:text-sm text-muted-foreground max-w-xs'>
+                {error}
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
-    <Card className='border-0 shadow-none bg-transparent'>
-      <CardHeader className='px-0 pb-2'>
-        <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
-          <div className='h-5 w-5 rounded bg-slate-100 dark:bg-slate-900/30 flex items-center justify-center'>
-            <Key className='h-3 w-3 text-slate-600 dark:text-slate-400' />
-          </div>
-          <span>Claves de Lectura</span>
+    <Card className='w-full'>
+      <CardHeader className='pb-3'>
+        <CardTitle className='flex items-center gap-2 text-base sm:text-lg'>
+          <Key className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
+          {error ? (
+            renderErrorContent()
+          ) : data.length > 0 ? (
+            <span>Claves de Lectura</span>
+          ) : (
+            <span>Claves de Lectura</span>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className='px-0 space-y-3'>
         {error ? (
-          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-lg border border-red-200 dark:border-red-800'>
-            <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
-            <span>{error}</span>
-          </div>
+          // Mostrar diferentes estilos según el tipo de error
+          error.includes('claves de lectura ingresadas aún') ? (
+            <div className='p-6 sm:p-8 text-center'>
+              <div className='flex flex-col items-center justify-center space-y-3'>
+                <div className='text-4xl sm:text-5xl'>⏳</div>
+                <div className='space-y-1'>
+                  <p className='font-medium text-sm sm:text-base text-foreground'>
+                    Lectura pendiente
+                  </p>
+                  <p className='text-xs sm:text-sm text-muted-foreground max-w-xs'>
+                    {error}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-lg border border-red-200 dark:border-red-800'>
+              <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+              <span>{error}</span>
+            </div>
+          )
         ) : data.length > 0 ? (
           <div className='space-y-2 sm:space-y-3'>
             {data.map((item, index) => (
@@ -98,30 +141,33 @@ export default function ClavesLectura({
           </div>
         )}
 
-        {/* Sección de acción completamente rediseñada */}
-        <div className='space-y-3 pt-2 border-t border-border/30'>
-          <div className='flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800'>
-            <History className='h-4 w-4 text-orange-600 dark:text-orange-400 flex-shrink-0' />
-            <span className='text-sm text-orange-700 dark:text-orange-300 font-medium'>
-              Resolver lectura con clave para lectura crítica
-            </span>
-          </div>
-          
-          <div className='flex justify-center sm:justify-end'>
-            <Button
-              variant='destructive'
-              onClick={onAceptarLectura}
-              className='w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-2 h-auto sm:h-10 text-sm font-medium bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-600 dark:hover:bg-red-500 transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed'
-              disabled={isAceptarDisabled}
-            >
-              <Key className='h-4 w-4 mr-2 flex-shrink-0' />
-              <span className='leading-tight text-center'>
-                <span className='block sm:inline'>Aceptar Lectura</span>
-                <span className='block sm:inline sm:ml-1'>con Clave Crítica</span>
+        {/* Sección de acción solo cuando hay clave crítica */}
+        {hasClaveCritica && (
+          <div className='space-y-3 pt-2 border-t border-border/30'>
+            <div className='flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800'>
+              <History className='h-4 w-4 text-orange-600 dark:text-orange-400 flex-shrink-0' />
+              <span className='text-sm text-orange-700 dark:text-orange-300 font-medium'>
+                Resolver lectura con clave para lectura crítica
               </span>
-            </Button>
+            </div>
+
+            <div className='flex justify-center sm:justify-end'>
+              <Button
+                variant='destructive'
+                onClick={onAceptarLectura}
+                className='w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-2 h-auto sm:h-10 text-sm font-medium bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-600 dark:hover:bg-red-500 transition-all duration-200 shadow-sm hover:shadow-md'
+              >
+                <Key className='h-4 w-4 mr-2 flex-shrink-0' />
+                <span className='leading-tight text-center'>
+                  <span className='block sm:inline'>Aceptar Lectura</span>
+                  <span className='block sm:inline sm:ml-1'>
+                    con Clave Crítica
+                  </span>
+                </span>
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

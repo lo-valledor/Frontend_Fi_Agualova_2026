@@ -1,4 +1,4 @@
-import { AlertCircle, Check, Key, Loader2, X } from 'lucide-react';
+import { AlertCircle, Check, Key, Loader2 } from 'lucide-react';
 
 import React from 'react';
 
@@ -33,7 +33,6 @@ interface ConfirmationDialogProps {
   onClaveChange?: (value: string) => void;
   showClaveSelect?: boolean;
   onConfirm: () => void;
-  onCancel?: () => void;
   isSubmitting?: boolean;
 }
 
@@ -49,15 +48,16 @@ export function ConfirmationDialog({
   onClaveChange,
   showClaveSelect = false,
   onConfirm,
-  onCancel,
   isSubmitting = false,
-}: ConfirmationDialogProps) {
+}: Readonly<ConfirmationDialogProps>) {
   // Define estilos compactos basados en el color
   const alertStyles = {
     red: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800',
-    yellow: 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
+    yellow:
+      'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
     blue: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800',
-    orange: 'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
+    orange:
+      'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
   };
 
   const iconStyles = {
@@ -74,11 +74,17 @@ export function ConfirmationDialog({
     orange: 'text-orange-700 dark:text-orange-300',
   };
 
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
+  const getConfirmButtonClass = () => {
+    if (isDestructive) {
+      return 'bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 text-white';
     }
-    onOpenChange(false);
+    if (alertColor === 'blue') {
+      return 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white';
+    }
+    if (alertColor === 'orange') {
+      return 'bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500';
+    }
+    return 'bg-primary hover:bg-primary/90';
   };
 
   return (
@@ -86,8 +92,10 @@ export function ConfirmationDialog({
       <DialogContent className='max-w-md border-0 shadow-sm bg-background/95 backdrop-blur-sm'>
         <DialogHeader className='pb-2'>
           <DialogTitle className='flex items-center gap-2 text-foreground text-base font-medium'>
-            <div className={`h-5 w-5 rounded flex items-center justify-center ${alertStyles[alertColor as keyof typeof alertStyles]}`}>
-              <AlertCircle className={`h-3 w-3 ${iconStyles[alertColor as keyof typeof iconStyles]}`} />
+            <div
+              className={`h-5 w-5 rounded flex items-center justify-center ${alertStyles[alertColor]}`}
+            >
+              <AlertCircle className={`h-3 w-3 ${iconStyles[alertColor]}`} />
             </div>
             <span>{title}</span>
           </DialogTitle>
@@ -95,11 +103,13 @@ export function ConfirmationDialog({
         </DialogHeader>
 
         {/* Mensaje compacto */}
-        <div className={`flex items-start gap-2 text-xs px-3 py-2 rounded-lg border ${alertStyles[alertColor as keyof typeof alertStyles]}`}>
-          <AlertCircle className={`h-3 w-3 mt-0.5 flex-shrink-0 ${iconStyles[alertColor as keyof typeof iconStyles]}`} />
-          <span className={textStyles[alertColor as keyof typeof textStyles]}>
-            {message}
-          </span>
+        <div
+          className={`flex items-start gap-2 text-xs px-3 py-2 rounded-lg border ${alertStyles[alertColor]}`}
+        >
+          <AlertCircle
+            className={`h-3 w-3 mt-0.5 flex-shrink-0 ${iconStyles[alertColor]}`}
+          />
+          <span className={textStyles[alertColor]}>{message}</span>
         </div>
 
         {/* Selector de clave compacto */}
@@ -115,7 +125,11 @@ export function ConfirmationDialog({
               </SelectTrigger>
               <SelectContent>
                 {claveOptions.map(option => (
-                  <SelectItem key={option.value} value={option.value} className='text-xs'>
+                  <SelectItem
+                    key={option.value}
+                    value={option.value}
+                    className='text-xs'
+                  >
                     {option.label}
                   </SelectItem>
                 ))}
@@ -132,26 +146,11 @@ export function ConfirmationDialog({
 
         <DialogFooter className='gap-2 pt-3'>
           <Button
-            variant='outline'
-            onClick={handleCancel}
-            disabled={isSubmitting}
-            className='h-8 px-3 text-xs'
-          >
-            <X className='h-3 w-3 mr-1.5' />
-            Cancelar
-          </Button>
-          <Button
+            className={`h-8 px-3 text-xs ${getConfirmButtonClass()}`}
             onClick={onConfirm}
-            disabled={isSubmitting || (showClaveSelect && selectedClave === '0')}
-            className={`h-8 px-3 text-xs text-white ${
-              isDestructive
-                ? 'bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500'
-                : alertColor === 'blue'
-                  ? 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500'
-                  : alertColor === 'orange'
-                    ? 'bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500'
-                    : 'bg-primary hover:bg-primary/90'
-            }`}
+            disabled={
+              isSubmitting || (showClaveSelect && selectedClave === '0')
+            }
           >
             {isSubmitting ? (
               <>

@@ -336,7 +336,7 @@ export default function CerrarLecturasComponent({
                     disabled={
                       isLoading || !cicloSeleccionado || !periodoFormateado
                     }
-                    className='gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+                    className='gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
                   >
                     <SearchIcon className='h-4 w-4' />
                     {isLoading ? 'Buscando...' : 'Buscar Lecturas'}
@@ -367,105 +367,119 @@ export default function CerrarLecturasComponent({
             </div>
           </CardHeader>
           <CardContent className='p-3'>
-            {isLoading ? (
-              <div className='flex justify-center items-center h-64'>
-                <div className='flex flex-col items-center gap-4'>
-                  <div className='relative'>
-                    <div className='w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700'></div>
-                    <div className='absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-sky-600 border-t-transparent animate-spin'></div>
-                  </div>
-                  <div className='text-center'>
-                    <p className='text-slate-700 dark:text-slate-300 font-medium'>
-                      Buscando lecturas...
-                    </p>
-                    <p className='text-sm text-slate-600 dark:text-slate-400 mt-1'>
-                      Por favor espere mientras procesamos su consulta
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : error ? (
-              <div className='p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
-                <div className='flex items-start gap-3'>
-                  <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                    <AlertCircleIcon className='w-4 h-4 text-slate-600 dark:text-slate-400' />
-                  </div>
-                  <div className='flex-1'>
-                    <h4 className='font-medium text-slate-900 dark:text-slate-100'>
-                      Error al cargar los datos
-                    </h4>
-                    <p className='mt-1 text-slate-700 dark:text-slate-300 text-sm'>
-                      {error}
-                    </p>
-                    <Button
-                      onClick={() => setError(null)}
-                      variant='outline'
-                      size='sm'
-                      className='mt-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
-                    >
-                      Cerrar
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ) : estadoCierreLecturas.length === 0 ? (
-              <div className='flex flex-col items-center justify-center h-64 gap-4'>
-                <div className='w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                  <SearchIcon className='w-8 h-8 text-sky-600 dark:text-sky-400' />
-                </div>
-                <div className='text-center'>
-                  <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
-                    Realizar consulta de lecturas
-                  </p>
-                  <p className='text-xs text-slate-600 dark:text-slate-400 mt-1'>
-                    Selecciona un ciclo y haz clic en "Buscar Lecturas" para ver
-                    los resultados
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className='space-y-4'>
-                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-                  <div className='flex items-center gap-2'>
-                    <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0'>
-                      <CheckCircleIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+            {(() => {
+              if (isLoading) {
+                return (
+                  <div className='flex justify-center items-center h-64'>
+                    <div className='flex flex-col items-center gap-4'>
+                      <div className='relative'>
+                        <div className='w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700'></div>
+                        <div className='absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-sky-600 border-t-transparent animate-spin'></div>
+                      </div>
+                      <div className='text-center'>
+                        <p className='text-slate-700 dark:text-slate-300 font-medium'>
+                          Buscando lecturas...
+                        </p>
+                        <p className='text-sm text-slate-600 dark:text-slate-400 mt-1'>
+                          Por favor espere mientras procesamos su consulta
+                        </p>
+                      </div>
                     </div>
-                    <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
-                      {estadoCierreLecturas.length} registros encontrados
-                    </span>
                   </div>
-                  <div className='flex items-center gap-2'>
-                    <Button
-                      variant='destructive'
-                      size='sm'
-                      onClick={handleOpenAlert}
-                      disabled={selectedRows.length === 0}
-                      className='gap-2'
-                    >
-                      <CircleX className='h-4 w-4' />
-                      Cerrar Lecturas ({selectedRows.length})
-                    </Button>
+                );
+              }
+
+              if (error) {
+                return (
+                  <div className='p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
+                    <div className='flex items-start gap-3'>
+                      <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                        <AlertCircleIcon className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                      </div>
+                      <div className='flex-1'>
+                        <h4 className='font-medium text-slate-900 dark:text-slate-100'>
+                          Error al cargar los datos
+                        </h4>
+                        <p className='mt-1 text-slate-700 dark:text-slate-300 text-sm'>
+                          {error}
+                        </p>
+                        <Button
+                          onClick={() => setError(null)}
+                          variant='outline'
+                          size='sm'
+                          className='mt-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
+                        >
+                          Cerrar
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (estadoCierreLecturas.length === 0) {
+                return (
+                  <div className='flex flex-col items-center justify-center h-64 gap-4'>
+                    <div className='w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
+                      <SearchIcon className='w-8 h-8 text-sky-600 dark:text-sky-400' />
+                    </div>
+                    <div className='text-center'>
+                      <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                        Realizar consulta de lecturas
+                      </p>
+                      <p className='text-xs text-slate-600 dark:text-slate-400 mt-1'>
+                        Selecciona un ciclo y haz clic en "Buscar Lecturas" para
+                        ver los resultados
+                      </p>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div className='space-y-4'>
+                  <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+                    <div className='flex items-center gap-2'>
+                      <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0'>
+                        <CheckCircleIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      </div>
+                      <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                        {estadoCierreLecturas.length} registros encontrados
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-2'>
+                      <Button
+                        variant='destructive'
+                        size='sm'
+                        onClick={handleOpenAlert}
+                        disabled={selectedRows.length === 0}
+                        className='gap-2'
+                      >
+                        <CircleX className='h-4 w-4' />
+                        Cerrar Lecturas ({selectedRows.length})
+                      </Button>
+                    </div>
+                  </div>
+                  <div className='rounded-lg border border-slate-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900'>
+                    <DataTable
+                      columns={columns}
+                      data={estadoCierreLecturas}
+                      onRowSelectionChange={setSelectedRows}
+                      rowIdKey='nichoId'
+                      meta={{
+                        allRowsDisabled: estadoCierreLecturas.every(
+                          row =>
+                            row.cantidadLecturasOK === 0 &&
+                            row.cantidadClaveRoja === 0 &&
+                            row.cantidadClaveNaranja === 0 &&
+                            row.cantidadCorregidas === 0
+                        ),
+                      }}
+                    />
                   </div>
                 </div>
-                <div className='rounded-lg border border-slate-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900'>
-                  <DataTable
-                    columns={columns}
-                    data={estadoCierreLecturas}
-                    onRowSelectionChange={setSelectedRows}
-                    rowIdKey='nichoId'
-                    meta={{
-                      allRowsDisabled: estadoCierreLecturas.every(
-                        row =>
-                          row.cantidadLecturasOK === 0 &&
-                          row.cantidadClaveRoja === 0 &&
-                          row.cantidadClaveNaranja === 0 &&
-                          row.cantidadCorregidas === 0
-                      ),
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+              );
+            })()}
           </CardContent>
         </Card>
 

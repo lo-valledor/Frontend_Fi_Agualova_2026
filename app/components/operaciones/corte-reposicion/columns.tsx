@@ -16,11 +16,11 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
-      const id = row.getValue('ctId') as string;
+      const id = row.getValue('ctId');
       return (
         <div className='flex items-center'>
           <Badge variant='outline' className='font-mono text-xs sm:text-xs'>
-            {id}
+            {id as string}
           </Badge>
         </div>
       );
@@ -33,10 +33,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='Código' />
     ),
     cell: ({ row }) => {
-      const codigo = row.getValue('seCodigo') as string;
+      const codigo = row.getValue('seCodigo');
       return (
         <div className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
-          {codigo}
+          {codigo as string}
         </div>
       );
     },
@@ -48,10 +48,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='N° Serie' />
     ),
     cell: ({ row }) => {
-      const serie = row.getValue('meNSerie') as string;
+      const serie = row.getValue('meNSerie');
       return (
         <div className='font-mono text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-          {serie}
+          {serie as string}
         </div>
       );
     },
@@ -63,10 +63,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='RUT' />
     ),
     cell: ({ row }) => {
-      const rut = row.getValue('clRut') as string;
+      const rut = row.getValue('clRut');
       return (
         <div className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
-          {rut}
+          {rut as string}
         </div>
       );
     },
@@ -78,10 +78,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='Razón Social' />
     ),
     cell: ({ row }) => {
-      const razonSocial = row.getValue('clRazonSocialCompleto') as string;
+      const razonSocial = row.getValue('clRazonSocialCompleto');
       return (
         <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100'>
-          {razonSocial}
+          {razonSocial as string}
         </div>
       );
     },
@@ -93,10 +93,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => {
-      const descripcion = row.getValue('niDescripcion') as string;
+      const descripcion = row.getValue('niDescripcion');
       return (
         <div className='max-w-[100px] sm:max-w-[150px] truncate text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-          {descripcion}
+          {descripcion as string}
         </div>
       );
     },
@@ -108,10 +108,10 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='Sección' />
     ),
     cell: ({ row }) => {
-      const seccion = row.getValue('secDescripcion') as string;
+      const seccion = row.getValue('secDescripcion');
       return (
         <div className='text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-          {seccion}
+          {seccion as string}
         </div>
       );
     },
@@ -123,7 +123,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
-      const estado = row.getValue('reEstado') as string;
+      const estado = row.getValue('reEstado');
 
       const getEstadoConfig = (estado: string) => {
         switch (estado) {
@@ -165,7 +165,15 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         }
       };
 
-      const config = getEstadoConfig(estado);
+      const config = getEstadoConfig(estado as string);
+
+      const getShortLabel = (estado: string) => {
+        if (estado === 'NULL') return 'Pend.';
+        if (estado === '1') return 'Lib.';
+        if (estado === '2') return 'Cort.';
+        if (estado === '3') return 'Rep.';
+        return config.label;
+      };
 
       return (
         <Badge
@@ -173,9 +181,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
           className={cn('text-xs font-medium px-1 sm:px-2', config.className)}
         >
           <span className='hidden sm:inline'>{config.label}</span>
-          <span className='sm:hidden'>
-            {estado === 'NULL' ? 'Pend.' : estado === '1' ? 'Lib.' : estado === '2' ? 'Cort.' : estado === '3' ? 'Rep.' : config.label}
-          </span>
+          <span className='sm:hidden'>{getShortLabel(estado as string)}</span>
         </Badge>
       );
     },
@@ -187,14 +193,14 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='Documentos' />
     ),
     cell: ({ row }) => {
-      const documentos = row.getValue('reCantDocumentos') as number;
+      const documentos = row.getValue('reCantDocumentos');
       return (
         <div className='text-center'>
           <Badge
             variant='outline'
             className='font-mono text-xs bg-slate-50 dark:bg-slate-800 px-1 sm:px-2'
           >
-            {documentos}
+            {documentos as number}
           </Badge>
         </div>
       );
@@ -207,13 +213,13 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       <DataTableColumnHeader column={column} title='Deuda Total' />
     ),
     cell: ({ row }) => {
-      const deuda = row.getValue('reDeudaTotal') as number;
+      const deuda = row.getValue('reDeudaTotal');
       const formattedDeuda = new Intl.NumberFormat('es-CL', {
         style: 'currency',
         currency: 'CLP',
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-      }).format(deuda);
+      }).format(deuda as number);
 
       return (
         <div className='text-right'>

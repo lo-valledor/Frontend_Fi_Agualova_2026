@@ -454,12 +454,36 @@ class AdministracionService {
       };
     } catch (error: any) {
       console.error('Error al modificar contrato:', error);
+
+      // Extraer información detallada del error
+      let errorMessage: string;
+
+      if (error.response) {
+        // Error de respuesta del servidor (4xx, 5xx)
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+        console.error('Error response headers:', error.response.headers);
+
+        errorMessage =
+          error.response.data?.message ||
+          error.response.data?.error ||
+          `Error ${error.response.status}: ${error.response.statusText}`;
+
+        // Si hay detalles de validación, incluirlos
+        if (error.response.data?.details) {
+          errorMessage += ` - Detalles: ${JSON.stringify(error.response.data.details)}`;
+        }
+      } else if (error.request) {
+        // Error de red
+        errorMessage = 'Error de conexión con el servidor';
+      } else {
+        // Error en configuración de la petición
+        errorMessage = error.message || 'Error al modificar el contrato';
+      }
+
       return {
         data: null,
-        error:
-          error.response?.data?.message ||
-          error.message ||
-          'Error al modificar el contrato',
+        error: errorMessage,
       };
     }
   }

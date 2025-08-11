@@ -407,7 +407,7 @@ export default function CambioMedidorComponent() {
                 <Button
                   onClick={nextStep}
                   disabled={!detalleMedidorAntiguo.medidorId || isLoading}
-                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
                 >
                   Siguiente <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
@@ -449,7 +449,7 @@ export default function CambioMedidorComponent() {
                 </Button>
                 <Button
                   onClick={nextStep}
-                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
                 >
                   Siguiente <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
@@ -504,7 +504,7 @@ export default function CambioMedidorComponent() {
                 <Button
                   onClick={nextStep}
                   disabled={!detalleMedidorNuevo.numero_serie || isLoading}
-                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
                 >
                   Siguiente <ArrowRight className='ml-2 h-4 w-4' />
                 </Button>
@@ -710,7 +710,7 @@ export default function CambioMedidorComponent() {
                 <Button
                   onClick={handleCambioMedidor}
                   disabled={!isFormValid || isLoading}
-                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600'
+                  className='bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
                 >
                   {isLoading ? (
                     <RefreshCw className='mr-2 h-4 w-4 animate-spin' />

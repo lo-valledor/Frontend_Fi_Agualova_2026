@@ -10,6 +10,7 @@ import { ExportButton } from '~/components/shared/export-button';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
+import { useAcometidaFilters } from '~/hooks/administracion/use-acometida-filters';
 import api from '~/lib/api';
 import type {
   Acometida,
@@ -22,7 +23,12 @@ import type {
 } from '~/types/administracion';
 
 import { AcometidaForm } from './acometida-form';
+import {
+  AcometidaFiltersComponent,
+  type AcometidaFilters,
+} from './acometida-filters';
 import { columns } from './columns';
+import { FilterSummary } from './filter-summary';
 
 interface AcometidaComponentProps {
   acometidas: Acometida[];
@@ -46,8 +52,41 @@ export default function AcometidaComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [, setEditingAcometidaId] = useState<number | null>(null);
 
+  // Estados para filtros
+  const [filters, setFilters] = useState<AcometidaFilters>({
+    empalmeDescripcion: '',
+    nichoDescripcion: '',
+    sectorDescripcion: '',
+    limitePotenciaMin: '',
+    limitePotenciaMax: '',
+    tieneUbicacion: '',
+    tieneMedidor: '',
+    tieneLimitePotencia: '',
+  });
+
   const revalidator = useRevalidator();
   const { acometidaColumns } = useExportAcometidas();
+  const { filteredAcometidas, filterStats, filterOptions } = useAcometidaFilters(
+    acometidas,
+    filters
+  );
+
+  const handleFiltersChange = (newFilters: AcometidaFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      empalmeDescripcion: '',
+      nichoDescripcion: '',
+      sectorDescripcion: '',
+      limitePotenciaMin: '',
+      limitePotenciaMax: '',
+      tieneUbicacion: '',
+      tieneMedidor: '',
+      tieneLimitePotencia: '',
+    });
+  };
 
   const handleAddAcometida = () => {
     setSelectedAcometida(null);
@@ -110,7 +149,7 @@ export default function AcometidaComponent({
           </div>
           <div className='flex gap-2'>
             <ExportButton
-               data={acometidas}
+               data={filteredAcometidas}
                columns={acometidaColumns}
                filename="acometidas"
                variant="outline"
@@ -128,6 +167,22 @@ export default function AcometidaComponent({
           </div>
         </div>
 
+        {/* Filtros */}
+        <AcometidaFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          filterOptions={filterOptions}
+        />
+
+        {/* Resumen de filtros */}
+        <FilterSummary
+          totalAcometidas={filterStats.total}
+          filteredAcometidas={filterStats.filtered}
+          activeFilters={filterStats.activeFilters}
+          isFiltered={filterStats.isFiltered}
+        />
+
         {/* Table */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
           <CardContent className='p-4'>
@@ -136,7 +191,7 @@ export default function AcometidaComponent({
                 columns={columns({
                   onEdit: handleEditAcometida,
                 })}
-                data={acometidas}
+                data={filteredAcometidas}
                 searchPlaceholder='Buscar por código, ubicación o contrato...'
                 defaultPageSize={10}
               />

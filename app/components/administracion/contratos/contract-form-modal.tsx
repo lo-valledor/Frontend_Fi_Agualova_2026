@@ -1,4 +1,3 @@
-/* eslint-disable unused-imports/no-unused-vars */
 import { Building2, List, MapPin, Search, User, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -68,12 +67,11 @@ export function ContractFormModal({
   mode,
   tipoContrato,
   tarifas,
-  contratante,
   propietario,
   local,
   madres,
   comuna,
-}: ContractFormModalProps) {
+}: Readonly<ContractFormModalProps>) {
   // Estados para los modales de selección
   const [modalPropietario, setModalPropietario] = useState(false);
   const [modalLocal, setModalLocal] = useState(false);
@@ -874,7 +872,10 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono text-xs'>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
                             {p.rut}
                           </Badge>
                         </TableCell>
@@ -961,7 +962,9 @@ export function ContractFormModal({
                 <Table className='min-w-[700px] relative'>
                   <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                     <TableRow>
-                      <TableHead className='min-w-[120px]'>Número Local</TableHead>
+                      <TableHead className='min-w-[120px]'>
+                        Número Local
+                      </TableHead>
                       <TableHead className='min-w-[180px]'>Empresa</TableHead>
                       <TableHead className='hidden md:table-cell min-w-[160px]'>
                         Propietario
@@ -1008,7 +1011,10 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono text-xs'>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
                             {l.numeroLocal}
                           </Badge>
                         </TableCell>
@@ -1057,8 +1063,8 @@ export function ContractFormModal({
               {localesFiltrados.length > 0 && (
                 <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
-                    Mostrando {localesFiltrados.length} de{' '}
-                    {local.length} locales
+                    Mostrando {localesFiltrados.length} de {local.length}{' '}
+                    locales
                   </span>
                   <span className='hidden sm:inline'>
                     💡 Desplácese horizontalmente para ver más columnas
@@ -1108,7 +1114,9 @@ export function ContractFormModal({
                   <TableHeader className='bg-muted/50 sticky top-0 z-10'>
                     <TableRow>
                       <TableHead className='min-w-[120px]'>Código</TableHead>
-                      <TableHead className='min-w-[200px]'>Propietario</TableHead>
+                      <TableHead className='min-w-[200px]'>
+                        Propietario
+                      </TableHead>
                       <TableHead className='hidden md:table-cell min-w-[180px]'>
                         Cliente
                       </TableHead>
@@ -1154,7 +1162,10 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono text-xs'>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
                             {m.codigoContrato}
                           </Badge>
                         </TableCell>
@@ -1196,8 +1207,8 @@ export function ContractFormModal({
               {madresFiltradas.length > 0 && (
                 <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
-                    Mostrando {madresFiltradas.length} de{' '}
-                    {madres.length} contratos madre
+                    Mostrando {madresFiltradas.length} de {madres.length}{' '}
+                    contratos madre
                   </span>
                   <span className='hidden sm:inline'>
                     💡 Desplácese horizontalmente para ver más columnas
@@ -1287,7 +1298,10 @@ export function ContractFormModal({
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
-                          <Badge variant='outline' className='font-mono text-xs'>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
                             {c.codigo}
                           </Badge>
                         </TableCell>
@@ -1321,8 +1335,8 @@ export function ContractFormModal({
               {comunasFiltradas.length > 0 && (
                 <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
-                    Mostrando {comunasFiltradas.length} de{' '}
-                    {comuna.length} comunas
+                    Mostrando {comunasFiltradas.length} de {comuna.length}{' '}
+                    comunas
                   </span>
                   <span className='hidden sm:inline'>
                     💡 Desplácese horizontalmente para ver más columnas
