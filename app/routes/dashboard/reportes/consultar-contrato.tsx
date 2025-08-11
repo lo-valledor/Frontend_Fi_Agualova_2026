@@ -34,7 +34,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
 
 export default function ConsultarContrato({
   loaderData,
-}: Route.ComponentProps) {
+}: Readonly<Route.ComponentProps>) {
   const pageBreadcrumbs = [
     { label: 'Reportes' },
     { label: 'Consulta de Contratos' },

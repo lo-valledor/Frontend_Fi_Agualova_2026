@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 
 import React, { useState } from 'react';
 
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -732,16 +733,10 @@ export default function CambioMedidorComponent() {
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Cambio Medidor
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestión de cambio de medidores
-            </p>
-          </div>
-        </div>
+        <ModernHeader
+          title='Cambio Medidor'
+          description='Gestión de cambio de medidores por medidores nuevos'
+        />
 
         {/* Stepper */}
         <div className='mb-6'>

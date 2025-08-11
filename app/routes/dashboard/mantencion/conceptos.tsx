@@ -30,7 +30,7 @@ export async function clientLoader() {
   return result.data;
 }
 
-export default function Conceptos({ loaderData }: Route.ComponentProps) {
+export default function Conceptos({ loaderData }: Readonly<Route.ComponentProps>) {
   const { conceptos, comboAsociadoConceptos } = loaderData;
 
   const pageBreadcrumbs = [{ label: 'Mantención' }, { label: 'Conceptos' }];

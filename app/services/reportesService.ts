@@ -126,6 +126,19 @@ class ReportesService {
   }
 
   /**
+   * Helper para hacer llamadas API individuales con manejo de errores
+   */
+  private async safeApiCall<T>(endpoint: string): Promise<T[]> {
+    try {
+      const response = await api.get(endpoint);
+      return this.processApiResponse<T>(response);
+    } catch (error) {
+      console.warn(`Error en endpoint ${endpoint}:`, error);
+      return [];
+    }
+  }
+
+  /**
    * Obtiene todos los detalles de un contrato específico
    */
   async getDetallesPorContrato(contratoId: number): Promise<
@@ -142,42 +155,35 @@ class ReportesService {
   > {
     try {
       const [
-        resPropietario,
-        resCliente,
-        resLocal,
-        resContrato,
-        resMedidores,
-        resUbicacion,
-        resLecturas,
-        resFacturas,
-      ] = await Promise.all([
-        api.get(`${contratoId}/propietario`), // Este endpoint puede no existir según tu lista
-        api.get(`${contratoId}/cliente`),
-        api.get(`${contratoId}/local`),
-        api.get(`${contratoId}/contrato`),
-        api.get(`${contratoId}/medidores`),
-        api.get(`${contratoId}/ubicacion`),
-        api.get(`${contratoId}/lecturas`),
-        api.get(`${contratoId}/facturas`),
+        detallePropietario,
+        detalleCliente,
+        detalleLocal,
+        detalleContrato,
+        detalleMedidores,
+        detalleUbicacion,
+        detalleLecturas,
+        detalleFacturas,
+      ] = await Promise.allSettled([
+        this.safeApiCall<DetallePropietario>(`${contratoId}/propietario`),
+        this.safeApiCall<DetalleCliente>(`${contratoId}/cliente`),
+        this.safeApiCall<DetalleLocal>(`${contratoId}/local`),
+        this.safeApiCall<DetalleContrato>(`${contratoId}/contrato`),
+        this.safeApiCall<DetalleMedidores>(`${contratoId}/medidores`),
+        this.safeApiCall<DetalleUbicacion>(`${contratoId}/ubicacion`),
+        this.safeApiCall<DetalleLecturas>(`${contratoId}/lecturas`),
+        this.safeApiCall<DetalleFacturas>(`${contratoId}/facturas`),
       ]);
-
 
       return {
         data: {
-          detallePropietario:
-            this.processApiResponse<DetallePropietario>(resPropietario),
-          detalleCliente: this.processApiResponse<DetalleCliente>(resCliente),
-          detalleLocal: this.processApiResponse<DetalleLocal>(resLocal),
-          detalleContrato:
-            this.processApiResponse<DetalleContrato>(resContrato),
-          detalleMedidores:
-            this.processApiResponse<DetalleMedidores>(resMedidores),
-          detalleUbicacion:
-            this.processApiResponse<DetalleUbicacion>(resUbicacion),
-          detalleLecturas:
-            this.processApiResponse<DetalleLecturas>(resLecturas),
-          detalleFacturas:
-            this.processApiResponse<DetalleFacturas>(resFacturas),
+          detallePropietario: detallePropietario.status === 'fulfilled' ? detallePropietario.value : [],
+          detalleCliente: detalleCliente.status === 'fulfilled' ? detalleCliente.value : [],
+          detalleLocal: detalleLocal.status === 'fulfilled' ? detalleLocal.value : [],
+          detalleContrato: detalleContrato.status === 'fulfilled' ? detalleContrato.value : [],
+          detalleMedidores: detalleMedidores.status === 'fulfilled' ? detalleMedidores.value : [],
+          detalleUbicacion: detalleUbicacion.status === 'fulfilled' ? detalleUbicacion.value : [],
+          detalleLecturas: detalleLecturas.status === 'fulfilled' ? detalleLecturas.value : [],
+          detalleFacturas: detalleFacturas.status === 'fulfilled' ? detalleFacturas.value : [],
         },
         error: null,
       };

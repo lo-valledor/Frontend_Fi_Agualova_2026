@@ -27,7 +27,7 @@ export async function clientLoader() {
   return { tiposContratos: result.data };
 }
 
-export default function TiposContratos({ loaderData }: Route.ComponentProps) {
+export default function TiposContratos({ loaderData }: Readonly<Route.ComponentProps>) {
   const { tiposContratos } = loaderData;
 
   const pageBreadcrumbs = [

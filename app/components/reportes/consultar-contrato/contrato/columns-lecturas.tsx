@@ -10,8 +10,8 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       <DataTableColumnHeader column={column} title='Período' />
     ),
     cell: ({ row }) => {
-      const periodo = row.getValue('periodo') as string;
-      return <div className='font-medium'>{periodo}</div>;
+      const periodo = row.getValue('periodo');
+      return <div className='font-medium'>{periodo as string}</div>;
     },
     enableSorting: true,
     enableHiding: false,
@@ -22,10 +22,8 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       <DataTableColumnHeader column={column} title='Fecha Lectura' />
     ),
     cell: ({ row }) => {
-      const fecha = row.getValue('fechaLectura') as string;
-      return (
-        <div>{new Date(fecha).toLocaleDateString('es-CL')}</div>
-      );
+      const fecha = row.getValue('fechaLectura');
+      return <div>{fecha as string}</div>;
     },
     enableSorting: true,
   },
@@ -35,8 +33,8 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       <DataTableColumnHeader column={column} title='Lectura Anterior' />
     ),
     cell: ({ row }) => {
-      const lectura = row.getValue('lecturaAnterior') as number;
-      return <div className='text-right'>{lectura?.toLocaleString('es-CL')}</div>;
+      const lectura = row.getValue('lecturaAnterior');
+      return <div className='text-left'>{lectura?.toLocaleString()}</div>;
     },
     enableSorting: true,
   },
@@ -46,8 +44,10 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       <DataTableColumnHeader column={column} title='Lectura Actual' />
     ),
     cell: ({ row }) => {
-      const lectura = row.getValue('lecturaActual') as number;
-      return <div className='text-right font-medium'>{lectura?.toLocaleString('es-CL')}</div>;
+      const lectura = row.getValue('lecturaActual');
+      return (
+        <div className='text-left font-medium'>{lectura?.toLocaleString()}</div>
+      );
     },
     enableSorting: true,
   },
@@ -57,8 +57,8 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       <DataTableColumnHeader column={column} title='Consumo' />
     ),
     cell: ({ row }) => {
-      const consumo = row.getValue('consumoPeriodo') as number;
-      return <div className='text-right'>{consumo?.toLocaleString('es-CL')} kWh</div>;
+      const consumo = row.getValue('consumoPeriodo');
+      return <div className='text-left'>{consumo?.toLocaleString()} kWh</div>;
     },
     enableSorting: true,
   },
@@ -68,8 +68,8 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       <DataTableColumnHeader column={column} title='Energía Base' />
     ),
     cell: ({ row }) => {
-      const energia = row.getValue('energiaBase') as number;
-      return <div className='text-right'>{energia?.toLocaleString('es-CL')} kWh</div>;
+      const energia = row.getValue('energiaBase');
+      return <div className='text-left'>{energia?.toLocaleString()} kWh</div>;
     },
     enableSorting: true,
   },
@@ -79,10 +79,12 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       <DataTableColumnHeader column={column} title='Sobreconsumo' />
     ),
     cell: ({ row }) => {
-      const sobreconsumo = row.getValue('sobreconsumo') as number;
+      const sobreconsumo = row.getValue('sobreconsumo');
       return (
-        <div className={`text-right ${sobreconsumo > 0 ? 'text-amber-600 font-medium' : ''}`}>
-          {sobreconsumo?.toLocaleString('es-CL')} kWh
+        <div
+          className={`text-left ${(sobreconsumo as number) > 0 ? 'text-amber-600 font-medium' : ''}`}
+        >
+          {sobreconsumo?.toLocaleString()} kWh
         </div>
       );
     },

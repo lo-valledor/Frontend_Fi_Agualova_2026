@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 
 import React, { useMemo, useState } from 'react';
 
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -160,21 +161,17 @@ export default function PrepararLecturasComponent({
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Preparación de Lecturas
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestión de asignación de sectores para lectura
-            </p>
-          </div>
-          <DialogLecturasPendientes
-            data={lecturasPendientes || undefined}
-            isLoading={false}
-            onRefresh={() => Promise.resolve(undefined)}
-          />
-        </div>
+        <ModernHeader
+          title='Preparación de Lecturas'
+          description='Gestión de asignación de sectores para lectura'
+          actions={
+            <DialogLecturasPendientes
+              data={lecturasPendientes || undefined}
+              isLoading={false}
+              onRefresh={() => Promise.resolve(undefined)}
+            />
+          }
+        />
 
         {/* Filtros de Búsqueda */}
         <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95'>

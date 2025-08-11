@@ -16,9 +16,6 @@ export { operacionesService } from './operacionesService';
 // Servicios de mantención
 export { mantencionService } from './mantencionService';
 
-// Servicios de actividad
-export { activityTracker } from './activityTracker';
-
 // Tipos de servicios
 export type {
   MonitorServiceResponse,

@@ -131,7 +131,7 @@ export default function EditarTipoContrato({
   condicionesContrato,
   cargos,
   tipoContratoId,
-}: {
+}: Readonly<{
   cargoTipoContrato: CargoTipoContratoEditor;
   detalle: CargoTipoDetalle[];
   listbox: CargoTipoListbox[];
@@ -141,7 +141,7 @@ export default function EditarTipoContrato({
   condicionesContrato: GetCondicionesContrato[];
   cargos: BuscarCargoFacturable[];
   tipoContratoId: number;
-}) {
+}>) {
   const [tipoContrato, setTipoContrato] = useState(
     `Tipo de Contrato ID: ${tipoContratoId}`
   );

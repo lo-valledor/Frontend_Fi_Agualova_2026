@@ -23,10 +23,11 @@ import { columns } from './columns';
 import { DeleteConfirmationDialog } from './delete-confirm-dialog';
 import { FilterSummary } from './filter-summary';
 import {
-  MedidorFiltersComponent,
   type MedidorFilters,
+  MedidorFiltersComponent,
 } from './medidor-filters';
 import { MedidorFormModal } from './medidor-form';
+import { ModernHeader } from '~/components/shared/modern-header';
 
 export default function MedidoresComponent({
   medidores: initialMedidores,
@@ -169,8 +170,6 @@ export default function MedidoresComponent({
     }
   };
 
-
-
   if (isFetching && medidores.length === 0) {
     return (
       <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
@@ -187,34 +186,30 @@ export default function MedidoresComponent({
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Medidores
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestiona los medidores del sistema
-            </p>
-          </div>
-          <div className='flex items-center gap-2'>
-            <ExportButton
-               data={filteredMedidores}
-               columns={medidorColumns}
-               filename="medidores"
-               variant="default"
-               size="sm"
-               className="gap-1.5 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-             />
-            <Button
-              onClick={handleAdd}
-              className='bg-sky-600 hover:bg-sky-700 text-white'
-              size='sm'
-            >
-              <Plus className='mr-2 h-4 w-4' />
-              Agregar Medidor
-            </Button>
-          </div>
-        </div>
+        <ModernHeader
+          title='Medidores'
+          description='Gestiona los medidores del sistema'
+          actions={
+            <div className='flex gap-2'>
+              <ExportButton
+                data={filteredMedidores}
+                columns={medidorColumns}
+                filename='clientes'
+                variant='outline'
+                size='sm'
+                className=''
+              />
+              <Button
+                onClick={handleAdd}
+                className='bg-sky-600 hover:bg-sky-700 text-white'
+                size='sm'
+              >
+                <Plus className='mr-2 h-4 w-4' />
+                Agregar Medidor
+              </Button>
+            </div>
+          }
+        />
 
         {/* Filtros */}
         <MedidorFiltersComponent
@@ -234,23 +229,23 @@ export default function MedidoresComponent({
 
         {/* Tabla */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
-        <CardContent className='relative p-2 sm:p-4 lg:p-6'>
-          {isFetching && (
-            <div className='absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10'>
-              <LoadingSpinner />
+          <CardContent className='relative p-2 sm:p-4 lg:p-6'>
+            {isFetching && (
+              <div className='absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10'>
+                <LoadingSpinner />
+              </div>
+            )}
+            <div className='overflow-x-auto'>
+              <DataTable
+                columns={columns({
+                  onEdit: handleEdit,
+                  onAsociarSubempalme: handleAsociarSubempalme,
+                })}
+                data={filteredMedidores}
+                searchPlaceholder='Buscar por serie, marca o código...'
+                defaultPageSize={10}
+              />
             </div>
-          )}
-          <div className='overflow-x-auto'>
-            <DataTable
-              columns={columns({
-                onEdit: handleEdit,
-                onAsociarSubempalme: handleAsociarSubempalme,
-              })}
-              data={filteredMedidores}
-              searchPlaceholder='Buscar por serie, marca o código...'
-              defaultPageSize={10}
-            />
-          </div>
           </CardContent>
         </Card>
 

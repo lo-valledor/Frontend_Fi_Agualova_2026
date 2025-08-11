@@ -28,7 +28,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 
 export default function CondicionesContrato({
   loaderData,
-}: Route.ComponentProps) {
+}: Readonly<Route.ComponentProps>) {
   const { condicionesContrato, conceptos } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },

@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { useRevalidator } from 'react-router';
 
 import { DataTable } from '~/components/data-table/data-table';
+import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useCargoFilters } from '~/hooks/administracion/use-cargo-filters';
@@ -36,7 +38,7 @@ export default function CargoFacturableComponent({
   conceptos,
   tarifas,
   tiposMedidor,
-}: CargoFacturableComponentProps) {
+}: Readonly<CargoFacturableComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCargo, setSelectedCargo] = useState<
     BuscarCargoFacturable | undefined
@@ -112,46 +114,64 @@ export default function CargoFacturableComponent({
     });
   };
 
+  const cargoColumns = [
+    { key: 'cuenta', header: 'Cuenta' },
+    { key: 'codigoEnerlova', header: 'Código' },
+    { key: 'descripcion', header: 'Descripción' },
+    { key: 'tipo', header: 'Tipo' },
+    { key: 'fijoVariable', header: 'Modalidad' },
+    { key: 'periodicoEventual', header: 'Frecuencia' },
+    { key: 'concepto', header: 'Concepto' },
+    { key: 'tarifa', header: 'Tarifa' },
+    { key: 'tipoMedidor', header: 'Tipo Medidor' },
+  ];
+
   return (
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Cargos Facturables
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestiona los cargos facturables del sistema
-            </p>
-          </div>
-          <Button
-            onClick={handleAddCargo}
-            className='bg-sky-600 hover:bg-sky-700 text-white'
-            size='sm'
-          >
-            <Plus className='mr-2 h-4 w-4' />
-            Agregar Cargo Facturable
-          </Button>
-        </div>
+        <ModernHeader
+          title='Cargos Facturables'
+          description='Gestiona los cargos facturables del sistema'
+          actions={
+            <div className='flex gap-2'>
+              <ExportButton
+                data={filteredCargos}
+                columns={cargoColumns}
+                filename='cargos'
+                variant='outline'
+                size='sm'
+                className=''
+              />
+              <Button
+                onClick={handleAddCargo}
+                className='bg-sky-600 hover:bg-sky-700 text-white'
+                size='sm'
+              >
+                <Plus className='mr-2 h-4 w-4' />
+                Agregar Cargo Facturable
+              </Button>
+            </div>
+          }
+        />
 
-      {/* Filters */}
-      <CargoFiltersComponent
-        filters={filters}
-        onFiltersChange={handleFiltersChange}
-        onClearFilters={handleClearFilters}
-        conceptos={conceptos}
-        tarifas={tarifas}
-        tiposMedidor={tiposMedidor}
-      />
+        {/* Filters */}
+        <CargoFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          conceptos={conceptos}
+          tarifas={tarifas}
+          tiposMedidor={tiposMedidor}
+        />
 
-      {/* Filter Summary */}
-      <FilterSummary
-        totalCargos={cargos.length}
-        filteredCargos={filteredCargos.length}
-        activeFilters={filterStats.activeFilters}
-        isFiltered={filterStats.isFiltered}
-      />
+        {/* Filter Summary */}
+        <FilterSummary
+          totalCargos={cargos.length}
+          filteredCargos={filteredCargos.length}
+          activeFilters={filterStats.activeFilters}
+          isFiltered={filterStats.isFiltered}
+        />
 
         {/* Table */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>

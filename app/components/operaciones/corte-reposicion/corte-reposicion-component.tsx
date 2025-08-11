@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -172,16 +173,10 @@ export default function CorteReposicionComponent({
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Corte y Reposición
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestión integral de procesos de corte y reposición de servicios
-            </p>
-          </div>
-        </div>
+        <ModernHeader
+          title='Corte y Reposición'
+          description='Gestión integral de procesos de corte y reposición de servicios'
+        />
 
         <div className='space-y-4'>
           {/* Panel de Revisión modernizado */}

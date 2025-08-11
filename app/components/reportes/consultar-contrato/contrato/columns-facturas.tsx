@@ -11,8 +11,8 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Período' />
     ),
     cell: ({ row }) => {
-      const periodo = row.getValue('periodo') as string;
-      return <div className='font-medium'>{periodo}</div>;
+      const periodo = row.getValue('periodo');
+      return <div className='font-medium'>{periodo as string}</div>;
     },
     enableSorting: true,
     enableHiding: false,
@@ -23,8 +23,8 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Nro. Factura' />
     ),
     cell: ({ row }) => {
-      const nroFactura = row.getValue('nroFactura') as string;
-      return <Badge variant='outline'>{nroFactura}</Badge>;
+      const nroFactura = row.getValue('nroFactura');
+      return <Badge variant='outline'>{nroFactura as string}</Badge>;
     },
     enableSorting: true,
   },
@@ -34,8 +34,8 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Tarifa' />
     ),
     cell: ({ row }) => {
-      const tarifa = row.getValue('tarifa') as string;
-      return <div className='text-center'>{tarifa}</div>;
+      const tarifa = row.getValue('tarifa');
+      return <div className='text-left'>{tarifa as string}</div>;
     },
     enableSorting: true,
   },
@@ -45,10 +45,8 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='F. Emisión' />
     ),
     cell: ({ row }) => {
-      const fecha = row.getValue('fechaEmision') as string;
-      return (
-        <div className='text-sm'>{new Date(fecha).toLocaleDateString('es-CL')}</div>
-      );
+      const fecha = row.getValue('fechaEmision');
+      return <div className='text-sm'>{fecha as string}</div>;
     },
     enableSorting: true,
   },
@@ -58,17 +56,9 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='F. Vencimiento' />
     ),
     cell: ({ row }) => {
-      const fecha = row.getValue('fechaVencimiento') as string;
-      const fechaVenc = new Date(fecha);
-      const hoy = new Date();
-      const isVencida = fechaVenc < hoy;
-      
-      return (
-        <div className={`text-sm ${isVencida ? 'text-red-600 font-medium' : ''}`}>
-          {fechaVenc.toLocaleDateString('es-CL')}
-          {isVencida && <div className='text-xs text-red-500'>Vencida</div>}
-        </div>
-      );
+      const fecha = row.getValue('fechaVencimiento');
+
+      return <div className='text-sm'>{fecha as string}</div>;
     },
     enableSorting: true,
   },
@@ -78,8 +68,8 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Valor Neto' />
     ),
     cell: ({ row }) => {
-      const valor = row.getValue('valorNeto') as number;
-      return <div className='text-right'>${valor?.toLocaleString('es-CL')}</div>;
+      const valor = row.getValue('valorNeto');
+      return <div className='text-left'>${valor?.toLocaleString()}</div>;
     },
     enableSorting: true,
   },
@@ -89,8 +79,8 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='IVA' />
     ),
     cell: ({ row }) => {
-      const iva = row.getValue('iva') as number;
-      return <div className='text-right'>${iva?.toLocaleString('es-CL')}</div>;
+      const iva = row.getValue('iva');
+      return <div className='text-left'>${iva?.toLocaleString()}</div>;
     },
     enableSorting: true,
   },
@@ -100,10 +90,10 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Total' />
     ),
     cell: ({ row }) => {
-      const total = row.getValue('valorTotal') as number;
+      const total = row.getValue('valorTotal');
       return (
-        <div className='text-right font-bold text-slate-900 dark:text-slate-100'>
-          ${total?.toLocaleString('es-CL')}
+        <div className='text-left font-bold text-slate-900 dark:text-slate-100'>
+          ${total?.toLocaleString()}
         </div>
       );
     },
@@ -115,8 +105,12 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Consumo' />
     ),
     cell: ({ row }) => {
-      const consumo = row.getValue('consumoPeriodo') as number;
-      return <div className='text-right text-sm'>{consumo} kWh</div>;
+      const consumo = row.getValue('consumoPeriodo');
+      return (
+        <div className='text-left text-sm'>
+          {(consumo as number).toLocaleString()} kWh
+        </div>
+      );
     },
     enableSorting: true,
   },

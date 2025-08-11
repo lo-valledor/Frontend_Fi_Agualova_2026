@@ -27,7 +27,7 @@ export async function clientLoader() {
   return { tarifas: result.data };
 }
 
-export default function Tarifas({ loaderData }: Route.ComponentProps) {
+export default function Tarifas({ loaderData }: Readonly<Route.ComponentProps>) {
   const { tarifas } = loaderData;
 
   const pageBreadcrumbs = [{ label: 'Mantención' }, { label: 'Tarifas' }];

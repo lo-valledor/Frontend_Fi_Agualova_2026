@@ -356,8 +356,8 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return consumoActual > consumoAnterior * 3;
     }
 
-    // Si no hay consumo anterior, considerar excesivo si es mayor a 2000 kWh
-    return consumoActual > 2000;
+    // Si no hay consumo anterior, considerar excesivo si es mayor a 500 kWh
+    return consumoActual > 500;
   }, [consumoActivaCalculado, consumoAnterior]);
 
   // Detectar si el consumo de energía reactiva es excesivo
@@ -371,7 +371,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     // Para energía reactiva, usar un umbral más alto ya que suele ser menor
     // Si hay consumo anterior, verificar si es más de 5 veces mayor
     if (consumoAnterior > 0) {
-      return consumoActual > consumoAnterior * 5;
+      return consumoActual > consumoAnterior * 3;
     }
 
     // Si no hay consumo anterior, considerar excesivo si es mayor a 1000 kVArh

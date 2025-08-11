@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { DataTable } from '~/components/data-table/data-table';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
@@ -36,11 +37,11 @@ export default function AbrirPeriodoFacturacion({
   years,
   periodos,
   error,
-}: {
+}: Readonly<{
   years: Anio[];
   periodos: Periodos[];
   error: string | null;
-}) {
+}>) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [, setPeriodosData] = useState(periodos);
 
@@ -70,7 +71,9 @@ export default function AbrirPeriodoFacturacion({
             <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2'>
               Error al cargar datos
             </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>{error}</p>
+            <p className='text-sm text-slate-600 dark:text-slate-400'>
+              {error}
+            </p>
           </div>
         </div>
       </div>
@@ -83,16 +86,10 @@ export default function AbrirPeriodoFacturacion({
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Período Facturación
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestión de períodos de facturación activos
-            </p>
-          </div>
-        </div>
+        <ModernHeader
+          title='Período Facturación'
+          description='Gestión de períodos de facturación activos'
+        />
 
         {/* Status Card */}
         {periodoAbierto ? (
@@ -237,8 +234,9 @@ export default function AbrirPeriodoFacturacion({
                       <div>
                         <div className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
                           {
-                            periodos.filter(p => p.epf_descripcion === 'Abierto')
-                              .length
+                            periodos.filter(
+                              p => p.epf_descripcion === 'Abierto'
+                            ).length
                           }
                         </div>
                         <div className='text-xs text-slate-600 dark:text-slate-400'>
@@ -253,8 +251,9 @@ export default function AbrirPeriodoFacturacion({
                       <div>
                         <div className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
                           {
-                            periodos.filter(p => p.epf_descripcion === 'Cerrado')
-                              .length
+                            periodos.filter(
+                              p => p.epf_descripcion === 'Cerrado'
+                            ).length
                           }
                         </div>
                         <div className='text-xs text-slate-600 dark:text-slate-400'>

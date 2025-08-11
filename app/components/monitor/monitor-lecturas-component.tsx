@@ -19,6 +19,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import ResultadosBusqueda from '~/components/monitor/monitor-lecturas/resultados-busqueda';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -149,17 +150,10 @@ const MonitorLecturasComponent = ({
       <div className='container mx-auto p-3 space-y-4'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
-        {/* Modern Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Monitor de Lecturas
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestion, ingreso y visualización de lecturas hechas a medidores
-            </p>
-          </div>
-        </div>
+        <ModernHeader
+          title='Monitor de Lecturas'
+          description='Gestion, ingreso y visualización de lecturas hechas a medidores'
+        />
 
         {/* Main Control Panel */}
         <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>

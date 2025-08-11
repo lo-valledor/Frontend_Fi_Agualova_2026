@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 
 import React, { useMemo, useState } from 'react';
 
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
@@ -74,7 +75,7 @@ export default function RevisarPrecioComponent({
   error,
   onRecargarPrecios,
   isLoadingPrecios,
-}: RevisarPrecioComponentProps) {
+}: Readonly<RevisarPrecioComponentProps>) {
   // Estados UI
   const [contrasena, setContrasena] = useState<string>('');
   const [_isLoadingCiclo] = useState(false);
@@ -358,7 +359,8 @@ export default function RevisarPrecioComponent({
     try {
       // setIsLoadingCiclo(true);
       await onCicloChange(nuevoCiclo);
-    } catch (_error) {
+    } catch (error) {
+      console.error('Error al cambiar el ciclo:', error);
       toast.error('Error al cambiar el ciclo');
     } finally {
       //    setIsLoadingCiclo(false);
@@ -378,27 +380,35 @@ export default function RevisarPrecioComponent({
         return {
           ...col,
           cell: ({ row }: { row: any }) => {
-            return (
-              <div className='text-center'>
-                {row.original.confirmacion === 'Confirmado' ? (
+            const renderActionContent = () => {
+              if (row.original.confirmacion === 'Confirmado') {
+                return (
                   <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'>
                     Confirmado
                   </Badge>
-                ) : row.original.indice === '' ? (
+                );
+              }
+
+              if (row.original.indice === '') {
+                return (
                   <Badge className='bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800'>
                     Inhabilitado
                   </Badge>
-                ) : (
-                  <DialogModificarPrecio
-                    isAuthorized={isAuthorized}
-                    indice={Number(row.original.indice)}
-                    descripcion={row.original.descripcion}
-                    valorActual={row.original.valor}
-                    onSuccess={onRecargarPrecios}
-                  />
-                )}
-              </div>
-            );
+                );
+              }
+
+              return (
+                <DialogModificarPrecio
+                  isAuthorized={isAuthorized}
+                  indice={Number(row.original.indice)}
+                  descripcion={row.original.descripcion}
+                  valorActual={row.original.valor}
+                  onSuccess={onRecargarPrecios}
+                />
+              );
+            };
+
+            return <div className='text-center'>{renderActionContent()}</div>;
           },
         };
       }
@@ -459,16 +469,10 @@ export default function RevisarPrecioComponent({
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Revisar Precios
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestión y validación de precios del sistema
-            </p>
-          </div>
-        </div>
+        <ModernHeader
+          title='Revisar Precios'
+          description='Gestión y validación de precios del sistema'
+        />
 
         {/* Validación de Usuario */}
         <Card className='bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>

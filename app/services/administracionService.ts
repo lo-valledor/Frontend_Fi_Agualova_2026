@@ -8,7 +8,6 @@ import type {
   ComboEmpalmes,
   ComboNichos,
   ComboSectores,
-  ContratanteProps,
   ContratosDisponibles,
   CrearContratoProps,
   GeCombosConceptos,
@@ -19,24 +18,15 @@ import type {
   GetComunas,
   GetCondicionesContrato,
   GetContratos,
-  GetContratosClientes,
-  GetFechaActual,
   GetGiros,
-  GetLimiteInvierno,
   GetLocal,
   GetMadres,
   GetMedidores,
   GetPropietario,
-  GetRegiones,
   ModificarContratoProps,
   Usuarios,
 } from '~/types/administracion';
-import type {
-  Conceptos,
-  Marca,
-  Tarifas,
-  TiposContrato,
-} from '~/types/mantencion';
+import type { Conceptos, Marca } from '~/types/mantencion';
 
 export interface AdministracionServiceResponse<T> {
   data: T | null;
@@ -149,63 +139,95 @@ class AdministracionService {
   async getContratosData(): Promise<
     AdministracionServiceResponse<{
       contratos: GetContratos[];
-      regiones: GetRegiones[];
-      contratosClientes: GetContratosClientes[];
-      limiteInvierno: GetLimiteInvierno[];
-      fechaActual: GetFechaActual[];
-      tipoContrato: TiposContrato[];
-      tarifas: Tarifas[];
-      contratante: ContratanteProps[];
-      propietario: GetPropietario[];
-      local: GetLocal[];
+    }>
+  > {
+    try {
+      const [resContratos] = await Promise.all([api.get('contrato/buscar')]);
+
+      return {
+        data: {
+          contratos: resContratos.data as GetContratos[],
+        },
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido',
+      };
+    }
+  }
+
+  /**
+   * Obtiene contrato por ID
+   */
+  async getContratoById(id: number): Promise<
+    AdministracionServiceResponse<{
+      contrato: GetContratos;
+      propietarios: GetPropietario[];
+      locales: GetLocal[];
+      comunas: GetComunas[];
       madres: GetMadres[];
-      comuna: GetComunas[];
     }>
   > {
     try {
       const [
         resContratos,
-        resRegiones,
-        resContratosClientes,
-        resLimiteInvierno,
-        resFechaActual,
-        resTipoContrato,
-        resTarifas,
-        resContratante,
-        resPropietario,
-        resLocal,
-        resMadre,
-        resComuna,
+        resPropietarios,
+        resLocales,
+        resComunas,
+        resMadres,
       ] = await Promise.all([
-        api.get('contrato/buscar'),
-        api.get('region/listar'),
-        api.get('cliente/buscar'),
-        api.get('parametro/limite-invierno'),
-        api.get('util/fecha-actual'),
-        api.get('buscarTipoContrato'),
-        api.get('buscarTarifa'),
-        api.get('contratante/existe'),
+        api.get(`contrato/${id}`),
         api.get('propietario/buscar'),
         api.get('local/buscar'),
-        api.get('contrato/madres/buscar'),
         api.get('comuna/por-region'),
+        api.get('contrato/madres/buscar'),
       ]);
+      return {
+        data: {
+          contrato: resContratos.data as GetContratos,
+          propietarios: resPropietarios.data as GetPropietario[],
+          locales: resLocales.data as GetLocal[],
+          comunas: resComunas.data as GetComunas[],
+          madres: resMadres.data as GetMadres[],
+        },
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido',
+      };
+    }
+  }
+
+  /**
+   * Obtiene solo los propietarios, local, comuna y madres
+   */
+  async getDataCreacionContrato(): Promise<
+    AdministracionServiceResponse<{
+      propietarios: GetPropietario[];
+      locales: GetLocal[];
+      comunas: GetComunas[];
+      madres: GetMadres[];
+    }>
+  > {
+    try {
+      const [resPropietarios, resLocales, resComunas, resMadres] =
+        await Promise.all([
+          api.get('propietario/buscar'),
+          api.get('local/buscar'),
+          api.get('comuna/por-region'),
+          api.get('contrato/madres/buscar'),
+        ]);
 
       return {
         data: {
-          contratos: resContratos.data as GetContratos[],
-          regiones: resRegiones.data as GetRegiones[],
-          contratosClientes:
-            resContratosClientes.data as GetContratosClientes[],
-          limiteInvierno: resLimiteInvierno.data as GetLimiteInvierno[],
-          fechaActual: resFechaActual.data as GetFechaActual[],
-          tipoContrato: resTipoContrato.data as TiposContrato[],
-          tarifas: resTarifas.data as Tarifas[],
-          contratante: resContratante.data as ContratanteProps[],
-          propietario: resPropietario.data as GetPropietario[],
-          local: resLocal.data as GetLocal[],
-          madres: resMadre.data as GetMadres[],
-          comuna: resComuna.data as GetComunas[],
+          propietarios: resPropietarios.data as GetPropietario[],
+          locales: resLocales.data as GetLocal[],
+          comunas: resComunas.data as GetComunas[],
+          madres: resMadres.data as GetMadres[],
         },
         error: null,
       };

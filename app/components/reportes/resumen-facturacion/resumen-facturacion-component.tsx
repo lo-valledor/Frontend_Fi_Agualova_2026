@@ -14,6 +14,7 @@ import React, { useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -51,10 +52,10 @@ export default function ResumenFacturacionComponent({
   comboEmpalmes,
   periodosFacturacion,
   error: _error,
-}: ResumenFacturacionComponentProps) {
+}: Readonly<ResumenFacturacionComponentProps>) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
-  const [selectedEmpalme, setSelectedEmpalme] = useState<string>('');
+  const [selectedEmpalme, setSelectedEmpalme] = useState<string>('0');
   const [facturacionData, setFacturacionData] = useState<FacturacionPorCargo[]>(
     []
   );
@@ -128,24 +129,11 @@ export default function ResumenFacturacionComponent({
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Resumen de Facturación
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Revisión de la Facturación Realizada por períodos y empalmes
-            </p>
-          </div>
-          {facturacionData.length > 0 && (
-            <ExportButton
-              data={facturacionData}
-              columns={exportColumns}
-              filename='resumen_facturacion'
-              size='sm'
-            />
-          )}
-        </div>
+
+        <ModernHeader
+          title='Resumen de Facturación'
+          description='Revisión de la Facturación Realizada por períodos y empalmes'
+        />
 
         {/* Filtros de Búsqueda */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
@@ -276,20 +264,30 @@ export default function ResumenFacturacionComponent({
         {/* Resultados de la búsqueda */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
           <CardHeader className='p-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-            <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                <TrendingUpIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
+                  <TrendingUpIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                </div>
+                <div>
+                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                    Resumen de Facturación
+                  </CardTitle>
+                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                    {facturacionData.length > 0
+                      ? `${facturacionData.length} cargos de facturación encontrados`
+                      : 'No hay datos disponibles'}
+                  </CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
-                  Resumen de Facturación
-                </CardTitle>
-                <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
-                  {facturacionData.length > 0
-                    ? `${facturacionData.length} cargos de facturación encontrados`
-                    : 'No hay datos disponibles'}
-                </CardDescription>
-              </div>
+              {facturacionData.length > 0 && (
+                <ExportButton
+                  data={facturacionData}
+                  columns={exportColumns}
+                  filename='resumen_facturacion'
+                  size='sm'
+                />
+              )}
             </div>
           </CardHeader>
           <CardContent className='p-3'>
@@ -350,14 +348,6 @@ export default function ResumenFacturacionComponent({
             )}
             {!isLoading && !fetchError && facturacionData.length > 0 && (
               <div className='space-y-4'>
-                <div className='flex items-center gap-2 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-                  <div className='w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                    <TrendingUpIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
-                  </div>
-                  <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
-                    {facturacionData.length} cargos encontrados
-                  </span>
-                </div>
                 <div className='overflow-x-auto'>
                   <DataTable columns={columns} data={facturacionData} />
                 </div>

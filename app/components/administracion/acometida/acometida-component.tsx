@@ -7,10 +7,11 @@ import { useRevalidator } from 'react-router';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
 import { useAcometidaFilters } from '~/hooks/administracion/use-acometida-filters';
+import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
 import api from '~/lib/api';
 import type {
   Acometida,
@@ -22,11 +23,11 @@ import type {
   CrearAcometidaProps,
 } from '~/types/administracion';
 
-import { AcometidaForm } from './acometida-form';
 import {
-  AcometidaFiltersComponent,
   type AcometidaFilters,
+  AcometidaFiltersComponent,
 } from './acometida-filters';
+import { AcometidaForm } from './acometida-form';
 import { columns } from './columns';
 import { FilterSummary } from './filter-summary';
 
@@ -44,7 +45,7 @@ export default function AcometidaComponent({
   comboNichos,
   comboSectores,
   contratosDisponibles,
-}: AcometidaComponentProps) {
+}: Readonly<AcometidaComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAcometida, setSelectedAcometida] = useState<Acometida | null>(
     null
@@ -66,10 +67,8 @@ export default function AcometidaComponent({
 
   const revalidator = useRevalidator();
   const { acometidaColumns } = useExportAcometidas();
-  const { filteredAcometidas, filterStats, filterOptions } = useAcometidaFilters(
-    acometidas,
-    filters
-  );
+  const { filteredAcometidas, filterStats, filterOptions } =
+    useAcometidaFilters(acometidas, filters);
 
   const handleFiltersChange = (newFilters: AcometidaFilters) => {
     setFilters(newFilters);
@@ -114,8 +113,6 @@ export default function AcometidaComponent({
     );
   };
 
-
-
   const handleSubmitForm = async (
     data: CrearAcometidaProps | ActualizarAcometidaProps
   ) => {
@@ -138,34 +135,30 @@ export default function AcometidaComponent({
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-              Acometidas
-            </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              Gestiona las acometidas eléctricas del sistema
-            </p>
-          </div>
-          <div className='flex gap-2'>
-            <ExportButton
-               data={filteredAcometidas}
-               columns={acometidaColumns}
-               filename="acometidas"
-               variant="outline"
-               size="sm"
-               className=""
-             />
-            <Button
-              onClick={handleAddAcometida}
-              className='bg-sky-600 hover:bg-sky-700 text-white'
-              size='sm'
-            >
-              <Plus className='mr-2 h-4 w-4' />
-              Agregar Acometida
-            </Button>
-          </div>
-        </div>
+        <ModernHeader
+          title='Acometidas'
+          description='Gestiona las acometidas eléctricas del sistema'
+          actions={
+            <div className='flex gap-2'>
+              <ExportButton
+                data={filteredAcometidas}
+                columns={acometidaColumns}
+                filename='acometidas'
+                variant='outline'
+                size='sm'
+                className=''
+              />
+              <Button
+                onClick={handleAddAcometida}
+                className='bg-sky-600 hover:bg-sky-700 text-white'
+                size='sm'
+              >
+                <Plus className='mr-2 h-4 w-4' />
+                Agregar Acometida
+              </Button>
+            </div>
+          }
+        />
 
         {/* Filtros */}
         <AcometidaFiltersComponent

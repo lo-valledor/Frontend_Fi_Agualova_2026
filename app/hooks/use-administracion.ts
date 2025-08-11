@@ -55,7 +55,7 @@ export function useAcometidasData() {
         if (result.error) {
           setError(result.error);
         } else if (result.data) {
-          setData(result.data);
+          setData(result.data as any);
         } else {
           setError('No se pudieron cargar los datos');
         }
@@ -163,7 +163,7 @@ export function useContratosData() {
         if (result.error) {
           setError(result.error);
         } else if (result.data) {
-          setData(result.data);
+          setData(result.data as any);
         } else {
           setError('No se pudieron cargar los datos');
         }

@@ -33,7 +33,7 @@ export function ExportButton<T extends Record<string, any>>({
   variant = 'default',
   showDropdown = true,
   defaultFormat = 'xlsx',
-}: ExportButtonProps<T>) {
+}: Readonly<ExportButtonProps<T>>) {
   const { isExporting, exportData } = useExportData<T>();
 
   const handleExport = async (format: ExportFormat) => {

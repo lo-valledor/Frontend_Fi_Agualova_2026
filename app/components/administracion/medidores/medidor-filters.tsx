@@ -49,7 +49,7 @@ export function MedidorFiltersComponent({
   onFiltersChange,
   onClearFilters,
   filterOptions,
-}: MedidorFiltersProps) {
+}: Readonly<MedidorFiltersProps>) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof MedidorFilters, value: string) => {
@@ -125,9 +125,7 @@ export function MedidorFiltersComponent({
                 </Label>
                 <Select
                   value={filters.marca}
-                  onValueChange={value =>
-                    handleFilterChange('marca', value)
-                  }
+                  onValueChange={value => handleFilterChange('marca', value)}
                 >
                   <SelectTrigger className='w-full'>
                     <SelectValue placeholder='Todas las marcas' />
@@ -153,9 +151,7 @@ export function MedidorFiltersComponent({
                 </Label>
                 <Select
                   value={filters.tipo}
-                  onValueChange={value =>
-                    handleFilterChange('tipo', value)
-                  }
+                  onValueChange={value => handleFilterChange('tipo', value)}
                 >
                   <SelectTrigger className='w-full'>
                     <SelectValue placeholder='Todos los tipos' />
@@ -224,12 +220,12 @@ export function MedidorFiltersComponent({
               </div>
             </div>
 
-            {/* Segunda fila de filtros - Rangos numéricos */}
+            {/* Segunda fila de filtros - Rangos numï¿½ricos */}
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
-              {/* Rango de Dígitos */}
+              {/* Rango de Dï¿½gitos */}
               <div className='space-y-2'>
                 <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
-                  Dígitos (Min)
+                  DÃ­gitos (Min)
                 </Label>
                 <Input
                   type='number'
@@ -244,7 +240,7 @@ export function MedidorFiltersComponent({
 
               <div className='space-y-2'>
                 <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
-                  Dígitos (Max)
+                  DÃ­gitos (Max)
                 </Label>
                 <Input
                   type='number'
@@ -293,13 +289,13 @@ export function MedidorFiltersComponent({
 
             {/* Tercera fila de filtros - Filtros de contenido */}
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
-              {/* Tiene Ubicación */}
+              {/* Tiene Ubicaciï¿½n */}
               <div className='space-y-2'>
                 <Label
                   htmlFor='tieneUbicacion'
                   className='text-sm font-medium text-slate-700 dark:text-slate-300'
                 >
-                  Tiene Ubicación
+                  Tiene Ubicaciï¿½n
                 </Label>
                 <Select
                   value={filters.tieneUbicacion}
@@ -312,8 +308,8 @@ export function MedidorFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value='all'>Todos</SelectItem>
-                    <SelectItem value='true'>Con Ubicación</SelectItem>
-                    <SelectItem value='false'>Sin Ubicación</SelectItem>
+                    <SelectItem value='true'>Con Ubicaciï¿½n</SelectItem>
+                    <SelectItem value='false'>Sin Ubicaciï¿½n</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -469,7 +465,8 @@ export function MedidorFiltersComponent({
                           variant='outline'
                           className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs sm:text-sm'
                         >
-                          Dígitos: {filters.digitosMin || '...'} - {filters.digitosMax || '...'}
+                          Dï¿½gitos: {filters.digitosMin || '...'} -{' '}
+                          {filters.digitosMax || '...'}
                           <Button
                             variant='ghost'
                             size='sm'
@@ -488,7 +485,8 @@ export function MedidorFiltersComponent({
                           variant='outline'
                           className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800 text-xs sm:text-sm'
                         >
-                          Mult: {filters.multiplicarMin || '...'} - {filters.multiplicarMax || '...'}
+                          Mult: {filters.multiplicarMin || '...'} -{' '}
+                          {filters.multiplicarMax || '...'}
                           <Button
                             variant='ghost'
                             size='sm'
@@ -502,44 +500,54 @@ export function MedidorFiltersComponent({
                           </Button>
                         </Badge>
                       )}
-                      {filters.tieneUbicacion && filters.tieneUbicacion !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800 text-xs sm:text-sm'
-                        >
-                          Ubicación: {filters.tieneUbicacion === 'true' ? 'Con' : 'Sin'}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('tieneUbicacion', '')}
+                      {filters.tieneUbicacion &&
+                        filters.tieneUbicacion !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
-                      {filters.tieneAcometida && filters.tieneAcometida !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800 text-xs sm:text-sm'
-                        >
-                          Acometida: {filters.tieneAcometida === 'true' ? 'Con' : 'Sin'}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('tieneAcometida', '')}
+                            Ubicaciï¿½n:{' '}
+                            {filters.tieneUbicacion === 'true' ? 'Con' : 'Sin'}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('tieneUbicacion', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
+                      {filters.tieneAcometida &&
+                        filters.tieneAcometida !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-300 dark:border-rose-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
-                      {(filters.fechaInicioDesde || filters.fechaInicioHasta) && (
+                            Acometida:{' '}
+                            {filters.tieneAcometida === 'true' ? 'Con' : 'Sin'}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('tieneAcometida', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
+                      {(filters.fechaInicioDesde ||
+                        filters.fechaInicioHasta) && (
                         <Badge
                           variant='outline'
                           className='bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800 text-xs sm:text-sm'
                         >
-                          Fechas: {filters.fechaInicioDesde || '...'} - {filters.fechaInicioHasta || '...'}
+                          Fechas: {filters.fechaInicioDesde || '...'} -{' '}
+                          {filters.fechaInicioHasta || '...'}
                           <Button
                             variant='ghost'
                             size='sm'

@@ -70,6 +70,14 @@ export default [
         ...prefix('administracion', [
           route('usuarios', 'routes/dashboard/administracion/usuarios.tsx'),
           route('contratos', 'routes/dashboard/administracion/contratos.tsx'),
+          route(
+            'contratos/crear',
+            'routes/dashboard/administracion/contratos/crear-contrato.tsx'
+          ),
+          route(
+            'contratos/:id',
+            'routes/dashboard/administracion/contratos/editar-contrato.tsx'
+          ),
           route('clientes', 'routes/dashboard/administracion/clientes.tsx'),
           route('medidores', 'routes/dashboard/administracion/medidores.tsx'),
           route('acometida', 'routes/dashboard/administracion/acometida.tsx'),

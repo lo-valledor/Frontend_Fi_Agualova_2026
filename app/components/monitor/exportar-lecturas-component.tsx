@@ -29,6 +29,8 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import api from '~/lib/api';
 import { type Periodo, type Sector } from '~/types/monitor';
 
+import { ModernHeader } from '../shared/modern-header';
+
 interface ExportarLecturasComponentProps {
   periodos: Periodo[];
   sectores: Sector[];
@@ -76,7 +78,9 @@ export default function ExportarLecturasComponent({
     if (checked) {
       setSelectedPeriodos([...selectedPeriodos, periodo]);
     } else {
-      setSelectedPeriodos(selectedPeriodos.filter(p => p.IdPeriodo !== periodo.IdPeriodo));
+      setSelectedPeriodos(
+        selectedPeriodos.filter(p => p.IdPeriodo !== periodo.IdPeriodo)
+      );
     }
   };
 
@@ -181,7 +185,9 @@ export default function ExportarLecturasComponent({
 
       // Obtener el nombre del archivo del header Content-Disposition
       const contentDisposition = response.headers['content-disposition'];
-      const periodosDescripcion = selectedPeriodos.map(p => p.DescripcionPeriodo).join('-');
+      const periodosDescripcion = selectedPeriodos
+        .map(p => p.DescripcionPeriodo)
+        .join('-');
       let filename = `Lecturas_${
         periodosDescripcion
       }_${selectedSectores.join(',')}_${selectedNichos.join(
@@ -240,18 +246,11 @@ export default function ExportarLecturasComponent({
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Header */}
-        <div className='flex items-center justify-between pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-          <div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-            Exportar Lecturas
-          </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-            Exporta lecturas de medidores en formato Excel con filtros
-            personalizados
-          </p>
-          </div>
-        </div>
-
+        <ModernHeader
+          title='Exportar Lecturas'
+          description='Exporta lecturas de medidores en formato Excel con filtros
+              personalizados'
+        />
 
         {/* Main Control Panel */}
         <Card className='border-slate-200/60 dark:border-slate-700/60'>
@@ -284,7 +283,9 @@ export default function ExportarLecturasComponent({
                     >
                       <Checkbox
                         id={periodo.IdPeriodo}
-                        checked={selectedPeriodos.some(p => p.IdPeriodo === periodo.IdPeriodo)}
+                        checked={selectedPeriodos.some(
+                          p => p.IdPeriodo === periodo.IdPeriodo
+                        )}
                         onCheckedChange={checked =>
                           handlePeriodoChange(periodo, checked as boolean)
                         }

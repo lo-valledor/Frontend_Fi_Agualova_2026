@@ -64,7 +64,6 @@ const ContratoComponent = memo(function ContratoComponent({
     detalleFacturas,
   } = detallesContrato;
 
-
   // Columnas para exportación de lecturas - Memoizadas para rendimiento
   const lecturasColumns = useMemo(
     (): ExportColumn[] => [
@@ -195,21 +194,21 @@ const ContratoComponent = memo(function ContratoComponent({
             {/* Estadísticas rápidas */}
             <div className='flex items-center gap-4 text-xs sm:text-sm'>
               <div className='text-center'>
-                <div className='font-semibold text-green-600'>
+                <div className='font-semibold text-green-600 dark:text-green-400'>
                   {estadisticas.totalFacturas}
                 </div>
                 <div className='text-slate-500'>Facturas</div>
               </div>
               <Separator orientation='vertical' className='h-8' />
               <div className='text-center'>
-                <div className='font-semibold text-blue-600'>
+                <div className='font-semibold text-blue-600 dark:text-blue-400'>
                   {estadisticas.totalConsumo.toLocaleString('es-CL')} kWh
                 </div>
                 <div className='text-slate-500'>Consumo Total</div>
               </div>
               <Separator orientation='vertical' className='h-8' />
               <div className='text-center'>
-                <div className='font-semibold text-amber-600'>
+                <div className='font-semibold text-amber-600 dark:text-amber-400'>
                   ${estadisticas.totalFacturado.toLocaleString('es-CL')}
                 </div>
                 <div className='text-slate-500'>Facturado</div>

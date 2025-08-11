@@ -36,7 +36,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
 
 export default function ResumenFacturacion({
   loaderData,
-}: Route.ComponentProps) {
+}: Readonly<Route.ComponentProps>) {
   const pageBreadcrumbs = [
     { label: 'Reportes' },
     { label: 'Resumen de Facturación' },

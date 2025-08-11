@@ -22,18 +22,6 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   if (result.error || !result.data) {
     return {
       contratos: [],
-      regiones: [],
-      contratosClientes: [],
-      limiteInvierno: [],
-      fechaActual: [],
-      tipoContrato: [],
-      tarifas: [],
-      contratoId: [],
-      contratante: [],
-      propietario: [],
-      local: [],
-      madres: [],
-      comuna: [],
     };
   }
 
@@ -41,38 +29,12 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 }
 
 export default function Contratos({ loaderData }: Route.ComponentProps) {
-  const {
-    contratos,
-    regiones,
-    contratosClientes,
-    limiteInvierno,
-    fechaActual,
-    tipoContrato,
-    tarifas,
-    contratante,
-    propietario,
-    local,
-    madres,
-    comuna,
-  } = loaderData;
+  const { contratos } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Contratos' }];
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <ContratosComponent
-        contratos={contratos}
-        regiones={regiones}
-        contratosClientes={contratosClientes}
-        limiteInvierno={limiteInvierno}
-        fechaActual={fechaActual}
-        tipoContrato={tipoContrato}
-        tarifas={tarifas}
-        contratante={contratante}
-        propietario={propietario}
-        local={local}
-        madres={madres}
-        comuna={comuna}
-      />
+      <ContratosComponent contratos={contratos} />
     </div>
   );
 }
