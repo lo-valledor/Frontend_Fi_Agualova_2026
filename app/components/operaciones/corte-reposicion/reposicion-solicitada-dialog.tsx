@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,19 +31,12 @@ interface ReposicionSolicitadaDialogProps {
 export function ReposicionSolicitadaDialog({
   acometida,
   onSuccess,
-}: ReposicionSolicitadaDialogProps) {
+}: Readonly<ReposicionSolicitadaDialogProps>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const { trackDataAction } = useActivityEvent();
 
   const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
-      trackDataAction(
-        'Solicitar',
-        'Corte y Reposición',
-        `Reposición solicitada para acometida ${acometida}`
-      );
       await api.post('reposicion-solicitada', null, {
         params: { acometida },
       });
@@ -90,7 +82,10 @@ export function ReposicionSolicitadaDialog({
             <div className='space-y-2 sm:space-y-3'>
               <p>
                 Esta acción solicitará la reposición para la acometida{' '}
-                <span className='font-mono font-medium text-xs sm:text-sm break-all'>{acometida}</span>.
+                <span className='font-mono font-medium text-xs sm:text-sm break-all'>
+                  {acometida}
+                </span>
+                .
               </p>
               <div className='flex items-start gap-2 p-2 sm:p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800'>
                 <AlertTriangle className='h-3 w-3 sm:h-4 sm:w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' />
@@ -102,7 +97,10 @@ export function ReposicionSolicitadaDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className='flex-col sm:flex-row gap-2 sm:gap-0'>
-          <AlertDialogCancel disabled={isSubmitting} className='w-full sm:w-auto text-sm sm:text-base'>
+          <AlertDialogCancel
+            disabled={isSubmitting}
+            className='w-full sm:w-auto text-sm sm:text-base'
+          >
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction

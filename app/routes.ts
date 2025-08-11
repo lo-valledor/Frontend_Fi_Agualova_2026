@@ -124,7 +124,6 @@ export default [
           ),
           route('ver-facturas', 'routes/dashboard/reportes/ver-facturas.tsx'),
         ]),
-        route('activity-analytics', 'routes/dashboard/activity-analytics.tsx'),
         ...prefix('configuracion', [
           route(
             'roles-permisos',

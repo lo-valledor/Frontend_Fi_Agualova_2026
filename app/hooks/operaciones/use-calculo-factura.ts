@@ -18,7 +18,6 @@ interface UseCalculoFacturaProps {
 export function useCalculoFactura({
   periodoFormateado,
   cicloId,
-  isCalculoPreparado,
 }: UseCalculoFacturaProps) {
   const [data, setData] = useState<CalculoPrefacturaCompleto[]>([]);
   const [filteredData, setFilteredData] = useState<CalculoPrefacturaCompleto[]>(
@@ -41,10 +40,6 @@ export function useCalculoFactura({
     }
     if (!cicloId) {
       toast.error('Debe seleccionar un ciclo de facturación');
-      return;
-    }
-    if (!isCalculoPreparado) {
-      toast.error('Haga clic en "Preparar Cálculo" primero');
       return;
     }
 

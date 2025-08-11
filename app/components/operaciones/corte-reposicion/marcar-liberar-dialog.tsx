@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -32,12 +31,10 @@ interface MarcarLiberarDialogProps {
 export function MarcarLiberarDialog({
   acometida,
   onSuccess,
-}: MarcarLiberarDialogProps) {
+}: Readonly<MarcarLiberarDialogProps>) {
   const [open, setOpen] = useState(false);
   const [comentario, setComentario] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const { trackDataAction } = useActivityEvent();
 
   const handleSubmit = async () => {
     if (!comentario.trim()) {
@@ -47,11 +44,6 @@ export function MarcarLiberarDialog({
 
     setIsSubmitting(true);
     try {
-      trackDataAction(
-        'Liberar',
-        'Corte y Reposición',
-        `Liberación registrada para acometida ${acometida}`
-      );
       await api.post('marcar-liberar', null, {
         params: { acometida, comentario },
       });
@@ -98,12 +90,17 @@ export function MarcarLiberarDialog({
           </DialogTitle>
           <DialogDescription className='text-emerald-700 dark:text-emerald-300 text-sm sm:text-base'>
             Ingrese un comentario para la liberación de la acometida{' '}
-            <span className='font-mono font-medium text-xs sm:text-sm break-all'>{acometida}</span>.
+            <span className='font-mono font-medium text-xs sm:text-sm break-all'>
+              {acometida}
+            </span>.
           </DialogDescription>
         </DialogHeader>
         <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>
           <div className='space-y-2'>
-            <Label htmlFor='comentario' className='flex items-center gap-1 text-sm sm:text-base'>
+            <Label
+              htmlFor='comentario'
+              className='flex items-center gap-1 text-sm sm:text-base'
+            >
               <MessageSquare className='h-3 w-3 sm:h-3 sm:w-3' />
               Comentario
             </Label>

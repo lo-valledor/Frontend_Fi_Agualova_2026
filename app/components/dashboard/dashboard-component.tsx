@@ -41,8 +41,6 @@ import type {
   ValidarSectoresPendientes,
 } from '~/types/operaciones';
 
-import { RecentActivity } from './recent-activity';
-
 // Datos de atajos rápidos
 const quickActions = [
   {
@@ -560,7 +558,9 @@ const AdminAnalyticsComponent = () => {
                           variant={getBadgeVariant(estado)}
                           className='text-xs px-1 sm:px-2'
                         >
-                          <span className='truncate max-w-[80px] sm:max-w-none'>{estado}</span>
+                          <span className='truncate max-w-[80px] sm:max-w-none'>
+                            {estado}
+                          </span>
                         </Badge>
                         <NumberFlow
                           value={cantidad}
@@ -848,7 +848,9 @@ export default function DashboardComponent({
                     /{dashboardData.periodoActual.anio}
                   </span>
                 ) : (
-                  <span className='text-sm sm:text-base text-red-500'>Sin período</span>
+                  <span className='text-sm sm:text-base text-red-500'>
+                    Sin período
+                  </span>
                 )}
               </div>
               <p className='text-xs text-muted-foreground'>
@@ -983,7 +985,9 @@ export default function DashboardComponent({
         {/* Atajos Rápidos */}
         <Card>
           <CardHeader className='pb-3 sm:pb-6'>
-            <CardTitle className='text-base sm:text-lg'>Atajos Rápidos</CardTitle>
+            <CardTitle className='text-base sm:text-lg'>
+              Atajos Rápidos
+            </CardTitle>
             <CardDescription className='text-xs sm:text-sm'>
               Accede rápidamente a las funciones más utilizadas
             </CardDescription>
@@ -1002,7 +1006,9 @@ export default function DashboardComponent({
                       <action.icon className='h-3 w-3 sm:h-4 sm:w-4 text-white' />
                     </div>
                     <div>
-                      <div className='font-semibold text-xs sm:text-sm'>{action.title}</div>
+                      <div className='font-semibold text-xs sm:text-sm'>
+                        {action.title}
+                      </div>
                       <div className='text-xs text-muted-foreground'>
                         {action.description}
                       </div>
@@ -1029,9 +1035,6 @@ export default function DashboardComponent({
           </div>
           <AdminAnalyticsComponent />
         </div>
-
-        {/* Actividad Reciente */}
-        <RecentActivity limit={8} showUserInfo={true} refreshInterval={30000} />
       </div>
     </div>
   );

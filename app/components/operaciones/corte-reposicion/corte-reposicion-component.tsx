@@ -12,9 +12,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import {
@@ -53,19 +52,12 @@ interface CorteReposicionComponentProps {
 export default function CorteReposicionComponent({
   totalesData,
   mantenedorCorteData: initialMantenedorCorteData,
-}: CorteReposicionComponentProps) {
+}: Readonly<CorteReposicionComponentProps>) {
   const [isRevisionOpen, setIsRevisionOpen] = useState(true);
   const [mantenedorCorteData, setMantenedorCorteData] = useState<
     ConsultarMantenedorRevisionCorte[]
   >(initialMantenedorCorteData);
   const [isSearching, setIsSearching] = useState(false);
-
-  const { trackPageView, trackDataAction } = useActivityEvent();
-
-  // Rastrear vista de página
-  useEffect(() => {
-    trackPageView('Corte y Reposición');
-  }, [trackPageView]);
 
   // Obtener cantidad por código
   const getCantidadPorCodigo = (codigo: string): number => {
@@ -75,11 +67,6 @@ export default function CorteReposicionComponent({
 
   const handleExportarExcel = async () => {
     try {
-      trackDataAction(
-        'Exportar',
-        'Corte y Reposición',
-        'Exportar mantenedor revisión'
-      );
       const res = await api.get('exportar-mantenedor-revision', {
         responseType: 'blob',
       });
@@ -100,11 +87,6 @@ export default function CorteReposicionComponent({
 
   const handleExportarExcelCorte = async () => {
     try {
-      trackDataAction(
-        'Exportar',
-        'Corte y Reposición',
-        'Exportar revisión corte'
-      );
       const res = await api.get('exportar-revision-corte', {
         responseType: 'blob',
       });
@@ -126,11 +108,6 @@ export default function CorteReposicionComponent({
   const handleBuscar = async () => {
     setIsSearching(true);
     try {
-      trackDataAction(
-        'Buscar',
-        'Corte y Reposición',
-        'Consultar mantenedor revisión corte'
-      );
       const res = await api.get<ConsultarMantenedorRevisionCorte[]>(
         'consulta-mantenedor-revision-corte'
       );
@@ -148,11 +125,6 @@ export default function CorteReposicionComponent({
 
   const handleActivarActualizacion = async () => {
     try {
-      trackDataAction(
-        'Activar',
-        'Corte y Reposición',
-        'Activar actualización revisión'
-      );
       const res = await api.post('modificar-revision');
       if (res.status === 200) {
         toast.success('Proceso de revisión modificado correctamente.');
@@ -168,11 +140,6 @@ export default function CorteReposicionComponent({
 
   const handleIniciar = async () => {
     try {
-      trackDataAction(
-        'Iniciar',
-        'Corte y Reposición',
-        'Iniciar proceso de revisión'
-      );
       const res = await api.post('ingresar-revision');
       if (res.status === 200) {
         toast.success('Proceso de revisión iniciado correctamente.');
@@ -188,18 +155,13 @@ export default function CorteReposicionComponent({
 
   const handleFinalizar = async () => {
     try {
-      trackDataAction(
-        'Finalizar',
-        'Corte y Reposición',
-        'Finalizar proceso de revisión'
-      );
-      toast.info('Funcionalidad de finalización en desarrollo');
-      /* const res = await api.delete('eliminar-revision');
+      const res = await api.post('finalizar-revision');
       if (res.status === 200) {
-        toast.success('Actualización activada correctamente');
+        toast.success('Proceso de revisión finalizado correctamente.');
+        void handleBuscar();
       } else {
-        toast.error('Error al activar actualización');
-      } */
+        toast.error('Error al finalizar el proceso de revisión.');
+      }
     } catch (error) {
       console.error('Error al finalizar el proceso:', error);
       toast.error('Error al finalizar el proceso.');

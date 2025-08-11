@@ -237,10 +237,10 @@ const data = {
           title: 'Resumen Facturación',
           url: '/dashboard/reportes/resumen-facturacion',
         },
-        {
+        /* {
           title: 'Ver Facturas',
           url: '/dashboard/reportes/ver-facturas',
-        },
+        }, */
       ],
     },
     {

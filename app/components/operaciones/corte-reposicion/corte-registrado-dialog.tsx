@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import { useActivityEvent } from '~/components/activity-tracker-hoc';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -32,25 +31,18 @@ interface CorteRegistradoDialogProps {
 export function CorteRegistradoDialog({
   acometida,
   onSuccess,
-}: CorteRegistradoDialogProps) {
+}: Readonly<CorteRegistradoDialogProps>) {
   const [open, setOpen] = useState(false);
   const [fecha, setFecha] = useState('');
   const [hora, setHora] = useState('');
   const [periodo, setPeriodo] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { trackDataAction } = useActivityEvent();
-
   const handleSubmit = async () => {
     if (!isFormValid) return;
 
     setIsSubmitting(true);
     try {
-      trackDataAction(
-        'Registrar',
-        'Corte y Reposición',
-        `Corte registrado para acometida ${acometida}`
-      );
       await api.post('corte-registrado', null, {
         params: { acometida, fecha, hora, periodo },
       });
@@ -101,7 +93,9 @@ export function CorteRegistradoDialog({
           </DialogTitle>
           <DialogDescription className='text-rose-700 dark:text-rose-300 text-sm sm:text-base'>
             Complete los datos para registrar el corte de la acometida{' '}
-            <span className='font-mono font-medium text-xs sm:text-sm break-all'>{acometida}</span>.
+            <span className='font-mono font-medium text-xs sm:text-sm break-all'>
+              {acometida}
+            </span>.
           </DialogDescription>
         </DialogHeader>
         <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>

@@ -9,6 +9,7 @@ import { ExportButton } from '~/components/shared/export-button';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useExportMedidores } from '~/hooks/administracion/use-export-medidores';
+import { useMedidorFilters } from '~/hooks/administracion/use-medidor-filters';
 import api from '~/lib/api';
 import type {
   ActualizarMedidorProps,
@@ -20,15 +21,20 @@ import type { Marca } from '~/types/mantencion';
 import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
 import { columns } from './columns';
 import { DeleteConfirmationDialog } from './delete-confirm-dialog';
+import { FilterSummary } from './filter-summary';
+import {
+  MedidorFiltersComponent,
+  type MedidorFilters,
+} from './medidor-filters';
 import { MedidorFormModal } from './medidor-form';
 
 export default function MedidoresComponent({
   medidores: initialMedidores,
   marcas,
-}: {
+}: Readonly<{
   medidores: GetMedidores[];
   marcas: Marca[];
-}) {
+}>) {
   const [medidores, setMedidores] = useState<GetMedidores[]>(initialMedidores);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -40,7 +46,27 @@ export default function MedidoresComponent({
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
+  // Estados para filtros
+  const [filters, setFilters] = useState<MedidorFilters>({
+    marca: '',
+    tipo: '',
+    modelo: '',
+    estado: '',
+    digitosMin: '',
+    digitosMax: '',
+    multiplicarMin: '',
+    multiplicarMax: '',
+    fechaInicioDesde: '',
+    fechaInicioHasta: '',
+    tieneUbicacion: '',
+    tieneAcometida: '',
+  });
+
   const { medidorColumns } = useExportMedidores();
+  const { filteredMedidores, filterStats, filterOptions } = useMedidorFilters(
+    medidores,
+    filters
+  );
   // Tipos de medidores hardcodeados como placeholder
   const [tipos] = useState([
     { id: 1, nombre: 'Monofásico' },
@@ -50,6 +76,27 @@ export default function MedidoresComponent({
   useEffect(() => {
     setMedidores(initialMedidores);
   }, [initialMedidores]);
+
+  const handleFiltersChange = (newFilters: MedidorFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      marca: '',
+      tipo: '',
+      modelo: '',
+      estado: '',
+      digitosMin: '',
+      digitosMax: '',
+      multiplicarMin: '',
+      multiplicarMax: '',
+      fechaInicioDesde: '',
+      fechaInicioHasta: '',
+      tieneUbicacion: '',
+      tieneAcometida: '',
+    });
+  };
 
   const refetchMedidores = async () => {
     setIsFetching(true);
@@ -151,7 +198,7 @@ export default function MedidoresComponent({
           </div>
           <div className='flex items-center gap-2'>
             <ExportButton
-               data={medidores}
+               data={filteredMedidores}
                columns={medidorColumns}
                filename="medidores"
                variant="default"
@@ -169,6 +216,22 @@ export default function MedidoresComponent({
           </div>
         </div>
 
+        {/* Filtros */}
+        <MedidorFiltersComponent
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          filterOptions={filterOptions}
+        />
+
+        {/* Resumen de filtros */}
+        <FilterSummary
+          totalMedidores={filterStats.total}
+          filteredMedidores={filterStats.filtered}
+          activeFilters={filterStats.activeFilters}
+          isFiltered={filterStats.isFiltered}
+        />
+
         {/* Tabla */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
         <CardContent className='relative p-2 sm:p-4 lg:p-6'>
@@ -183,7 +246,7 @@ export default function MedidoresComponent({
                 onEdit: handleEdit,
                 onAsociarSubempalme: handleAsociarSubempalme,
               })}
-              data={medidores}
+              data={filteredMedidores}
               searchPlaceholder='Buscar por serie, marca o código...'
               defaultPageSize={10}
             />

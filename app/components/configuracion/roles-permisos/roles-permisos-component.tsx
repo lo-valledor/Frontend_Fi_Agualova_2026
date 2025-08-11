@@ -4,10 +4,9 @@ import { Card, CardContent } from '~/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import type { Menus, PermisoRolMenu, Roles } from '~/types/roles-permisos';
 
-import EstadisticasComponent from './roles-permisos/estadisticas-component';
-import MenusTabComponent from './roles-permisos/menus-tab-component';
-import PermisosTabComponent from './roles-permisos/permisos-tab-component';
-import RolesTabComponent from './roles-permisos/roles-tab-component';
+import MenusTabComponent from './menus-tab-component';
+import PermisosTabComponent from './permisos-tab-component';
+import RolesTabComponent from './roles-tab-component';
 
 interface RolesPermisosComponentProps {
   roles: Roles[];
@@ -59,13 +58,6 @@ const RolesPermisosComponent: React.FC<RolesPermisosComponentProps> = ({
             </p>
           </div>
         </div>
-
-        {/* Estadísticas */}
-        <EstadisticasComponent
-          roles={roles}
-          menus={menus}
-          permisos={permisos}
-        />
 
         {/* Tabs para roles, menús y permisos */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>

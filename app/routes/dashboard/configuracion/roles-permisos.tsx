@@ -1,5 +1,5 @@
 /* eslint-disable no-empty-pattern */
-import RolesPermisosComponent from '~/components/configuracion/roles-permisos-component';
+import RolesPermisosComponent from '~/components/configuracion/roles-permisos/roles-permisos-component';
 import { ReporteHydrateFallback } from '~/components/reportes/reporte-hydrate-fallback';
 import { rolesPermisosService } from '~/services/rolesPermisosService';
 
