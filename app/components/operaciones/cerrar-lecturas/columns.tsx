@@ -42,10 +42,11 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           aria-label='Seleccionar fila'
           className='translate-y-[2px]'
           disabled={
-            row.original.cantidadLecturasOK === 0 &&
+            (row.original.cantidadLecturasOK === 0 &&
             row.original.cantidadClaveRoja === 0 &&
             row.original.cantidadClaveNaranja === 0 &&
-            row.original.cantidadCorregidas === 0
+            row.original.cantidadCorregidas === 0) ||
+            row.original.cantidadClaveRoja > 0 // Bloquear filas con claves críticas
           }
         />
       </div>
@@ -115,20 +116,37 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
     accessorKey: 'nichoDescripcion',
     cell: ({ row }) => {
       const nicho = row.original.nichoDescripcion;
-      const hasProblems =
-        row.original.cantidadClaveRoja > 0 ||
-        row.original.cantidadClaveNaranja > 0;
+      const hasCritical = row.original.cantidadClaveRoja > 0;
+      const hasWarning = row.original.cantidadClaveNaranja > 0;
+      const isBlocked = hasCritical;
+      
       return (
-        <div className='font-medium'>
+        <div className={cn('font-medium', isBlocked && 'opacity-60')}>
           <div className='flex items-center gap-2'>
-            <div
-              className={cn(
-                'w-2 h-2 rounded-full flex-shrink-0',
-                hasProblems ? 'bg-red-500' : 'bg-green-500'
+            <div className='flex items-center gap-1'>
+              <div
+                className={cn(
+                  'w-2 h-2 rounded-full flex-shrink-0',
+                  hasCritical 
+                    ? 'bg-red-500 animate-pulse' 
+                    : hasWarning 
+                      ? 'bg-orange-500' 
+                      : 'bg-green-500'
+                )}
+              />
+              {isBlocked && (
+                <span title='Cierre bloqueado por claves críticas'>
+                  <Ban className='w-3 h-3 text-red-500' />
+                </span>
               )}
-            />
+            </div>
             <span className='truncate'>{nicho}</span>
           </div>
+          {isBlocked && (
+            <div className='text-xs text-red-600 dark:text-red-400 mt-1'>
+              Bloqueado - {row.original.cantidadClaveRoja} críticas
+            </div>
+          )}
         </div>
       );
     },

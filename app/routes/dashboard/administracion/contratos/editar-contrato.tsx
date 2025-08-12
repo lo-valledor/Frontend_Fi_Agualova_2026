@@ -7,7 +7,7 @@ import { administracionService } from '~/services';
 export function meta() {
   return [
     { title: 'Enerlova | Contrato - Editar' },
-    { name: 'description', content: 'Contrato - Editar' },
+    { name: 'description', content: 'Contrato - Editar' }
   ];
 }
 
@@ -21,6 +21,7 @@ export async function clientLoader({ params }: { params: { id: string } }) {
       locales: [],
       comunas: [],
       madres: [],
+      clientes: []
     };
   }
 
@@ -30,13 +31,15 @@ export async function clientLoader({ params }: { params: { id: string } }) {
     locales: result.data.locales,
     comunas: result.data.comunas,
     madres: result.data.madres,
+    clientes: result.data.clientes
   };
 }
 
 export default function EditarContrato({
-  loaderData,
+  loaderData
 }: Readonly<{ loaderData: any }>) {
-  const { contrato, propietarios, locales, comunas, madres } = loaderData;
+  const { contrato, propietarios, locales, comunas, madres, clientes } =
+    loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Contratos' }];
 
   // Si no hay datos, mostrar mensaje de error o loading
@@ -62,6 +65,7 @@ export default function EditarContrato({
         locales={locales}
         comunas={comunas}
         madres={madres}
+        clientes={clientes}
       />
     </div>
   );

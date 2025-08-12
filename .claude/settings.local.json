@@ -1,9 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mv:*)"
+      "Bash(pnpm lint:*)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   },
   "hooks": [
     {

@@ -1,4 +1,12 @@
-import { Building2, MapPin, Network, Search, User } from 'lucide-react';
+import {
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Network,
+  Save,
+  Search,
+  User
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -12,7 +20,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -21,7 +29,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import {
@@ -30,16 +38,17 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import { Textarea } from '~/components/ui/textarea';
 import { administracionService, mantencionService } from '~/services';
 import type {
   ContratoFormData,
+  GetClientes,
   GetComunas,
   GetLocal,
   GetMadres,
-  GetPropietario,
+  GetPropietario
 } from '~/types/administracion';
 import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
@@ -48,16 +57,19 @@ export default function CrearContratoComponent({
   locales,
   comunas,
   madres,
+  clientes: _clientes
 }: {
   readonly propietarios: GetPropietario[];
   readonly locales: GetLocal[];
   readonly comunas: GetComunas[];
   readonly madres: GetMadres[];
+  readonly clientes: GetClientes[];
 }) {
   const navigate = useNavigate();
 
   // Estados para los modales de selección
   const [modalPropietario, setModalPropietario] = useState(false);
+  const [modalCliente, setModalCliente] = useState(false);
   const [modalLocal, setModalLocal] = useState(false);
   const [modalMadres, setModalMadres] = useState(false);
   const [modalComuna, setModalComuna] = useState(false);
@@ -65,6 +77,7 @@ export default function CrearContratoComponent({
 
   // Estados para las búsquedas
   const [busquedaPropietario, setBusquedaPropietario] = useState('');
+  const [busquedaCliente, setBusquedaCliente] = useState('');
   const [busquedaLocal, setBusquedaLocal] = useState('');
   const [busquedaMadres, setBusquedaMadres] = useState('');
   const [busquedaComuna, setBusquedaComuna] = useState('');
@@ -89,7 +102,7 @@ export default function CrearContratoComponent({
     cicloFacturacion: 'Ciclo Día 15',
     potenciaContratada: '',
     liberadoCorte: false,
-    madre: '',
+    madre: ''
   });
 
   // Cargar datos adicionales al montar el componente
@@ -125,29 +138,51 @@ export default function CrearContratoComponent({
     );
   }, [propietarios, busquedaPropietario]);
 
+  const clientesFiltrados = useMemo(() => {
+    if (!_clientes || _clientes.length === 0) return [];
+
+    return _clientes.filter(
+      (c: any) =>
+        (c.nombreCompleto &&
+          c.nombreCompleto
+            .toLowerCase()
+            .includes(busquedaCliente.toLowerCase())) ||
+        (c.rut &&
+          c.rut.toLowerCase().includes(busquedaCliente.toLowerCase())) ||
+        (c.nombre &&
+          c.nombre.toLowerCase().includes(busquedaCliente.toLowerCase()))
+    );
+  }, [_clientes, busquedaCliente]);
+
   const localesFiltrados = useMemo(() => {
     return locales.filter(
       l =>
-        l.numeroLocal.toLowerCase().includes(busquedaLocal.toLowerCase()) ||
-        l.empresa.toLowerCase().includes(busquedaLocal.toLowerCase())
+        (l.numeroLocal &&
+          l.numeroLocal.toLowerCase().includes(busquedaLocal.toLowerCase())) ||
+        (l.empresa &&
+          l.empresa.toLowerCase().includes(busquedaLocal.toLowerCase()))
     );
   }, [locales, busquedaLocal]);
 
   const madresFiltradas = useMemo(() => {
     return madres.filter(
       m =>
-        m.nombrePropietario
-          .toLowerCase()
-          .includes(busquedaMadres.toLowerCase()) ||
-        m.codigoContrato.toLowerCase().includes(busquedaMadres.toLowerCase())
+        (m.nombrePropietario &&
+          m.nombrePropietario
+            .toLowerCase()
+            .includes(busquedaMadres.toLowerCase())) ||
+        (m.codigoContrato &&
+          m.codigoContrato.toLowerCase().includes(busquedaMadres.toLowerCase()))
     );
   }, [madres, busquedaMadres]);
 
   const comunasFiltradas = useMemo(() => {
     return comunas.filter(
       c =>
-        c.nombre.toLowerCase().includes(busquedaComuna.toLowerCase()) ||
-        c.codigo.toLowerCase().includes(busquedaComuna.toLowerCase())
+        (c.nombre &&
+          c.nombre.toLowerCase().includes(busquedaComuna.toLowerCase())) ||
+        (c.codigo &&
+          c.codigo.toLowerCase().includes(busquedaComuna.toLowerCase()))
     );
   }, [comunas, busquedaComuna]);
 
@@ -159,6 +194,18 @@ export default function CrearContratoComponent({
     }
     setModalPropietario(false);
     setBusquedaPropietario('');
+  };
+
+  const handleSelectCliente = (clienteRut: string) => {
+    const cliente = _clientes.find(c => c.rut === clienteRut);
+    if (cliente) {
+      const nombreCompleto = cliente.esEmpresa
+        ? cliente.nombreCompleto
+        : `${cliente.nombreCompleto} || ''}`.trim();
+      setFormData(prev => ({ ...prev, nombreCliente: nombreCompleto }));
+    }
+    setModalCliente(false);
+    setBusquedaCliente('');
   };
 
   const handleSelectLocal = (localNumero: string) => {
@@ -182,7 +229,7 @@ export default function CrearContratoComponent({
   const handleSelectComuna = (comunaCodigo: string) => {
     const com = comunas.find(c => c.codigo === comunaCodigo);
     if (com) {
-      setFormData(prev => ({ ...prev, comunaEnvio: com.nombre }));
+      setFormData(prev => ({ ...prev, comunaEnvio: com.codigo }));
     }
     setModalComuna(false);
     setBusquedaComuna('');
@@ -195,99 +242,405 @@ export default function CrearContratoComponent({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Helper para mostrar el nombre de la comuna en el input
+  const getComunaDisplayName = () => {
+    const comuna = comunas.find(c => c.codigo === formData.comunaEnvio);
+    return comuna ? comuna.nombre : formData.comunaEnvio;
+  };
 
-    // Validaciones de campos requeridos
-    if (!formData.fechaInicio) {
-      toast.error('La fecha de inicio es obligatoria');
-      return;
+  // Validación de campos requeridos
+  const validateRequiredFields = (): boolean => {
+    const validations = [
+      {
+        field: formData.fechaInicio,
+        message: 'La fecha de inicio es obligatoria'
+      },
+      {
+        field: formData.tipoContrato,
+        message: 'El tipo de contrato es obligatorio'
+      },
+      { field: formData.tarifa, message: 'La tarifa es obligatoria' },
+      {
+        field: formData.nombrePropietario,
+        message: 'El nombre del propietario es obligatorio'
+      },
+      {
+        field: formData.nombreCliente,
+        message: 'El nombre del cliente es obligatorio'
+      },
+      { field: formData.local, message: 'El local es obligatorio' },
+      {
+        field: formData.comunaEnvio,
+        message: 'La comuna de envío es obligatoria'
+      },
+      {
+        field: formData.direccionEnvio,
+        message: 'La dirección de envío es obligatoria'
+      }
+    ];
+
+    for (const validation of validations) {
+      if (!validation.field) {
+        toast.error(validation.message);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // Validación de entidades existentes
+  const validateEntities = () => {
+    const propietarioSeleccionado = propietarios.find(
+      p => p.nombre.trim() === formData.nombrePropietario.trim()
+    );
+    if (!propietarioSeleccionado) {
+      toast.error(
+        'El propietario seleccionado no es válido. Por favor, selecciona uno de la lista.'
+      );
+      return null;
     }
 
-    if (!formData.tipoContrato) {
-      toast.error('El tipo de contrato es obligatorio');
-      return;
+    const localSeleccionado = locales.find(
+      l => l.numeroLocal === formData.local
+    );
+    if (!localSeleccionado) {
+      toast.error(
+        'El local seleccionado no es válido. Por favor, selecciona uno de la lista.'
+      );
+      return null;
     }
 
-    if (!formData.tarifa) {
-      toast.error('La tarifa es obligatoria');
-      return;
+    const comunaSeleccionada = comunas.find(
+      c => c.codigo === formData.comunaEnvio
+    );
+    if (!comunaSeleccionada) {
+      toast.error(
+        'La comuna seleccionada no es válida. Por favor, selecciona una de la lista.'
+      );
+      return null;
     }
 
-    if (!formData.nombrePropietario) {
-      toast.error('El nombre del propietario es obligatorio');
-      return;
+    const tipoContratoValido = tipoContrato.find(
+      tc => tc.id.toString() === formData.tipoContrato
+    );
+    if (!tipoContratoValido) {
+      toast.error('El tipo de contrato seleccionado no es válido.');
+      return null;
     }
 
-    if (!formData.nombreCliente) {
-      toast.error('El nombre del cliente es obligatorio');
-      return;
+    const tarifaValida = tarifas.find(t => t.id.toString() === formData.tarifa);
+    if (!tarifaValida) {
+      toast.error('La tarifa seleccionada no es válida.');
+      return null;
     }
 
-    if (!formData.local) {
-      toast.error('El local es obligatorio');
-      return;
+    return {
+      propietarioSeleccionado,
+      localSeleccionado,
+      comunaSeleccionada,
+      tipoContratoValido,
+      tarifaValida
+    };
+  };
+
+  // Validación de contrato madre
+  const validateMadreContract = () => {
+    if (!formData.madre) return '';
+
+    const madreSeleccionada = madres.find(
+      m => m.nombrePropietario === formData.madre
+    );
+    if (!madreSeleccionada) {
+      toast.error('El contrato madre seleccionado no es válido.');
+      return null;
     }
+    return madreSeleccionada.codigoContrato;
+  };
+
+  // Preparación de datos para envío
+  const prepareSubmitData = (entities: any, madreCodigoContrato: string) => {
+    const formatDateForSP = (dateString: string): string => {
+      if (!dateString) return '';
+      const [year, month, day] = dateString.split('-');
+      return `${day}-${month}-${year}`;
+    };
+
+    const { propietarioSeleccionado } = entities;
+
+    // Obtener RUT del cliente
+    let clienteRut = propietarioSeleccionado.rut; // Por defecto usar el mismo del propietario
+
+    // Si cliente es diferente al propietario, buscar su RUT
+    if (formData.nombreCliente.trim() !== formData.nombrePropietario.trim()) {
+      // Buscar en clientes si están disponibles
+      if (_clientes && _clientes.length > 0) {
+        const clienteEncontrado = _clientes.find(
+          (c: any) => c.nombre.trim() === formData.nombreCliente.trim()
+        );
+        if (clienteEncontrado) {
+          clienteRut = clienteEncontrado.rut;
+        } else {
+          // Si no se encuentra en clientes, buscar en propietarios
+          const propietarioCliente = propietarios.find(
+            p => p.nombre.trim() === formData.nombreCliente.trim()
+          );
+          if (propietarioCliente) {
+            clienteRut = propietarioCliente.rut;
+          } else {
+            console.warn('Cliente no encontrado, usando RUT del propietario.');
+          }
+        }
+      }
+    }
+
+    // Validar que los valores numéricos sean válidos
+    const tipoContratoNum = parseInt(formData.tipoContrato);
+    const tarifaNum = parseInt(formData.tarifa);
+
+    console.log('🔍 DEBUG - Valores antes de procesar:');
+    console.log('  - formData.tipoContrato:', formData.tipoContrato);
+    console.log('  - formData.tarifa:', formData.tarifa);
+    console.log('  - parseInt tipoContrato:', tipoContratoNum);
+    console.log('  - parseInt tarifa:', tarifaNum);
+
+    if (isNaN(tipoContratoNum) || tipoContratoNum <= 0) {
+      throw new Error('Tipo de contrato no válido');
+    }
+
+    if (isNaN(tarifaNum) || tarifaNum <= 0) {
+      throw new Error('Tarifa no válida');
+    }
+
+    return {
+      tipoContrato: tipoContratoNum,
+      tarifa: tarifaNum,
+      propietario: propietarioSeleccionado.rut,
+      cliente: clienteRut,
+      localId: formData.local,
+      fechaInicio: formatDateForSP(formData.fechaInicio),
+      activo: formData.activo,
+      direccion: formData.direccionEnvio.trim(),
+      comuna: formData.comunaEnvio.trim(),
+      limite: Math.max(0, formData.limiteInvierno || 0),
+      ciclo: 1,
+      potencia: formData.potenciaContratada?.trim() || '',
+      guardaCliente: '1',
+      esMadre: formData.madre ? '1' : '0',
+      madre: madreCodigoContrato,
+      lugar: formData.local,
+      sinCorte: formData.liberadoCorte ? 1 : 0
+    };
+  };
+
+  // Manejo de errores HTTP
+  const handleHttpError = (error: any) => {
+    console.error('❌ Error completo al crear contrato:', error);
+    console.error('❌ Error response:', error.response);
+    console.error('❌ Error data:', error.response?.data);
+
+    const errorMessages: Record<number, string> = {
+      500: 'Error interno del servidor. Verifica que todos los datos sean válidos.',
+      400: 'Datos inválidos. Revisa la información ingresada.',
+      401: 'No tienes permisos para realizar esta acción.'
+    };
+
+    const status = error.response?.status;
+    const serverMessage = error.response?.data?.message || error.response?.data;
+    const message =
+      errorMessages[status] ||
+      'Error inesperado al crear el contrato. Contacta al administrador.';
+
+    // Mostrar mensaje del servidor si está disponible
+    if (serverMessage && typeof serverMessage === 'string') {
+      toast.error(`${message}\n\nDetalle: ${serverMessage}`);
+    } else {
+      toast.error(message);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!validateRequiredFields()) return;
 
     setIsSubmitting(true);
 
     try {
-      // Preparar los datos para la API
-      const submitData: any = {
-        tipoContrato: parseInt(formData.tipoContrato) || 0,
-        tarifa: parseInt(formData.tarifa) || 0,
-        propietario: formData.nombrePropietario,
-        cliente: formData.nombreCliente,
-        guardaCliente: formData.nombreCliente,
-        localId: formData.local,
-        fechaInicio: formData.fechaInicio,
-        activo: formData.activo,
-        direccion: formData.direccionEnvio,
-        comuna: formData.comunaEnvio,
-        limite: formData.limiteInvierno,
-        ciclo: 1, // Valor fijo para "Ciclo Día 15"
-        potencia: formData.potenciaContratada,
-        madre: formData.madre || '',
-        lugar: formData.local,
-        sinCorte: formData.liberadoCorte ? 1 : 0,
-        esMadre: formData.madre ? 'S' : 'N',
-      };
+      const entities = validateEntities();
+      if (!entities) return;
+
+      const madreCodigoContrato = validateMadreContract();
+      if (madreCodigoContrato === null) return;
+
+      let submitData;
+      try {
+        submitData = prepareSubmitData(entities, madreCodigoContrato);
+      } catch (validationError: any) {
+        toast.error(
+          validationError.message || 'Error en la validación de datos'
+        );
+        return;
+      }
+
+      console.log(
+        '🔍 DEBUG - Propietario seleccionado:',
+        entities.propietarioSeleccionado
+      );
+      console.log('🔍 DEBUG - Local seleccionado:', entities.localSeleccionado);
+      console.log(
+        '🔍 DEBUG - Comuna seleccionada:',
+        entities.comunaSeleccionada
+      );
+      console.log('🔍 DEBUG - Madre seleccionada:', madreCodigoContrato);
+      console.log('🔍 DEBUG - FormData antes de procesar:', formData);
+      console.log(
+        '🔍 DEBUG - RUT Propietario enviado:',
+        submitData.propietario
+      );
+      console.log('🔍 DEBUG - RUT Cliente enviado:', submitData.cliente);
+      console.log(
+        '📤 DEBUG - JSON final enviado al backend:',
+        JSON.stringify(submitData, null, 2)
+      );
+
+      // Validación adicional de campos críticos
+      console.log('🔍 DEBUG - Validación de campos:');
+      console.log(
+        '  - tipoContrato:',
+        submitData.tipoContrato,
+        typeof submitData.tipoContrato
+      );
+      console.log('  - tarifa:', submitData.tarifa, typeof submitData.tarifa);
+      console.log(
+        '  - propietario:',
+        submitData.propietario,
+        'length:',
+        submitData.propietario?.length
+      );
+      console.log(
+        '  - cliente:',
+        submitData.cliente,
+        'length:',
+        submitData.cliente?.length
+      );
+      console.log(
+        '  - localId:',
+        submitData.localId,
+        'length:',
+        submitData.localId?.length
+      );
+      console.log(
+        '  - fechaInicio:',
+        submitData.fechaInicio,
+        'length:',
+        submitData.fechaInicio?.length
+      );
+      console.log(
+        '  - direccion:',
+        submitData.direccion,
+        'length:',
+        submitData.direccion?.length
+      );
+      console.log(
+        '  - comuna:',
+        submitData.comuna,
+        'length:',
+        submitData.comuna?.length
+      );
 
       const result = await administracionService.crearContrato(submitData);
 
       if (result.error) {
+        console.error('❌ Error del servicio:', result.error);
         toast.error(result.error || 'Error al crear el contrato');
         return;
       }
 
-      toast.success('Contrato creado exitosamente');
-      navigate('/dashboard/administracion/contratos');
-    } catch (error) {
-      console.error('Error al crear contrato:', error);
-      toast.error('Error inesperado al crear el contrato');
+      console.log('✅ Contrato creado exitosamente:', result.data);
+      console.log(
+        '✅ Estructura completa de result:',
+        JSON.stringify(result, null, 2)
+      );
+
+      // Buscar el idContrato en diferentes estructuras posibles
+      let contratoId = null;
+
+      if (result.data && result.data.idContrato) {
+        contratoId = result.data.idContrato;
+      } else if (result.data && typeof result.data === 'number') {
+        contratoId = result.data;
+      } else if (result.data && result.data.id) {
+        contratoId = result.data.id;
+      } else if (result && result.data) {
+        contratoId = result.data;
+      }
+
+      console.log('✅ ID del contrato encontrado:', contratoId);
+
+      // Mostrar el ID del contrato en un Alert
+      if (contratoId) {
+        alert(
+          `¡Contrato creado exitosamente!\n\nID del Contrato: ${contratoId}\n\nGuarde este ID para futuras referencias.`
+        );
+      } else {
+        alert('¡Contrato creado exitosamente!');
+      }
+
+      // No navegar automáticamente - el usuario decide cuándo salir
+    } catch (error: any) {
+      console.error('❌ Error en handleSubmit:', error);
+      handleHttpError(error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
-      <div className='container mx-auto p-3 space-y-4'>
-        <ModernHeader
-          title='Crear Nuevo Contrato'
-          description='Creación de nuevo Contrato para sistema'
-          actions={
-            <Button
-              variant='outline'
-              onClick={() => navigate('/dashboard/administracion/contratos')}
-            >
-              Volver a Contratos
-            </Button>
-          }
-        />
+    <div className='min-h-screen bg-background'>
+      {/* Header */}
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+        <div className='container mx-auto px-4 py-4'>
+          <ModernHeader
+            title='Crear Nuevo Contrato'
+            description='Creación de nuevo Contrato para sistema'
+            actions={
+              <>
+                <Button
+                  variant='ghost'
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratos')
+                  }
+                  disabled={isSubmitting}
+                  className='gap-2'
+                >
+                  <ArrowLeft className='h-4 w-4' />
+                  Volver
+                </Button>
+                <Button
+                  variant='outline'
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratos')
+                  }
+                  disabled={isSubmitting}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleSubmit}
+                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  disabled={isSubmitting}
+                >
+                  <Save className='h-4 w-4' />
+                  {isSubmitting ? 'Creando...' : 'Crear Contrato'}
+                </Button>
+              </>
+            }
+          />
+        </div>
+      </div>
 
+      {/* Contenido principal */}
+      <div className='container mx-auto px-4 py-6 space-y-6'>
         <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
-          <form onSubmit={handleSubmit} className='p-6 space-y-6'>
+          <form className='p-6 space-y-6'>
             {/* Información básica del contrato */}
             <div className='space-y-4'>
               <h3 className='text-sm font-medium text-sky-800 dark:text-sky-200'>
@@ -373,16 +726,28 @@ export default function CrearContratoComponent({
 
                 <div className='space-y-2'>
                   <Label htmlFor='nombreCliente'>Cliente *</Label>
-                  <Input
-                    id='nombreCliente'
-                    value={formData.nombreCliente}
-                    onChange={e =>
-                      handleInputChange('nombreCliente', e.target.value)
-                    }
-                    placeholder='Nombre del cliente'
-                    className='w-full'
-                    required
-                  />
+                  <div className='flex gap-2'>
+                    <Input
+                      id='nombreCliente'
+                      value={formData.nombreCliente}
+                      onChange={e =>
+                        handleInputChange('nombreCliente', e.target.value)
+                      }
+                      placeholder='Nombre del cliente'
+                      className='w-full'
+                      required
+                      readOnly
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => setModalCliente(true)}
+                      className='shrink-0'
+                    >
+                      <User className='h-4 w-4' />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -422,7 +787,7 @@ export default function CrearContratoComponent({
                   <div className='flex gap-2'>
                     <Input
                       id='comunaEnvio'
-                      value={formData.comunaEnvio}
+                      value={getComunaDisplayName()}
                       onChange={e =>
                         handleInputChange('comunaEnvio', e.target.value)
                       }
@@ -560,7 +925,10 @@ export default function CrearContratoComponent({
                       handleInputChange('liberadoCorte', checked)
                     }
                   />
-                  <Label htmlFor='liberadoCorte' className='text-sm font-medium'>
+                  <Label
+                    htmlFor='liberadoCorte'
+                    className='text-sm font-medium'
+                  >
                     Liberado de Corte
                   </Label>
                 </div>
@@ -588,30 +956,12 @@ export default function CrearContratoComponent({
                 </div>
               </div>
             </div>
-
-            <div className='flex justify-end gap-4 pt-4 border-t border-slate-200/60 dark:border-slate-700/60'>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={() => navigate('/dashboard/administracion/contratos')}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type='submit'
-                className='bg-sky-600 hover:bg-sky-700 text-white'
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Creando...' : 'Crear Contrato'}
-              </Button>
-            </div>
           </form>
         </div>
 
         {/* Modal de Selección de Propietarios */}
         <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -638,34 +988,76 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>RUT</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {propietariosFiltrados.map(prop => (
-                      <TableRow key={prop.rut}>
-                        <TableCell className='font-medium'>
-                          {prop.rut}
-                        </TableCell>
-                        <TableCell>{prop.nombre}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() => handleSelectPropietario(prop.rut)}
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[500px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
+                          RUT
+                        </TableHead>
+                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                          Nombre
+                        </TableHead>
+                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                          Acción
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {propietariosFiltrados.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-8 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-2'>
+                              <User className='h-8 w-8 opacity-50' />
+                              <p className='text-sm'>
+                                No se encontraron propietarios
+                              </p>
+                              {busquedaPropietario && (
+                                <p className='text-xs'>
+                                  Intenta con otro término de búsqueda
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        propietariosFiltrados.map(prop => (
+                          <TableRow
+                            key={prop.rut}
+                            className='hover:bg-muted/50 transition-colors'
+                          >
+                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
+                              {prop.rut}
+                            </TableCell>
+                            <TableCell className='text-xs sm:text-sm'>
+                              <div
+                                className='truncate max-w-[200px]'
+                                title={prop.nombre}
+                              >
+                                {prop.nombre}
+                              </div>
+                            </TableCell>
+                            <TableCell className='text-center'>
+                              <Button
+                                size='sm'
+                                onClick={() =>
+                                  handleSelectPropietario(prop.rut)
+                                }
+                                className='h-7 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white'
+                              >
+                                Seleccionar
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>
@@ -699,34 +1091,76 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Número</TableHead>
-                      <TableHead>Empresa</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {localesFiltrados.map(loc => (
-                      <TableRow key={loc.numeroLocal}>
-                        <TableCell className='font-medium'>
-                          {loc.numeroLocal}
-                        </TableCell>
-                        <TableCell>{loc.empresa}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() => handleSelectLocal(loc.numeroLocal)}
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[450px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead className='w-[100px] sm:w-[120px] text-xs sm:text-sm'>
+                          Número
+                        </TableHead>
+                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                          Empresa
+                        </TableHead>
+                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                          Acción
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {localesFiltrados.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-8 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-2'>
+                              <Building2 className='h-8 w-8 opacity-50' />
+                              <p className='text-sm'>
+                                No se encontraron locales
+                              </p>
+                              {busquedaLocal && (
+                                <p className='text-xs'>
+                                  Intenta con otro término de búsqueda
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        localesFiltrados.map(loc => (
+                          <TableRow
+                            key={loc.numeroLocal}
+                            className='hover:bg-muted/50 transition-colors'
+                          >
+                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
+                              {loc.numeroLocal}
+                            </TableCell>
+                            <TableCell className='text-xs sm:text-sm'>
+                              <div
+                                className='truncate max-w-[200px]'
+                                title={loc.empresa}
+                              >
+                                {loc.empresa}
+                              </div>
+                            </TableCell>
+                            <TableCell className='text-center'>
+                              <Button
+                                size='sm'
+                                onClick={() =>
+                                  handleSelectLocal(loc.numeroLocal)
+                                }
+                                className='h-7 px-3 text-xs bg-violet-600 hover:bg-violet-700 text-white'
+                              >
+                                Seleccionar
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>
@@ -760,36 +1194,198 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Propietario</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {madresFiltradas.map(mad => (
-                      <TableRow key={mad.codigoContrato}>
-                        <TableCell className='font-medium'>
-                          {mad.codigoContrato}
-                        </TableCell>
-                        <TableCell>{mad.nombrePropietario}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() =>
-                              handleSelectMadre(mad.codigoContrato)
-                            }
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[450px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
+                          Código
+                        </TableHead>
+                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                          Propietario
+                        </TableHead>
+                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                          Acción
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {madresFiltradas.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-8 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-2'>
+                              <Network className='h-8 w-8 opacity-50' />
+                              <p className='text-sm'>
+                                No se encontraron contratos madre
+                              </p>
+                              {busquedaMadres && (
+                                <p className='text-xs'>
+                                  Intenta con otro término de búsqueda
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        madresFiltradas.map(mad => (
+                          <TableRow
+                            key={mad.codigoContrato}
+                            className='hover:bg-muted/50 transition-colors'
+                          >
+                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
+                              {mad.codigoContrato}
+                            </TableCell>
+                            <TableCell className='text-xs sm:text-sm'>
+                              <div
+                                className='truncate max-w-[200px]'
+                                title={mad.nombrePropietario}
+                              >
+                                {mad.nombrePropietario}
+                              </div>
+                            </TableCell>
+                            <TableCell className='text-center'>
+                              <Button
+                                size='sm'
+                                onClick={() =>
+                                  handleSelectMadre(mad.codigoContrato)
+                                }
+                                className='h-7 px-3 text-xs bg-amber-600 hover:bg-amber-700 text-white'
+                              >
+                                Seleccionar
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Selección de Clientes */}
+        <Dialog open={modalCliente} onOpenChange={setModalCliente}>
+          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+            <DialogHeader>
+              <div className='flex items-center gap-3'>
+                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
+                  <User className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+                </div>
+                <div>
+                  <DialogTitle>Seleccionar Cliente</DialogTitle>
+                  <DialogDescription>
+                    Selecciona un cliente de la lista
+                  </DialogDescription>
+                </div>
+              </div>
+            </DialogHeader>
+
+            <div className='space-y-4 overflow-auto'>
+              {/* Barra de búsqueda */}
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+                <Input
+                  placeholder='Buscar por nombre, apellido o RUT...'
+                  value={busquedaCliente}
+                  onChange={e => setBusquedaCliente(e.target.value)}
+                  className='h-11 pl-10'
+                />
+              </div>
+
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[600px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
+                          RUT
+                        </TableHead>
+                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                          Nombre
+                        </TableHead>
+                        <TableHead className='w-[100px] text-xs sm:text-sm'>
+                          Tipo
+                        </TableHead>
+                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                          Acción
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {clientesFiltrados.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={4}
+                            className='text-center py-8 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-2'>
+                              <User className='h-8 w-8 opacity-50' />
+                              <p className='text-sm'>
+                                No se encontraron clientes
+                              </p>
+                              {busquedaCliente && (
+                                <p className='text-xs'>
+                                  Intenta con otro término de búsqueda
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        clientesFiltrados.map(cliente => (
+                          <TableRow
+                            key={cliente.rut}
+                            className='hover:bg-muted/50 transition-colors'
+                          >
+                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
+                              {cliente.rut}
+                            </TableCell>
+                            <TableCell className='text-xs sm:text-sm'>
+                              <div
+                                className='truncate max-w-[200px]'
+                                title={
+                                  cliente.esEmpresa
+                                    ? cliente.nombreCompleto
+                                    : `${cliente.nombreCompleto} || ''}`.trim()
+                                }
+                              >
+                                {cliente.esEmpresa
+                                  ? cliente.nombreCompleto
+                                  : `${cliente.nombreCompleto} || ''}`.trim()}
+                              </div>
+                            </TableCell>
+                            <TableCell className='text-xs sm:text-sm'>
+                              <span
+                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  cliente.esEmpresa
+                                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                                    : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                }`}
+                              >
+                                {cliente.esEmpresa ? 'Empresa' : 'Persona'}
+                              </span>
+                            </TableCell>
+                            <TableCell className='text-center'>
+                              <Button
+                                size='sm'
+                                onClick={() => handleSelectCliente(cliente.rut)}
+                                className='h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white'
+                              >
+                                Seleccionar
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>
@@ -823,34 +1419,74 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {comunasFiltradas.map(com => (
-                      <TableRow key={com.codigo}>
-                        <TableCell className='font-medium'>
-                          {com.codigo}
-                        </TableCell>
-                        <TableCell>{com.nombre}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() => handleSelectComuna(com.codigo)}
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[400px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead className='w-[80px] sm:w-[100px] text-xs sm:text-sm'>
+                          Código
+                        </TableHead>
+                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                          Nombre
+                        </TableHead>
+                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                          Acción
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {comunasFiltradas.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-8 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-2'>
+                              <MapPin className='h-8 w-8 opacity-50' />
+                              <p className='text-sm'>
+                                No se encontraron comunas
+                              </p>
+                              {busquedaComuna && (
+                                <p className='text-xs'>
+                                  Intenta con otro término de búsqueda
+                                </p>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        comunasFiltradas.map(com => (
+                          <TableRow
+                            key={com.codigo}
+                            className='hover:bg-muted/50 transition-colors'
+                          >
+                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
+                              {com.codigo}
+                            </TableCell>
+                            <TableCell className='text-xs sm:text-sm'>
+                              <div
+                                className='truncate max-w-[200px]'
+                                title={com.nombre}
+                              >
+                                {com.nombre}
+                              </div>
+                            </TableCell>
+                            <TableCell className='text-center'>
+                              <Button
+                                size='sm'
+                                onClick={() => handleSelectComuna(com.codigo)}
+                                className='h-7 px-3 text-xs bg-sky-600 hover:bg-sky-700 text-white'
+                              >
+                                Seleccionar
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>

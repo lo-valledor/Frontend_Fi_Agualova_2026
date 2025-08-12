@@ -4,8 +4,9 @@ import { toast } from 'sonner';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
-import Select, { type StylesConfig } from 'react-select';
+import Select from 'react-select';
 
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -73,7 +74,7 @@ export function AcometidaForm({
   comboEmpalmes,
   comboNichos,
   contratosDisponibles,
-}: AcometidaFormProps) {
+}: Readonly<AcometidaFormProps>) {
   // Hooks
   const { theme } = useTheme();
   const isEdit = !!acometida;
@@ -114,79 +115,8 @@ export function AcometidaForm({
     );
   }, [isEdit, acometida, contratosDisponibles]);
 
-  // Estilos personalizados para react-select
-  const selectStyles: StylesConfig<any> = {
-    control: styles => ({
-      ...styles,
-      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
-      borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-      minHeight: '3rem',
-      fontSize: '1rem',
-      '&:hover': {
-        borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
-      },
-    }),
-    menu: styles => ({
-      ...styles,
-      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
-      zIndex: 9999,
-      maxHeight: '300px',
-      border: theme === 'dark' ? '1px solid #334155' : '1px solid #E2E8F0',
-      boxShadow:
-        '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    }),
-    menuList: styles => ({
-      ...styles,
-      maxHeight: '280px',
-      overflowY: 'auto',
-      padding: '8px 0',
-    }),
-    option: (styles, { isFocused, isSelected }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? theme === 'dark'
-          ? '#0ea5e9'
-          : '#0ea5e9'
-        : isFocused
-          ? theme === 'dark'
-            ? '#1e293b'
-            : '#f1f5f9'
-          : 'transparent',
-      color: isSelected ? '#FFFFFF' : theme === 'dark' ? '#f8fafc' : '#0f172a',
-      padding: '12px 16px',
-      cursor: 'pointer',
-      fontSize: '0.95rem',
-      ':active': {
-        ...styles[':active'],
-        backgroundColor: theme === 'dark' ? '#0ea5e9' : '#0ea5e9',
-      },
-    }),
-    singleValue: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-    }),
-    input: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-    }),
-    placeholder: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#94a3b8' : '#6b7280',
-    }),
-    noOptionsMessage: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#94a3b8' : '#6b7280',
-      padding: '12px 16px',
-      textAlign: 'center' as const,
-    }),
-    loadingMessage: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#94a3b8' : '#6b7280',
-      padding: '12px 16px',
-      textAlign: 'center' as const,
-    }),
-  };
+  // Usar estilos compartidos para react-select
+  const selectStyles = getReactSelectStyles(theme);
 
   // Datos derivados
   const contratosFiltrados = contratosDisponibles.filter(c => {

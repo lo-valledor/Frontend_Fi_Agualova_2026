@@ -5,8 +5,9 @@ import { z } from 'zod';
 import React from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
-import Select, { type StylesConfig } from 'react-select';
+import Select from 'react-select';
 
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import {
@@ -78,69 +79,8 @@ export default function ConceptoFormModal({
   });
   const { theme } = useTheme();
 
-  const selectStyles: StylesConfig = {
-    control: styles => ({
-      ...styles,
-      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
-      borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-      '&:hover': {
-        borderColor: theme === 'dark' ? '#475569' : '#CBD5E1',
-      },
-    }),
-    menu: styles => ({
-      ...styles,
-      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
-    }),
-    option: (styles, { isFocused, isSelected }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? theme === 'dark'
-          ? '#166534'
-          : '#16A34A'
-        : isFocused
-          ? theme === 'dark'
-            ? '#1E293B'
-            : '#F1F5F9'
-          : 'transparent',
-      color: isSelected ? '#FFFFFF' : theme === 'dark' ? '#F8FAFC' : '#0F172A',
-      ':active': {
-        ...styles[':active'],
-        backgroundColor: theme === 'dark' ? '#166534' : '#16A34A',
-      },
-    }),
-    singleValue: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-    }),
-    input: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-    }),
-    placeholder: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
-    }),
-    indicatorSeparator: styles => ({
-      ...styles,
-      backgroundColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-    }),
-    dropdownIndicator: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
-      '&:hover': {
-        color: theme === 'dark' ? '#CBD5E1' : '#374151',
-      },
-    }),
-    noOptionsMessage: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
-    }),
-    loadingMessage: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#94A3B8' : '#6B7280',
-    }),
-  };
+  // Usar estilos compartidos para react-select
+  const selectStyles = getReactSelectStyles(theme);
 
   const isLoading = form.formState.isSubmitting;
 

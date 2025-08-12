@@ -24,7 +24,7 @@ import type {
   GetMedidores,
   GetPropietario,
   ModificarContratoProps,
-  Usuarios,
+  Usuarios
 } from '~/types/administracion';
 import type { Conceptos, Marca } from '~/types/mantencion';
 
@@ -69,13 +69,13 @@ class AdministracionService {
         resComboEmpalmes,
         resComboNichos,
         resComboSectores,
-        resContratosDisponibles,
+        resContratosDisponibles
       ] = await Promise.all([
         api.get('buscar-Acometida', { params: {} }),
         api.get('combo-empalmes-Acometida'),
         api.get('combo-nichos'),
         api.get('combo-sectores'),
-        api.get('contratos-disponibles'),
+        api.get('contratos-disponibles')
       ]);
 
       return {
@@ -88,14 +88,14 @@ class AdministracionService {
             this.processApiResponse<ComboSectores>(resComboSectores),
           contratosDisponibles: this.processApiResponse<ContratosDisponibles>(
             resContratosDisponibles
-          ),
+          )
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -114,21 +114,21 @@ class AdministracionService {
       const [resClientes, resGiros, resComunas] = await Promise.all([
         api.get('ClienteBuscar'),
         api.get('giro/buscar'),
-        api.get('comuna/por-region'),
+        api.get('comuna/por-region')
       ]);
 
       return {
         data: {
           clientes: this.processApiResponse<GetClientes>(resClientes),
           giros: this.processApiResponse<GetGiros>(resGiros),
-          comunas: this.processApiResponse<GetComunas>(resComunas),
+          comunas: this.processApiResponse<GetComunas>(resComunas)
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -146,14 +146,34 @@ class AdministracionService {
 
       return {
         data: {
-          contratos: resContratos.data as GetContratos[],
+          contratos: resContratos.data as GetContratos[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene datos de clientes para contratos
+   */
+  async getClientesBuscar(): Promise<
+    AdministracionServiceResponse<GetClientes[]>
+  > {
+    try {
+      const response = await api.get('cliente/buscar');
+      return {
+        data: response.data as GetClientes[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -168,6 +188,7 @@ class AdministracionService {
       locales: GetLocal[];
       comunas: GetComunas[];
       madres: GetMadres[];
+      clientes: GetClientes[];
     }>
   > {
     try {
@@ -177,12 +198,14 @@ class AdministracionService {
         resLocales,
         resComunas,
         resMadres,
+        resClientes
       ] = await Promise.all([
         api.get(`contrato/${id}`),
         api.get('propietario/buscar'),
         api.get('local/buscar'),
         api.get('comuna/por-region'),
         api.get('contrato/madres/buscar'),
+        api.get('cliente/buscar')
       ]);
       return {
         data: {
@@ -191,13 +214,14 @@ class AdministracionService {
           locales: resLocales.data as GetLocal[],
           comunas: resComunas.data as GetComunas[],
           madres: resMadres.data as GetMadres[],
+          clientes: resClientes.data as GetClientes[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -211,15 +235,17 @@ class AdministracionService {
       locales: GetLocal[];
       comunas: GetComunas[];
       madres: GetMadres[];
+      clientes: GetClientes[];
     }>
   > {
     try {
-      const [resPropietarios, resLocales, resComunas, resMadres] =
+      const [resPropietarios, resLocales, resComunas, resMadres, resClientes] =
         await Promise.all([
           api.get('propietario/buscar'),
           api.get('local/buscar'),
           api.get('comuna/por-region'),
           api.get('contrato/madres/buscar'),
+          api.get('cliente/buscar')
         ]);
 
       return {
@@ -228,13 +254,14 @@ class AdministracionService {
           locales: resLocales.data as GetLocal[],
           comunas: resComunas.data as GetComunas[],
           madres: resMadres.data as GetMadres[],
+          clientes: resClientes.data as GetClientes[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -251,20 +278,20 @@ class AdministracionService {
     try {
       const [resMedidores, resMarcas] = await Promise.all([
         api.get('buscarMedidor'),
-        api.get('buscarMarca'),
+        api.get('buscarMarca')
       ]);
 
       return {
         data: {
           medidores: resMedidores.data as GetMedidores[],
-          marcas: resMarcas.data as Marca[],
+          marcas: resMarcas.data as Marca[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -277,12 +304,12 @@ class AdministracionService {
       const response = await api.get('listar');
       return {
         data: response.data as Usuarios[],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -297,12 +324,12 @@ class AdministracionService {
       const response = await api.get('cargoTipoContrato-buscar');
       return {
         data: response.data as GetCargoTipoContrato[],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -331,7 +358,7 @@ class AdministracionService {
         responseTarifas,
         responseTiposMedidor,
         responseCondicionesContrato,
-        responseCargos,
+        responseCargos
       ] = await Promise.all([
         api.get(`cargoTipoContrato-editar/${cargoTipoContratoId}`),
         api.get(`cargoTipoContrato-detalle/${cargoTipoContratoId}`),
@@ -340,7 +367,7 @@ class AdministracionService {
         api.get('combos/tarifas'),
         api.get('combos/tipos-medidor'),
         api.get('condicion-contrato/condicionContrato-Buscar'),
-        api.get('buscarCargoFacturable'),
+        api.get('buscarCargoFacturable')
       ]);
 
       return {
@@ -357,14 +384,14 @@ class AdministracionService {
             ),
           condicionesContrato:
             responseCondicionesContrato.data as GetCondicionesContrato[],
-          cargos: responseCargos.data as BuscarCargoFacturable[],
+          cargos: responseCargos.data as BuscarCargoFacturable[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -381,7 +408,7 @@ class AdministracionService {
     try {
       const [resCondicionesContrato, resConceptos] = await Promise.all([
         api.get('condicion-contrato/condicionContrato-Buscar'),
-        api.get('buscarConceptos'),
+        api.get('buscarConceptos')
       ]);
 
       return {
@@ -389,14 +416,14 @@ class AdministracionService {
           condicionesContrato: this.processApiResponse<GetCondicionesContrato>(
             resCondicionesContrato
           ),
-          conceptos: this.processApiResponse<Conceptos>(resConceptos),
+          conceptos: this.processApiResponse<Conceptos>(resConceptos)
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -418,7 +445,7 @@ class AdministracionService {
           api.get('buscarCargoFacturable'),
           api.get('combos/conceptos'),
           api.get('combos/tarifas'),
-          api.get('combos/tipos-medidor'),
+          api.get('combos/tipos-medidor')
         ]);
 
       return {
@@ -426,14 +453,14 @@ class AdministracionService {
           cargos: resCargoFacturable.data as BuscarCargoFacturable[],
           conceptos: resConceptos.data as GeCombosConceptos[],
           tarifas: resTarifas.data as GetCombosTarifas[],
-          tiposMedidor: resTiposMedidor.data as GetCombosTiposMedidor[],
+          tiposMedidor: resTiposMedidor.data as GetCombosTiposMedidor[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -448,7 +475,7 @@ class AdministracionService {
       const response = await api.post('/contrato/crear', contratoData);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       console.error('Error al crear contrato:', error);
@@ -457,7 +484,7 @@ class AdministracionService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al crear el contrato',
+          'Error al crear el contrato'
       };
     }
   }
@@ -472,7 +499,7 @@ class AdministracionService {
       const response = await api.put('/contrato/modificar', contratoData);
       return {
         data: response.data,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       console.error('Error al modificar contrato:', error);
@@ -505,7 +532,7 @@ class AdministracionService {
 
       return {
         data: null,
-        error: errorMessage,
+        error: errorMessage
       };
     }
   }

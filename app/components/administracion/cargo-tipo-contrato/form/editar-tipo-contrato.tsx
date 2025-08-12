@@ -5,7 +5,6 @@ import {
   FileText,
   Plus,
   Save,
-  Settings,
   Trash2,
   Zap,
 } from 'lucide-react';
@@ -13,8 +12,10 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import Select, { type StylesConfig } from 'react-select';
+import Select from 'react-select';
 
+import { ModernHeader } from '~/components/shared/modern-header';
+import { getTailwindSelectStyles } from '~/components/shared/react-select-styles';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
@@ -53,73 +54,8 @@ interface CargoOption {
   data: BuscarCargoFacturable;
 }
 
-// Estilos personalizados para react-select
-const selectStyles: StylesConfig<CargoOption, false> = {
-  control: (provided, state) => ({
-    ...provided,
-    backgroundColor: 'hsl(var(--background))',
-    borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
-    boxShadow: state.isFocused ? '0 0 0 1px hsl(var(--ring))' : 'none',
-    '&:hover': {
-      borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--input))',
-    },
-    borderRadius: 'var(--radius)',
-    minHeight: '36px',
-    height: '36px',
-  }),
-  menu: provided => ({
-    ...provided,
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '6px',
-    boxShadow:
-      '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    zIndex: 9999,
-  }),
-  menuList: provided => ({
-    ...provided,
-    backgroundColor: '#ffffff',
-    padding: '4px',
-    maxHeight: '200px',
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isSelected
-      ? '#0ea5e9'
-      : state.isFocused
-        ? '#f1f5f9'
-        : 'transparent',
-    color: state.isSelected ? '#ffffff' : '#1e293b',
-    '&:hover': {
-      backgroundColor: state.isSelected ? '#0ea5e9' : '#f1f5f9',
-      color: state.isSelected ? '#ffffff' : '#1e293b',
-    },
-    cursor: 'pointer',
-    padding: '8px 12px',
-    borderRadius: '4px',
-    margin: '1px 0',
-  }),
-  singleValue: provided => ({
-    ...provided,
-    color: 'hsl(var(--foreground))',
-  }),
-  input: provided => ({
-    ...provided,
-    color: 'hsl(var(--foreground))',
-    margin: '0px',
-  }),
-  placeholder: provided => ({
-    ...provided,
-    color: 'hsl(var(--muted-foreground))',
-  }),
-  indicatorSeparator: () => ({
-    display: 'none',
-  }),
-  valueContainer: provided => ({
-    ...provided,
-    padding: '0 12px',
-  }),
-};
+// Usar estilos compartidos para react-select con variables Tailwind
+const selectStyles = getTailwindSelectStyles<CargoOption>();
 
 export default function EditarTipoContrato({
   cargoTipoContrato,
@@ -142,9 +78,7 @@ export default function EditarTipoContrato({
   cargos: BuscarCargoFacturable[];
   tipoContratoId: number;
 }>) {
-  const [tipoContrato, setTipoContrato] = useState(
-    `Tipo de Contrato ID: ${tipoContratoId}`
-  );
+  const [tipoContrato] = useState(`Tipo de Contrato ID: ${tipoContratoId}`);
   const [selectedConcepto, setSelectedConcepto] = useState('');
   const [selectedCondicion, setSelectedCondicion] = useState('');
   const [selectedCargo, setSelectedCargo] = useState('');
@@ -277,11 +211,6 @@ export default function EditarTipoContrato({
   const cargosFiltradosPorConcepto = selectedConcepto
     ? getCargosByConcepto(selectedConcepto)
     : [];
-
-  // Obtener cargos ya agregados para cada tipo de medidor
-  const cargosAgregadosAmbos = getCargosAgregadosByTipoMedidor(0);
-  const cargosAgregadosMonofasico = getCargosAgregadosByTipoMedidor(1);
-  const cargosAgregadosTrifasico = getCargosAgregadosByTipoMedidor(2);
 
   // Obtener cargos facturables disponibles por tipo de medidor
   const cargosFacturablesAmbos = getCargosFacturablesByTipoMedidor('Ambos');
@@ -451,40 +380,35 @@ export default function EditarTipoContrato({
 
   return (
     <div className='min-h-screen bg-background'>
-      {/* Header minimalista */}
-      <div className='sticky top-0 z-10 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      {/* Header */}
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-3'>
-              <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500/10'>
-                <Settings className='h-5 w-5 text-sky-600 dark:text-sky-400' />
-              </div>
-              <div>
-                <h1 className='text-xl font-semibold text-foreground'>
-                  Modificar Cargo Tipo de Contrato
-                </h1>
-                <p className='text-sm text-muted-foreground'>
-                  Gestiona las condiciones y cargos del tipo de contrato
-                </p>
-              </div>
-            </div>
-            <div className='flex items-center gap-2'>
-              <Button variant='ghost' onClick={handleVolver} className='gap-2'>
-                <ArrowLeft className='h-4 w-4' />
-                Volver
-              </Button>
-              <Button variant='outline' onClick={handleCancelar}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={handleGuardar}
-                className='gap-2 bg-sky-600 hover:bg-sky-700'
-              >
-                <Save className='h-4 w-4' />
-                Guardar
-              </Button>
-            </div>
-          </div>
+          <ModernHeader
+            title='Modificar Cargo Tipo de Contrato'
+            description='Gestiona las condiciones y cargos del tipo de contrato'
+            actions={
+              <>
+                <Button
+                  variant='ghost'
+                  onClick={handleVolver}
+                  className='gap-2'
+                >
+                  <ArrowLeft className='h-4 w-4' />
+                  Volver
+                </Button>
+                <Button variant='outline' onClick={handleCancelar}>
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleGuardar}
+                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                >
+                  <Save className='h-4 w-4' />
+                  Guardar
+                </Button>
+              </>
+            }
+          />
         </div>
       </div>
 
@@ -606,7 +530,7 @@ export default function EditarTipoContrato({
             </div>
 
             <Button
-              className='gap-2 bg-sky-600 hover:bg-sky-700'
+              className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
               disabled={
                 !selectedConcepto ||
                 !selectedCargo ||

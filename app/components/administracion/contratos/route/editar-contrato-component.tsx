@@ -1,4 +1,12 @@
-import { Building2, MapPin, Network, Search, User } from 'lucide-react';
+import {
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Network,
+  Save,
+  Search,
+  User
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import React, { useEffect, useMemo, useState } from 'react';
@@ -12,7 +20,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -21,7 +29,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import {
@@ -30,17 +38,18 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import { Textarea } from '~/components/ui/textarea';
 import { administracionService, mantencionService } from '~/services';
 import type {
   ContratoFormData,
+  GetClientes,
   GetComunas,
   GetContratoPorId,
   GetLocal,
   GetMadres,
-  GetPropietario,
+  GetPropietario
 } from '~/types/administracion';
 import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
@@ -50,17 +59,20 @@ export default function EditarContratoComponent({
   locales,
   comunas,
   madres,
+  clientes: _clientes
 }: {
   readonly contrato: GetContratoPorId;
   readonly propietarios: GetPropietario[];
   readonly locales: GetLocal[];
   readonly comunas: GetComunas[];
   readonly madres: GetMadres[];
+  readonly clientes: GetClientes[];
 }) {
   const navigate = useNavigate();
 
   // Estados para los modales de selección
   const [modalPropietario, setModalPropietario] = useState(false);
+  const [modalCliente, setModalCliente] = useState(false);
   const [modalLocal, setModalLocal] = useState(false);
   const [modalMadres, setModalMadres] = useState(false);
   const [modalComuna, setModalComuna] = useState(false);
@@ -68,6 +80,7 @@ export default function EditarContratoComponent({
 
   // Estados para las búsquedas
   const [busquedaPropietario, setBusquedaPropietario] = useState('');
+  const [busquedaCliente, setBusquedaCliente] = useState('');
   const [busquedaLocal, setBusquedaLocal] = useState('');
   const [busquedaMadres, setBusquedaMadres] = useState('');
   const [busquedaComuna, setBusquedaComuna] = useState('');
@@ -77,7 +90,9 @@ export default function EditarContratoComponent({
   const [tarifas, setTarifas] = useState<Tarifas[]>([]);
 
   // Función para mapear GetContratoPorId a ContratoFormData
-  const mapContratoToFormData = (contratoData: GetContratoPorId): ContratoFormData => {
+  const mapContratoToFormData = (
+    contratoData: GetContratoPorId
+  ): ContratoFormData => {
     return {
       tipoContrato: contratoData.tipoContrato || '',
       tarifa: contratoData.tarifa || '',
@@ -87,18 +102,18 @@ export default function EditarContratoComponent({
       fechaInicio: contratoData.fechaInicio || '',
       activo: contratoData.activoTexto === 'Si',
       fechaTermino: contratoData.fechaTermino || '',
-      comunaEnvio: contratoData.comunaNombre || '',
+      comunaEnvio: contratoData.codigoComuna || '',
       direccionEnvio: contratoData.direccion || '',
       limiteInvierno: contratoData.limiteInvierno || 0,
       promedioAnual: '',
       cicloFacturacion: contratoData.cicloFacturacion || 'Ciclo Día 15',
       potenciaContratada: contratoData.potenciaContratada || '',
       liberadoCorte: contratoData.esMadreTexto === 'Si',
-      madre: contratoData.codigoContratoMadre || '',
+      madre: contratoData.codigoContratoMadre || ''
     };
   };
 
-  const [formData, setFormData] = useState<ContratoFormData>(() => 
+  const [formData, setFormData] = useState<ContratoFormData>(() =>
     mapContratoToFormData(contrato)
   );
 
@@ -135,29 +150,51 @@ export default function EditarContratoComponent({
     );
   }, [propietarios, busquedaPropietario]);
 
+  const clientesFiltrados = useMemo(() => {
+    if (!_clientes || _clientes.length === 0) return [];
+
+    return _clientes.filter(
+      (c: any) =>
+        (c.nombreCompleto &&
+          c.nombreCompleto
+            .toLowerCase()
+            .includes(busquedaCliente.toLowerCase())) ||
+        (c.rut &&
+          c.rut.toLowerCase().includes(busquedaCliente.toLowerCase())) ||
+        (c.nombre &&
+          c.nombre.toLowerCase().includes(busquedaCliente.toLowerCase()))
+    );
+  }, [_clientes, busquedaCliente]);
+
   const localesFiltrados = useMemo(() => {
     return locales.filter(
       l =>
-        l.numeroLocal.toLowerCase().includes(busquedaLocal.toLowerCase()) ||
-        l.empresa.toLowerCase().includes(busquedaLocal.toLowerCase())
+        (l.numeroLocal &&
+          l.numeroLocal.toLowerCase().includes(busquedaLocal.toLowerCase())) ||
+        (l.empresa &&
+          l.empresa.toLowerCase().includes(busquedaLocal.toLowerCase()))
     );
   }, [locales, busquedaLocal]);
 
   const madresFiltradas = useMemo(() => {
     return madres.filter(
       m =>
-        m.nombrePropietario
-          .toLowerCase()
-          .includes(busquedaMadres.toLowerCase()) ||
-        m.codigoContrato.toLowerCase().includes(busquedaMadres.toLowerCase())
+        (m.nombrePropietario &&
+          m.nombrePropietario
+            .toLowerCase()
+            .includes(busquedaMadres.toLowerCase())) ||
+        (m.codigoContrato &&
+          m.codigoContrato.toLowerCase().includes(busquedaMadres.toLowerCase()))
     );
   }, [madres, busquedaMadres]);
 
   const comunasFiltradas = useMemo(() => {
     return comunas.filter(
       c =>
-        c.nombre.toLowerCase().includes(busquedaComuna.toLowerCase()) ||
-        c.codigo.toLowerCase().includes(busquedaComuna.toLowerCase())
+        (c.nombre &&
+          c.nombre.toLowerCase().includes(busquedaComuna.toLowerCase())) ||
+        (c.codigo &&
+          c.codigo.toLowerCase().includes(busquedaComuna.toLowerCase()))
     );
   }, [comunas, busquedaComuna]);
 
@@ -171,6 +208,18 @@ export default function EditarContratoComponent({
     setBusquedaPropietario('');
   };
 
+  const handleSelectCliente = (clienteRut: string) => {
+    const cliente = _clientes.find(c => c.rut === clienteRut);
+    if (cliente) {
+      const nombreCompleto = cliente.esEmpresa
+        ? cliente.nombreCompleto
+        : `${cliente.nombreCompleto} || ''}`.trim();
+      setFormData(prev => ({ ...prev, nombreCliente: nombreCompleto }));
+    }
+    setModalCliente(false);
+    setBusquedaCliente('');
+  };
+
   const handleSelectLocal = (localNumero: string) => {
     const loc = locales.find(l => l.numeroLocal === localNumero);
     if (loc) {
@@ -178,6 +227,31 @@ export default function EditarContratoComponent({
     }
     setModalLocal(false);
     setBusquedaLocal('');
+  };
+
+  // Helper para obtener el RUT del propietario basándose en el nombre
+  const getPropietarioRut = () => {
+    const propietario = propietarios.find(
+      p => p.nombre.trim() === formData.nombrePropietario.trim()
+    );
+    return propietario ? propietario.rut : formData.nombrePropietario;
+  };
+
+  // Helper para obtener el RUT del cliente basándose en el nombre
+  const getClienteRut = () => {
+    // Si hay clientes disponibles, buscar por nombre
+    if (_clientes && _clientes.length > 0) {
+      const cliente = _clientes.find(
+        (c: any) => c.nombre.trim() === formData.nombreCliente.trim()
+      );
+      if (cliente) return cliente.rut;
+    }
+
+    // Si no se encuentra en clientes, buscar en propietarios
+    const propietario = propietarios.find(
+      p => p.nombre.trim() === formData.nombreCliente.trim()
+    );
+    return propietario ? propietario.rut : formData.nombreCliente;
   };
 
   const handleSelectMadre = (madreCodigo: string) => {
@@ -192,7 +266,7 @@ export default function EditarContratoComponent({
   const handleSelectComuna = (comunaCodigo: string) => {
     const com = comunas.find(c => c.codigo === comunaCodigo);
     if (com) {
-      setFormData(prev => ({ ...prev, comunaEnvio: com.nombre }));
+      setFormData(prev => ({ ...prev, comunaEnvio: com.codigo }));
     }
     setModalComuna(false);
     setBusquedaComuna('');
@@ -205,9 +279,13 @@ export default function EditarContratoComponent({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Helper para mostrar el nombre de la comuna en el input
+  const getComunaDisplayName = () => {
+    const comuna = comunas.find(c => c.codigo === formData.comunaEnvio);
+    return comuna ? comuna.nombre : formData.comunaEnvio;
+  };
 
+  const handleSubmit = async () => {
     // Validaciones de campos requeridos
     if (!formData.fechaInicio) {
       toast.error('La fecha de inicio es obligatoria');
@@ -242,13 +320,26 @@ export default function EditarContratoComponent({
     setIsSubmitting(true);
 
     try {
+      // Debug: Mostrar todos los campos del contrato para identificar el código correcto
+      console.log('🔍 DEBUG - Objeto contrato completo:', contrato);
+      console.log('🔍 DEBUG - Campos disponibles:', Object.keys(contrato));
+
+      // Obtener el ID del contrato desde la URL
+      const urlPath = window.location.pathname;
+      const urlParts = urlPath.split('/');
+      const contratoIdFromUrl = urlParts[urlParts.length - 1]; // Último segmento de la URL
+
+      console.log('🔍 DEBUG - URL path:', urlPath);
+      console.log('🔍 DEBUG - contratoId from URL:', contratoIdFromUrl);
+      console.log('🔍 DEBUG - contrato.codigoLocal:', contrato.codigoLocal);
+
       // Preparar los datos para la API usando ModificarContratoProps
       const submitData: any = {
-        codigo: contrato.codigoLocal, // Usar el código del contrato original
+        codigo: contratoIdFromUrl, // Usar el ID del parámetro URL como código de contrato
         tipoContrato: parseInt(formData.tipoContrato) || 0,
         tarifa: parseInt(formData.tarifa) || 0,
-        propietario: formData.nombrePropietario,
-        cliente: formData.nombreCliente,
+        propietario: getPropietarioRut(),
+        cliente: getClienteRut(),
         localId: formData.local,
         fechaInicio: formData.fechaInicio,
         activo: formData.activo,
@@ -259,7 +350,21 @@ export default function EditarContratoComponent({
         ciclo: 1, // Valor fijo para "Ciclo Día 15"
         potencia: formData.potenciaContratada,
         madre: formData.madre || '',
+        lugar: formData.local,
+        sinCorte: formData.liberadoCorte ? 1 : 0
       };
+
+      // Debug: Mostrar datos del formulario antes de procesar
+      console.log('🔍 DEBUG - Datos del formulario (editar):', formData);
+      console.log('🔍 DEBUG - Contrato original:', contrato);
+      console.log('🔍 DEBUG - RUT Propietario enviado:', getPropietarioRut());
+      console.log('🔍 DEBUG - RUT Cliente enviado:', getClienteRut());
+
+      // Debug: Mostrar datos preparados para enviar al backend
+      console.log(
+        '📤 DEBUG - JSON enviado al backend (modificar):',
+        JSON.stringify(submitData, null, 2)
+      );
 
       const result = await administracionService.modificarContrato(submitData);
 
@@ -279,23 +384,53 @@ export default function EditarContratoComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
-      <div className='container mx-auto p-3 space-y-4'>
-        <ModernHeader
-          title='Editar Contrato'
-          description='Modificación de contrato existente en el sistema'
-          actions={
-            <Button
-              variant='outline'
-              onClick={() => navigate('/dashboard/administracion/contratos')}
-            >
-              Volver a Contratos
-            </Button>
-          }
-        />
+    <div className='min-h-screen bg-background'>
+      {/* Header */}
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+        <div className='container mx-auto px-4 py-4'>
+          <ModernHeader
+            title='Editar Contrato'
+            description='Modificación de contrato existente en el sistema'
+            actions={
+              <>
+                <Button
+                  variant='ghost'
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratos')
+                  }
+                  disabled={isSubmitting}
+                  className='gap-2'
+                >
+                  <ArrowLeft className='h-4 w-4' />
+                  Volver
+                </Button>
+                <Button
+                  variant='outline'
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratos')
+                  }
+                  disabled={isSubmitting}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleSubmit}
+                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  disabled={isSubmitting}
+                >
+                  <Save className='h-4 w-4' />
+                  {isSubmitting ? 'Actualizando...' : 'Actualizar Contrato'}
+                </Button>
+              </>
+            }
+          />
+        </div>
+      </div>
 
+      {/* Contenido principal */}
+      <div className='container mx-auto px-4 py-6 space-y-6'>
         <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
-          <form onSubmit={handleSubmit} className='p-6 space-y-6'>
+          <form className='p-6 space-y-6'>
             {/* Información básica del contrato */}
             <div className='space-y-4'>
               <h3 className='text-sm font-medium text-sky-800 dark:text-sky-200'>
@@ -381,16 +516,28 @@ export default function EditarContratoComponent({
 
                 <div className='space-y-2'>
                   <Label htmlFor='nombreCliente'>Cliente *</Label>
-                  <Input
-                    id='nombreCliente'
-                    value={formData.nombreCliente}
-                    onChange={e =>
-                      handleInputChange('nombreCliente', e.target.value)
-                    }
-                    placeholder='Nombre del cliente'
-                    className='w-full'
-                    required
-                  />
+                  <div className='flex gap-2'>
+                    <Input
+                      id='nombreCliente'
+                      value={formData.nombreCliente}
+                      onChange={e =>
+                        handleInputChange('nombreCliente', e.target.value)
+                      }
+                      placeholder='Nombre del cliente'
+                      className='w-full'
+                      required
+                      readOnly
+                    />
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={() => setModalCliente(true)}
+                      className='shrink-0'
+                    >
+                      <User className='h-4 w-4' />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -430,7 +577,7 @@ export default function EditarContratoComponent({
                   <div className='flex gap-2'>
                     <Input
                       id='comunaEnvio'
-                      value={formData.comunaEnvio}
+                      value={getComunaDisplayName()}
                       onChange={e =>
                         handleInputChange('comunaEnvio', e.target.value)
                       }
@@ -568,7 +715,10 @@ export default function EditarContratoComponent({
                       handleInputChange('liberadoCorte', checked)
                     }
                   />
-                  <Label htmlFor='liberadoCorte' className='text-sm font-medium'>
+                  <Label
+                    htmlFor='liberadoCorte'
+                    className='text-sm font-medium'
+                  >
                     Liberado de Corte
                   </Label>
                 </div>
@@ -596,30 +746,12 @@ export default function EditarContratoComponent({
                 </div>
               </div>
             </div>
-
-            <div className='flex justify-end gap-4 pt-4 border-t border-slate-200/60 dark:border-slate-700/60'>
-              <Button
-                type='button'
-                variant='outline'
-                onClick={() => navigate('/dashboard/administracion/contratos')}
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type='submit'
-                className='bg-sky-600 hover:bg-sky-700 text-white'
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Actualizando...' : 'Actualizar Contrato'}
-              </Button>
-            </div>
           </form>
         </div>
 
         {/* Modal de Selección de Propietarios */}
         <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -646,34 +778,66 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>RUT</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {propietariosFiltrados.map(prop => (
-                      <TableRow key={prop.rut}>
-                        <TableCell className='font-medium'>
-                          {prop.rut}
-                        </TableCell>
-                        <TableCell>{prop.nombre}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() => handleSelectPropietario(prop.rut)}
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[500px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead>RUT</TableHead>
+                        <TableHead>Nombre</TableHead>
+                        <TableHead className='text-center'>Acción</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {propietariosFiltrados.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-12 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-3'>
+                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                                <User className='h-8 w-8 opacity-50' />
+                              </div>
+                              <div className='space-y-1'>
+                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                  No se encontraron propietarios
+                                </p>
+                                <p className='text-sm'>
+                                  {busquedaPropietario
+                                    ? `No hay resultados para "${busquedaPropietario}"`
+                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {propietariosFiltrados.map(prop => (
+                        <TableRow
+                          key={prop.rut}
+                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                        >
+                          <TableCell className='font-medium font-mono text-sm'>
+                            {prop.rut}
+                          </TableCell>
+                          <TableCell className='font-medium'>
+                            {prop.nombre}
+                          </TableCell>
+                          <TableCell className='text-center'>
+                            <Button
+                              size='sm'
+                              onClick={() => handleSelectPropietario(prop.rut)}
+                              className='bg-emerald-600 hover:bg-emerald-700 text-white'
+                            >
+                              Seleccionar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>
@@ -681,7 +845,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Locales */}
         <Dialog open={modalLocal} onOpenChange={setModalLocal}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg'>
@@ -707,34 +871,66 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Número</TableHead>
-                      <TableHead>Empresa</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {localesFiltrados.map(loc => (
-                      <TableRow key={loc.numeroLocal}>
-                        <TableCell className='font-medium'>
-                          {loc.numeroLocal}
-                        </TableCell>
-                        <TableCell>{loc.empresa}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() => handleSelectLocal(loc.numeroLocal)}
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[500px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead>Número</TableHead>
+                        <TableHead>Empresa</TableHead>
+                        <TableHead className='text-center'>Acción</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {localesFiltrados.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-12 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-3'>
+                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                                <Building2 className='h-8 w-8 opacity-50' />
+                              </div>
+                              <div className='space-y-1'>
+                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                  No se encontraron locales
+                                </p>
+                                <p className='text-sm'>
+                                  {busquedaLocal
+                                    ? `No hay resultados para "${busquedaLocal}"`
+                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {localesFiltrados.map(loc => (
+                        <TableRow
+                          key={loc.numeroLocal}
+                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                        >
+                          <TableCell className='font-medium font-mono text-sm'>
+                            {loc.numeroLocal}
+                          </TableCell>
+                          <TableCell className='font-medium'>
+                            {loc.empresa}
+                          </TableCell>
+                          <TableCell className='text-center'>
+                            <Button
+                              size='sm'
+                              onClick={() => handleSelectLocal(loc.numeroLocal)}
+                              className='bg-violet-600 hover:bg-violet-700 text-white'
+                            >
+                              Seleccionar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>
@@ -742,7 +938,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Madres */}
         <Dialog open={modalMadres} onOpenChange={setModalMadres}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg'>
@@ -768,36 +964,175 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Propietario</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {madresFiltradas.map(mad => (
-                      <TableRow key={mad.codigoContrato}>
-                        <TableCell className='font-medium'>
-                          {mad.codigoContrato}
-                        </TableCell>
-                        <TableCell>{mad.nombrePropietario}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() =>
-                              handleSelectMadre(mad.codigoContrato)
-                            }
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[500px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead>Código</TableHead>
+                        <TableHead>Propietario</TableHead>
+                        <TableHead className='text-center'>Acción</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {madresFiltradas.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-12 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-3'>
+                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                                <Network className='h-8 w-8 opacity-50' />
+                              </div>
+                              <div className='space-y-1'>
+                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                  No se encontraron contratos madre
+                                </p>
+                                <p className='text-sm'>
+                                  {busquedaMadres
+                                    ? `No hay resultados para "${busquedaMadres}"`
+                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {madresFiltradas.map(mad => (
+                        <TableRow
+                          key={mad.codigoContrato}
+                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                        >
+                          <TableCell className='font-medium font-mono text-sm'>
+                            {mad.codigoContrato}
+                          </TableCell>
+                          <TableCell className='font-medium'>
+                            {mad.nombrePropietario}
+                          </TableCell>
+                          <TableCell className='text-center'>
+                            <Button
+                              size='sm'
+                              onClick={() =>
+                                handleSelectMadre(mad.codigoContrato)
+                              }
+                              className='bg-amber-600 hover:bg-amber-700 text-white'
+                            >
+                              Seleccionar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Selección de Clientes */}
+        <Dialog open={modalCliente} onOpenChange={setModalCliente}>
+          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+            <DialogHeader>
+              <div className='flex items-center gap-3'>
+                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
+                  <User className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+                </div>
+                <div>
+                  <DialogTitle>Seleccionar Cliente</DialogTitle>
+                  <DialogDescription>
+                    Selecciona un cliente de la lista
+                  </DialogDescription>
+                </div>
+              </div>
+            </DialogHeader>
+
+            <div className='space-y-4 overflow-auto'>
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+                <Input
+                  placeholder='Buscar por nombre, apellido o RUT...'
+                  value={busquedaCliente}
+                  onChange={e => setBusquedaCliente(e.target.value)}
+                  className='h-11 pl-10'
+                />
+              </div>
+
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[600px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead>RUT</TableHead>
+                        <TableHead>Nombre</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead className='text-center'>Acción</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {clientesFiltrados.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={4}
+                            className='text-center py-12 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-3'>
+                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                                <User className='h-8 w-8 opacity-50' />
+                              </div>
+                              <div className='space-y-1'>
+                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                  No se encontraron clientes
+                                </p>
+                                <p className='text-sm'>
+                                  {busquedaCliente
+                                    ? `No hay resultados para "${busquedaCliente}"`
+                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {clientesFiltrados.map(cliente => (
+                        <TableRow
+                          key={cliente.rut}
+                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                        >
+                          <TableCell className='font-medium font-mono text-sm'>
+                            {cliente.rut}
+                          </TableCell>
+                          <TableCell className='font-medium'>
+                            {cliente.esEmpresa
+                              ? cliente.nombreCompleto
+                              : `${cliente.nombreCompleto} || ''}`.trim()}
+                          </TableCell>
+                          <TableCell>
+                            <span
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                cliente.esEmpresa
+                                  ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                                  : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                              }`}
+                            >
+                              {cliente.esEmpresa ? 'Empresa' : 'Persona'}
+                            </span>
+                          </TableCell>
+                          <TableCell className='text-center'>
+                            <Button
+                              size='sm'
+                              onClick={() => handleSelectCliente(cliente.rut)}
+                              className='bg-blue-600 hover:bg-blue-700 text-white'
+                            >
+                              Seleccionar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>
@@ -805,7 +1140,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Comunas */}
         <Dialog open={modalComuna} onOpenChange={setModalComuna}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
@@ -831,34 +1166,66 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Nombre</TableHead>
-                      <TableHead>Acción</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {comunasFiltradas.map(com => (
-                      <TableRow key={com.codigo}>
-                        <TableCell className='font-medium'>
-                          {com.codigo}
-                        </TableCell>
-                        <TableCell>{com.nombre}</TableCell>
-                        <TableCell>
-                          <Button
-                            size='sm'
-                            onClick={() => handleSelectComuna(com.codigo)}
-                          >
-                            Seleccionar
-                          </Button>
-                        </TableCell>
+              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+                <div className='min-w-[500px]'>
+                  <Table>
+                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                      <TableRow>
+                        <TableHead>Código</TableHead>
+                        <TableHead>Nombre</TableHead>
+                        <TableHead className='text-center'>Acción</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {comunasFiltradas.length === 0 && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={3}
+                            className='text-center py-12 text-muted-foreground'
+                          >
+                            <div className='flex flex-col items-center gap-3'>
+                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                                <MapPin className='h-8 w-8 opacity-50' />
+                              </div>
+                              <div className='space-y-1'>
+                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                  No se encontraron comunas
+                                </p>
+                                <p className='text-sm'>
+                                  {busquedaComuna
+                                    ? `No hay resultados para "${busquedaComuna}"`
+                                    : 'Escriba en el campo de búsqueda para filtrar'}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                      {comunasFiltradas.map(com => (
+                        <TableRow
+                          key={com.codigo}
+                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                        >
+                          <TableCell className='font-medium font-mono text-sm'>
+                            {com.codigo}
+                          </TableCell>
+                          <TableCell className='font-medium'>
+                            {com.nombre}
+                          </TableCell>
+                          <TableCell className='text-center'>
+                            <Button
+                              size='sm'
+                              onClick={() => handleSelectComuna(com.codigo)}
+                              className='bg-sky-600 hover:bg-sky-700 text-white'
+                            >
+                              Seleccionar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </DialogContent>

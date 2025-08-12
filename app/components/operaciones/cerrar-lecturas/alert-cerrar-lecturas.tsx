@@ -1,4 +1,5 @@
 import { AlertTriangle, CircleX, Loader2 } from 'lucide-react';
+import { useMemo } from 'react';
 import { toast } from 'sonner';
 
 import React, { useState } from 'react';
@@ -37,6 +38,18 @@ export default function AlertCerrarLecturas({
   totalLecturas,
 }: AlertCerrarLecturasProps) {
   const [isLoading, setIsLoading] = useState(false);
+
+  // Calcular alertas en las filas seleccionadas
+  const alertSummary = useMemo(() => {
+    const warningRows = selectedRows.filter(row => row.cantidadClaveNaranja > 0);
+    const warningCount = warningRows.reduce((acc, row) => acc + row.cantidadClaveNaranja, 0);
+    
+    return {
+      hasWarnings: warningRows.length > 0,
+      warningCount,
+      warningNichos: warningRows.map(row => row.nichoDescripcion),
+    };
+  }, [selectedRows]);
 
   const handleClose = () => {
     onOpenChange(false);
@@ -138,6 +151,35 @@ export default function AlertCerrarLecturas({
               </span>
             </p>
           </div>
+
+          {/* Mostrar advertencias si hay claves de alerta */}
+          {alertSummary.hasWarnings && (
+            <div className='bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-md p-3 sm:p-4'>
+              <div className='flex items-start gap-2'>
+                <AlertTriangle className='h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0' />
+                <div className='flex-1'>
+                  <p className='text-xs sm:text-sm text-orange-700 dark:text-orange-300 font-medium'>
+                    <span className='hidden sm:inline'>
+                      ⚠️ Atención: {alertSummary.warningCount} lecturas con claves de alerta
+                    </span>
+                    <span className='sm:hidden'>
+                      ⚠️ {alertSummary.warningCount} alertas
+                    </span>
+                  </p>
+                  <p className='text-xs text-orange-600 dark:text-orange-400 mt-1'>
+                    <span className='hidden sm:inline'>
+                      Nichos con alertas: {alertSummary.warningNichos.slice(0, 3).join(', ')}
+                      {alertSummary.warningNichos.length > 3 && ` y ${alertSummary.warningNichos.length - 3} más`}
+                    </span>
+                    <span className='sm:hidden'>
+                      {alertSummary.warningNichos.length} nicho(s) con alertas
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <p className='text-xs sm:text-sm font-medium'>
             <span className='hidden sm:inline'>¿Estás seguro de que deseas continuar?</span>
             <span className='sm:hidden'>¿Continuar?</span>

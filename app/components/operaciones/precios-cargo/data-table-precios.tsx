@@ -12,7 +12,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 
@@ -26,7 +26,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 
 interface ColumnGroup {
@@ -52,7 +52,7 @@ export function DataTablePrecios<TData, TValue>({
   searchPlaceholder = 'Buscar...',
   defaultPageSize = 10,
   showSearch = true,
-  columnGroups = [],
+  columnGroups = []
 }: DataTablePreciosProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
   const [rowSelection] = useState<RowSelectionState>({});
@@ -61,7 +61,7 @@ export function DataTablePrecios<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: defaultPageSize,
+    pageSize: defaultPageSize
   });
 
   const table = useReactTable({
@@ -73,7 +73,7 @@ export function DataTablePrecios<TData, TValue>({
       rowSelection,
       columnFilters,
       pagination,
-      globalFilter,
+      globalFilter
     },
     enableRowSelection: false,
     onSortingChange: setSorting,
@@ -86,7 +86,7 @@ export function DataTablePrecios<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedUniqueValues: getFacetedUniqueValues()
   });
 
   // Función para obtener el span de una columna
@@ -101,7 +101,7 @@ export function DataTablePrecios<TData, TValue>({
   };
 
   return (
-    <div className='space-y-2'>
+    <div className='space-y-1'>
       {/* Search */}
       {showSearch && (
         <div className='flex justify-end'>
@@ -118,17 +118,17 @@ export function DataTablePrecios<TData, TValue>({
       )}
 
       {/* Table */}
-      <div className='rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-x-auto shadow-lg'>
-        <Table className='min-w-full'>
-          <TableHeader>
+      <div className='rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-x-auto shadow'>
+        <Table className='min-w-full text-xs align-middle'>
+          <TableHeader className='text-xs'>
             {/* Headers agrupados */}
             {columnGroups.length > 0 && (
-              <TableRow className='border-b-0'>
+              <TableRow className='border-b-0 h-5'>
                 {columnGroups.map(group => (
                   <TableHead
                     key={group.id}
                     colSpan={getColumnSpan(group.id)}
-                    className={`text-center font-bold text-xs sm:text-sm py-1 sm:py-2 border-r last:border-r-0 ${
+                    className={`text-center font-bold text-xs py-1 px-1 border-r last:border-r-0 ${
                       group.className || 'bg-slate-600 text-white'
                     }`}
                   >
@@ -142,14 +142,14 @@ export function DataTablePrecios<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b bg-slate-50 dark:bg-slate-800/50'
+                className='border-b bg-slate-50 dark:bg-slate-800/50 h-5'
               >
                 {headerGroup.headers.map(header => {
                   const group = getColumnGroup(header.column.id);
                   return (
                     <TableHead
                       key={header.id}
-                      className={`font-semibold text-xs py-0.5 sm:py-1 px-1 sm:px-2 border-r last:border-r-0 ${
+                      className={`font-semibold text-xs py-0 px-1 border-r last:border-r-0 ${
                         group ? 'bg-slate-100 dark:bg-slate-700/50' : ''
                       }`}
                       style={{
@@ -157,7 +157,7 @@ export function DataTablePrecios<TData, TValue>({
                           header.getSize() !== 150
                             ? header.getSize()
                             : undefined,
-                        minWidth: '60px',
+                        minWidth: '40px'
                       }}
                     >
                       {header.isPlaceholder
@@ -172,12 +172,12 @@ export function DataTablePrecios<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className='text-xs'>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b ${
+                  className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b h-5 ${
                     index % 2 === 0
                       ? 'bg-white dark:bg-slate-900'
                       : 'bg-slate-25 dark:bg-slate-900/50'
@@ -188,7 +188,7 @@ export function DataTablePrecios<TData, TValue>({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`py-1 sm:py-2 px-1 sm:px-2 text-xs sm:text-sm border-r last:border-r-0 ${
+                        className={`py-0 px-1 text-xs border-r last:border-r-0 ${
                           group ? 'border-slate-200 dark:border-slate-700' : ''
                         }`}
                       >
@@ -205,7 +205,7 @@ export function DataTablePrecios<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-12 sm:h-16 text-center text-slate-500 dark:text-slate-400 text-xs sm:text-sm'
+                  className='h-6 text-center text-slate-500 dark:text-slate-400 text-xs'
                 >
                   No se encontraron resultados.
                 </TableCell>

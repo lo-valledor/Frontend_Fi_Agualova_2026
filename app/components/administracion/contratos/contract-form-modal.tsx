@@ -344,7 +344,7 @@ export function ContractFormModal({
 
     try {
       // Enviar los datos al componente padre para que maneje la llamada al servidor
-      await onSubmit(submitData);
+      onSubmit(submitData);
       onClose();
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
@@ -775,16 +775,17 @@ export function ContractFormModal({
                 className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto'
                 disabled={isSubmitting}
               >
-                {isSubmitting ? (
-                  <>
-                    <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
-                    {mode === 'add' ? 'Creando...' : 'Actualizando...'}
-                  </>
-                ) : mode === 'add' ? (
-                  'Crear'
-                ) : (
-                  'Actualizar'
-                )}
+                {(() => {
+                  if (isSubmitting) {
+                    return (
+                      <>
+                        <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
+                        {mode === 'add' ? 'Creando...' : 'Actualizando...'}
+                      </>
+                    );
+                  }
+                  return mode === 'add' ? 'Crear' : 'Actualizar';
+                })()}
               </Button>
             </DialogFooter>
           </form>

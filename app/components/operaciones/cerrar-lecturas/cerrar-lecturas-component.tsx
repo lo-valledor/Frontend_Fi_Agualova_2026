@@ -1,5 +1,7 @@
 import {
   AlertCircleIcon,
+  AlertTriangle,
+  Ban,
   CalendarIcon,
   CheckCircleIcon,
   ChevronDown,
@@ -141,8 +143,47 @@ export default function CerrarLecturasComponent({
     }
   };
 
+  // Función para verificar si hay claves críticas que bloqueen el cierre
+  const checkCriticalBlockers = (rows: EstadoCierreLecturas[]) => {
+    const criticalRows = rows.filter(row => row.cantidadClaveRoja > 0);
+    const warningRows = rows.filter(row => row.cantidadClaveNaranja > 0);
+    
+    return {
+      hasCritical: criticalRows.length > 0,
+      hasWarning: warningRows.length > 0,
+      criticalCount: criticalRows.reduce((acc, row) => acc + row.cantidadClaveRoja, 0),
+      warningCount: warningRows.reduce((acc, row) => acc + row.cantidadClaveNaranja, 0),
+      blockedNichos: criticalRows.map(row => row.nichoDescripcion),
+    };
+  };
+
   const handleOpenAlert = () => {
     if (selectedRows.length > 0) {
+      const blockers = checkCriticalBlockers(selectedRows);
+      
+      // Bloquear si hay claves críticas
+      if (blockers.hasCritical) {
+        toast.error(
+          `No se puede cerrar: ${blockers.criticalCount} lecturas con claves críticas en ${blockers.blockedNichos.length} nicho(s)`,
+          {
+            description: `Nichos bloqueados: ${blockers.blockedNichos.join(', ')}`,
+            duration: 6000,
+          }
+        );
+        return;
+      }
+
+      // Advertir si hay claves de alerta pero permitir continuar
+      if (blockers.hasWarning) {
+        toast.warning(
+          `Atención: ${blockers.warningCount} lecturas con claves de alerta en la selección`,
+          {
+            description: 'Se recomienda revisar antes de proceder',
+            duration: 4000,
+          }
+        );
+      }
+
       const total = selectedRows.reduce(
         (acc, row) =>
           acc +
@@ -443,16 +484,70 @@ export default function CerrarLecturasComponent({
                       </span>
                     </div>
                     <div className='flex items-center gap-2'>
-                      <Button
-                        variant='destructive'
-                        size='sm'
-                        onClick={handleOpenAlert}
-                        disabled={selectedRows.length === 0}
-                        className='gap-2'
-                      >
-                        <CircleX className='h-4 w-4' />
-                        Cerrar Lecturas ({selectedRows.length})
-                      </Button>
+                      {(() => {
+                        const blockers = checkCriticalBlockers(selectedRows);
+                        const isBlocked = blockers.hasCritical;
+                        const hasWarnings = blockers.hasWarning;
+                        
+                        return (
+                          <>
+                            {/* Indicadores de estado */}
+                            {selectedRows.length > 0 && (
+                              <div className='flex items-center gap-2 mr-2'>
+                                {isBlocked && (
+                                  <div className='flex items-center gap-1 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md border border-red-200 dark:border-red-800'>
+                                    <AlertCircleIcon className='h-3 w-3' />
+                                    <span className='text-xs font-medium'>
+                                      {blockers.criticalCount} Críticas
+                                    </span>
+                                  </div>
+                                )}
+                                {hasWarnings && !isBlocked && (
+                                  <div className='flex items-center gap-1 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded-md border border-orange-200 dark:border-orange-800'>
+                                    <AlertTriangle className='h-3 w-3' />
+                                    <span className='text-xs font-medium'>
+                                      {blockers.warningCount} Alertas
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            
+                            <Button
+                              variant={isBlocked ? 'secondary' : 'destructive'}
+                              size='sm'
+                              onClick={handleOpenAlert}
+                              disabled={selectedRows.length === 0 || isBlocked}
+                              className={`gap-2 ${
+                                isBlocked 
+                                  ? 'opacity-50 cursor-not-allowed bg-slate-100 hover:bg-slate-100 text-slate-500 dark:bg-slate-800 dark:hover:bg-slate-800 dark:text-slate-400 border border-red-200 dark:border-red-800' 
+                                  : hasWarnings 
+                                    ? 'bg-orange-600 hover:bg-orange-700 border-orange-500'
+                                    : ''
+                              }`}
+                              title={
+                                isBlocked 
+                                  ? `Cierre bloqueado: ${blockers.criticalCount} lecturas críticas`
+                                  : hasWarnings 
+                                    ? `${blockers.warningCount} lecturas con alertas - Proceder con precaución`
+                                    : 'Cerrar lecturas seleccionadas'
+                              }
+                            >
+                              {isBlocked ? (
+                                <>
+                                  <Ban className='h-4 w-4' />
+                                  Bloqueado ({selectedRows.length})
+                                </>
+                              ) : (
+                                <>
+                                  <CircleX className='h-4 w-4' />
+                                  Cerrar Lecturas ({selectedRows.length})
+                                </>
+                              )}
+                            </Button>
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                   <div className='rounded-lg border border-slate-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900'>

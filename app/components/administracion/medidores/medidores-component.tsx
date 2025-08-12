@@ -14,7 +14,7 @@ import api from '~/lib/api';
 import type {
   ActualizarMedidorProps,
   CrearMedidorProps,
-  GetMedidores,
+  GetMedidores
 } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
 
@@ -24,14 +24,14 @@ import { DeleteConfirmationDialog } from './delete-confirm-dialog';
 import { FilterSummary } from './filter-summary';
 import {
   type MedidorFilters,
-  MedidorFiltersComponent,
+  MedidorFiltersComponent
 } from './medidor-filters';
 import { MedidorFormModal } from './medidor-form';
 import { ModernHeader } from '~/components/shared/modern-header';
 
 export default function MedidoresComponent({
   medidores: initialMedidores,
-  marcas,
+  marcas
 }: Readonly<{
   medidores: GetMedidores[];
   marcas: Marca[];
@@ -60,7 +60,7 @@ export default function MedidoresComponent({
     fechaInicioDesde: '',
     fechaInicioHasta: '',
     tieneUbicacion: '',
-    tieneAcometida: '',
+    tieneAcometida: ''
   });
 
   const { medidorColumns } = useExportMedidores();
@@ -71,7 +71,7 @@ export default function MedidoresComponent({
   // Tipos de medidores hardcodeados como placeholder
   const [tipos] = useState([
     { id: 1, nombre: 'Monofásico' },
-    { id: 2, nombre: 'Trifásico' },
+    { id: 2, nombre: 'Trifásico' }
   ]);
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function MedidoresComponent({
       fechaInicioDesde: '',
       fechaInicioHasta: '',
       tieneUbicacion: '',
-      tieneAcometida: '',
+      tieneAcometida: ''
     });
   };
 
@@ -132,21 +132,49 @@ export default function MedidoresComponent({
   const handleSubmit = async (
     data: CrearMedidorProps | ActualizarMedidorProps,
     mode: 'add' | 'edit'
-  ) => {
+  ): Promise<{ codigoMedidor?: number } | void> => {
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/MedidorCrear', data);
+        const response = await api.post('/MedidorCrear', data);
+        console.log(
+          '🔍 DEBUG - Respuesta completa de creación:',
+          response.data
+        );
+
         toast.success('Medidor creado exitosamente');
+
+        // Extraer el código del medidor de la respuesta
+        const result = response.data as {
+          mensaje: string;
+          codigoMedidor: number;
+        };
+        if (result?.codigoMedidor) {
+          console.log(
+            '✅ DEBUG - Código de medidor extraído:',
+            result.codigoMedidor
+          );
+          await refetchMedidores();
+          // NO cerrar el modal automáticamente para que el usuario vea el código generado
+          // setIsModalOpen(false); // <- Comentado para mantener modal abierto
+          return { codigoMedidor: result.codigoMedidor };
+        } else {
+          console.warn(
+            '⚠️ WARNING - No se encontró codigoMedidor en la respuesta'
+          );
+          await refetchMedidores();
+          setIsModalOpen(false);
+        }
       } else {
         await api.put(`/MedidorModificar`, data);
         toast.success('Medidor actualizado exitosamente');
+        await refetchMedidores();
+        setIsModalOpen(false);
       }
-      await refetchMedidores();
-      setIsModalOpen(false);
     } catch (error) {
       toast.error('Error al guardar el medidor.');
       console.error(error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -239,7 +267,7 @@ export default function MedidoresComponent({
               <DataTable
                 columns={columns({
                   onEdit: handleEdit,
-                  onAsociarSubempalme: handleAsociarSubempalme,
+                  onAsociarSubempalme: handleAsociarSubempalme
                 })}
                 data={filteredMedidores}
                 searchPlaceholder='Buscar por serie, marca o código...'

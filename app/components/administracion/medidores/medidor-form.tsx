@@ -1,33 +1,36 @@
-/* eslint-disable unused-imports/no-unused-vars */
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Calendar,
   CheckCircle2,
   Clock,
+  Copy,
   Gauge,
   Hash,
   Power,
   Search,
   Tag,
   Type,
+  X
 } from 'lucide-react';
 import { z } from 'zod';
 
 import { useEffect, useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
-import Select, { type StylesConfig } from 'react-select';
+import Select from 'react-select';
 
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -35,7 +38,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { ScrollArea } from '~/components/ui/scroll-area';
@@ -45,84 +48,16 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import api from '~/lib/api';
 import type {
   ActualizarMedidorProps,
   CrearMedidorProps,
   GetMedidores,
-  SubempalmeOption,
+  SubempalmeOption
 } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
-
-// Estilos personalizados para react-select
-const selectStyles: StylesConfig = {
-  control: (provided, state) => ({
-    ...provided,
-    backgroundColor: 'hsl(var(--background))',
-    borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
-    boxShadow: state.isFocused ? '0 0 0 1px hsl(var(--ring))' : 'none',
-    '&:hover': {
-      borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--input))',
-    },
-    borderRadius: 'var(--radius)',
-    minHeight: '44px',
-    height: '44px',
-  }),
-  menu: provided => ({
-    ...provided,
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '6px',
-    boxShadow:
-      '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    zIndex: 9999,
-  }),
-  menuList: provided => ({
-    ...provided,
-    backgroundColor: '#ffffff',
-    padding: '4px',
-    maxHeight: '200px',
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isSelected
-      ? '#0ea5e9'
-      : state.isFocused
-        ? '#f1f5f9'
-        : 'transparent',
-    color: state.isSelected ? '#ffffff' : '#1e293b',
-    '&:hover': {
-      backgroundColor: state.isSelected ? '#0ea5e9' : '#f1f5f9',
-      color: state.isSelected ? '#ffffff' : '#1e293b',
-    },
-    cursor: 'pointer',
-    padding: '8px 12px',
-    borderRadius: '4px',
-    margin: '1px 0',
-  }),
-  singleValue: provided => ({
-    ...provided,
-    color: 'hsl(var(--foreground))',
-  }),
-  input: provided => ({
-    ...provided,
-    color: 'hsl(var(--foreground))',
-    margin: '0px',
-  }),
-  placeholder: provided => ({
-    ...provided,
-    color: 'hsl(var(--muted-foreground))',
-  }),
-  indicatorSeparator: () => ({
-    display: 'none',
-  }),
-  valueContainer: provided => ({
-    ...provided,
-    padding: '0 12px',
-  }),
-};
 
 // Zod schema for form validation
 const medidorSchema = z.object({
@@ -138,7 +73,7 @@ const medidorSchema = z.object({
   fechaPrimeraLectura: z.string().optional(),
   horaPrimeraLectura: z.string().optional(),
   subempalmeId: z.coerce.number().optional(),
-  subempalmeCodigo: z.string().optional(),
+  subempalmeCodigo: z.string().optional()
 });
 
 const getEstadoIdFromString = (estado: string): number => {
@@ -170,7 +105,7 @@ interface MedidorFormModalProps {
   onSubmit: (
     data: CrearMedidorProps | ActualizarMedidorProps,
     mode: 'add' | 'edit'
-  ) => Promise<void>;
+  ) => Promise<{ codigoMedidor?: number } | void>;
   medidor?: GetMedidores | null;
   mode: 'add' | 'edit';
   isLoading?: boolean;
@@ -186,12 +121,32 @@ export function MedidorFormModal({
   mode,
   isLoading,
   marcas,
-  tipos,
-}: MedidorFormModalProps) {
+  tipos
+}: Readonly<MedidorFormModalProps>) {
   const { theme } = useTheme();
   const [medidorDetalle, setMedidorDetalle] = useState<any>(null);
   const [cantidadLecturas, setCantidadLecturas] = useState<number>(0);
   const [isLoadingDetalle, setIsLoadingDetalle] = useState(false);
+  const [codigoMedidorGenerado, setCodigoMedidorGenerado] = useState<
+    number | null
+  >(null);
+
+  // Función para copiar código al portapapeles
+  const copiarCodigo = async (codigo: number) => {
+    try {
+      await navigator.clipboard.writeText(codigo.toString());
+      toast.success('Código copiado al portapapeles', {
+        duration: 2000
+      });
+    } catch (_error) {
+      toast.error('Error al copiar código');
+    }
+  };
+
+  // Función para cerrar notificación de código generado
+  const cerrarNotificacionCodigo = () => {
+    setCodigoMedidorGenerado(null);
+  };
 
   // Función para determinar si los campos de lectura están habilitados
   const isEstadoActivo = (estadoId: number) => {
@@ -205,6 +160,14 @@ export function MedidorFormModal({
   const [subempalmes, setSubempalmes] = useState<SubempalmeOption[]>([]);
 
   const [isLoadingSubempalmes, setIsLoadingSubempalmes] = useState(false);
+
+  // Debug del estado codigoMedidorGenerado
+  useEffect(() => {
+    console.log(
+      '🎯 DEBUG - Estado codigoMedidorGenerado cambió:',
+      codigoMedidorGenerado
+    );
+  }, [codigoMedidorGenerado]);
 
   const form = useForm<MedidorFormData>({
     resolver: zodResolver(medidorSchema),
@@ -221,20 +184,31 @@ export function MedidorFormModal({
       fechaPrimeraLectura: '',
       horaPrimeraLectura: '',
       subempalmeId: 0,
-      subempalmeCodigo: '',
-    },
+      subempalmeCodigo: ''
+    }
   });
+
+  // Usar estilos compartidos para react-select
+  const selectStyles = getReactSelectStyles(theme);
 
   // Función para cargar subempalmes
   const cargarSubempalmes = async () => {
+    console.log('🔍 DEBUG - Iniciando carga de subempalmes...');
     setIsLoadingSubempalmes(true);
     try {
       const response = await api.get('/MedidorSubempalmes');
+      console.log('🔍 DEBUG - Respuesta subempalmes:', response.data);
       if (response.data) {
-        setSubempalmes(response.data as SubempalmeOption[]);
+        const subempalmesList = response.data as SubempalmeOption[];
+        setSubempalmes(subempalmesList);
+        console.log(
+          '✅ DEBUG - Subempalmes cargados correctamente:',
+          subempalmesList.length,
+          'elementos'
+        );
       }
     } catch (error) {
-      console.error('Error al cargar subempalmes:', error);
+      console.error('❌ ERROR al cargar subempalmes:', error);
     } finally {
       setIsLoadingSubempalmes(false);
     }
@@ -242,10 +216,15 @@ export function MedidorFormModal({
 
   // Función para seleccionar subempalme
   const handleSelectSubempalme = (subempalme: SubempalmeOption) => {
+    console.log('🔍 DEBUG - Subempalme seleccionado:', subempalme);
     form.setValue('subempalmeId', subempalme.id);
     form.setValue('subempalmeCodigo', subempalme.codigo);
     setModalSubempalmes(false);
     setBusquedaSubempalme('');
+    console.log('✅ DEBUG - Valores actualizados en el formulario:', {
+      subempalmeId: subempalme.id,
+      subempalmeCodigo: subempalme.codigo
+    });
   };
 
   // Filtrar subempalmes
@@ -290,6 +269,9 @@ export function MedidorFormModal({
 
   useEffect(() => {
     if (isOpen) {
+      // Limpiar código generado al abrir el modal
+      setCodigoMedidorGenerado(null);
+
       if (mode === 'edit' && medidor) {
         const marcaSeleccionada = marcas.find(m => m.nombre === medidor.marca);
 
@@ -329,7 +311,7 @@ export function MedidorFormModal({
             digitos: medidor.digitos,
             multiplicar: medidor.multiplicar,
             subempalmeId: medidorDetalle?.subEmpalmeId ?? 0,
-            subempalmeCodigo: medidorDetalle?.subempalmeCodigo ?? '',
+            subempalmeCodigo: medidorDetalle?.subempalmeCodigo ?? ''
           });
         }, 100);
       } else {
@@ -342,13 +324,14 @@ export function MedidorFormModal({
           digitos: 0,
           multiplicar: 1,
           subempalmeId: 0,
-          subempalmeCodigo: '',
+          subempalmeCodigo: ''
         });
+        setCodigoMedidorGenerado(null);
       }
     }
   }, [isOpen, medidor, mode, form, marcas, tipos, medidorDetalle]);
 
-  const handleFormSubmit = (data: MedidorFormData) => {
+  const handleFormSubmit = async (data: MedidorFormData) => {
     // Validaciones de campos requeridos
     if (!data.marcaCodigo) {
       alert('La marca es obligatoria');
@@ -401,7 +384,7 @@ export function MedidorFormModal({
             .toLocaleDateString('es-ES', {
               day: '2-digit',
               month: '2-digit',
-              year: 'numeric',
+              year: 'numeric'
             })
             .split('/')
             .join('-')
@@ -413,7 +396,7 @@ export function MedidorFormModal({
         estadoId,
         fechaInicio,
         primeraLectura: '',
-        fechaPrimeraLectura: '',
+        fechaPrimeraLectura: ''
       };
       delete (payload as any).marcaCodigo;
 
@@ -430,7 +413,7 @@ export function MedidorFormModal({
         tipoId: data.tipoId,
         subempalmeCodigo: data.subempalmeCodigo || '',
         primeraLectura: payload.primeraLectura,
-        fechaPrimeraLectura: payload.fechaPrimeraLectura,
+        fechaPrimeraLectura: payload.fechaPrimeraLectura
       };
 
       // El subempalmeCodigo se maneja por separado con el endpoint modificar-subempalme
@@ -468,10 +451,23 @@ export function MedidorFormModal({
         }
       }
 
-      onSubmit(submitData, 'edit');
+      const result = await onSubmit(submitData, 'edit');
+      console.log('🔍 DEBUG - Resultado de onSubmit (edit):', result);
+      if (result && 'codigoMedidor' in result) {
+        console.log(
+          '✅ DEBUG - Estableciendo código generado (edit):',
+          result.codigoMedidor
+        );
+        setCodigoMedidorGenerado(result.codigoMedidor!);
+      }
     } else {
+      // Para CREAR: El formulario guarda el código de la marca
       const marcaEncontrada = marcas.find(m => m.codigo === data.marcaCodigo);
-      const marcaId = marcaEncontrada?.id ?? 0;
+
+      if (!marcaEncontrada) {
+        alert('Marca no encontrada. Por favor selecciona una marca válida.');
+        return;
+      }
 
       // Convertir fecha de yyyy-MM-dd a dd-MM-yyyy
       const fechaInicio = data.fechaInicio
@@ -479,47 +475,49 @@ export function MedidorFormModal({
             .toLocaleDateString('es-ES', {
               day: '2-digit',
               month: '2-digit',
-              year: 'numeric',
+              year: 'numeric'
             })
             .split('/')
             .join('-')
         : '';
 
-      const submitData = {
-        marcaId: String(marcaId),
-        tipoId: data.tipoId,
-        modelo: data.modelo,
-        serie: data.serie,
-        estadoId: data.estadoId,
-        fechaInicio: fechaInicio,
-        digitos: data.digitos,
-        multiplicar: data.multiplicar,
-        primeraLectura: data.primeraLectura || '',
-        fechaPrimeraLectura: data.fechaPrimeraLectura || '',
-        horaPrimeraLectura: data.horaPrimeraLectura || '',
-      };
-      delete (submitData as any).marcaCodigo;
-
-      const fechaInicioFormateada = fechaInicio;
-      const fechaPrimeraLecturaFormateada = data.fechaPrimeraLectura || '';
-
       const submitDataFinal = {
-        codigoMedidor: Number(medidor?.codigo),
-        marcaId: Number(marcaId), // Convertir a número
+        marcaId: marcaEncontrada.codigo, // Enviar el código de la marca como string
         tipoId: Number(data.tipoId),
         modelo: data.modelo,
         serie: data.serie,
         estadoId: Number(data.estadoId),
-        fechaInicio: fechaInicioFormateada,
+        fechaInicio: fechaInicio,
         digitos: Number(data.digitos),
         multiplicar: Number(data.multiplicar),
         subempalmeCodigo: data.subempalmeCodigo || '',
         primeraLectura: data.primeraLectura || '',
-        fechaPrimeraLectura: fechaPrimeraLecturaFormateada,
-        horaPrimeraLectura: data.horaPrimeraLectura || '',
+        fechaPrimeraLectura: data.fechaPrimeraLectura || '',
+        horaPrimeraLectura: data.horaPrimeraLectura || ''
       };
 
-      onSubmit(submitDataFinal as any, mode);
+      const result = await onSubmit(submitDataFinal as any, mode);
+      console.log('🔍 DEBUG - Resultado de onSubmit (create):', result);
+      if (result && 'codigoMedidor' in result) {
+        console.log(
+          '✅ DEBUG - Estableciendo código generado (create):',
+          result.codigoMedidor
+        );
+        setCodigoMedidorGenerado(result.codigoMedidor!);
+
+        // Verificar que el estado se estableció correctamente
+        setTimeout(() => {
+          console.log(
+            '🔍 DEBUG - Estado codigoMedidorGenerado después de set:',
+            result.codigoMedidor
+          );
+        }, 100);
+      } else {
+        console.warn(
+          '⚠️ WARNING - No se recibió codigoMedidor en result:',
+          result
+        );
+      }
     }
   };
 
@@ -541,6 +539,52 @@ export function MedidorFormModal({
                 ? 'Complete la información para registrar un nuevo medidor.'
                 : 'Modifique la información del medidor.'}
             </DialogDescription>
+
+            {/* Notificación persistente de código generado */}
+            {/* {codigoMedidorGenerado && (
+              <div className='bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 shadow-md'>
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-full'>
+                      <CheckCircle2 className='h-5 w-5 text-green-600 dark:text-green-400' />
+                    </div>
+                    <div>
+                      <h4 className='font-semibold text-green-900 dark:text-green-100 text-sm sm:text-base'>
+                        ¡Medidor creado exitosamente!
+                      </h4>
+                      <div className='flex items-center gap-2 mt-1'>
+                        <span className='text-green-700 dark:text-green-300 text-sm'>
+                          Código del medidor:
+                        </span>
+                        <span className='font-mono text-lg font-bold text-green-900 dark:text-green-100 bg-white dark:bg-green-900/30 px-2 py-1 rounded border'>
+                          {codigoMedidorGenerado}
+                        </span>
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          onClick={() => copiarCodigo(codigoMedidorGenerado)}
+                          className='h-8 w-8 p-0 border-green-300 hover:bg-green-100 dark:hover:bg-green-800'
+                        >
+                          <Copy className='h-4 w-4 text-green-600' />
+                        </Button>
+                      </div>
+                      <p className='text-xs text-green-600 dark:text-green-400 mt-1'>
+                        Guarde este código para futuras referencias. Use el
+                        botón de copiar para guardarlo en el portapapeles.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    size='sm'
+                    variant='ghost'
+                    onClick={cerrarNotificacionCodigo}
+                    className='h-8 w-8 p-0 text-green-600 hover:bg-green-100 dark:hover:bg-green-800'
+                  >
+                    <X className='h-4 w-4' />
+                  </Button>
+                </div>
+              </div>
+            )} */}
 
             {/* Información adicional para edición */}
             {mode === 'edit' && medidor && (
@@ -604,6 +648,56 @@ export function MedidorFormModal({
                       </div>
                     </>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Notificación de Código Generado */}
+            {codigoMedidorGenerado && (
+              <div className='bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4'>
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-lg'>
+                      <CheckCircle2 className='h-5 w-5 text-green-600 dark:text-green-400' />
+                    </div>
+                    <div>
+                      <h4 className='font-semibold text-green-900 dark:text-green-100'>
+                        ¡Medidor creado exitosamente!
+                      </h4>
+                      <p className='text-sm text-green-700 dark:text-green-300'>
+                        Código generado:
+                        <span className='font-mono font-bold text-lg ml-2 bg-green-100 dark:bg-green-900/50 px-2 py-1 rounded'>
+                          {codigoMedidorGenerado}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <Button
+                      type='button'
+                      size='sm'
+                      variant='outline'
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          codigoMedidorGenerado.toString()
+                        );
+                        toast.success('¡Código copiado al portapapeles!');
+                      }}
+                      className='h-8 gap-1 text-xs bg-white dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/30'
+                    >
+                      <Copy className='h-3 w-3' />
+                      Copiar
+                    </Button>
+                    <Button
+                      type='button'
+                      size='sm'
+                      variant='ghost'
+                      onClick={() => setCodigoMedidorGenerado(null)}
+                      className='h-8 w-8 p-0 hover:bg-green-100 dark:hover:bg-green-900/30'
+                    >
+                      <X className='h-3 w-3' />
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -677,7 +771,7 @@ export function MedidorFormModal({
                             instanceId='marca-select'
                             options={marcas.map(m => ({
                               value: m.codigo,
-                              label: m.nombre,
+                              label: m.nombre
                             }))}
                             value={marcas
                               .map(m => ({ value: m.codigo, label: m.nombre }))
@@ -717,7 +811,7 @@ export function MedidorFormModal({
                             }}
                             options={tipos.map(t => ({
                               value: t.id,
-                              label: t.nombre,
+                              label: t.nombre
                             }))}
                             placeholder='Selecciona el tipo'
                             isClearable={false}
@@ -746,7 +840,7 @@ export function MedidorFormModal({
                                 { value: 1, label: 'Activo' },
                                 { value: 2, label: 'En reparación' },
                                 { value: 3, label: 'En Bodega' },
-                                { value: 4, label: 'Inactivo' },
+                                { value: 4, label: 'Inactivo' }
                               ].find(t => t.value === field.value) || null
                             }
                             onChange={(option: any) => {
@@ -756,7 +850,7 @@ export function MedidorFormModal({
                               { value: 1, label: 'Activo' },
                               { value: 2, label: 'En reparación' },
                               { value: 3, label: 'En Bodega' },
-                              { value: 4, label: 'Inactivo' },
+                              { value: 4, label: 'Inactivo' }
                             ]}
                             placeholder='Selecciona el estado'
                             isClearable={false}

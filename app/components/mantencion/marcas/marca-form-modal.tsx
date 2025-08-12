@@ -54,7 +54,7 @@ export default function MarcaFormModal({
   onSuccess,
   marca,
   mode,
-}: MarcaFormModalProps) {
+}: Readonly<MarcaFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<MarcaFormValues>({
@@ -173,13 +173,12 @@ export default function MarcaFormModal({
                 disabled={isLoading}
                 className='bg-sky-600 hover:bg-sky-700'
               >
-                {isLoading
-                  ? mode === 'add'
-                    ? 'Creando...'
-                    : 'Actualizando...'
-                  : mode === 'add'
-                    ? 'Crear Marca'
-                    : 'Actualizar Marca'}
+                {(() => {
+                  if (isLoading) {
+                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
+                  }
+                  return mode === 'add' ? 'Crear Marca' : 'Actualizar Marca';
+                })()}
               </Button>
             </DialogFooter>
           </form>

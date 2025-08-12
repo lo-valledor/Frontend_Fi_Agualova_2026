@@ -1,21 +1,14 @@
 {
   "semi": true,
-  "trailingComma": "es5",
   "singleQuote": true,
   "printWidth": 80,
   "tabWidth": 2,
   "useTabs": false,
   "bracketSpacing": true,
-  "bracketSameLine": false,
   "arrowParens": "avoid",
   "endOfLine": "lf",
-  "plugins": [
-    "prettier-plugin-tailwindcss",
-    "@trivago/prettier-plugin-sort-imports"
-  ],
-  "importOrder": ["^react$", "^react-(.*)$", "^@/(.*)$", "^~/(.*)$", "^[./]"],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
+  "trailingComma": "none",
+  "bracketSameLine": false,
   "overrides": [
     {
       "files": "*.tsx",

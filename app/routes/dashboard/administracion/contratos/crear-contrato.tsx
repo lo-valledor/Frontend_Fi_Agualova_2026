@@ -1,4 +1,3 @@
-/* eslint-disable no-empty-pattern */
 import React from 'react';
 
 import CrearContratoComponent from '~/components/administracion/contratos/route/crear-contrato-component';
@@ -8,7 +7,7 @@ import { administracionService } from '~/services';
 export function meta() {
   return [
     { title: 'Enerlova | Crear Contrato' },
-    { name: 'description', content: 'Crear un nuevo contrato' },
+    { name: 'description', content: 'Crear un nuevo contrato' }
   ];
 }
 
@@ -21,6 +20,7 @@ export async function clientLoader() {
       locales: [],
       comunas: [],
       madres: [],
+      clientes: []
     };
   }
 
@@ -28,9 +28,9 @@ export async function clientLoader() {
 }
 
 export default function CrearContrato({
-  loaderData,
+  loaderData
 }: Readonly<{ loaderData: any }>) {
-  const { propietarios, locales, comunas, madres } = loaderData;
+  const { propietarios, locales, comunas, madres, clientes } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Contratos' }];
   return (
     <div>
@@ -40,6 +40,7 @@ export default function CrearContrato({
         locales={locales}
         comunas={comunas}
         madres={madres}
+        clientes={clientes}
       />
     </div>
   );
