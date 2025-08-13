@@ -23,10 +23,21 @@ export const formatRut = (rut: string): string => {
   // Si ya tiene guión, devolverlo limpio
   if (cleaned.includes('-')) return cleaned;
   
-  // Agregar guión antes del último dígito
-  const body = cleaned.slice(0, -1);
-  const verifier = cleaned.slice(-1);
-  return `${body}-${verifier}`;
+  // Formatear según la longitud
+  if (cleaned.length === 8) {
+    // RUT de 7 dígitos + verificador: 1234567K -> 1234567-K
+    const body = cleaned.slice(0, 7);
+    const verifier = cleaned.slice(7);
+    return `${body}-${verifier}`;
+  } else if (cleaned.length === 9) {
+    // RUT de 8 dígitos + verificador: 123456789 -> 12345678-9
+    const body = cleaned.slice(0, 8);
+    const verifier = cleaned.slice(8);
+    return `${body}-${verifier}`;
+  }
+  
+  // Si no tiene la longitud correcta, devolver sin formatear
+  return cleaned;
 };
 
 /**

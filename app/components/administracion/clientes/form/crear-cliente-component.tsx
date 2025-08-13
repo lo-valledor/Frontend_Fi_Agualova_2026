@@ -237,7 +237,7 @@ export default function CrearClienteComponent() {
                             <Input
                               placeholder='12345678-9'
                               {...field}
-                              onChange={e => {
+                              onBlur={e => {
                                 const formatted = formatRut(e.target.value);
                                 field.onChange(formatted);
                               }}

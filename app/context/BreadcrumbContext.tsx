@@ -1,4 +1,3 @@
-// src/context/BreadcrumbContext.tsx
 import React, {
   type ReactNode,
   createContext,

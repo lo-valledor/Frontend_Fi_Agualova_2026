@@ -140,9 +140,10 @@ export default function EditarClienteComponent() {
         }
         
         if (clienteResult.data) {
-          setCliente(clienteResult.data);
+          const formattedRut = formatRut(clienteResult.data.rut || '');
+          setCliente({...clienteResult.data, rut: formattedRut});
           form.reset({
-            rut: formatRut(clienteResult.data.rut || ''),
+            rut: formattedRut,
             nombre: clienteResult.data.nombre || '',
             apellido: clienteResult.data.apellido || '',
             esEmpresa: clienteResult.data.esEmpresa || false,
@@ -308,7 +309,7 @@ export default function EditarClienteComponent() {
                             <Input
                               placeholder='12345678-9'
                               {...field}
-                              onChange={(e) => {
+                              onBlur={(e) => {
                                 const formatted = formatRut(e.target.value);
                                 field.onChange(formatted);
                               }}
