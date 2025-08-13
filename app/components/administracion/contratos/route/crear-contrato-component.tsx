@@ -195,32 +195,25 @@ export default function CrearContratoComponent({
   const localesFiltrados = useMemo(() => {
     return locales.filter(
       l =>
-        (l.numeroLocal &&
-          l.numeroLocal.toLowerCase().includes(busquedaLocal.toLowerCase())) ||
-        (l.empresa &&
-          l.empresa.toLowerCase().includes(busquedaLocal.toLowerCase()))
+        l.numeroLocal?.toLowerCase().includes(busquedaLocal.toLowerCase()) ||
+        l.empresa?.toLowerCase().includes(busquedaLocal.toLowerCase())
     );
   }, [locales, busquedaLocal]);
 
   const madresFiltradas = useMemo(() => {
     return madres.filter(
       m =>
-        (m.nombrePropietario &&
-          m.nombrePropietario
-            .toLowerCase()
-            .includes(busquedaMadres.toLowerCase())) ||
-        (m.codigoContrato &&
-          m.codigoContrato.toLowerCase().includes(busquedaMadres.toLowerCase()))
+        m.nombrePropietario?.toLowerCase()
+            .includes(busquedaMadres.toLowerCase()) ||
+        m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase())
     );
   }, [madres, busquedaMadres]);
 
   const comunasFiltradas = useMemo(() => {
     return comunas.filter(
       c =>
-        (c.nombre &&
-          c.nombre.toLowerCase().includes(busquedaComuna.toLowerCase())) ||
-        (c.codigo &&
-          c.codigo.toLowerCase().includes(busquedaComuna.toLowerCase()))
+        c.nombre?.toLowerCase().includes(busquedaComuna.toLowerCase()) ||
+        c.codigo?.toLowerCase().includes(busquedaComuna.toLowerCase())
     );
   }, [comunas, busquedaComuna]);
 

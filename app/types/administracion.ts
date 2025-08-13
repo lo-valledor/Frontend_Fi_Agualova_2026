@@ -663,3 +663,16 @@ export interface ActualizarCondicionContratoProps {
   valor: number;
   estado: boolean;
 }
+
+export interface MedidorFormData {
+  marca: string;
+  tipo: string;
+  modelo: string;
+  serie: string;
+  estado: string;
+  fechaInicio: string;
+  digitos: number;
+  multiplicar: number;
+  primeraLectura: string;
+  fechaPrimeraLectura: string;
+}

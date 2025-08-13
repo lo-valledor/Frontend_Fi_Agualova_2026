@@ -155,7 +155,8 @@ export default function EditarContratoComponent({
 
     return _clientes.filter(
       (c: any) =>
-        c.nombreCompleto?.toLowerCase()
+        c.nombreCompleto
+          ?.toLowerCase()
           .includes(busquedaCliente.toLowerCase()) ||
         c.rut?.toLowerCase().includes(busquedaCliente.toLowerCase()) ||
         c.nombre?.toLowerCase().includes(busquedaCliente.toLowerCase())
@@ -173,7 +174,8 @@ export default function EditarContratoComponent({
   const madresFiltradas = useMemo(() => {
     return madres.filter(
       m =>
-        m.nombrePropietario?.toLowerCase()
+        m.nombrePropietario
+          ?.toLowerCase()
           .includes(busquedaMadres.toLowerCase()) ||
         m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase())
     );

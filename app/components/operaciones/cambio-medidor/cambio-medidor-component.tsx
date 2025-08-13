@@ -142,6 +142,20 @@ export default function CambioMedidorComponent() {
     }
   };
 
+  const handleUltimaLecturaChange = (value: string) => {
+    setDetalleMedidorAntiguo(prev => ({
+      ...prev,
+      ultimaLectura: value,
+    }));
+  };
+
+  const handleLecturaActualChange = (value: string) => {
+    setDetalleMedidorAntiguo(prev => ({
+      ...prev,
+      lecturaActual: value,
+    }));
+  };
+
   const handleBuscarAntiguo = async () => {
     try {
       setIsLoading(true);
@@ -438,6 +452,8 @@ export default function CambioMedidorComponent() {
               <CardContent className='p-3'>
                 <DetalleMedidorAntiguoComponent
                   detalleMedidorAntiguo={detalleMedidorAntiguo}
+                  onUltimaLecturaChange={handleUltimaLecturaChange}
+                  onLecturaActualChange={handleLecturaActualChange}
                 />
               </CardContent>
               <CardFooter className='flex justify-between border-t border-slate-200/60 dark:border-slate-700/60 p-3'>

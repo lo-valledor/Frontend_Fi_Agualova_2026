@@ -28,6 +28,7 @@ import {
 } from './medidor-filters';
 import { MedidorFormModal } from './medidor-form';
 import { ModernHeader } from '~/components/shared/modern-header';
+import { useNavigate } from 'react-router';
 
 export default function MedidoresComponent({
   medidores: initialMedidores,
@@ -73,6 +74,7 @@ export default function MedidoresComponent({
     { id: 1, nombre: 'Monofásico' },
     { id: 2, nombre: 'Trifásico' }
   ]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setMedidores(initialMedidores);
@@ -113,15 +115,11 @@ export default function MedidoresComponent({
   };
 
   const handleAdd = () => {
-    setSelectedMedidor(null);
-    setModalMode('add');
-    setIsModalOpen(true);
+    navigate('/dashboard/administracion/medidores/crear');
   };
 
   const handleEdit = (medidor: GetMedidores) => {
-    setSelectedMedidor(medidor);
-    setModalMode('edit');
-    setIsModalOpen(true);
+    navigate(`/dashboard/administracion/medidores/${medidor.codigo}`);
   };
 
   const handleAsociarSubempalme = (medidor: GetMedidores) => {

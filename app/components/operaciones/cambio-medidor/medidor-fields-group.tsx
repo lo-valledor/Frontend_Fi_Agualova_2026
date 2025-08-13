@@ -14,12 +14,16 @@ interface MedidorFieldsGroupProps {
     lecturaActual: string;
   };
   colorScheme?: 'amber' | 'blue' | 'green' | 'purple';
+  onUltimaLecturaChange?: (value: string) => void;
+  onLecturaActualChange?: (value: string) => void;
 }
 
 export default function MedidorFieldsGroup({
   data,
   colorScheme = 'amber',
-}: MedidorFieldsGroupProps) {
+  onUltimaLecturaChange,
+  onLecturaActualChange
+}: Readonly<MedidorFieldsGroupProps>) {
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6'>
       {/* Primera columna */}
@@ -47,6 +51,8 @@ export default function MedidorFieldsGroup({
           label='Última Lectura'
           value={data.ultimaLectura}
           colorScheme={colorScheme}
+          readOnly={!onUltimaLecturaChange}
+          onChange={onUltimaLecturaChange ? (e) => onUltimaLecturaChange(e.target.value) : undefined}
         />
       </div>
 
@@ -75,6 +81,12 @@ export default function MedidorFieldsGroup({
           label='Lectura Actual'
           value={data.lecturaActual}
           colorScheme={colorScheme}
+          readOnly={!onLecturaActualChange}
+          onChange={
+            onLecturaActualChange
+              ? e => onLecturaActualChange(e.target.value)
+              : undefined
+          }
         />
       </div>
     </div>

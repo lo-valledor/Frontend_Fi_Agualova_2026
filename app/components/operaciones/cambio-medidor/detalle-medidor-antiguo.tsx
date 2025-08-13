@@ -11,7 +11,9 @@ import MedidorFieldsGroup from './medidor-fields-group';
 
 export default function DetalleMedidorAntiguo({
   detalleMedidorAntiguo,
-}: DetalleMedidorAntiguoProps) {
+  onUltimaLecturaChange,
+  onLecturaActualChange,
+}: Readonly<DetalleMedidorAntiguoProps>) {
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
@@ -30,6 +32,8 @@ export default function DetalleMedidorAntiguo({
             <MedidorFieldsGroup
               data={detalleMedidorAntiguo}
               colorScheme='amber'
+              onUltimaLecturaChange={onUltimaLecturaChange}
+              onLecturaActualChange={onLecturaActualChange}
             />
           </CardContent>
         </CollapsibleContent>

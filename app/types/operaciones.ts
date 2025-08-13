@@ -331,6 +331,8 @@ export interface NuevoMedidorFormProps {
 
 export interface DetalleMedidorAntiguoProps {
   detalleMedidorAntiguo: DetalleMedidorAntiguo;
+  onUltimaLecturaChange?: (value: string) => void;
+  onLecturaActualChange?: (value: string) => void;
 }
 
 export interface DetalleMedidorNuevoProps {

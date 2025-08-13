@@ -10,6 +10,7 @@ import type {
   ComboSectores,
   ContratosDisponibles,
   CrearContratoProps,
+  CrearMedidorProps,
   GeCombosConceptos,
   GetCargoTipoContrato,
   GetClientes,
@@ -287,6 +288,36 @@ class AdministracionService {
         data: {
           medidores: resMedidores.data as GetMedidores[],
           marcas: resMarcas.data as Marca[]
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene datos de medidores con marcas
+   */
+  async postMedidoresData(): Promise<
+    AdministracionServiceResponse<{
+      marca: Marca[];
+      tipoMedidor: GetCombosTiposMedidor[];
+    }>
+  > {
+    try {
+      const [resMedidores, resMarcas] = await Promise.all([
+        api.get('buscarMarca'),
+        api.get('combos/tipos-medidor')
+      ]);
+
+      return {
+        data: {
+          marca: resMedidores.data as Marca[],
+          tipoMedidor: resMarcas.data as GetCombosTiposMedidor[]
         },
         error: null
       };
@@ -578,7 +609,9 @@ class AdministracionService {
   /**
    * Obtiene todos los clientes por RUT
    */
-  async getClientesByRut(): Promise<AdministracionServiceResponse<GetClientesByRut[]>> {
+  async getClientesByRut(): Promise<
+    AdministracionServiceResponse<GetClientesByRut[]>
+  > {
     try {
       const response = await api.get('ClienteBuscar');
       return {
@@ -596,7 +629,9 @@ class AdministracionService {
   /**
    * Obtiene un cliente específico por RUT
    */
-  async getClienteByRut(rut: string): Promise<AdministracionServiceResponse<GetClientesByRut>> {
+  async getClienteByRut(
+    rut: string
+  ): Promise<AdministracionServiceResponse<GetClientesByRut>> {
     try {
       const response = await api.get(`/cliente/${rut}`);
       // Convertir GetClienteById a GetClientesByRut mapeando email a correo
@@ -613,6 +648,26 @@ class AdministracionService {
       return {
         data: null,
         error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Crea un nuevo medidor
+   */
+  async crearMedidor(
+    data: CrearMedidorProps
+  ): Promise<AdministracionServiceResponse<{ id: number }>> {
+    try {
+      const response = await api.post('medidor', data);
+      return {
+        data: response.data as { id: number },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error al crear medidor'
       };
     }
   }

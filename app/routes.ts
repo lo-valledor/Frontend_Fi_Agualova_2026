@@ -93,7 +93,7 @@ export default [
             'routes/dashboard/administracion/medidores/crear-medidor.tsx'
           ),
           route(
-            'medidores/:id',
+            'medidores/:codigo',
             'routes/dashboard/administracion/medidores/editar-medidor.tsx'
           ),
           route('acometida', 'routes/dashboard/administracion/acometida.tsx'),

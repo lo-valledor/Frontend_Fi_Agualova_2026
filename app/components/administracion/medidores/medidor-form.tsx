@@ -168,7 +168,7 @@ export function MedidorFormModal({
       tipoId: 0,
       modelo: '',
       serie: '',
-      estadoId: 1, // Activo por defecto
+      estadoId: 3, // En Bodega por defecto
       fechaInicio: '',
       digitos: 0,
       multiplicar: 1,
@@ -300,6 +300,7 @@ export function MedidorFormModal({
           tipoId: 0,
           modelo: '',
           serie: '',
+          estadoId: 3,
           fechaInicio: '',
           digitos: 0,
           multiplicar: 1,
