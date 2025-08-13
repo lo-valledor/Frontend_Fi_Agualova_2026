@@ -320,18 +320,10 @@ export default function EditarContratoComponent({
     setIsSubmitting(true);
 
     try {
-      // Debug: Mostrar todos los campos del contrato para identificar el código correcto
-      console.log('🔍 DEBUG - Objeto contrato completo:', contrato);
-      console.log('🔍 DEBUG - Campos disponibles:', Object.keys(contrato));
-
       // Obtener el ID del contrato desde la URL
       const urlPath = window.location.pathname;
       const urlParts = urlPath.split('/');
       const contratoIdFromUrl = urlParts[urlParts.length - 1]; // Último segmento de la URL
-
-      console.log('🔍 DEBUG - URL path:', urlPath);
-      console.log('🔍 DEBUG - contratoId from URL:', contratoIdFromUrl);
-      console.log('🔍 DEBUG - contrato.codigoLocal:', contrato.codigoLocal);
 
       // Preparar los datos para la API usando ModificarContratoProps
       const submitData: any = {
@@ -353,18 +345,6 @@ export default function EditarContratoComponent({
         lugar: formData.local,
         sinCorte: formData.liberadoCorte ? 1 : 0
       };
-
-      // Debug: Mostrar datos del formulario antes de procesar
-      console.log('🔍 DEBUG - Datos del formulario (editar):', formData);
-      console.log('🔍 DEBUG - Contrato original:', contrato);
-      console.log('🔍 DEBUG - RUT Propietario enviado:', getPropietarioRut());
-      console.log('🔍 DEBUG - RUT Cliente enviado:', getClienteRut());
-
-      // Debug: Mostrar datos preparados para enviar al backend
-      console.log(
-        '📤 DEBUG - JSON enviado al backend (modificar):',
-        JSON.stringify(submitData, null, 2)
-      );
 
       const result = await administracionService.modificarContrato(submitData);
 

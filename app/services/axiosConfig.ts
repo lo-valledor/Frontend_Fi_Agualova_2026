@@ -7,13 +7,13 @@ const API_URL = import.meta.env.VITE_API_URL;
 const refreshAxiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 15000,
+  timeout: 15000
 });
 
 const axiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 15000, // 15 segundos de timeout
+  timeout: 15000 // 15 segundos de timeout
 });
 
 // Interceptor de request para agregar el token automáticamente
@@ -66,7 +66,7 @@ axiosInstance.interceptors.response.use(
           '/login',
           '/refresh-token',
           'validar-usuario-modificacion',
-          'cambiar-contrasena',
+          'cambiar-contrasena'
         ];
         const isExpected401 = routesWithExpected401.some(route =>
           originalRequest.url?.includes(route)
@@ -79,7 +79,6 @@ axiosInstance.interceptors.response.use(
 
         // Si ya se intentó refrescar el token, no volver a intentarlo
         if (originalRequest._retry) {
-          console.log('Refresh token falló, cerrando sesión');
           toast.error(
             'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
           );
@@ -91,7 +90,6 @@ axiosInstance.interceptors.response.use(
         originalRequest._retry = true;
 
         try {
-          console.log('Intentando refresh token...');
           // Usar la instancia separada para evitar interceptor circular
           const response = await refreshAxiosInstance.post('/refresh-token');
           const newToken = response.data.token;
@@ -99,13 +97,11 @@ axiosInstance.interceptors.response.use(
           if (newToken) {
             localStorage.setItem('token', newToken);
             originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            console.log('Token refrescado exitosamente');
             return axiosInstance(originalRequest);
           } else {
             throw new Error('No se recibió token válido');
           }
         } catch (refreshError) {
-          console.log('Error en refresh token:', refreshError);
           toast.error(
             'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
           );

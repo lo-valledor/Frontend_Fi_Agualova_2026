@@ -94,7 +94,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             );
           }
         } else {
-          console.log('No hay token en localStorage');
           setUser(null);
         }
       } catch (error) {

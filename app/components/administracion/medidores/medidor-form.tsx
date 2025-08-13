@@ -161,14 +161,6 @@ export function MedidorFormModal({
 
   const [isLoadingSubempalmes, setIsLoadingSubempalmes] = useState(false);
 
-  // Debug del estado codigoMedidorGenerado
-  useEffect(() => {
-    console.log(
-      '🎯 DEBUG - Estado codigoMedidorGenerado cambió:',
-      codigoMedidorGenerado
-    );
-  }, [codigoMedidorGenerado]);
-
   const form = useForm<MedidorFormData>({
     resolver: zodResolver(medidorSchema),
     defaultValues: {
@@ -193,19 +185,12 @@ export function MedidorFormModal({
 
   // Función para cargar subempalmes
   const cargarSubempalmes = async () => {
-    console.log('🔍 DEBUG - Iniciando carga de subempalmes...');
     setIsLoadingSubempalmes(true);
     try {
       const response = await api.get('/MedidorSubempalmes');
-      console.log('🔍 DEBUG - Respuesta subempalmes:', response.data);
       if (response.data) {
         const subempalmesList = response.data as SubempalmeOption[];
         setSubempalmes(subempalmesList);
-        console.log(
-          '✅ DEBUG - Subempalmes cargados correctamente:',
-          subempalmesList.length,
-          'elementos'
-        );
       }
     } catch (error) {
       console.error('❌ ERROR al cargar subempalmes:', error);
@@ -216,15 +201,10 @@ export function MedidorFormModal({
 
   // Función para seleccionar subempalme
   const handleSelectSubempalme = (subempalme: SubempalmeOption) => {
-    console.log('🔍 DEBUG - Subempalme seleccionado:', subempalme);
     form.setValue('subempalmeId', subempalme.id);
     form.setValue('subempalmeCodigo', subempalme.codigo);
     setModalSubempalmes(false);
     setBusquedaSubempalme('');
-    console.log('✅ DEBUG - Valores actualizados en el formulario:', {
-      subempalmeId: subempalme.id,
-      subempalmeCodigo: subempalme.codigo
-    });
   };
 
   // Filtrar subempalmes
@@ -452,12 +432,7 @@ export function MedidorFormModal({
       }
 
       const result = await onSubmit(submitData, 'edit');
-      console.log('🔍 DEBUG - Resultado de onSubmit (edit):', result);
       if (result && 'codigoMedidor' in result) {
-        console.log(
-          '✅ DEBUG - Estableciendo código generado (edit):',
-          result.codigoMedidor
-        );
         setCodigoMedidorGenerado(result.codigoMedidor!);
       }
     } else {
@@ -497,21 +472,9 @@ export function MedidorFormModal({
       };
 
       const result = await onSubmit(submitDataFinal as any, mode);
-      console.log('🔍 DEBUG - Resultado de onSubmit (create):', result);
       if (result && 'codigoMedidor' in result) {
-        console.log(
-          '✅ DEBUG - Estableciendo código generado (create):',
-          result.codigoMedidor
-        );
+        
         setCodigoMedidorGenerado(result.codigoMedidor!);
-
-        // Verificar que el estado se estableció correctamente
-        setTimeout(() => {
-          console.log(
-            '🔍 DEBUG - Estado codigoMedidorGenerado después de set:',
-            result.codigoMedidor
-          );
-        }, 100);
       } else {
         console.warn(
           '⚠️ WARNING - No se recibió codigoMedidor en result:',
@@ -541,7 +504,7 @@ export function MedidorFormModal({
             </DialogDescription>
 
             {/* Notificación persistente de código generado */}
-            {/* {codigoMedidorGenerado && (
+            {codigoMedidorGenerado && (
               <div className='bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 shadow-md'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
@@ -584,7 +547,7 @@ export function MedidorFormModal({
                   </Button>
                 </div>
               </div>
-            )} */}
+            )}
 
             {/* Información adicional para edición */}
             {mode === 'edit' && medidor && (

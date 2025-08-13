@@ -137,10 +137,6 @@ export default function MedidoresComponent({
     try {
       if (mode === 'add') {
         const response = await api.post('/MedidorCrear', data);
-        console.log(
-          '🔍 DEBUG - Respuesta completa de creación:',
-          response.data
-        );
 
         toast.success('Medidor creado exitosamente');
 
@@ -150,10 +146,6 @@ export default function MedidoresComponent({
           codigoMedidor: number;
         };
         if (result?.codigoMedidor) {
-          console.log(
-            '✅ DEBUG - Código de medidor extraído:',
-            result.codigoMedidor
-          );
           await refetchMedidores();
           // NO cerrar el modal automáticamente para que el usuario vea el código generado
           // setIsModalOpen(false); // <- Comentado para mantener modal abierto

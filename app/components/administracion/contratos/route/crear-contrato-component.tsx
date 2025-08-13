@@ -1,11 +1,14 @@
 import {
   ArrowLeft,
   Building2,
+  CheckCircle2,
+  Copy,
   MapPin,
   Network,
   Save,
   Search,
-  User
+  User,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -14,6 +17,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { ModernHeader } from '~/components/shared/modern-header';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -75,6 +79,13 @@ export default function CrearContratoComponent({
   const [modalComuna, setModalComuna] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Estados para el modal de éxito
+  const [modalExito, setModalExito] = useState(false);
+  const [contratoCreado, setContratoCreado] = useState<{
+    id: string | number | null;
+    fecha: string;
+  } | null>(null);
+
   // Estados para las búsquedas
   const [busquedaPropietario, setBusquedaPropietario] = useState('');
   const [busquedaCliente, setBusquedaCliente] = useState('');
@@ -129,6 +140,35 @@ export default function CrearContratoComponent({
     loadAdditionalData();
   }, []);
 
+  // Helper para obtener el nombre del cliente
+  const getClienteDisplayName = (cliente: any) => {
+    if (!cliente.nombreCompleto) {
+      return `${cliente.nombre || 'sin RUT'}`;
+    }
+
+    return cliente.nombreCompleto;
+  };
+
+  // Función para copiar código al portapapeles
+  const copiarCodigoContrato = async (codigo: string | number) => {
+    try {
+      await navigator.clipboard.writeText(codigo.toString());
+      toast.success('ID del contrato copiado al portapapeles', {
+        duration: 2000
+      });
+    } catch (error) {
+      console.error('Error al copiar ID del contrato:', error);
+      // Fallback: intentar seleccionar el texto si el portapapeles falla
+      toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
+    }
+  };
+
+  // Función utilitaria para trim seguro
+  // Previene errores "Cannot read properties of undefined (reading 'trim')"
+  const safeTrim = (value: string | undefined | null): string => {
+    return value && typeof value === 'string' ? value.trim() : '';
+  };
+
   // Funciones de filtrado
   const propietariosFiltrados = useMemo(() => {
     return propietarios.filter(
@@ -139,18 +179,16 @@ export default function CrearContratoComponent({
   }, [propietarios, busquedaPropietario]);
 
   const clientesFiltrados = useMemo(() => {
-    if (!_clientes || _clientes.length === 0) return [];
+    if (!_clientes || _clientes.length === 0) {
+      return [];
+    }
 
     return _clientes.filter(
       (c: any) =>
-        (c.nombreCompleto &&
-          c.nombreCompleto
-            .toLowerCase()
-            .includes(busquedaCliente.toLowerCase())) ||
-        (c.rut &&
-          c.rut.toLowerCase().includes(busquedaCliente.toLowerCase())) ||
-        (c.nombre &&
-          c.nombre.toLowerCase().includes(busquedaCliente.toLowerCase()))
+        c.nombreCompleto
+          ?.toLowerCase()
+          .includes(busquedaCliente.toLowerCase()) ||
+        c.rut?.toLowerCase().includes(busquedaCliente.toLowerCase())
     );
   }, [_clientes, busquedaCliente]);
 
@@ -199,9 +237,7 @@ export default function CrearContratoComponent({
   const handleSelectCliente = (clienteRut: string) => {
     const cliente = _clientes.find(c => c.rut === clienteRut);
     if (cliente) {
-      const nombreCompleto = cliente.esEmpresa
-        ? cliente.nombreCompleto
-        : `${cliente.nombreCompleto} || ''}`.trim();
+      const nombreCompleto = getClienteDisplayName(cliente);
       setFormData(prev => ({ ...prev, nombreCliente: nombreCompleto }));
     }
     setModalCliente(false);
@@ -291,7 +327,7 @@ export default function CrearContratoComponent({
   // Validación de entidades existentes
   const validateEntities = () => {
     const propietarioSeleccionado = propietarios.find(
-      p => p.nombre.trim() === formData.nombrePropietario.trim()
+      p => safeTrim(p.nombre) === safeTrim(formData.nombrePropietario)
     );
     if (!propietarioSeleccionado) {
       toast.error(
@@ -371,18 +407,21 @@ export default function CrearContratoComponent({
     let clienteRut = propietarioSeleccionado.rut; // Por defecto usar el mismo del propietario
 
     // Si cliente es diferente al propietario, buscar su RUT
-    if (formData.nombreCliente.trim() !== formData.nombrePropietario.trim()) {
+    if (
+      safeTrim(formData.nombreCliente) !== safeTrim(formData.nombrePropietario)
+    ) {
       // Buscar en clientes si están disponibles
       if (_clientes && _clientes.length > 0) {
         const clienteEncontrado = _clientes.find(
-          (c: any) => c.nombre.trim() === formData.nombreCliente.trim()
+          (c: any) =>
+            safeTrim(c.nombreCliente) === safeTrim(formData.nombreCliente)
         );
         if (clienteEncontrado) {
           clienteRut = clienteEncontrado.rut;
         } else {
           // Si no se encuentra en clientes, buscar en propietarios
           const propietarioCliente = propietarios.find(
-            p => p.nombre.trim() === formData.nombreCliente.trim()
+            p => safeTrim(p.nombre) === safeTrim(formData.nombreCliente)
           );
           if (propietarioCliente) {
             clienteRut = propietarioCliente.rut;
@@ -396,12 +435,6 @@ export default function CrearContratoComponent({
     // Validar que los valores numéricos sean válidos
     const tipoContratoNum = parseInt(formData.tipoContrato);
     const tarifaNum = parseInt(formData.tarifa);
-
-    console.log('🔍 DEBUG - Valores antes de procesar:');
-    console.log('  - formData.tipoContrato:', formData.tipoContrato);
-    console.log('  - formData.tarifa:', formData.tarifa);
-    console.log('  - parseInt tipoContrato:', tipoContratoNum);
-    console.log('  - parseInt tarifa:', tarifaNum);
 
     if (isNaN(tipoContratoNum) || tipoContratoNum <= 0) {
       throw new Error('Tipo de contrato no válido');
@@ -419,11 +452,11 @@ export default function CrearContratoComponent({
       localId: formData.local,
       fechaInicio: formatDateForSP(formData.fechaInicio),
       activo: formData.activo,
-      direccion: formData.direccionEnvio.trim(),
-      comuna: formData.comunaEnvio.trim(),
+      direccion: safeTrim(formData.direccionEnvio),
+      comuna: safeTrim(formData.comunaEnvio),
       limite: Math.max(0, formData.limiteInvierno || 0),
       ciclo: 1,
-      potencia: formData.potenciaContratada?.trim() || '',
+      potencia: safeTrim(formData.potenciaContratada),
       guardaCliente: '1',
       esMadre: formData.madre ? '1' : '0',
       madre: madreCodigoContrato,
@@ -480,72 +513,6 @@ export default function CrearContratoComponent({
         return;
       }
 
-      console.log(
-        '🔍 DEBUG - Propietario seleccionado:',
-        entities.propietarioSeleccionado
-      );
-      console.log('🔍 DEBUG - Local seleccionado:', entities.localSeleccionado);
-      console.log(
-        '🔍 DEBUG - Comuna seleccionada:',
-        entities.comunaSeleccionada
-      );
-      console.log('🔍 DEBUG - Madre seleccionada:', madreCodigoContrato);
-      console.log('🔍 DEBUG - FormData antes de procesar:', formData);
-      console.log(
-        '🔍 DEBUG - RUT Propietario enviado:',
-        submitData.propietario
-      );
-      console.log('🔍 DEBUG - RUT Cliente enviado:', submitData.cliente);
-      console.log(
-        '📤 DEBUG - JSON final enviado al backend:',
-        JSON.stringify(submitData, null, 2)
-      );
-
-      // Validación adicional de campos críticos
-      console.log('🔍 DEBUG - Validación de campos:');
-      console.log(
-        '  - tipoContrato:',
-        submitData.tipoContrato,
-        typeof submitData.tipoContrato
-      );
-      console.log('  - tarifa:', submitData.tarifa, typeof submitData.tarifa);
-      console.log(
-        '  - propietario:',
-        submitData.propietario,
-        'length:',
-        submitData.propietario?.length
-      );
-      console.log(
-        '  - cliente:',
-        submitData.cliente,
-        'length:',
-        submitData.cliente?.length
-      );
-      console.log(
-        '  - localId:',
-        submitData.localId,
-        'length:',
-        submitData.localId?.length
-      );
-      console.log(
-        '  - fechaInicio:',
-        submitData.fechaInicio,
-        'length:',
-        submitData.fechaInicio?.length
-      );
-      console.log(
-        '  - direccion:',
-        submitData.direccion,
-        'length:',
-        submitData.direccion?.length
-      );
-      console.log(
-        '  - comuna:',
-        submitData.comuna,
-        'length:',
-        submitData.comuna?.length
-      );
-
       const result = await administracionService.crearContrato(submitData);
 
       if (result.error) {
@@ -554,35 +521,33 @@ export default function CrearContratoComponent({
         return;
       }
 
-      console.log('✅ Contrato creado exitosamente:', result.data);
-      console.log(
-        '✅ Estructura completa de result:',
-        JSON.stringify(result, null, 2)
-      );
-
       // Buscar el idContrato en diferentes estructuras posibles
       let contratoId = null;
 
-      if (result.data && result.data.idContrato) {
+      if (result.data?.idContrato) {
         contratoId = result.data.idContrato;
       } else if (result.data && typeof result.data === 'number') {
         contratoId = result.data;
-      } else if (result.data && result.data.id) {
+      } else if (result.data?.id) {
         contratoId = result.data.id;
-      } else if (result && result.data) {
+      } else if (result?.data) {
         contratoId = result.data;
       }
 
-      console.log('✅ ID del contrato encontrado:', contratoId);
+      // Preparar datos del contrato creado y mostrar modal
+      const fechaActual = new Date().toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
 
-      // Mostrar el ID del contrato en un Alert
-      if (contratoId) {
-        alert(
-          `¡Contrato creado exitosamente!\n\nID del Contrato: ${contratoId}\n\nGuarde este ID para futuras referencias.`
-        );
-      } else {
-        alert('¡Contrato creado exitosamente!');
-      }
+      setContratoCreado({
+        id: contratoId,
+        fecha: fechaActual
+      });
+      setModalExito(true);
 
       // No navegar automáticamente - el usuario decide cuándo salir
     } catch (error: any) {
@@ -961,7 +926,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Propietarios */}
         <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-full max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -1338,50 +1303,48 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        clientesFiltrados.map(cliente => (
-                          <TableRow
-                            key={cliente.rut}
-                            className='hover:bg-muted/50 transition-colors'
-                          >
-                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
-                              {cliente.rut}
-                            </TableCell>
-                            <TableCell className='text-xs sm:text-sm'>
-                              <div
-                                className='truncate max-w-[200px]'
-                                title={
-                                  cliente.esEmpresa
-                                    ? cliente.nombreCompleto
-                                    : `${cliente.nombreCompleto} || ''}`.trim()
-                                }
-                              >
-                                {cliente.esEmpresa
-                                  ? cliente.nombreCompleto
-                                  : `${cliente.nombreCompleto} || ''}`.trim()}
-                              </div>
-                            </TableCell>
-                            <TableCell className='text-xs sm:text-sm'>
-                              <span
-                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                  cliente.esEmpresa
-                                    ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                    : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                }`}
-                              >
-                                {cliente.esEmpresa ? 'Empresa' : 'Persona'}
-                              </span>
-                            </TableCell>
-                            <TableCell className='text-center'>
-                              <Button
-                                size='sm'
-                                onClick={() => handleSelectCliente(cliente.rut)}
-                                className='h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white'
-                              >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))
+                        clientesFiltrados.map(cliente => {
+                          return (
+                            <TableRow
+                              key={cliente.rut}
+                              className='hover:bg-muted/50 transition-colors'
+                            >
+                              <TableCell className='font-mono text-xs sm:text-sm font-medium'>
+                                {cliente.rut}
+                              </TableCell>
+                              <TableCell className='text-xs sm:text-sm'>
+                                <div
+                                  className='truncate max-w-[200px]'
+                                  title={getClienteDisplayName(cliente)}
+                                >
+                                  {getClienteDisplayName(cliente)}
+                                </div>
+                              </TableCell>
+                              <TableCell className='text-xs sm:text-sm'>
+                                <span
+                                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                    cliente.esEmpresa
+                                      ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                                      : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                  }`}
+                                >
+                                  {cliente.esEmpresa ? 'Empresa' : 'Persona'}
+                                </span>
+                              </TableCell>
+                              <TableCell className='text-center'>
+                                <Button
+                                  size='sm'
+                                  onClick={() =>
+                                    handleSelectCliente(cliente.rut)
+                                  }
+                                  className='h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white'
+                                >
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>
@@ -1487,6 +1450,95 @@ export default function CrearContratoComponent({
                     </TableBody>
                   </Table>
                 </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Éxito - Contrato Creado */}
+        <Dialog open={modalExito} onOpenChange={setModalExito}>
+          <DialogContent className='w-[95vw] sm:max-w-[500px] lg:max-w-[600px] max-h-[85vh] overflow-y-auto'>
+            <DialogHeader className='space-y-4'>
+              <div className='flex items-center gap-3'>
+                <div className='p-3 bg-green-100 dark:bg-green-900/30 rounded-full'>
+                  <CheckCircle2 className='h-6 w-6 text-green-600 dark:text-green-400' />
+                </div>
+                <div className='text-left'>
+                  <DialogTitle className='text-xl font-bold text-green-900 dark:text-green-100'>
+                    ¡Contrato Creado Exitosamente!
+                  </DialogTitle>
+                  <DialogDescription className='text-sm text-green-700 dark:text-green-300 mt-1'>
+                    El contrato ha sido registrado correctamente en el sistema
+                  </DialogDescription>
+                </div>
+              </div>
+            </DialogHeader>
+
+            <div className='space-y-6 pt-4'>
+              {/* Alert de información del contrato */}
+              <Alert className='border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'>
+                <CheckCircle2 className='h-4 w-4 text-green-600 dark:text-green-400' />
+                <AlertTitle className='text-green-900 dark:text-green-100'>
+                  Información del Contrato
+                </AlertTitle>
+                <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
+                  {contratoCreado?.id && (
+                    <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
+                      <div>
+                        <p className='font-medium'>ID del Contrato:</p>
+                        <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
+                          {contratoCreado.id}
+                        </p>
+                      </div>
+                      <Button
+                        size='sm'
+                        variant='outline'
+                        onClick={() => copiarCodigoContrato(contratoCreado.id!)}
+                        className='gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/50'
+                      >
+                        <Copy className='h-4 w-4' />
+                        Copiar
+                      </Button>
+                    </div>
+                  )}
+                  <div className='text-sm'>
+                    <p>
+                      <strong>Fecha de creación:</strong>{' '}
+                      {contratoCreado?.fecha}
+                    </p>
+                    <p className='mt-2 text-green-700 dark:text-green-300'>
+                      💡 <strong>Importante:</strong> Guarde este ID para
+                      futuras referencias. Puede utilizarlo para buscar y
+                      gestionar este contrato.
+                    </p>
+                  </div>
+                </AlertDescription>
+              </Alert>
+
+              {/* Botones de acción */}
+              <div className='flex flex-col sm:flex-row gap-3 pt-4 border-t'>
+                <Button
+                  variant='outline'
+                  onClick={() => {
+                    setModalExito(false);
+                    setContratoCreado(null);
+                  }}
+                  className='flex-1 gap-2'
+                >
+                  <X className='h-4 w-4' />
+                  Cerrar
+                </Button>
+                <Button
+                  onClick={() => {
+                    setModalExito(false);
+                    setContratoCreado(null);
+                    navigate('/dashboard/administracion/contratos');
+                  }}
+                  className='flex-1 gap-2 bg-green-600 hover:bg-green-700 text-white'
+                >
+                  <ArrowLeft className='h-4 w-4' />
+                  Volver a Contratos
+                </Button>
               </div>
             </div>
           </DialogContent>

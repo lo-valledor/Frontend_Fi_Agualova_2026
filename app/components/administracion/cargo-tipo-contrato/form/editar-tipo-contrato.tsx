@@ -349,8 +349,6 @@ export default function EditarTipoContrato({
         payload
       );
 
-      console.log('Respuesta del servidor:', response.data);
-
       // Si la respuesta es exitosa, mostrar mensaje y redirigir
       toast.success('Configuración guardada exitosamente');
       setTimeout(() => {
