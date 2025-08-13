@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import { useRevalidator } from 'react-router';
+import { useNavigate, useRevalidator } from 'react-router';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { ExportButton } from '~/components/shared/export-button';
@@ -12,7 +12,7 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import {
   type ClientFilters,
-  useClientFilters,
+  useClientFilters
 } from '~/hooks/administracion/use-client-filters';
 import { useExportClientes } from '~/hooks/administracion/use-export-clientes';
 import { useClientes } from '~/hooks/use-administracion';
@@ -20,11 +20,10 @@ import type {
   GetClientes,
   GetClientesByRut,
   GetComunas,
-  GetGiros,
+  GetGiros
 } from '~/types/administracion';
 
 import { ClientFiltersComponent } from './client-filters';
-import ClienteFormModal from './cliente-form-modal';
 import { columns } from './columns';
 import { ClienteDetailsModal } from './detalles-cliente';
 import { FilterSummary } from './filter-summary';
@@ -36,16 +35,11 @@ interface ClientesComponentProps {
 }
 
 export default function ClientesComponent({
-  clientes,
-  giros,
-  comunas,
+  clientes
 }: Readonly<ClientesComponentProps>) {
-  const [clients, setClients] = useState<GetClientes[]>(clientes);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCliente, setSelectedCliente] = useState<GetClientesByRut>();
+  const [clients] = useState<GetClientes[]>(clientes);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [detailedCliente, setDetailedCliente] = useState<GetClientesByRut>();
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editingClienteRut, setEditingClienteRut] = useState<string | null>(
     null
   );
@@ -58,9 +52,10 @@ export default function ClientesComponent({
     codigoComuna: 'all',
     tieneContacto: 'all',
     tieneTelefono: 'all',
-    tieneEmail: 'all',
+    tieneEmail: 'all'
   });
 
+  const router = useNavigate();
   const revalidator = useRevalidator();
   const { getClienteByRut } = useClientes();
   const { filteredClients, filterStats, filterOptions } = useClientFilters(
@@ -70,31 +65,11 @@ export default function ClientesComponent({
   const { clientColumns } = useExportClientes();
 
   const handleAddCliente = () => {
-    setSelectedCliente(undefined);
-    setModalMode('add');
-    setIsModalOpen(true);
+    router('/dashboard/administracion/clientes/crear');
   };
 
   const handleEditCliente = (cliente: GetClientes) => {
-    (async () => {
-      try {
-        setEditingClienteRut(cliente.rut);
-        const clienteDetallado = await getClienteByRut(cliente.rut);
-        // Convertir GetClienteById a GetClientesByRut mapeando email a correo
-        const clienteConvertido: GetClientesByRut = {
-          ...(clienteDetallado as unknown as GetClientesByRut),
-          correo: clienteDetallado.email,
-        };
-        setSelectedCliente(clienteConvertido);
-        setModalMode('edit');
-        setIsModalOpen(true);
-      } catch (error) {
-        console.error('Error al cargar detalles del cliente:', error);
-        toast.error('Error al cargar los detalles del cliente');
-      } finally {
-        setEditingClienteRut(null);
-      }
-    })();
+    router(`/dashboard/administracion/clientes/${cliente.rut}`);
   };
 
   const handleDetailsCliente = (cliente: GetClientes) => {
@@ -105,7 +80,7 @@ export default function ClientesComponent({
         // Convertir GetClienteById a GetClientesByRut mapeando email a correo
         const clienteConvertido: GetClientesByRut = {
           ...(clienteDetallado as unknown as GetClientesByRut),
-          correo: clienteDetallado.email,
+          correo: clienteDetallado.email
         };
         setDetailedCliente(clienteConvertido);
         setIsDetailsOpen(true);
@@ -119,61 +94,6 @@ export default function ClientesComponent({
     })();
   };
 
-  const handleClienteSuccess = (clienteData: any, mode: 'add' | 'edit') => {
-    // Actualizar el estado local
-    if (mode === 'add') {
-      // Crear nuevo cliente para la lista
-      const newCliente: GetClientes = {
-        rut: clienteData.rut,
-        nombreCompleto: clienteData.esEmpresa
-          ? clienteData.nombre
-          : `${clienteData.nombre} ${clienteData.apellido}`.trim(),
-        esEmpresa: clienteData.esEmpresa,
-        direccion: clienteData.direccion,
-        comuna: '', // Se llenará cuando se recargue desde el servidor
-        contacto: clienteData.contacto,
-        telefono: clienteData.telefono || '',
-        email: clienteData.correo || '',
-        codigoComuna: clienteData.codComuna,
-      };
-      setClients(prev => [...prev, newCliente]);
-    } else if (mode === 'edit' && selectedCliente) {
-      // Actualizar cliente existente
-      setClients(prev =>
-        prev.map(cliente =>
-          cliente.rut === selectedCliente.rut
-            ? {
-                ...cliente,
-                nombreCompleto: clienteData.esEmpresa
-                  ? clienteData.nombre
-                  : `${clienteData.nombre} ${clienteData.apellido}`.trim(),
-                esEmpresa: clienteData.esEmpresa,
-                direccion: clienteData.direccion,
-                contacto: clienteData.contacto,
-                telefono: clienteData.telefono || '',
-                email: clienteData.correo || '',
-                codigoComuna: clienteData.codComuna,
-              }
-            : cliente
-        )
-      );
-    }
-
-    revalidator.revalidate();
-    setIsModalOpen(false);
-    setSelectedCliente(undefined); // Limpiar cliente seleccionado
-    toast.success(
-      mode === 'add'
-        ? 'Cliente creado exitosamente'
-        : 'Cliente actualizado exitosamente'
-    );
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedCliente(undefined); // Limpiar cliente seleccionado
-  };
-
   const handleFiltersChange = (newFilters: ClientFilters) => {
     setFilters(newFilters);
   };
@@ -185,7 +105,7 @@ export default function ClientesComponent({
       codigoComuna: 'all',
       tieneContacto: 'all',
       tieneTelefono: 'all',
-      tieneEmail: 'all',
+      tieneEmail: 'all'
     });
   };
 
@@ -243,7 +163,7 @@ export default function ClientesComponent({
                   onDetails: handleDetailsCliente,
                   onEdit: handleEditCliente,
                   editingClienteRut,
-                  detailingClienteRut,
+                  detailingClienteRut
                 })}
                 data={filteredClients}
                 searchPlaceholder='Buscar por RUT, nombre o email...'
@@ -258,18 +178,6 @@ export default function ClientesComponent({
           isOpen={isDetailsOpen}
           onClose={() => setIsDetailsOpen(false)}
           cliente={detailedCliente ?? null}
-        />
-
-        {/* Modal de Formulario */}
-        <ClienteFormModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onSuccess={handleClienteSuccess}
-          cliente={selectedCliente}
-          mode={modalMode}
-          giros={giros}
-          comunas={comunas}
-          existingClients={clients.map(client => client.rut)}
         />
       </div>
     </div>

@@ -1,10 +1,14 @@
 import api from '~/lib/api';
 import type {
   Anio,
+  CalculoPrefacturaCargoResponse,
+  CalculoPrefacturaDetalle,
   Ciclo,
   ConsultarAsignacionSectores,
   ConsultarMantenedorRevisionCorte,
   ConsultarSectores,
+  EstadoProceso,
+  IdentificadorProceso,
   OpcionesPrepararLecturas,
   PeriodoAbierto,
   Periodos,
@@ -13,7 +17,7 @@ import type {
   RevisarPrecioDos,
   RevisarPrecioUno,
   TotalesCorteReposicion,
-  ValidarSectoresPendientes,
+  ValidarSectoresPendientes
 } from '~/types/operaciones';
 
 export interface OperacionesServiceResponse<T> {
@@ -32,12 +36,12 @@ class OperacionesService {
       const response = await api.get('/ConsultarPeriodoAbierto');
       return {
         data: response.data as PeriodoAbierto[],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -50,12 +54,12 @@ class OperacionesService {
       const response = await api.get('/ciclos-facturacion-activos');
       return {
         data: response.data as Ciclo[],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -77,7 +81,7 @@ class OperacionesService {
           api.get('/ConsultarPeriodoAbierto'),
           api.get('/validar-lecturas-pendientes'),
           api.get('/consultar-sectores'),
-          api.get('/opciones-preparar-lecturas', { params: { control: '1' } }),
+          api.get('/opciones-preparar-lecturas', { params: { control: '1' } })
         ]);
 
       return {
@@ -86,14 +90,14 @@ class OperacionesService {
           lecturasPendientes:
             lecturasPendientes.data as ValidarSectoresPendientes,
           sectores: sectores.data as ConsultarSectores[],
-          opcionesPreparar: opcionesPreparar.data as OpcionesPrepararLecturas[],
+          opcionesPreparar: opcionesPreparar.data as OpcionesPrepararLecturas[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -111,17 +115,17 @@ class OperacionesService {
       params.append('periodo', periodo);
 
       const response = await api.get('/consultar-asignacion-sectores', {
-        params,
+        params
       });
 
       return {
         data: response.data as ConsultarAsignacionSectores[],
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -141,20 +145,20 @@ class OperacionesService {
     try {
       const [resTablaEnel, resTablaEnerlova] = await Promise.all([
         api.get(`/consulta-precio-pago?mes=${mes}&año=${anio}`),
-        api.get(`/consulta-precio-pago-tabla`),
+        api.get(`/consulta-precio-pago-tabla`)
       ]);
 
       return {
         data: {
           tablaEnel: resTablaEnel.data as PreciosCargoEnel[],
-          tablaEnerlova: resTablaEnerlova.data as PreciosCargoEnerlova[],
+          tablaEnerlova: resTablaEnerlova.data as PreciosCargoEnerlova[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -177,7 +181,7 @@ class OperacionesService {
       // Carga paralela de datos básicos
       const [periodoAbierto, ciclosFacturacion] = await Promise.all([
         api.get('/ConsultarPeriodoAbierto'),
-        api.get('/ciclos-facturacion-activos'),
+        api.get('/ciclos-facturacion-activos')
       ]);
 
       const dataPeriodoAbierto = periodoAbierto.data as PeriodoAbierto[];
@@ -192,9 +196,9 @@ class OperacionesService {
             dataPeriodoAbierto: [],
             dataConsultarPreciosUno: [],
             dataConsultarPreciosDos: [],
-            ciclosFacturacion: [],
+            ciclosFacturacion: []
           },
-          error: 'No hay periodo abierto',
+          error: 'No hay periodo abierto'
         };
       }
 
@@ -206,7 +210,7 @@ class OperacionesService {
       const [resConsultarPreciosUno, resConsultarPreciosDos] =
         await Promise.all([
           api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`),
+          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`)
         ]);
 
       return {
@@ -216,14 +220,14 @@ class OperacionesService {
             resConsultarPreciosUno.data as RevisarPrecioUno[],
           dataConsultarPreciosDos:
             resConsultarPreciosDos.data as RevisarPrecioDos[],
-          ciclosFacturacion: dataCiclosFacturacion,
+          ciclosFacturacion: dataCiclosFacturacion
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -240,21 +244,21 @@ class OperacionesService {
     try {
       const [res, resCorte] = await Promise.all([
         api.get('consulta-registros-revision?acometida=0'),
-        api.get('consulta-mantenedor-revision-corte'),
+        api.get('consulta-mantenedor-revision-corte')
       ]);
 
       return {
         data: {
           totalesData: res.data as TotalesCorteReposicion[],
           mantenedorCorteData:
-            resCorte.data as ConsultarMantenedorRevisionCorte[],
+            resCorte.data as ConsultarMantenedorRevisionCorte[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -271,20 +275,20 @@ class OperacionesService {
     try {
       const [periodoAbierto, ciclosFacturacion] = await Promise.all([
         api.get('/ConsultarPeriodoAbierto'),
-        api.get('/ciclos-facturacion-activos'),
+        api.get('/ciclos-facturacion-activos')
       ]);
 
       return {
         data: {
           periodoAbierto: periodoAbierto.data as PeriodoAbierto[],
-          ciclosFacturacion: ciclosFacturacion.data as Ciclo[],
+          ciclosFacturacion: ciclosFacturacion.data as Ciclo[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -301,20 +305,20 @@ class OperacionesService {
     try {
       const [resYears, resPeriodos] = await Promise.all([
         api.get('/consulta-año'),
-        api.get('/consulta-periodo'),
+        api.get('/consulta-periodo')
       ]);
 
       return {
         data: {
           years: resYears.data as Anio[],
-          periodos: resPeriodos.data as Periodos[],
+          periodos: resPeriodos.data as Periodos[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -336,20 +340,162 @@ class OperacionesService {
       const [resConsultarPreciosUno, resConsultarPreciosDos] =
         await Promise.all([
           api.get(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
-          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`),
+          api.get(`/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`)
         ]);
 
       return {
         data: {
           preciosUno: resConsultarPreciosUno.data as RevisarPrecioUno[],
-          preciosDos: resConsultarPreciosDos.data as RevisarPrecioDos[],
+          preciosDos: resConsultarPreciosDos.data as RevisarPrecioDos[]
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  // ============ MÉTODOS PARA FLUJO DE CÁLCULO DE FACTURACIÓN ============
+
+  /**
+   * Lanza el cálculo de facturación (Paso 1)
+   */
+  async lanzarCalculoFacturacion(
+    cicloFacturacion: number,
+    periodoFacturable: string
+  ): Promise<OperacionesServiceResponse<any>> {
+    try {
+      const response = await api.post('/lanzar-calculo-facturacion', {
+        cicloFacturacion,
+        periodoFacturable
+      });
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene el identificador del proceso (Paso 2)
+   */
+  async obtenerIdentificadorProceso(
+    cicloId: string,
+    periodoId: string,
+    modo: number = 1
+  ): Promise<OperacionesServiceResponse<IdentificadorProceso[]>> {
+    try {
+      const response = await api.get('/identificador-proceso', {
+        params: { cicloId, periodoId, modo }
+      });
+      return {
+        data: response.data as IdentificadorProceso[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Verifica el estado del proceso (Paso 3)
+   */
+  async verificarEstadoProceso(
+    procesoId: string
+  ): Promise<OperacionesServiceResponse<EstadoProceso[]>> {
+    try {
+      const response = await api.get('/estado-proceso', {
+        params: { procesoId }
+      });
+      return {
+        data: response.data as EstadoProceso[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Consulta encabezado de prefactura (Paso 4)
+   */
+  async consultarEncabezadoPrefactura(
+    cicloId: string,
+    periodo: string
+  ): Promise<OperacionesServiceResponse<CalculoPrefacturaDetalle[]>> {
+    try {
+      const response = await api.get('/calculo-prefactura-encabezado', {
+        params: { cicloId, periodo }
+      });
+      return {
+        data: response.data as CalculoPrefacturaDetalle[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Consulta cargos de prefactura (Paso 5)
+   */
+  async consultarCargosPrefactura(
+    cicloId: string,
+    periodo: string
+  ): Promise<OperacionesServiceResponse<CalculoPrefacturaCargoResponse[]>> {
+    try {
+      const response = await api.get('/calculo-prefactura-cargos', {
+        params: { cicloId, periodo }
+      });
+      return {
+        data: response.data as CalculoPrefacturaCargoResponse[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Genera detalle de factura (Paso 6)
+   */
+  async generarDetalleFactura(
+    lecturaId: number,
+    periodoId: string
+  ): Promise<OperacionesServiceResponse<any>> {
+    try {
+      const response = await api.post('/generar-detalle-factura', {
+        lecturaId,
+        periodoId
+      });
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

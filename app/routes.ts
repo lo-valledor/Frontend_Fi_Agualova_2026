@@ -3,7 +3,7 @@ import {
   index,
   layout,
   prefix,
-  route,
+  route
 } from '@react-router/dev/routes';
 
 export default [
@@ -22,7 +22,7 @@ export default [
           route(
             'exportar-lecturas',
             'routes/dashboard/monitor/exportar-lecturas.tsx'
-          ),
+          )
         ]),
         ...prefix('operaciones', [
           route(
@@ -65,7 +65,7 @@ export default [
           route(
             'anular-factura-impresa',
             'routes/dashboard/operaciones/anular-factura-impresa.tsx'
-          ),
+          )
         ]),
         ...prefix('administracion', [
           route('usuarios', 'routes/dashboard/administracion/usuarios.tsx'),
@@ -79,7 +79,23 @@ export default [
             'routes/dashboard/administracion/contratos/editar-contrato.tsx'
           ),
           route('clientes', 'routes/dashboard/administracion/clientes.tsx'),
+          route(
+            'clientes/crear',
+            'routes/dashboard/administracion/clientes/crear-cliente.tsx'
+          ),
+          route(
+            'clientes/:id',
+            'routes/dashboard/administracion/clientes/editar-cliente.tsx'
+          ),
           route('medidores', 'routes/dashboard/administracion/medidores.tsx'),
+          route(
+            'medidores/crear',
+            'routes/dashboard/administracion/medidores/crear-medidor.tsx'
+          ),
+          route(
+            'medidores/:id',
+            'routes/dashboard/administracion/medidores/editar-medidor.tsx'
+          ),
           route('acometida', 'routes/dashboard/administracion/acometida.tsx'),
           route(
             'cargo-facturable',
@@ -90,12 +106,12 @@ export default [
             route(
               'edit/:cargoTipoContratoId',
               'routes/dashboard/administracion/cargo-tipo-contrato/edit.tsx'
-            ),
+            )
           ]),
           route(
             'condiciones-contrato',
             'routes/dashboard/administracion/condiciones-contrato.tsx'
-          ),
+          )
         ]),
         route('profile', 'routes/dashboard/profile.tsx'),
         ...prefix('mantencion', [
@@ -115,7 +131,7 @@ export default [
           ),
           route('conceptos', 'routes/dashboard/mantencion/conceptos.tsx'),
           route('tarifas', 'routes/dashboard/mantencion/tarifas.tsx'),
-          route('parametros', 'routes/dashboard/mantencion/parametros.tsx'),
+          route('parametros', 'routes/dashboard/mantencion/parametros.tsx')
         ]),
         ...prefix('reportes', [
           route(
@@ -130,7 +146,7 @@ export default [
             'resumen-facturacion',
             'routes/dashboard/reportes/resumen-facturacion.tsx'
           ),
-          route('ver-facturas', 'routes/dashboard/reportes/ver-facturas.tsx'),
+          route('ver-facturas', 'routes/dashboard/reportes/ver-facturas.tsx')
         ]),
         ...prefix('configuracion', [
           route(
@@ -140,11 +156,11 @@ export default [
           route(
             'permisos-usuarios',
             'routes/dashboard/configuracion/permisos-usuarios.tsx'
-          ),
-        ]),
-      ]),
-    ]),
+          )
+        ])
+      ])
+    ])
   ]),
   // Ruta catch-all para 404
-  route('*', 'routes/not-found.tsx'),
+  route('*', 'routes/not-found.tsx')
 ] satisfies RouteConfig;

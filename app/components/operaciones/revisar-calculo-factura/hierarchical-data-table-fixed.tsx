@@ -33,7 +33,7 @@ export function HierarchicalDataTable({
   columns,
   data,
   onSelectionChange
-}: Readonly<HierarchicalDataTableProps>) {
+}: HierarchicalDataTableProps) {
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
@@ -71,84 +71,98 @@ export function HierarchicalDataTable({
   ) => (
     <TableRow
       key={`${contratoIndex}-cargo-${cargoIndex}`}
-      className='bg-sky-50/30 dark:bg-sky-900/10 border-l-4 border-l-sky-300 dark:border-l-sky-700 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 transition-colors h-8'
+      className='bg-sky-50/30 dark:bg-sky-900/10 border-l-4 border-l-sky-300 dark:border-l-sky-700 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 transition-colors'
     >
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Sector - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Contrato - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Tarifa - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* RUT - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Nombre cliente - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Local - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Dirección - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Comuna - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* N° Serie - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Fecha Lectura - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell></TableCell>
 
       {/* Descripción Cargo - esta es la primera columna con contenido */}
-      <TableCell className='pl-4 py-0.5 px-1'>
-        <span className='text-xs font-medium text-slate-700 dark:text-slate-300'>
+      <TableCell className='pl-8'>
+        <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
           {cargo.descripcion}
         </span>
       </TableCell>
 
       {/* Cantidad - alineada con consumo */}
-      <TableCell className='text-xs text-right py-0.5 px-1'>
+      <TableCell className='text-sm text-right'>
         <span className='font-medium text-slate-700 dark:text-slate-300'>
           {cargo.cantidad?.toLocaleString('es-CL')}
         </span>
       </TableCell>
 
+      {/* Unidad - alineada con la columna de lectura ID */}
+      <TableCell className='text-sm text-center'>
+        <span className='text-xs text-muted-foreground bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded'>
+          ud
+        </span>
+      </TableCell>
+
       {/* Precio Unitario - alineada con Total Facturado */}
-      <TableCell className='text-xs text-right font-medium text-emerald-700 dark:text-emerald-300 py-0.5 px-1'>
-        ${(cargo.precioUnitario || 0).toLocaleString('es-CL')}
+      <TableCell className='text-sm text-right font-medium text-emerald-700 dark:text-emerald-300'>
+        {new Intl.NumberFormat('es-CL', {
+          style: 'currency',
+          currency: 'CLP',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(cargo.precioUnitario || 0)}
       </TableCell>
 
       {/* Subtotal - alineada con Total a Pagar */}
-      <TableCell className='text-xs text-right font-semibold text-sky-700 dark:text-sky-300 py-0.5 px-1'>
-        ${(cargo.subtotal || 0).toLocaleString('es-CL')}
+      <TableCell className='text-sm text-right font-semibold text-sky-700 dark:text-sky-300'>
+        {new Intl.NumberFormat('es-CL', {
+          style: 'currency',
+          currency: 'CLP',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(cargo.subtotal || 0)}
       </TableCell>
-
-      {/* Facturar - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
     </TableRow>
   );
 
   return (
     <div className='w-full'>
       <div className='rounded-lg border border-border/60 shadow-sm overflow-x-auto'>
-        <Table className='min-w-full table-auto text-xs'>
+        <Table className='min-w-full table-auto'>
           <TableHeader className='bg-slate-50 dark:bg-slate-900/50 sticky top-0 z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b border-border/60 h-8'
+                className='border-b border-border/60'
               >
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead
                       key={header.id}
-                      className='font-semibold text-slate-700 dark:text-slate-300 py-1 px-1 sm:px-2 whitespace-nowrap text-xs h-8'
+                      className='font-semibold text-slate-700 dark:text-slate-300 py-3 px-2 sm:px-3 whitespace-nowrap text-xs sm:text-sm'
                       style={{
                         width: header.getSize(),
                         minWidth:
@@ -175,12 +189,12 @@ export function HierarchicalDataTable({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
-                    className='hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-border/40 h-9'
+                    className='hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-border/40'
                   >
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}
-                        className='py-1 px-1 sm:px-2 text-xs h-9'
+                        className='py-2 px-2 sm:px-3 text-xs sm:text-sm'
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -192,38 +206,49 @@ export function HierarchicalDataTable({
                   {row.getIsExpanded() && row.original.cargos && (
                     <>
                       {/* Encabezado de cargos */}
-                      <TableRow className='bg-sky-100/50 dark:bg-sky-900/20 border-l-4 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20 h-7'>
-                        {/* Columnas vacías hasta Descripción Cargo */}
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
+                      <TableRow className='bg-sky-100/50 dark:bg-sky-900/20 border-l-4 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20'>
+                        <TableCell></TableCell>
+                        {/* Sector - vacío */}
+                        <TableCell></TableCell>
+                        {/* Contrato - vacío */}
+                        <TableCell></TableCell>
+                        {/* Tarifa - vacío */}
+                        <TableCell></TableCell>
+                        {/* RUT - vacío */}
+                        <TableCell></TableCell>
+                        {/* Nombre cliente - vacío */}
+                        <TableCell></TableCell>
+                        {/* Local - vacío */}
+                        <TableCell></TableCell>
+                        {/* Dirección - vacío */}
+                        <TableCell></TableCell>
+                        {/* Comuna - vacío */}
+                        <TableCell></TableCell>
+                        {/* N° Serie - vacío */}
+                        <TableCell></TableCell>
+                        {/* Fecha Lectura - vacío */}
+                        <TableCell></TableCell>
 
-                        {/* Descripción Cargo */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0.5 px-1'>
+                        {/* Descripción Cargo - alineada con nombre cliente */}
+                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 uppercase tracking-wide'>
                           Descripción Cargo
                         </TableCell>
-                        {/* Cantidad */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0.5 px-1'>
+                        {/* Cantidad - alineada con consumo */}
+                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide'>
                           Cantidad
                         </TableCell>
-                        {/* Precio Unit. */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0.5 px-1'>
+                        {/* Unidad - alineada con lectura ID */}
+                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-center uppercase tracking-wide'>
+                          Unidad
+                        </TableCell>
+                        {/* Precio Unit. - alineada con Total Facturado */}
+                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide'>
                           Precio Unit.
                         </TableCell>
-                        {/* Subtotal */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0.5 px-1'>
+                        {/* Subtotal - alineada con Total a Pagar */}
+                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide'>
                           Subtotal
                         </TableCell>
-                        {/* Facturar - vacío */}
-                        <TableCell className='py-0.5 px-1'></TableCell>
                       </TableRow>
                       {/* Filas de cargos */}
                       {row.original.cargos.map((cargo, cargoIndex) =>

@@ -155,36 +155,27 @@ export default function EditarContratoComponent({
 
     return _clientes.filter(
       (c: any) =>
-        (c.nombreCompleto &&
-          c.nombreCompleto
-            .toLowerCase()
-            .includes(busquedaCliente.toLowerCase())) ||
-        (c.rut &&
-          c.rut.toLowerCase().includes(busquedaCliente.toLowerCase())) ||
-        (c.nombre &&
-          c.nombre.toLowerCase().includes(busquedaCliente.toLowerCase()))
+        c.nombreCompleto?.toLowerCase()
+          .includes(busquedaCliente.toLowerCase()) ||
+        c.rut?.toLowerCase().includes(busquedaCliente.toLowerCase()) ||
+        c.nombre?.toLowerCase().includes(busquedaCliente.toLowerCase())
     );
   }, [_clientes, busquedaCliente]);
 
   const localesFiltrados = useMemo(() => {
     return locales.filter(
       l =>
-        (l.numeroLocal &&
-          l.numeroLocal.toLowerCase().includes(busquedaLocal.toLowerCase())) ||
-        (l.empresa &&
-          l.empresa.toLowerCase().includes(busquedaLocal.toLowerCase()))
+        l.numeroLocal?.toLowerCase().includes(busquedaLocal.toLowerCase()) ||
+        l.empresa?.toLowerCase().includes(busquedaLocal.toLowerCase())
     );
   }, [locales, busquedaLocal]);
 
   const madresFiltradas = useMemo(() => {
     return madres.filter(
       m =>
-        (m.nombrePropietario &&
-          m.nombrePropietario
-            .toLowerCase()
-            .includes(busquedaMadres.toLowerCase())) ||
-        (m.codigoContrato &&
-          m.codigoContrato.toLowerCase().includes(busquedaMadres.toLowerCase()))
+        m.nombrePropietario?.toLowerCase()
+          .includes(busquedaMadres.toLowerCase()) ||
+        m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase())
     );
   }, [madres, busquedaMadres]);
 

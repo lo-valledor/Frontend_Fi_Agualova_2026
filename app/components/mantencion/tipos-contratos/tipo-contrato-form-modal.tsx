@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
@@ -33,7 +33,7 @@ const tipoContratoSchema = z.object({
     .string()
     .min(1, 'El nombre es requerido')
     .max(100, 'El nombre no debe exceder 100 caracteres'),
-  estado: z.boolean(),
+  estado: z.boolean()
 });
 
 type TipoContratoFormData = z.infer<typeof tipoContratoSchema>;
@@ -51,14 +51,14 @@ export default function TipoContratoFormModal({
   onClose,
   onSuccess,
   tipoContrato,
-  mode,
+  mode
 }: TipoContratoFormModalProps) {
   const form = useForm<TipoContratoFormData>({
     resolver: zodResolver(tipoContratoSchema),
     defaultValues: {
       nombre: tipoContrato?.nombre || '',
-      estado: tipoContrato?.estado ?? true,
-    },
+      estado: tipoContrato?.estado ?? true
+    }
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -67,7 +67,7 @@ export default function TipoContratoFormModal({
     if (isOpen) {
       form.reset({
         nombre: tipoContrato?.nombre || '',
-        estado: tipoContrato?.estado ?? true,
+        estado: tipoContrato?.estado ?? true
       });
     }
   }, [isOpen, tipoContrato, form]);
@@ -81,7 +81,7 @@ export default function TipoContratoFormModal({
       } else {
         await api.put(`/modificarTipoContrato`, {
           ...data,
-          id: tipoContrato?.id,
+          id: tipoContrato?.id
         });
       }
 
@@ -161,10 +161,12 @@ export default function TipoContratoFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                {mode === 'add' ? 'Crear' : 'Actualizar'}
+                {mode === 'add'
+                  ? 'Crear Tipo de Contrato'
+                  : 'Actualizar Tipo de Contrato'}
               </Button>
             </DialogFooter>
           </form>

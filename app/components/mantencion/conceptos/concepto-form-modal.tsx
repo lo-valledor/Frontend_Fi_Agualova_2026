@@ -16,7 +16,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -25,7 +25,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
@@ -45,7 +45,7 @@ const conceptoSchema = z.object({
     .min(1, 'La unidad es requerida')
     .max(20, 'La unidad no debe exceder 20 caracteres'),
   fijoVariable: z.string().min(1, 'El tipo Fijo/Variable es requerido'),
-  asociadoId: z.number().optional(),
+  asociadoId: z.number().optional()
 });
 
 type ConceptoFormData = z.infer<typeof conceptoSchema>;
@@ -65,7 +65,7 @@ export default function ConceptoFormModal({
   onSuccess,
   concepto,
   mode,
-  comboAsociadoConceptos,
+  comboAsociadoConceptos
 }: ConceptoFormModalProps) {
   const form = useForm<ConceptoFormData>({
     resolver: zodResolver(conceptoSchema),
@@ -74,8 +74,8 @@ export default function ConceptoFormModal({
       descripcion: concepto?.descripcion || '',
       unidad: concepto?.unidad || '',
       fijoVariable: concepto?.fijoVariable || '',
-      asociadoId: concepto?.asociadoId || undefined,
-    },
+      asociadoId: concepto?.asociadoId || undefined
+    }
   });
   const { theme } = useTheme();
 
@@ -91,7 +91,7 @@ export default function ConceptoFormModal({
         descripcion: concepto?.descripcion || '',
         unidad: concepto?.unidad || '',
         fijoVariable: concepto?.fijoVariable || '',
-        asociadoId: concepto?.asociadoId || undefined,
+        asociadoId: concepto?.asociadoId || undefined
       });
     }
   }, [isOpen, concepto, form]);
@@ -195,7 +195,7 @@ export default function ConceptoFormModal({
                           ? {
                               value: field.value,
                               label:
-                                field.value === 'FIJO' ? 'Fijo' : 'Variable',
+                                field.value === 'FIJO' ? 'Fijo' : 'Variable'
                             }
                           : null
                       }
@@ -204,7 +204,7 @@ export default function ConceptoFormModal({
                       }
                       options={[
                         { value: 'FIJO', label: 'Fijo' },
-                        { value: 'VARIABLE', label: 'Variable' },
+                        { value: 'VARIABLE', label: 'Variable' }
                       ]}
                       placeholder='Seleccione el tipo'
                       isClearable
@@ -243,7 +243,7 @@ export default function ConceptoFormModal({
                                 )!.id,
                                 label: comboAsociadoConceptos.find(
                                   a => a.id === field.value
-                                )!.descripcion,
+                                )!.descripcion
                               }
                             : null
                           : null
@@ -253,7 +253,7 @@ export default function ConceptoFormModal({
                       }
                       options={comboAsociadoConceptos.map(asociado => ({
                         value: asociado.id,
-                        label: asociado.descripcion,
+                        label: asociado.descripcion
                       }))}
                       placeholder='Seleccione el asociado'
                       isClearable
@@ -285,10 +285,10 @@ export default function ConceptoFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                {mode === 'add' ? 'Crear' : 'Actualizar'}
+                {mode === 'add' ? 'Crear Concepto' : 'Actualizar Concepto'}
               </Button>
             </DialogFooter>
           </form>

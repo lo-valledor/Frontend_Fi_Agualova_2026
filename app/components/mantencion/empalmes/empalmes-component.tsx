@@ -96,6 +96,7 @@ export default function EmpalmesComponent({
           onSuccess={handleEmpalmeSuccess}
           empalme={selectedEmpalme}
           mode={modalMode}
+          existingCodes={empalmes.map(emp => emp.codigo)}
         />
       </div>
     </div>

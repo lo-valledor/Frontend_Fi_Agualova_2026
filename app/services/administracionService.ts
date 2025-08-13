@@ -13,6 +13,8 @@ import type {
   GeCombosConceptos,
   GetCargoTipoContrato,
   GetClientes,
+  GetClienteById,
+  GetClientesByRut,
   GetCombosTarifas,
   GetCombosTiposMedidor,
   GetComunas,
@@ -533,6 +535,84 @@ class AdministracionService {
       return {
         data: null,
         error: errorMessage
+      };
+    }
+  }
+
+  /**
+   * Obtiene giros
+   */
+  async getGiros(): Promise<AdministracionServiceResponse<GetGiros[]>> {
+    try {
+      const response = await api.get('giro/buscar');
+      return {
+        data: this.processApiResponse<GetGiros>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene comunas
+   */
+  async getComunas(): Promise<AdministracionServiceResponse<GetComunas[]>> {
+    try {
+      const response = await api.get('comuna/por-region');
+      return {
+        data: this.processApiResponse<GetComunas>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene todos los clientes por RUT
+   */
+  async getClientesByRut(): Promise<AdministracionServiceResponse<GetClientesByRut[]>> {
+    try {
+      const response = await api.get('ClienteBuscar');
+      return {
+        data: this.processApiResponse<GetClientesByRut>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene un cliente específico por RUT
+   */
+  async getClienteByRut(rut: string): Promise<AdministracionServiceResponse<GetClientesByRut>> {
+    try {
+      const response = await api.get(`/cliente/${rut}`);
+      // Convertir GetClienteById a GetClientesByRut mapeando email a correo
+      const clienteById = response.data as GetClienteById;
+      const clientesByRut: GetClientesByRut = {
+        ...clienteById,
+        correo: clienteById.email
+      };
+      return {
+        data: clientesByRut,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

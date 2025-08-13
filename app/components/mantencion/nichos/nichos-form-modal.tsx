@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import {
@@ -30,13 +30,17 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import api from '~/lib/api';
 import type { Nicho, Sectores } from '~/types/mantencion';
 
 const nichoFormSchema = z.object({
+  id: z
+    .string()
+    .min(1, { message: 'El ID es requerido.' })
+    .max(4, { message: 'El ID no puede exceder 4 caracteres.' }),
   sectorId: z.string().min(1, { message: 'El sector es requerido.' }),
   nombre: z
     .string()
@@ -46,7 +50,7 @@ const nichoFormSchema = z.object({
     .string()
     .min(1, { message: 'La ubicación es requerida.' })
     .max(100, { message: 'La ubicación no puede exceder 100 caracteres.' }),
-  estado: z.boolean(),
+  estado: z.boolean()
 });
 
 type NichoFormValues = z.infer<typeof nichoFormSchema>;
@@ -57,6 +61,7 @@ interface NichoFormModalProps {
   onSuccess: () => void;
   nicho: Nicho | null;
   mode: 'add' | 'edit';
+  existingNichos: Nicho[];
 }
 
 export default function NichoFormModal({
@@ -65,7 +70,8 @@ export default function NichoFormModal({
   onSuccess,
   nicho,
   mode,
-}: NichoFormModalProps) {
+  existingNichos
+}: Readonly<NichoFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
   const [sectores, setSectores] = useState<Sectores[]>([]);
   const [isLoadingSectores, setIsLoadingSectores] = useState(false);
@@ -73,11 +79,12 @@ export default function NichoFormModal({
   const form = useForm<NichoFormValues>({
     resolver: zodResolver(nichoFormSchema),
     defaultValues: {
+      id: '',
       sectorId: '',
       nombre: '',
       ubicacion: '',
-      estado: true,
-    },
+      estado: true
+    }
   });
 
   useEffect(() => {
@@ -118,39 +125,68 @@ export default function NichoFormModal({
       if (mode === 'edit' && nicho) {
         const sector = sectores.find(s => s.nombre === nicho.sectorNombre);
         form.reset({
+          id: nicho.id.toString(),
           sectorId: sector?.id.toString() || '',
           nombre: nicho.nombre,
           ubicacion: nicho.ubicacion,
-          estado: nicho.estado,
+          estado: nicho.estado
         });
       } else {
+        // Generar el próximo ID disponible para modo agregar
+        const existingIds = existingNichos.map(n => n.id);
+        const nextId =
+          existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
         form.reset({
+          id: nextId.toString(),
           sectorId: '',
           nombre: '',
           ubicacion: '',
-          estado: true,
+          estado: true
         });
       }
     }
-  }, [isOpen, mode, nicho, sectores, form]);
+  }, [isOpen, mode, nicho, sectores, existingNichos, form]);
 
   const handleSubmit = async (data: NichoFormValues) => {
     setIsLoading(true);
     try {
       const payload = {
-        ...data,
+        id: mode === 'add' ? parseInt(data.id, 10) : nicho?.id || 0,
         sectorId: parseInt(data.sectorId, 10),
+        nombre: data.nombre,
+        ubicacion: data.ubicacion,
+        estado: data.estado
       };
 
+      // Debug: mostrar el JSON que se está enviando
+      console.log(
+        '🔍 DEBUG - Payload enviado a la API:',
+        JSON.stringify(payload, null, 2)
+      );
+      console.log('🔍 DEBUG - Modo:', mode);
+      console.log('🔍 DEBUG - ID del formulario:', data.id);
+      console.log(
+        '🔍 DEBUG - URL:',
+        mode === 'add' ? '/crearNichoM' : `/modificarNicho/${nicho?.id}`
+      );
+
       if (mode === 'add') {
-        await api.post('/crearNichoM', payload);
+        const response = await api.post('/crearNichoM', payload);
+        console.log('✅ DEBUG - Respuesta de creación:', response.data);
       } else if (mode === 'edit' && nicho) {
-        await api.put(`/modificarNicho/${nicho.id}`, payload);
+        const response = await api.put(`/modificarNicho/${nicho.id}`, payload);
+        console.log('✅ DEBUG - Respuesta de edición:', response.data);
       }
 
+      toast.success(
+        mode === 'add'
+          ? 'Nicho creado exitosamente'
+          : 'Nicho actualizado exitosamente'
+      );
       onSuccess();
     } catch (error) {
-      console.error('Error al procesar nicho:', error);
+      console.error('❌ ERROR al procesar nicho:', error);
+      console.error('❌ ERROR - Detalles:', (error as any).response?.data);
       toast.error(
         mode === 'add'
           ? 'Error al crear el nicho'
@@ -185,6 +221,25 @@ export default function NichoFormModal({
             onSubmit={form.handleSubmit(handleSubmit)}
             className='space-y-4 pt-4'
           >
+            <FormField
+              control={form.control}
+              name='id'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>ID del Nicho</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      disabled={true}
+                      placeholder='Código numérico generado automáticamente'
+                      className='bg-muted'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name='sectorId'
@@ -284,15 +339,14 @@ export default function NichoFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingSectores}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
-                {isLoading
-                  ? mode === 'add'
-                    ? 'Creando...'
-                    : 'Actualizando...'
-                  : mode === 'add'
-                    ? 'Crear Nicho'
-                    : 'Actualizar Nicho'}
+                {(() => {
+                  if (isLoading) {
+                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
+                  }
+                  return mode === 'add' ? 'Crear Nicho' : 'Actualizar Nicho';
+                })()}
               </Button>
             </DialogFooter>
           </form>

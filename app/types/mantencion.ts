@@ -57,6 +57,7 @@ export type Marca = {
 // buscarNichos, obtenerNicho{id}, crearNicho, modificarNicho
 export type Nicho = {
   id: number;
+  codigo?: string;
   sectorNombre: string;
   nombre: string;
   ubicacion: string;

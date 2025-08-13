@@ -149,7 +149,7 @@ export interface ValidarSectoresPendientes {
       nicho: string;
       estado: number;
       cantidad: number;
-    },
+    }
   ];
 }
 
@@ -191,7 +191,7 @@ export interface TablaAlertCerrarLecturasProps {
   isAuthorized: boolean;
 }
 
-// Revisar Calculo Factura
+// Revisar Cálculo Factura
 export interface CalculoPrefacturaEncabezado {
   modo: number;
   resultados: CalculoPrefacturaDetalle[];
@@ -246,7 +246,9 @@ export interface TablaEstadoProcesoProps {
 export interface IdentificadorProceso {
   cicloId: number;
   periodoId: string;
+  procesoId: number;
   modo: number;
+  fechaConsulta: string;
 }
 
 export interface TablaIdentificadorProcesoProps {

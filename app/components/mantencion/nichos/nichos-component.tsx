@@ -18,7 +18,9 @@ interface NichosComponentProps {
   nichos: Nicho[];
 }
 
-export default function NichosComponent({ nichos }: NichosComponentProps) {
+export default function NichosComponent({
+  nichos
+}: Readonly<NichosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNicho, setSelectedNicho] = useState<Nicho | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
@@ -38,7 +40,6 @@ export default function NichosComponent({ nichos }: NichosComponentProps) {
 
   const handleDeleteNicho = (nicho: Nicho) => {
     setSelectedNicho(nicho);
-    // TODO: Implementar diálogo de confirmación de eliminación
     setIsModalOpen(true);
   };
 
@@ -80,7 +81,7 @@ export default function NichosComponent({ nichos }: NichosComponentProps) {
             <DataTable
               columns={columns({
                 onEdit: handleEditNicho,
-                onDelete: handleDeleteNicho,
+                onDelete: handleDeleteNicho
               })}
               data={nichos}
             />
@@ -94,6 +95,7 @@ export default function NichosComponent({ nichos }: NichosComponentProps) {
           onSuccess={handleNichoSuccess}
           nicho={selectedNicho}
           mode={modalMode}
+          existingNichos={nichos}
         />
       </div>
     </div>

@@ -6,7 +6,7 @@ import {
   Plus,
   Save,
   Trash2,
-  Zap,
+  Zap
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -25,7 +25,7 @@ import {
   SelectItem,
   Select as SelectPrimitive,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import {
   Table,
@@ -33,7 +33,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import api from '~/lib/api';
 import type {
@@ -44,7 +44,7 @@ import type {
   GeCombosConceptos,
   GetCombosTarifas,
   GetCombosTiposMedidor,
-  GetCondicionesContrato,
+  GetCondicionesContrato
 } from '~/types/administracion';
 
 // Tipos para las opciones de react-select
@@ -66,7 +66,7 @@ export default function EditarTipoContrato({
   tiposMedidor,
   condicionesContrato,
   cargos,
-  tipoContratoId,
+  tipoContratoId
 }: Readonly<{
   cargoTipoContrato: CargoTipoContratoEditor;
   detalle: CargoTipoDetalle[];
@@ -118,7 +118,7 @@ export default function EditarTipoContrato({
             tipoMedidor: 'Monofasico',
             tipo: '',
             codigoEnerlova: '',
-            mostrarValorCero: false,
+            mostrarValorCero: false
           }
         );
       });
@@ -145,7 +145,7 @@ export default function EditarTipoContrato({
             tipoMedidor: 'Trifasico',
             tipo: '',
             codigoEnerlova: '',
-            mostrarValorCero: false,
+            mostrarValorCero: false
           }
         );
       });
@@ -172,16 +172,11 @@ export default function EditarTipoContrato({
             tipoMedidor: 'Ambos',
             tipo: '',
             codigoEnerlova: '',
-            mostrarValorCero: false,
+            mostrarValorCero: false
           }
         );
       });
   });
-
-  // Función para filtrar cargos ya agregados por tipo de medidor
-  const getCargosAgregadosByTipoMedidor = (tipoMedidor: number) => {
-    return listbox.filter(cargo => cargo.tipoMedidor === tipoMedidor);
-  };
 
   // Función para filtrar cargos por concepto seleccionado
   const getCargosByConcepto = (conceptoNombre: string) => {
@@ -203,7 +198,7 @@ export default function EditarTipoContrato({
     return cargosList.map(cargo => ({
       value: cargo.id,
       label: cargo.descripcion,
-      data: cargo,
+      data: cargo
     }));
   };
 
@@ -255,7 +250,7 @@ export default function EditarTipoContrato({
           cargoDescripcion: cargoSeleccionado.descripcion,
           condicionId: parseInt(selectedCondicion),
           condicionDescripcion: condicionSeleccionada.concepto,
-          descripcion: descripcion.trim(),
+          descripcion: descripcion.trim()
         };
 
         setCondicionesAgregadas(prev => [...prev, nuevaCondicion]);
@@ -284,7 +279,7 @@ export default function EditarTipoContrato({
     ) {
       setCargosMonofasicoAgregados(prev => [
         ...prev,
-        selectedCargoMonofasico.data,
+        selectedCargoMonofasico.data
       ]);
       setSelectedCargoMonofasico(null);
     }
@@ -299,7 +294,7 @@ export default function EditarTipoContrato({
     ) {
       setCargosTrifasicoAgregados(prev => [
         ...prev,
-        selectedCargoTrifasico.data,
+        selectedCargoTrifasico.data
       ]);
       setSelectedCargoTrifasico(null);
     }
@@ -336,18 +331,15 @@ export default function EditarTipoContrato({
           cargoId: item.cargoId,
           tipoContratoId: tipoContratoId,
           condicionId: item.condicionId,
-          descripcion: item.descripcion,
+          descripcion: item.descripcion
         })),
         cargoMonofasicoIds: cargosMonofasicoAgregados.map(c => c.id),
         cargoTrifasicoIds: cargosTrifasicoAgregados.map(c => c.id),
-        cargoAmbosIds: cargosAmbosAgregados.map(c => c.id),
+        cargoAmbosIds: cargosAmbosAgregados.map(c => c.id)
       };
 
       // Llamada real a la API
-      const response = await api.post(
-        '/cargoTipoContrato-guardarConfiguracion',
-        payload
-      );
+      await api.post('/cargoTipoContrato-guardarConfiguracion', payload);
 
       // Si la respuesta es exitosa, mostrar mensaje y redirigir
       toast.success('Configuración guardada exitosamente');
@@ -567,7 +559,10 @@ export default function EditarTipoContrato({
                   </TableHeader>
                   <TableBody>
                     {condicionesAgregadas.map((item, index) => (
-                      <TableRow key={index} className='hover:bg-muted/50'>
+                      <TableRow
+                        key={`${item.cargoId}-${item.condicionId}`}
+                        className='hover:bg-muted/50'
+                      >
                         <TableCell>
                           <Button
                             variant='ghost'

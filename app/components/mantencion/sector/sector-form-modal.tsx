@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import {
@@ -30,7 +30,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import api from '~/lib/api';
@@ -42,7 +42,7 @@ const SectorFormSchema = z.object({
     .min(1, { message: 'El nombre es requerido.' })
     .max(50, { message: 'El nombre no puede exceder 50 caracteres.' }),
   zona: z.string().min(1, { message: 'La zona es requerida.' }),
-  estado: z.boolean(),
+  estado: z.boolean()
 });
 
 type SectorFormValues = z.infer<typeof SectorFormSchema>;
@@ -60,7 +60,7 @@ export default function SectorFormModal({
   onClose,
   onSuccess,
   sector,
-  mode,
+  mode
 }: SectorFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [zonas, setZonas] = useState<Zonas[]>([]);
@@ -71,8 +71,8 @@ export default function SectorFormModal({
     defaultValues: {
       nombre: '',
       zona: '',
-      estado: true,
-    },
+      estado: true
+    }
   });
 
   useEffect(() => {
@@ -114,13 +114,13 @@ export default function SectorFormModal({
         form.reset({
           nombre: sector.nombre,
           zona: sector.zona,
-          estado: sector.estado,
+          estado: sector.estado
         });
       } else {
         form.reset({
           nombre: '',
           zona: '',
-          estado: true,
+          estado: true
         });
       }
     }
@@ -253,15 +253,14 @@ export default function SectorFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingZonas}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
-                {isLoading
-                  ? mode === 'add'
-                    ? 'Creando...'
-                    : 'Actualizando...'
-                  : mode === 'add'
-                    ? 'Crear Sector'
-                    : 'Actualizar Sector'}
+                {(() => {
+                  if (isLoading) {
+                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
+                  }
+                  return mode === 'add' ? 'Crear Sector' : 'Actualizar Sector';
+                })()}
               </Button>
             </DialogFooter>
           </form>

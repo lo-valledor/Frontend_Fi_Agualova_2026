@@ -11,7 +11,7 @@ import {
   RefreshCw,
   SearchIcon,
   SettingsIcon,
-  TrendingUp,
+  TrendingUp
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -25,7 +25,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 // Removido useOperaciones ya que los datos vienen como props
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
@@ -41,7 +41,7 @@ import { HierarchicalDataTable } from './hierarchical-data-table';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
-  ciclosFacturacionActivos: _ciclosFacturacionActivos,
+  ciclosFacturacionActivos: _ciclosFacturacionActivos
 }: Readonly<{
   periodoAbierto: PeriodoAbierto[];
   ciclosFacturacionActivos: Ciclo[];
@@ -68,14 +68,14 @@ export default function RevisarCalculoFacturaComponent({
     isCalculoPreparado,
     handleLanzarCalculo,
     handleAceptarCalculo,
-    setIsCalculoPreparado,
+    setIsCalculoPreparado
   } = useCalculoProceso({
     periodoFormateado,
     cicloId,
     onCalculoAceptado: () => {
       // Refrescar datos después de aceptar cálculo
       handleRevisarCalculo();
-    },
+    }
   });
 
   const {
@@ -86,11 +86,11 @@ export default function RevisarCalculoFacturaComponent({
     searchTerm,
     setSearchTerm,
     handleRevisarCalculo,
-    setData,
+    setData
   } = useCalculoFactura({
     periodoFormateado,
     cicloId,
-    isCalculoPreparado,
+    isCalculoPreparado
   });
 
   // Función para actualizar los datos
@@ -232,88 +232,99 @@ export default function RevisarCalculoFacturaComponent({
                 </div>
 
                 {/* Acciones */}
-                <div className='space-y-3 pt-4 border-t border-slate-200 dark:border-slate-700'>
-                  {/* Botones de utilidad */}
-                  <div className='flex flex-wrap gap-2'>
-                    <Button
-                      onClick={handleClearFilters}
-                      variant='outline'
-                      disabled={isLoading}
-                      size='sm'
-                      className='flex items-center gap-2'
-                    >
-                      <Eraser className='h-4 w-4' />
-                      Limpiar
-                    </Button>
-                    <Button
-                      onClick={handleRefreshData}
-                      variant='outline'
-                      disabled={isLoading || !isCalculoPreparado}
-                      size='sm'
-                      className='flex items-center gap-2'
-                    >
-                      <RefreshCw className='h-4 w-4' />
-                      Actualizar
-                    </Button>
-                  </div>
-
-                  {/* Botones principales */}
-                  <div className='grid grid-cols-1 sm:grid-cols-3 gap-2 '>
+                <div className='pt-4 border-t border-slate-200 dark:border-slate-700'>
+                  {/* Todos los botones en una sola fila responsive */}
+                  <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2'>
+                    {/* Botón principal de preparar cálculo */}
                     <Button
                       onClick={handleLanzarCalculo}
                       disabled={isLaunching}
-                      className='flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white'
+                      className='flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white col-span-2 sm:col-span-1'
                       size='sm'
                     >
                       {isLaunching ? (
                         <>
                           <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          Preparando...
+                          <span className='hidden sm:inline'>
+                            Preparando...
+                          </span>
                         </>
                       ) : (
                         <>
                           <SearchIcon className='h-4 w-4' />
-                          Preparar Cálculo
+                          <span className='hidden sm:inline'>Preparar</span>
+                          <span className='sm:hidden'>Preparar Cálculo</span>
                         </>
                       )}
                     </Button>
 
+                    {/* Ver cálculos */}
                     <Button
                       onClick={handleRevisarCalculo}
                       disabled={isLoading}
-                      className='flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white'
+                      className='flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white'
                       size='sm'
                     >
                       {isLoading ? (
                         <>
                           <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          Cargando...
+                          <span className='hidden sm:inline'>Cargando...</span>
                         </>
                       ) : (
                         <>
                           <FileTextIcon className='h-4 w-4' />
-                          Ver Cálculos
+                          <span className='hidden sm:inline'>Ver</span>
+                          <span className='sm:hidden'>Ver Cálculos</span>
                         </>
                       )}
                     </Button>
 
+                    {/* Aceptar cálculo */}
                     <Button
                       onClick={handleAceptarCalculo}
                       disabled={isAccepting || selectedContratos.length === 0}
-                      className='flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white'
+                      className='flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white'
                       size='sm'
                     >
                       {isAccepting ? (
                         <>
                           <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          Aceptando...
+                          <span className='hidden sm:inline'>Aceptando...</span>
                         </>
                       ) : (
                         <>
                           <SettingsIcon className='h-4 w-4' />
-                          Aceptar ({selectedContratos.length})
+                          <span className='hidden sm:inline'>Aceptar</span>
+                          <span className='sm:hidden'>Aceptar</span>
+                          <span className='ml-1'>
+                            ({selectedContratos.length})
+                          </span>
                         </>
                       )}
+                    </Button>
+
+                    {/* Actualizar */}
+                    <Button
+                      onClick={handleRefreshData}
+                      variant='outline'
+                      disabled={isLoading || !isCalculoPreparado}
+                      size='sm'
+                      className='flex items-center justify-center gap-2'
+                    >
+                      <RefreshCw className='h-4 w-4' />
+                      <span className='hidden lg:inline'>Actualizar</span>
+                    </Button>
+
+                    {/* Limpiar */}
+                    <Button
+                      onClick={handleClearFilters}
+                      variant='outline'
+                      disabled={isLoading}
+                      size='sm'
+                      className='flex items-center justify-center gap-2'
+                    >
+                      <Eraser className='h-4 w-4' />
+                      <span className='hidden lg:inline'>Limpiar</span>
                     </Button>
                   </div>
                 </div>
@@ -451,7 +462,7 @@ export default function RevisarCalculoFacturaComponent({
                           style: 'currency',
                           currency: 'CLP',
                           minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
+                          maximumFractionDigits: 0
                         }).format(
                           filteredData.reduce(
                             (sum, item) => sum + (item.totalFacturado || 0),
@@ -534,7 +545,7 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
 
                   {/* Tabla de datos */}
-                  <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden'>
+                  <div className='w-full overflow-hidden'>
                     <HierarchicalDataTable
                       columns={columns}
                       data={filteredData}

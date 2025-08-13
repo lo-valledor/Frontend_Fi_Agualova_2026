@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -21,7 +21,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
@@ -35,7 +35,7 @@ const marcaFormSchema = z.object({
   nombre: z
     .string()
     .min(1, { message: 'El nombre es requerido.' })
-    .max(100, { message: 'El nombre no puede exceder 100 caracteres.' }),
+    .max(100, { message: 'El nombre no puede exceder 100 caracteres.' })
 });
 
 type MarcaFormValues = z.infer<typeof marcaFormSchema>;
@@ -53,7 +53,7 @@ export default function MarcaFormModal({
   onClose,
   onSuccess,
   marca,
-  mode,
+  mode
 }: Readonly<MarcaFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -61,8 +61,8 @@ export default function MarcaFormModal({
     resolver: zodResolver(marcaFormSchema),
     defaultValues: {
       codigo: '',
-      nombre: '',
-    },
+      nombre: ''
+    }
   });
 
   useEffect(() => {
@@ -70,12 +70,12 @@ export default function MarcaFormModal({
       if (mode === 'edit' && marca) {
         form.reset({
           codigo: marca.codigo,
-          nombre: marca.nombre,
+          nombre: marca.nombre
         });
       } else {
         form.reset({
           codigo: '',
-          nombre: '',
+          nombre: ''
         });
       }
     }
@@ -171,7 +171,7 @@ export default function MarcaFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
                 {(() => {
                   if (isLoading) {

@@ -12,8 +12,25 @@ interface TableColumnsProps {
 
 export const columns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: TableColumnsProps): ColumnDef<Nicho>[] => [
+  {
+    accessorKey: 'id',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='ID' />
+    ),
+    cell: ({ row }) => {
+      const id = row.getValue('id');
+      return (
+        <div className='w-16 font-mono text-sm font-medium text-center'>
+          {id as number}
+        </div>
+      );
+    },
+    enableSorting: true,
+    enableHiding: false,
+    size: 80
+  },
   {
     accessorKey: 'sectorNombre',
     header: ({ column }) => (
@@ -32,7 +49,7 @@ export const columns = ({
       );
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'nombre',
@@ -40,10 +57,14 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
-      const nombre = row.getValue('nombre') as string;
-      return <div className='max-w-[150px] truncate font-medium'>{nombre}</div>;
+      const nombre = row.getValue('nombre');
+      return (
+        <div className='max-w-[150px] truncate font-medium'>
+          {nombre as string}
+        </div>
+      );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'ubicacion',
@@ -51,14 +72,14 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Ubicación' />
     ),
     cell: ({ row }) => {
-      const ubicacion = row.getValue('ubicacion') as string;
+      const ubicacion = row.getValue('ubicacion');
       return (
         <div className='max-w-[200px] truncate text-sm text-muted-foreground'>
-          {ubicacion}
+          {ubicacion as string}
         </div>
       );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'estado',
@@ -66,7 +87,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
-      const estado = row.getValue('estado') as boolean;
+      const estado = row.getValue('estado');
       return (
         <Badge
           variant={estado ? 'default' : 'destructive'}
@@ -76,14 +97,14 @@ export const columns = ({
               : ''
           }
         >
-          {estado ? 'Activo' : 'Inactivo'}
+          {(estado as string) ? 'Activo' : 'Inactivo'}
         </Badge>
       );
     },
     enableSorting: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
+    }
   },
   {
     id: 'actions',
@@ -95,6 +116,6 @@ export const columns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
@@ -42,7 +42,7 @@ const parametroSchema = z.object({
     .string()
     .min(1, 'La sigla es requerida')
     .max(10, 'La sigla no debe exceder 10 caracteres'),
-  estado: z.boolean(),
+  estado: z.boolean()
 });
 
 type ParametroFormData = z.infer<typeof parametroSchema>;
@@ -60,7 +60,7 @@ export default function ParametroFormModal({
   onClose,
   onSuccess,
   parametro,
-  mode,
+  mode
 }: ParametroFormModalProps) {
   const form = useForm<ParametroFormData>({
     resolver: zodResolver(parametroSchema),
@@ -68,8 +68,8 @@ export default function ParametroFormModal({
       descripcion: parametro?.descripcion || '',
       valor: parametro?.valor || '',
       sigla: parametro?.sigla || '',
-      estado: parametro?.estado ?? true,
-    },
+      estado: parametro?.estado ?? true
+    }
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -80,7 +80,7 @@ export default function ParametroFormModal({
         descripcion: parametro?.descripcion || '',
         valor: parametro?.valor || '',
         sigla: parametro?.sigla || '',
-        estado: parametro?.estado ?? true,
+        estado: parametro?.estado ?? true
       });
     }
   }, [isOpen, parametro, form]);
@@ -202,10 +202,10 @@ export default function ParametroFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                {mode === 'add' ? 'Crear' : 'Actualizar'}
+                {mode === 'add' ? 'Crear Parámetro' : 'Actualizar Parámetro'}
               </Button>
             </DialogFooter>
           </form>

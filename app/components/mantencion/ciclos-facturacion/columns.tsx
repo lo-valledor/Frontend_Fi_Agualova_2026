@@ -12,7 +12,7 @@ interface TableColumnsProps {
 
 export const columns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: TableColumnsProps): ColumnDef<CiclosFacturacion>[] => [
   {
     accessorKey: 'descripcion',
@@ -20,13 +20,15 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => {
-      const descripcion = row.getValue('descripcion') as string;
+      const descripcion = row.getValue('descripcion');
       return (
-        <div className='max-w-[200px] truncate font-medium'>{descripcion}</div>
+        <div className='max-w-[200px] truncate font-medium'>
+          {descripcion as string}
+        </div>
       );
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'diaFacturacion',
@@ -34,16 +36,16 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Día de Facturación' />
     ),
     cell: ({ row }) => {
-      const dia = row.getValue('diaFacturacion') as number;
+      const dia = row.getValue('diaFacturacion');
       return (
         <div className='text-center'>
           <Badge variant='outline' className='font-mono'>
-            {dia}
+            {dia as number}
           </Badge>
         </div>
       );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'diaInicioLectura',
@@ -51,16 +53,16 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Día Inicio Lectura' />
     ),
     cell: ({ row }) => {
-      const dia = row.getValue('diaInicioLectura') as number;
+      const dia = row.getValue('diaInicioLectura');
       return (
         <div className='text-center'>
           <Badge variant='outline' className='font-mono'>
-            {dia}
+            {dia as number}
           </Badge>
         </div>
       );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'diasVencimientoFactura',
@@ -68,15 +70,15 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Días Vencimiento' />
     ),
     cell: ({ row }) => {
-      const dias = row.getValue('diasVencimientoFactura') as number;
+      const dias = row.getValue('diasVencimientoFactura');
       return (
         <div className='text-center'>
-          <span className='font-medium'>{dias}</span>
+          <span className='font-medium'>{dias as number}</span>
           <span className='text-xs text-muted-foreground ml-1'>días</span>
         </div>
       );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'estado',
@@ -84,12 +86,12 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => {
-      const estado = row.getValue('estado') as boolean;
+      const estado = row.getValue('estado');
       return (
         <Badge
           variant={estado ? 'default' : 'destructive'}
           className={
-            estado
+            (estado as boolean)
               ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
               : ''
           }
@@ -101,7 +103,7 @@ export const columns = ({
     enableSorting: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
+    }
   },
   {
     id: 'actions',
@@ -113,6 +115,6 @@ export const columns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

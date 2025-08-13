@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -21,11 +21,12 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
 import type { Empalme } from '~/types/mantencion';
+import { generateNextCode } from '~/utils/auto-increment-utils';
 
 const empalmeFormSchema = z.object({
   codigo: z
@@ -40,7 +41,7 @@ const empalmeFormSchema = z.object({
     .string()
     .min(1, { message: 'El código del cliente es requerido.' })
     .max(20, {
-      message: 'El código del cliente no puede exceder 20 caracteres.',
+      message: 'El código del cliente no puede exceder 20 caracteres.'
     }),
   potenciaContratada: z
     .number({ message: 'La potencia contratada debe ser un número válido.' })
@@ -48,7 +49,7 @@ const empalmeFormSchema = z.object({
   tarifa: z
     .string()
     .min(1, { message: 'La tarifa es requerida.' })
-    .max(50, { message: 'La tarifa no puede exceder 50 caracteres.' }),
+    .max(50, { message: 'La tarifa no puede exceder 50 caracteres.' })
 });
 
 type EmpalmeFormValues = z.infer<typeof empalmeFormSchema>;
@@ -59,6 +60,7 @@ interface EmpalmeFormModalProps {
   onSuccess: () => void;
   empalme: Empalme | null;
   mode: 'add' | 'edit';
+  existingCodes: string[];
 }
 
 export default function EmpalmesModalForm({
@@ -67,7 +69,8 @@ export default function EmpalmesModalForm({
   onSuccess,
   empalme,
   mode,
-}: EmpalmeFormModalProps) {
+  existingCodes
+}: Readonly<EmpalmeFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<EmpalmeFormValues>({
@@ -77,8 +80,8 @@ export default function EmpalmesModalForm({
       nombre: '',
       codigoCliente: '',
       potenciaContratada: 0,
-      tarifa: '',
-    },
+      tarifa: ''
+    }
   });
 
   useEffect(() => {
@@ -89,19 +92,21 @@ export default function EmpalmesModalForm({
           nombre: empalme.nombre,
           codigoCliente: empalme.codigoCliente,
           potenciaContratada: empalme.potenciaContratada,
-          tarifa: empalme.tarifa,
+          tarifa: empalme.tarifa
         });
       } else {
+        // Generar el próximo código disponible para modo agregar
+        const nextCode = generateNextCode(existingCodes, false);
         form.reset({
-          codigo: '',
+          codigo: String(nextCode),
           nombre: '',
           codigoCliente: '',
           potenciaContratada: 0,
-          tarifa: '',
+          tarifa: ''
         });
       }
     }
-  }, [isOpen, mode, empalme, form]);
+  }, [isOpen, mode, empalme, existingCodes, form]);
 
   const handleSubmit = async (data: EmpalmeFormValues) => {
     setIsLoading(true);
@@ -111,7 +116,7 @@ export default function EmpalmesModalForm({
       } else if (mode === 'edit' && empalme) {
         await api.put('/modificarEmpalmes', {
           ...data,
-          codigo: empalme.codigo,
+          codigo: empalme.codigo
         });
       }
       onSuccess();
@@ -160,8 +165,9 @@ export default function EmpalmesModalForm({
                   <FormControl>
                     <Input
                       {...field}
-                      disabled={mode === 'edit'}
-                      placeholder='Ingrese el código del empalme'
+                      disabled={true}
+                      placeholder='Código numérico generado automáticamente'
+                      className='bg-muted'
                     />
                   </FormControl>
                   <FormMessage />
@@ -252,7 +258,7 @@ export default function EmpalmesModalForm({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
                 {isLoading
                   ? mode === 'add'

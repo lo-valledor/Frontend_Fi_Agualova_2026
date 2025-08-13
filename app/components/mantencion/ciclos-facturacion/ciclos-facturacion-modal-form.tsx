@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
@@ -41,7 +41,7 @@ const cicloFormSchema = z.object({
     .max(31, { message: 'El día de facturación debe ser entre 1 y 31.' }),
   diaInicioLectura: z
     .number({
-      message: 'El día de inicio de lectura debe ser un número válido.',
+      message: 'El día de inicio de lectura debe ser un número válido.'
     })
     .int({ message: 'El día de inicio de lectura debe ser un número entero.' })
     .min(1, { message: 'El día de inicio de lectura debe ser entre 1 y 31.' })
@@ -51,9 +51,9 @@ const cicloFormSchema = z.object({
     .int({ message: 'Los días de vencimiento deben ser un número entero.' })
     .min(1, { message: 'Los días de vencimiento deben ser mayor a 0.' })
     .max(365, {
-      message: 'Los días de vencimiento no pueden exceder 365 días.',
+      message: 'Los días de vencimiento no pueden exceder 365 días.'
     }),
-  estado: z.boolean(),
+  estado: z.boolean()
 });
 
 type CicloFormValues = z.infer<typeof cicloFormSchema>;
@@ -71,8 +71,8 @@ export default function CiclosFacturacionModalForm({
   onClose,
   onSuccess,
   ciclo,
-  mode,
-}: CicloFormModalProps) {
+  mode
+}: Readonly<CicloFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<CicloFormValues>({
@@ -82,8 +82,8 @@ export default function CiclosFacturacionModalForm({
       diaFacturacion: 1,
       diaInicioLectura: 1,
       diasVencimientoFactura: 30,
-      estado: true,
-    },
+      estado: true
+    }
   });
 
   useEffect(() => {
@@ -94,7 +94,7 @@ export default function CiclosFacturacionModalForm({
           diaFacturacion: ciclo.diaFacturacion,
           diaInicioLectura: ciclo.diaInicioLectura,
           diasVencimientoFactura: ciclo.diasVencimientoFactura,
-          estado: ciclo.estado,
+          estado: ciclo.estado
         });
       } else {
         form.reset({
@@ -102,7 +102,7 @@ export default function CiclosFacturacionModalForm({
           diaFacturacion: 1,
           diaInicioLectura: 1,
           diasVencimientoFactura: 30,
-          estado: true,
+          estado: true
         });
       }
     }
@@ -284,15 +284,14 @@ export default function CiclosFacturacionModalForm({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
-                {isLoading
-                  ? mode === 'add'
-                    ? 'Creando...'
-                    : 'Actualizando...'
-                  : mode === 'add'
-                    ? 'Crear Ciclo'
-                    : 'Actualizar Ciclo'}
+                {(() => {
+                  if (isLoading) {
+                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
+                  }
+                  return mode === 'add' ? 'Crear Ciclo' : 'Actualizar Ciclo';
+                })()}
               </Button>
             </DialogFooter>
           </form>

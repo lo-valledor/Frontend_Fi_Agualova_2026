@@ -109,6 +109,7 @@ export default function ClavesComponent({
           onSuccess={handleSuccess}
           clave={selectedClave}
           mode={modalMode}
+          existingCodes={claves.map(c => c.codigo)}
         />
       </div>
     </div>

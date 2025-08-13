@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import type { Tarifas } from '~/types/mantencion';
@@ -35,7 +35,7 @@ const tarifaSchema = z.object({
   nombre: z
     .string()
     .min(1, 'El nombre es requerido')
-    .max(100, 'El nombre no debe exceder 100 caracteres'),
+    .max(100, 'El nombre no debe exceder 100 caracteres')
 });
 
 type TarifaFormData = z.infer<typeof tarifaSchema>;
@@ -53,14 +53,14 @@ export default function TarifaFormModal({
   onClose,
   onSuccess,
   tarifa,
-  mode,
+  mode
 }: TarifaFormModalProps) {
   const form = useForm<TarifaFormData>({
     resolver: zodResolver(tarifaSchema),
     defaultValues: {
       codigo: tarifa?.codigo || '',
-      nombre: tarifa?.nombre || '',
-    },
+      nombre: tarifa?.nombre || ''
+    }
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -69,7 +69,7 @@ export default function TarifaFormModal({
     if (isOpen) {
       form.reset({
         codigo: tarifa?.codigo || '',
-        nombre: tarifa?.nombre || '',
+        nombre: tarifa?.nombre || ''
       });
     }
   }, [isOpen, tarifa, form]);
@@ -157,10 +157,10 @@ export default function TarifaFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                {mode === 'add' ? 'Crear' : 'Actualizar'}
+                {mode === 'add' ? 'Crear Tarifa' : 'Actualizar Tarifa'}
               </Button>
             </DialogFooter>
           </form>

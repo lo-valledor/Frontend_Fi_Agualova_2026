@@ -1,21 +1,26 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  ArrowLeft,
   Building2,
   CheckCircle2,
   FileText,
   Mail,
   MapPin,
   Phone,
+  Save,
   User,
-  XCircle,
+  XCircle
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import React, { useEffect, useState } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
+import { useNavigate } from 'react-router';
 
+import { ModernHeader } from '~/components/shared/modern-header';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
@@ -26,27 +31,28 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
-import type {
-  GetComunas,
-  GetGiros,
-} from '~/types/administracion';
+import { administracionService } from '~/services';
+import type { GetComunas, GetGiros } from '~/types/administracion';
+import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
-// Schema para validación de formulario de creación
 const createClienteSchema = (existingClients: string[]) =>
   z.object({
     rut: z
       .string()
       .min(1, 'El RUT es requerido')
+      .refine(isValidRutFormat, {
+        message: 'El RUT debe tener el formato 12345678-9'
+      })
       .refine(
         rut => {
           return !existingClients.includes(rut);
         },
         {
-          message: 'Este RUT ya está registrado en el sistema',
+          message: 'Este RUT ya está registrado en el sistema'
         }
       ),
     nombre: z.string().min(1, 'El nombre es requerido'),
@@ -57,29 +63,25 @@ const createClienteSchema = (existingClients: string[]) =>
     contacto: z.string().min(1, 'El contacto es requerido'),
     telefono: z.string().optional(),
     correo: z.string().optional(),
-    codigoGiro: z.string().min(1, 'El código de giro es requerido'),
+    codigoGiro: z.string().min(1, 'El código de giro es requerido')
   });
 
 type ClienteFormData = z.infer<ReturnType<typeof createClienteSchema>>;
 
-interface CrearClienteComponentProps {
-  giros: GetGiros[];
-  comunas: GetComunas[];
-  existingClients: string[];
-  onSuccess: (clienteData: ClienteFormData) => void;
-  onCancel: () => void;
-}
-
-export default function CrearClienteComponent({
-  giros,
-  comunas,
-  existingClients,
-  onSuccess,
-  onCancel,
-}: CrearClienteComponentProps) {
-  const clienteSchema = createClienteSchema(existingClients);
+export default function CrearClienteComponent() {
+  const navigate = useNavigate();
   const { theme } = useTheme();
-  
+
+  const [giros, setGiros] = useState<GetGiros[]>([]);
+  const [comunas, setComunas] = useState<GetComunas[]>([]);
+  const [existingClients, setExistingClients] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rutValidationStatus, setRutValidationStatus] = useState<
+    'idle' | 'checking' | 'valid' | 'invalid'
+  >('idle');
+
+  const clienteSchema = createClienteSchema(existingClients);
+
   const form = useForm<ClienteFormData>({
     resolver: zodResolver(clienteSchema),
     defaultValues: {
@@ -92,22 +94,50 @@ export default function CrearClienteComponent({
       contacto: '',
       telefono: '',
       correo: '',
-      codigoGiro: '',
-    },
+      codigoGiro: ''
+    }
   });
 
-  const [rutValidationStatus, setRutValidationStatus] = useState<
-    'idle' | 'checking' | 'valid' | 'invalid'
-  >('idle');
+  const selectStyles = getReactSelectStyles(theme);
 
-  // Función para validar RUT en tiempo real
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const clientesDataResult =
+          await administracionService.getClientesData();
+
+        if (clientesDataResult.error) {
+          toast.error(clientesDataResult.error);
+          return;
+        }
+
+        if (clientesDataResult.data) {
+          setGiros(clientesDataResult.data.giros);
+          setComunas(clientesDataResult.data.comunas);
+          setExistingClients(clientesDataResult.data.clientes.map(c => c.rut));
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        toast.error('Error al cargar datos del formulario');
+      }
+    };
+
+    loadData();
+  }, []);
+
   const validateRut = (rut: string) => {
     if (!rut) {
       setRutValidationStatus('idle');
       return;
     }
 
-    // Verificar si el RUT ya existe
+    // Validar formato
+    if (!isValidRutFormat(rut)) {
+      setRutValidationStatus('invalid');
+      return;
+    }
+
+    // Validar si ya existe
     if (existingClients.includes(rut)) {
       setRutValidationStatus('invalid');
     } else {
@@ -115,391 +145,412 @@ export default function CrearClienteComponent({
     }
   };
 
-  // Validar RUT cuando cambie el valor del campo
   useEffect(() => {
     const rutValue = form.watch('rut');
     validateRut(rutValue);
   }, [form.watch('rut'), existingClients]);
 
-  // Usar estilos compartidos para react-select
-  const selectStyles = getReactSelectStyles(theme);
-
   const onSubmit = async (data: ClienteFormData) => {
+    setIsSubmitting(true);
     try {
-      await api.post('/cliente/crear', data);
-      onSuccess(data);
+      // Asegurar que el RUT esté correctamente formateado antes de enviar
+      const formattedData = {
+        ...data,
+        rut: formatRut(data.rut)
+      };
+
+      await api.post('/cliente/crear', formattedData);
+      toast.success('Cliente creado exitosamente');
+      navigate('/dashboard/administracion/clientes');
     } catch (error) {
       console.error('Error al crear cliente:', error);
-      throw error;
+      toast.error('Error al crear el cliente');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className='space-y-8'>
-      {/* Header */}
-      <div className='space-y-3'>
-        <div className='flex items-center gap-2'>
-          <User className='h-6 w-6 text-blue-600' />
-          <h1 className='text-2xl font-semibold'>Crear Nuevo Cliente</h1>
+    <div className='min-h-screen bg-background'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+        <div className='container mx-auto px-4 py-4'>
+          <ModernHeader
+            title='Crear Nuevo Cliente'
+            description='Creación de nuevo cliente para el sistema'
+            actions={
+              <>
+                <Button
+                  variant='ghost'
+                  onClick={() => navigate('/dashboard/administracion/clientes')}
+                  disabled={isSubmitting}
+                  className='gap-2'
+                >
+                  <ArrowLeft className='h-4 w-4' />
+                  Volver
+                </Button>
+                <Button
+                  variant='outline'
+                  onClick={() => navigate('/dashboard/administracion/clientes')}
+                  disabled={isSubmitting}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={form.handleSubmit(onSubmit)}
+                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  disabled={isSubmitting}
+                >
+                  <Save className='h-4 w-4' />
+                  {isSubmitting ? 'Creando...' : 'Crear Cliente'}
+                </Button>
+              </>
+            }
+          />
         </div>
-        <p className='text-base text-muted-foreground'>
-          Complete el formulario para agregar un nuevo cliente al sistema.
-        </p>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-          {/* Información Básica */}
-          <div className='space-y-6'>
-            <div className='flex items-center gap-2 pb-2 border-b'>
-              <User className='h-5 w-5 text-blue-600' />
-              <h3 className='text-lg font-medium'>Información Básica</h3>
-            </div>
+      <div className='container mx-auto px-4 py-6 space-y-6'>
+        <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='p-6 space-y-8'
+            >
+              <div className='space-y-6'>
+                <div className='flex items-center gap-2 pb-2 border-b'>
+                  <User className='h-5 w-5 text-blue-600' />
+                  <h3 className='text-lg font-medium'>Información Básica</h3>
+                </div>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
-              <FormField
-                control={form.control}
-                name='rut'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='flex items-center gap-2'>
-                      <FileText className='h-4 w-4' />
-                      RUT
-                    </FormLabel>
-                    <FormControl>
-                      <div className='relative'>
-                        <Input
-                          placeholder='12345678-9'
-                          {...field}
-                          className={`h-11 pr-10 ${
-                            rutValidationStatus === 'valid'
-                              ? 'border-green-500 focus:border-green-500'
-                              : rutValidationStatus === 'invalid'
-                                ? 'border-red-500 focus:border-red-500'
-                                : ''
-                          }`}
-                        />
-                        {rutValidationStatus === 'valid' && (
-                          <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
-                            <CheckCircle2 className='h-5 w-5 text-green-500' />
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                  <FormField
+                    control={form.control}
+                    name='rut'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='flex items-center gap-2'>
+                          <FileText className='h-4 w-4' />
+                          RUT
+                        </FormLabel>
+                        <FormControl>
+                          <div className='relative'>
+                            <Input
+                              placeholder='12345678-9'
+                              {...field}
+                              onChange={e => {
+                                const formatted = formatRut(e.target.value);
+                                field.onChange(formatted);
+                              }}
+                              className={`h-11 pr-10 ${
+                                rutValidationStatus === 'valid'
+                                  ? 'border-green-500 focus:border-green-500'
+                                  : rutValidationStatus === 'invalid'
+                                    ? 'border-red-500 focus:border-red-500'
+                                    : ''
+                              }`}
+                            />
+                            {rutValidationStatus === 'valid' && (
+                              <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
+                                <CheckCircle2 className='h-5 w-5 text-green-500' />
+                              </div>
+                            )}
+                            {rutValidationStatus === 'invalid' && (
+                              <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
+                                <XCircle className='h-5 w-5 text-red-500' />
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </FormControl>
+                        <FormMessage />
                         {rutValidationStatus === 'invalid' && (
-                          <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
-                            <XCircle className='h-5 w-5 text-red-500' />
-                          </div>
+                          <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
+                            {!isValidRutFormat(form.watch('rut'))
+                              ? 'El RUT debe tener el formato 12345678-9'
+                              : 'Este RUT ya está registrado en el sistema'}
+                          </p>
                         )}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                    {rutValidationStatus === 'invalid' && (
-                      <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
-                        Este RUT ya está registrado en el sistema
-                      </p>
+                      </FormItem>
                     )}
-                  </FormItem>
-                )}
-              />
+                  />
 
-              <FormField
-                control={form.control}
-                name='esEmpresa'
-                render={({ field }) => (
-                  <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4 bg-muted/30'>
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className='space-y-1 leading-none'>
-                      <FormLabel className='flex items-center gap-2'>
-                        <Building2 className='h-4 w-4' />
-                        ¿Es Empresa?
-                      </FormLabel>
-                    </div>
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name='esEmpresa'
+                    render={({ field }) => (
+                      <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4 bg-muted/30'>
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className='space-y-1 leading-none'>
+                          <FormLabel className='flex items-center gap-2'>
+                            <Building2 className='h-4 w-4' />
+                            ¿Es Empresa?
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name='nombre'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='flex items-center gap-2'>
-                      <User className='h-4 w-4' />
-                      {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className='h-11'
-                        placeholder={
-                          form.watch('esEmpresa')
-                            ? 'Nombre de la empresa'
-                            : 'Nombre completo'
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name='nombre'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='flex items-center gap-2'>
+                          <User className='h-4 w-4' />
+                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className='h-11'
+                            placeholder={
+                              form.watch('esEmpresa')
+                                ? 'Nombre de la empresa'
+                                : 'Nombre completo'
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              {!form.watch('esEmpresa') && (
-                <FormField
-                  control={form.control}
-                  name='apellido'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className='flex items-center gap-2'>
-                        <User className='h-4 w-4' />
-                        Apellido
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          className='h-11'
-                          placeholder='Apellido'
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  {!form.watch('esEmpresa') && (
+                    <FormField
+                      control={form.control}
+                      name='apellido'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className='flex items-center gap-2'>
+                            <User className='h-4 w-4' />
+                            Apellido
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className='h-11'
+                              placeholder='Apellido'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
-                />
-              )}
-            </div>
-          </div>
+                </div>
+              </div>
 
-          {/* Información de Ubicación */}
-          <div className='space-y-6'>
-            <div className='flex items-center gap-2 pb-2 border-b'>
-              <MapPin className='h-5 w-5 text-green-600' />
-              <h3 className='text-lg font-medium'>
-                Información de Ubicación
-              </h3>
-            </div>
+              <div className='space-y-6'>
+                <div className='flex items-center gap-2 pb-2 border-b'>
+                  <MapPin className='h-5 w-5 text-green-600' />
+                  <h3 className='text-lg font-medium'>
+                    Información de Ubicación
+                  </h3>
+                </div>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
-              <FormField
-                control={form.control}
-                name='direccion'
-                render={({ field }) => (
-                  <FormItem className='md:col-span-2'>
-                    <FormLabel className='flex items-center gap-2'>
-                      <MapPin className='h-4 w-4' />
-                      Dirección
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className='h-11'
-                        placeholder='Dirección completa'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                  <FormField
+                    control={form.control}
+                    name='direccion'
+                    render={({ field }) => (
+                      <FormItem className='md:col-span-2'>
+                        <FormLabel className='flex items-center gap-2'>
+                          <MapPin className='h-4 w-4' />
+                          Dirección
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className='h-11'
+                            placeholder='Dirección completa'
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              {/* Comuna */}
-              <Controller
-                control={form.control}
-                name='codComuna'
-                render={({ field }) => {
-                  // Encontrar la comuna actual basada en el código
-                  const comunaActual = comunas.find(
-                    c => c.codigo === field.value
-                  );
+                  <Controller
+                    control={form.control}
+                    name='codComuna'
+                    render={({ field }) => {
+                      const comunaActual = comunas.find(
+                        c => c.codigo === field.value
+                      );
 
-                  return (
-                    <FormItem className='md:col-span-2'>
-                      <FormLabel className='flex items-center gap-2'>
-                        <MapPin className='h-4 w-4' />
-                        Comuna
-                      </FormLabel>
-                      <FormControl>
-                        <Select
-                          instanceId='comuna-select'
-                          options={comunas.map(comuna => ({
-                            value: comuna.codigo,
-                            label: `${comuna.nombre} (${comuna.codigo})`,
-                          }))}
-                          value={
-                            comunaActual
-                              ? {
-                                  value: comunaActual.codigo,
-                                  label: `${comunaActual.nombre} (${comunaActual.codigo})`,
-                                }
-                              : null
-                          }
-                          onChange={(option: any) =>
-                            field.onChange(option ? option.value : '')
-                          }
-                          placeholder='Seleccione la comuna'
-                          isClearable
-                          styles={selectStyles}
-                          classNamePrefix='react-select'
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </div>
-          </div>
+                      return (
+                        <FormItem className='md:col-span-2'>
+                          <FormLabel className='flex items-center gap-2'>
+                            <MapPin className='h-4 w-4' />
+                            Comuna
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              instanceId='comuna-select'
+                              options={comunas.map(comuna => ({
+                                value: comuna.codigo,
+                                label: `${comuna.nombre} (${comuna.codigo})`
+                              }))}
+                              value={
+                                comunaActual
+                                  ? {
+                                      value: comunaActual.codigo,
+                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
+                                    }
+                                  : null
+                              }
+                              onChange={(option: any) =>
+                                field.onChange(option ? option.value : '')
+                              }
+                              placeholder='Seleccione la comuna'
+                              isClearable
+                              styles={selectStyles}
+                              classNamePrefix='react-select'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+              </div>
 
-          {/* Información de Contacto */}
-          <div className='space-y-6'>
-            <div className='flex items-center gap-2 pb-2 border-b'>
-              <Phone className='h-5 w-5 text-purple-600' />
-              <h3 className='text-lg font-medium'>Información de Contacto</h3>
-            </div>
+              <div className='space-y-6'>
+                <div className='flex items-center gap-2 pb-2 border-b'>
+                  <Phone className='h-5 w-5 text-purple-600' />
+                  <h3 className='text-lg font-medium'>
+                    Información de Contacto
+                  </h3>
+                </div>
 
-            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
-              <FormField
-                control={form.control}
-                name='contacto'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='flex items-center gap-2'>
-                      <User className='h-4 w-4' />
-                      Contacto
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className='h-11'
-                        placeholder='Nombre del contacto'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
+                  <FormField
+                    control={form.control}
+                    name='contacto'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='flex items-center gap-2'>
+                          <User className='h-4 w-4' />
+                          Contacto
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className='h-11'
+                            placeholder='Nombre del contacto'
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name='telefono'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='flex items-center gap-2'>
-                      <Phone className='h-4 w-4' />
-                      Teléfono
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className='h-11'
-                        placeholder='+56 9 1234 5678'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  <FormField
+                    control={form.control}
+                    name='telefono'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='flex items-center gap-2'>
+                          <Phone className='h-4 w-4' />
+                          Teléfono
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className='h-11'
+                            placeholder='+56 9 1234 5678'
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <FormField
-                control={form.control}
-                name='correo'
-                render={({ field }) => (
-                  <FormItem className='md:col-span-2'>
-                    <FormLabel className='flex items-center gap-2'>
-                      <Mail className='h-4 w-4' />
-                      Correo Electrónico
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type='email'
-                        {...field}
-                        className='h-11'
-                        placeholder='correo@ejemplo.com'
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
+                  <FormField
+                    control={form.control}
+                    name='correo'
+                    render={({ field }) => (
+                      <FormItem className='md:col-span-2'>
+                        <FormLabel className='flex items-center gap-2'>
+                          <Mail className='h-4 w-4' />
+                          Correo Electrónico
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type='email'
+                            {...field}
+                            className='h-11'
+                            placeholder='correo@ejemplo.com'
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-          {/* Información de Giro */}
-          <div className='space-y-6'>
-            <div className='flex items-center gap-2 pb-2 border-b'>
-              <Building2 className='h-5 w-5 text-orange-600' />
-              <h3 className='text-lg font-medium'>Información de Giro</h3>
-            </div>
+              <div className='space-y-6'>
+                <div className='flex items-center gap-2 pb-2 border-b'>
+                  <Building2 className='h-5 w-5 text-orange-600' />
+                  <h3 className='text-lg font-medium'>Información de Giro</h3>
+                </div>
 
-            <div className='grid grid-cols-1 gap-4 sm:gap-6'>
-              <Controller
-                control={form.control}
-                name='codigoGiro'
-                render={({ field }) => {
-                  // Encontrar el giro actual basado en el código
-                  const giroActual = giros.find(
-                    g => g.codigo === field.value
-                  );
+                <div className='grid grid-cols-1 gap-4 sm:gap-6'>
+                  <Controller
+                    control={form.control}
+                    name='codigoGiro'
+                    render={({ field }) => {
+                      const giroActual = giros.find(
+                        g => g.codigo === field.value
+                      );
 
-                  return (
-                    <FormItem>
-                      <FormLabel className='flex items-center gap-2'>
-                        <Building2 className='h-4 w-4' />
-                        Código de Giro
-                      </FormLabel>
-                      <FormControl>
-                        <Select
-                          instanceId='giro-select'
-                          options={giros.map(giro => ({
-                            value: giro.codigo,
-                            label: `${giro.codigo} - ${giro.actividadEconomica}`,
-                          }))}
-                          value={
-                            giroActual
-                              ? {
-                                  value: giroActual.codigo,
-                                  label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`,
-                                }
-                              : null
-                          }
-                          onChange={(option: any) =>
-                            field.onChange(option ? option.value : '')
-                          }
-                          placeholder='Seleccione el giro'
-                          isClearable
-                          styles={selectStyles}
-                          classNamePrefix='react-select'
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Botones de acción */}
-          <div className='flex flex-col sm:flex-row gap-4 pt-6 border-t'>
-            <Button
-              type='button'
-              variant='outline'
-              onClick={onCancel}
-              className='h-11 px-6 flex-1 sm:flex-none'
-            >
-              Cancelar
-            </Button>
-            <Button
-              type='submit'
-              className='h-11 px-6 flex items-center gap-2 flex-1 sm:flex-none'
-            >
-              <CheckCircle2 className='h-4 w-4' />
-              Crear Cliente
-            </Button>
-          </div>
-        </form>
-      </Form>
+                      return (
+                        <FormItem>
+                          <FormLabel className='flex items-center gap-2'>
+                            <Building2 className='h-4 w-4' />
+                            Código de Giro
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              instanceId='giro-select'
+                              options={giros.map(giro => ({
+                                value: giro.codigo,
+                                label: `${giro.codigo} - ${giro.actividadEconomica}`
+                              }))}
+                              value={
+                                giroActual
+                                  ? {
+                                      value: giroActual.codigo,
+                                      label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`
+                                    }
+                                  : null
+                              }
+                              onChange={(option: any) =>
+                                field.onChange(option ? option.value : '')
+                              }
+                              placeholder='Seleccione el giro'
+                              isClearable
+                              styles={selectStyles}
+                              classNamePrefix='react-select'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+              </div>
+            </form>
+          </Form>
+        </div>
+      </div>
     </div>
   );
 }

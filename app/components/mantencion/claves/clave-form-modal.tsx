@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,30 +22,55 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
 import type { Claves } from '~/types/mantencion';
 
-const claveSchema = z.object({
-  codigo: z
-    .string()
-    .min(1, 'El código es requerido')
-    .max(20, 'El código no debe exceder 20 caracteres'),
-  descripcion: z
-    .string()
-    .min(1, 'La descripción es requerida')
-    .max(100, 'La descripción no debe exceder 100 caracteres'),
-  tipo: z
-    .string()
-    .min(1, 'El tipo es requerido')
-    .max(50, 'El tipo no debe exceder 50 caracteres'),
-  estado: z.boolean(),
-});
+const createClaveSchema = (existingCodes: string[], currentCode?: string) =>
+  z.object({
+    codigo: z
+      .string()
+      .min(1, 'El código es requerido')
+      .length(4, 'El código debe tener exactamente 4 caracteres')
+      .regex(
+        /^[A-Z0-9]{4}$/,
+        'El código debe contener solo letras mayúsculas y números'
+      )
+      .refine(
+        codigo => {
+          // En modo edición, permitir el código actual
+          if (currentCode && codigo === currentCode) return true;
+          // En modo creación, verificar que no exista
+          return !existingCodes.includes(codigo);
+        },
+        {
+          message: 'Este código ya está registrado en el sistema'
+        }
+      ),
+    descripcion: z
+      .string()
+      .min(1, 'La descripción es requerida')
+      .max(100, 'La descripción no debe exceder 100 caracteres'),
+    tipo: z
+      .string()
+      .min(1, 'El tipo es requerido')
+      .refine(value => ['0', '1', '2', '3'].includes(value), {
+        message: 'El tipo debe ser un valor entre 0 y 3'
+      }),
+    estado: z.boolean()
+  });
 
-type ClaveFormData = z.infer<typeof claveSchema>;
+type ClaveFormData = z.infer<ReturnType<typeof createClaveSchema>>;
 
 interface ClaveFormModalProps {
   isOpen: boolean;
@@ -53,6 +78,7 @@ interface ClaveFormModalProps {
   onSuccess: () => void;
   clave?: Claves;
   mode: 'add' | 'edit';
+  existingCodes: string[];
 }
 
 export default function ClaveFormModal({
@@ -61,15 +87,17 @@ export default function ClaveFormModal({
   onSuccess,
   clave,
   mode,
+  existingCodes
 }: ClaveFormModalProps) {
+  const claveSchema = createClaveSchema(existingCodes, clave?.codigo);
   const form = useForm<ClaveFormData>({
     resolver: zodResolver(claveSchema),
     defaultValues: {
       codigo: clave?.codigo || '',
       descripcion: clave?.descripcion || '',
       tipo: clave?.tipo || '',
-      estado: clave?.estado ?? true,
-    },
+      estado: clave?.estado ?? true
+    }
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -80,7 +108,7 @@ export default function ClaveFormModal({
         codigo: clave?.codigo || '',
         descripcion: clave?.descripcion || '',
         tipo: clave?.tipo || '',
-        estado: clave?.estado ?? true,
+        estado: clave?.estado ?? true
       });
     }
   }, [isOpen, clave, form]);
@@ -129,10 +157,21 @@ export default function ClaveFormModal({
                       {...field}
                       readOnly={mode === 'edit'}
                       className={mode === 'edit' ? 'bg-muted' : ''}
-                      placeholder='Ingrese el código'
+                      placeholder='Ingrese el código (4 caracteres)'
+                      maxLength={4}
+                      onChange={e => {
+                        // Solo permitir letras y números, convertir a mayúsculas
+                        const formatted = e.target.value
+                          .replace(/[^A-Za-z0-9]/g, '')
+                          .toUpperCase()
+                          .slice(0, 4);
+                        field.onChange(formatted);
+                      }}
                     />
                   </FormControl>
-                  <FormDescription>Máximo 20 caracteres</FormDescription>
+                  <FormDescription>
+                    Exactamente 4 caracteres alfanuméricos (letras y números)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -163,10 +202,25 @@ export default function ClaveFormModal({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder='Ingrese el tipo' />
-                  </FormControl>
-                  <FormDescription>Máximo 50 caracteres</FormDescription>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Seleccione el tipo' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value='0'>0</SelectItem>
+                      <SelectItem value='1'>1</SelectItem>
+                      <SelectItem value='2'>2</SelectItem>
+                      <SelectItem value='3'>3</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Seleccione un valor entre 0 y 3
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -205,10 +259,10 @@ export default function ClaveFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                {mode === 'add' ? 'Crear' : 'Actualizar'}
+                {mode === 'add' ? 'Crear Clave' : 'Actualizar Clave'}
               </Button>
             </DialogFooter>
           </form>

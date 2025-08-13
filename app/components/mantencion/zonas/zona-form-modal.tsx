@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -22,7 +22,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
@@ -38,7 +38,7 @@ const zonaFormSchema = z.object({
     .string()
     .min(1, { message: 'La referencia es requerida.' })
     .max(20, { message: 'La referencia no puede exceder 20 caracteres.' }),
-  estado: z.boolean(),
+  estado: z.boolean()
 });
 
 type ZonaFormValues = z.infer<typeof zonaFormSchema>;
@@ -56,7 +56,7 @@ export default function ZonaFormModal({
   onClose,
   onSuccess,
   zona,
-  mode,
+  mode
 }: ZonaFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -65,8 +65,8 @@ export default function ZonaFormModal({
     defaultValues: {
       nombre: '',
       referencia: '',
-      estado: true,
-    },
+      estado: true
+    }
   });
 
   useEffect(() => {
@@ -75,13 +75,13 @@ export default function ZonaFormModal({
         form.reset({
           nombre: zona.nombre,
           referencia: zona.referencia,
-          estado: zona.estado,
+          estado: zona.estado
         });
       } else {
         form.reset({
           nombre: '',
           referencia: '',
-          estado: true,
+          estado: true
         });
       }
     }
@@ -193,15 +193,14 @@ export default function ZonaFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                className='bg-sky-600 hover:bg-sky-700 text-white'
               >
-                {isLoading
-                  ? mode === 'add'
-                    ? 'Creando...'
-                    : 'Actualizando...'
-                  : mode === 'add'
-                    ? 'Crear Zona'
-                    : 'Actualizar Zona'}
+                {(() => {
+                  if (isLoading) {
+                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
+                  }
+                  return mode === 'add' ? 'Crear Zona' : 'Actualizar Zona';
+                })()}
               </Button>
             </DialogFooter>
           </form>
