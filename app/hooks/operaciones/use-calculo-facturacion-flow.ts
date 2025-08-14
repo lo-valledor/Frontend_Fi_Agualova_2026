@@ -97,14 +97,6 @@ export function useCalculoFacturacionFlow({
             : step
         )
       );
-
-      if (debugMode) {
-        console.log(`[FLOW STEP ${stepId}] ${status}:`, {
-          data,
-          error,
-          timestamp: new Date()
-        });
-      }
     },
     [debugMode]
   );
@@ -169,14 +161,10 @@ export function useCalculoFacturacionFlow({
         return false;
       }
 
-      // Log para debug: ver estructura completa de la respuesta
-      console.log('[DEBUG] Respuesta completa del paso 2:', response.data);
-
       const identificador = response.data[0];
-      console.log('[DEBUG] Primer elemento del array:', identificador);
 
       // Verificar que el identificador tenga la estructura esperada
-      if (!identificador || typeof identificador.procesoId === 'undefined') {
+      if (!identificador?.procesoId) {
         logStep(
           2,
           'error',

@@ -4,6 +4,7 @@ import type {
   Claves,
   ComboAsociadoConceptos,
   Conceptos,
+  CreateNichoRequest,
   Empalme,
   Marca,
   Nicho,
@@ -11,7 +12,8 @@ import type {
   Sectores,
   Tarifas,
   TiposContrato,
-  Zonas,
+  UpdateNichoRequest,
+  Zonas
 } from '~/types/mantencion';
 
 export interface MantencionServiceResponse<T> {
@@ -47,12 +49,12 @@ class MantencionService {
       const response = await api.get('/buscarCiclo');
       return {
         data: this.processApiResponse<CiclosFacturacion>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -65,12 +67,12 @@ class MantencionService {
       const response = await api.get('/buscarClaves');
       return {
         data: this.processApiResponse<Claves>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -87,21 +89,21 @@ class MantencionService {
     try {
       const [resConceptos, resComboAsociado] = await Promise.all([
         api.get('/buscarConceptos'),
-        api.get('/combo-asociado-conoceptos'),
+        api.get('/combo-asociado-conoceptos')
       ]);
 
       return {
         data: {
           conceptos: this.processApiResponse<Conceptos>(resConceptos),
           comboAsociadoConceptos:
-            this.processApiResponse<ComboAsociadoConceptos>(resComboAsociado),
+            this.processApiResponse<ComboAsociadoConceptos>(resComboAsociado)
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -114,12 +116,12 @@ class MantencionService {
       const response = await api.get('/buscarEmpalmes');
       return {
         data: this.processApiResponse<Empalme>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -132,12 +134,12 @@ class MantencionService {
       const response = await api.get('/buscarMarca');
       return {
         data: this.processApiResponse<Marca>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -150,12 +152,53 @@ class MantencionService {
       const response = await api.get('/buscarNichoM');
       return {
         data: this.processApiResponse<Nicho>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Crea un nuevo nicho
+   */
+  async createNicho(
+    nicho: CreateNichoRequest
+  ): Promise<MantencionServiceResponse<Nicho>> {
+    try {
+      const response = await api.post('/CrearNichoM', nicho);
+      return {
+        data: response.data as Nicho,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Actualiza un nicho existente
+   */
+  async updateNicho(
+    id: number,
+    nicho: UpdateNichoRequest
+  ): Promise<MantencionServiceResponse<Nicho>> {
+    try {
+      const response = await api.patch(`/nichos/${id}`, nicho);
+      return {
+        data: response.data as Nicho,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -168,12 +211,12 @@ class MantencionService {
       const response = await api.get('/buscarParametro');
       return {
         data: this.processApiResponse<Parametro>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -186,12 +229,12 @@ class MantencionService {
       const response = await api.get('/buscarSector');
       return {
         data: this.processApiResponse<Sectores>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -204,12 +247,12 @@ class MantencionService {
       const response = await api.get('/buscarTarifa');
       return {
         data: this.processApiResponse<Tarifas>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -224,12 +267,12 @@ class MantencionService {
       const response = await api.get('/buscarTipoContrato');
       return {
         data: this.processApiResponse<TiposContrato>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -242,12 +285,12 @@ class MantencionService {
       const response = await api.get('/buscarZona');
       return {
         data: this.processApiResponse<Zonas>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

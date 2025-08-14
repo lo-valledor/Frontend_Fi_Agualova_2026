@@ -111,6 +111,25 @@ axiosInstance.interceptors.response.use(
         }
       }
 
+      case 404: {
+        // Excluimos rutas donde un 404 es una respuesta esperada
+        const routesWithExpected404 = [
+          '/datos-basicos-medidor'
+        ];
+        const isExpected404 = routesWithExpected404.some(route =>
+          originalRequest.url?.includes(route)
+        );
+
+        if (isExpected404) {
+          // Dejamos que el error sea manejado por la lógica del componente
+          return Promise.reject(error);
+        }
+
+        // Para 404s inesperados, mostrar mensaje de error
+        toast.error(data?.message || 'Recurso no encontrado.');
+        break;
+      }
+
       case 500:
         toast.error('Error del servidor. Por favor, intenta más tarde.');
         break;

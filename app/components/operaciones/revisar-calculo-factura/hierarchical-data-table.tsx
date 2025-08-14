@@ -71,84 +71,85 @@ export function HierarchicalDataTable({
   ) => (
     <TableRow
       key={`${contratoIndex}-cargo-${cargoIndex}`}
-      className='bg-sky-50/30 dark:bg-sky-900/10 border-l-4 border-l-sky-300 dark:border-l-sky-700 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 transition-colors h-8'
+      className='bg-sky-50/30 dark:bg-sky-900/10 border-l-2 border-l-sky-300 dark:border-l-sky-700 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 transition-colors h-6'
     >
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Sector - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Contrato - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Tarifa - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* RUT - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Nombre cliente - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Local - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Dirección - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Comuna - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* N° Serie - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Fecha Lectura - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Descripción Cargo - esta es la primera columna con contenido */}
-      <TableCell className='pl-4 py-0.5 px-1'>
-        <span className='text-xs font-medium text-slate-700 dark:text-slate-300'>
+      <TableCell className='pl-2 py-0 px-0.5'>
+        <span className='text-[10px] font-medium text-slate-700 dark:text-slate-300'>
           {cargo.descripcion}
         </span>
       </TableCell>
 
       {/* Cantidad - alineada con consumo */}
-      <TableCell className='text-xs text-right py-0.5 px-1'>
+      <TableCell className='text-[10px] text-right py-0 px-0.5'>
         <span className='font-medium text-slate-700 dark:text-slate-300'>
           {cargo.cantidad?.toLocaleString('es-CL')}
         </span>
       </TableCell>
 
       {/* Precio Unitario - alineada con Total Facturado */}
-      <TableCell className='text-xs text-right font-medium text-emerald-700 dark:text-emerald-300 py-0.5 px-1'>
+      <TableCell className='text-[10px] text-right font-medium text-emerald-700 dark:text-emerald-300 py-0 px-0.5'>
         ${(cargo.precioUnitario || 0).toLocaleString('es-CL')}
       </TableCell>
 
       {/* Subtotal - alineada con Total a Pagar */}
-      <TableCell className='text-xs text-right font-semibold text-sky-700 dark:text-sky-300 py-0.5 px-1'>
+      <TableCell className='text-[10px] text-right font-semibold text-sky-700 dark:text-sky-300 py-0 px-0.5'>
         ${(cargo.subtotal || 0).toLocaleString('es-CL')}
       </TableCell>
 
       {/* Facturar - vacío para cargos */}
-      <TableCell className='py-0.5 px-1'></TableCell>
+      <TableCell className='py-0 px-0.5'></TableCell>
     </TableRow>
   );
 
   return (
     <div className='w-full'>
       <div className='rounded-lg border border-border/60 shadow-sm overflow-x-auto'>
-        <Table className='min-w-full table-auto text-xs'>
+        <Table className='min-w-full table-auto text-[10px]'>
           <TableHeader className='bg-slate-50 dark:bg-slate-900/50 sticky top-0 z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b border-border/60 h-8'
+                className='border-b border-border/60 h-6'
               >
                 {headerGroup.headers.map(header => {
                   return (
                     <TableHead
                       key={header.id}
-                      className='font-semibold text-slate-700 dark:text-slate-300 py-1 px-1 sm:px-2 whitespace-nowrap text-xs h-8'
+                      className='font-semibold text-slate-700 dark:text-slate-300 py-0.5 px-0.5 whitespace-nowrap text-[10px] h-6'
                       style={{
                         width: header.getSize(),
                         minWidth:
@@ -175,12 +176,12 @@ export function HierarchicalDataTable({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
-                    className='hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-border/40 h-9'
+                    className='hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-border/40 h-6'
                   >
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}
-                        className='py-1 px-1 sm:px-2 text-xs h-9'
+                        className='py-0 px-0.5 text-[10px] h-6'
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -192,48 +193,48 @@ export function HierarchicalDataTable({
                   {row.getIsExpanded() && row.original.cargos && (
                     <>
                       {/* Encabezado de cargos */}
-                      <TableRow className='bg-sky-100/50 dark:bg-sky-900/20 border-l-4 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20 h-7'>
+                      <TableRow className='bg-sky-100/50 dark:bg-sky-900/20 border-l-2 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20 h-5'>
                         {/* Columnas vacías hasta Descripción Cargo */}
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
-                        <TableCell className='py-0.5 px-1'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
 
                         {/* Descripción Cargo */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0.5 px-1'>
+                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'>
                           Descripción Cargo
                         </TableCell>
                         {/* Cantidad */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0.5 px-1'>
+                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
                           Cantidad
                         </TableCell>
                         {/* Precio Unit. */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0.5 px-1'>
+                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
                           Precio Unit.
                         </TableCell>
                         {/* Subtotal */}
-                        <TableCell className='font-semibold text-xs text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0.5 px-1'>
+                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
                           Subtotal
                         </TableCell>
                         {/* Facturar - vacío */}
-                        <TableCell className='py-0.5 px-1'></TableCell>
+                        <TableCell className='py-0 px-0.5'></TableCell>
                       </TableRow>
                       {/* Filas de cargos */}
                       {row.original.cargos.map((cargo, cargoIndex) =>
                         renderCargoRow(cargo, index, cargoIndex)
                       )}
                       {/* Separador después de los cargos */}
-                      <TableRow className='h-2'>
+                      <TableRow className='h-1'>
                         <TableCell
                           colSpan={columns.length}
-                          className='p-0 bg-slate-50/30 dark:bg-slate-900/30 border-b-2 border-border/60'
+                          className='p-0 bg-slate-50/30 dark:bg-slate-900/30 border-b border-border/60'
                         ></TableCell>
                       </TableRow>
                     </>

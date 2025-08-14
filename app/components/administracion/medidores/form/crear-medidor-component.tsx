@@ -33,11 +33,17 @@ interface EstadoMedidor {
   nombre: string;
 }
 
+interface MedidorCreado {
+  id: string | number | null;
+  codigo?: string | number | null;
+  fecha: string;
+}
+
 const ESTADOS_MEDIDOR: EstadoMedidor[] = [
-  { id: 2, nombre: 'Activo' },
-  { id: 3, nombre: 'En Bodega' },
-  { id: 4, nombre: 'En Reparacion' },
-  { id: 5, nombre: 'Inactivo' }
+  { id: 2, nombre: 'En Bodega' },
+  { id: 3, nombre: 'Inactivo' },
+  { id: 4, nombre: 'Activo' },
+  { id: 5, nombre: 'En Reparación' }
 ];
 
 export default function CrearMedidorComponent({
@@ -54,17 +60,16 @@ export default function CrearMedidorComponent({
 
   // Estados para el modal de éxito
   const [modalExito, setModalExito] = useState(false);
-  const [medidorCreado, setMedidorCreado] = useState<{
-    id: string | number | null;
-    fecha: string;
-  } | null>(null);
+  const [medidorCreado, setMedidorCreado] = useState<MedidorCreado | null>(
+    null
+  );
 
   const [formData, setFormData] = useState<MedidorFormData>({
     marca: '',
     tipo: '',
     modelo: '',
     serie: '',
-    estado: '3', // Nuevo por defecto
+    estado: '', // Nuevo por defecto
     fechaInicio: '',
     digitos: 5,
     multiplicar: 1,
@@ -114,14 +119,6 @@ export default function CrearMedidorComponent({
       {
         field: formData.fechaInicio,
         message: 'La fecha de inicio es obligatoria'
-      },
-      {
-        field: formData.primeraLectura,
-        message: 'La primera lectura es obligatoria'
-      },
-      {
-        field: formData.fechaPrimeraLectura,
-        message: 'La fecha de primera lectura es obligatoria'
       }
     ];
 
@@ -149,7 +146,7 @@ export default function CrearMedidorComponent({
     }
 
     const marcaSeleccionada = marcas.find(
-      m => m.id?.toString() === formData.marca
+      m => m.codigo?.toString() === formData.marca
     );
     if (!marcaSeleccionada) {
       toast.error('La marca seleccionada no es válida.');
@@ -238,7 +235,9 @@ export default function CrearMedidorComponent({
 
       const submitData = prepareSubmitData();
 
+      console.log('📤 [DEBUG] Payload enviado:', submitData);
       const result = await administracionService.crearMedidor(submitData);
+      console.log('📨 [DEBUG] Respuesta del backend:', result);
 
       if (result.error) {
         console.error('❌ Error del servicio:', result.error);
@@ -246,9 +245,15 @@ export default function CrearMedidorComponent({
         return;
       }
 
-      // Buscar el id del medidor en diferentes estructuras posibles
+      // Buscar el código/id del medidor en diferentes estructuras posibles
       let medidorId: string | number | null = null;
+      let medidorCodigo: string | number | null = null;
 
+      if ((result.data as any)?.codigoMedidor) {
+        medidorCodigo = (result.data as any).codigoMedidor;
+      } else if ((result.data as any)?.codigo) {
+        medidorCodigo = (result.data as any).codigo;
+      }
       if (result.data?.id) {
         medidorId = result.data.id;
       } else if (result.data && typeof result.data === 'number') {
@@ -268,6 +273,7 @@ export default function CrearMedidorComponent({
 
       setMedidorCreado({
         id: medidorId,
+        codigo: medidorCodigo,
         fecha: fechaActual
       });
       setModalExito(true);
@@ -344,11 +350,11 @@ export default function CrearMedidorComponent({
                     </SelectTrigger>
                     <SelectContent>
                       {marcas
-                        .filter(marca => marca.id != null)
+                        .filter(marca => marca.codigo != null)
                         .map(marca => (
                           <SelectItem
-                            key={marca.id}
-                            value={marca.id!.toString()}
+                            key={marca.codigo}
+                            value={marca.codigo.toString()}
                           >
                             {marca.nombre}
                           </SelectItem>
@@ -497,7 +503,7 @@ export default function CrearMedidorComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='primeraLectura'>Primera Lectura *</Label>
+                  <Label htmlFor='primeraLectura'>Primera Lectura</Label>
                   <Input
                     id='primeraLectura'
                     value={formData.primeraLectura}
@@ -506,13 +512,12 @@ export default function CrearMedidorComponent({
                     }
                     placeholder='0'
                     className='w-full'
-                    required
                   />
                 </div>
 
                 <div className='space-y-2'>
                   <Label htmlFor='fechaPrimeraLectura'>
-                    Fecha Primera Lectura *
+                    Fecha Primera Lectura
                   </Label>
                   <Input
                     id='fechaPrimeraLectura'
@@ -522,7 +527,6 @@ export default function CrearMedidorComponent({
                       handleInputChange('fechaPrimeraLectura', e.target.value)
                     }
                     className='w-full'
-                    required
                   />
                 </div>
               </div>
@@ -557,26 +561,49 @@ export default function CrearMedidorComponent({
                   Información del Medidor
                 </AlertTitle>
                 <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
-                  {medidorCreado?.id && (
-                    <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
-                      <div>
-                        <p className='font-medium'>ID del Medidor:</p>
-                        <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
-                          {medidorCreado.id}
-                        </p>
+                  <div className='space-y-3'>
+                    {medidorCreado?.codigo && (
+                      <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
+                        <div>
+                          <p className='font-medium'>Código del Medidor:</p>
+                          <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
+                            {medidorCreado.codigo}
+                          </p>
+                        </div>
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          onClick={() =>
+                            copiarCodigoMedidor(medidorCreado.codigo!)
+                          }
+                          className='gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/50'
+                        >
+                          <Copy className='h-4 w-4' />
+                          Copiar
+                        </Button>
                       </div>
-                      <Button
-                        size='sm'
-                        variant='outline'
-                        onClick={() => copiarCodigoMedidor(medidorCreado.id!)}
-                        className='gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/50'
-                      >
-                        <Copy className='h-4 w-4' />
-                        Copiar
-                      </Button>
-                    </div>
-                  )}
-                  <div className='text-sm'>
+                    )}
+
+                    {medidorCreado?.id && (
+                      <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
+                        <div>
+                          <p className='font-medium'>ID del Medidor:</p>
+                          <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
+                            {medidorCreado.id}
+                          </p>
+                        </div>
+                        <Button
+                          size='sm'
+                          variant='outline'
+                          onClick={() => copiarCodigoMedidor(medidorCreado.id!)}
+                          className='gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/50'
+                        >
+                          <Copy className='h-4 w-4' />
+                          Copiar
+                        </Button>
+                      </div>
+                    )}
+
                     <p>
                       <strong>Fecha de creación:</strong> {medidorCreado?.fecha}
                     </p>

@@ -184,10 +184,8 @@ export default function EditarContratoComponent({
   const comunasFiltradas = useMemo(() => {
     return comunas.filter(
       c =>
-        (c.nombre &&
-          c.nombre.toLowerCase().includes(busquedaComuna.toLowerCase())) ||
-        (c.codigo &&
-          c.codigo.toLowerCase().includes(busquedaComuna.toLowerCase()))
+        c.nombre?.toLowerCase().includes(busquedaComuna.toLowerCase()) ||
+        c.codigo?.toLowerCase().includes(busquedaComuna.toLowerCase())
     );
   }, [comunas, busquedaComuna]);
 

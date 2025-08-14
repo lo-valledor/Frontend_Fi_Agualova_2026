@@ -63,11 +63,11 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'sector',
     cell: ({ row }) => {
-      const sector = row.getValue('sector') as string;
+      const sector = row.getValue('sector');
       return (
         <div className='text-center'>
           <span className='text-xs font-mono bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded'>
-            {sector}
+            {sector as string}
           </span>
         </div>
       );
@@ -82,10 +82,10 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'contratoId',
     cell: ({ row }) => {
-      const contrato = row.getValue('contratoId') as string;
+      const contrato = row.getValue('contratoId');
       return (
         <span className='font-mono text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 px-1 py-0.5 rounded'>
-          {contrato}
+          {contrato as string}
         </span>
       );
     },
@@ -99,11 +99,11 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'codigoTarifa',
     cell: ({ row }) => {
-      const tarifa = row.getValue('codigoTarifa') as string;
+      const tarifa = row.getValue('codigoTarifa');
       return (
         <div className='text-center'>
           <span className='text-xs bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-1 py-0.5 rounded'>
-            {tarifa}
+            {tarifa as string}
           </span>
         </div>
       );
@@ -118,8 +118,8 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'rutCliente',
     cell: ({ row }) => {
-      const rut = row.getValue('rutCliente') as string;
-      return <span className='font-mono text-xs'>{rut}</span>;
+      const rut = row.getValue('rutCliente');
+      return <span className='font-mono text-xs'>{rut as string}</span>;
     },
     size: 85,
     minSize: 80,
@@ -131,13 +131,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'nombreCliente',
     cell: ({ row }) => {
-      const nombre = row.getValue('nombreCliente') as string;
+      const nombre = row.getValue('nombreCliente');
       return (
         <span
           className='text-xs text-slate-700 dark:text-slate-300 truncate block max-w-[140px]'
-          title={nombre}
+          title={nombre as string}
         >
-          {nombre}
+          {nombre as string}
         </span>
       );
     },
@@ -151,11 +151,11 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'localId',
     cell: ({ row }) => {
-      const local = row.getValue('localId') as string;
+      const local = row.getValue('localId');
       return (
         <div className='text-center'>
           <span className='text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded'>
-            {local}
+            {local as string}
           </span>
         </div>
       );
@@ -168,13 +168,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     header: () => <div className='font-semibold text-xs'>Dirección</div>,
     accessorKey: 'direccion',
     cell: ({ row }) => {
-      const direccion = row.getValue('direccion') as string;
+      const direccion = row.getValue('direccion');
       return (
         <span
           className='text-xs text-slate-600 dark:text-slate-400 truncate block max-w-[120px]'
-          title={direccion}
+          title={direccion as string}
         >
-          {direccion}
+          {direccion as string}
         </span>
       );
     },
@@ -186,13 +186,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     header: () => <div className='font-semibold text-xs'>Comuna</div>,
     accessorKey: 'comuna',
     cell: ({ row }) => {
-      const comuna = row.getValue('comuna') as string;
+      const comuna = row.getValue('comuna');
       return (
         <span
           className='text-xs text-slate-700 dark:text-slate-300 truncate block max-w-[80px]'
-          title={comuna}
+          title={comuna as string}
         >
-          {comuna}
+          {comuna as string}
         </span>
       );
     },
@@ -206,10 +206,10 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'numeroSerie',
     cell: ({ row }) => {
-      const serie = row.getValue('numeroSerie') as string;
+      const serie = row.getValue('numeroSerie');
       return (
         <span className='font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded'>
-          {serie}
+          {serie as string}
         </span>
       );
     },
@@ -223,10 +223,10 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'fechaLectura',
     cell: ({ row }) => {
-      const fecha = row.getValue('fechaLectura') as string;
+      const fecha = row.getValue('fechaLectura');
       return fecha ? (
         <span className='text-xs text-slate-700 dark:text-slate-300'>
-          {new Date(fecha).toLocaleDateString('es-CL', {
+          {new Date(fecha as string).toLocaleDateString('es-CL', {
             day: '2-digit',
             month: '2-digit',
             year: '2-digit'
@@ -246,11 +246,11 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'consumoPeriodo',
     cell: ({ row }) => {
-      const consumo = row.getValue('consumoPeriodo') as number;
+      const consumo = row.getValue('consumoPeriodo');
       return (
         <div className='text-right'>
           <span className='text-xs text-slate-700 dark:text-slate-300'>
-            {consumo?.toLocaleString('es-CL') || '0'}
+            {((consumo as number) || 0).toLocaleString('es-CL') || '0'}
           </span>
         </div>
       );
@@ -265,11 +265,11 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'totalFacturado',
     cell: ({ row }) => {
-      const total = row.getValue('totalFacturado') as number;
+      const total = row.getValue('totalFacturado');
       return (
         <div className='text-right'>
           <span className='text-xs font-medium text-emerald-700 dark:text-emerald-300'>
-            ${(total || 0).toLocaleString('es-CL')}
+            ${((total as number) || 0).toLocaleString('es-CL')}
           </span>
         </div>
       );
@@ -284,12 +284,12 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     accessorKey: 'totalAPagar',
     cell: ({ row }) => {
-      const totalFacturado = row.getValue('totalFacturado') as number;
+      const totalFacturado = row.getValue('totalFacturado');
 
       return (
         <div className='text-right'>
           <span className='text-xs font-medium text-indigo-700 dark:text-indigo-300'>
-            ${(totalFacturado || 0).toLocaleString('es-CL')}
+            ${((totalFacturado as number) || 0).toLocaleString('es-CL')}
           </span>
         </div>
       );

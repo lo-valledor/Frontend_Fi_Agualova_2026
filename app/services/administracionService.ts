@@ -1,6 +1,7 @@
 import api from '~/lib/api';
 import type {
   Acometida,
+  ActualizarMedidorProps,
   BuscarCargoFacturable,
   CargoTipoContratoEditor,
   CargoTipoDetalle,
@@ -318,6 +319,39 @@ class AdministracionService {
         data: {
           marca: resMedidores.data as Marca[],
           tipoMedidor: resMarcas.data as GetCombosTiposMedidor[]
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene datos de medidores con marcas
+   */
+  async getMedidoresByCodigo({ codigo }: { codigo: string }): Promise<
+    AdministracionServiceResponse<{
+      medidor: GetMedidores[];
+      marca: Marca[];
+      tipoMedidor: GetCombosTiposMedidor[];
+    }>
+  > {
+    try {
+      const [resMedidores, resMarcas, resTiposMedidor] = await Promise.all([
+        api.get(`medidor/${codigo}`),
+        api.get('buscarMarca'),
+        api.get('combos/tipos-medidor')
+      ]);
+
+      return {
+        data: {
+          medidor: resMedidores.data as GetMedidores[],
+          marca: resMarcas.data as Marca[],
+          tipoMedidor: resTiposMedidor.data as GetCombosTiposMedidor[]
         },
         error: null
       };
@@ -659,7 +693,7 @@ class AdministracionService {
     data: CrearMedidorProps
   ): Promise<AdministracionServiceResponse<{ id: number }>> {
     try {
-      const response = await api.post('medidor', data);
+      const response = await api.post('medidorCrear', data);
       return {
         data: response.data as { id: number },
         error: null
@@ -668,6 +702,30 @@ class AdministracionService {
       return {
         data: null,
         error: error instanceof Error ? error.message : 'Error al crear medidor'
+      };
+    }
+  }
+
+  /**
+   * Modifica un medidor existente
+   */
+  async modificarMedidor(
+    data: ActualizarMedidorProps
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.put('medidorModificar', data);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error: any) {
+      console.error('Error al modificar medidor:', error);
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al modificar el medidor'
       };
     }
   }

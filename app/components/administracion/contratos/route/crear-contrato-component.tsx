@@ -203,8 +203,9 @@ export default function CrearContratoComponent({
   const madresFiltradas = useMemo(() => {
     return madres.filter(
       m =>
-        m.nombrePropietario?.toLowerCase()
-            .includes(busquedaMadres.toLowerCase()) ||
+        m.nombrePropietario
+          ?.toLowerCase()
+          .includes(busquedaMadres.toLowerCase()) ||
         m.codigoContrato?.toLowerCase().includes(busquedaMadres.toLowerCase())
     );
   }, [madres, busquedaMadres]);
@@ -386,46 +387,47 @@ export default function CrearContratoComponent({
     return madreSeleccionada.codigoContrato;
   };
 
-  // Preparación de datos para envío
-  const prepareSubmitData = (entities: any, madreCodigoContrato: string) => {
-    const formatDateForSP = (dateString: string): string => {
-      if (!dateString) return '';
-      const [year, month, day] = dateString.split('-');
-      return `${day}-${month}-${year}`;
-    };
+  // Helper para formatear fechas
+  const formatDateForSP = (dateString: string): string => {
+    if (!dateString) return '';
+    const [year, month, day] = dateString.split('-');
+    return `${day}-${month}-${year}`;
+  };
 
-    const { propietarioSeleccionado } = entities;
-
-    // Obtener RUT del cliente
-    let clienteRut = propietarioSeleccionado.rut; // Por defecto usar el mismo del propietario
-
-    // Si cliente es diferente al propietario, buscar su RUT
+  // Helper para obtener RUT del cliente
+  const getClienteRut = (propietarioRut: string): string => {
+    // Si cliente y propietario son el mismo, usar RUT del propietario
     if (
-      safeTrim(formData.nombreCliente) !== safeTrim(formData.nombrePropietario)
+      safeTrim(formData.nombreCliente) === safeTrim(formData.nombrePropietario)
     ) {
-      // Buscar en clientes si están disponibles
-      if (_clientes && _clientes.length > 0) {
-        const clienteEncontrado = _clientes.find(
-          (c: any) =>
-            safeTrim(c.nombreCliente) === safeTrim(formData.nombreCliente)
-        );
-        if (clienteEncontrado) {
-          clienteRut = clienteEncontrado.rut;
-        } else {
-          // Si no se encuentra en clientes, buscar en propietarios
-          const propietarioCliente = propietarios.find(
-            p => safeTrim(p.nombre) === safeTrim(formData.nombreCliente)
-          );
-          if (propietarioCliente) {
-            clienteRut = propietarioCliente.rut;
-          } else {
-            console.warn('Cliente no encontrado, usando RUT del propietario.');
-          }
-        }
+      return propietarioRut;
+    }
+
+    // Buscar en clientes si están disponibles
+    if (_clientes && _clientes.length > 0) {
+      const clienteEncontrado = _clientes.find(
+        (c: any) =>
+          safeTrim(c.nombreCliente) === safeTrim(formData.nombreCliente)
+      );
+      if (clienteEncontrado) {
+        return clienteEncontrado.rut;
       }
     }
 
-    // Validar que los valores numéricos sean válidos
+    // Si no se encuentra en clientes, buscar en propietarios
+    const propietarioCliente = propietarios.find(
+      p => safeTrim(p.nombre) === safeTrim(formData.nombreCliente)
+    );
+    if (propietarioCliente) {
+      return propietarioCliente.rut;
+    }
+
+    console.warn('Cliente no encontrado, usando RUT del propietario.');
+    return propietarioRut;
+  };
+
+  // Helper para validar valores numéricos
+  const validateNumericValues = () => {
     const tipoContratoNum = parseInt(formData.tipoContrato);
     const tarifaNum = parseInt(formData.tarifa);
 
@@ -436,6 +438,15 @@ export default function CrearContratoComponent({
     if (isNaN(tarifaNum) || tarifaNum <= 0) {
       throw new Error('Tarifa no válida');
     }
+
+    return { tipoContratoNum, tarifaNum };
+  };
+
+  // Preparación de datos para envío
+  const prepareSubmitData = (entities: any, madreCodigoContrato: string) => {
+    const { propietarioSeleccionado } = entities;
+    const clienteRut = getClienteRut(propietarioSeleccionado.rut);
+    const { tipoContratoNum, tarifaNum } = validateNumericValues();
 
     return {
       tipoContrato: tipoContratoNum,

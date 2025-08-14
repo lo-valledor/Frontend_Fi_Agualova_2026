@@ -64,6 +64,20 @@ export type Nicho = {
   estado: boolean;
 };
 
+export type CreateNichoRequest = {
+  sectorId: number;
+  nombre: string;
+  ubicacion: string;
+  estado: boolean;
+};
+
+export type UpdateNichoRequest = {
+  sectorId: number;
+  nombre: string;
+  ubicacion: string;
+  estado: boolean;
+};
+
 /* Parámetro */
 // buscarParametros, obtenerParametro{id}, crearParametro, modificarParametro
 export type Parametro = {

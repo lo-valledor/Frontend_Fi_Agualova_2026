@@ -33,7 +33,7 @@ export function HierarchicalDataTable({
   columns,
   data,
   onSelectionChange
-}: HierarchicalDataTableProps) {
+}: Readonly<HierarchicalDataTableProps>) {
   const [expanded, setExpanded] = useState<ExpandedState>(true);
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 

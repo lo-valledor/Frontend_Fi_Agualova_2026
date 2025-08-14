@@ -442,7 +442,7 @@ export default function RevisarCalculoFacturaComponent({
                         {filteredData.length}
                       </div>
                       <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Contratos
+                        Lecturas Cerradas
                       </div>
                     </div>
                     <div className='text-center'>
@@ -453,7 +453,7 @@ export default function RevisarCalculoFacturaComponent({
                         )}
                       </div>
                       <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Cargos
+                        Cargos Detallados
                       </div>
                     </div>
                     <div className='text-center'>
@@ -484,7 +484,7 @@ export default function RevisarCalculoFacturaComponent({
                           .toLocaleString('es-CL')}
                       </div>
                       <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Consumo m³
+                        Consumo Kwh
                       </div>
                     </div>
                   </div>

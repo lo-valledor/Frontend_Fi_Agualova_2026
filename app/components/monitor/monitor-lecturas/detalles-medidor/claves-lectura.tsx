@@ -20,40 +20,13 @@ export default function ClavesLectura({
   // LEOK significa que la lectura ya está OK, otras claves indican problemas críticos
   const hasClaveCritica = data.length > 0 && data[0].CLA_Codigo !== 'LEOK';
 
-  const renderErrorContent = () => {
-    if (error?.includes('claves de lectura ingresadas aún')) {
-      return (
-        <div className='p-6 sm:p-8 text-center'>
-          <div className='flex flex-col items-center justify-center space-y-3'>
-            <div className='text-4xl sm:text-5xl'>⏳</div>
-            <div className='space-y-1'>
-              <p className='font-medium text-sm sm:text-base text-foreground'>
-                Lectura pendiente
-              </p>
-              <p className='text-xs sm:text-sm text-muted-foreground max-w-xs'>
-                {error}
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    return null;
-  };
 
   return (
     <Card className='w-full'>
       <CardHeader className='pb-3'>
         <CardTitle className='flex items-center gap-2 text-base sm:text-lg'>
           <Key className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
-          {error ? (
-            renderErrorContent()
-          ) : data.length > 0 ? (
-            <span>Claves de Lectura</span>
-          ) : (
-            <span>Claves de Lectura</span>
-          )}
+          <span>Claves de Lectura</span>
         </CardTitle>
       </CardHeader>
       <CardContent className='px-0 space-y-3'>

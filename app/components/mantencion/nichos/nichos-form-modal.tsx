@@ -33,14 +33,10 @@ import {
   SelectValue
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
-import api from '~/lib/api';
+import { mantencionService } from '~/services/mantencionService';
 import type { Nicho, Sectores } from '~/types/mantencion';
 
 const nichoFormSchema = z.object({
-  id: z
-    .string()
-    .min(1, { message: 'El ID es requerido.' })
-    .max(4, { message: 'El ID no puede exceder 4 caracteres.' }),
   sectorId: z.string().min(1, { message: 'El sector es requerido.' }),
   nombre: z
     .string()
@@ -61,7 +57,6 @@ interface NichoFormModalProps {
   onSuccess: () => void;
   nicho: Nicho | null;
   mode: 'add' | 'edit';
-  existingNichos: Nicho[];
 }
 
 export default function NichoFormModal({
@@ -69,8 +64,7 @@ export default function NichoFormModal({
   onClose,
   onSuccess,
   nicho,
-  mode,
-  existingNichos
+  mode
 }: Readonly<NichoFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
   const [sectores, setSectores] = useState<Sectores[]>([]);
@@ -79,7 +73,6 @@ export default function NichoFormModal({
   const form = useForm<NichoFormValues>({
     resolver: zodResolver(nichoFormSchema),
     defaultValues: {
-      id: '',
       sectorId: '',
       nombre: '',
       ubicacion: '',
@@ -91,24 +84,15 @@ export default function NichoFormModal({
     const fetchSectores = async () => {
       setIsLoadingSectores(true);
       try {
-        const response = await api.get('/buscarSector');
+        const result = await mantencionService.getSectores();
 
-        // Manejar diferentes formatos de respuesta de la API
-        let sectoresData: Sectores[] = [];
-        if (
-          response.data &&
-          typeof response.data === 'object' &&
-          'data' in response.data &&
-          Array.isArray((response.data as any).data)
-        ) {
-          sectoresData = (response.data as { data: Sectores[] }).data;
-        } else if (Array.isArray(response.data)) {
-          sectoresData = response.data;
+        if (result.error || !result.data) {
+          throw new Error(result.error || 'Error al cargar sectores');
         }
 
-        setSectores(sectoresData);
+        setSectores(result.data);
       } catch (error) {
-        console.error('Error al cargar los sectores:', error);
+        console.error('❌ ERROR al cargar los sectores:', error);
         toast.error('No se pudieron cargar los sectores.');
       } finally {
         setIsLoadingSectores(false);
@@ -124,58 +108,47 @@ export default function NichoFormModal({
     if (isOpen) {
       if (mode === 'edit' && nicho) {
         const sector = sectores.find(s => s.nombre === nicho.sectorNombre);
-        form.reset({
-          id: nicho.id.toString(),
+        const formData = {
           sectorId: sector?.id.toString() || '',
           nombre: nicho.nombre,
           ubicacion: nicho.ubicacion,
           estado: nicho.estado
-        });
+        };
+
+        form.reset(formData);
       } else {
-        // Generar el próximo ID disponible para modo agregar
-        const existingIds = existingNichos.map(n => n.id);
-        const nextId =
-          existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
-        form.reset({
-          id: nextId.toString(),
+        const formData = {
           sectorId: '',
           nombre: '',
           ubicacion: '',
           estado: true
-        });
+        };
+
+        form.reset(formData);
       }
     }
-  }, [isOpen, mode, nicho, sectores, existingNichos, form]);
+  }, [isOpen, mode, nicho, sectores, form]);
 
   const handleSubmit = async (data: NichoFormValues) => {
     setIsLoading(true);
     try {
       const payload = {
-        id: mode === 'add' ? parseInt(data.id, 10) : nicho?.id || 0,
         sectorId: parseInt(data.sectorId, 10),
         nombre: data.nombre,
         ubicacion: data.ubicacion,
         estado: data.estado
       };
 
-      // Debug: mostrar el JSON que se está enviando
-      console.log(
-        '🔍 DEBUG - Payload enviado a la API:',
-        JSON.stringify(payload, null, 2)
-      );
-      console.log('🔍 DEBUG - Modo:', mode);
-      console.log('🔍 DEBUG - ID del formulario:', data.id);
-      console.log(
-        '🔍 DEBUG - URL:',
-        mode === 'add' ? '/crearNichoM' : `/modificarNicho/${nicho?.id}`
-      );
-
+      let result;
       if (mode === 'add') {
-        const response = await api.post('/crearNichoM', payload);
-        console.log('✅ DEBUG - Respuesta de creación:', response.data);
+        result = await mantencionService.createNicho(payload);
       } else if (mode === 'edit' && nicho) {
-        const response = await api.put(`/modificarNicho/${nicho.id}`, payload);
-        console.log('✅ DEBUG - Respuesta de edición:', response.data);
+        result = await mantencionService.updateNicho(nicho.id, payload);
+      }
+
+      if (result?.error) {
+        console.error('❌ ERROR - El servicio devolvió error:', result.error);
+        throw new Error(result.error);
       }
 
       toast.success(
@@ -185,8 +158,7 @@ export default function NichoFormModal({
       );
       onSuccess();
     } catch (error) {
-      console.error('❌ ERROR al procesar nicho:', error);
-      console.error('❌ ERROR - Detalles:', (error as any).response?.data);
+      console.error('❌ ERROR al procesar el nicho:', error);
       toast.error(
         mode === 'add'
           ? 'Error al crear el nicho'
@@ -221,25 +193,6 @@ export default function NichoFormModal({
             onSubmit={form.handleSubmit(handleSubmit)}
             className='space-y-4 pt-4'
           >
-            <FormField
-              control={form.control}
-              name='id'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>ID del Nicho</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={true}
-                      placeholder='Código numérico generado automáticamente'
-                      className='bg-muted'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name='sectorId'

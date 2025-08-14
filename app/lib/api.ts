@@ -34,6 +34,8 @@ const api = {
     axiosInstance.post<T | ApiResponse<T>>(url, data, config),
   put: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
     axiosInstance.put<T | ApiResponse<T>>(url, data, config),
+  patch: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
+    axiosInstance.patch<T | ApiResponse<T>>(url, data, config),
   delete: <T>(url: string, config?: AxiosRequestConfig) =>
     axiosInstance.delete<T | ApiResponse<T>>(url, config),
 };
@@ -59,6 +61,7 @@ export function useApiWithLoadingBar() {
     get: (...args: any[]) => requestWithBar('get', ...args),
     post: (...args: any[]) => requestWithBar('post', ...args),
     put: (...args: any[]) => requestWithBar('put', ...args),
+    patch: (...args: any[]) => requestWithBar('patch', ...args),
     delete: (...args: any[]) => requestWithBar('delete', ...args) as any,
   };
 }

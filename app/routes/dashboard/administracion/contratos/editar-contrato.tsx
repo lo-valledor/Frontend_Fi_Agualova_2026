@@ -4,15 +4,6 @@ import EditarContratoComponent from '~/components/administracion/contratos/route
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services';
 
-interface EditarContratoProps {
-  contrato: any;
-  propietarios: any;
-  locales: any;
-  comunas: any;
-  madres: any;
-  clientes: any;
-}
-
 export function meta() {
   return [
     { title: 'Enerlova | Contrato - Editar' },

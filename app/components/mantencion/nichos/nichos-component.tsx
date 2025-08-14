@@ -95,7 +95,6 @@ export default function NichosComponent({
           onSuccess={handleNichoSuccess}
           nicho={selectedNicho}
           mode={modalMode}
-          existingNichos={nichos}
         />
       </div>
     </div>
