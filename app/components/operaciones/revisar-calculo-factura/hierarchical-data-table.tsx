@@ -73,31 +73,7 @@ export function HierarchicalDataTable({
       key={`${contratoIndex}-cargo-${cargoIndex}`}
       className='bg-sky-50/30 dark:bg-sky-900/10 border-l-2 border-l-sky-300 dark:border-l-sky-700 hover:bg-sky-50/50 dark:hover:bg-sky-900/20 transition-colors h-6'
     >
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* Sector - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* Contrato - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* Tarifa - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* RUT - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* Nombre cliente - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* Local - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* Dirección - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
-
-      {/* Comuna - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
+      <TableCell colSpan={9} className='py-0 px-0.5'></TableCell>
 
       {/* N° Serie - vacío para cargos */}
       <TableCell className='py-0 px-0.5'>
@@ -107,14 +83,11 @@ export function HierarchicalDataTable({
       </TableCell>
 
       {/* Descripción Cargo - esta es la primera columna con contenido */}
-      <TableCell className='pl-2 py-0 px-0.5'>
+      <TableCell colSpan={2} className='pl-2 py-0 px-0.5'>
         <span className='font-medium text-slate-700 dark:text-slate-300 col-span-2'>
           {cargo.descripcion}
         </span>
       </TableCell>
-
-      {/* Fecha Lectura - vacío para cargos */}
-      <TableCell className='py-0 px-0.5'></TableCell>
 
       {/* Cantidad - alineada con consumo */}
       <TableCell className='text-[10px] text-right py-0 px-0.5'>
@@ -198,25 +171,22 @@ export function HierarchicalDataTable({
                       {/* Encabezado de cargos */}
                       <TableRow className='bg-sky-100/50 dark:bg-sky-900/20 border-l-2 border-l-sky-500 dark:border-l-sky-400 hover:bg-sky-100/50 dark:hover:bg-sky-900/20 h-5'>
                         {/* Columnas vacías hasta Descripción Cargo */}
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
-                        <TableCell className='py-0 px-0.5'></TableCell>
+                        <TableCell
+                          colSpan={9}
+                          className='py-0 px-0.5'
+                        ></TableCell>
                         <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'>
                           Código
                         </TableCell>
 
                         {/* Descripción Cargo */}
-                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'>
+                        <TableCell
+                          colSpan={2}
+                          className='text-center font-semibold text-[10px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'
+                        >
                           Descripción Cargo
                         </TableCell>
 
-                        <TableCell className='py-0 px-0.5'></TableCell>
                         {/* Cantidad */}
                         <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
                           Cantidad
