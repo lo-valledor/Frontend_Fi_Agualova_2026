@@ -15,7 +15,7 @@ export function FilterSummary({
   filteredContracts,
   activeFilters,
   isFiltered,
-}: FilterSummaryProps) {
+}: Readonly<FilterSummaryProps>) {
   if (!isFiltered) return null;
 
   const percentageShown =

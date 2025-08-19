@@ -114,7 +114,7 @@ export default function RevisarCalculoFacturaComponent({
 
   return (
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
-      <div className='container mx-auto p-3 space-y-4'>
+      <div className='max-w-[1880px] mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
           title='Revisar Cálculo de Factura'
@@ -545,7 +545,7 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
 
                   {/* Tabla de datos */}
-                  <div className='w-full overflow-hidden'>
+                  <div className=''>
                     <HierarchicalDataTable
                       columns={columns}
                       data={filteredData}

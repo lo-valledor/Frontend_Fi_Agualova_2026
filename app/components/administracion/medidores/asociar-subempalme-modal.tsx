@@ -10,7 +10,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { ScrollArea } from '~/components/ui/scroll-area';
@@ -20,7 +20,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import api from '~/lib/api';
 import type { GetMedidores, SubempalmeOption } from '~/types/administracion';
@@ -36,7 +36,7 @@ export function AsociarSubempalmeModal({
   isOpen,
   onClose,
   medidor,
-  onSuccess,
+  onSuccess
 }: AsociarSubempalmeModalProps) {
   const [subempalmes, setSubempalmes] = useState<SubempalmeOption[]>([]);
   const [busquedaSubempalme, setBusquedaSubempalme] = useState('');
@@ -75,7 +75,7 @@ export function AsociarSubempalmeModal({
     try {
       const payload = {
         codigoMedidor: medidor.codigo,
-        subempalmeId: subempalmeId,
+        subempalmeId: subempalmeId
       };
 
       const response = await api.put('/modificar-subempalme', payload);
@@ -103,7 +103,7 @@ export function AsociarSubempalmeModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[90vh] overflow-hidden'>
+      <DialogContent className='sm:min-w-full md:min-w-full lg:min-w-[800px] xl:min-w-[1000px] max-h-[90vh] overflow-auto'>
         <DialogHeader className='space-y-3 pb-4'>
           <div className='flex items-center gap-3'>
             <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>

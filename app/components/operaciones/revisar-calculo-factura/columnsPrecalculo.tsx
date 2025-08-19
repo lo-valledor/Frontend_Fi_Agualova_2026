@@ -25,9 +25,9 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         </Button>
       );
     },
-    size: 25,
-    minSize: 25,
-    maxSize: 25
+    size: 40,
+    minSize: 40,
+    maxSize: 40
   },
   {
     id: 'facturar',
@@ -53,9 +53,9 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 25,
-    minSize: 25,
-    maxSize: 25
+    size: 40,
+    minSize: 40,
+    maxSize: 40
   },
   {
     header: () => (
@@ -72,13 +72,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         </div>
       );
     },
-    size: 40,
-    minSize: 35,
-    maxSize: 45
+    size: 70,
+    minSize: 65,
+    maxSize: 75
   },
   {
     header: () => (
-      <div className='text-center font-medium text-[10px]'>Contrato</div>
+      <div className='text-left font-medium text-[10px]'>Contrato</div>
     ),
     accessorKey: 'contratoId',
     cell: ({ row }) => {
@@ -89,41 +89,39 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         </span>
       );
     },
-    size: 50,
-    minSize: 45,
-    maxSize: 55
+    size: 10,
+    minSize: 85,
+    maxSize: 95
   },
   {
     header: () => (
-      <div className='text-center font-medium text-[10px]'>Tarifa</div>
+      <div className='text-left font-medium text-[10px]'>Tarifa</div>
     ),
     accessorKey: 'codigoTarifa',
     cell: ({ row }) => {
       const tarifa = row.getValue('codigoTarifa');
       return (
-        <div className='text-center'>
+        <div className='text-left'>
           <span className='text-[10px] bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-0.5 py-0.5 rounded'>
             {tarifa as string}
           </span>
         </div>
       );
     },
-    size: 35,
-    minSize: 30,
-    maxSize: 40
+    size: 65,
+    minSize: 60,
+    maxSize: 70
   },
   {
-    header: () => (
-      <div className='text-center font-medium text-[10px]'>RUT Cliente</div>
-    ),
+    header: () => <div className='text-left font-medium text-[10px]'>RUT</div>,
     accessorKey: 'rutCliente',
     cell: ({ row }) => {
       const rut = row.getValue('rutCliente');
       return <span className='font-mono text-[10px]'>{rut as string}</span>;
     },
-    size: 65,
-    minSize: 60,
-    maxSize: 70
+    size: 110,
+    minSize: 105,
+    maxSize: 115
   },
   {
     header: () => (
@@ -136,35 +134,35 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const nombre = row.getValue('nombreCliente');
       return (
         <span
-          className='text-[10px] text-slate-700 dark:text-slate-300 truncate block max-w-[100px]'
+          className='text-[10px] text-slate-700 dark:text-slate-300 truncate block max-w-[220px]'
           title={nombre as string}
         >
           {nombre as string}
         </span>
       );
     },
-    size: 100,
-    minSize: 80,
-    maxSize: 120
+    size: 220,
+    minSize: 200,
+    maxSize: 240
   },
   {
     header: () => (
-      <div className='text-center font-medium text-[10px]'>Local</div>
+      <div className='text-left font-medium text-[10px]'>Local</div>
     ),
     accessorKey: 'localId',
     cell: ({ row }) => {
       const local = row.getValue('localId');
       return (
-        <div className='text-center'>
+        <div className='text-left'>
           <span className='text-[10px] bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-0.5 py-0.5 rounded'>
             {local as string}
           </span>
         </div>
       );
     },
-    size: 35,
-    minSize: 30,
-    maxSize: 40
+    size: 65,
+    minSize: 60,
+    maxSize: 70
   },
   {
     header: () => <div className='font-medium text-[10px]'>Dirección</div>,
@@ -173,16 +171,16 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const direccion = row.getValue('direccion');
       return (
         <span
-          className='text-[10px] text-slate-600 dark:text-slate-400 truncate block max-w-[85px]'
+          className='text-left text-[10px] text-slate-600 dark:text-slate-400 truncate block max-w-[170px]'
           title={direccion as string}
         >
           {direccion as string}
         </span>
       );
     },
-    size: 85,
-    minSize: 75,
-    maxSize: 95
+    size: 170,
+    minSize: 150,
+    maxSize: 190
   },
   {
     header: () => <div className='font-medium text-[10px]'>Comuna</div>,
@@ -191,16 +189,16 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const comuna = row.getValue('comuna');
       return (
         <span
-          className='text-[10px] text-slate-700 dark:text-slate-300 truncate block max-w-[60px]'
+          className='text-[10px] text-slate-700 dark:text-slate-300 truncate block max-w-[120px]'
           title={comuna as string}
         >
           {comuna as string}
         </span>
       );
     },
-    size: 60,
-    minSize: 50,
-    maxSize: 70
+    size: 120,
+    minSize: 110,
+    maxSize: 130
   },
   {
     header: () => (
@@ -215,9 +213,9 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         </span>
       );
     },
-    size: 55,
-    minSize: 50,
-    maxSize: 60
+    size: 95,
+    minSize: 90,
+    maxSize: 100
   },
   {
     header: () => (
@@ -238,15 +236,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         <span className='text-[10px] text-muted-foreground'>-</span>
       );
     },
-    size: 55,
-    minSize: 50,
-    maxSize: 60
+    size: 95,
+    minSize: 90,
+    maxSize: 100
   },
   {
     header: () => (
-      <div className='text-center font-medium text-[10px]'>
-        Consumo Cantidad
-      </div>
+      <div className='text-center font-medium text-[10px]'>Consumo</div>
     ),
     accessorKey: 'consumoPeriodo',
     cell: ({ row }) => {
@@ -259,15 +255,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         </div>
       );
     },
-    size: 50,
-    minSize: 45,
-    maxSize: 55
+    size: 90,
+    minSize: 85,
+    maxSize: 95
   },
   {
     header: () => (
-      <div className='text-center font-medium text-[10px]'>
-        Total Facturado Precio Unitario
-      </div>
+      <div className='text-center font-medium text-[10px]'>Total Facturado</div>
     ),
     accessorKey: 'totalFacturado',
     cell: ({ row }) => {
@@ -280,15 +274,13 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         </div>
       );
     },
-    size: 65,
-    minSize: 60,
-    maxSize: 70
+    size: 120,
+    minSize: 115,
+    maxSize: 125
   },
   {
     header: () => (
-      <div className='text-center font-medium text-[10px]'>
-        Total a Pagar Sub Total
-      </div>
+      <div className='text-center font-medium text-[10px]'>Total a Pagar</div>
     ),
     accessorKey: 'totalAPagar',
     cell: ({ row }) => {
@@ -302,26 +294,8 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
         </div>
       );
     },
-    size: 65,
-    minSize: 60,
-    maxSize: 70
-  },
-  {
-    header: () => (
-      <div className='text-center font-medium text-[10px]'>Facturar</div>
-    ),
-    accessorKey: 'facturar',
-    cell: () => {
-      return (
-        <div className='text-center'>
-          <span className='text-[10px] bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-0.5 py-0.5 rounded'>
-            Todos
-          </span>
-        </div>
-      );
-    },
-    size: 45,
-    minSize: 40,
-    maxSize: 50
+    size: 120,
+    minSize: 115,
+    maxSize: 125
   }
 ];
