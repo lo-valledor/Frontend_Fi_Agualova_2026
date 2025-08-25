@@ -87,6 +87,18 @@ export default [
             'clientes/:id',
             'routes/dashboard/administracion/clientes/editar-cliente.tsx'
           ),
+          route(
+            'propietarios',
+            'routes/dashboard/administracion/propietarios.tsx'
+          ),
+          route(
+            'contratantes',
+            'routes/dashboard/administracion/contratantes.tsx'
+          ),
+          route(
+            'contratantes/crear',
+            'routes/dashboard/administracion/contratantes/crear-contratante.tsx'
+          ),
           route('medidores', 'routes/dashboard/administracion/medidores.tsx'),
           route(
             'medidores/crear',

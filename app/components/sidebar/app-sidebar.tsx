@@ -141,6 +141,14 @@ const data = {
           url: '/dashboard/administracion/clientes'
         },
         {
+          title: 'Propietarios',
+          url: '/dashboard/administracion/propietarios'
+        },
+        {
+          title: 'Contratantes',
+          url: '/dashboard/administracion/contratantes'
+        },
+        {
           title: 'Medidores',
           url: '/dashboard/administracion/medidores'
         },

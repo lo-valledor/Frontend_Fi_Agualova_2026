@@ -28,7 +28,8 @@ import type {
   GetMedidores,
   GetPropietario,
   ModificarContratoProps,
-  Usuarios
+  Usuarios,
+  GetContratante
 } from '~/types/administracion';
 import type { Conceptos, Marca } from '~/types/mantencion';
 
@@ -151,6 +152,71 @@ class AdministracionService {
       return {
         data: {
           contratos: resContratos.data as GetContratos[]
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene datos de propietarios para contratos
+   */
+  async getPropietariosData(): Promise<
+    AdministracionServiceResponse<{
+      propietarios: GetPropietario[];
+      contratante: GetContratante[];
+    }>
+  > {
+    try {
+      const [resPropietarios, resContratante] = await Promise.all([
+        api.get('propietario/buscar'),
+        api.get('contratante/existe')
+      ]);
+
+      return {
+        data: {
+          propietarios:
+            this.processApiResponse<GetPropietario>(resPropietarios),
+          contratante: this.processApiResponse<GetContratante>(resContratante)
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene datos de contratantes con giros y comunas
+   */
+  async getContratantesData(): Promise<
+    AdministracionServiceResponse<{
+      contratantes: GetContratante[];
+      giros: GetGiros[];
+      comunas: GetComunas[];
+    }>
+  > {
+    try {
+      const [resContratantes, resGiros, resComunas] = await Promise.all([
+        api.get('contratante/existe'),
+        api.get('giro/buscar'),
+        api.get('comuna/por-region')
+      ]);
+
+      return {
+        data: {
+          contratantes:
+            this.processApiResponse<GetContratante>(resContratantes),
+          giros: this.processApiResponse<GetGiros>(resGiros),
+          comunas: this.processApiResponse<GetComunas>(resComunas)
         },
         error: null
       };
@@ -687,6 +753,46 @@ class AdministracionService {
   }
 
   /**
+   * Obtiene un contratante específico por RUT
+   */
+  async getContratanteByRut(
+    rut: string
+  ): Promise<AdministracionServiceResponse<GetContratante>> {
+    try {
+      const response = await api.get(`/contratante/${rut}`);
+      return {
+        data: response.data as GetContratante,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene un propietario específico por RUT
+   */
+  async getPropietarioByRut(
+    rut: string
+  ): Promise<AdministracionServiceResponse<GetPropietario>> {
+    try {
+      const response = await api.get(`/propietario/${rut}`);
+      return {
+        data: response.data as GetPropietario,
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
    * Crea un nuevo medidor
    */
   async crearMedidor(
@@ -726,6 +832,55 @@ class AdministracionService {
           error.response?.data?.message ||
           error.message ||
           'Error al modificar el medidor'
+      };
+    }
+  }
+
+  /**
+   * Crea un nuevo contratante
+   */
+  async crearContratante(
+    contratanteData: any
+  ): Promise<AdministracionServiceResponse<any>> {
+    try {
+      const response = await api.post('/contratante/crear', contratanteData);
+      return {
+        data: response.data,
+        error: null
+      };
+    } catch (error: any) {
+      console.error('Error al crear contratante:', error);
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al crear el contratante'
+      };
+    }
+  }
+
+  /**
+   * Sincroniza propietarios con locales asociados
+   */
+  async sincronizarPropietarios(): Promise<AdministracionServiceResponse<{
+    registrosAfectados: number;
+    mensaje: string;
+  }>> {
+    try {
+      const response = await api.put('/contrato/actualizar-propietarios-local');
+      return {
+        data: response.data as { registrosAfectados: number; mensaje: string },
+        error: null
+      };
+    } catch (error: any) {
+      console.error('Error al sincronizar propietarios:', error);
+      return {
+        data: null,
+        error:
+          error.response?.data?.message ||
+          error.message ||
+          'Error al sincronizar propietarios'
       };
     }
   }

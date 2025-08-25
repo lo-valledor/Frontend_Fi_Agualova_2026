@@ -1,19 +1,24 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'rut.js';
 
+import { Badge } from '~/components/ui/badge';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
-import type { GetPropietario } from '~/types/administracion';
+import type { GetContratante } from '~/types/administracion';
 
-interface PropietariosColumnsProps {
-  onDetails: (propietario: GetPropietario) => void;
-  detailingPropietarioRut: string | null;
+interface ContratantesColumnsProps {
+  onEdit: (contratante: GetContratante) => void;
+  onDetails: (contratante: GetContratante) => void;
+  editingContratanteRut: string | null;
+  detailingContratanteRut: string | null;
 }
 
 export const columns = ({
+  onEdit,
   onDetails,
-  detailingPropietarioRut
-}: PropietariosColumnsProps): ColumnDef<GetPropietario>[] => [
+  editingContratanteRut,
+  detailingContratanteRut
+}: ContratantesColumnsProps): ColumnDef<GetContratante>[] => [
   {
     accessorKey: 'rut',
     header: ({ column }) => (
@@ -45,20 +50,82 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
+      const nombreCompleto = row.original.esEmpresa 
+        ? row.original.nombre
+        : `${row.original.nombre} ${row.original.apellido || ''}`.trim();
+
       return (
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
               className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
-              title={row.original.nombre}
+              title={nombreCompleto}
             >
-              {row.original.nombre}
+              {nombreCompleto}
+            </div>
+            <div className='flex items-center gap-1 mt-1'>
+              <Badge
+                variant={row.original.esEmpresa ? 'default' : 'secondary'}
+                className='text-xs'
+              >
+                {row.original.esEmpresa ? 'Empresa' : 'Persona'}
+              </Badge>
             </div>
           </div>
         </div>
       );
     },
-    minSize: 150,
+    minSize: 200,
+    maxSize: 280
+  },
+  {
+    accessorKey: 'direccion',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Dirección' />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+          <div className='min-w-0 flex-1'>
+            <div
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              title={row.original.direccion || 'No especificada'}
+            >
+              {row.original.direccion || 'No especificada'}
+            </div>
+            <div className='text-xs text-slate-500 dark:text-slate-400 truncate'>
+              {row.original.comuna}
+            </div>
+          </div>
+        </div>
+      );
+    },
+    minSize: 200,
+    maxSize: 250
+  },
+  {
+    accessorKey: 'contacto',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Contacto' />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+          <div className='min-w-0 flex-1'>
+            <div
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              title={row.original.contacto || 'No especificado'}
+            >
+              {row.original.contacto || 'No especificado'}
+            </div>
+            <div className='text-xs text-slate-500 dark:text-slate-400 truncate'>
+              {row.original.telefono || 'Sin teléfono'}
+            </div>
+          </div>
+        </div>
+      );
+    },
+    minSize: 180,
     maxSize: 220
   },
   {
@@ -80,74 +147,8 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 220
-  },
-  {
-    accessorKey: 'telefono',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Teléfono' />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
-            <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
-              title={row.original.telefono || 'No especificado'}
-            >
-              {row.original.telefono || 'No especificado'}
-            </div>
-          </div>
-        </div>
-      );
-    },
-    minSize: 150,
-    maxSize: 220
-  },
-  {
-    accessorKey: 'celular',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Celular' />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
-            <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
-              title={row.original.celular || 'No especificado'}
-            >
-              {row.original.celular || 'No especificado'}
-            </div>
-          </div>
-        </div>
-      );
-    },
-    minSize: 150,
-    maxSize: 220
-  },
-  {
-    accessorKey: 'comuna',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Comuna' />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
-            <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
-              title={row.original.comuna}
-            >
-              {row.original.comuna}
-            </div>
-          </div>
-        </div>
-      );
-    },
-    minSize: 150,
-    maxSize: 220
+    minSize: 200,
+    maxSize: 250
   },
   {
     id: 'actions',
@@ -159,11 +160,12 @@ export const columns = ({
         <div className='flex items-center justify-center'>
           <TableActions
             onView={onDetails}
+            onEdit={onEdit}
             item={row.original}
             showView={true}
-            showEdit={false}
             showDelete={false}
-            loadingView={detailingPropietarioRut === row.original.rut}
+            loadingEdit={editingContratanteRut === row.original.rut}
+            loadingView={detailingContratanteRut === row.original.rut}
           />
         </div>
       );

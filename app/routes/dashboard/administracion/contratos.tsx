@@ -28,7 +28,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   return result.data;
 }
 
-export default function Contratos({ loaderData }: Route.ComponentProps) {
+export default function Contratos({ loaderData }: Readonly<Route.ComponentProps>) {
   const { contratos } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Contratos' }];
   return (

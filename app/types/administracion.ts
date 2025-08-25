@@ -43,6 +43,18 @@ export interface ContratanteProps {
   email: string;
 }
 
+export interface GetClienteContrato {
+  rut: string;
+  nombre: string;
+  esEmpresa: boolean;
+  direccion: string;
+  comunaCodigo: string;
+  contacto: string;
+  telefono: string;
+  email: string;
+  comunaDescripcion: string;
+}
+
 export interface GetLocal {
   numeroLocal: string;
   empresa: string;
@@ -57,6 +69,18 @@ export interface GetPropietario {
   comuna: string;
   telefono: string;
   celular: string;
+  email: string;
+}
+
+export interface GetContratante {
+  rut: string;
+  nombre: string;
+  apellido: string;
+  esEmpresa: boolean;
+  direccion: string;
+  comuna: string;
+  contacto: string;
+  telefono: string;
   email: string;
 }
 

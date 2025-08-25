@@ -930,7 +930,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Propietarios */}
         <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-          <DialogContent className='min-w-full max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
@@ -1034,7 +1034,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Locales */}
         <Dialog open={modalLocal} onOpenChange={setModalLocal}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg'>
@@ -1137,7 +1137,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Madres */}
         <Dialog open={modalMadres} onOpenChange={setModalMadres}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg'>
@@ -1240,7 +1240,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Clientes */}
         <Dialog open={modalCliente} onOpenChange={setModalCliente}>
-          <DialogContent className='w-[98vw] sm:w-[95vw] md:w-[90vw] lg:w-[85vw] xl:w-[80vw] 2xl:w-[75vw] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
@@ -1321,7 +1321,7 @@ export default function CrearContratoComponent({
                                   className='truncate max-w-[200px]'
                                   title={getClienteDisplayName(cliente)}
                                 >
-                                  {getClienteDisplayName(cliente)}
+                                  {cliente.nombreCompleto}
                                 </div>
                               </TableCell>
                               <TableCell className='text-xs sm:text-sm'>
@@ -1360,7 +1360,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Comunas */}
         <Dialog open={modalComuna} onOpenChange={setModalComuna}>
-          <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
@@ -1461,7 +1461,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Éxito - Contrato Creado */}
         <Dialog open={modalExito} onOpenChange={setModalExito}>
-          <DialogContent className='w-[95vw] sm:max-w-[500px] lg:max-w-[600px] max-h-[85vh] overflow-y-auto'>
+          <DialogContent className='min-w-[320px] sm:min-w-[400px] md:min-w-[500px] lg:min-w-[600px] max-w-2xl max-h-[85vh] overflow-y-auto'>
             <DialogHeader className='space-y-4'>
               <div className='flex items-center gap-3'>
                 <div className='p-3 bg-green-100 dark:bg-green-900/30 rounded-full'>
