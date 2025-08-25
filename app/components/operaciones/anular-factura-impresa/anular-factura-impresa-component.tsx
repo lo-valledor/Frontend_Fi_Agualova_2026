@@ -4,7 +4,7 @@ import {
   FileX,
   RotateCcw,
   Trash2,
-  X,
+  X
 } from 'lucide-react';
 
 import { useState } from 'react';
@@ -17,7 +17,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   Dialog,
@@ -25,7 +25,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -57,7 +57,7 @@ export default function AnularFacturaImpresaComponent() {
 
       const response = await api.post('/anular-factura-impresa', {
         numeroFolio: numeroFactura,
-        alcance: conTomaLectura ? 1 : 2,
+        alcance: conTomaLectura ? 1 : 2
       });
 
       if (response.status === 200) {

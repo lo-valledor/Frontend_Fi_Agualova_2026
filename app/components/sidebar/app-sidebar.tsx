@@ -5,7 +5,7 @@ import {
   Settings,
   Settings2,
   Users,
-  Wrench,
+  Wrench
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -16,7 +16,7 @@ import { Link, useLocation } from 'react-router';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import {
   Sidebar,
@@ -28,7 +28,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
+  SidebarRail
 } from '~/components/ui/sidebar';
 
 import { SearchForm } from './search-form';
@@ -37,13 +37,13 @@ const itemVariants = {
   hidden: {
     opacity: 0,
     x: -20,
-    transition: { duration: 0.2 },
+    transition: { duration: 0.2 }
   },
   visible: {
     opacity: 1,
     x: 0,
-    transition: { duration: 0.3, ease: 'easeOut' },
-  },
+    transition: { duration: 0.3, ease: 'easeOut' }
+  }
 };
 
 const containerVariants = {
@@ -52,9 +52,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
-  },
+      delayChildren: 0.1
+    }
+  }
 };
 
 // This is sample data.
@@ -68,13 +68,13 @@ const data = {
       items: [
         {
           title: 'Monitor de Lecturas',
-          url: '/dashboard/monitor/monitor-lecturas',
+          url: '/dashboard/monitor/monitor-lecturas'
         },
         {
           title: 'Exportar Lecturas',
-          url: '/dashboard/monitor/exportar-lecturas',
-        },
-      ],
+          url: '/dashboard/monitor/exportar-lecturas'
+        }
+      ]
     },
     {
       title: 'Operaciones',
@@ -83,45 +83,45 @@ const data = {
       items: [
         {
           title: 'Periodo Facturación',
-          url: '/dashboard/operaciones/periodo-facturacion',
+          url: '/dashboard/operaciones/periodo-facturacion'
         },
         {
           title: 'Precios Cargos',
-          url: '/dashboard/operaciones/precios-cargo',
+          url: '/dashboard/operaciones/precios-cargo'
         },
         {
           title: 'Revisar Precio',
-          url: '/dashboard/operaciones/revisar-precio',
+          url: '/dashboard/operaciones/revisar-precio'
         },
         {
           title: 'Preparar Lecturas',
-          url: '/dashboard/operaciones/preparar-lecturas',
+          url: '/dashboard/operaciones/preparar-lecturas'
         },
         {
           title: 'Cerrar Lecturas',
-          url: '/dashboard/operaciones/cerrar-lecturas',
+          url: '/dashboard/operaciones/cerrar-lecturas'
         },
         {
           title: 'Revisar Calculo Facturas',
-          url: '/dashboard/operaciones/revisar-calculo-factura',
+          url: '/dashboard/operaciones/revisar-calculo-factura'
         },
         {
           title: 'Cambio Medidor',
-          url: '/dashboard/operaciones/cambio-medidor',
+          url: '/dashboard/operaciones/cambio-medidor'
         },
         {
           title: 'Corte y Reposición',
-          url: '/dashboard/operaciones/corte-reposicion',
+          url: '/dashboard/operaciones/corte-reposicion'
         },
         {
           title: 'Crear Archivos SAP',
-          url: '/dashboard/operaciones/crear-archivos-sap',
+          url: '/dashboard/operaciones/crear-archivos-sap'
         },
         {
           title: 'Anular Factura Impresa',
-          url: '/dashboard/operaciones/anular-factura-impresa',
-        },
-      ],
+          url: '/dashboard/operaciones/anular-factura-impresa'
+        }
+      ]
     },
     {
       title: 'Administracion',
@@ -130,37 +130,37 @@ const data = {
       items: [
         {
           title: 'Usuarios',
-          url: '/dashboard/administracion/usuarios',
+          url: '/dashboard/administracion/usuarios'
         },
         {
           title: 'Contratos',
-          url: '/dashboard/administracion/contratos',
+          url: '/dashboard/administracion/contratos'
         },
         {
           title: 'Clientes',
-          url: '/dashboard/administracion/clientes',
+          url: '/dashboard/administracion/clientes'
         },
         {
           title: 'Medidores',
-          url: '/dashboard/administracion/medidores',
+          url: '/dashboard/administracion/medidores'
         },
         {
           title: 'Acometida',
-          url: '/dashboard/administracion/acometida',
+          url: '/dashboard/administracion/acometida'
         },
         {
           title: 'Cargo Facturable',
-          url: '/dashboard/administracion/cargo-facturable',
+          url: '/dashboard/administracion/cargo-facturable'
         },
         {
           title: 'Cargo Tipo Contrato',
-          url: '/dashboard/administracion/cargo-tipo-contrato',
+          url: '/dashboard/administracion/cargo-tipo-contrato'
         },
         {
           title: 'Condiciones Contrato',
-          url: '/dashboard/administracion/condiciones-contrato',
-        },
-      ],
+          url: '/dashboard/administracion/condiciones-contrato'
+        }
+      ]
     },
     {
       title: 'Mantencion',
@@ -169,49 +169,49 @@ const data = {
       items: [
         {
           title: 'Zonas',
-          url: '/dashboard/mantencion/zonas',
+          url: '/dashboard/mantencion/zonas'
         },
         {
           title: 'Sector',
-          url: '/dashboard/mantencion/sector',
+          url: '/dashboard/mantencion/sector'
         },
         {
           title: 'Nichos',
-          url: '/dashboard/mantencion/nichos',
+          url: '/dashboard/mantencion/nichos'
         },
         {
           title: 'Empalmes',
-          url: '/dashboard/mantencion/empalmes',
+          url: '/dashboard/mantencion/empalmes'
         },
         {
           title: 'Marcas',
-          url: '/dashboard/mantencion/marcas',
+          url: '/dashboard/mantencion/marcas'
         },
         {
           title: 'Ciclos Facturación',
-          url: '/dashboard/mantencion/ciclos-facturacion',
+          url: '/dashboard/mantencion/ciclos-facturacion'
         },
         {
           title: 'Claves',
-          url: '/dashboard/mantencion/claves',
+          url: '/dashboard/mantencion/claves'
         },
         {
           title: 'Tipos Contrato',
-          url: '/dashboard/mantencion/tipos-contratos',
+          url: '/dashboard/mantencion/tipos-contratos'
         },
         {
           title: 'Conceptos',
-          url: '/dashboard/mantencion/conceptos',
+          url: '/dashboard/mantencion/conceptos'
         },
         {
           title: 'Tarifas',
-          url: '/dashboard/mantencion/tarifas',
+          url: '/dashboard/mantencion/tarifas'
         },
         {
           title: 'Parametros',
-          url: '/dashboard/mantencion/parametros',
-        },
-      ],
+          url: '/dashboard/mantencion/parametros'
+        }
+      ]
     },
     /* {
       title: 'Análisis',
@@ -231,17 +231,17 @@ const data = {
       items: [
         {
           title: 'Consultar Contrato',
-          url: '/dashboard/reportes/consultar-contrato',
+          url: '/dashboard/reportes/consultar-contrato'
         },
         {
           title: 'Resumen Facturación',
-          url: '/dashboard/reportes/resumen-facturacion',
-        },
+          url: '/dashboard/reportes/resumen-facturacion'
+        }
         /* {
           title: 'Ver Facturas',
           url: '/dashboard/reportes/ver-facturas',
         }, */
-      ],
+      ]
     },
     {
       title: 'Configuración	',
@@ -250,11 +250,11 @@ const data = {
       items: [
         {
           title: 'Roles y Permisos',
-          url: '/dashboard/configuracion/roles-permisos',
-        },
-      ],
-    },
-  ],
+          url: '/dashboard/configuracion/roles-permisos'
+        }
+      ]
+    }
+  ]
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -282,7 +282,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
         return {
           ...section,
-          items: filteredItems,
+          items: filteredItems
         };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
@@ -342,7 +342,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 transition={{
                                   type: 'spring',
                                   stiffness: 400,
-                                  damping: 17,
+                                  damping: 17
                                 }}
                                 className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-md bg-sky-500 text-white group-hover:from-sky-500/30 group-hover:to-sky-500/30 transition-all duration-300'
                               >
@@ -391,7 +391,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         transition={{
                                           type: 'spring',
                                           stiffness: 400,
-                                          damping: 17,
+                                          damping: 17
                                         }}
                                         className='w-full'
                                       >
@@ -403,7 +403,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                             className='w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-current opacity-50'
                                             whileHover={{
                                               scale: 1.5,
-                                              opacity: 1,
+                                              opacity: 1
                                             }}
                                             transition={{ duration: 0.2 }}
                                           />

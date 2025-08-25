@@ -14,7 +14,7 @@ interface ConsultarContratoComponentProps {
 
 export default function ConsultarContratoComponent({
   buscarContratos,
-  error,
+  error
 }: Readonly<ConsultarContratoComponentProps>) {
   if (error) {
     return <div>Error: {error.message}</div>;

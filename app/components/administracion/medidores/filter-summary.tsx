@@ -14,7 +14,7 @@ export function FilterSummary({
   totalMedidores,
   filteredMedidores,
   activeFilters,
-  isFiltered,
+  isFiltered
 }: FilterSummaryProps) {
   if (!isFiltered) return null;
 

@@ -42,7 +42,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
     },
     enableSorting: false,
     enableHiding: false,
-    size: 40,
+    size: 40
   },
   {
     accessorKey: 'codigo',
@@ -58,7 +58,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
         {row.getValue('codigo')}
       </div>
     ),
-    size: 100,
+    size: 100
   },
   {
     accessorKey: 'codigoEner',
@@ -74,7 +74,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
         {row.getValue('codigoEner')}
       </div>
     ),
-    size: 100,
+    size: 100
   },
   {
     accessorKey: 'descripcion',
@@ -90,7 +90,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
         {row.getValue('descripcion')}
       </div>
     ),
-    size: 250,
+    size: 250
   },
   {
     accessorKey: 'valor',
@@ -111,17 +111,17 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              maximumFractionDigits: 2
             });
       };
 
       return (
-          <div className='text-xs font-mono font-medium text-green-600 dark:text-green-400'>
-            {formatValue(value)}
-          </div>
-        );
+        <div className='text-xs font-mono font-medium text-green-600 dark:text-green-400'>
+          {formatValue(value)}
+        </div>
+      );
     },
-      size: 100,
+    size: 100
   },
   {
     accessorKey: 'confirmacion',
@@ -168,7 +168,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
         );
       }
     },
-    size: 130,
+    size: 130
   },
   {
     id: 'acciones',
@@ -206,6 +206,6 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       );
     },
     enableSorting: false,
-    size: 120,
-  },
+    size: 120
+  }
 ];

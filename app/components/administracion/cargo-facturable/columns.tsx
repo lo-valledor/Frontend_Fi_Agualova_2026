@@ -12,7 +12,7 @@ interface TableColumnsProps {
 
 export const columns = ({
   onEdit,
-  editingCargoId,
+  editingCargoId
 }: TableColumnsProps): ColumnDef<BuscarCargoFacturable>[] => [
   {
     accessorKey: 'cuenta',
@@ -30,7 +30,7 @@ export const columns = ({
       </div>
     ),
     minSize: 110,
-    maxSize: 160,
+    maxSize: 160
   },
   {
     accessorKey: 'codigoEnerlova',
@@ -49,7 +49,7 @@ export const columns = ({
       </Badge>
     ),
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'descripcion',
@@ -67,7 +67,7 @@ export const columns = ({
       </div>
     ),
     minSize: 180,
-    maxSize: 250,
+    maxSize: 250
   },
   {
     accessorKey: 'tipo',
@@ -86,7 +86,7 @@ export const columns = ({
       </Badge>
     ),
     minSize: 100,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     accessorKey: 'fijoVariable',
@@ -115,7 +115,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'periodicoEventual',
@@ -145,7 +145,7 @@ export const columns = ({
       );
     },
     minSize: 110,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     accessorKey: 'concepto',
@@ -164,7 +164,7 @@ export const columns = ({
       </Badge>
     ),
     minSize: 120,
-    maxSize: 160,
+    maxSize: 160
   },
   {
     accessorKey: 'tarifa',
@@ -183,7 +183,7 @@ export const columns = ({
       </Badge>
     ),
     minSize: 110,
-    maxSize: 150,
+    maxSize: 150
   },
   {
     accessorKey: 'tipoMedidor',
@@ -202,7 +202,7 @@ export const columns = ({
       </Badge>
     ),
     minSize: 130,
-    maxSize: 170,
+    maxSize: 170
   },
   {
     id: 'actions',
@@ -224,6 +224,6 @@ export const columns = ({
       );
     },
     minSize: 80,
-    maxSize: 100,
-  },
+    maxSize: 100
+  }
 ];

@@ -9,14 +9,14 @@ import type { Route } from './+types/cambio-medidor';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Cambio de Medidor' },
-    { name: 'description', content: 'Cambio de Medidor' },
+    { name: 'description', content: 'Cambio de Medidor' }
   ];
 }
 
 export default function CambioMedidor() {
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Cambio de Medidor' },
+    { label: 'Cambio de Medidor' }
   ];
 
   return (

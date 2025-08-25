@@ -12,7 +12,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -22,7 +22,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -47,7 +47,7 @@ interface MenuFormData {
 
 const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
   menus,
-  onDataChange,
+  onDataChange
 }) => {
   const [editingMenu, setEditingMenu] = useState<Menus | null>(null);
   const [deletingMenu, setDeletingMenu] = useState<Menus | null>(null);
@@ -59,7 +59,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
     ruta: '',
     orden: 1,
     icono: '',
-    visible: true,
+    visible: true
   });
 
   const resetForm = () => {
@@ -68,7 +68,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
       ruta: '',
       orden: 1,
       icono: '',
-      visible: true,
+      visible: true
     });
   };
 
@@ -79,7 +79,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
       ruta: menu.ruta || '',
       orden: menu.orden || 1,
       icono: menu.icono || '',
-      visible: menu.esVisible,
+      visible: menu.esVisible
     });
   };
 
@@ -99,7 +99,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         nombre: formData.nombre.trim(),
         url: formData.ruta.trim() || undefined,
         orden: formData.orden,
-        icono: formData.icono.trim() || undefined,
+        icono: formData.icono.trim() || undefined
       });
 
       if (result.error) {
@@ -130,7 +130,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         nombre: formData.nombre.trim(),
         url: formData.ruta.trim() || undefined,
         orden: formData.orden,
-        icono: formData.icono.trim() || undefined,
+        icono: formData.icono.trim() || undefined
       });
 
       if (result.error) {
@@ -229,7 +229,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
                         onChange={e =>
                           setFormData({
                             ...formData,
-                            orden: parseInt(e.target.value) || 1,
+                            orden: parseInt(e.target.value) || 1
                           })
                         }
                         min={1}
@@ -336,7 +336,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
                   onChange={e =>
                     setFormData({
                       ...formData,
-                      orden: parseInt(e.target.value) || 1,
+                      orden: parseInt(e.target.value) || 1
                     })
                   }
                   min={1}

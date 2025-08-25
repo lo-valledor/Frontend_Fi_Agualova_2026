@@ -16,7 +16,7 @@ interface TableColumnsProps {
 export const columns = ({
   onEdit,
   onView,
-  editingCondicionContrato,
+  editingCondicionContrato
 }: TableColumnsProps): ColumnDef<GetCondicionesContrato>[] => [
   {
     id: 'id',
@@ -25,7 +25,7 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.id}</div>;
-    },
+    }
   },
   {
     id: 'descripcion',
@@ -34,7 +34,7 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.descripcion}</div>;
-    },
+    }
   },
   {
     id: 'concepto',
@@ -43,7 +43,7 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.concepto}</div>;
-    },
+    }
   },
   {
     id: 'factorPorcentual',
@@ -52,7 +52,7 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.factorPorcentual}</div>;
-    },
+    }
   },
   {
     id: 'valorFijo',
@@ -61,7 +61,7 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.valorFijo}</div>;
-    },
+    }
   },
   {
     accessorKey: 'estado',
@@ -86,7 +86,7 @@ export const columns = ({
     enableSorting: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
+    }
   },
   {
     id: 'actions',
@@ -98,6 +98,6 @@ export const columns = ({
         showView={true}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

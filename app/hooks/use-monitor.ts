@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import {
   type MonitorBasicData,
-  monitorService,
+  monitorService
 } from '~/services/monitorService';
 import type { Periodo, Sector } from '~/types/monitor';
 
@@ -61,7 +61,7 @@ export function useMonitorData() {
     data,
     loading,
     error,
-    refreshData,
+    refreshData
   };
 }
 
@@ -102,7 +102,7 @@ export function useMonitorPeriodosAndSectores() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -168,6 +168,6 @@ export const getDefaultDates = (
 
   return {
     fechaInicio: periodo?.FechaInicio || '',
-    fechaFin: today,
+    fechaFin: today
   };
 };

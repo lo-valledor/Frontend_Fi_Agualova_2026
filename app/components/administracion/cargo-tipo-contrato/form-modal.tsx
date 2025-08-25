@@ -7,7 +7,7 @@ import {
   Link2,
   ListChecks,
   PlusCircle,
-  Trash2,
+  Trash2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -24,7 +24,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -32,7 +32,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { ScrollArea } from '~/components/ui/scroll-area';
@@ -41,13 +41,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Select as UiSelect,
+  Select as UiSelect
 } from '~/components/ui/select';
 import type {
   BuscarCargoFacturable,
   CargoTipoContratoEditor,
   GetCargoTipoContrato,
-  GetCondicionesContrato,
+  GetCondicionesContrato
 } from '~/types/administracion';
 import type { TiposContrato } from '~/types/mantencion';
 
@@ -60,9 +60,9 @@ const formSchema = z.object({
     z.object({
       cargoId: z.number().min(1, 'El cargo es requerido'),
       condicionId: z.number().min(1, 'La condición es requerida'),
-      descripcion: z.string().min(1, 'La descripción es requerida'),
+      descripcion: z.string().min(1, 'La descripción es requerida')
     })
-  ),
+  )
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -88,7 +88,7 @@ export function FormModal({
   cargos,
   condiciones,
   initialData,
-  selectedItem,
+  selectedItem
 }: FormModalProps) {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -97,13 +97,13 @@ export function FormModal({
       cargoMonofasicoIds: [],
       cargoTrifasicoIds: [],
       cargoAmbosIds: [],
-      grilla: [],
-    },
+      grilla: []
+    }
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'grilla',
+    name: 'grilla'
   });
 
   useEffect(() => {
@@ -117,8 +117,8 @@ export function FormModal({
           grilla: initialData.grilla.map(g => ({
             cargoId: g.cargoId,
             condicionId: g.condicionId,
-            descripcion: g.descripcion,
-          })),
+            descripcion: g.descripcion
+          }))
         });
       } else {
         form.reset({
@@ -126,7 +126,7 @@ export function FormModal({
           cargoMonofasicoIds: [],
           cargoTrifasicoIds: [],
           cargoAmbosIds: [],
-          grilla: [],
+          grilla: []
         });
       }
     }
@@ -137,16 +137,16 @@ export function FormModal({
       tipoContratoId: data.tipoContratoId,
       configuraciones: data.grilla.map(g => ({
         ...g,
-        tipoContratoId: data.tipoContratoId,
+        tipoContratoId: data.tipoContratoId
       })),
       cargoMonofasicoIds: data.cargoMonofasicoIds,
       cargoTrifasicoIds: data.cargoTrifasicoIds,
-      cargoAmbosIds: data.cargoAmbosIds,
+      cargoAmbosIds: data.cargoAmbosIds
     };
     toast.promise(onSubmit(payload), {
       loading: 'Guardando configuración...',
       success: 'Configuración guardada exitosamente',
-      error: 'Error al guardar la configuración',
+      error: 'Error al guardar la configuración'
     });
     onClose();
   };

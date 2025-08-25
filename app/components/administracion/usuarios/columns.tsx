@@ -2,7 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 import {
   EstadoBadge,
-  TableActions,
+  TableActions
 } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
 import type { Usuarios } from '~/types/administracion';
@@ -14,7 +14,7 @@ interface TableColumnsProps {
 
 export const columns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: TableColumnsProps): ColumnDef<Usuarios>[] => [
   {
     accessorKey: 'nombres',
@@ -33,7 +33,7 @@ export const columns = ({
           </div>
         </div>
       );
-    },
+    }
   },
   {
     accessorKey: 'departamento',
@@ -46,7 +46,7 @@ export const columns = ({
         3: 'Ventas',
         4: 'Marketing',
         5: 'Finanzas',
-        6: 'Operaciones',
+        6: 'Operaciones'
       };
       return (
         <div className='text-sm text-gray-600 dark:text-gray-300'>
@@ -54,7 +54,7 @@ export const columns = ({
             `Departamento ${departamento}`}
         </div>
       );
-    },
+    }
   },
   {
     accessorKey: 'perfilId',
@@ -64,29 +64,27 @@ export const columns = ({
       const perfiles = {
         1: {
           name: 'Administrador',
-          color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+          color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
         },
         2: {
           name: 'Moderador',
           color:
-            'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+            'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
         },
         3: {
           name: 'Usuario',
-          color:
-            'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+          color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
         },
         4: {
           name: 'Visualizador',
-          color:
-            'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-        },
+          color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+        }
       };
 
       const perfil = perfiles[perfilId as keyof typeof perfiles] || perfiles[3];
 
       return <Badge className={perfil.color}>{perfil.name}</Badge>;
-    },
+    }
   },
   {
     accessorKey: 'activo',
@@ -97,7 +95,7 @@ export const columns = ({
     enableSorting: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
+    }
   },
   {
     accessorKey: 'fechaCreacion',
@@ -109,7 +107,7 @@ export const columns = ({
           {fecha.toLocaleDateString('es-ES')}
         </div>
       );
-    },
+    }
   },
   {
     id: 'actions',
@@ -123,6 +121,6 @@ export const columns = ({
           showView={false}
         />
       );
-    },
-  },
+    }
+  }
 ];

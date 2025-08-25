@@ -9,12 +9,12 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
+  CommandList
 } from '~/components/ui/command';
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from '~/components/ui/popover';
 import { cn } from '~/lib/utils';
 
@@ -42,7 +42,7 @@ export function Combobox({
   searchPlaceholder = 'Search...',
   emptyMessage = 'No results found.',
   disabled = false,
-  className,
+  className
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -67,7 +67,7 @@ export function Combobox({
       <PopoverContent
         className='w-[--radix-popover-trigger-width] p-0'
         style={{
-          maxHeight: 'var(--radix-popover-content-available-height)',
+          maxHeight: 'var(--radix-popover-content-available-height)'
         }}
       >
         <Command>

@@ -15,7 +15,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -23,7 +23,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import {
@@ -32,7 +32,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import type {
   Acometida,
@@ -41,7 +41,7 @@ import type {
   ComboNichos,
   ComboSectores,
   ContratosDisponibles,
-  CrearAcometidaProps,
+  CrearAcometidaProps
 } from '~/types/administracion';
 
 // Tipos para las opciones de react-select
@@ -73,7 +73,7 @@ export function AcometidaForm({
   isLoading = false,
   comboEmpalmes,
   comboNichos,
-  contratosDisponibles,
+  contratosDisponibles
 }: Readonly<AcometidaFormProps>) {
   // Hooks
   const { theme } = useTheme();
@@ -91,19 +91,19 @@ export function AcometidaForm({
       nichoId: '',
       contratoId: '',
       codigo: '',
-      limitePotencia: '',
-    },
+      limitePotencia: ''
+    }
   });
 
   // Preparar opciones para react-select
   const empalmeOptions: SelectOption[] = comboEmpalmes.map(empalme => ({
     value: empalme.id,
-    label: empalme.nombre,
+    label: empalme.nombre
   }));
 
   const nichoOptions: SelectOption[] = comboNichos.map(nicho => ({
     value: nicho.id,
-    label: nicho.nombre,
+    label: nicho.nombre
   }));
 
   // Verificar si el contrato actual está disponible
@@ -148,7 +148,7 @@ export function AcometidaForm({
         nichoId,
         contratoId,
         codigo: acometida.codigo || '',
-        limitePotencia: acometida.limitePotencia?.toString() || '0',
+        limitePotencia: acometida.limitePotencia?.toString() || '0'
       });
     } else {
       form.reset({
@@ -157,7 +157,7 @@ export function AcometidaForm({
         nichoId: '',
         contratoId: '',
         codigo: '',
-        limitePotencia: '0',
+        limitePotencia: '0'
       });
     }
   }, [
@@ -166,7 +166,7 @@ export function AcometidaForm({
     form,
     comboEmpalmes,
     comboNichos,
-    contratosDisponibles,
+    contratosDisponibles
   ]);
 
   // Handlers
@@ -217,7 +217,7 @@ export function AcometidaForm({
           empalmeId,
           nichoId,
           contratoId: contratoIdFinal,
-          limitePotencia,
+          limitePotencia
         };
 
         await onSubmit(submitData);
@@ -228,7 +228,7 @@ export function AcometidaForm({
           nichoId,
           contratoId: contratoIdFinal,
           codigo,
-          limitePotencia,
+          limitePotencia
         };
 
         await onSubmit(submitData);
@@ -271,7 +271,7 @@ export function AcometidaForm({
     if (contrato) {
       toast.success('Contrato seleccionado correctamente', {
         description: `${contrato.clienteNombre} ${contrato.clienteApellidos} - ${contrato.empresa}`,
-        duration: 3000,
+        duration: 3000
       });
     }
   };
@@ -742,81 +742,81 @@ export function AcometidaForm({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                      {contratosFiltrados.length === 0 && (
-                        <TableRow>
-                          <TableCell
-                            colSpan={6}
-                            className='text-center py-12 text-muted-foreground'
-                          >
-                            <div className='flex flex-col items-center gap-3'>
-                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
-                                <Search className='h-8 w-8 opacity-50' />
-                              </div>
-                              <div className='space-y-1'>
-                                <p className='font-medium text-slate-700 dark:text-slate-300'>
-                                  No se encontraron contratos
-                                </p>
-                                <p className='text-sm'>
-                                  {busquedaContrato
-                                    ? `No hay resultados para "${busquedaContrato}"`
-                                    : 'Escriba en el campo de búsqueda para filtrar contratos'}
-                                </p>
-                              </div>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      {contratosFiltrados.map(c => (
-                        <TableRow
-                          key={c.contratoId}
-                          className='hover:bg-muted/50 transition-colors'
+                    {contratosFiltrados.length === 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={6}
+                          className='text-center py-12 text-muted-foreground'
                         >
-                          <TableCell>
-                            <Badge
-                              variant='outline'
-                              className='font-mono text-xs'
-                            >
-                              {c.contratoId}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className='font-medium'>
-                            <div className='flex items-center gap-2'>
-                              <User className='h-4 w-4 text-muted-foreground flex-shrink-0' />
-                              <div className='min-w-0'>
-                                <p className='truncate'>
-                                  {c.clienteNombre} {c.clienteApellidos}
-                                </p>
-                              </div>
+                          <div className='flex flex-col items-center gap-3'>
+                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <Search className='h-8 w-8 opacity-50' />
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className='flex items-center gap-2'>
-                              <Building2 className='h-4 w-4 text-muted-foreground flex-shrink-0' />
-                              <p className='truncate'>{c.empresa}</p>
+                            <div className='space-y-1'>
+                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                No se encontraron contratos
+                              </p>
+                              <p className='text-sm'>
+                                {busquedaContrato
+                                  ? `No hay resultados para "${busquedaContrato}"`
+                                  : 'Escriba en el campo de búsqueda para filtrar contratos'}
+                              </p>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <p className='truncate'>{c.local}</p>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant='secondary' className='text-xs'>
-                              {c.tarifa}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
-                            <Button
-                              size='sm'
-                              onClick={() => handleSelectContrato(c.contratoId)}
-                              className='bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-3 text-xs'
-                            >
-                              Seleccionar
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {contratosFiltrados.map(c => (
+                      <TableRow
+                        key={c.contratoId}
+                        className='hover:bg-muted/50 transition-colors'
+                      >
+                        <TableCell>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
+                            {c.contratoId}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className='font-medium'>
+                          <div className='flex items-center gap-2'>
+                            <User className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <div className='min-w-0'>
+                              <p className='truncate'>
+                                {c.clienteNombre} {c.clienteApellidos}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className='flex items-center gap-2'>
+                            <Building2 className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <p className='truncate'>{c.empresa}</p>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <p className='truncate'>{c.local}</p>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant='secondary' className='text-xs'>
+                            {c.tarifa}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
+                          <Button
+                            size='sm'
+                            onClick={() => handleSelectContrato(c.contratoId)}
+                            className='bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-3 text-xs'
+                          >
+                            Seleccionar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
               {/* Información de resultados */}
               {contratosFiltrados.length > 0 && (

@@ -12,7 +12,7 @@ interface ClavesColumnsProps {
 
 export const createColumns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: ClavesColumnsProps): ColumnDef<Claves>[] => [
   {
     accessorKey: 'codigo',
@@ -23,7 +23,7 @@ export const createColumns = ({
       <Badge variant='outline' className='font-mono'>
         {row.getValue('codigo')}
       </Badge>
-    ),
+    )
   },
   {
     accessorKey: 'descripcion',
@@ -37,7 +37,7 @@ export const createColumns = ({
       >
         {row.getValue('descripcion')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'tipo',
@@ -48,7 +48,7 @@ export const createColumns = ({
       <div className='max-w-[150px] truncate' title={row.getValue('tipo')}>
         {row.getValue('tipo')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'estado',
@@ -69,7 +69,7 @@ export const createColumns = ({
           {estado ? 'Activo' : 'Inactivo'}
         </Badge>
       );
-    },
+    }
   },
   {
     id: 'actions',
@@ -81,6 +81,6 @@ export const createColumns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

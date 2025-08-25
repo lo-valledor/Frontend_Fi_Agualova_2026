@@ -10,7 +10,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -21,14 +21,14 @@ export default function DialogAgregarPrecios({
   codigo,
   mes,
   anio,
-  onSuccess,
+  onSuccess
 }: DialogAgregarPreciosProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [valores, setValores] = useState({
     valor1: '',
     valor2: '',
-    valor3: '',
+    valor3: ''
   });
 
   const handleSubmit = async () => {
@@ -45,7 +45,7 @@ export default function DialogAgregarPrecios({
         codigo: codigo,
         valor: parseFloat(valores.valor1),
         valor2: parseFloat(valores.valor2),
-        valor3: parseFloat(valores.valor3),
+        valor3: parseFloat(valores.valor3)
       });
 
       if (response.status === 200) {

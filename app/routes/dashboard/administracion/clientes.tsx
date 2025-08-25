@@ -10,7 +10,7 @@ import type { Route } from './+types/clientes';
 export function meta(_args: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Clientes' },
-    { name: 'description', content: 'Clientes' },
+    { name: 'description', content: 'Clientes' }
   ];
 }
 

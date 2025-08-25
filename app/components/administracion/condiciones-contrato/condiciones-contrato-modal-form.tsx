@@ -17,7 +17,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -26,7 +26,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
@@ -39,7 +39,7 @@ const condicionContratoFormSchema = z.object({
   conceptoId: z.number().min(1, { message: 'El concepto es requerido.' }),
   usaPorcentaje: z.boolean(),
   valor: z.number().min(0, { message: 'El valor debe ser mayor o igual a 0.' }),
-  estado: z.boolean(),
+  estado: z.boolean()
 });
 
 type CondicionContratoFormValues = z.infer<typeof condicionContratoFormSchema>;
@@ -59,7 +59,7 @@ export default function CondicionesContratoModalForm({
   onSuccess,
   condicionContrato,
   mode,
-  conceptos,
+  conceptos
 }: CondicionesContratoModalFormProps) {
   const { theme } = useTheme();
   const form = useForm<CondicionContratoFormValues>({
@@ -69,8 +69,8 @@ export default function CondicionesContratoModalForm({
       conceptoId: 0,
       usaPorcentaje: true,
       valor: 0,
-      estado: true,
-    },
+      estado: true
+    }
   });
 
   // Usar estilos compartidos para react-select
@@ -98,7 +98,7 @@ export default function CondicionesContratoModalForm({
         conceptoId: conceptoId,
         usaPorcentaje: usaPorcentaje,
         valor: valor,
-        estado: condicionContrato?.estado ?? true,
+        estado: condicionContrato?.estado ?? true
       });
     }
   }, [isOpen, condicionContrato, form, conceptos]);
@@ -167,7 +167,7 @@ export default function CondicionesContratoModalForm({
                   <Select
                     options={conceptos.map(concepto => ({
                       value: concepto.id,
-                      label: concepto.descripcion,
+                      label: concepto.descripcion
                     }))}
                     value={
                       field.value
@@ -175,7 +175,7 @@ export default function CondicionesContratoModalForm({
                             value: field.value,
                             label:
                               conceptos.find(c => c.id === field.value)
-                                ?.descripcion || '',
+                                ?.descripcion || ''
                           }
                         : null
                     }

@@ -3,7 +3,7 @@ import {
   CheckCircle,
   Edit3,
   Loader2,
-  PencilIcon,
+  PencilIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,7 +18,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -39,7 +39,7 @@ export default function DialogModificarPrecio({
   indice,
   descripcion = '',
   valorActual = '',
-  onSuccess,
+  onSuccess
 }: DialogModificarPrecioProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [valor, setValor] = useState(valorActual);
@@ -103,7 +103,7 @@ export default function DialogModificarPrecio({
         indice: indice,
         valor: valor,
         motivo: motivo,
-        usuario: user.username,
+        usuario: user.username
       };
 
       const response = await api.post(
@@ -221,7 +221,9 @@ export default function DialogModificarPrecio({
                 <span className='sm:hidden'>Modificar</span>
               </DialogTitle>
               <DialogDescription className='text-slate-600 dark:text-slate-400 text-xs sm:text-sm'>
-                <span className='hidden sm:inline'>Modifica el valor del cargo y especifica el motivo del cambio</span>
+                <span className='hidden sm:inline'>
+                  Modifica el valor del cargo y especifica el motivo del cambio
+                </span>
                 <span className='sm:hidden'>Modifica el valor y motivo</span>
               </DialogDescription>
             </div>
@@ -290,7 +292,9 @@ export default function DialogModificarPrecio({
               htmlFor='motivo'
               className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'
             >
-              <span className='hidden sm:inline'>Motivo de la Modificación</span>
+              <span className='hidden sm:inline'>
+                Motivo de la Modificación
+              </span>
               <span className='sm:hidden'>Motivo</span>
             </Label>
             <Textarea

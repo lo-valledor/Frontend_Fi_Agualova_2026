@@ -60,5 +60,5 @@ export const authService = {
     } catch (_error) {
       throw new Error('Error al refrescar el token');
     }
-  },
+  }
 };

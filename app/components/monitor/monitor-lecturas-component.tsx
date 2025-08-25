@@ -10,7 +10,7 @@ import {
   ListFilter,
   MapPin,
   Search,
-  Settings2,
+  Settings2
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -31,12 +31,12 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import {
   findActivePeriod,
   getDefaultDates,
-  validateSearchParams,
+  validateSearchParams
 } from '~/hooks/use-monitor';
 import { cn } from '~/lib/utils';
 import { type Clave, type Periodo, type Sector } from '~/types/monitor';
@@ -53,11 +53,11 @@ const MonitorLecturasComponent = ({
   periodos,
   sectores,
   claves,
-  error,
+  error
 }: MonitorLecturasComponentProps) => {
   const pageBreadcrumbs = [
     { label: 'Monitor' },
-    { label: 'Monitor de Lecturas' },
+    { label: 'Monitor de Lecturas' }
   ];
 
   // Estados del formulario de filtros

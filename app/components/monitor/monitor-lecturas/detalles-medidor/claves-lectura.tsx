@@ -14,12 +14,11 @@ interface ClavesLecturaProps {
 export default function ClavesLectura({
   data,
   error,
-  onAceptarLectura,
+  onAceptarLectura
 }: Readonly<ClavesLecturaProps>) {
   // El botón se habilita solo si hay claves críticas (diferente de LEOK)
   // LEOK significa que la lectura ya está OK, otras claves indican problemas críticos
   const hasClaveCritica = data.length > 0 && data[0].CLA_Codigo !== 'LEOK';
-
 
   return (
     <Card className='w-full'>

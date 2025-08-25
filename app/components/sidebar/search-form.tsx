@@ -7,7 +7,7 @@ import { Label } from '~/components/ui/label';
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarInput,
+  SidebarInput
 } from '~/components/ui/sidebar';
 
 interface SearchFormProps extends React.ComponentProps<'form'> {

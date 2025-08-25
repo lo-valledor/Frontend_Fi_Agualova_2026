@@ -79,7 +79,7 @@ export function useUserProfileSimple(): UseUserProfileSimpleReturn {
             nombres: data.nombres,
             apellidos: data.apellidos,
             departamento: data.departamento,
-            activo: data.activo,
+            activo: data.activo
           };
           setUserData(updatedUserData);
         } else {
@@ -118,6 +118,6 @@ export function useUserProfileSimple(): UseUserProfileSimpleReturn {
     error,
     updateProfile,
     refreshProfile,
-    clearCache,
+    clearCache
   };
 }

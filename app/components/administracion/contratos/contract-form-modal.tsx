@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -21,7 +21,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import {
@@ -30,7 +30,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import { Textarea } from '~/components/ui/textarea';
 import type {
@@ -40,7 +40,7 @@ import type {
   GetContratos,
   GetLocal,
   GetMadres,
-  GetPropietario,
+  GetPropietario
 } from '~/types/administracion';
 import type { Tarifas, TiposContrato } from '~/types/mantencion';
 
@@ -70,7 +70,7 @@ export function ContractFormModal({
   propietario,
   local,
   madres,
-  comuna,
+  comuna
 }: Readonly<ContractFormModalProps>) {
   // Estados para los modales de selección
   const [modalPropietario, setModalPropietario] = useState(false);
@@ -101,7 +101,7 @@ export function ContractFormModal({
     cicloFacturacion: '',
     potenciaContratada: '',
     liberadoCorte: false,
-    madre: '',
+    madre: ''
   });
 
   // Función para formatear fechas de forma segura
@@ -167,7 +167,7 @@ export function ContractFormModal({
         cicloFacturacion: contract.cicloFacturacion || 'Ciclo Día 15',
         potenciaContratada: contract.potenciaContratada,
         liberadoCorte: contract.liberadoCorte,
-        madre: contract.madre || '',
+        madre: contract.madre || ''
       });
     } else {
       setFormData({
@@ -186,7 +186,7 @@ export function ContractFormModal({
         cicloFacturacion: 'Ciclo Día 15',
         potenciaContratada: '',
         liberadoCorte: false,
-        madre: '',
+        madre: ''
       });
     }
   }, [contract, mode, isOpen, tipoContrato, tarifas]);
@@ -332,14 +332,14 @@ export function ContractFormModal({
       // Campos específicos para crear
       ...(mode === 'add' && {
         guardaCliente: formData.nombreCliente,
-        esMadre: formData.madre ? 'S' : 'N',
+        esMadre: formData.madre ? 'S' : 'N'
       }),
 
       // Campos específicos para editar
       ...(mode === 'edit' && {
         codigo: contract?.codigoContrato || '',
-        fechaTermino: fechaTermino,
-      }),
+        fechaTermino: fechaTermino
+      })
     } as any; // Usar any temporalmente para evitar conflictos de tipos
 
     try {

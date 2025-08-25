@@ -22,7 +22,7 @@ const colorVariants = {
     title: 'text-sky-900 dark:text-sky-100',
     description: 'text-sky-700 dark:text-sky-300',
     button: 'hover:bg-sky-100 dark:hover:bg-sky-900/50',
-    chevron: 'text-sky-600 dark:text-sky-400',
+    chevron: 'text-sky-600 dark:text-sky-400'
   },
   blue: {
     container:
@@ -31,7 +31,7 @@ const colorVariants = {
     title: 'text-blue-900 dark:text-blue-100',
     description: 'text-blue-700 dark:text-blue-300',
     button: 'hover:bg-blue-100 dark:hover:bg-blue-900/50',
-    chevron: 'text-blue-600 dark:text-blue-400',
+    chevron: 'text-blue-600 dark:text-blue-400'
   },
   green: {
     container:
@@ -40,7 +40,7 @@ const colorVariants = {
     title: 'text-green-900 dark:text-green-100',
     description: 'text-green-700 dark:text-green-300',
     button: 'hover:bg-green-100 dark:hover:bg-green-900/50',
-    chevron: 'text-green-600 dark:text-green-400',
+    chevron: 'text-green-600 dark:text-green-400'
   },
   amber: {
     container:
@@ -49,15 +49,15 @@ const colorVariants = {
     title: 'text-amber-900 dark:text-amber-100',
     description: 'text-amber-700 dark:text-amber-300',
     button: 'hover:bg-amber-100 dark:hover:bg-amber-900/50',
-    chevron: 'text-amber-600 dark:text-amber-400',
-  },
+    chevron: 'text-amber-600 dark:text-amber-400'
+  }
 };
 
 export default function CollapsibleHeader({
   isOpen,
   title,
   description,
-  colorScheme,
+  colorScheme
 }: CollapsibleHeaderProps) {
   const colors = colorVariants[colorScheme];
 

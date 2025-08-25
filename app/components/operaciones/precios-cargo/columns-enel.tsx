@@ -25,7 +25,7 @@ export const columns = (
         {row.getValue('codigo')}
       </div>
     ),
-    size: 100,
+    size: 100
   },
   {
     accessorKey: 'codigoener',
@@ -41,7 +41,7 @@ export const columns = (
         {row.getValue('codigoener')}
       </div>
     ),
-    size: 120,
+    size: 120
   },
   {
     accessorKey: 'descripcion',
@@ -57,7 +57,7 @@ export const columns = (
         {row.getValue('descripcion')}
       </div>
     ),
-    size: 200,
+    size: 200
   },
   {
     accessorKey: 'valor',
@@ -73,7 +73,7 @@ export const columns = (
         {row.getValue('valor')}
       </div>
     ),
-    size: 80,
+    size: 80
   },
   {
     accessorKey: 'valor2',
@@ -89,7 +89,7 @@ export const columns = (
         {row.getValue('valor2')}
       </div>
     ),
-    size: 80,
+    size: 80
   },
   {
     accessorKey: 'valor3',
@@ -105,7 +105,7 @@ export const columns = (
         {row.getValue('valor3')}
       </div>
     ),
-    size: 80,
+    size: 80
   },
   {
     accessorKey: 'valoractual',
@@ -128,7 +128,7 @@ export const columns = (
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              maximumFractionDigits: 2
             });
       };
 
@@ -144,7 +144,7 @@ export const columns = (
         </div>
       );
     },
-    size: 90,
+    size: 90
   },
   {
     accessorKey: 'valoractual2',
@@ -167,7 +167,7 @@ export const columns = (
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              maximumFractionDigits: 2
             });
       };
 
@@ -183,7 +183,7 @@ export const columns = (
         </div>
       );
     },
-    size: 90,
+    size: 90
   },
   {
     accessorKey: 'valoractual3',
@@ -206,7 +206,7 @@ export const columns = (
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              maximumFractionDigits: 2
             });
       };
 
@@ -222,7 +222,7 @@ export const columns = (
         </div>
       );
     },
-    size: 90,
+    size: 90
   },
   {
     id: 'actions',
@@ -262,6 +262,6 @@ export const columns = (
       );
     },
     size: 100,
-    enableSorting: false,
-  },
+    enableSorting: false
+  }
 ];

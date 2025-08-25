@@ -19,7 +19,7 @@ interface TarifasComponentProps {
 }
 
 export default function TarifasComponent({
-  tarifas,
+  tarifas
 }: Readonly<TarifasComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTarifa, setSelectedTarifa] = useState<Tarifas | undefined>(
@@ -71,7 +71,7 @@ export default function TarifasComponent({
 
   const columns = createColumns({
     onEdit: handleEdit,
-    onDelete: handleDelete,
+    onDelete: handleDelete
   });
 
   return (

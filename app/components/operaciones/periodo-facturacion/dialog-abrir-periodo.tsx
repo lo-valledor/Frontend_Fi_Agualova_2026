@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -30,7 +30,7 @@ const meses = [
   'Septiembre',
   'Octubre',
   'Noviembre',
-  'Diciembre',
+  'Diciembre'
 ];
 
 interface DialogAbrirPeriodoProps {
@@ -46,7 +46,7 @@ export default function DialogAbrirPeriodo({
   onOpenChange,
   selectedMonth = '',
   selectedYear = '',
-  onSuccess,
+  onSuccess
 }: DialogAbrirPeriodoProps) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -65,7 +65,7 @@ export default function DialogAbrirPeriodo({
       const params = {
         nombre: `${nombreMes} ${selectedYear}`,
         mesi: selectedMonth,
-        añoi: selectedYear,
+        añoi: selectedYear
       };
       const response = await api.post('/ingresa-periodo', params);
 
@@ -116,7 +116,8 @@ export default function DialogAbrirPeriodo({
             Confirmar Apertura
           </DialogTitle>
           <DialogDescription className='text-xs sm:text-sm text-muted-foreground'>
-            ¿Está seguro que desea abrir el periodo para el mes y año seleccionado?
+            ¿Está seguro que desea abrir el periodo para el mes y año
+            seleccionado?
           </DialogDescription>
         </DialogHeader>
         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 py-3'>

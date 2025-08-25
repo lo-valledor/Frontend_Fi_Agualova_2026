@@ -13,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import api from '~/lib/api';
 import { type EstadoCierreLecturas } from '~/types/operaciones';
@@ -35,19 +35,24 @@ export default function AlertCerrarLecturas({
   onSuccess,
   onOpenChange,
   isOpen,
-  totalLecturas,
+  totalLecturas
 }: AlertCerrarLecturasProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Calcular alertas en las filas seleccionadas
   const alertSummary = useMemo(() => {
-    const warningRows = selectedRows.filter(row => row.cantidadClaveNaranja > 0);
-    const warningCount = warningRows.reduce((acc, row) => acc + row.cantidadClaveNaranja, 0);
-    
+    const warningRows = selectedRows.filter(
+      row => row.cantidadClaveNaranja > 0
+    );
+    const warningCount = warningRows.reduce(
+      (acc, row) => acc + row.cantidadClaveNaranja,
+      0
+    );
+
     return {
       hasWarnings: warningRows.length > 0,
       warningCount,
-      warningNichos: warningRows.map(row => row.nichoDescripcion),
+      warningNichos: warningRows.map(row => row.nichoDescripcion)
     };
   }, [selectedRows]);
 
@@ -71,7 +76,7 @@ export default function AlertCerrarLecturas({
           nichoId: row.nichoId,
           cantLecturas: cantLecturas,
           cicloFact: cicloFact,
-          periodo: periodo,
+          periodo: periodo
         });
         if (response.status === 200) {
           successCount++;
@@ -120,7 +125,9 @@ export default function AlertCerrarLecturas({
         <DialogHeader className='pb-3 sm:pb-4'>
           <DialogTitle className='text-lg sm:text-xl font-semibold text-red-700 dark:text-red-300 flex items-center gap-2'>
             <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5' />
-            <span className='hidden sm:inline'>Confirmar Cierre de Lecturas</span>
+            <span className='hidden sm:inline'>
+              Confirmar Cierre de Lecturas
+            </span>
             <span className='sm:hidden'>Confirmar Cierre</span>
           </DialogTitle>
         </DialogHeader>
@@ -130,14 +137,17 @@ export default function AlertCerrarLecturas({
               <span className='hidden sm:inline'>
                 Estás por cerrar{' '}
                 <span className='font-bold'>{totalLecturas}</span> lecturas para{' '}
-                <span className='font-bold'>{selectedRows.length}</span> nicho(s)
-                del ciclo <span className='font-bold'>{cicloFact}</span> del
-                periodo <span className='font-bold'>{periodo}</span>.
+                <span className='font-bold'>{selectedRows.length}</span>{' '}
+                nicho(s) del ciclo{' '}
+                <span className='font-bold'>{cicloFact}</span> del periodo{' '}
+                <span className='font-bold'>{periodo}</span>.
               </span>
               <span className='sm:hidden'>
-                Cerrar <span className='font-bold'>{totalLecturas}</span> lecturas de{' '}
-                <span className='font-bold'>{selectedRows.length}</span> nicho(s),
-                ciclo <span className='font-bold'>{cicloFact}</span>, período <span className='font-bold'>{periodo}</span>.
+                Cerrar <span className='font-bold'>{totalLecturas}</span>{' '}
+                lecturas de{' '}
+                <span className='font-bold'>{selectedRows.length}</span>{' '}
+                nicho(s), ciclo <span className='font-bold'>{cicloFact}</span>,
+                período <span className='font-bold'>{periodo}</span>.
               </span>
             </p>
             <p className='text-xs sm:text-sm text-red-700 dark:text-red-300 mt-2'>
@@ -146,8 +156,8 @@ export default function AlertCerrarLecturas({
                 afectará la facturación de los usuarios.
               </span>
               <span className='sm:hidden'>
-                Acción <span className='font-bold'>irreversible</span>.
-                Afecta facturación.
+                Acción <span className='font-bold'>irreversible</span>. Afecta
+                facturación.
               </span>
             </p>
           </div>
@@ -160,7 +170,8 @@ export default function AlertCerrarLecturas({
                 <div className='flex-1'>
                   <p className='text-xs sm:text-sm text-orange-700 dark:text-orange-300 font-medium'>
                     <span className='hidden sm:inline'>
-                      ⚠️ Atención: {alertSummary.warningCount} lecturas con claves de alerta
+                      ⚠️ Atención: {alertSummary.warningCount} lecturas con
+                      claves de alerta
                     </span>
                     <span className='sm:hidden'>
                       ⚠️ {alertSummary.warningCount} alertas
@@ -168,8 +179,10 @@ export default function AlertCerrarLecturas({
                   </p>
                   <p className='text-xs text-orange-600 dark:text-orange-400 mt-1'>
                     <span className='hidden sm:inline'>
-                      Nichos con alertas: {alertSummary.warningNichos.slice(0, 3).join(', ')}
-                      {alertSummary.warningNichos.length > 3 && ` y ${alertSummary.warningNichos.length - 3} más`}
+                      Nichos con alertas:{' '}
+                      {alertSummary.warningNichos.slice(0, 3).join(', ')}
+                      {alertSummary.warningNichos.length > 3 &&
+                        ` y ${alertSummary.warningNichos.length - 3} más`}
                     </span>
                     <span className='sm:hidden'>
                       {alertSummary.warningNichos.length} nicho(s) con alertas
@@ -181,13 +194,20 @@ export default function AlertCerrarLecturas({
           )}
 
           <p className='text-xs sm:text-sm font-medium'>
-            <span className='hidden sm:inline'>¿Estás seguro de que deseas continuar?</span>
+            <span className='hidden sm:inline'>
+              ¿Estás seguro de que deseas continuar?
+            </span>
             <span className='sm:hidden'>¿Continuar?</span>
           </p>
         </DialogDescription>
         <DialogFooter className='flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4'>
           <DialogClose asChild>
-            <Button variant='outline' disabled={isLoading} size='sm' className='w-full sm:w-auto order-2 sm:order-1'>
+            <Button
+              variant='outline'
+              disabled={isLoading}
+              size='sm'
+              className='w-full sm:w-auto order-2 sm:order-1'
+            >
               Cancelar
             </Button>
           </DialogClose>

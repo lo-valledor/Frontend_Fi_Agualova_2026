@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 
 import type { Route } from './+types/not-found';
@@ -16,7 +16,7 @@ import type { Route } from './+types/not-found';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Página no encontrada | Enerlova' },
-    { name: 'description', content: 'La página que buscas no existe' },
+    { name: 'description', content: 'La página que buscas no existe' }
   ];
 }
 

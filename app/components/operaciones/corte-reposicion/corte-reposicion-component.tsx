@@ -8,7 +8,7 @@ import {
   ListChecks,
   Loader2,
   Play,
-  Search,
+  Search
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -21,12 +21,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import {
   Dialog,
@@ -34,13 +34,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Table, TableBody, TableCell, TableRow } from '~/components/ui/table';
 import api from '~/lib/api';
 import type {
   ConsultarMantenedorRevisionCorte,
-  TotalesCorteReposicion,
+  TotalesCorteReposicion
 } from '~/types/operaciones';
 
 import { columns } from './columns';
@@ -52,7 +52,7 @@ interface CorteReposicionComponentProps {
 
 export default function CorteReposicionComponent({
   totalesData,
-  mantenedorCorteData: initialMantenedorCorteData,
+  mantenedorCorteData: initialMantenedorCorteData
 }: Readonly<CorteReposicionComponentProps>) {
   const [isRevisionOpen, setIsRevisionOpen] = useState(true);
   const [mantenedorCorteData, setMantenedorCorteData] = useState<
@@ -69,7 +69,7 @@ export default function CorteReposicionComponent({
   const handleExportarExcel = async () => {
     try {
       const res = await api.get('exportar-mantenedor-revision', {
-        responseType: 'blob',
+        responseType: 'blob'
       });
 
       const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
@@ -89,7 +89,7 @@ export default function CorteReposicionComponent({
   const handleExportarExcelCorte = async () => {
     try {
       const res = await api.get('exportar-revision-corte', {
-        responseType: 'blob',
+        responseType: 'blob'
       });
 
       const url = window.URL.createObjectURL(new Blob([res.data as Blob]));

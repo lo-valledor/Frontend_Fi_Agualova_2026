@@ -8,12 +8,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
 import api from '~/lib/api';
@@ -50,7 +50,7 @@ export default function CrearArchivosSapComponent() {
   const handleDescargarEncabezado = async () => {
     try {
       const response = await api.get('/exportar-encabezado', {
-        responseType: 'blob',
+        responseType: 'blob'
       });
       // Extract filename from headers or use fallback with proper format
       const filename =
@@ -74,7 +74,7 @@ export default function CrearArchivosSapComponent() {
   const handleDescargarDetalle = async () => {
     try {
       const response = await api.get('/exportar-detalle', {
-        responseType: 'blob',
+        responseType: 'blob'
       });
       // Extract filename from headers or use fallback with proper format
       const filename =

@@ -9,7 +9,7 @@ import {
   ClockIcon,
   KeyIcon,
   Shield,
-  Users,
+  Users
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -23,7 +23,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
@@ -33,7 +33,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Skeleton } from '~/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
@@ -43,7 +43,7 @@ import type {
   PeriodoAbierto,
   RevisarPrecioDos,
   RevisarPrecioUno,
-  ValidacionUsuarioResponse,
+  ValidacionUsuarioResponse
 } from '~/types/operaciones';
 
 import { columnsEnel } from './columns-enel';
@@ -74,7 +74,7 @@ export default function RevisarPrecioComponent({
   isLoading,
   error,
   onRecargarPrecios,
-  isLoadingPrecios,
+  isLoadingPrecios
 }: Readonly<RevisarPrecioComponentProps>) {
   // Estados UI
   const [contrasena, setContrasena] = useState<string>('');
@@ -114,14 +114,14 @@ export default function RevisarPrecioComponent({
   const validarUsuario = async () => {
     try {
       const data = {
-        contrasena: contrasena,
+        contrasena: contrasena
       };
 
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
       };
 
       const response = await api.post<ValidacionUsuarioResponse>(
@@ -409,7 +409,7 @@ export default function RevisarPrecioComponent({
             };
 
             return <div className='text-center'>{renderActionContent()}</div>;
-          },
+          }
         };
       }
       return col;
@@ -439,7 +439,7 @@ export default function RevisarPrecioComponent({
                 )}
               </div>
             );
-          },
+          }
         };
       }
       return col;

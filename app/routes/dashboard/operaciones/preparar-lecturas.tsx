@@ -11,7 +11,7 @@ import type { Route } from './+types/preparar-lecturas';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Preparar Lecturas' },
-    { name: 'description', content: 'Preparar Lecturas' },
+    { name: 'description', content: 'Preparar Lecturas' }
   ];
 }
 
@@ -23,7 +23,7 @@ export async function clientLoader() {
       periodoAbierto: null,
       lecturasPendientes: null,
       sectores: null,
-      opcionesPreparar: null,
+      opcionesPreparar: null
     };
   }
 
@@ -42,7 +42,7 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Preparar Lecturas' },
+    { label: 'Preparar Lecturas' }
   ];
 
   // Función para recargar los datos de asignación de sectores

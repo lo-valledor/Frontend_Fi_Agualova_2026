@@ -9,14 +9,14 @@ import type { Route } from './+types/anular-factura-impresa';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Anular Factura Impresa' },
-    { name: 'description', content: 'Anular Factura Impresa' },
+    { name: 'description', content: 'Anular Factura Impresa' }
   ];
 }
 
 export default function AnularFacturaImpresa() {
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Anular Factura Impresa' },
+    { label: 'Anular Factura Impresa' }
   ];
 
   return (

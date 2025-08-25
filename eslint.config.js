@@ -16,29 +16,29 @@ export default [
       '*.config.js',
       '*.config.ts',
       'public/**/*',
-      '.react-router/**/*', // Ahora esto será ignorado globalmente
-    ],
+      '.react-router/**/*' // Ahora esto será ignorado globalmente
+    ]
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     plugins: {
       react: pluginReact,
-      'unused-imports': unusedImports,
+      'unused-imports': unusedImports
     },
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        ecmaFeatures: { jsx: true },
+        ecmaFeatures: { jsx: true }
       },
       globals: {
         ...globals.browser,
-        ...globals.node,
-      },
+        ...globals.node
+      }
     },
     settings: {
       react: {
-        version: 'detect',
-      },
+        version: 'detect'
+      }
     },
     rules: {
       // React rules
@@ -57,8 +57,8 @@ export default [
           varsIgnorePattern: '^_',
           args: 'after-used',
           argsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-        },
+          caughtErrorsIgnorePattern: '^_'
+        }
       ],
 
       // General code quality
@@ -68,7 +68,7 @@ export default [
 
       // TypeScript specific
       '@typescript-eslint/no-unused-vars': 'off', // handled by unused-imports
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
-  },
+      '@typescript-eslint/no-explicit-any': 'off'
+    }
+  }
 ];

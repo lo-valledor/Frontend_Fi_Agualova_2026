@@ -12,7 +12,7 @@ interface ConceptosColumnsProps {
 
 export const createColumns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: ConceptosColumnsProps): ColumnDef<Conceptos>[] => [
   {
     accessorKey: 'denominacion',
@@ -26,7 +26,7 @@ export const createColumns = ({
       >
         {row.getValue('denominacion')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'descripcion',
@@ -40,7 +40,7 @@ export const createColumns = ({
       >
         {row.getValue('descripcion')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'unidad',
@@ -51,7 +51,7 @@ export const createColumns = ({
       <Badge variant='outline' className='font-mono'>
         {row.getValue('unidad')}
       </Badge>
-    ),
+    )
   },
   {
     accessorKey: 'fijoVariable',
@@ -73,7 +73,7 @@ export const createColumns = ({
           {valor === 'V' ? 'Variable' : 'Fijo'}
         </Badge>
       );
-    },
+    }
   },
   {
     accessorKey: 'asociadoDescripcion',
@@ -87,7 +87,7 @@ export const createColumns = ({
       >
         {row.getValue('asociadoDescripcion') || 'N/A'}
       </div>
-    ),
+    )
   },
   {
     id: 'actions',
@@ -99,6 +99,6 @@ export const createColumns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

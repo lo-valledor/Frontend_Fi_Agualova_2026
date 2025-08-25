@@ -6,7 +6,7 @@ import {
   History,
   TrendingDown,
   TrendingUp,
-  Zap,
+  Zap
 } from 'lucide-react';
 import {
   Bar,
@@ -17,7 +17,7 @@ import {
   LineChart,
   Tooltip,
   XAxis,
-  YAxis,
+  YAxis
 } from 'recharts';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -31,7 +31,7 @@ import {
   SheetContent,
   SheetDescription,
   SheetHeader,
-  SheetTitle,
+  SheetTitle
 } from '~/components/ui/sheet';
 import {
   Table,
@@ -39,7 +39,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import api from '~/lib/api';
@@ -47,7 +47,7 @@ import type {
   CompararConsumoMedidor,
   EtapaCuatro,
   EtapaDos,
-  EtapaUno,
+  EtapaUno
 } from '~/types/monitor';
 
 interface AnalisisConsumoProps {
@@ -63,7 +63,7 @@ export default function AnalisisConsumo({
   dataEtapaUno,
   dataEtapaDos,
   dataEtapaCuatro,
-  error,
+  error
 }: AnalisisConsumoProps) {
   const [periodoSeleccionado, setPeriodoSeleccionado] =
     useState<PeriodoTiempo>('todo');
@@ -84,7 +84,7 @@ export default function AnalisisConsumo({
       try {
         const response = await api.post('/comparar-consumo-medidor', {
           numeroSerie,
-          periodoActual,
+          periodoActual
         });
         setDatosComparacion(response.data as CompararConsumoMedidor[]);
       } catch (e) {
@@ -123,7 +123,7 @@ export default function AnalisisConsumo({
       'Septiembre',
       'Octubre',
       'Noviembre',
-      'Diciembre',
+      'Diciembre'
     ];
     return months[monthNumber - 1];
   };
@@ -215,7 +215,7 @@ export default function AnalisisConsumo({
         periodoMaximo,
         periodoMinimo,
         ultimoPeriodo,
-        totalPeriodos: consumos.length,
+        totalPeriodos: consumos.length
       };
     };
   }, []);
@@ -237,7 +237,7 @@ export default function AnalisisConsumo({
       if (!groupedByMonth[monthName]) {
         groupedByMonth[monthName] = {
           consumoActual: null,
-          consumoAnterior: null,
+          consumoAnterior: null
         };
       }
 
@@ -250,7 +250,7 @@ export default function AnalisisConsumo({
 
     return Object.entries(groupedByMonth).map(([mes, consumos]) => ({
       mes,
-      ...consumos,
+      ...consumos
     }));
   }, [datosComparacion]);
 
@@ -314,7 +314,7 @@ export default function AnalisisConsumo({
     unit,
     period,
     trend,
-    color = 'blue',
+    color = 'blue'
   }: {
     icon: React.ReactNode;
     label: string;
@@ -332,7 +332,7 @@ export default function AnalisisConsumo({
         'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400',
       purple:
         'bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800 text-purple-600 dark:text-purple-400',
-      red: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400',
+      red: 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400'
     };
 
     return (
@@ -631,13 +631,13 @@ export default function AnalisisConsumo({
                       >
                         <LineChart
                           data={[
-                            ...getDatosFiltrados(dataEtapaCuatro),
+                            ...getDatosFiltrados(dataEtapaCuatro)
                           ].reverse()}
                           margin={{
                             top: 20,
                             right: 30,
                             left: 20,
-                            bottom: 20,
+                            bottom: 20
                           }}
                         >
                           <CartesianGrid
@@ -652,7 +652,7 @@ export default function AnalisisConsumo({
                             axisLine={false}
                             tick={{
                               fill: 'var(--color-detallesMedidor)',
-                              fontSize: 11,
+                              fontSize: 11
                             }}
                           />
                           <YAxis
@@ -661,7 +661,7 @@ export default function AnalisisConsumo({
                             tickMargin={8}
                             tick={{
                               fill: 'var(--color-detallesMedidor)',
-                              fontSize: 11,
+                              fontSize: 11
                             }}
                           />
                           <Tooltip
@@ -681,13 +681,13 @@ export default function AnalisisConsumo({
                               fill: 'var(--color-detallesMedidor)',
                               strokeWidth: 2,
                               stroke: '#fff',
-                              r: 4,
+                              r: 4
                             }}
                             activeDot={{
                               r: 6,
                               fill: 'var(--color-detallesMedidor)',
                               stroke: '#fff',
-                              strokeWidth: 2,
+                              strokeWidth: 2
                             }}
                           />
                         </LineChart>
@@ -726,7 +726,7 @@ export default function AnalisisConsumo({
                               top: 20,
                               right: 30,
                               left: 20,
-                              bottom: 50,
+                              bottom: 50
                             }}
                           >
                             <CartesianGrid
@@ -741,7 +741,7 @@ export default function AnalisisConsumo({
                               axisLine={false}
                               tick={{
                                 fill: 'var(--color-detallesMedidor)',
-                                fontSize: 12,
+                                fontSize: 12
                               }}
                             />
                             <YAxis
@@ -750,7 +750,7 @@ export default function AnalisisConsumo({
                               tickMargin={8}
                               tick={{
                                 fill: 'var(--color-detallesMedidor)',
-                                fontSize: 12,
+                                fontSize: 12
                               }}
                             />
                             <Tooltip
@@ -994,7 +994,7 @@ export default function AnalisisConsumo({
                     top: 20,
                     right: 20,
                     left: 20,
-                    bottom: 20,
+                    bottom: 20
                   }}
                 >
                   <CartesianGrid
@@ -1009,7 +1009,7 @@ export default function AnalisisConsumo({
                     axisLine={false}
                     tick={{
                       fill: 'var(--color-detallesMedidor)',
-                      fontSize: 10,
+                      fontSize: 10
                     }}
                   />
                   <YAxis
@@ -1018,7 +1018,7 @@ export default function AnalisisConsumo({
                     tickMargin={8}
                     tick={{
                       fill: 'var(--color-detallesMedidor)',
-                      fontSize: 10,
+                      fontSize: 10
                     }}
                   />
                   <Tooltip
@@ -1038,13 +1038,13 @@ export default function AnalisisConsumo({
                       fill: 'var(--color-detallesMedidor)',
                       strokeWidth: 2,
                       stroke: '#fff',
-                      r: 3,
+                      r: 3
                     }}
                     activeDot={{
                       r: 5,
                       fill: 'var(--color-detallesMedidor)',
                       stroke: '#fff',
-                      strokeWidth: 2,
+                      strokeWidth: 2
                     }}
                   />
                 </LineChart>
@@ -1078,7 +1078,7 @@ export default function AnalisisConsumo({
                     top: 20,
                     right: 20,
                     left: 20,
-                    bottom: 40,
+                    bottom: 40
                   }}
                 >
                   <CartesianGrid
@@ -1093,7 +1093,7 @@ export default function AnalisisConsumo({
                     axisLine={false}
                     tick={{
                       fill: 'var(--color-detallesMedidor)',
-                      fontSize: 10,
+                      fontSize: 10
                     }}
                   />
                   <YAxis
@@ -1102,7 +1102,7 @@ export default function AnalisisConsumo({
                     tickMargin={8}
                     tick={{
                       fill: 'var(--color-detallesMedidor)',
-                      fontSize: 10,
+                      fontSize: 10
                     }}
                   />
                   <Tooltip

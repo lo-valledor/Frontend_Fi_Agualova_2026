@@ -13,7 +13,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Sectores' },
-    { name: 'description', content: ' sectores del sistema' },
+    { name: 'description', content: ' sectores del sistema' }
   ];
 }
 

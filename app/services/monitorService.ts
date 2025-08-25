@@ -29,7 +29,7 @@ class MonitorService {
       const [periodosRes, sectoresRes, clavesRes] = await Promise.all([
         api.get<Periodo[]>('/Periodos'),
         api.get<Sector[]>('/Sectores'),
-        api.get<Clave[]>('/Claves'),
+        api.get<Clave[]>('/Claves')
       ]);
 
       const periodosData = Array.isArray(periodosRes.data)
@@ -56,14 +56,14 @@ class MonitorService {
           periodos: periodosData,
           sectores: sectoresData,
           claves: clavesData,
-          activePeriodoId,
+          activePeriodoId
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -88,7 +88,7 @@ class MonitorService {
       // Carga paralela de datos necesarios
       const [periodosRes, sectoresRes] = await Promise.all([
         api.get<Periodo[]>('/Periodos'),
-        api.get<Sector[]>('/Sectores'),
+        api.get<Sector[]>('/Sectores')
       ]);
 
       const periodosData = Array.isArray(periodosRes.data)
@@ -113,14 +113,14 @@ class MonitorService {
         data: {
           periodos: periodosData,
           sectores: sectoresData,
-          activePeriodoId,
+          activePeriodoId
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -135,12 +135,12 @@ class MonitorService {
 
       return {
         data: periodosData,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -155,12 +155,12 @@ class MonitorService {
 
       return {
         data: sectoresData,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -175,12 +175,12 @@ class MonitorService {
 
       return {
         data: clavesData,
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

@@ -10,7 +10,7 @@ import {
   PieChart,
   ResponsiveContainer,
   XAxis,
-  YAxis,
+  YAxis
 } from 'recharts';
 
 import {
@@ -18,12 +18,12 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
+  ChartTooltipContent
 } from '~/components/ui/chart';
 
 // Datos para gráfico de crecimiento de usuarios
@@ -33,14 +33,14 @@ const userGrowthData = [
   { month: 'Mar', usuarios: 1580, nuevos: 230, activos: 1280 },
   { month: 'Apr', usuarios: 1720, nuevos: 140, activos: 1420 },
   { month: 'May', usuarios: 1950, nuevos: 230, activos: 1650 },
-  { month: 'Jun', usuarios: 2180, nuevos: 230, activos: 1880 },
+  { month: 'Jun', usuarios: 2180, nuevos: 230, activos: 1880 }
 ];
 
 // Datos para gráfico de distribución de dispositivos
 const deviceData = [
   { name: 'Desktop', value: 45, color: '#0088FE' },
   { name: 'Mobile', value: 35, color: '#00C49F' },
-  { name: 'Tablet', value: 20, color: '#FFBB28' },
+  { name: 'Tablet', value: 20, color: '#FFBB28' }
 ];
 
 // Datos para gráfico de rendimiento por hora
@@ -50,7 +50,7 @@ const hourlyData = [
   { hour: '08', visitas: 450, conversiones: 45 },
   { hour: '12', visitas: 680, conversiones: 68 },
   { hour: '16', visitas: 520, conversiones: 52 },
-  { hour: '20', visitas: 380, conversiones: 38 },
+  { hour: '20', visitas: 380, conversiones: 38 }
 ];
 
 export function AdvancedCharts() {
@@ -69,16 +69,16 @@ export function AdvancedCharts() {
             config={{
               usuarios: {
                 label: 'Total Usuarios',
-                color: 'hsl(var(--chart-1))',
+                color: 'hsl(var(--chart-1))'
               },
               nuevos: {
                 label: 'Nuevos Usuarios',
-                color: 'hsl(var(--chart-2))',
+                color: 'hsl(var(--chart-2))'
               },
               activos: {
                 label: 'Usuarios Activos',
-                color: 'hsl(var(--chart-3))',
-              },
+                color: 'hsl(var(--chart-3))'
+              }
             }}
             className='h-[300px]'
           >
@@ -130,16 +130,16 @@ export function AdvancedCharts() {
             config={{
               desktop: {
                 label: 'Desktop',
-                color: '#0088FE',
+                color: '#0088FE'
               },
               mobile: {
                 label: 'Mobile',
-                color: '#00C49F',
+                color: '#00C49F'
               },
               tablet: {
                 label: 'Tablet',
-                color: '#FFBB28',
-              },
+                color: '#FFBB28'
+              }
             }}
             className='h-[250px]'
           >
@@ -195,12 +195,12 @@ export function AdvancedCharts() {
             config={{
               visitas: {
                 label: 'Visitas',
-                color: 'hsl(var(--chart-1))',
+                color: 'hsl(var(--chart-1))'
               },
               conversiones: {
                 label: 'Conversiones',
-                color: 'hsl(var(--chart-2))',
-              },
+                color: 'hsl(var(--chart-2))'
+              }
             }}
             className='h-[200px]'
           >

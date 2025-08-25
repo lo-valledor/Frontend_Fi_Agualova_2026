@@ -6,7 +6,7 @@ import {
   Eraser,
   FileTextIcon,
   SearchIcon,
-  UsersIcon,
+  UsersIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -19,7 +19,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
@@ -28,14 +28,14 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import {
   type ConsultarAsignacionSectores,
   type ConsultarSectores,
   type OpcionesPrepararLecturas,
   type PeriodoAbierto,
-  type ValidarSectoresPendientes,
+  type ValidarSectoresPendientes
 } from '~/types/operaciones';
 
 import DialogLecturasPendientes from './dialog-lecturas-pendientes';
@@ -50,7 +50,7 @@ export default function PrepararLecturasComponent({
   asignacionSectores,
   setAsignacionSectores,
   isLoadingAsignacion,
-  onRecargarAsignacionSectores,
+  onRecargarAsignacionSectores
 }: {
   readonly periodoAbierto: PeriodoAbierto[];
   readonly lecturasPendientes: ValidarSectoresPendientes | null;

@@ -8,8 +8,8 @@ export function meta(_args: Route.MetaArgs) {
     {
       title: 'Enerlova | Ver Facturas',
       description:
-        'Próximamente tendrás acceso a un visor completo de facturas con opciones de búsqueda, filtros y exportación.',
-    },
+        'Próximamente tendrás acceso a un visor completo de facturas con opciones de búsqueda, filtros y exportación.'
+    }
   ];
 }
 

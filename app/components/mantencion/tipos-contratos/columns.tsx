@@ -12,7 +12,7 @@ interface TiposContratoColumnsProps {
 
 export const createColumns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: TiposContratoColumnsProps): ColumnDef<TiposContrato>[] => [
   {
     accessorKey: 'nombre',
@@ -26,7 +26,7 @@ export const createColumns = ({
       >
         {row.getValue('nombre')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'estado',
@@ -47,7 +47,7 @@ export const createColumns = ({
           {estado ? 'Activo' : 'Inactivo'}
         </Badge>
       );
-    },
+    }
   },
   {
     id: 'actions',
@@ -59,6 +59,6 @@ export const createColumns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

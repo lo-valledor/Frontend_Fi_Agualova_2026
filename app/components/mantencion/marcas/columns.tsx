@@ -12,7 +12,7 @@ interface TableColumnsProps {
 
 export const columns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: TableColumnsProps): ColumnDef<Marca>[] => [
   {
     accessorKey: 'codigo',
@@ -30,7 +30,7 @@ export const columns = ({
       );
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'nombre',
@@ -41,7 +41,7 @@ export const columns = ({
       const nombre = row.getValue('nombre') as string;
       return <div className='max-w-[200px] truncate font-medium'>{nombre}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     id: 'actions',
@@ -53,6 +53,6 @@ export const columns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

@@ -12,7 +12,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -22,7 +22,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -46,7 +46,7 @@ interface RolFormData {
 
 const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
   roles,
-  onDataChange,
+  onDataChange
 }) => {
   const [editingRol, setEditingRol] = useState<Roles | null>(null);
   const [deletingRol, setDeletingRol] = useState<Roles | null>(null);
@@ -56,14 +56,14 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
   const [formData, setFormData] = useState<RolFormData>({
     nombre: '',
     descripcion: '',
-    estado: true,
+    estado: true
   });
 
   const resetForm = () => {
     setFormData({
       nombre: '',
       descripcion: '',
-      estado: true,
+      estado: true
     });
   };
 
@@ -72,7 +72,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
     setFormData({
       nombre: rol.nombreRol,
       descripcion: rol.descripcion || '',
-      estado: rol.estadoRol,
+      estado: rol.estadoRol
     });
   };
 
@@ -95,7 +95,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
     try {
       const result = await rolesPermisosService.crearRol({
         nombre: formData.nombre.trim(),
-        descripcion: formData.descripcion.trim() || undefined,
+        descripcion: formData.descripcion.trim() || undefined
       });
 
       if (result.error) {
@@ -124,7 +124,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
       const result = await rolesPermisosService.actualizarRol({
         id: editingRol.idRol,
         nombre: formData.nombre.trim(),
-        descripcion: formData.descripcion.trim() || undefined,
+        descripcion: formData.descripcion.trim() || undefined
       });
 
       if (result.error) {
@@ -212,7 +212,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
                       onChange={e =>
                         setFormData({
                           ...formData,
-                          descripcion: e.target.value,
+                          descripcion: e.target.value
                         })
                       }
                       placeholder='Descripción del rol...'

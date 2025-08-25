@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 
 import { useState } from 'react';
 
-import { useNavigate, useRevalidator } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { ExportButton } from '~/components/shared/export-button';
@@ -40,9 +40,7 @@ export default function ClientesComponent({
   const [clients] = useState<GetClientes[]>(clientes);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [detailedCliente, setDetailedCliente] = useState<GetClientesByRut>();
-  const [editingClienteRut, setEditingClienteRut] = useState<string | null>(
-    null
-  );
+  const [editingClienteRut] = useState<string | null>(null);
   const [detailingClienteRut, setDetailingClienteRut] = useState<string | null>(
     null
   );
@@ -56,7 +54,6 @@ export default function ClientesComponent({
   });
 
   const router = useNavigate();
-  const revalidator = useRevalidator();
   const { getClienteByRut } = useClientes();
   const { filteredClients, filterStats, filterOptions } = useClientFilters(
     clients,

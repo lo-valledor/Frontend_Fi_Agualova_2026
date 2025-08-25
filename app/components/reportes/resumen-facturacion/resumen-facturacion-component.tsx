@@ -6,7 +6,7 @@ import {
   Eraser,
   FileTextIcon,
   SearchIcon,
-  TrendingUpIcon,
+  TrendingUpIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -21,7 +21,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
@@ -30,14 +30,14 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import type { ExportColumn } from '~/hooks/shared/use-export-data';
 import { reportesService } from '~/services/reportesService';
 import type {
   ComboEmpalmes,
   FacturacionPorCargo,
-  PeriodosFacturacion,
+  PeriodosFacturacion
 } from '~/types/reportes';
 
 import { columns } from './columns';
@@ -51,7 +51,7 @@ interface ResumenFacturacionComponentProps {
 export default function ResumenFacturacionComponent({
   comboEmpalmes,
   periodosFacturacion,
-  error: _error,
+  error: _error
 }: Readonly<ResumenFacturacionComponentProps>) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [selectedPeriodo, setSelectedPeriodo] = useState<string>('');
@@ -69,12 +69,12 @@ export default function ResumenFacturacionComponent({
     { key: 'totalFacturaPeriodoAnterior', header: 'Factura Período Anterior' },
     {
       key: 'cantidadCargosPeriodoAnterior',
-      header: 'Cantidad Cargos Anterior',
+      header: 'Cantidad Cargos Anterior'
     },
     { key: 'totalEnergiaPeriodoActual', header: 'Energía Período Actual' },
     { key: 'totalFacturaPeriodoActual', header: 'Factura Período Actual' },
     { key: 'cantidadCargosPeriodoActual', header: 'Cantidad Cargos Actual' },
-    { key: 'diferenciaPeriodos', header: 'Diferencia Períodos' },
+    { key: 'diferenciaPeriodos', header: 'Diferencia Períodos' }
   ];
 
   const handleConsultar = async () => {

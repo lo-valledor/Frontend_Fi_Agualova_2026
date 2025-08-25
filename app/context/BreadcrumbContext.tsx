@@ -2,7 +2,7 @@ import React, {
   type ReactNode,
   createContext,
   useContext,
-  useState,
+  useState
 } from 'react';
 
 // Reutiliza la interfaz que ya tienes en SiteHeader

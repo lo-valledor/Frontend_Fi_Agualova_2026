@@ -30,7 +30,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
+  children
 }) => {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         username: decoded.name,
         role: decoded.role,
         profileId: decoded.sub,
-        fullName: decoded.NombreUsuario,
+        fullName: decoded.NombreUsuario
       };
     } catch (error) {
       console.error('Error al decodificar el token:', error);
@@ -206,7 +206,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         login,
         logout,
         loading,
-        error,
+        error
       }}
     >
       {children}

@@ -77,7 +77,7 @@ export const useDebugInfo = () => {
 
     return {
       detected: evidence.length > 0,
-      evidence,
+      evidence
     };
   };
 
@@ -98,7 +98,7 @@ export const useDebugInfo = () => {
         browserName: getBrowserName(userAgent),
         isPrivateMode: isPrivate,
         proxyDetected: proxyInfo.detected,
-        networkInterception: proxyInfo.evidence,
+        networkInterception: proxyInfo.evidence
       };
 
       setDebugInfo(info);

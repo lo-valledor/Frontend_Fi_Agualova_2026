@@ -21,7 +21,7 @@ const RolesPermisosComponent: React.FC<RolesPermisosComponentProps> = ({
   menus,
   permisos,
   error,
-  onDataChange,
+  onDataChange
 }) => {
   const [activeTab, setActiveTab] = useState('roles');
 

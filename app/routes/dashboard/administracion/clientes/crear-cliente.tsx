@@ -9,10 +9,9 @@ export function meta() {
 }
 
 export default function CrearCliente() {
-    
   return (
     <div>
-        <CrearClienteComponent />
+      <CrearClienteComponent />
     </div>
   );
 }

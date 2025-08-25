@@ -8,7 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 
 interface SessionExpiredProps {
@@ -16,7 +16,7 @@ interface SessionExpiredProps {
 }
 
 const SessionExpired: React.FC<SessionExpiredProps> = ({
-  message = 'Tu sesión ha expirado o ha sido cerrada en otro dispositivo.',
+  message = 'Tu sesión ha expirado o ha sido cerrada en otro dispositivo.'
 }) => {
   const navigate = useNavigate();
 

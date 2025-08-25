@@ -10,7 +10,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 
 interface UnderConstructionProps {
@@ -22,7 +22,7 @@ interface UnderConstructionProps {
 export default function UnderConstruction({
   title = 'Página en Construcción',
   description = 'Estamos trabajando arduamente para traerte esta funcionalidad. ¡Vuelve pronto!',
-  showBackButton = true,
+  showBackButton = true
 }: UnderConstructionProps) {
   return (
     <div className='min-h-screen flex items-center justify-center bg-background p-4'>

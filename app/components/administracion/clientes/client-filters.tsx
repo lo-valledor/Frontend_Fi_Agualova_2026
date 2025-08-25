@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
 import {
@@ -16,7 +16,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Separator } from '~/components/ui/separator';
 import type { FilterOptions } from '~/hooks/administracion/use-client-filters';
@@ -41,14 +41,14 @@ export function ClientFiltersComponent({
   filters,
   onFiltersChange,
   onClearFilters,
-  filterOptions,
+  filterOptions
 }: ClientFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof ClientFilters, value: string) => {
     onFiltersChange({
       ...filters,
-      [key]: value,
+      [key]: value
     });
   };
 

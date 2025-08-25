@@ -9,7 +9,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 
 interface ErrorBoundaryProps {
@@ -19,7 +19,7 @@ interface ErrorBoundaryProps {
 
 export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
   error,
-  resetError,
+  resetError
 }) => {
   const handleRetry = () => {
     if (resetError) {

@@ -6,7 +6,7 @@ import {
   Eraser,
   Info,
   Search,
-  TrendingUp,
+  TrendingUp
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -23,13 +23,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import api from '~/lib/api';
 import type {
   PreciosCargoEnel,
-  PreciosCargoEnerlova,
+  PreciosCargoEnerlova
 } from '~/types/operaciones';
 
 import { columns as columnsEnel } from './columns-enel';
@@ -60,13 +60,13 @@ const months = [
   { value: '09', label: 'Septiembre' },
   { value: '10', label: 'Octubre' },
   { value: '11', label: 'Noviembre' },
-  { value: '12', label: 'Diciembre' },
+  { value: '12', label: 'Diciembre' }
 ];
 
 const years = [
   { value: '2025', label: '2025' },
   { value: '2026', label: '2026' },
-  { value: '2027', label: '2027' },
+  { value: '2027', label: '2027' }
 ];
 
 export default function PreciosCargoComponent({
@@ -74,7 +74,7 @@ export default function PreciosCargoComponent({
   tablaEnerlova,
   initialMes,
   initialAnio,
-  error,
+  error
 }: Readonly<PreciosCargoComponentProps>) {
   // Estados para filtros y datos
   const [mes, setMes] = useState(initialMes);
@@ -91,7 +91,7 @@ export default function PreciosCargoComponent({
 
       const params = new URLSearchParams({
         mes,
-        año: anio,
+        año: anio
       });
 
       const response = await api.get('/consulta-precio-pago', { params });
@@ -325,13 +325,13 @@ export default function PreciosCargoComponent({
                         id: 'identificacion',
                         title: 'Identificación',
                         columns: ['codigo', 'codigoener', 'descripcion'],
-                        className: 'bg-slate-600 text-white',
+                        className: 'bg-slate-600 text-white'
                       },
                       {
                         id: 'valores',
                         title: 'Valores Anteriores',
                         columns: ['valor', 'valor2', 'valor3'],
-                        className: 'bg-orange-600 text-white',
+                        className: 'bg-orange-600 text-white'
                       },
                       {
                         id: 'valoresActuales',
@@ -339,16 +339,16 @@ export default function PreciosCargoComponent({
                         columns: [
                           'valoractual',
                           'valoractual2',
-                          'valoractual3',
+                          'valoractual3'
                         ],
-                        className: 'bg-emerald-600 text-white',
+                        className: 'bg-emerald-600 text-white'
                       },
                       {
                         id: 'acciones',
                         title: 'Estado',
                         columns: ['actions'],
-                        className: 'bg-blue-600 text-white',
-                      },
+                        className: 'bg-blue-600 text-white'
+                      }
                     ]}
                   />
                 </div>
@@ -387,22 +387,22 @@ export default function PreciosCargoComponent({
                         columns: [
                           'CD_ID',
                           'cd_codigoenerlova',
-                          'CD_Descripcion',
+                          'CD_Descripcion'
                         ],
-                        className: 'bg-slate-600 text-white',
+                        className: 'bg-slate-600 text-white'
                       },
                       {
                         id: 'valores',
                         title: 'Valores',
                         columns: ['valor', 'dias'],
-                        className: 'bg-emerald-600 text-white',
+                        className: 'bg-emerald-600 text-white'
                       },
                       {
                         id: 'acciones',
                         title: 'Detalles',
                         columns: ['actions'],
-                        className: 'bg-blue-600 text-white',
-                      },
+                        className: 'bg-blue-600 text-white'
+                      }
                     ]}
                   />
                 </div>

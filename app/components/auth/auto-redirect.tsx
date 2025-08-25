@@ -17,7 +17,7 @@ interface AutoRedirectProps {
 export const AutoRedirect = ({
   authenticatedRoute = '/dashboard',
   unauthenticatedRoute = '/auth/login',
-  loadingMessage = 'Verificando autenticación...',
+  loadingMessage = 'Verificando autenticación...'
 }: AutoRedirectProps) => {
   const { isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export const AutoRedirect = ({
     loading,
     navigate,
     authenticatedRoute,
-    unauthenticatedRoute,
+    unauthenticatedRoute
   ]);
 
   if (loading) {

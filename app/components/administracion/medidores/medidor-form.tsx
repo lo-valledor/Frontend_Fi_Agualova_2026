@@ -474,7 +474,6 @@ export function MedidorFormModal({
 
       const result = await onSubmit(submitDataFinal as any, mode);
       if (result && 'codigoMedidor' in result) {
-        
         setCodigoMedidorGenerado(result.codigoMedidor!);
       } else {
         console.warn(

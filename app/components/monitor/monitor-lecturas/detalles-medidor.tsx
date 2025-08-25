@@ -10,7 +10,7 @@ import type {
   EtapaCuatro,
   EtapaDos,
   EtapaTres,
-  EtapaUno,
+  EtapaUno
 } from '~/types/monitor';
 
 import AnalisisConsumo from './detalles-medidor/analisis-consumo';
@@ -21,7 +21,7 @@ import InformacionMedidor from './detalles-medidor/informacion-medidor';
 
 export default function DetallesMedidor({
   lecturaId,
-  onSuccess,
+  onSuccess
 }: Readonly<{
   lecturaId: number;
   onSuccess?: () => void;
@@ -46,7 +46,7 @@ export default function DetallesMedidor({
         etapas.map(etapa => {
           const params = new URLSearchParams({
             idLec: lecturaId.toString(),
-            etapa: etapa.toString(),
+            etapa: etapa.toString()
           });
           return api.get('/datos-basicos-medidor', { params });
         })
@@ -87,8 +87,9 @@ export default function DetallesMedidor({
               3: 'No hay claves de lectura ingresadas aún',
               4: 'No hay análisis de consumo disponible'
             };
-            
-            newEtapaErrors[etapa] = etapaMessages[etapa as keyof typeof etapaMessages] ||
+
+            newEtapaErrors[etapa] =
+              etapaMessages[etapa as keyof typeof etapaMessages] ||
               result.reason.response.data ||
               `No hay datos disponibles para la etapa ${etapa}`;
           } else {
@@ -133,7 +134,7 @@ export default function DetallesMedidor({
   const handleAceptarLectura = async () => {
     try {
       const response = await api.post('/aceptar-lectura-medidor', {
-        idLectura: lecturaId,
+        idLectura: lecturaId
       });
       if (response.status === 200) {
         toast.success('Lectura aceptada correctamente');

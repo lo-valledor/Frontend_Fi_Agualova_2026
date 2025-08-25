@@ -25,7 +25,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 80,
+    size: 80
   },
   {
     accessorKey: 'seCodigo',
@@ -40,7 +40,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 120,
+    size: 120
   },
   {
     accessorKey: 'meNSerie',
@@ -55,7 +55,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 140,
+    size: 140
   },
   {
     accessorKey: 'clRut',
@@ -70,7 +70,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 120,
+    size: 120
   },
   {
     accessorKey: 'clRazonSocialCompleto',
@@ -85,7 +85,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 200,
+    size: 200
   },
   {
     accessorKey: 'niDescripcion',
@@ -100,7 +100,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 150,
+    size: 150
   },
   {
     accessorKey: 'secDescripcion',
@@ -115,7 +115,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 120,
+    size: 120
   },
   {
     accessorKey: 'reEstado',
@@ -132,35 +132,35 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
               label: 'Pendiente',
               variant: 'outline' as const,
               className:
-                'border-amber-200 text-amber-700 bg-amber-50 dark:border-amber-700 dark:text-amber-300 dark:bg-amber-900/20',
+                'border-amber-200 text-amber-700 bg-amber-50 dark:border-amber-700 dark:text-amber-300 dark:bg-amber-900/20'
             };
           case '1':
             return {
               label: 'Liberado',
               variant: 'default' as const,
               className:
-                'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700',
+                'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700'
             };
           case '2':
             return {
               label: 'Cortado',
               variant: 'destructive' as const,
               className:
-                'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700',
+                'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700'
             };
           case '3':
             return {
               label: 'Reposición Solicitada',
               variant: 'outline' as const,
               className:
-                'border-sky-200 text-sky-700 bg-sky-50 dark:border-sky-700 dark:text-sky-300 dark:bg-sky-900/20',
+                'border-sky-200 text-sky-700 bg-sky-50 dark:border-sky-700 dark:text-sky-300 dark:bg-sky-900/20'
             };
           default:
             return {
               label: estado,
               variant: 'outline' as const,
               className:
-                'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300',
+                'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300'
             };
         }
       };
@@ -185,7 +185,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </Badge>
       );
     },
-    size: 140,
+    size: 140
   },
   {
     accessorKey: 'reCantDocumentos',
@@ -205,7 +205,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 100,
+    size: 100
   },
   {
     accessorKey: 'reDeudaTotal',
@@ -218,7 +218,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         style: 'currency',
         currency: 'CLP',
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        maximumFractionDigits: 0
       }).format(deuda as number);
 
       return (
@@ -229,7 +229,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         </div>
       );
     },
-    size: 140,
+    size: 140
   },
   {
     header: 'Acciones',
@@ -261,6 +261,6 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
       );
     },
     size: 120,
-    enableSorting: false,
-  },
+    enableSorting: false
+  }
 ];

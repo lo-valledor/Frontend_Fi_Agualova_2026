@@ -54,7 +54,7 @@ export const dispatchTokenChange = (
 ) => {
   window.dispatchEvent(
     new CustomEvent(TOKEN_CHANGED_EVENT, {
-      detail: { action, token },
+      detail: { action, token }
     })
   );
 };

@@ -6,7 +6,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '~/components/ui/alert-dialog';
 import type { GetContratos } from '~/types/administracion';
 
@@ -21,7 +21,7 @@ export function DeleteConfirmationDialog({
   isOpen,
   onClose,
   onConfirm,
-  contract,
+  contract
 }: DeleteConfirmationDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>

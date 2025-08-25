@@ -52,7 +52,11 @@ export default function MedidorFieldsGroup({
           value={data.ultimaLectura}
           colorScheme={colorScheme}
           readOnly={!onUltimaLecturaChange}
-          onChange={onUltimaLecturaChange ? (e) => onUltimaLecturaChange(e.target.value) : undefined}
+          onChange={
+            onUltimaLecturaChange
+              ? e => onUltimaLecturaChange(e.target.value)
+              : undefined
+          }
         />
       </div>
 

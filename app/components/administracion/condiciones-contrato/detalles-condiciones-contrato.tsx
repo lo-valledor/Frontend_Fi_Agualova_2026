@@ -9,7 +9,7 @@ import {
   Percent,
   Settings,
   TrendingUp,
-  XCircle,
+  XCircle
 } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -29,7 +29,7 @@ const DetailItem = ({
   label,
   value,
   icon: Icon,
-  className = '',
+  className = ''
 }: {
   label: string;
   value: React.ReactNode;
@@ -69,7 +69,7 @@ const DetailItem = ({
 
 const SectionTitle = ({
   icon: Icon,
-  title,
+  title
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
@@ -83,7 +83,7 @@ const SectionTitle = ({
 );
 
 export default function DetallesCondicionesContrato({
-  condicionId,
+  condicionId
 }: DetallesCondicionesContratoProps) {
   const [condicion, setCondicion] =
     useState<GetCondicionesContratoPorId | null>(null);

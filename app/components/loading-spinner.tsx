@@ -12,18 +12,18 @@ interface LoadingSpinnerProps {
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message = 'Cargando...',
   showSkeleton = false,
-  size = 'md',
+  size = 'md'
 }) => {
   const sizeClasses = {
     sm: 'h-6 w-6',
     md: 'h-8 w-8',
-    lg: 'h-12 w-12',
+    lg: 'h-12 w-12'
   };
 
   const textSizes = {
     sm: 'text-sm',
     md: 'text-base',
-    lg: 'text-lg',
+    lg: 'text-lg'
   };
 
   if (showSkeleton) {

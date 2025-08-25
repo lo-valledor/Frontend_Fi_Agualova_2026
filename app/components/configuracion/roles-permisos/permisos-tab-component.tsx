@@ -12,7 +12,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '~/components/ui/tooltip';
 import { rolesPermisosService } from '~/services/rolesPermisosService';
 import type { Menus, PermisoRolMenu, Roles } from '~/types/roles-permisos';
@@ -28,7 +28,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   roles,
   menus,
   permisos,
-  onDataChange,
+  onDataChange
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
@@ -41,15 +41,17 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   };
 
   // Filtrar menús por búsqueda
-  const filteredMenus = menus.filter(menu =>
-    menu.nombreMenu.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    menu.ruta?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMenus = menus.filter(
+    menu =>
+      menu.nombreMenu.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      menu.ruta?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Filtrar roles seleccionados
-  const visibleRoles = selectedRoles.length > 0 
-    ? roles.filter(role => selectedRoles.includes(role.idRol))
-    : roles;
+  const visibleRoles =
+    selectedRoles.length > 0
+      ? roles.filter(role => selectedRoles.includes(role.idRol))
+      : roles;
 
   // Función para actualizar permisos
   const handleUpdatePermiso = async (
@@ -68,7 +70,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
         puedeEditar: permisoActual?.puedeEditar || false,
         puedeEliminar: permisoActual?.puedeEliminar || false,
         [tipoPermiso]: valor,
-        fechaAsignacion: new Date().toISOString(),
+        fechaAsignacion: new Date().toISOString()
       };
 
       const result =
@@ -89,7 +91,10 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   const MobileView = () => (
     <div className='space-y-4'>
       {filteredMenus.map(menu => (
-        <Card key={menu.idMenu} className='border border-slate-200 dark:border-slate-700'>
+        <Card
+          key={menu.idMenu}
+          className='border border-slate-200 dark:border-slate-700'
+        >
           <CardHeader className='pb-3'>
             <div className='flex items-center justify-between'>
               <div className='space-y-1'>
@@ -100,7 +105,9 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                   <span className='font-medium text-sm'>{menu.nombreMenu}</span>
                 </div>
                 {menu.ruta && (
-                  <div className='text-xs text-slate-500 font-mono'>{menu.ruta}</div>
+                  <div className='text-xs text-slate-500 font-mono'>
+                    {menu.ruta}
+                  </div>
                 )}
               </div>
             </div>
@@ -110,13 +117,21 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               {visibleRoles.map(rol => {
                 const permiso = getPermiso(rol.idRol, menu.idMenu);
                 return (
-                  <div key={rol.idRol} className='border border-slate-100 dark:border-slate-700 rounded-lg p-3'>
+                  <div
+                    key={rol.idRol}
+                    className='border border-slate-100 dark:border-slate-700 rounded-lg p-3'
+                  >
                     <div className='flex items-center justify-between mb-3'>
                       <div className='flex items-center gap-2'>
-                        <Badge variant='secondary' className='font-mono text-xs'>
+                        <Badge
+                          variant='secondary'
+                          className='font-mono text-xs'
+                        >
                           #{rol.idRol}
                         </Badge>
-                        <span className='font-medium text-sm'>{rol.nombreRol}</span>
+                        <span className='font-medium text-sm'>
+                          {rol.nombreRol}
+                        </span>
                       </div>
                     </div>
                     <div className='grid grid-cols-2 gap-3'>
@@ -125,21 +140,35 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                           <Checkbox
                             checked={permiso?.puedeVer || false}
                             onCheckedChange={checked =>
-                              handleUpdatePermiso(rol.idRol, menu.idMenu, 'puedeVer', !!checked)
+                              handleUpdatePermiso(
+                                rol.idRol,
+                                menu.idMenu,
+                                'puedeVer',
+                                !!checked
+                              )
                             }
                             className='h-4 w-4 data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500'
                           />
-                          <span className='text-sm text-blue-700 dark:text-blue-300'>Ver</span>
+                          <span className='text-sm text-blue-700 dark:text-blue-300'>
+                            Ver
+                          </span>
                         </div>
                         <div className='flex items-center gap-2'>
                           <Checkbox
                             checked={permiso?.puedeCrear || false}
                             onCheckedChange={checked =>
-                              handleUpdatePermiso(rol.idRol, menu.idMenu, 'puedeCrear', !!checked)
+                              handleUpdatePermiso(
+                                rol.idRol,
+                                menu.idMenu,
+                                'puedeCrear',
+                                !!checked
+                              )
                             }
                             className='h-4 w-4 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500'
                           />
-                          <span className='text-sm text-green-700 dark:text-green-300'>Crear</span>
+                          <span className='text-sm text-green-700 dark:text-green-300'>
+                            Crear
+                          </span>
                         </div>
                       </div>
                       <div className='space-y-2'>
@@ -147,21 +176,35 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                           <Checkbox
                             checked={permiso?.puedeEditar || false}
                             onCheckedChange={checked =>
-                              handleUpdatePermiso(rol.idRol, menu.idMenu, 'puedeEditar', !!checked)
+                              handleUpdatePermiso(
+                                rol.idRol,
+                                menu.idMenu,
+                                'puedeEditar',
+                                !!checked
+                              )
                             }
                             className='h-4 w-4 data-[state=checked]:bg-yellow-500 data-[state=checked]:border-yellow-500'
                           />
-                          <span className='text-sm text-yellow-700 dark:text-yellow-300'>Editar</span>
+                          <span className='text-sm text-yellow-700 dark:text-yellow-300'>
+                            Editar
+                          </span>
                         </div>
                         <div className='flex items-center gap-2'>
                           <Checkbox
                             checked={permiso?.puedeEliminar || false}
                             onCheckedChange={checked =>
-                              handleUpdatePermiso(rol.idRol, menu.idMenu, 'puedeEliminar', !!checked)
+                              handleUpdatePermiso(
+                                rol.idRol,
+                                menu.idMenu,
+                                'puedeEliminar',
+                                !!checked
+                              )
                             }
                             className='h-4 w-4 data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500'
                           />
-                          <span className='text-sm text-red-700 dark:text-red-300'>Eliminar</span>
+                          <span className='text-sm text-red-700 dark:text-red-300'>
+                            Eliminar
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -253,15 +296,19 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
               {/* Selector de roles */}
               <div className='flex flex-wrap gap-1 items-center'>
-                <span className='text-sm text-slate-600 dark:text-slate-400 mr-2'>Roles:</span>
+                <span className='text-sm text-slate-600 dark:text-slate-400 mr-2'>
+                  Roles:
+                </span>
                 {roles.slice(0, 3).map(role => (
                   <Button
                     key={role.idRol}
-                    variant={selectedRoles.includes(role.idRol) ? 'default' : 'outline'}
+                    variant={
+                      selectedRoles.includes(role.idRol) ? 'default' : 'outline'
+                    }
                     size='sm'
                     onClick={() => {
-                      setSelectedRoles(prev => 
-                        prev.includes(role.idRol) 
+                      setSelectedRoles(prev =>
+                        prev.includes(role.idRol)
                           ? prev.filter(id => id !== role.idRol)
                           : [...prev, role.idRol]
                       );
@@ -276,11 +323,17 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                     variant='outline'
                     size='sm'
                     onClick={() => {
-                      setSelectedRoles(selectedRoles.length === roles.length ? [] : roles.map(r => r.idRol));
+                      setSelectedRoles(
+                        selectedRoles.length === roles.length
+                          ? []
+                          : roles.map(r => r.idRol)
+                      );
                     }}
                     className='h-7 px-2 text-xs'
                   >
-                    {selectedRoles.length === roles.length ? 'Ninguno' : `+${roles.length - 3} más`}
+                    {selectedRoles.length === roles.length
+                      ? 'Ninguno'
+                      : `+${roles.length - 3} más`}
                   </Button>
                 )}
               </div>
@@ -310,7 +363,8 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
             {(searchTerm || selectedRoles.length > 0) && (
               <div className='text-sm text-slate-600 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg'>
                 Mostrando {filteredMenus.length} menús
-                {selectedRoles.length > 0 && ` para ${visibleRoles.length} roles seleccionados`}
+                {selectedRoles.length > 0 &&
+                  ` para ${visibleRoles.length} roles seleccionados`}
               </div>
             )}
           </div>
@@ -324,7 +378,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               {/* Indicador de scroll */}
               <div className='absolute top-0 right-0 z-20 bg-gradient-to-l from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
               <div className='absolute top-0 left-64 z-20 bg-gradient-to-r from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
-              
+
               <div className='overflow-auto border rounded-lg bg-white dark:bg-slate-900 max-h-[80vh]'>
                 <table className='w-full border-collapse relative'>
                   <thead className='sticky top-0 bg-slate-50 dark:bg-slate-800 z-10'>
@@ -341,14 +395,19 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                         <th
                           key={rol.idRol}
                           className={`text-center border-b border-l font-medium ${
-                            compactView ? 'p-2 min-w-[160px]' : 'p-3 min-w-[200px]'
+                            compactView
+                              ? 'p-2 min-w-[160px]'
+                              : 'p-3 min-w-[200px]'
                           }`}
                         >
                           <div className={`space-y-${compactView ? '1' : '2'}`}>
                             <div className='flex items-center justify-center gap-2'>
                               <Tooltip>
                                 <TooltipTrigger>
-                                  <Badge variant='secondary' className='font-mono text-xs'>
+                                  <Badge
+                                    variant='secondary'
+                                    className='font-mono text-xs'
+                                  >
                                     #{rol.idRol}
                                   </Badge>
                                 </TooltipTrigger>
@@ -358,9 +417,13 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                               </Tooltip>
                               <Tooltip>
                                 <TooltipTrigger>
-                                  <div className={`font-semibold text-sm truncate ${
-                                    compactView ? 'max-w-[100px]' : 'max-w-[120px]'
-                                  }`}>
+                                  <div
+                                    className={`font-semibold text-sm truncate ${
+                                      compactView
+                                        ? 'max-w-[100px]'
+                                        : 'max-w-[120px]'
+                                    }`}
+                                  >
                                     {rol.nombreRol}
                                   </div>
                                 </TooltipTrigger>
@@ -395,22 +458,33 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                       <tr
                         key={menu.idMenu}
                         className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
-                          index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-25 dark:bg-slate-900/50'
+                          index % 2 === 0
+                            ? 'bg-white dark:bg-slate-900'
+                            : 'bg-slate-25 dark:bg-slate-900/50'
                         }`}
                       >
-                        <td className={`border-b font-medium sticky left-0 bg-inherit z-10 shadow-r ${
-                          compactView ? 'p-2' : 'p-3'
-                        }`}>
+                        <td
+                          className={`border-b font-medium sticky left-0 bg-inherit z-10 shadow-r ${
+                            compactView ? 'p-2' : 'p-3'
+                          }`}
+                        >
                           <div className='space-y-1'>
                             <div className='flex items-center gap-2'>
-                              <Badge variant='outline' className='font-mono text-xs'>
+                              <Badge
+                                variant='outline'
+                                className='font-mono text-xs'
+                              >
                                 #{menu.idMenu}
                               </Badge>
                               <Tooltip>
                                 <TooltipTrigger>
-                                  <div className={`font-medium truncate ${
-                                    compactView ? 'max-w-[160px]' : 'max-w-[180px]'
-                                  }`}>
+                                  <div
+                                    className={`font-medium truncate ${
+                                      compactView
+                                        ? 'max-w-[160px]'
+                                        : 'max-w-[180px]'
+                                    }`}
+                                  >
                                     {menu.nombreMenu}
                                   </div>
                                 </TooltipTrigger>
@@ -422,9 +496,13 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                             {menu.ruta && (
                               <Tooltip>
                                 <TooltipTrigger>
-                                  <div className={`text-xs text-slate-500 font-mono truncate ${
-                                    compactView ? 'max-w-[180px]' : 'max-w-[200px]'
-                                  }`}>
+                                  <div
+                                    className={`text-xs text-slate-500 font-mono truncate ${
+                                      compactView
+                                        ? 'max-w-[180px]'
+                                        : 'max-w-[200px]'
+                                    }`}
+                                  >
                                     {menu.ruta}
                                   </div>
                                 </TooltipTrigger>

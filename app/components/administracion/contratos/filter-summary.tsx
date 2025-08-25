@@ -14,7 +14,7 @@ export function FilterSummary({
   totalContracts,
   filteredContracts,
   activeFilters,
-  isFiltered,
+  isFiltered
 }: Readonly<FilterSummaryProps>) {
   if (!isFiltered) return null;
 

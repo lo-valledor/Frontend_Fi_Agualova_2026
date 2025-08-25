@@ -18,7 +18,7 @@ import type {
   CrearCargoFacturableProps,
   GeCombosConceptos,
   GetCombosTarifas,
-  GetCombosTiposMedidor,
+  GetCombosTiposMedidor
 } from '~/types/administracion';
 
 import CargoFacturableModalForm from './cargo-facturable-modal-form';
@@ -37,7 +37,7 @@ export default function CargoFacturableComponent({
   cargos,
   conceptos,
   tarifas,
-  tiposMedidor,
+  tiposMedidor
 }: Readonly<CargoFacturableComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCargo, setSelectedCargo] = useState<
@@ -51,7 +51,7 @@ export default function CargoFacturableComponent({
     periodicoEventual: 'all',
     concepto: 'all',
     tarifa: 'all',
-    tipoMedidor: 'all',
+    tipoMedidor: 'all'
   });
 
   const revalidator = useRevalidator();
@@ -110,7 +110,7 @@ export default function CargoFacturableComponent({
       periodicoEventual: 'all',
       concepto: 'all',
       tarifa: 'all',
-      tipoMedidor: 'all',
+      tipoMedidor: 'all'
     });
   };
 
@@ -123,7 +123,7 @@ export default function CargoFacturableComponent({
     { key: 'periodicoEventual', header: 'Frecuencia' },
     { key: 'concepto', header: 'Concepto' },
     { key: 'tarifa', header: 'Tarifa' },
-    { key: 'tipoMedidor', header: 'Tipo Medidor' },
+    { key: 'tipoMedidor', header: 'Tipo Medidor' }
   ];
 
   return (
@@ -180,7 +180,7 @@ export default function CargoFacturableComponent({
               <DataTable
                 columns={columns({
                   onEdit: handleEditCargo,
-                  editingCargoId,
+                  editingCargoId
                 })}
                 data={filteredCargos}
                 searchPlaceholder='Buscar por cuenta, código, descripción...'

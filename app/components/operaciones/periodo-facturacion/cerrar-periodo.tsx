@@ -9,14 +9,14 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogFooter,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from '~/components/ui/alert-dialog';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import api from '~/lib/api';
@@ -31,7 +31,7 @@ interface CerrarPeriodoProps {
 export default function CerrarPeriodo({
   periodoId,
   onSuccess,
-  className,
+  className
 }: CerrarPeriodoProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -45,8 +45,8 @@ export default function CerrarPeriodo({
         JSON.stringify(periodoId),
         {
           headers: {
-            'Content-Type': 'application/json',
-          },
+            'Content-Type': 'application/json'
+          }
         }
       );
 
@@ -103,7 +103,8 @@ export default function CerrarPeriodo({
 
         <div className='bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800 rounded-md p-2 my-2'>
           <p className='text-xs sm:text-sm text-red-700 dark:text-red-300'>
-            Al cerrar el período, no se podrán realizar más operaciones a menos que sea reabierto.
+            Al cerrar el período, no se podrán realizar más operaciones a menos
+            que sea reabierto.
           </p>
         </div>
 

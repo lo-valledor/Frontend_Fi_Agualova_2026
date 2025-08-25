@@ -26,7 +26,7 @@ export function useExportContratos() {
       return date.toLocaleDateString('es-CL', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric',
+        year: 'numeric'
       });
     } catch {
       return dateString || '';
@@ -55,7 +55,7 @@ export function useExportContratos() {
       'Promedio Anual',
       'Ciclo Facturación',
       'Potencia Contratada',
-      'Liberado Corte',
+      'Liberado Corte'
     ];
 
     const csvContent = [];
@@ -82,7 +82,7 @@ export function useExportContratos() {
         `"${contrato.promedioAnual || ''}"`,
         `"${contrato.cicloFacturacion || ''}"`,
         `"${contrato.potenciaContratada || ''}"`,
-        `"${contrato.liberadoCorte ? 'Sí' : 'No'}"`,
+        `"${contrato.liberadoCorte ? 'Sí' : 'No'}"`
       ];
       csvContent.push(row.join(','));
     });
@@ -98,7 +98,7 @@ export function useExportContratos() {
   ) => {
     const csvContent = convertToCSV(data, includeHeaders);
     const blob = new Blob(['\uFEFF' + csvContent], {
-      type: 'text/csv;charset=utf-8;',
+      type: 'text/csv;charset=utf-8;'
     });
     const link = document.createElement('a');
 
@@ -125,7 +125,7 @@ export function useExportContratos() {
   ) => {
     const csvContent = convertToCSV(data, includeHeaders);
     const blob = new Blob(['\uFEFF' + csvContent], {
-      type: 'application/vnd.ms-excel;charset=utf-8;',
+      type: 'application/vnd.ms-excel;charset=utf-8;'
     });
     const link = document.createElement('a');
 
@@ -176,7 +176,7 @@ export function useExportContratos() {
           break;
         case 'pdf':
           toast.error('Exportación a PDF no implementada aún', {
-            description: 'Usa CSV o Excel por el momento',
+            description: 'Usa CSV o Excel por el momento'
           });
           return;
         default:
@@ -185,12 +185,12 @@ export function useExportContratos() {
 
       toast.success(`✅ ${data.length} contratos exportados exitosamente`, {
         description: `Archivo: ${baseFilename}_${new Date().toISOString().split('T')[0]}.${options.format}`,
-        duration: 4000,
+        duration: 4000
       });
     } catch (error) {
       console.error('Error al exportar:', error);
       toast.error('Error al exportar los datos', {
-        description: 'Inténtalo de nuevo en unos momentos',
+        description: 'Inténtalo de nuevo en unos momentos'
       });
     } finally {
       setIsExporting(false);
@@ -207,7 +207,7 @@ export function useExportContratos() {
       {
         format,
         includeHeaders: true,
-        filename: 'contratos_completos',
+        filename: 'contratos_completos'
       },
       false
     );
@@ -223,7 +223,7 @@ export function useExportContratos() {
       {
         format,
         includeHeaders: true,
-        filename: 'contratos_filtrados',
+        filename: 'contratos_filtrados'
       },
       true
     );
@@ -233,6 +233,6 @@ export function useExportContratos() {
     isExporting,
     exportAllContratos,
     exportFilteredContratos,
-    exportData,
+    exportData
   };
 }

@@ -15,7 +15,7 @@ interface ProfileLoadingStateProps {
 export const ProfileLoadingState: React.FC<ProfileLoadingStateProps> = ({
   message = 'Cargando datos del perfil...',
   showRetry = false,
-  onRetry,
+  onRetry
 }) => {
   return (
     <div className='container mx-auto p-6 space-y-6'>

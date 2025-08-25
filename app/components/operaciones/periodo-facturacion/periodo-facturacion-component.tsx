@@ -3,7 +3,7 @@ import {
   CheckCircle,
   Clock,
   History,
-  PlusCircleIcon,
+  PlusCircleIcon
 } from 'lucide-react';
 
 import { useMemo, useState } from 'react';
@@ -18,13 +18,13 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '~/components/ui/tooltip';
 import api from '~/lib/api';
 import type { Anio, Periodos } from '~/types/operaciones';
@@ -36,7 +36,7 @@ import DialogNuevoPeriodo from './dialog-nuevo-periodo';
 export default function AbrirPeriodoFacturacion({
   years,
   periodos,
-  error,
+  error
 }: Readonly<{
   years: Anio[];
   periodos: Periodos[];
@@ -47,7 +47,7 @@ export default function AbrirPeriodoFacturacion({
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Período Facturación' },
+    { label: 'Período Facturación' }
   ];
 
   //Se ejecuta cuando se crea un nuevo periodo

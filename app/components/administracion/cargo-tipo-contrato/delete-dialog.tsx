@@ -6,7 +6,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '~/components/ui/alert-dialog';
 import type { GetCargoTipoContrato } from '~/types/administracion';
 
@@ -21,7 +21,7 @@ export function DeleteDialog({
   isOpen,
   onClose,
   onConfirm,
-  data,
+  data
 }: DeleteDialogProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>

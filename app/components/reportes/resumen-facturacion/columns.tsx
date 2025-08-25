@@ -16,7 +16,7 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       );
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'totalEnergiaPeriodoAnterior',
@@ -27,7 +27,7 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       const valor = row.getValue('totalEnergiaPeriodoAnterior') as string;
       return <div className='text-right'>{valor}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'totalFacturaPeriodoAnterior',
@@ -38,7 +38,7 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       const valor = row.getValue('totalFacturaPeriodoAnterior') as string;
       return <div className='text-right'>{valor}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'cantidadCargosPeriodoAnterior',
@@ -49,7 +49,7 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       const valor = row.getValue('cantidadCargosPeriodoAnterior') as string;
       return <div className='text-right'>{valor}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'totalEnergiaPeriodoActual',
@@ -60,7 +60,7 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       const valor = row.getValue('totalEnergiaPeriodoActual') as string;
       return <div className='text-right'>{valor}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'totalFacturaPeriodoActual',
@@ -71,7 +71,7 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       const valor = row.getValue('totalFacturaPeriodoActual') as string;
       return <div className='text-right'>{valor}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'cantidadCargosPeriodoActual',
@@ -82,7 +82,7 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       const valor = row.getValue('cantidadCargosPeriodoActual') as string;
       return <div className='text-right'>{valor}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'diferenciaPeriodos',
@@ -93,8 +93,8 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
       const valor = row.getValue('diferenciaPeriodos') as string;
       return <div className='text-right font-medium'>{valor}</div>;
     },
-    enableSorting: true,
-  },
+    enableSorting: true
+  }
 ];
 /**
  * cargoDescripcion: string;

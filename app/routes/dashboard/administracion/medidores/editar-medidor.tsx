@@ -109,7 +109,7 @@ export default function EditarMedidor({
     id: string | number | null;
     fecha: string;
   } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting] = useState(false);
 
   // Función para copiar código al portapapeles
   const copiarCodigoMedidor = async (codigo: string | number) => {

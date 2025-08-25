@@ -53,11 +53,11 @@ export const isValidCodeFormat = (
   if (prefix) {
     // Verificar que tenga el prefijo correcto
     if (!code.toUpperCase().startsWith(prefix.toUpperCase())) return false;
-    
+
     // Verificar que la parte numérica tenga el formato correcto
     const numberPart = code.slice(prefix.length);
     if (numberPart.length !== padding) return false;
-    
+
     return /^\d+$/.test(numberPart);
   } else {
     // Sin prefijo, debe ser solo números con el padding correcto
@@ -72,12 +72,13 @@ export const isValidCodeFormat = (
  * @param prefix Prefijo a remover (opcional)
  * @returns El número extraído o 0 si no es válido
  */
-export const extractNumberFromCode = (code: string, prefix?: string): number => {
+export const extractNumberFromCode = (
+  code: string,
+  prefix?: string
+): number => {
   if (!code) return 0;
 
-  const numberPart = prefix 
-    ? code.slice(prefix.length)
-    : code;
+  const numberPart = prefix ? code.slice(prefix.length) : code;
 
   const parsed = parseInt(numberPart, 10);
   return isNaN(parsed) ? 0 : parsed;

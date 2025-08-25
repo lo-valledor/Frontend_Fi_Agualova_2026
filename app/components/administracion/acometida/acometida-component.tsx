@@ -20,12 +20,12 @@ import type {
   ComboNichos,
   ComboSectores,
   ContratosDisponibles,
-  CrearAcometidaProps,
+  CrearAcometidaProps
 } from '~/types/administracion';
 
 import {
   type AcometidaFilters,
-  AcometidaFiltersComponent,
+  AcometidaFiltersComponent
 } from './acometida-filters';
 import { AcometidaForm } from './acometida-form';
 import { columns } from './columns';
@@ -44,7 +44,7 @@ export default function AcometidaComponent({
   comboEmpalmes,
   comboNichos,
   comboSectores,
-  contratosDisponibles,
+  contratosDisponibles
 }: Readonly<AcometidaComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAcometida, setSelectedAcometida] = useState<Acometida | null>(
@@ -62,7 +62,7 @@ export default function AcometidaComponent({
     limitePotenciaMax: '',
     tieneUbicacion: '',
     tieneMedidor: '',
-    tieneLimitePotencia: '',
+    tieneLimitePotencia: ''
   });
 
   const revalidator = useRevalidator();
@@ -83,7 +83,7 @@ export default function AcometidaComponent({
       limitePotenciaMax: '',
       tieneUbicacion: '',
       tieneMedidor: '',
-      tieneLimitePotencia: '',
+      tieneLimitePotencia: ''
     });
   };
 
@@ -122,7 +122,7 @@ export default function AcometidaComponent({
       } else {
         await api.put(`/modificar-Acometida-Existen`, {
           acometidaId: selectedAcometida?.acometidaId,
-          ...data,
+          ...data
         });
       }
       handleSuccess();
@@ -182,7 +182,7 @@ export default function AcometidaComponent({
             <div className='overflow-x-auto'>
               <DataTable
                 columns={columns({
-                  onEdit: handleEditAcometida,
+                  onEdit: handleEditAcometida
                 })}
                 data={filteredAcometidas}
                 searchPlaceholder='Buscar por código, ubicación o contrato...'

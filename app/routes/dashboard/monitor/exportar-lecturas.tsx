@@ -12,7 +12,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Exportar Lecturas' },
-    { name: 'description', content: 'Exportar lecturas de medidores' },
+    { name: 'description', content: 'Exportar lecturas de medidores' }
   ];
 }
 
@@ -24,7 +24,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
       periodos: [],
       sectores: [],
       activePeriodoId: null,
-      error: new Error(result.error || 'Error al cargar datos'),
+      error: new Error(result.error || 'Error al cargar datos')
     };
   }
 
@@ -32,7 +32,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
     periodos: result.data.periodos,
     sectores: result.data.sectores,
     activePeriodoId: result.data.activePeriodoId,
-    error: null,
+    error: null
   };
 }
 

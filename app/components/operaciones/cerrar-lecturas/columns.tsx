@@ -9,7 +9,7 @@ import {
   MapPin,
   Shield,
   TrendingUp,
-  Zap,
+  Zap
 } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
@@ -43,9 +43,9 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           className='translate-y-[2px]'
           disabled={
             (row.original.cantidadLecturasOK === 0 &&
-            row.original.cantidadClaveRoja === 0 &&
-            row.original.cantidadClaveNaranja === 0 &&
-            row.original.cantidadCorregidas === 0) ||
+              row.original.cantidadClaveRoja === 0 &&
+              row.original.cantidadClaveNaranja === 0 &&
+              row.original.cantidadCorregidas === 0) ||
             row.original.cantidadClaveRoja > 0 // Bloquear filas con claves críticas
           }
         />
@@ -53,7 +53,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 50,
+    size: 50
   },
   {
     id: 'sectorId',
@@ -78,7 +78,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 80,
+    size: 80
   },
   {
     id: 'nichoId',
@@ -102,7 +102,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 80,
+    size: 80
   },
   {
     id: 'nichoDescripcion',
@@ -119,7 +119,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
       const hasCritical = row.original.cantidadClaveRoja > 0;
       const hasWarning = row.original.cantidadClaveNaranja > 0;
       const isBlocked = hasCritical;
-      
+
       return (
         <div className={cn('font-medium', isBlocked && 'opacity-60')}>
           <div className='flex items-center gap-2'>
@@ -127,10 +127,10 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
               <div
                 className={cn(
                   'w-2 h-2 rounded-full flex-shrink-0',
-                  hasCritical 
-                    ? 'bg-red-500 animate-pulse' 
-                    : hasWarning 
-                      ? 'bg-orange-500' 
+                  hasCritical
+                    ? 'bg-red-500 animate-pulse'
+                    : hasWarning
+                      ? 'bg-orange-500'
                       : 'bg-green-500'
                 )}
               />
@@ -150,7 +150,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 200,
+    size: 200
   },
   {
     id: 'cantidadSinLectura',
@@ -184,7 +184,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 100,
+    size: 100
   },
   {
     id: 'cantidadLecturasOK',
@@ -210,7 +210,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 100,
+    size: 100
   },
   {
     id: 'cantidadClaveRoja',
@@ -242,7 +242,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 120,
+    size: 120
   },
   {
     id: 'cantidadClaveNaranja',
@@ -276,7 +276,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 120,
+    size: 120
   },
   {
     id: 'cantidadCorregidas',
@@ -308,6 +308,6 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         </div>
       );
     },
-    size: 110,
-  },
+    size: 110
+  }
 ];

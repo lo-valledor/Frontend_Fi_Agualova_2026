@@ -9,7 +9,7 @@ import type { Route } from './+types/condiciones-contrato';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Condiciones Contrato' },
-    { name: 'description', content: 'Condiciones Contrato' },
+    { name: 'description', content: 'Condiciones Contrato' }
   ];
 }
 
@@ -19,7 +19,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
   if (result.error || !result.data) {
     return {
       condicionesContrato: [],
-      conceptos: [],
+      conceptos: []
     };
   }
 
@@ -27,12 +27,12 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 }
 
 export default function CondicionesContrato({
-  loaderData,
+  loaderData
 }: Readonly<Route.ComponentProps>) {
   const { condicionesContrato, conceptos } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
-    { label: 'Condiciones Contrato' },
+    { label: 'Condiciones Contrato' }
   ];
   return (
     <div>

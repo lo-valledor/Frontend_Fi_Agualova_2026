@@ -9,7 +9,7 @@ import {
   Phone,
   Save,
   User,
-  XCircle,
+  XCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -31,7 +31,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
@@ -39,7 +39,7 @@ import { administracionService } from '~/services';
 import type {
   GetClientesByRut,
   GetComunas,
-  GetGiros,
+  GetGiros
 } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
@@ -57,7 +57,7 @@ const createClienteSchema = (existingClients: string[], currentRut?: string) =>
           return !existingClients.includes(rut);
         },
         {
-          message: 'Este RUT ya está registrado en el sistema',
+          message: 'Este RUT ya está registrado en el sistema'
         }
       ),
     nombre: z.string().min(1, 'El nombre es requerido'),
@@ -68,7 +68,7 @@ const createClienteSchema = (existingClients: string[], currentRut?: string) =>
     contacto: z.string().min(1, 'El contacto es requerido'),
     telefono: z.string().optional(),
     correo: z.string().optional(),
-    codigoGiro: z.string().min(1, 'El código de giro es requerido'),
+    codigoGiro: z.string().min(1, 'El código de giro es requerido')
   });
 
 type ClienteFormData = z.infer<ReturnType<typeof createClienteSchema>>;
@@ -77,7 +77,7 @@ export default function EditarClienteComponent() {
   const navigate = useNavigate();
   const { id: rut } = useParams<{ id: string }>();
   const { theme } = useTheme();
-  
+
   const [cliente, setCliente] = useState<GetClientesByRut | null>(null);
   const [giros, setGiros] = useState<GetGiros[]>([]);
   const [comunas, setComunas] = useState<GetComunas[]>([]);
@@ -102,8 +102,8 @@ export default function EditarClienteComponent() {
       contacto: '',
       telefono: '',
       correo: '',
-      codigoGiro: '',
-    },
+      codigoGiro: ''
+    }
   });
 
   const selectStyles = getReactSelectStyles(theme);
@@ -126,22 +126,22 @@ export default function EditarClienteComponent() {
           toast.error(clientesDataResult.error);
           return;
         }
-        
+
         if (clientesDataResult.data) {
           setGiros(clientesDataResult.data.giros);
           setComunas(clientesDataResult.data.comunas);
           setExistingClients(clientesDataResult.data.clientes.map(c => c.rut));
         }
-        
+
         if (clienteResult.error) {
           toast.error(clienteResult.error);
           navigate('/dashboard/administracion/clientes');
           return;
         }
-        
+
         if (clienteResult.data) {
           const formattedRut = formatRut(clienteResult.data.rut || '');
-          setCliente({...clienteResult.data, rut: formattedRut});
+          setCliente({ ...clienteResult.data, rut: formattedRut });
           form.reset({
             rut: formattedRut,
             nombre: clienteResult.data.nombre || '',
@@ -152,7 +152,7 @@ export default function EditarClienteComponent() {
             contacto: clienteResult.data.contacto || '',
             telefono: clienteResult.data.telefono || '',
             correo: clienteResult.data.correo || '',
-            codigoGiro: clienteResult.data.codigoGiro || '',
+            codigoGiro: clienteResult.data.codigoGiro || ''
           });
         }
       } catch (error) {
@@ -206,8 +206,11 @@ export default function EditarClienteComponent() {
         ...data,
         rut: formatRut(data.rut)
       };
-      
-      await api.put('/cliente/modificar', { ...formattedData, id: cliente?.rut });
+
+      await api.put('/cliente/modificar', {
+        ...formattedData,
+        id: cliente?.rut
+      });
       toast.success('Cliente actualizado exitosamente');
       navigate('/dashboard/administracion/clientes');
     } catch (error) {
@@ -234,7 +237,7 @@ export default function EditarClienteComponent() {
       <div className='min-h-screen bg-background flex items-center justify-center'>
         <div className='text-center'>
           <p className='text-muted-foreground'>Cliente no encontrado</p>
-          <Button 
+          <Button
             onClick={() => navigate('/dashboard/administracion/clientes')}
             className='mt-4'
           >
@@ -287,7 +290,10 @@ export default function EditarClienteComponent() {
       <div className='container mx-auto px-4 py-6 space-y-6'>
         <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='p-6 space-y-8'>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='p-6 space-y-8'
+            >
               <div className='space-y-6'>
                 <div className='flex items-center gap-2 pb-2 border-b'>
                   <User className='h-5 w-5 text-blue-600' />
@@ -309,7 +315,7 @@ export default function EditarClienteComponent() {
                             <Input
                               placeholder='12345678-9'
                               {...field}
-                              onBlur={(e) => {
+                              onBlur={e => {
                                 const formatted = formatRut(e.target.value);
                                 field.onChange(formatted);
                               }}
@@ -336,10 +342,9 @@ export default function EditarClienteComponent() {
                         <FormMessage />
                         {rutValidationStatus === 'invalid' && (
                           <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
-                            {!isValidRutFormat(form.watch('rut')) 
+                            {!isValidRutFormat(form.watch('rut'))
                               ? 'El RUT debe tener el formato 12345678-9'
-                              : 'Este RUT ya está registrado en el sistema'
-                            }
+                              : 'Este RUT ya está registrado en el sistema'}
                           </p>
                         )}
                       </FormItem>
@@ -420,7 +425,9 @@ export default function EditarClienteComponent() {
               <div className='space-y-6'>
                 <div className='flex items-center gap-2 pb-2 border-b'>
                   <MapPin className='h-5 w-5 text-green-600' />
-                  <h3 className='text-lg font-medium'>Información de Ubicación</h3>
+                  <h3 className='text-lg font-medium'>
+                    Información de Ubicación
+                  </h3>
                 </div>
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
@@ -464,13 +471,13 @@ export default function EditarClienteComponent() {
                               instanceId='comuna-select'
                               options={comunas.map(comuna => ({
                                 value: comuna.codigo,
-                                label: `${comuna.nombre} (${comuna.codigo})`,
+                                label: `${comuna.nombre} (${comuna.codigo})`
                               }))}
                               value={
                                 comunaActual
                                   ? {
                                       value: comunaActual.codigo,
-                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`,
+                                      label: `${comunaActual.nombre} (${comunaActual.codigo})`
                                     }
                                   : null
                               }
@@ -494,7 +501,9 @@ export default function EditarClienteComponent() {
               <div className='space-y-6'>
                 <div className='flex items-center gap-2 pb-2 border-b'>
                   <Phone className='h-5 w-5 text-purple-600' />
-                  <h3 className='text-lg font-medium'>Información de Contacto</h3>
+                  <h3 className='text-lg font-medium'>
+                    Información de Contacto
+                  </h3>
                 </div>
 
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
@@ -590,13 +599,13 @@ export default function EditarClienteComponent() {
                               instanceId='giro-select'
                               options={giros.map(giro => ({
                                 value: giro.codigo,
-                                label: `${giro.codigo} - ${giro.actividadEconomica}`,
+                                label: `${giro.codigo} - ${giro.actividadEconomica}`
                               }))}
                               value={
                                 giroActual
                                   ? {
                                       value: giroActual.codigo,
-                                      label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`,
+                                      label: `${giroActual.codigo} - ${giroActual.actividadEconomica}`
                                     }
                                   : null
                               }

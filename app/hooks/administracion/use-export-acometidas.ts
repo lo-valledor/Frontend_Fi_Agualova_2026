@@ -9,23 +9,23 @@ export function useExportAcometidas() {
   const acometidaColumns: ExportColumn[] = [
     {
       key: 'numeroAcometida',
-      header: 'Número Acometida',
+      header: 'Número Acometida'
     },
     {
       key: 'cliente',
-      header: 'Cliente',
+      header: 'Cliente'
     },
     {
       key: 'direccion',
-      header: 'Dirección',
+      header: 'Dirección'
     },
     {
       key: 'comuna',
-      header: 'Comuna',
+      header: 'Comuna'
     },
     {
       key: 'tipoAcometida',
-      header: 'Tipo Acometida',
+      header: 'Tipo Acometida'
     },
     {
       key: 'fechaInstalacion',
@@ -33,28 +33,28 @@ export function useExportAcometidas() {
       formatter: (value: string) => {
         if (!value) return '';
         return new Date(value).toLocaleDateString('es-CL');
-      },
+      }
     },
     {
       key: 'estado',
-      header: 'Estado',
+      header: 'Estado'
     },
     {
       key: 'diametro',
-      header: 'Diámetro',
+      header: 'Diámetro'
     },
     {
       key: 'material',
-      header: 'Material',
+      header: 'Material'
     },
     {
       key: 'presion',
-      header: 'Presión',
+      header: 'Presión'
     },
     {
       key: 'observaciones',
-      header: 'Observaciones',
-    },
+      header: 'Observaciones'
+    }
   ];
 
   // Función para exportar acometidas
@@ -66,13 +66,13 @@ export function useExportAcometidas() {
     await exportData(data, acometidaColumns, {
       format,
       filename,
-      includeHeaders: true,
+      includeHeaders: true
     });
   };
 
   return {
     isExporting,
     exportAcometidas,
-    acometidaColumns,
+    acometidaColumns
   };
 }

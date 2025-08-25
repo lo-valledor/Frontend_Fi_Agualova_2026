@@ -1,6 +1,6 @@
 import {
   ExportAllButton,
-  ExportFilteredButton,
+  ExportFilteredButton
 } from '~/components/shared/export-button';
 import { useExportContratos } from '~/hooks/administracion/use-export-contratos-new';
 import type { GetContratos } from '~/types/administracion';
@@ -14,7 +14,7 @@ interface ExportButtonsProps {
 export function ExportButtons({
   allContratos,
   filteredContratos,
-  isFiltered,
+  isFiltered
 }: ExportButtonsProps) {
   const { contractColumns } = useExportContratos();
 

@@ -10,7 +10,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 
 interface Metric {
@@ -28,29 +28,29 @@ export function RealTimeMetrics() {
       value: 1234,
       change: 0,
       icon: Users,
-      color: 'text-blue-600',
+      color: 'text-blue-600'
     },
     {
       label: 'Páginas Vistas',
       value: 5678,
       change: 0,
       icon: Eye,
-      color: 'text-green-600',
+      color: 'text-green-600'
     },
     {
       label: 'Clics Totales',
       value: 890,
       change: 0,
       icon: MousePointer,
-      color: 'text-purple-600',
+      color: 'text-purple-600'
     },
     {
       label: 'Tasa de Actividad',
       value: 67,
       change: 0,
       icon: Activity,
-      color: 'text-orange-600',
-    },
+      color: 'text-orange-600'
+    }
   ]);
 
   // Simular actualizaciones en tiempo real
@@ -60,7 +60,7 @@ export function RealTimeMetrics() {
         prev.map(metric => ({
           ...metric,
           value: metric.value + Math.floor(Math.random() * 10) - 5,
-          change: Math.floor(Math.random() * 20) - 10,
+          change: Math.floor(Math.random() * 20) - 10
         }))
       );
     }, 3000);

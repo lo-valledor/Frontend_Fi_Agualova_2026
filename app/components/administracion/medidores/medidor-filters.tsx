@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Separator } from '~/components/ui/separator';
 import type { FilterOptions } from '~/hooks/administracion/use-medidor-filters';
@@ -48,14 +48,14 @@ export function MedidorFiltersComponent({
   filters,
   onFiltersChange,
   onClearFilters,
-  filterOptions,
+  filterOptions
 }: Readonly<MedidorFiltersProps>) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof MedidorFilters, value: string) => {
     onFiltersChange({
       ...filters,
-      [key]: value,
+      [key]: value
     });
   };
 

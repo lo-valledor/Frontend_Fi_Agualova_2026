@@ -4,7 +4,7 @@ import {
   CheckCircle2,
   FileText,
   Gauge,
-  RefreshCw,
+  RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,7 +18,7 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -31,7 +31,7 @@ import {
   type DetalleMedidorAntiguo,
   type DetalleMedidorNuevo,
   type MedidorAntiguo,
-  type MedidorNuevo,
+  type MedidorNuevo
 } from '~/types/operaciones';
 
 import AntiguoMedidorForm from './antiguo-medidor-form';
@@ -45,7 +45,7 @@ export default function CambioMedidorComponent() {
   // Estados para medidor antiguo
   const [medidorAntiguo, setMedidorAntiguo] = useState<MedidorAntiguo>({
     acometida: '',
-    numeroSerie: '',
+    numeroSerie: ''
   });
 
   // Estados para detalles de medidor antiguo
@@ -59,12 +59,12 @@ export default function CambioMedidorComponent() {
       tipo: '',
       modelo: '',
       lecturaActual: '',
-      medidorId: 0,
+      medidorId: 0
     });
 
   // Estados para nuevo medidor
   const [medidorNuevo, setMedidorNuevo] = useState<MedidorNuevo>({
-    numeroSerie: '',
+    numeroSerie: ''
   });
 
   // Estados para detalle nuevo medidor
@@ -76,7 +76,7 @@ export default function CambioMedidorComponent() {
       marca: '',
       modelo: '',
       numero_serie: '',
-      estado_medidor: 0,
+      estado_medidor: 0
     });
   // Estado para nuevo contrato
   const [codigoContrato, setCodigoContrato] = useState<string>('');
@@ -98,13 +98,13 @@ export default function CambioMedidorComponent() {
     const { id, value } = e.target;
     setMedidorAntiguo(prev => ({
       ...prev,
-      [id === 'acometida' ? 'acometida' : 'numeroSerie']: value,
+      [id === 'acometida' ? 'acometida' : 'numeroSerie']: value
     }));
   };
 
   const handleMedidorNuevoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMedidorNuevo({
-      numeroSerie: e.target.value,
+      numeroSerie: e.target.value
     });
   };
 
@@ -117,27 +117,27 @@ export default function CambioMedidorComponent() {
     if (id === 'nuevo-numero-medidor') {
       setDetalleMedidorNuevo(prev => ({
         ...prev,
-        numero_serie: value,
+        numero_serie: value
       }));
     } else if (id === 'nueva-constante') {
       setDetalleMedidorNuevo(prev => ({
         ...prev,
-        constante_multiplicar: parseFloat(value) || 0,
+        constante_multiplicar: parseFloat(value) || 0
       }));
     } else if (id === 'nueva-marca') {
       setDetalleMedidorNuevo(prev => ({
         ...prev,
-        marca: value,
+        marca: value
       }));
     } else if (id === 'nuevo-tipo') {
       setDetalleMedidorNuevo(prev => ({
         ...prev,
-        tipo_medidor: value,
+        tipo_medidor: value
       }));
     } else if (id === 'nuevo-modelo') {
       setDetalleMedidorNuevo(prev => ({
         ...prev,
-        modelo: value,
+        modelo: value
       }));
     }
   };
@@ -145,14 +145,14 @@ export default function CambioMedidorComponent() {
   const handleUltimaLecturaChange = (value: string) => {
     setDetalleMedidorAntiguo(prev => ({
       ...prev,
-      ultimaLectura: value,
+      ultimaLectura: value
     }));
   };
 
   const handleLecturaActualChange = (value: string) => {
     setDetalleMedidorAntiguo(prev => ({
       ...prev,
-      lecturaActual: value,
+      lecturaActual: value
     }));
   };
 
@@ -193,7 +193,7 @@ export default function CambioMedidorComponent() {
           tipo: data.tipo_medidor,
           modelo: data.modelo,
           lecturaActual: data.lectura_actual?.toString() || '',
-          medidorId: data.medidor_id,
+          medidorId: data.medidor_id
         });
 
         toast.success('Datos del medidor cargados correctamente');
@@ -222,8 +222,8 @@ export default function CambioMedidorComponent() {
 
       const response = await api.get('/consulta-medidor-nuevo', {
         params: {
-          numeroSerie: medidorNuevo.numeroSerie,
-        },
+          numeroSerie: medidorNuevo.numeroSerie
+        }
       });
 
       if (response.status === 200) {
@@ -246,7 +246,7 @@ export default function CambioMedidorComponent() {
           marca: data.marca,
           modelo: data.modelo,
           numero_serie: data.numero_serie,
-          estado_medidor: data.estado_medidor,
+          estado_medidor: data.estado_medidor
         });
 
         toast.success('Datos del nuevo medidor cargados correctamente');
@@ -304,7 +304,7 @@ export default function CambioMedidorComponent() {
         acometidaCodigo: detalleMedidorAntiguo.acometidaDetalle,
         usuario: user.username,
         fechaCierre: fechaPrimeraLectura, // Usamos la misma fecha para ambos campos
-        codigoContrato: codigoContrato ? parseInt(codigoContrato) : 0,
+        codigoContrato: codigoContrato ? parseInt(codigoContrato) : 0
       };
 
       const response = await api.post(
@@ -326,7 +326,7 @@ export default function CambioMedidorComponent() {
           tipo: '',
           modelo: '',
           lecturaActual: '',
-          medidorId: 0,
+          medidorId: 0
         });
         setMedidorNuevo({ numeroSerie: '' });
         setDetalleMedidorNuevo({
@@ -336,7 +336,7 @@ export default function CambioMedidorComponent() {
           marca: '',
           modelo: '',
           numero_serie: '',
-          estado_medidor: 0,
+          estado_medidor: 0
         });
         setCodigoContrato('');
         setValorPrimeraLectura('');
@@ -779,7 +779,7 @@ export default function CambioMedidorComponent() {
               <div
                 className='h-full bg-sky-600'
                 style={{
-                  width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
+                  width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`
                 }}
               ></div>
             </div>
@@ -805,7 +805,7 @@ export default function CambioMedidorComponent() {
               <div
                 className='h-full bg-sky-600'
                 style={{
-                  width: `${((currentStep - 2) / (totalSteps - 1)) * 100}%`,
+                  width: `${((currentStep - 2) / (totalSteps - 1)) * 100}%`
                 }}
               ></div>
             </div>
@@ -831,7 +831,7 @@ export default function CambioMedidorComponent() {
               <div
                 className='h-full bg-sky-600'
                 style={{
-                  width: `${((currentStep - 3) / (totalSteps - 1)) * 100}%`,
+                  width: `${((currentStep - 3) / (totalSteps - 1)) * 100}%`
                 }}
               ></div>
             </div>

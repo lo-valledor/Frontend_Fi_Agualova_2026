@@ -13,7 +13,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Parámetros' },
-    { name: 'description', content: ' Parámetros del sistema' },
+    { name: 'description', content: ' Parámetros del sistema' }
   ];
 }
 

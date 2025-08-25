@@ -12,7 +12,7 @@ import type { Route } from './+types/login';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Login' },
-    { name: 'description', content: 'Enerlova | Login' },
+    { name: 'description', content: 'Enerlova | Login' }
   ];
 }
 
@@ -45,7 +45,7 @@ const Login = () => {
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
                 animationDuration: `${5 + Math.random() * 10}s`,
-                animationDelay: `${Math.random() * 5}s`,
+                animationDelay: `${Math.random() * 5}s`
               }}
             ></div>
           ))}

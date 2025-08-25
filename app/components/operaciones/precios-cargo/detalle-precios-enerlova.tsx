@@ -10,13 +10,13 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
+  ChartTooltipContent
 } from '~/components/ui/chart';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import {
@@ -24,7 +24,7 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
+  SheetTrigger
 } from '~/components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import api from '~/lib/api';
@@ -37,8 +37,8 @@ const chartConfig = {
   desktop: {
     label: 'Valor',
     // Cambiamos el color a un tono de azul más vibrante
-    color: 'hsl(210, 100%, 50%)', // Puedes usar cualquier color CSS válido aquí
-  },
+    color: 'hsl(210, 100%, 50%)' // Puedes usar cualquier color CSS válido aquí
+  }
 } satisfies ChartConfig;
 
 // Función auxiliar para normalizar valores numéricos
@@ -64,7 +64,7 @@ const formatearValor = (valor: number | string): string => {
   // Formateamos con 2 decimales y separador de miles
   return numero.toLocaleString('es-CL', {
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: 2
   });
 };
 
@@ -89,7 +89,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
       ).map(item => ({
         ...item,
         // Aseguramos que valor sea un número para operaciones
-        valorNumerico: normalizarValor(item.valor),
+        valorNumerico: normalizarValor(item.valor)
       }));
 
       setData(datosNormalizados);
@@ -230,7 +230,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
     return datosFiltrados.map(item => ({
       ...item,
       // Aseguramos que valor sea un número para el gráfico
-      valor: normalizarValor(item.valor),
+      valor: normalizarValor(item.valor)
     }));
   }, [datosFiltrados]);
 
@@ -251,7 +251,9 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
         <SheetHeader className='px-3 sm:px-6 py-3 sm:py-4 border-b border-border/60 bg-muted/40'>
           <SheetTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
             <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
-            <span className='hidden sm:inline'>Detalle de Precios de Cargo</span>
+            <span className='hidden sm:inline'>
+              Detalle de Precios de Cargo
+            </span>
             <span className='sm:hidden'>Detalle Precios</span>
           </SheetTitle>
         </SheetHeader>
@@ -285,10 +287,30 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                           className='w-full'
                         >
                           <TabsList className='grid grid-cols-4 w-full h-8 sm:h-10'>
-                            <TabsTrigger value='todo' className='text-xs sm:text-sm px-1 sm:px-3'>Todo</TabsTrigger>
-                            <TabsTrigger value='1año' className='text-xs sm:text-sm px-1 sm:px-3'>1 Año</TabsTrigger>
-                            <TabsTrigger value='6meses' className='text-xs sm:text-sm px-1 sm:px-3'>6M</TabsTrigger>
-                            <TabsTrigger value='3meses' className='text-xs sm:text-sm px-1 sm:px-3'>3M</TabsTrigger>
+                            <TabsTrigger
+                              value='todo'
+                              className='text-xs sm:text-sm px-1 sm:px-3'
+                            >
+                              Todo
+                            </TabsTrigger>
+                            <TabsTrigger
+                              value='1año'
+                              className='text-xs sm:text-sm px-1 sm:px-3'
+                            >
+                              1 Año
+                            </TabsTrigger>
+                            <TabsTrigger
+                              value='6meses'
+                              className='text-xs sm:text-sm px-1 sm:px-3'
+                            >
+                              6M
+                            </TabsTrigger>
+                            <TabsTrigger
+                              value='3meses'
+                              className='text-xs sm:text-sm px-1 sm:px-3'
+                            >
+                              3M
+                            </TabsTrigger>
                           </TabsList>
                         </Tabs>
                       </div>
@@ -346,7 +368,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               top: 5,
                               right: 5,
                               left: 5,
-                              bottom: 15,
+                              bottom: 15
                             }}
                           >
                             <CartesianGrid
@@ -383,7 +405,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                             <ChartTooltip
                               cursor={{
                                 stroke: 'var(--border)',
-                                strokeWidth: 1,
+                                strokeWidth: 1
                               }}
                               content={
                                 <ChartTooltipContent
@@ -402,13 +424,13 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               dot={{
                                 fill: 'var(--color-desktop)',
                                 r: 4,
-                                strokeWidth: 0,
+                                strokeWidth: 0
                               }}
                               activeDot={{
                                 r: 6,
                                 fill: 'var(--color-desktop)',
                                 stroke: 'var(--background)',
-                                strokeWidth: 2,
+                                strokeWidth: 2
                               }}
                             />
                           </LineChart>

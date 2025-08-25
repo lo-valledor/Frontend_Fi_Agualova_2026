@@ -44,7 +44,7 @@ export default function MedidoresComponent({
   const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(
     null
   );
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [modalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 

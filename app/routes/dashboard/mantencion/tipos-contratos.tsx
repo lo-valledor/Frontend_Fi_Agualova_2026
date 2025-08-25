@@ -13,7 +13,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Tipos de Contratos' },
-    { name: 'description', content: ' Tipos de Contratos' },
+    { name: 'description', content: ' Tipos de Contratos' }
   ];
 }
 
@@ -27,12 +27,14 @@ export async function clientLoader() {
   return { tiposContratos: result.data };
 }
 
-export default function TiposContratos({ loaderData }: Readonly<Route.ComponentProps>) {
+export default function TiposContratos({
+  loaderData
+}: Readonly<Route.ComponentProps>) {
   const { tiposContratos } = loaderData;
 
   const pageBreadcrumbs = [
     { label: 'Mantención' },
-    { label: 'Tipos de Contratos' },
+    { label: 'Tipos de Contratos' }
   ];
 
   return (

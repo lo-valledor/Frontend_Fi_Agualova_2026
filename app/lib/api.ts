@@ -24,7 +24,7 @@ const api = {
     refreshToken: () =>
       axiosInstance.post<ApiResponse<{ token: string }> | { token: string }>(
         '/refresh-token'
-      ),
+      )
   },
 
   // Generic CRUD operations con tipos flexibles
@@ -37,7 +37,7 @@ const api = {
   patch: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
     axiosInstance.patch<T | ApiResponse<T>>(url, data, config),
   delete: <T>(url: string, config?: AxiosRequestConfig) =>
-    axiosInstance.delete<T | ApiResponse<T>>(url, config),
+    axiosInstance.delete<T | ApiResponse<T>>(url, config)
 };
 
 export function useApiWithLoadingBar() {
@@ -62,7 +62,7 @@ export function useApiWithLoadingBar() {
     post: (...args: any[]) => requestWithBar('post', ...args),
     put: (...args: any[]) => requestWithBar('put', ...args),
     patch: (...args: any[]) => requestWithBar('patch', ...args),
-    delete: (...args: any[]) => requestWithBar('delete', ...args) as any,
+    delete: (...args: any[]) => requestWithBar('delete', ...args) as any
   };
 }
 

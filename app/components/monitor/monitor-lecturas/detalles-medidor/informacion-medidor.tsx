@@ -5,7 +5,7 @@ import {
   Key,
   PlugIcon,
   TrendingUp,
-  Zap,
+  Zap
 } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
@@ -16,7 +16,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import type { EtapaUno } from '~/types/monitor';
@@ -32,7 +32,7 @@ interface InformacionMedidorProps {
 export default function InformacionMedidor({
   data,
   error,
-  lecturaId,
+  lecturaId
 }: InformacionMedidorProps) {
   return (
     <Card className='border-0 shadow-none bg-transparent'>
@@ -106,7 +106,10 @@ export default function InformacionMedidor({
                             <span className='text-lg font-semibold text-foreground'>
                               Detalle Lectura BT-4.3
                             </span>
-                            <Badge variant='outline' className='font-mono text-xs self-start sm:self-auto'>
+                            <Badge
+                              variant='outline'
+                              className='font-mono text-xs self-start sm:self-auto'
+                            >
                               ID: {lecturaId}
                             </Badge>
                           </div>

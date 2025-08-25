@@ -11,7 +11,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Textarea } from '~/components/ui/textarea';
 import api from '~/lib/api';
@@ -61,7 +61,7 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
     const dataToSend = {
       lecturaId: result.LM_ID.toString(),
       claveId: parseInt(selectedClave),
-      descripcion: descripcionReapertura.trim(),
+      descripcion: descripcionReapertura.trim()
     };
 
     reabrirMedicion(dataToSend);

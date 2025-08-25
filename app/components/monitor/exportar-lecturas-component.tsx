@@ -10,7 +10,7 @@ import {
   Hash,
   Loader2,
   MapPin,
-  X,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -42,7 +42,7 @@ export default function ExportarLecturasComponent({
   periodos,
   sectores,
   activePeriodoId,
-  error,
+  error
 }: ExportarLecturasComponentProps) {
   const [selectedPeriodos, setSelectedPeriodos] = useState<Periodo[]>([]);
   const [isExporting, setIsExporting] = useState(false);
@@ -57,7 +57,7 @@ export default function ExportarLecturasComponent({
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
-    { label: 'Exportar Lecturas' },
+    { label: 'Exportar Lecturas' }
   ];
 
   // Efecto para establecer el período activo por defecto
@@ -173,7 +173,7 @@ export default function ExportarLecturasComponent({
       // Realizar la petición
       const response = await api.get('/exportar-lecturas-excel', {
         params,
-        responseType: 'blob', // Importante para descargar archivos
+        responseType: 'blob' // Importante para descargar archivos
       });
 
       // Crear un enlace para descargar el archivo
@@ -197,7 +197,7 @@ export default function ExportarLecturasComponent({
       )}_${new Date().toLocaleDateString('es-ES', {
         year: 'numeric',
         month: '2-digit',
-        day: '2-digit',
+        day: '2-digit'
       })}.xlsx`;
 
       if (contentDisposition) {

@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -19,7 +19,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '~/components/ui/tooltip';
 import api from '~/lib/api';
 
@@ -30,7 +30,7 @@ interface CorteRegistradoDialogProps {
 
 export function CorteRegistradoDialog({
   acometida,
-  onSuccess,
+  onSuccess
 }: Readonly<CorteRegistradoDialogProps>) {
   const [open, setOpen] = useState(false);
   const [fecha, setFecha] = useState('');
@@ -44,7 +44,7 @@ export function CorteRegistradoDialog({
     setIsSubmitting(true);
     try {
       await api.post('corte-registrado', null, {
-        params: { acometida, fecha, hora, periodo },
+        params: { acometida, fecha, hora, periodo }
       });
       toast.success('Corte registrado correctamente');
       onSuccess();
@@ -95,7 +95,8 @@ export function CorteRegistradoDialog({
             Complete los datos para registrar el corte de la acometida{' '}
             <span className='font-mono font-medium text-xs sm:text-sm break-all'>
               {acometida}
-            </span>.
+            </span>
+            .
           </DialogDescription>
         </DialogHeader>
         <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>

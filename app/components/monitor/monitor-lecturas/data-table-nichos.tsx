@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 
 import { useEffect, useState } from 'react';
@@ -18,7 +18,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import { cn } from '~/lib/utils';
 
@@ -39,12 +39,7 @@ interface DataTableNichosProps<TData, TValue> {
 // Configuración de visibilidad responsiva para columnas
 const responsiveColumnVisibility = {
   // En mobile (< 640px) solo mostrar columnas esenciales
-  mobile: [
-    'numero',
-    'numero_serie', 
-    'consumo_energia_activa',
-    'acciones'
-  ],
+  mobile: ['numero', 'numero_serie', 'consumo_energia_activa', 'acciones'],
   // En tablet portrait (640px - 768px) agregar algunas columnas
   tabletPortrait: [
     'numero',
@@ -98,10 +93,12 @@ export function DataTableNichos<TData, TValue>({
   columnGroups,
   onRowClick,
   pagination,
-  onPaginationChange,
+  onPaginationChange
 }: DataTableNichosProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [screenSize, setScreenSize] = useState<'mobile' | 'tabletPortrait' | 'tablet' | 'desktopSmall' | 'desktop'>('desktop');
+  const [screenSize, setScreenSize] = useState<
+    'mobile' | 'tabletPortrait' | 'tablet' | 'desktopSmall' | 'desktop'
+  >('desktop');
 
   // Hook para detectar el tamaño de pantalla con breakpoints mejorados
   useEffect(() => {
@@ -130,9 +127,9 @@ export function DataTableNichos<TData, TValue>({
     if (screenSize === 'desktop') {
       return columns; // Mostrar todas las columnas
     }
-    
+
     const visibleColumnIds = responsiveColumnVisibility[screenSize] || [];
-    return columns.filter(column => 
+    return columns.filter(column =>
       visibleColumnIds.includes(column.id as string)
     );
   };
@@ -144,7 +141,7 @@ export function DataTableNichos<TData, TValue>({
     if (screenSize === 'desktop') {
       return columnGroups;
     }
-    
+
     const visibleColumnIds = responsiveColumnVisibility[screenSize] || [];
     return columnGroups
       .map(group => ({
@@ -166,8 +163,8 @@ export function DataTableNichos<TData, TValue>({
     onPaginationChange: onPaginationChange,
     state: {
       sorting,
-      pagination,
-    },
+      pagination
+    }
   });
 
   // Función para renderizar encabezados agrupados
@@ -187,7 +184,7 @@ export function DataTableNichos<TData, TValue>({
       groupedRow[group.id] = {
         span: 0,
         title: group.title,
-        className: group.className,
+        className: group.className
       };
 
       // Contar columnas en cada grupo
@@ -200,14 +197,16 @@ export function DataTableNichos<TData, TValue>({
     });
 
     return (
-      <TableRow className={cn(
-        'border-b border-border/20',
-        // Altura adaptativa para headers agrupados
-        screenSize === 'mobile' && 'h-10',
-        screenSize === 'tabletPortrait' && 'h-10',
-        screenSize === 'tablet' && 'h-9',
-        (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'h-8'
-      )}>
+      <TableRow
+        className={cn(
+          'border-b border-border/20',
+          // Altura adaptativa para headers agrupados
+          screenSize === 'mobile' && 'h-10',
+          screenSize === 'tabletPortrait' && 'h-10',
+          screenSize === 'tablet' && 'h-9',
+          (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'h-8'
+        )}
+      >
         {headerGroup.headers.map(header => {
           // Buscar si esta columna es la primera de algún grupo
           const group = visibleColumnGroups.find(
@@ -259,7 +258,7 @@ export function DataTableNichos<TData, TValue>({
           {/* Contenedor con scroll horizontal mejorado */}
           <div className='overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-muted/10 hover:scrollbar-thumb-muted-foreground/50 transition-colors'>
             {/* Tabla con ancho mínimo adaptivo */}
-            <div 
+            <div
               className={cn(
                 'w-full relative',
                 screenSize === 'mobile' && 'min-w-[450px]',
@@ -288,9 +287,12 @@ export function DataTableNichos<TData, TValue>({
                               'text-center text-xs font-medium border-r border-border/20 last:border-r-0 whitespace-nowrap',
                               // Altura y padding adaptativo para headers
                               screenSize === 'mobile' && 'h-10 py-2 px-1',
-                              screenSize === 'tabletPortrait' && 'h-10 py-2 px-1.5',
+                              screenSize === 'tabletPortrait' &&
+                                'h-10 py-2 px-1.5',
                               screenSize === 'tablet' && 'h-9 py-1.5 px-2',
-                              (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'h-8 py-1 px-2',
+                              (screenSize === 'desktopSmall' ||
+                                screenSize === 'desktop') &&
+                                'h-8 py-1 px-2',
                               meta?.className
                             )}
                           >
@@ -320,7 +322,9 @@ export function DataTableNichos<TData, TValue>({
                           screenSize === 'mobile' && 'h-10',
                           screenSize === 'tabletPortrait' && 'h-10',
                           screenSize === 'tablet' && 'h-9',
-                          (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'h-8'
+                          (screenSize === 'desktopSmall' ||
+                            screenSize === 'desktop') &&
+                            'h-8'
                         )}
                         onClick={() => onRowClick?.(row.original)}
                       >
@@ -335,9 +339,12 @@ export function DataTableNichos<TData, TValue>({
                                 'border-r border-border/10 last:border-r-0 whitespace-nowrap text-xs',
                                 // Padding adaptativo para mejor experiencia táctil
                                 screenSize === 'mobile' && 'py-2 px-1',
-                                screenSize === 'tabletPortrait' && 'py-2 px-1.5',
+                                screenSize === 'tabletPortrait' &&
+                                  'py-2 px-1.5',
                                 screenSize === 'tablet' && 'py-1.5 px-2',
-                                (screenSize === 'desktopSmall' || screenSize === 'desktop') && 'py-1 px-2',
+                                (screenSize === 'desktopSmall' ||
+                                  screenSize === 'desktop') &&
+                                  'py-1 px-2',
                                 meta?.className
                               )}
                             >
@@ -372,13 +379,15 @@ export function DataTableNichos<TData, TValue>({
               </Table>
             </div>
           </div>
-          
+
           {/* Indicadores de scroll horizontal */}
           {(screenSize === 'mobile' || screenSize === 'tabletPortrait') && (
             <>
               {/* Indicador de scroll derecha */}
               <div className='absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-end pr-1'>
-                <div className='text-muted-foreground/60 text-xs animate-pulse'>→</div>
+                <div className='text-muted-foreground/60 text-xs animate-pulse'>
+                  →
+                </div>
               </div>
               {/* Indicador de scroll izquierda (se muestra al hacer scroll) */}
               <div className='absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-start pl-1 opacity-0 transition-opacity'>
@@ -386,7 +395,7 @@ export function DataTableNichos<TData, TValue>({
               </div>
             </>
           )}
-          
+
           {/* Sombra de scroll para tablets */}
           {screenSize === 'tablet' && (
             <>

@@ -3,7 +3,7 @@ import {
   IconDots,
   IconFolder,
   IconShare3,
-  IconTrash,
+  IconTrash
 } from '@tabler/icons-react';
 
 import {
@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu';
 import {
   SidebarGroup,
@@ -20,11 +20,11 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  useSidebar
 } from '~/components/ui/sidebar';
 
 export function NavDocuments({
-  items,
+  items
 }: {
   items: {
     name: string;
@@ -36,11 +36,16 @@ export function NavDocuments({
 
   return (
     <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
-      <SidebarGroupLabel className='text-xs sm:text-sm px-2 sm:px-4'>Documents</SidebarGroupLabel>
+      <SidebarGroupLabel className='text-xs sm:text-sm px-2 sm:px-4'>
+        Documents
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map(item => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild className='px-2 sm:px-3 py-2 text-xs sm:text-sm'>
+            <SidebarMenuButton
+              asChild
+              className='px-2 sm:px-3 py-2 text-xs sm:text-sm'
+            >
               <a href={item.url} className='flex items-center gap-2'>
                 <item.icon className='h-3 w-3 sm:h-4 sm:w-4' />
                 <span className='truncate'>{item.name}</span>
@@ -70,7 +75,10 @@ export function NavDocuments({
                   <span>Share</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem variant='destructive' className='gap-1.5 sm:gap-2 py-1.5 sm:py-2'>
+                <DropdownMenuItem
+                  variant='destructive'
+                  className='gap-1.5 sm:gap-2 py-1.5 sm:py-2'
+                >
                   <IconTrash className='h-3 w-3 sm:h-4 sm:w-4' />
                   <span>Delete</span>
                 </DropdownMenuItem>

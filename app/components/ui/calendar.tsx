@@ -57,13 +57,13 @@ function Calendar({
         day_range_middle:
           'aria-selected:bg-accent aria-selected:text-accent-foreground',
         day_hidden: 'invisible',
-        ...classNames,
+        ...classNames
       }}
       components={{
         Chevron: ({ orientation, ...props }) => {
           const Component = orientation === 'left' ? ChevronLeft : ChevronRight;
           return <Component className='size-4' {...props} />;
-        },
+        }
       }}
       {...props}
     />

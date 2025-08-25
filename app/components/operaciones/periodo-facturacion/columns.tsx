@@ -47,7 +47,7 @@ export const columns: ColumnDef<Periodos>[] = [
         </Badge>
       );
     },
-    size: 60,
+    size: 60
   },
   {
     accessorKey: 'pf_descripcion',
@@ -62,7 +62,7 @@ export const columns: ColumnDef<Periodos>[] = [
         </div>
       );
     },
-    size: 150,
+    size: 150
   },
   {
     accessorKey: 'Column1', //Formato DD-MM-YYYY
@@ -80,7 +80,7 @@ export const columns: ColumnDef<Periodos>[] = [
               ? fechaInicio.toLocaleDateString('es-CL', {
                   day: '2-digit',
                   month: '2-digit',
-                  year: 'numeric',
+                  year: 'numeric'
                 })
               : 'Fecha inválida'}
           </span>
@@ -92,7 +92,7 @@ export const columns: ColumnDef<Periodos>[] = [
       const fechaB = formatDateForSorting(rowB.original.Column1);
       return fechaA.localeCompare(fechaB);
     },
-    size: 140,
+    size: 140
   },
   {
     header: ({ column }) => (
@@ -110,7 +110,7 @@ export const columns: ColumnDef<Periodos>[] = [
               ? fechaFin.toLocaleDateString('es-CL', {
                   day: '2-digit',
                   month: '2-digit',
-                  year: 'numeric',
+                  year: 'numeric'
                 })
               : 'Fecha inválida'}
           </span>
@@ -122,7 +122,7 @@ export const columns: ColumnDef<Periodos>[] = [
       const fechaB = formatDateForSorting(rowB.original.Column2);
       return fechaA.localeCompare(fechaB);
     },
-    size: 140,
+    size: 140
   },
   {
     accessorKey: 'epf_descripcion',
@@ -139,19 +139,19 @@ export const columns: ColumnDef<Periodos>[] = [
             return {
               variant: 'default' as const,
               className:
-                'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700',
+                'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-700'
             };
           case 'Cerrado':
             return {
               variant: 'destructive' as const,
               className:
-                'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700',
+                'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700'
             };
           default:
             return {
               variant: 'outline' as const,
               className:
-                'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300',
+                'border-slate-200 text-slate-700 dark:border-slate-700 dark:text-slate-300'
             };
         }
       };
@@ -170,6 +170,6 @@ export const columns: ColumnDef<Periodos>[] = [
         </div>
       );
     },
-    size: 100,
-  },
+    size: 100
+  }
 ];

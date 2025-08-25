@@ -9,7 +9,7 @@ import {
   TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import { type ValidarSectoresPendientes } from '~/types/operaciones';
 
@@ -22,7 +22,7 @@ interface TablaLecturasPendientesProps {
 export default function TablaLecturasPendientes({
   data,
   isLoading,
-  onRefresh,
+  onRefresh
 }: TablaLecturasPendientesProps) {
   // Función para renderizar el badge del estado
   const renderEstadoBadge = (estado: number) => {
@@ -114,7 +114,9 @@ export default function TablaLecturasPendientes({
                   <div className='flex flex-col items-center gap-2'>
                     <Info className='h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground' />
                     <span className='text-xs sm:text-sm'>
-                      <span className='hidden sm:inline'>No hay lecturas pendientes</span>
+                      <span className='hidden sm:inline'>
+                        No hay lecturas pendientes
+                      </span>
                       <span className='sm:hidden'>Sin pendientes</span>
                     </span>
                   </div>
@@ -123,10 +125,18 @@ export default function TablaLecturasPendientes({
             ) : (
               data.detalles.map((item, index) => (
                 <TableRow key={index} className='hover:bg-muted/30'>
-                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>{item.sector}</TableCell>
-                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>{item.nicho}</TableCell>
-                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>{item.cantidad}</TableCell>
-                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3'>{renderEstadoBadge(item.estado)}</TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>
+                    {item.sector}
+                  </TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>
+                    {item.nicho}
+                  </TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm'>
+                    {item.cantidad}
+                  </TableCell>
+                  <TableCell className='px-2 sm:px-4 py-2 sm:py-3'>
+                    {renderEstadoBadge(item.estado)}
+                  </TableCell>
                 </TableRow>
               ))
             )}
@@ -137,16 +147,25 @@ export default function TablaLecturasPendientes({
             data.detalles.length > 0 && (
               <TableFooter className='bg-muted/30'>
                 <TableRow>
-                  <TableCell colSpan={2} className='text-xs font-medium px-2 sm:px-4 py-2 sm:py-3'>
-                    <span className='hidden sm:inline'>Periodo: {data.periodo}</span>
+                  <TableCell
+                    colSpan={2}
+                    className='text-xs font-medium px-2 sm:px-4 py-2 sm:py-3'
+                  >
+                    <span className='hidden sm:inline'>
+                      Periodo: {data.periodo}
+                    </span>
                     <span className='sm:hidden'>Per: {data.periodo}</span>
                   </TableCell>
                   <TableCell
                     colSpan={2}
                     className='text-xs font-medium text-right px-2 sm:px-4 py-2 sm:py-3'
                   >
-                    <span className='hidden sm:inline'>Total pendientes: {data.totalPendientes}</span>
-                    <span className='sm:hidden'>Total: {data.totalPendientes}</span>
+                    <span className='hidden sm:inline'>
+                      Total pendientes: {data.totalPendientes}
+                    </span>
+                    <span className='sm:hidden'>
+                      Total: {data.totalPendientes}
+                    </span>
                   </TableCell>
                 </TableRow>
               </TableFooter>

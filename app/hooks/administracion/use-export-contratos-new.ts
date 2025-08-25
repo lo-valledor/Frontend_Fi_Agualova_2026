@@ -10,78 +10,78 @@ export function useExportContratos() {
   const contractColumns: ExportColumn[] = [
     {
       key: 'codigoContrato',
-      header: 'Código Contrato',
+      header: 'Código Contrato'
     },
     {
       key: 'acometida',
-      header: 'Acometida',
+      header: 'Acometida'
     },
     {
       key: 'tipoContrato',
-      header: 'Tipo Contrato',
+      header: 'Tipo Contrato'
     },
     {
       key: 'tarifa',
-      header: 'Tarifa',
+      header: 'Tarifa'
     },
     {
       key: 'nombrePropietario',
-      header: 'Propietario',
+      header: 'Propietario'
     },
     {
       key: 'nombreCliente',
-      header: 'Cliente',
+      header: 'Cliente'
     },
     {
       key: 'local',
-      header: 'Local',
+      header: 'Local'
     },
     {
       key: 'fechaInicio',
       header: 'Fecha Inicio',
       formatter: (value: string | null | undefined) =>
-        formatDateForExport(value),
+        formatDateForExport(value)
     },
     {
       key: 'activo',
       header: 'Estado',
-      formatter: (value: boolean) => (value ? 'Activo' : 'Inactivo'),
+      formatter: (value: boolean) => (value ? 'Activo' : 'Inactivo')
     },
     {
       key: 'fechaTermino',
       header: 'Fecha Término',
       formatter: (value: string | null | undefined) =>
-        formatDateForExport(value),
+        formatDateForExport(value)
     },
     {
       key: 'comunaEnvio',
-      header: 'Comuna Envío',
+      header: 'Comuna Envío'
     },
     {
       key: 'direccionEnvio',
-      header: 'Dirección Envío',
+      header: 'Dirección Envío'
     },
     {
       key: 'limiteInvierno',
-      header: 'Límite Invierno',
+      header: 'Límite Invierno'
     },
     {
       key: 'promedioAnual',
-      header: 'Promedio Anual',
+      header: 'Promedio Anual'
     },
     {
       key: 'cicloFacturacion',
-      header: 'Ciclo Facturación',
+      header: 'Ciclo Facturación'
     },
     {
       key: 'potenciaContratada',
-      header: 'Potencia Contratada',
+      header: 'Potencia Contratada'
     },
     {
       key: 'liberadoCorte',
       header: 'Liberado Corte',
-      formatter: (value: boolean) => (value ? 'Sí' : 'No'),
-    },
+      formatter: (value: boolean) => (value ? 'Sí' : 'No')
+    }
   ];
 
   // Función para exportar todos los contratos
@@ -92,7 +92,7 @@ export function useExportContratos() {
     await exportData(allData, contractColumns, {
       format,
       filename: 'contratos_completos',
-      includeHeaders: true,
+      includeHeaders: true
     });
   };
 
@@ -104,7 +104,7 @@ export function useExportContratos() {
     await exportData(filteredData, contractColumns, {
       format,
       filename: 'contratos_filtrados',
-      includeHeaders: true,
+      includeHeaders: true
     });
   };
 
@@ -112,6 +112,6 @@ export function useExportContratos() {
     isExporting,
     exportAllContratos,
     exportFilteredContratos,
-    contractColumns,
+    contractColumns
   };
 }

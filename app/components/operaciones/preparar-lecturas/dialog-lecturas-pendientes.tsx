@@ -4,7 +4,7 @@ import {
   ClockIcon,
   Info,
   Loader2,
-  RefreshCwIcon,
+  RefreshCwIcon
 } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
@@ -17,7 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import {
   Table,
@@ -26,7 +26,7 @@ import {
   TableFooter,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import { type ValidarSectoresPendientes } from '~/types/operaciones';
 
@@ -39,7 +39,7 @@ interface DialogLecturasPendientesProps {
 export default function DialogLecturasPendientes({
   data,
   isLoading,
-  onRefresh,
+  onRefresh
 }: DialogLecturasPendientesProps) {
   // Función para renderizar el badge del estado
   const renderEstadoBadge = (estado: number) => {
@@ -91,12 +91,18 @@ export default function DialogLecturasPendientes({
             </div>
             <div>
               <DialogTitle className='text-lg sm:text-xl font-semibold bg-gradient-to-r from-amber-700 to-orange-700 dark:from-amber-300 dark:to-orange-300 bg-clip-text text-transparent'>
-                <span className='hidden sm:inline'>Sectores con Lecturas Pendientes</span>
+                <span className='hidden sm:inline'>
+                  Sectores con Lecturas Pendientes
+                </span>
                 <span className='sm:hidden'>Lecturas Pendientes</span>
               </DialogTitle>
               <DialogDescription className='text-slate-600 dark:text-slate-400 text-xs sm:text-sm'>
-                <span className='hidden sm:inline'>Sectores con lecturas pendientes para el periodo en consulta</span>
-                <span className='sm:hidden'>Sectores pendientes del periodo</span>
+                <span className='hidden sm:inline'>
+                  Sectores con lecturas pendientes para el periodo en consulta
+                </span>
+                <span className='sm:hidden'>
+                  Sectores pendientes del periodo
+                </span>
               </DialogDescription>
             </div>
           </div>
@@ -157,16 +163,24 @@ export default function DialogLecturasPendientes({
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={4} className='text-center py-6 sm:py-8'>
+                      <TableCell
+                        colSpan={4}
+                        className='text-center py-6 sm:py-8'
+                      >
                         <div className='flex items-center justify-center gap-2'>
                           <Loader2 className='h-4 w-4 sm:h-5 sm:w-5 animate-spin text-slate-500' />
-                          <span className='text-slate-500 text-xs sm:text-sm'>Cargando lecturas pendientes...</span>
+                          <span className='text-slate-500 text-xs sm:text-sm'>
+                            Cargando lecturas pendientes...
+                          </span>
                         </div>
                       </TableCell>
                     </TableRow>
                   ) : !data || data.sinPendientes ? (
                     <TableRow>
-                      <TableCell colSpan={4} className='text-center py-6 sm:py-8'>
+                      <TableCell
+                        colSpan={4}
+                        className='text-center py-6 sm:py-8'
+                      >
                         <div className='flex justify-center items-center flex-col gap-2 sm:gap-3'>
                           <div className='w-12 h-12 sm:w-16 sm:h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center'>
                             <Info className='h-6 w-6 sm:h-8 sm:w-8 text-emerald-500 dark:text-emerald-400' />
@@ -176,7 +190,9 @@ export default function DialogLecturasPendientes({
                               No hay lecturas pendientes
                             </p>
                             <p className='text-xs sm:text-sm text-muted-foreground mt-1'>
-                              <span className='hidden sm:inline'>Todos los sectores están al día</span>
+                              <span className='hidden sm:inline'>
+                                Todos los sectores están al día
+                              </span>
                               <span className='sm:hidden'>Sectores al día</span>
                             </p>
                           </div>
@@ -223,8 +239,12 @@ export default function DialogLecturasPendientes({
                         >
                           <div className='flex items-center gap-1 sm:gap-2'>
                             <ClockIcon className='w-3 h-3 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400' />
-                            <span className='hidden sm:inline'>Periodo: {data.periodo}</span>
-                            <span className='sm:hidden'>Per: {data.periodo}</span>
+                            <span className='hidden sm:inline'>
+                              Periodo: {data.periodo}
+                            </span>
+                            <span className='sm:hidden'>
+                              Per: {data.periodo}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell
@@ -232,7 +252,9 @@ export default function DialogLecturasPendientes({
                           className='text-right font-medium text-slate-700 dark:text-slate-300 text-xs sm:text-sm px-2 sm:px-4 py-2 sm:py-3'
                         >
                           <div className='flex items-center justify-end gap-1 sm:gap-2'>
-                            <span className='hidden sm:inline'>Total pendientes:</span>
+                            <span className='hidden sm:inline'>
+                              Total pendientes:
+                            </span>
                             <span className='sm:hidden'>Total:</span>
                             <Badge className='bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs px-1 sm:px-2'>
                               {data.totalPendientes}

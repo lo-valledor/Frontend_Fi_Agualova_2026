@@ -19,7 +19,7 @@ interface TiposContratosComponentProps {
 }
 
 export default function TiposContratosComponent({
-  tiposContratos,
+  tiposContratos
 }: Readonly<TiposContratosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTipoContrato, setSelectedTipoContrato] = useState<
@@ -71,7 +71,7 @@ export default function TiposContratosComponent({
 
   const columns = createColumns({
     onEdit: handleEdit,
-    onDelete: handleDelete,
+    onDelete: handleDelete
   });
 
   return (

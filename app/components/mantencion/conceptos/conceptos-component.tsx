@@ -21,7 +21,7 @@ interface ConceptosComponentProps {
 
 export default function ConceptosComponent({
   conceptos,
-  comboAsociadoConceptos,
+  comboAsociadoConceptos
 }: Readonly<ConceptosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedConcepto, setSelectedConcepto] = useState<
@@ -73,7 +73,7 @@ export default function ConceptosComponent({
 
   const columns = createColumns({
     onEdit: handleEdit,
-    onDelete: handleDelete,
+    onDelete: handleDelete
   });
 
   return (

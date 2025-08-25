@@ -80,7 +80,7 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
             <DataTable
               columns={columns({
                 onEdit: handleEditZona,
-                onDelete: handleDeleteZona,
+                onDelete: handleDeleteZona
               })}
               data={zonas}
             />

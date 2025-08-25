@@ -9,8 +9,8 @@ export function meta(_args: Route.MetaArgs) {
   return [
     {
       title: 'Enerlova | Roles y Permisos',
-      description: 'Gestión de roles y permisos del sistema.',
-    },
+      description: 'Gestión de roles y permisos del sistema.'
+    }
   ];
 }
 
@@ -19,7 +19,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
     // Cargar roles y menús en paralelo
     const [rolesResponse, menusResponse] = await Promise.all([
       rolesPermisosService.getRoles(),
-      rolesPermisosService.getMenus(),
+      rolesPermisosService.getMenus()
     ]);
 
     if (rolesResponse.error || menusResponse.error) {
@@ -29,7 +29,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
         permisos: [],
         error: new Error(
           rolesResponse.error || menusResponse.error || 'Error al cargar datos'
-        ),
+        )
       };
     }
 
@@ -51,7 +51,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
       roles,
       menus,
       permisos: allPermisos,
-      error: null,
+      error: null
     };
   } catch (error) {
     console.error('Error en clientLoader de roles y permisos:', error);
@@ -61,7 +61,7 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
       permisos: [],
       error: new Error(
         error instanceof Error ? error.message : 'Error desconocido'
-      ),
+      )
     };
   }
 }

@@ -3,7 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight,
+  ChevronsRight
 } from 'lucide-react';
 
 import { Button } from '~/components/ui/button';
@@ -12,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 
 interface DataTablePaginationProps<TData> {
@@ -20,7 +20,7 @@ interface DataTablePaginationProps<TData> {
 }
 
 export function DataTablePagination<TData>({
-  table,
+  table
 }: DataTablePaginationProps<TData>) {
   return (
     <div className='flex items-center justify-between px-2 py-2'>
@@ -31,7 +31,7 @@ export function DataTablePagination<TData>({
           </span>
         )}
       </div>
-      
+
       <div className='flex items-center space-x-4'>
         <div className='flex items-center space-x-2'>
           <span className='text-sm'>Filas:</span>
@@ -44,7 +44,11 @@ export function DataTablePagination<TData>({
             </SelectTrigger>
             <SelectContent side='top'>
               {[10, 20, 50, 100].map(pageSize => (
-                <SelectItem key={pageSize} value={`${pageSize}`} className='text-sm'>
+                <SelectItem
+                  key={pageSize}
+                  value={`${pageSize}`}
+                  className='text-sm'
+                >
                   {pageSize}
                 </SelectItem>
               ))}
@@ -53,7 +57,8 @@ export function DataTablePagination<TData>({
         </div>
 
         <div className='text-sm font-medium'>
-          Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+          Página {table.getState().pagination.pageIndex + 1} de{' '}
+          {table.getPageCount()}
         </div>
 
         <div className='flex items-center space-x-1'>

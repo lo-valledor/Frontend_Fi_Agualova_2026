@@ -25,16 +25,16 @@ export function useClientFilters(
   const filterOptions = useMemo((): FilterOptions => {
     const tiposCliente = ['Persona', 'Empresa'];
     const comunas = [
-      ...new Set(clients.map(c => c.comuna).filter(Boolean)),
+      ...new Set(clients.map(c => c.comuna).filter(Boolean))
     ].sort();
     const codigosComuna = [
-      ...new Set(clients.map(c => c.codigoComuna).filter(Boolean)),
+      ...new Set(clients.map(c => c.codigoComuna).filter(Boolean))
     ].sort();
 
     return {
       tiposCliente,
       comunas,
-      codigosComuna,
+      codigosComuna
     };
   }, [clients]);
 
@@ -112,13 +112,13 @@ export function useClientFilters(
       total,
       filtered,
       activeFilters,
-      isFiltered: activeFilters > 0,
+      isFiltered: activeFilters > 0
     };
   }, [clients.length, filteredClients.length, filters]);
 
   return {
     filteredClients,
     filterStats,
-    filterOptions,
+    filterOptions
   };
 }

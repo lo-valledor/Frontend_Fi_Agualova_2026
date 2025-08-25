@@ -12,7 +12,7 @@ import type { Route } from './+types/contratos';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Contratos' },
-    { name: 'description', content: 'Contratos' },
+    { name: 'description', content: 'Contratos' }
   ];
 }
 
@@ -21,7 +21,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 
   if (result.error || !result.data) {
     return {
-      contratos: [],
+      contratos: []
     };
   }
 

@@ -15,7 +15,7 @@ import type {
   RevisarPrecioDos,
   RevisarPrecioUno,
   TotalesCorteReposicion,
-  ValidarSectoresPendientes,
+  ValidarSectoresPendientes
 } from '~/types/operaciones';
 
 export function usePrepararLecturasData() {
@@ -78,7 +78,7 @@ export function usePrepararLecturasData() {
     data,
     loading,
     error,
-    refreshData,
+    refreshData
   };
 }
 
@@ -124,7 +124,7 @@ export function useAsignacionSectores() {
     data,
     loading,
     error,
-    loadAsignacionSectores,
+    loadAsignacionSectores
   };
 }
 
@@ -164,7 +164,7 @@ export function usePreciosCargo(mes: string, anio: string) {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -232,7 +232,7 @@ export function useRevisarPrecio(dia: string = '15') {
               ? {
                   ...prev,
                   dataConsultarPreciosUno: result.data?.preciosUno || [],
-                  dataConsultarPreciosDos: result.data?.preciosDos || [],
+                  dataConsultarPreciosDos: result.data?.preciosDos || []
                 }
               : null
           );
@@ -250,7 +250,7 @@ export function useRevisarPrecio(dia: string = '15') {
     data,
     loading,
     error,
-    refreshPrecios,
+    refreshPrecios
   };
 }
 
@@ -290,7 +290,7 @@ export function useCorteReposicion() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -330,7 +330,7 @@ export function useCerrarLecturas() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -370,6 +370,6 @@ export function usePeriodoFacturacion() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }

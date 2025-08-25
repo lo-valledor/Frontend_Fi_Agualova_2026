@@ -3,7 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import {
   EstadoBadge,
-  TableActions,
+  TableActions
 } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
 import { type GetContratos } from '~/types/administracion';
@@ -35,7 +35,7 @@ const formatDateToSpanish = (
       // Formato DD-MM-YYYY
       /^\d{2}-\d{2}-\d{4}/,
       // Formato MM-DD-YYYY
-      /^\d{1,2}-\d{1,2}-\d{4}/,
+      /^\d{1,2}-\d{1,2}-\d{4}/
     ];
 
     // Verificar si la fecha tiene un formato reconocible
@@ -60,14 +60,14 @@ const formatDateToSpanish = (
   return date.toLocaleDateString('es-ES', {
     day: '2-digit',
     month: '2-digit',
-    year: 'numeric',
+    year: 'numeric'
   });
 };
 
 export const columns = ({
   onEdit,
   onDelete,
-  onViewDetails,
+  onViewDetails
 }: TableColumnsProps): ColumnDef<GetContratos>[] => [
   {
     accessorKey: 'codigoContrato',
@@ -84,7 +84,7 @@ export const columns = ({
       );
     },
     minSize: 120,
-    maxSize: 180,
+    maxSize: 180
   },
   {
     accessorKey: 'nombreCliente',
@@ -112,7 +112,7 @@ export const columns = ({
       </div>
     ),
     minSize: 180,
-    maxSize: 250,
+    maxSize: 250
   },
   {
     accessorKey: 'tipoContrato',
@@ -133,7 +133,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     accessorKey: 'tarifa',
@@ -154,7 +154,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 140,
+    maxSize: 140
   },
 
   {
@@ -175,7 +175,7 @@ export const columns = ({
       );
     },
     minSize: 120,
-    maxSize: 180,
+    maxSize: 180
   },
   {
     accessorKey: 'fechaInicio',
@@ -192,7 +192,7 @@ export const columns = ({
       );
     },
     minSize: 110,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     accessorKey: 'activo',
@@ -201,7 +201,7 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <EstadoBadge estado={row.original.activo} />;
-    },
+    }
   },
   {
     accessorKey: 'fechaTermino',
@@ -226,7 +226,7 @@ export const columns = ({
       );
     },
     minSize: 110,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     accessorKey: 'cicloFacturacion',
@@ -247,7 +247,7 @@ export const columns = ({
       );
     },
     minSize: 120,
-    maxSize: 160,
+    maxSize: 160
   },
   {
     accessorKey: 'potenciaContratada',
@@ -264,7 +264,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'liberadoCorte',
@@ -288,7 +288,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     id: 'actions',
@@ -309,8 +309,8 @@ export const columns = ({
       );
     },
     minSize: 80,
-    maxSize: 100,
-  },
+    maxSize: 100
+  }
 ];
 
 /**

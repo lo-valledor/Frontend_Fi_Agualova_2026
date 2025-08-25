@@ -346,13 +346,13 @@ export default [
   {
     plugins: {
       react,
-      'unused-imports': unusedImports,
+      'unused-imports': unusedImports
     },
     rules: {
       'unused-imports/no-unused-imports': 'error',
-      'react/react-in-jsx-scope': 'off',
-    },
-  },
+      'react/react-in-jsx-scope': 'off'
+    }
+  }
 ];
 ```
 

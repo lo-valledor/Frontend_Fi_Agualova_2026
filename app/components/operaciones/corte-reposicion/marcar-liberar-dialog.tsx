@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
 import { Textarea } from '~/components/ui/textarea';
@@ -19,7 +19,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '~/components/ui/tooltip';
 import api from '~/lib/api';
 
@@ -30,7 +30,7 @@ interface MarcarLiberarDialogProps {
 
 export function MarcarLiberarDialog({
   acometida,
-  onSuccess,
+  onSuccess
 }: Readonly<MarcarLiberarDialogProps>) {
   const [open, setOpen] = useState(false);
   const [comentario, setComentario] = useState('');
@@ -45,7 +45,7 @@ export function MarcarLiberarDialog({
     setIsSubmitting(true);
     try {
       await api.post('marcar-liberar', null, {
-        params: { acometida, comentario },
+        params: { acometida, comentario }
       });
       toast.success('Liberación registrada correctamente');
       onSuccess();
@@ -92,7 +92,8 @@ export function MarcarLiberarDialog({
             Ingrese un comentario para la liberación de la acometida{' '}
             <span className='font-mono font-medium text-xs sm:text-sm break-all'>
               {acometida}
-            </span>.
+            </span>
+            .
           </DialogDescription>
         </DialogHeader>
         <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>

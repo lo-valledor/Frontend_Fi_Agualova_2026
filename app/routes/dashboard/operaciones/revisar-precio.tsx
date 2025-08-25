@@ -11,7 +11,7 @@ import type { Route } from './+types/revisar-precio';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Revisar Precio' },
-    { name: 'description', content: 'Revisar Precio' },
+    { name: 'description', content: 'Revisar Precio' }
   ];
 }
 
@@ -28,7 +28,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
       dataConsultarPreciosDos: [],
       ciclosFacturacion: [],
       dia: '15',
-      error: result.error || 'Error al cargar los datos',
+      error: result.error || 'Error al cargar los datos'
     };
   }
 
@@ -38,7 +38,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     dataConsultarPreciosDos: result.data.dataConsultarPreciosDos,
     ciclosFacturacion: result.data.ciclosFacturacion,
     dia,
-    error: null,
+    error: null
   };
 }
 
@@ -49,7 +49,7 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
     dataConsultarPreciosDos: initialPreciosDos,
     ciclosFacturacion,
     dia,
-    error,
+    error
   } = loaderData;
 
   // Estado local para los datos de precios (permitirá actualizaciones reactivas)
@@ -62,7 +62,7 @@ export default function RevisarPrecio({ loaderData }: Route.ComponentProps) {
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Revisar Precio' },
+    { label: 'Revisar Precio' }
   ];
 
   // Función para recargar solo los datos de precios

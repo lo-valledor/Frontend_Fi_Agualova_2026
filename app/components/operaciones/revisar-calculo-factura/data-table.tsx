@@ -2,7 +2,7 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 
 import {
@@ -11,7 +11,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 
 interface DataTableProps<TData, TValue> {
@@ -21,12 +21,12 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({
   columns,
-  data,
+  data
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    getCoreRowModel: getCoreRowModel()
   });
   return (
     <div className='w-fit max-w-full mx-auto overflow-x-auto'>

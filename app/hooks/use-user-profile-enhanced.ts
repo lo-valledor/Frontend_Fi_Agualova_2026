@@ -38,7 +38,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
       apellidos: nameParts.slice(1).join(' ') || '',
       departamento: 1, // Valor por defecto
       activo: true,
-      fechaCreacion: new Date().toISOString(),
+      fechaCreacion: new Date().toISOString()
     };
   }, []);
 
@@ -73,7 +73,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
         // Intentar obtener datos del usuario desde la API
         try {
           const response = await api.get('/listar', {
-            signal: abortControllerRef.current.signal,
+            signal: abortControllerRef.current.signal
           });
 
           const usuarios = response.data as Usuarios[];
@@ -87,7 +87,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
             // Guardar en caché
             userProfileCache.set(cacheKey, {
               data: usuarioEncontrado,
-              timestamp: Date.now(),
+              timestamp: Date.now()
             });
 
             setUserData(usuarioEncontrado);
@@ -115,7 +115,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
           // Guardar en caché
           userProfileCache.set(cacheKey, {
             data: mockUserData,
-            timestamp: Date.now(),
+            timestamp: Date.now()
           });
 
           setUserData(mockUserData);
@@ -160,7 +160,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
             const cacheKey = `user_${userData.idUsuario}`;
             userProfileCache.set(cacheKey, {
               data: updatedUserData,
-              timestamp: Date.now(),
+              timestamp: Date.now()
             });
           } else {
             // Si no hay respuesta, actualizar localmente
@@ -170,7 +170,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
               nombres: data.nombres,
               apellidos: data.apellidos,
               departamento: data.departamento,
-              activo: data.activo,
+              activo: data.activo
             };
 
             setUserData(updatedUserData);
@@ -179,7 +179,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
             const cacheKey = `user_${userData.idUsuario}`;
             userProfileCache.set(cacheKey, {
               data: updatedUserData,
-              timestamp: Date.now(),
+              timestamp: Date.now()
             });
           }
         } catch (apiError: any) {
@@ -195,7 +195,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
             nombres: data.nombres,
             apellidos: data.apellidos,
             departamento: data.departamento,
-            activo: data.activo,
+            activo: data.activo
           };
 
           setUserData(updatedUserData);
@@ -204,7 +204,7 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
           const cacheKey = `user_${userData.idUsuario}`;
           userProfileCache.set(cacheKey, {
             data: updatedUserData,
-            timestamp: Date.now(),
+            timestamp: Date.now()
           });
         }
       } catch (err) {
@@ -247,6 +247,6 @@ export function useUserProfileEnhanced(): UseUserProfileEnhancedReturn {
     error,
     updateProfile,
     refreshProfile,
-    clearCache,
+    clearCache
   };
 }

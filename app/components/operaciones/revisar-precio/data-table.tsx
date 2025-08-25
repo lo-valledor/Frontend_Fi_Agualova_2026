@@ -7,7 +7,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { Loader2 } from 'lucide-react';
 
@@ -20,7 +20,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 
 interface DataTableProps<TData, TValue> {
@@ -40,12 +40,12 @@ export function DataTable<TData, TValue>({
   selectedRowIds = [],
   rowId = 'codigo' as keyof TData,
   enableSelection = false,
-  isLoading = false,
+  isLoading = false
 }: DataTableProps<TData, TValue>) {
   // Configuración para la paginación
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 10
   });
 
   // Estado interno para la selección de filas
@@ -88,12 +88,12 @@ export function DataTable<TData, TValue>({
     },
     state: {
       pagination,
-      rowSelection,
+      rowSelection
     },
     onPaginationChange: setPagination,
     enableRowSelection: enableSelection,
     enableMultiRowSelection: enableSelection,
-    getRowId: row => String(row[rowId]),
+    getRowId: row => String(row[rowId])
   });
 
   return (
@@ -155,7 +155,9 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className='h-16 text-center'
                 >
-                  <span className='text-sm text-muted-foreground'>No results.</span>
+                  <span className='text-sm text-muted-foreground'>
+                    No results.
+                  </span>
                 </TableCell>
               </TableRow>
             )}

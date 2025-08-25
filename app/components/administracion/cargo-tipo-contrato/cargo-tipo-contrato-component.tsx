@@ -18,7 +18,7 @@ import { columns } from './columns';
 import { DeleteDialog } from './delete-dialog';
 
 export default function CargoTipoContratoComponent({
-  cargoTipoContrato: initialData,
+  cargoTipoContrato: initialData
 }: {
   cargoTipoContrato: GetCargoTipoContrato[];
 }) {
@@ -116,7 +116,7 @@ export default function CargoTipoContratoComponent({
               <DataTable
                 columns={columns({
                   onEdit: handleEdit,
-                  onDelete: handleDelete,
+                  onDelete: handleDelete
                 })}
                 data={data}
                 searchPlaceholder='Buscar por tipo de contrato, condición o descripción...'

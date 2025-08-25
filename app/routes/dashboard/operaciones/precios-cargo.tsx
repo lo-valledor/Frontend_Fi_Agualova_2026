@@ -10,7 +10,7 @@ import type { Route } from './+types/precios-cargo';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Precios de Cargo' },
-    { name: 'description', content: 'Precios de Cargo' },
+    { name: 'description', content: 'Precios de Cargo' }
   ];
 }
 
@@ -31,7 +31,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
       tablaEnerlova: [],
       initialMes: currentMonth,
       initialAnio: currentYear,
-      error: 'Error al cargar los datos',
+      error: 'Error al cargar los datos'
     };
   }
 
@@ -40,14 +40,14 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
     tablaEnerlova: result.data.tablaEnerlova,
     initialMes: mes,
     initialAnio: anio,
-    error: null,
+    error: null
   };
 }
 
 export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Precios de Cargo' },
+    { label: 'Precios de Cargo' }
   ];
 
   return (

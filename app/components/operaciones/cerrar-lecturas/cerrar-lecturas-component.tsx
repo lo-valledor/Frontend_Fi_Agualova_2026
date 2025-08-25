@@ -9,7 +9,7 @@ import {
   CircleX,
   Eraser,
   FileTextIcon,
-  SearchIcon,
+  SearchIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -22,7 +22,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
@@ -31,13 +31,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import api from '~/lib/api';
 import {
   type Ciclo,
   type EstadoCierreLecturas,
-  type PeriodoAbierto,
+  type PeriodoAbierto
 } from '~/types/operaciones';
 
 import { DataTable } from '../../data-table/data-table';
@@ -46,7 +46,7 @@ import { columns } from './columns';
 
 export default function CerrarLecturasComponent({
   periodoAbierto,
-  ciclosFacturacion,
+  ciclosFacturacion
 }: {
   periodoAbierto: PeriodoAbierto[];
   ciclosFacturacion: Ciclo[];
@@ -91,7 +91,7 @@ export default function CerrarLecturasComponent({
       params.append('periodo', periodoFormateado);
 
       const response = await api.get('/estado-cierre-lecturas', {
-        params,
+        params
       });
 
       if (response.status === 200) {
@@ -147,27 +147,33 @@ export default function CerrarLecturasComponent({
   const checkCriticalBlockers = (rows: EstadoCierreLecturas[]) => {
     const criticalRows = rows.filter(row => row.cantidadClaveRoja > 0);
     const warningRows = rows.filter(row => row.cantidadClaveNaranja > 0);
-    
+
     return {
       hasCritical: criticalRows.length > 0,
       hasWarning: warningRows.length > 0,
-      criticalCount: criticalRows.reduce((acc, row) => acc + row.cantidadClaveRoja, 0),
-      warningCount: warningRows.reduce((acc, row) => acc + row.cantidadClaveNaranja, 0),
-      blockedNichos: criticalRows.map(row => row.nichoDescripcion),
+      criticalCount: criticalRows.reduce(
+        (acc, row) => acc + row.cantidadClaveRoja,
+        0
+      ),
+      warningCount: warningRows.reduce(
+        (acc, row) => acc + row.cantidadClaveNaranja,
+        0
+      ),
+      blockedNichos: criticalRows.map(row => row.nichoDescripcion)
     };
   };
 
   const handleOpenAlert = () => {
     if (selectedRows.length > 0) {
       const blockers = checkCriticalBlockers(selectedRows);
-      
+
       // Bloquear si hay claves críticas
       if (blockers.hasCritical) {
         toast.error(
           `No se puede cerrar: ${blockers.criticalCount} lecturas con claves críticas en ${blockers.blockedNichos.length} nicho(s)`,
           {
             description: `Nichos bloqueados: ${blockers.blockedNichos.join(', ')}`,
-            duration: 6000,
+            duration: 6000
           }
         );
         return;
@@ -179,7 +185,7 @@ export default function CerrarLecturasComponent({
           `Atención: ${blockers.warningCount} lecturas con claves de alerta en la selección`,
           {
             description: 'Se recomienda revisar antes de proceder',
-            duration: 4000,
+            duration: 4000
           }
         );
       }
@@ -488,7 +494,7 @@ export default function CerrarLecturasComponent({
                         const blockers = checkCriticalBlockers(selectedRows);
                         const isBlocked = blockers.hasCritical;
                         const hasWarnings = blockers.hasWarning;
-                        
+
                         return (
                           <>
                             {/* Indicadores de estado */}
@@ -512,23 +518,23 @@ export default function CerrarLecturasComponent({
                                 )}
                               </div>
                             )}
-                            
+
                             <Button
                               variant={isBlocked ? 'secondary' : 'destructive'}
                               size='sm'
                               onClick={handleOpenAlert}
                               disabled={selectedRows.length === 0 || isBlocked}
                               className={`gap-2 ${
-                                isBlocked 
-                                  ? 'opacity-50 cursor-not-allowed bg-slate-100 hover:bg-slate-100 text-slate-500 dark:bg-slate-800 dark:hover:bg-slate-800 dark:text-slate-400 border border-red-200 dark:border-red-800' 
-                                  : hasWarnings 
+                                isBlocked
+                                  ? 'opacity-50 cursor-not-allowed bg-slate-100 hover:bg-slate-100 text-slate-500 dark:bg-slate-800 dark:hover:bg-slate-800 dark:text-slate-400 border border-red-200 dark:border-red-800'
+                                  : hasWarnings
                                     ? 'bg-orange-600 hover:bg-orange-700 border-orange-500'
                                     : ''
                               }`}
                               title={
-                                isBlocked 
+                                isBlocked
                                   ? `Cierre bloqueado: ${blockers.criticalCount} lecturas críticas`
-                                  : hasWarnings 
+                                  : hasWarnings
                                     ? `${blockers.warningCount} lecturas con alertas - Proceder con precaución`
                                     : 'Cerrar lecturas seleccionadas'
                               }
@@ -563,7 +569,7 @@ export default function CerrarLecturasComponent({
                             row.cantidadClaveRoja === 0 &&
                             row.cantidadClaveNaranja === 0 &&
                             row.cantidadCorregidas === 0
-                        ),
+                        )
                       }}
                     />
                   </div>

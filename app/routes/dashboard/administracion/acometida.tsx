@@ -9,7 +9,7 @@ import type { Route } from './+types/acometida';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Acometidas' },
-    { name: 'description', content: 'Acometidas' },
+    { name: 'description', content: 'Acometidas' }
   ];
 }
 
@@ -22,7 +22,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
       comboEmpalmes: [],
       comboNichos: [],
       comboSectores: [],
-      contratosDisponibles: [],
+      contratosDisponibles: []
     };
   }
 
@@ -35,11 +35,11 @@ export default function Acometida({ loaderData }: Route.ComponentProps) {
     comboEmpalmes,
     comboNichos,
     comboSectores,
-    contratosDisponibles,
+    contratosDisponibles
   } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
-    { label: 'Acometidas' },
+    { label: 'Acometidas' }
   ];
   return (
     <div>

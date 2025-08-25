@@ -85,13 +85,13 @@ export function useCargoFilters(
       totalCargos: cargos.length,
       filteredCargos: filteredCargos.length,
       activeFilters,
-      isFiltered: activeFilters > 0,
+      isFiltered: activeFilters > 0
     }),
     [cargos.length, filteredCargos.length, activeFilters]
   );
 
   return {
     filteredCargos,
-    filterStats,
+    filterStats
   };
 }

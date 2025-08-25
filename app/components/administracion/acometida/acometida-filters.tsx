@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Separator } from '~/components/ui/separator';
 import type { FilterOptions } from '~/hooks/administracion/use-acometida-filters';
@@ -44,14 +44,14 @@ export function AcometidaFiltersComponent({
   filters,
   onFiltersChange,
   onClearFilters,
-  filterOptions,
+  filterOptions
 }: AcometidaFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof AcometidaFilters, value: string) => {
     onFiltersChange({
       ...filters,
-      [key]: value,
+      [key]: value
     });
   };
 
@@ -177,7 +177,9 @@ export function AcometidaFiltersComponent({
                 </Label>
                 <Select
                   value={filters.sectorDescripcion}
-                  onValueChange={value => handleFilterChange('sectorDescripcion', value)}
+                  onValueChange={value =>
+                    handleFilterChange('sectorDescripcion', value)
+                  }
                 >
                   <SelectTrigger className='w-full'>
                     <SelectValue placeholder='Todos los sectores' />
@@ -318,60 +320,71 @@ export function AcometidaFiltersComponent({
                       Filtros activos:
                     </span>
                     <div className='flex flex-wrap gap-1 sm:gap-2'>
-                      {filters.empalmeDescripcion && filters.empalmeDescripcion !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800 text-xs sm:text-sm'
-                        >
-                          Empalme: {filters.empalmeDescripcion}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('empalmeDescripcion', '')}
+                      {filters.empalmeDescripcion &&
+                        filters.empalmeDescripcion !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
-                      {filters.nichoDescripcion && filters.nichoDescripcion !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs sm:text-sm'
-                        >
-                          Nicho: {filters.nichoDescripcion}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('nichoDescripcion', '')}
+                            Empalme: {filters.empalmeDescripcion}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('empalmeDescripcion', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
+                      {filters.nichoDescripcion &&
+                        filters.nichoDescripcion !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
-                      {filters.sectorDescripcion && filters.sectorDescripcion !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs sm:text-sm'
-                        >
-                          Sector: {filters.sectorDescripcion}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('sectorDescripcion', '')}
+                            Nicho: {filters.nichoDescripcion}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('nichoDescripcion', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
+                      {filters.sectorDescripcion &&
+                        filters.sectorDescripcion !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
-                      {(filters.limitePotenciaMin || filters.limitePotenciaMax) && (
+                            Sector: {filters.sectorDescripcion}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('sectorDescripcion', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
+                      {(filters.limitePotenciaMin ||
+                        filters.limitePotenciaMax) && (
                         <Badge
                           variant='outline'
                           className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs sm:text-sm'
                         >
-                          Potencia: {filters.limitePotenciaMin || '...'} - {filters.limitePotenciaMax || '...'}
+                          Potencia: {filters.limitePotenciaMin || '...'} -{' '}
+                          {filters.limitePotenciaMax || '...'}
                           <Button
                             variant='ghost'
                             size='sm'
@@ -385,54 +398,68 @@ export function AcometidaFiltersComponent({
                           </Button>
                         </Badge>
                       )}
-                      {filters.tieneUbicacion && filters.tieneUbicacion !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs sm:text-sm'
-                        >
-                          Ubicación: {filters.tieneUbicacion === 'true' ? 'Con' : 'Sin'}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('tieneUbicacion', '')}
+                      {filters.tieneUbicacion &&
+                        filters.tieneUbicacion !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
-                      {filters.tieneMedidor && filters.tieneMedidor !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800 text-xs sm:text-sm'
-                        >
-                          Medidor: {filters.tieneMedidor === 'true' ? 'Con' : 'Sin'}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('tieneMedidor', '')}
+                            Ubicación:{' '}
+                            {filters.tieneUbicacion === 'true' ? 'Con' : 'Sin'}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('tieneUbicacion', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
+                      {filters.tieneMedidor &&
+                        filters.tieneMedidor !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-300 dark:border-orange-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
-                      {filters.tieneLimitePotencia && filters.tieneLimitePotencia !== 'all' && (
-                        <Badge
-                          variant='outline'
-                          className='bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800 text-xs sm:text-sm'
-                        >
-                          Límite: {filters.tieneLimitePotencia === 'true' ? 'Con' : 'Sin'}
-                          <Button
-                            variant='ghost'
-                            size='sm'
-                            className='h-auto p-0 ml-1 hover:bg-transparent'
-                            onClick={() => handleFilterChange('tieneLimitePotencia', '')}
+                            Medidor:{' '}
+                            {filters.tieneMedidor === 'true' ? 'Con' : 'Sin'}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('tieneMedidor', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
+                      {filters.tieneLimitePotencia &&
+                        filters.tieneLimitePotencia !== 'all' && (
+                          <Badge
+                            variant='outline'
+                            className='bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800 text-xs sm:text-sm'
                           >
-                            <X className='h-3 w-3' />
-                          </Button>
-                        </Badge>
-                      )}
+                            Límite:{' '}
+                            {filters.tieneLimitePotencia === 'true'
+                              ? 'Con'
+                              : 'Sin'}
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              className='h-auto p-0 ml-1 hover:bg-transparent'
+                              onClick={() =>
+                                handleFilterChange('tieneLimitePotencia', '')
+                              }
+                            >
+                              <X className='h-3 w-3' />
+                            </Button>
+                          </Badge>
+                        )}
                     </div>
                   </div>
                   <Button

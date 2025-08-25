@@ -17,14 +17,14 @@ export function ModeToggle() {
       y: 0,
       opacity: 1,
       rotate: 0,
-      transition: { type: 'spring', stiffness: 260, damping: 20 },
+      transition: { type: 'spring', stiffness: 260, damping: 20 }
     },
     exit: {
       y: 20,
       opacity: 0,
       rotate: 180,
-      transition: { duration: 0.2 },
-    },
+      transition: { duration: 0.2 }
+    }
   };
 
   return (

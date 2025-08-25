@@ -14,7 +14,7 @@ export function FilterSummary({
   totalClients,
   filteredClients,
   activeFilters,
-  isFiltered,
+  isFiltered
 }: FilterSummaryProps) {
   if (!isFiltered) return null;
 

@@ -10,7 +10,7 @@ import type { Route } from './+types/cerrar-lecturas';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Cerrar Lecturas' },
-    { name: 'description', content: 'Cerrar Lecturas' },
+    { name: 'description', content: 'Cerrar Lecturas' }
   ];
 }
 
@@ -20,7 +20,7 @@ export async function clientLoader() {
   if (result.error || !result.data) {
     return {
       periodoAbierto: [],
-      ciclosFacturacion: [],
+      ciclosFacturacion: []
     };
   }
 
@@ -31,7 +31,7 @@ export default function CerrarLecturas({ loaderData }: Route.ComponentProps) {
   const { periodoAbierto, ciclosFacturacion } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Cerrar Lecturas' },
+    { label: 'Cerrar Lecturas' }
   ];
 
   return (

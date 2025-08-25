@@ -17,7 +17,7 @@ export function TableActions({
   showDelete = true,
   loadingEdit = false,
   loadingView = false,
-  loadingDelete = false,
+  loadingDelete = false
 }: {
   onView?: (item: any) => void;
   onEdit?: (item: any) => void;

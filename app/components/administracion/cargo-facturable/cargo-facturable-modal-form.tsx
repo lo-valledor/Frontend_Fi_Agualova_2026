@@ -14,7 +14,7 @@ import {
   Settings2,
   Tags,
   Text,
-  Type,
+  Type
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -32,7 +32,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import {
   Form,
@@ -40,7 +40,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
@@ -48,7 +48,7 @@ import type {
   BuscarCargoFacturable,
   GeCombosConceptos,
   GetCombosTarifas,
-  GetCombosTiposMedidor,
+  GetCombosTiposMedidor
 } from '~/types/administracion';
 
 interface CargoFacturableModalFormProps {
@@ -66,17 +66,17 @@ interface CargoFacturableModalFormProps {
 const tiposOptions = [
   { value: 'Base CH', label: 'Base CH' },
   { value: 'Cargo Fact', label: 'Cargo Fact' },
-  { value: 'Condicion', label: 'Condición' },
+  { value: 'Condicion', label: 'Condición' }
 ];
 
 const fijoVariableOptions = [
   { value: 'Fijo', label: 'Fijo' },
-  { value: 'Variable', label: 'Variable' },
+  { value: 'Variable', label: 'Variable' }
 ];
 
 const periodicoEventualOptions = [
   { value: 'Periodico', label: 'Periódico' },
-  { value: 'Eventual', label: 'Eventual' },
+  { value: 'Eventual', label: 'Eventual' }
 ];
 
 export default function CargoFacturableModalForm({
@@ -87,7 +87,7 @@ export default function CargoFacturableModalForm({
   conceptos,
   tarifas,
   tiposMedidor,
-  onSuccess,
+  onSuccess
 }: CargoFacturableModalFormProps) {
   const { theme } = useTheme();
   const form = useForm({
@@ -101,8 +101,8 @@ export default function CargoFacturableModalForm({
       conceptoId: 0,
       tarifaId: 0,
       tipoMedidorId: 0,
-      muestraValorEn0: false,
-    },
+      muestraValorEn0: false
+    }
   });
 
   const selectStyles: StylesConfig = {
@@ -110,11 +110,11 @@ export default function CargoFacturableModalForm({
       ...styles,
       backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
       borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-      minHeight: '44px',
+      minHeight: '44px'
     }),
     menu: styles => ({
       ...styles,
-      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
+      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF'
     }),
     option: (styles, { isFocused, isSelected }) => ({
       ...styles,
@@ -126,12 +126,12 @@ export default function CargoFacturableModalForm({
           ? theme === 'dark'
             ? '#1E293B'
             : '#F1F5F9'
-          : 'transparent',
+          : 'transparent'
     }),
     singleValue: styles => ({
       ...styles,
-      color: theme === 'dark' ? '#FFFFFF' : '#000000',
-    }),
+      color: theme === 'dark' ? '#FFFFFF' : '#000000'
+    })
   };
 
   const isLoading = form.formState.isSubmitting;
@@ -218,7 +218,7 @@ export default function CargoFacturableModalForm({
           conceptoId: normalizeAndFind(conceptos, cargo.concepto),
           tarifaId: normalizeAndFind(tarifas, cargo.tarifa),
           tipoMedidorId: normalizeAndFind(tiposMedidor, cargo.tipoMedidor),
-          muestraValorEn0: cargo.mostrarValorCero || false,
+          muestraValorEn0: cargo.mostrarValorCero || false
         });
       } else {
         form.reset({
@@ -231,7 +231,7 @@ export default function CargoFacturableModalForm({
           conceptoId: 0,
           tarifaId: 0,
           tipoMedidorId: 0,
-          muestraValorEn0: false,
+          muestraValorEn0: false
         });
       }
     }
@@ -264,7 +264,7 @@ export default function CargoFacturableModalForm({
         tipoMedidorId: data.tipoMedidorId,
         tipo: getTipoNumero(data.tipo),
         codigoEnerlova: data.codigo.trim(),
-        mostrarValorCero: data.muestraValorEn0,
+        mostrarValorCero: data.muestraValorEn0
       };
 
       if (mode === 'add') {
@@ -480,7 +480,7 @@ export default function CargoFacturableModalForm({
                       <Select
                         options={conceptos.map(c => ({
                           value: c.id,
-                          label: c.nombre,
+                          label: c.nombre
                         }))}
                         value={conceptos
                           .map(c => ({ value: c.id, label: c.nombre }))
@@ -506,7 +506,7 @@ export default function CargoFacturableModalForm({
                       <Select
                         options={tarifas.map(t => ({
                           value: t.id,
-                          label: t.nombre,
+                          label: t.nombre
                         }))}
                         value={tarifas
                           .map(t => ({ value: t.id, label: t.nombre }))
@@ -532,7 +532,7 @@ export default function CargoFacturableModalForm({
                       <Select
                         options={tiposMedidor.map(t => ({
                           value: t.id,
-                          label: t.nombre,
+                          label: t.nombre
                         }))}
                         value={tiposMedidor
                           .map(t => ({ value: t.id, label: t.nombre }))

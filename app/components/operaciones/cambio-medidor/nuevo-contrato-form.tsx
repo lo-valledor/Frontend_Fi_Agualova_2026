@@ -7,12 +7,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -23,7 +23,7 @@ export default function NuevoContratoForm({
   onCodigoChange,
   isLoading,
   isFormValid,
-  onCambioMedidor,
+  onCambioMedidor
 }: NuevoContratoFormProps) {
   const [isOpen, setIsOpen] = React.useState(true);
 
@@ -42,7 +42,9 @@ export default function NuevoContratoForm({
                   <span className='sm:hidden'>Contrato</span>
                 </CardTitle>
                 <CardDescription className='text-xs sm:text-sm truncate'>
-                  <span className='hidden sm:inline'>Activar nuevo contrato si es necesario</span>
+                  <span className='hidden sm:inline'>
+                    Activar nuevo contrato si es necesario
+                  </span>
                   <span className='sm:hidden'>Activar contrato</span>
                 </CardDescription>
               </div>

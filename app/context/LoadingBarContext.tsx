@@ -16,7 +16,7 @@ const LoadingBarContext =
   createContext<MutableRefObject<LoadingBarRef | null> | null>(null);
 
 export function LoadingBarProvider({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

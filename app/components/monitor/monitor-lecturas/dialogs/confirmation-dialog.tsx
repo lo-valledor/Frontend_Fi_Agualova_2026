@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
 import {
@@ -17,7 +17,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 
 interface ConfirmationDialogProps {
@@ -48,7 +48,7 @@ export function ConfirmationDialog({
   onClaveChange,
   showClaveSelect = false,
   onConfirm,
-  isSubmitting = false,
+  isSubmitting = false
 }: Readonly<ConfirmationDialogProps>) {
   // Define estilos compactos basados en el color
   const alertStyles = {
@@ -57,21 +57,21 @@ export function ConfirmationDialog({
       'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800',
     blue: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800',
     orange:
-      'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800',
+      'bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800'
   };
 
   const iconStyles = {
     red: 'text-red-600 dark:text-red-400',
     yellow: 'text-amber-600 dark:text-amber-400',
     blue: 'text-blue-600 dark:text-blue-400',
-    orange: 'text-orange-600 dark:text-orange-400',
+    orange: 'text-orange-600 dark:text-orange-400'
   };
 
   const textStyles = {
     red: 'text-red-700 dark:text-red-300',
     yellow: 'text-amber-700 dark:text-amber-300',
     blue: 'text-blue-700 dark:text-blue-300',
-    orange: 'text-orange-700 dark:text-orange-300',
+    orange: 'text-orange-700 dark:text-orange-300'
   };
 
   const getConfirmButtonClass = () => {

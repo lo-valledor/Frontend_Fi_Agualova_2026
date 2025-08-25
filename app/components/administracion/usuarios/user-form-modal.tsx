@@ -11,7 +11,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -20,13 +20,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { useAdministracion } from '~/hooks/use-administracion';
 import type {
   ActualizarUsuarioProps,
   CrearUsuarioProps,
-  Usuarios,
+  Usuarios
 } from '~/types/administracion';
 
 interface UserFormModalProps {
@@ -42,7 +42,7 @@ export function UserFormModal({
   onClose,
   onSuccess,
   user,
-  mode,
+  mode
 }: UserFormModalProps) {
   const { createUsuario, updateUsuario, loadingState } = useAdministracion();
   const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +54,7 @@ export function UserFormModal({
     nombres: '',
     apellidos: '',
     departamento: 1,
-    activo: true,
+    activo: true
   });
 
   const [updateData, setUpdateData] = useState<ActualizarUsuarioProps>({
@@ -63,7 +63,7 @@ export function UserFormModal({
     nombres: '',
     apellidos: '',
     departamento: 1,
-    activo: true,
+    activo: true
   });
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export function UserFormModal({
         nombres: user.nombres,
         apellidos: user.apellidos,
         departamento: user.departamento,
-        activo: user.activo,
+        activo: user.activo
       });
       setFormData({
         nombreDeUsuario: user.nombreDeUsuario,
@@ -83,7 +83,7 @@ export function UserFormModal({
         nombres: user.nombres,
         apellidos: user.apellidos,
         departamento: user.departamento,
-        activo: user.activo,
+        activo: user.activo
       });
     } else {
       setFormData({
@@ -93,7 +93,7 @@ export function UserFormModal({
         nombres: '',
         apellidos: '',
         departamento: 1,
-        activo: true,
+        activo: true
       });
       setUpdateData({
         nombreDeUsuario: '',
@@ -101,7 +101,7 @@ export function UserFormModal({
         nombres: '',
         apellidos: '',
         departamento: 1,
-        activo: true,
+        activo: true
       });
     }
   }, [user, mode, isOpen]);
@@ -125,7 +125,7 @@ export function UserFormModal({
 
         const updatePayload: ActualizarUsuarioProps = {
           ...restOfUpdateData,
-          contrasena: updateData.contrasena,
+          contrasena: updateData.contrasena
         };
 
         if (formData.contrasena.trim()) {

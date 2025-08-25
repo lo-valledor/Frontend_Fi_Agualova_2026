@@ -3,7 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
-  ChevronsRight,
+  ChevronsRight
 } from 'lucide-react';
 
 import { Button } from '~/components/ui/button';
@@ -12,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 
 interface AdvancedPaginationProps<TData> {
@@ -28,7 +28,7 @@ export function AdvancedPagination<TData>({
   pageSizeOptions = [5, 10, 20, 50, 100],
   showPageSizeSelector = true,
   showPageNumbers = true,
-  maxPageNumbers = 7,
+  maxPageNumbers = 7
 }: AdvancedPaginationProps<TData>) {
   const currentPage = table.getState().pagination.pageIndex + 1;
   const totalPages = table.getPageCount();

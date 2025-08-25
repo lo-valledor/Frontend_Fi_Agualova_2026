@@ -10,7 +10,7 @@ import type { Route } from './+types/contrato';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Consulta Contrato' },
-    { name: 'description', content: 'Consulta de Contrato' },
+    { name: 'description', content: 'Consulta de Contrato' }
   ];
 }
 
@@ -29,13 +29,13 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
         detalleMedidores: [],
         detalleUbicacion: [],
         detalleLecturas: [],
-        detalleFacturas: [],
-      },
+        detalleFacturas: []
+      }
     };
   }
 
   return {
-    detallesContrato: result.data,
+    detallesContrato: result.data
   };
 }
 

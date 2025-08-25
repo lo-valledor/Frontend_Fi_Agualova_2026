@@ -7,7 +7,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
+  BreadcrumbSeparator
 } from '~/components/ui/breadcrumb';
 import { Separator } from '~/components/ui/separator';
 import { SidebarTrigger } from '~/components/ui/sidebar';
@@ -35,19 +35,35 @@ export function SiteHeader() {
           <h1 className='text-sm sm:text-base font-medium'>
             <Breadcrumb>
               <BreadcrumbList className='text-xs sm:text-sm'>
-                <BreadcrumbLink href='/dashboard' className='truncate max-w-[60px] sm:max-w-none'>Dashboard</BreadcrumbLink>
+                <BreadcrumbLink
+                  href='/dashboard'
+                  className='truncate max-w-[60px] sm:max-w-none'
+                >
+                  Dashboard
+                </BreadcrumbLink>
                 <BreadcrumbSeparator className='hidden sm:block' />
                 {/* Renderiza los items del contexto */}
                 {breadcrumbItems?.map((item, index) => (
                   <React.Fragment key={index}>
                     <BreadcrumbItem className='hidden sm:block'></BreadcrumbItem>
-                    <BreadcrumbItem className={index === breadcrumbItems.length - 1 ? 'block' : 'hidden sm:block'}>
+                    <BreadcrumbItem
+                      className={
+                        index === breadcrumbItems.length - 1
+                          ? 'block'
+                          : 'hidden sm:block'
+                      }
+                    >
                       {item.href ? (
-                        <BreadcrumbLink href={item.href} className='truncate max-w-[100px] sm:max-w-none'>
+                        <BreadcrumbLink
+                          href={item.href}
+                          className='truncate max-w-[100px] sm:max-w-none'
+                        >
                           {item.label}
                         </BreadcrumbLink>
                       ) : (
-                        <BreadcrumbPage className='truncate max-w-[100px] sm:max-w-none'>{item.label}</BreadcrumbPage>
+                        <BreadcrumbPage className='truncate max-w-[100px] sm:max-w-none'>
+                          {item.label}
+                        </BreadcrumbPage>
                       )}
                     </BreadcrumbItem>
                     {index < (breadcrumbItems?.length || 0) - 1 && (
@@ -68,7 +84,7 @@ export function SiteHeader() {
                   name: user.fullName || user.username || 'Usuario',
                   username: user.username,
                   avatar: '', // Si tienes avatar, pon user.avatar aquí
-                  role: user.role || 'Usuario',
+                  role: user.role || 'Usuario'
                 }}
               />
             )}

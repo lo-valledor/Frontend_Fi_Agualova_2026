@@ -11,7 +11,7 @@ import type { Route } from './+types/medidores';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Medidores' },
-    { name: 'description', content: 'Medidores' },
+    { name: 'description', content: 'Medidores' }
   ];
 }
 
@@ -21,7 +21,7 @@ export async function clientLoader() {
   if (result.error || !result.data) {
     return {
       medidores: [],
-      marcas: [],
+      marcas: []
     };
   }
 

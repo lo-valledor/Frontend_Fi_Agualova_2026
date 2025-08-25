@@ -73,8 +73,7 @@ export default function EditarMedidorComponent({
   medidorDetalle,
   cantidadLecturas,
   codigoMedidor,
-  onSuccess,
-  onCancel
+  onSuccess
 }: EditarMedidorComponentProps) {
   const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,12 +110,12 @@ export default function EditarMedidorComponent({
     if (!fecha) return '';
 
     // Si ya está en formato yyyy-MM-dd, devolverla como está
-    if (fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    if (RegExp(/^\d{4}-\d{2}-\d{2}$/).exec(fecha)) {
       return fecha;
     }
 
     // Si está en formato dd-MM-yyyy, convertir a yyyy-MM-dd
-    if (fecha.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    if (RegExp(/^\d{2}-\d{2}-\d{4}$/).exec(fecha)) {
       const [dia, mes, ano] = fecha.split('-');
       return `${ano}-${mes}-${dia}`;
     }
@@ -202,18 +201,6 @@ export default function EditarMedidorComponent({
       );
       // El backend espera el código de la marca, no el ID
       const marcaId = marcaEncontrada?.codigo ?? data.marcaCodigo;
-
-      // Convertir fecha de yyyy-MM-dd a dd-MM-yyyy
-      const fechaInicio = data.fechaInicio
-        ? new Date(data.fechaInicio + 'T00:00:00')
-            .toLocaleDateString('es-ES', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            })
-            .split('/')
-            .join('-')
-        : '';
 
       // Función para convertir fecha de yyyy-MM-dd a dd-MM-yyyy
       const convertirFechaAAAAMMDDToDDMMAA = (fecha: string): string => {

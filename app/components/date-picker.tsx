@@ -9,14 +9,14 @@ import {
   isValid,
   parseISO,
   startOfMonth,
-  subMonths,
+  subMonths
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
-  X,
+  X
 } from 'lucide-react';
 
 import * as React from 'react';
@@ -32,7 +32,7 @@ export function DatePicker({
   date,
   setDate,
   placeholder = 'Seleccionar fecha',
-  className = '',
+  className = ''
 }: DatePickerProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
@@ -151,7 +151,7 @@ export function DatePicker({
           className='absolute z-50 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 min-w-[280px]'
           style={{
             left: 0,
-            top: '100%',
+            top: '100%'
           }}
         >
           {/* Header con navegación */}

@@ -12,7 +12,7 @@ interface TableColumnsProps {
 
 export const columns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: TableColumnsProps): ColumnDef<Sectores>[] => [
   {
     accessorKey: 'nombre',
@@ -32,7 +32,7 @@ export const columns = ({
       );
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'zona',
@@ -47,7 +47,7 @@ export const columns = ({
         </Badge>
       );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'estado',
@@ -72,7 +72,7 @@ export const columns = ({
     enableSorting: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    },
+    }
   },
   {
     id: 'actions',
@@ -84,6 +84,6 @@ export const columns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

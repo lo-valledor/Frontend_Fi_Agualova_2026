@@ -80,7 +80,7 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
             <DataTable
               columns={columns({
                 onEdit: handleEditSector,
-                onDelete: handleDeleteSector,
+                onDelete: handleDeleteSector
               })}
               data={sectores}
             />

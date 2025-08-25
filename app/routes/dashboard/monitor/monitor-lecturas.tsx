@@ -12,7 +12,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Monitor Lecturas' },
-    { name: 'description', content: 'Monitoreo de lecturas de medidores' },
+    { name: 'description', content: 'Monitoreo de lecturas de medidores' }
   ];
 }
 
@@ -25,7 +25,7 @@ export async function clientLoader() {
       sectores: [],
       claves: [],
       activePeriodoId: null,
-      error: new Error(result.error || 'Error al cargar datos'),
+      error: new Error(result.error || 'Error al cargar datos')
     };
   }
 
@@ -34,12 +34,12 @@ export async function clientLoader() {
     sectores: result.data.sectores,
     claves: result.data.claves,
     activePeriodoId: result.data.activePeriodoId,
-    error: null,
+    error: null
   };
 }
 
 export default function MonitorLecturasPage({
-  loaderData,
+  loaderData
 }: Route.ComponentProps) {
   return (
     <div>

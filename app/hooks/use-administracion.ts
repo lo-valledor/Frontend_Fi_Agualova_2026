@@ -24,13 +24,13 @@ import type {
   GetLimiteInvierno,
   GetMedidores,
   GetRegiones,
-  Usuarios,
+  Usuarios
 } from '~/types/administracion';
 import type {
   Conceptos,
   Marca,
   Tarifas,
-  TiposContrato,
+  TiposContrato
 } from '~/types/mantencion';
 
 export function useAcometidasData() {
@@ -94,7 +94,7 @@ export function useAcometidasData() {
     data,
     loading,
     error,
-    refreshData,
+    refreshData
   };
 }
 
@@ -135,7 +135,7 @@ export function useClientesData() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -180,7 +180,7 @@ export function useContratosData() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -220,7 +220,7 @@ export function useMedidoresData() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -257,7 +257,7 @@ export function useUsuarios() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -294,7 +294,7 @@ export function useCargoTipoContrato() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -334,7 +334,7 @@ export function useCondicionesContrato() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -376,7 +376,7 @@ export function useCargoFacturable() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -385,13 +385,13 @@ export function useAdministracion() {
     createUsuario: { isLoading: false },
     updateUsuario: { isLoading: false },
     deleteUsuario: { isLoading: false },
-    fetchUsuarios: { isLoading: false },
+    fetchUsuarios: { isLoading: false }
   });
 
   const createUsuario = async (userData: any) => {
     setLoadingState(prev => ({
       ...prev,
-      createUsuario: { isLoading: true },
+      createUsuario: { isLoading: true }
     }));
     try {
       const response = await api.post('/crear', userData);
@@ -399,7 +399,7 @@ export function useAdministracion() {
     } finally {
       setLoadingState(prev => ({
         ...prev,
-        createUsuario: { isLoading: false },
+        createUsuario: { isLoading: false }
       }));
     }
   };
@@ -407,7 +407,7 @@ export function useAdministracion() {
   const updateUsuario = async (idUsuario: number, userData: any) => {
     setLoadingState(prev => ({
       ...prev,
-      updateUsuario: { isLoading: true },
+      updateUsuario: { isLoading: true }
     }));
     try {
       const response = await api.put(`/actualizar/${idUsuario}`, userData);
@@ -415,7 +415,7 @@ export function useAdministracion() {
     } finally {
       setLoadingState(prev => ({
         ...prev,
-        updateUsuario: { isLoading: false },
+        updateUsuario: { isLoading: false }
       }));
     }
   };
@@ -423,7 +423,7 @@ export function useAdministracion() {
   const deleteUsuario = async (idUsuario: number) => {
     setLoadingState(prev => ({
       ...prev,
-      deleteUsuario: { isLoading: true },
+      deleteUsuario: { isLoading: true }
     }));
     try {
       const response = await api.delete(`/eliminar/${idUsuario}`);
@@ -431,7 +431,7 @@ export function useAdministracion() {
     } finally {
       setLoadingState(prev => ({
         ...prev,
-        deleteUsuario: { isLoading: false },
+        deleteUsuario: { isLoading: false }
       }));
     }
   };
@@ -439,7 +439,7 @@ export function useAdministracion() {
   const fetchUsuarios = async () => {
     setLoadingState(prev => ({
       ...prev,
-      fetchUsuarios: { isLoading: true },
+      fetchUsuarios: { isLoading: true }
     }));
     try {
       const response = await api.get('/listar');
@@ -447,7 +447,7 @@ export function useAdministracion() {
     } finally {
       setLoadingState(prev => ({
         ...prev,
-        fetchUsuarios: { isLoading: false },
+        fetchUsuarios: { isLoading: false }
       }));
     }
   };
@@ -457,7 +457,7 @@ export function useAdministracion() {
     updateUsuario,
     deleteUsuario,
     fetchUsuarios,
-    loadingState,
+    loadingState
   };
 }
 
@@ -468,6 +468,6 @@ export function useClientes() {
   };
 
   return {
-    getClienteByRut,
+    getClienteByRut
   };
 }

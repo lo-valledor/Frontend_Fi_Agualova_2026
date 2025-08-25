@@ -19,7 +19,7 @@ interface EmpalmesComponentProps {
 }
 
 export default function EmpalmesComponent({
-  empalmes,
+  empalmes
 }: Readonly<EmpalmesComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmpalme, setSelectedEmpalme] = useState<Empalme | null>(null);
@@ -82,7 +82,7 @@ export default function EmpalmesComponent({
             <DataTable
               columns={columns({
                 onEdit: handleEditEmpalme,
-                onDelete: handleDeleteEmpalme,
+                onDelete: handleDeleteEmpalme
               })}
               data={empalmes}
             />

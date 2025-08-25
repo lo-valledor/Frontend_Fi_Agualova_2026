@@ -35,7 +35,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <ContratoIdCell id={id} />;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'lC_ID',
@@ -47,7 +47,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{id}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'cL_RUT',
@@ -59,7 +59,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{rut}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'nombreCliente',
@@ -71,7 +71,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{nombre}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'pR_RUT',
@@ -83,7 +83,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{rut}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'nombrePropietario',
@@ -95,7 +95,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{nombre}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'mE_NSerie',
@@ -107,7 +107,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{nSerie}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'cT_ID_Madre',
@@ -119,7 +119,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{id}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'cT_esMadre',
@@ -135,7 +135,7 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       );
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'se_codigo',
@@ -147,6 +147,6 @@ export const columns: ColumnDef<BuscarContratos>[] = [
       return <div className='max-w-[200px] truncate font-medium'>{codigo}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
-  },
+    enableHiding: false
+  }
 ];

@@ -6,7 +6,7 @@ import {
   Check,
   Gauge,
   Loader2,
-  Zap,
+  Zap
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -15,7 +15,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -85,7 +85,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   const [showMayorReactivaDialog, setShowMayorReactivaDialog] = useState(false);
   const [
     showConsumoExcesivoReactivaDialog,
-    setShowConsumoExcesivoReactivaDialog,
+    setShowConsumoExcesivoReactivaDialog
   ] = useState(false);
 
   // Estados para demandas
@@ -95,7 +95,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     dpHora: '',
     ds: 0,
     dsFecha: '',
-    dsHora: '',
+    dsHora: ''
   });
   // Estados para inputs de demanda como strings para preservar formato
   const [dpInputValue, setDpInputValue] = useState('');
@@ -116,7 +116,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       dpHora: '',
       ds: 0,
       dsFecha: '',
-      dsHora: '',
+      dsHora: ''
     });
     // Inicializar inputs de demanda
     setDpInputValue('');
@@ -177,7 +177,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return {
         consumo: consumo.toString(),
         tipo,
-        vlecturadigitos,
+        vlecturadigitos
       };
     },
     [digito, valorActivaAnterior, constante]
@@ -235,7 +235,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return {
         consumo: consumo.toString(),
         tipo,
-        vlecturadigitos,
+        vlecturadigitos
       };
     },
     [digito, valorReactivaAnterior, constante]
@@ -476,7 +476,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     (field: 'dpFecha' | 'dpHora' | 'dsFecha' | 'dsHora', value: string) => {
       setDemandaData(prev => ({
         ...prev,
-        [field]: value,
+        [field]: value
       }));
     },
     []
@@ -520,7 +520,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     validarDigitos,
     maxValuePermitido,
     digito,
-    esConsumoActivaExcesivo,
+    esConsumoActivaExcesivo
   ]);
 
   // Validar la lectura de energía reactiva
@@ -561,7 +561,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     validarDigitos,
     maxValuePermitido,
     digito,
-    esConsumoReactivaExcesivo,
+    esConsumoReactivaExcesivo
   ]);
 
   // Confirmar tipo de lectura activa y registrar la clave seleccionada
@@ -695,7 +695,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       dpHora: demandaData.dpHora,
       ds: demandaData.ds,
       dsFecha: demandaData.dsFecha,
-      dsHora: demandaData.dsHora,
+      dsHora: demandaData.dsHora
     };
 
     return data;
@@ -709,7 +709,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     tipoLecturaReactiva,
     selectedClaveReactiva,
     demandaData,
-    result.LM_ID,
+    result.LM_ID
   ]);
 
   // Guardar la lectura
@@ -771,14 +771,14 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     isReactivaValidated,
     demandaData,
     prepararDatosFormulario,
-    onSuccess,
+    onSuccess
   ]);
 
   const clavesOptions = useMemo(
     () => [
       { value: '0', label: 'Seleccione' },
       { value: '1', label: 'CSCR - CONSUMO SUPERA CRITERIO DE RANGO' },
-      { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' },
+      { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' }
     ],
     []
   );
@@ -789,7 +789,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       { value: '3', label: 'RCER - LOCAL CERRADO' },
       { value: '5', label: 'LENR - LECTURA NO REALIZADA' },
       { value: '15', label: 'MCRT - MEDIDOR CORTADO' },
-      { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' },
+      { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' }
     ],
     []
   );

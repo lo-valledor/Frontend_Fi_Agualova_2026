@@ -13,7 +13,7 @@ interface UseCalculoProcesoProps {
 export function useCalculoProceso({
   periodoFormateado,
   cicloId,
-  onCalculoAceptado,
+  onCalculoAceptado
 }: UseCalculoProcesoProps) {
   const [isLaunching, setIsLaunching] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
@@ -30,7 +30,7 @@ export function useCalculoProceso({
     setIsCalculoPreparado(true);
     toast.success('¡Cálculo preparado exitosamente!', {
       description: 'Ahora puedes hacer clic en "Ver Cálculo Facturas"',
-      duration: 4000,
+      duration: 4000
     });
   }, []);
 
@@ -44,7 +44,7 @@ export function useCalculoProceso({
       const cicloParaAPI = obtenerCicloParaAPI(cicloId);
       const requestBody = {
         cicloFacturacion: parseInt(cicloParaAPI),
-        periodoFacturable: periodoFormateado,
+        periodoFacturable: periodoFormateado
       };
       await api.post('lanzar-calculo-facturacion', requestBody);
       marcarCalculoPreparado();
@@ -72,7 +72,7 @@ export function useCalculoProceso({
       try {
         await api.post('generar-detalle-factura', {
           lecturaId,
-          periodoId: periodoFormateado,
+          periodoId: periodoFormateado
         });
         successCount++;
       } catch (_error) {
@@ -105,6 +105,6 @@ export function useCalculoProceso({
     isCalculoPreparado,
     handleLanzarCalculo,
     handleAceptarCalculo,
-    setIsCalculoPreparado, // Allow parent to reset
+    setIsCalculoPreparado // Allow parent to reset
   };
 }

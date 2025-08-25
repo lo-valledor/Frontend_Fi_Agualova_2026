@@ -155,12 +155,12 @@ class RolesPermisosService {
       const response = await api.get('listarRoles');
       return {
         data: this.processApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -173,12 +173,12 @@ class RolesPermisosService {
       const response = await api.get(`ObtenerRolpor/${id}`);
       return {
         data: this.processSingleApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -199,15 +199,15 @@ class RolesPermisosService {
             idRol: 0, // Se establecerá por el backend
             nombreRol: rolData.nombre,
             descripcion: rolData.descripcion || '',
-            estadoRol: true,
+            estadoRol: true
           } as Roles,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -215,7 +215,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al crear el rol',
+          'Error al crear el rol'
       };
     }
   }
@@ -236,15 +236,15 @@ class RolesPermisosService {
             idRol: rolData.id,
             nombreRol: rolData.nombre,
             descripcion: rolData.descripcion || '',
-            estadoRol: true, // Asumimos que está activo si se actualizó
+            estadoRol: true // Asumimos que está activo si se actualizó
           } as Roles,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -252,7 +252,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al actualizar el rol',
+          'Error al actualizar el rol'
       };
     }
   }
@@ -267,7 +267,7 @@ class RolesPermisosService {
       await api.delete(`eliminarRol/${id}`);
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -275,7 +275,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al eliminar el rol',
+          'Error al eliminar el rol'
       };
     }
   }
@@ -292,12 +292,12 @@ class RolesPermisosService {
       const response = await api.get('ListarMenus');
       return {
         data: this.processApiResponse<Menus>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -312,12 +312,12 @@ class RolesPermisosService {
       const response = await api.get(`ObtenerMenu/${idMenu}`);
       return {
         data: this.processSingleApiResponse<Menus>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -340,15 +340,15 @@ class RolesPermisosService {
             ruta: menuData.url || '',
             orden: menuData.orden || 0,
             icono: menuData.icono || '',
-            esVisible: true,
+            esVisible: true
           } as Menus,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<Menus>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -356,7 +356,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al crear el menú',
+          'Error al crear el menú'
       };
     }
   }
@@ -382,15 +382,15 @@ class RolesPermisosService {
             ruta: menuData.url || '',
             orden: menuData.orden || 1,
             icono: menuData.icono || '',
-            esVisible: true, // Asumimos que está visible si se actualizó
+            esVisible: true // Asumimos que está visible si se actualizó
           } as Menus,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<Menus>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -398,7 +398,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al actualizar el menú',
+          'Error al actualizar el menú'
       };
     }
   }
@@ -413,7 +413,7 @@ class RolesPermisosService {
       await api.delete(`BorrarMenu${idMenu}`);
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -421,7 +421,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al eliminar el menú',
+          'Error al eliminar el menú'
       };
     }
   }
@@ -440,12 +440,12 @@ class RolesPermisosService {
       const response = await api.get(`ObtenerPermisoUsuario/${codigoUsuario}`);
       return {
         data: this.processApiResponse<PermisosUsuario>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -464,12 +464,12 @@ class RolesPermisosService {
       const response = await api.get(`ListarMenu/${idRol}`);
       return {
         data: this.processApiResponse<RolMenu>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -485,12 +485,12 @@ class RolesPermisosService {
       const response = await api.get(`ObtenerRelacion/${idRol}/${idMenu}`);
       return {
         data: this.processSingleApiResponse<RelacionRolMenu>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -515,16 +515,16 @@ class RolesPermisosService {
               lectura: permisosData.permisos.lectura || false,
               escritura: permisosData.permisos.escritura || false,
               edicion: permisosData.permisos.edicion || false,
-              eliminacion: permisosData.permisos.eliminacion || false,
-            },
+              eliminacion: permisosData.permisos.eliminacion || false
+            }
           } as RelacionRolMenu,
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<RelacionRolMenu>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -532,7 +532,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al asignar permisos',
+          'Error al asignar permisos'
       };
     }
   }
@@ -546,8 +546,7 @@ class RolesPermisosService {
     try {
       const dataToSend = {
         ...permisoData,
-        fechaAsignacion:
-          permisoData.fechaAsignacion || new Date().toISOString(),
+        fechaAsignacion: permisoData.fechaAsignacion || new Date().toISOString()
       };
 
       const response = await api.post('AsignarPermisos', dataToSend);
@@ -556,13 +555,13 @@ class RolesPermisosService {
       if (response.status === 204) {
         return {
           data: dataToSend, // Devolvemos los datos que enviamos como confirmación
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processSingleApiResponse<any>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -570,7 +569,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al asignar permisos',
+          'Error al asignar permisos'
       };
     }
   }
@@ -586,7 +585,7 @@ class RolesPermisosService {
       await api.delete(`EliminarRelacio/${idRol}/${idMenu}`);
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -594,7 +593,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al eliminar la relación',
+          'Error al eliminar la relación'
       };
     }
   }
@@ -613,12 +612,12 @@ class RolesPermisosService {
       const response = await api.get(`${codigoUsuario}/roles`);
       return {
         data: this.processApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -638,13 +637,13 @@ class RolesPermisosService {
         // Devolvemos un array vacío ya que no tenemos datos específicos
         return {
           data: [],
-          error: null,
+          error: null
         };
       }
 
       return {
         data: this.processApiResponse<Roles>(response),
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -652,7 +651,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al asignar roles al usuario',
+          'Error al asignar roles al usuario'
       };
     }
   }
@@ -668,7 +667,7 @@ class RolesPermisosService {
       await api.delete(`${codigoUsuario}/roles/${idRol}`);
       return {
         data: true,
-        error: null,
+        error: null
       };
     } catch (error: any) {
       return {
@@ -676,7 +675,7 @@ class RolesPermisosService {
         error:
           error.response?.data?.message ||
           error.message ||
-          'Error al quitar el rol del usuario',
+          'Error al quitar el rol del usuario'
       };
     }
   }

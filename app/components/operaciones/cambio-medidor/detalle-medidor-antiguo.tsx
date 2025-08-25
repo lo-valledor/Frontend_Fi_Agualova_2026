@@ -12,7 +12,7 @@ import MedidorFieldsGroup from './medidor-fields-group';
 export default function DetalleMedidorAntiguo({
   detalleMedidorAntiguo,
   onUltimaLecturaChange,
-  onLecturaActualChange,
+  onLecturaActualChange
 }: Readonly<DetalleMedidorAntiguoProps>) {
   const [isOpen, setIsOpen] = React.useState(true);
 

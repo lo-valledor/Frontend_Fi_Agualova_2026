@@ -39,7 +39,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
     },
     enableSorting: false,
     enableHiding: false,
-    size: 40,
+    size: 40
   },
   {
     accessorKey: 'codigo',
@@ -55,7 +55,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
         {row.getValue('codigo')}
       </div>
     ),
-      size: 120,
+    size: 120
   },
   {
     accessorKey: 'codigoEner',
@@ -71,7 +71,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
         {row.getValue('codigoEner')}
       </div>
     ),
-    size: 100,
+    size: 100
   },
   {
     accessorKey: 'descripcion',
@@ -87,7 +87,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
         {row.getValue('descripcion')}
       </div>
     ),
-    size: 250,
+    size: 250
   },
   {
     accessorKey: 'valor',
@@ -108,17 +108,17 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
+              maximumFractionDigits: 2
             });
       };
 
       return (
-          <div className='text-xs font-mono font-medium text-green-600 dark:text-green-400'>
-            {formatValue(value)}
-          </div>
-        );
+        <div className='text-xs font-mono font-medium text-green-600 dark:text-green-400'>
+          {formatValue(value)}
+        </div>
+      );
     },
-      size: 100,
+    size: 100
   },
   {
     accessorKey: 'confirmacion',
@@ -151,7 +151,7 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
         </div>
       );
     },
-    size: 130,
+    size: 130
   },
   {
     id: 'acciones',
@@ -167,9 +167,9 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
         <div className='flex items-center justify-center'>
           {confirmacion === 'Confirmado' ? (
             <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1 text-xs px-2 py-1'>
-                <CheckCircle className='w-3 h-3' />
-                Confirmado
-              </Badge>
+              <CheckCircle className='w-3 h-3' />
+              Confirmado
+            </Badge>
           ) : (
             <DialogModificarPrecio
               isAuthorized={true}
@@ -183,6 +183,6 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
       );
     },
     enableSorting: false,
-    size: 120,
-  },
+    size: 120
+  }
 ];

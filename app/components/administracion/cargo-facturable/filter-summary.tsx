@@ -14,7 +14,7 @@ export function FilterSummary({
   totalCargos,
   filteredCargos,
   activeFilters,
-  isFiltered,
+  isFiltered
 }: FilterSummaryProps) {
   if (!isFiltered) return null;
 

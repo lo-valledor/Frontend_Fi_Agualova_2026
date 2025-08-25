@@ -7,7 +7,7 @@ import { Card, CardContent } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -17,7 +17,7 @@ export default function NuevoMedidorForm({
   medidorNuevo,
   isLoading,
   onMedidorChange,
-  onBuscar,
+  onBuscar
 }: NuevoMedidorFormProps) {
   const [isOpen, setIsOpen] = React.useState(true);
 
@@ -35,7 +35,9 @@ export default function NuevoMedidorForm({
                   Nuevo Medidor
                 </h3>
                 <p className='text-xs sm:text-sm text-emerald-700 dark:text-emerald-300 truncate'>
-                  <span className='hidden sm:inline'>Buscar el nuevo medidor a instalar</span>
+                  <span className='hidden sm:inline'>
+                    Buscar el nuevo medidor a instalar
+                  </span>
                   <span className='sm:hidden'>Buscar nuevo medidor</span>
                 </p>
               </div>
@@ -79,7 +81,7 @@ export default function NuevoMedidorForm({
                     size='icon'
                     onClick={() => {
                       onMedidorChange({
-                        target: { id: 'nuevo-serie', value: '' },
+                        target: { id: 'nuevo-serie', value: '' }
                       } as React.ChangeEvent<HTMLInputElement>);
                     }}
                     className='rounded-l-none border-l-0 border-emerald-200 hover:bg-emerald-50 dark:border-emerald-800 dark:hover:bg-emerald-900/50 h-9 sm:h-10 w-9 sm:w-10'

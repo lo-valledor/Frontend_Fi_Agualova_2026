@@ -10,7 +10,7 @@ interface TableColumnsProps {
 }
 
 export const columns = ({
-  onEdit,
+  onEdit
 }: TableColumnsProps): ColumnDef<Acometida>[] => [
   {
     accessorKey: 'acometidaId',
@@ -26,7 +26,7 @@ export const columns = ({
       );
     },
     minSize: 60,
-    maxSize: 80,
+    maxSize: 80
   },
   {
     accessorKey: 'codigo',
@@ -47,7 +47,7 @@ export const columns = ({
       );
     },
     minSize: 110,
-    maxSize: 150,
+    maxSize: 150
   },
   {
     accessorKey: 'ubicacion',
@@ -68,7 +68,7 @@ export const columns = ({
       );
     },
     minSize: 140,
-    maxSize: 220,
+    maxSize: 220
   },
   {
     accessorKey: 'contratoId',
@@ -92,7 +92,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'empalmeDescripcion',
@@ -113,7 +113,7 @@ export const columns = ({
       );
     },
     minSize: 120,
-    maxSize: 160,
+    maxSize: 160
   },
   {
     accessorKey: 'nichoDescripcion',
@@ -134,7 +134,7 @@ export const columns = ({
       );
     },
     minSize: 110,
-    maxSize: 150,
+    maxSize: 150
   },
   {
     accessorKey: 'sectorDescripcion',
@@ -158,7 +158,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'limitePotencia',
@@ -193,7 +193,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'numeroMedidor',
@@ -214,7 +214,7 @@ export const columns = ({
       );
     },
     minSize: 110,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     id: 'actions',
@@ -234,6 +234,6 @@ export const columns = ({
       );
     },
     minSize: 80,
-    maxSize: 100,
-  },
+    maxSize: 100
+  }
 ];

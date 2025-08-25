@@ -9,7 +9,7 @@ import type { Route } from './+types/cargo-tipo-contrato';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Cargo Tipo Contrato' },
-    { name: 'description', content: 'Cargo Tipo Contrato' },
+    { name: 'description', content: 'Cargo Tipo Contrato' }
   ];
 }
 
@@ -18,22 +18,22 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 
   if (result.error || !result.data) {
     return {
-      cargoTipoContrato: [],
+      cargoTipoContrato: []
     };
   }
 
   return {
-    cargoTipoContrato: result.data,
+    cargoTipoContrato: result.data
   };
 }
 
 export default function CargoTipoContrato({
-  loaderData,
+  loaderData
 }: Route.ComponentProps) {
   const { cargoTipoContrato } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
-    { label: 'Cargo Tipo Contrato' },
+    { label: 'Cargo Tipo Contrato' }
   ];
   return (
     <div>

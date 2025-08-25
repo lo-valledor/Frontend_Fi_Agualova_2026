@@ -20,7 +20,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
         {row.getValue('CD_ID')}
       </div>
     ),
-    size: 60,
+    size: 60
   },
   {
     header: ({ column }) => (
@@ -36,7 +36,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
         {row.getValue('cd_codigoenerlova')}
       </div>
     ),
-    size: 100,
+    size: 100
   },
   {
     header: ({ column }) => (
@@ -52,7 +52,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
         {row.getValue('CD_Descripcion')}
       </div>
     ),
-    size: 200,
+    size: 200
   },
   {
     header: ({ column }) => (
@@ -68,7 +68,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
         {row.getValue('valor')}
       </div>
     ),
-    size: 90,
+    size: 90
   },
   {
     header: ({ column }) => (
@@ -99,7 +99,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
         </div>
       );
     },
-    size: 80,
+    size: 80
   },
   {
     id: 'actions',
@@ -118,6 +118,6 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
       );
     },
     size: 80,
-    enableSorting: false,
-  },
+    enableSorting: false
+  }
 ];

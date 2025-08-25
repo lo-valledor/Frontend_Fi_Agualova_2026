@@ -10,7 +10,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import { Skeleton } from '~/components/ui/skeleton';
 // Puedes usar cualquiera de estos hooks:

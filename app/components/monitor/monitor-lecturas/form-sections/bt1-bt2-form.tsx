@@ -117,7 +117,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
       return {
         consumo: consumo.toString(),
         tipo,
-        vlecturadigitos,
+        vlecturadigitos
       };
     },
     [digito, valorAnterior, constante]
@@ -221,7 +221,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     maxValuePermitido,
     digito,
     result.ME_NSerie,
-    esConsumoExcesivo,
+    esConsumoExcesivo
   ]);
 
   // Preparar datos para enviar
@@ -232,7 +232,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
       lmid: result.LM_ID.toString(),
       vactual: inputValue,
       consumo: consumoCalculado,
-      claid: '',
+      claid: ''
     };
 
     if (tipoLectura === 'mayor') {
@@ -329,7 +329,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     () => [
       { value: '0', label: 'Seleccione' },
       { value: '1', label: 'CSCR - CONSUMO SUPERA CRITERIO DE RANGO' },
-      { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' },
+      { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' }
     ],
     []
   );
@@ -340,7 +340,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
       { value: '3', label: 'RCER - LOCAL CERRADO' },
       { value: '5', label: 'LENR - LECTURA NO REALIZADA' },
       { value: '15', label: 'MCRT - MEDIDOR CORTADO' },
-      { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' },
+      { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' }
     ],
     []
   );

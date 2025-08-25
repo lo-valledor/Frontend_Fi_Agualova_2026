@@ -6,7 +6,7 @@ import { Button } from '~/components/ui/button';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -17,7 +17,7 @@ export default function AntiguoMedidorForm({
   isLoading,
   onMedidorChange,
   onBuscar,
-  onLimpiar,
+  onLimpiar
 }: AntiguoMedidorFormProps) {
   return (
     <Collapsible
@@ -30,7 +30,9 @@ export default function AntiguoMedidorForm({
             <Gauge className='h-3 w-3 sm:h-4 sm:w-4' />
           </div>
           <span className='font-semibold text-purple-900 dark:text-purple-100 text-sm sm:text-base truncate'>
-            <span className='hidden sm:inline'>Búsqueda de Medidor Antiguo</span>
+            <span className='hidden sm:inline'>
+              Búsqueda de Medidor Antiguo
+            </span>
             <span className='sm:hidden'>Medidor Antiguo</span>
           </span>
         </div>
@@ -67,7 +69,7 @@ export default function AntiguoMedidorForm({
                     if (inputElement) {
                       inputElement.value = '';
                       onMedidorChange({
-                        target: { id: 'acometida', value: '' },
+                        target: { id: 'acometida', value: '' }
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
                   }}
@@ -105,7 +107,7 @@ export default function AntiguoMedidorForm({
                     if (inputElement) {
                       inputElement.value = '';
                       onMedidorChange({
-                        target: { id: 'numeroSerie', value: '' },
+                        target: { id: 'numeroSerie', value: '' }
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
                   }}

@@ -21,13 +21,13 @@ class UserService {
       return {
         data: response.data as Usuarios[],
         error: null,
-        fromCache: false,
+        fromCache: false
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al obtener usuarios',
-        fromCache: false,
+        fromCache: false
       };
     }
   }
@@ -42,7 +42,7 @@ class UserService {
       return {
         data: null,
         error: 'ID de usuario es requerido',
-        fromCache: false,
+        fromCache: false
       };
     }
 
@@ -56,7 +56,7 @@ class UserService {
         return {
           data: cached.data,
           error: null,
-          fromCache: true,
+          fromCache: true
         };
       }
     }
@@ -69,7 +69,7 @@ class UserService {
         return {
           data: null,
           error: allUsersResponse.error,
-          fromCache: false,
+          fromCache: false
         };
       }
 
@@ -82,26 +82,26 @@ class UserService {
         return {
           data: null,
           error: 'Usuario no encontrado',
-          fromCache: false,
+          fromCache: false
         };
       }
 
       // Guardar en caché
       userCache.set(cacheKey, {
         data: usuarioEncontrado,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       return {
         data: usuarioEncontrado,
         error: null,
-        fromCache: false,
+        fromCache: false
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al obtener usuario',
-        fromCache: false,
+        fromCache: false
       };
     }
   }
@@ -121,7 +121,7 @@ class UserService {
         return {
           data: cached.data,
           error: null,
-          fromCache: true,
+          fromCache: true
         };
       }
     }
@@ -133,7 +133,7 @@ class UserService {
         return {
           data: null,
           error: allUsersResponse.error,
-          fromCache: false,
+          fromCache: false
         };
       }
 
@@ -146,26 +146,26 @@ class UserService {
         return {
           data: null,
           error: 'Usuario no encontrado',
-          fromCache: false,
+          fromCache: false
         };
       }
 
       // Guardar en caché
       userCache.set(cacheKey, {
         data: usuarioEncontrado,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       return {
         data: usuarioEncontrado,
         error: null,
-        fromCache: false,
+        fromCache: false
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al obtener usuario',
-        fromCache: false,
+        fromCache: false
       };
     }
   }
@@ -181,7 +181,7 @@ class UserService {
       return {
         data: response.data as Usuarios,
         error: null,
-        fromCache: false,
+        fromCache: false
       };
     } catch (error: any) {
       // El interceptor de Axios manejará los 401/403, pero por si acaso...
@@ -191,7 +191,7 @@ class UserService {
           error.response?.data?.message ||
           error.message ||
           'Error al obtener el perfil',
-        fromCache: false,
+        fromCache: false
       };
     }
   }
@@ -212,26 +212,26 @@ class UserService {
       const cacheKey = `user_${userId}`;
       userCache.set(cacheKey, {
         data: updatedUser,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       // También actualizar caché por username si existe
       const usernameCacheKey = `user_username_${updatedUser.nombreDeUsuario}`;
       userCache.set(usernameCacheKey, {
         data: updatedUser,
-        timestamp: Date.now(),
+        timestamp: Date.now()
       });
 
       return {
         data: updatedUser,
         error: null,
-        fromCache: false,
+        fromCache: false
       };
     } catch (error: any) {
       return {
         data: null,
         error: error.message || 'Error al actualizar usuario',
-        fromCache: false,
+        fromCache: false
       };
     }
   }
@@ -249,7 +249,7 @@ class UserService {
       apellidos: nameParts.slice(1).join(' ') || '',
       departamento: 1, // Valor por defecto
       activo: true,
-      fechaCreacion: new Date().toISOString(),
+      fechaCreacion: new Date().toISOString()
     };
   }
 
@@ -278,12 +278,12 @@ class UserService {
     const now = Date.now();
     const entries = Array.from(userCache.entries()).map(([key, value]) => ({
       key,
-      age: now - value.timestamp,
+      age: now - value.timestamp
     }));
 
     return {
       size: userCache.size,
-      entries,
+      entries
     };
   }
 }

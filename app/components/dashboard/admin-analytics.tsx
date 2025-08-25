@@ -7,7 +7,7 @@ import {
   Power,
   Settings,
   User,
-  Users,
+  Users
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
@@ -18,14 +18,14 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import api from '~/lib/api';
 import type {
   Acometida,
   GetClientes,
   GetContratos,
-  GetMedidores,
+  GetMedidores
 } from '~/types/administracion';
 
 interface AnalyticsData {
@@ -47,7 +47,7 @@ export function AdminAnalytics() {
     medidoresPorTipo: {},
     medidoresPorEstado: {},
     acometidasPorSector: {},
-    loading: true,
+    loading: true
   });
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function AdminAnalytics() {
             api.get('contrato/buscar'),
             api.get('ClienteBuscar'),
             api.get('buscarMedidor'),
-            api.get('buscar-Acometida'),
+            api.get('buscar-Acometida')
           ]);
 
         // Procesar contratos por tipo
@@ -125,7 +125,7 @@ export function AdminAnalytics() {
           medidoresPorTipo,
           medidoresPorEstado,
           acometidasPorSector,
-          loading: false,
+          loading: false
         });
       } catch (error) {
         console.error('Error al cargar datos de análisis:', error);
@@ -145,7 +145,7 @@ export function AdminAnalytics() {
       'bg-teal-500',
       'bg-pink-500',
       'bg-indigo-500',
-      'bg-yellow-500',
+      'bg-yellow-500'
     ];
     return colors[index % colors.length];
   };
@@ -200,7 +200,9 @@ export function AdminAnalytics() {
                       <div
                         className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
                       ></div>
-                      <span className='text-xs sm:text-sm font-medium truncate'>{tipo}</span>
+                      <span className='text-xs sm:text-sm font-medium truncate'>
+                        {tipo}
+                      </span>
                     </div>
                     <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                       <NumberFlow
@@ -242,7 +244,9 @@ export function AdminAnalytics() {
               <div className='flex justify-between items-center'>
                 <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                   <Building className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0' />
-                  <span className='text-xs sm:text-sm font-medium'>Empresas</span>
+                  <span className='text-xs sm:text-sm font-medium'>
+                    Empresas
+                  </span>
                 </div>
                 <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                   <NumberFlow
@@ -255,7 +259,9 @@ export function AdminAnalytics() {
               <div className='flex justify-between items-center'>
                 <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                   <User className='h-3 w-3 sm:h-4 sm:w-4 text-orange-500 flex-shrink-0' />
-                  <span className='text-xs sm:text-sm font-medium'>Personas</span>
+                  <span className='text-xs sm:text-sm font-medium'>
+                    Personas
+                  </span>
                 </div>
                 <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                   <NumberFlow
@@ -397,7 +403,9 @@ export function AdminAnalytics() {
                       <div
                         className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
                       ></div>
-                      <span className='text-xs sm:text-sm font-medium truncate'>{sector}</span>
+                      <span className='text-xs sm:text-sm font-medium truncate'>
+                        {sector}
+                      </span>
                     </div>
                     <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
                       <NumberFlow

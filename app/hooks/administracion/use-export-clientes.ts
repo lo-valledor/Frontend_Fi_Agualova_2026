@@ -9,41 +9,41 @@ export function useExportClientes() {
   const clientColumns: ExportColumn[] = [
     {
       key: 'rut',
-      header: 'RUT',
+      header: 'RUT'
     },
     {
       key: 'nombreCompleto',
-      header: 'Nombre Completo',
+      header: 'Nombre Completo'
     },
     {
       key: 'esEmpresa',
       header: 'Tipo',
-      formatter: (value: boolean) => value ? 'Empresa' : 'Persona',
+      formatter: (value: boolean) => (value ? 'Empresa' : 'Persona')
     },
     {
       key: 'direccion',
-      header: 'Dirección',
+      header: 'Dirección'
     },
     {
       key: 'comuna',
-      header: 'Comuna',
+      header: 'Comuna'
     },
     {
       key: 'contacto',
-      header: 'Contacto',
+      header: 'Contacto'
     },
     {
       key: 'telefono',
-      header: 'Teléfono',
+      header: 'Teléfono'
     },
     {
       key: 'email',
-      header: 'Email',
+      header: 'Email'
     },
     {
       key: 'codigoComuna',
-      header: 'Código Comuna',
-    },
+      header: 'Código Comuna'
+    }
   ];
 
   // Función para exportar clientes
@@ -52,20 +52,16 @@ export function useExportClientes() {
     format: 'csv' | 'xlsx' = 'xlsx',
     filename: string = 'clientes'
   ) => {
-    await exportData(
-      data,
-      clientColumns,
-      {
-        format,
-        filename,
-        includeHeaders: true,
-      }
-    );
+    await exportData(data, clientColumns, {
+      format,
+      filename,
+      includeHeaders: true
+    });
   };
 
   return {
     isExporting,
     exportClientes,
-    clientColumns,
+    clientColumns
   };
 }

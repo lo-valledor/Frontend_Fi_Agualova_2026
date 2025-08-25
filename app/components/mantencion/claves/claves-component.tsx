@@ -19,7 +19,7 @@ interface ClavesComponentProps {
 }
 
 export default function ClavesComponent({
-  claves,
+  claves
 }: Readonly<ClavesComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClave, setSelectedClave] = useState<Claves | undefined>(
@@ -71,7 +71,7 @@ export default function ClavesComponent({
 
   const columns = createColumns({
     onEdit: handleEdit,
-    onDelete: handleDelete,
+    onDelete: handleDelete
   });
 
   return (

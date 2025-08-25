@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
 import {
@@ -18,7 +18,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import type { Anio } from '~/types/operaciones';
 
@@ -36,7 +36,7 @@ const months = [
   { value: '09', label: 'Septiembre' },
   { value: '10', label: 'Octubre' },
   { value: '11', label: 'Noviembre' },
-  { value: '12', label: 'Diciembre' },
+  { value: '12', label: 'Diciembre' }
 ];
 
 interface DialogNuevoPeriodoProps {
@@ -50,7 +50,7 @@ export default function DialogNuevoPeriodo({
   open,
   onOpenChange,
   onPeriodoCreated,
-  years,
+  years
 }: DialogNuevoPeriodoProps) {
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [selectedYear, setSelectedYear] = useState<string>('');

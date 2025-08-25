@@ -3,7 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import {
   EstadoBadge,
-  TableActions,
+  TableActions
 } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -24,7 +24,7 @@ const getTipoBadgeProps = (tipo: string) => {
         className:
           'border-blue-500 text-blue-600 dark:text-blue-400 text-xs sm:text-sm px-1 sm:px-2',
         shortText: 'Tri',
-        fullText: 'Trifásico',
+        fullText: 'Trifásico'
       };
     case 'monofásico':
     case 'monofasico':
@@ -33,7 +33,7 @@ const getTipoBadgeProps = (tipo: string) => {
         className:
           'border-emerald-500 text-emerald-600 dark:text-emerald-400 text-xs sm:text-sm px-1 sm:px-2',
         shortText: 'Mono',
-        fullText: 'Monofásico',
+        fullText: 'Monofásico'
       };
     case 'ambos':
       return {
@@ -41,7 +41,7 @@ const getTipoBadgeProps = (tipo: string) => {
         className:
           'border-purple-500 text-purple-600 dark:text-purple-400 text-xs sm:text-sm px-1 sm:px-2',
         shortText: 'Ambos',
-        fullText: 'Ambos',
+        fullText: 'Ambos'
       };
     default:
       return {
@@ -49,14 +49,14 @@ const getTipoBadgeProps = (tipo: string) => {
         className:
           'border-gray-500 text-gray-600 dark:text-gray-400 text-xs sm:text-sm px-1 sm:px-2',
         shortText: 'N/A',
-        fullText: tipo,
+        fullText: tipo
       };
   }
 };
 
 export const columns = ({
   onEdit,
-  onAsociarSubempalme,
+  onAsociarSubempalme
 }: MedidoresColumnsProps): ColumnDef<GetMedidores>[] => [
   {
     accessorKey: 'serie',
@@ -77,7 +77,7 @@ export const columns = ({
       );
     },
     minSize: 120,
-    maxSize: 150,
+    maxSize: 150
   },
   {
     accessorKey: 'codigo',
@@ -95,7 +95,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'marca',
@@ -116,7 +116,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'modelo',
@@ -137,7 +137,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'digitos',
@@ -155,7 +155,7 @@ export const columns = ({
       );
     },
     minSize: 70,
-    maxSize: 90,
+    maxSize: 90
   },
   {
     accessorKey: 'multiplicar',
@@ -173,7 +173,7 @@ export const columns = ({
       );
     },
     minSize: 60,
-    maxSize: 80,
+    maxSize: 80
   },
   {
     accessorKey: 'tipo',
@@ -194,7 +194,7 @@ export const columns = ({
       );
     },
     minSize: 90,
-    maxSize: 120,
+    maxSize: 120
   },
   {
     accessorKey: 'codigoAcometida',
@@ -218,7 +218,7 @@ export const columns = ({
       );
     },
     minSize: 130,
-    maxSize: 160,
+    maxSize: 160
   },
   {
     accessorKey: 'ubicacion',
@@ -239,7 +239,7 @@ export const columns = ({
       );
     },
     minSize: 120,
-    maxSize: 150,
+    maxSize: 150
   },
   {
     accessorKey: 'fechaInicio',
@@ -257,7 +257,7 @@ export const columns = ({
       );
     },
     minSize: 100,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'estado',
@@ -268,7 +268,7 @@ export const columns = ({
       return <EstadoBadge estado={row.getValue('estado')} />;
     },
     minSize: 80,
-    maxSize: 100,
+    maxSize: 100
   },
   {
     id: 'actions',
@@ -310,6 +310,6 @@ export const columns = ({
       );
     },
     minSize: 80,
-    maxSize: 100,
-  },
+    maxSize: 100
+  }
 ];

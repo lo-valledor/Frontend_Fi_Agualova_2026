@@ -13,7 +13,7 @@ import type {
   Sectores,
   Tarifas,
   TiposContrato,
-  Zonas,
+  Zonas
 } from '~/types/mantencion';
 
 export function useCiclosFacturacion() {
@@ -49,7 +49,7 @@ export function useCiclosFacturacion() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -86,7 +86,7 @@ export function useClaves() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -126,7 +126,7 @@ export function useConceptos() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -163,7 +163,7 @@ export function useEmpalmes() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -200,7 +200,7 @@ export function useMarcas() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -237,7 +237,7 @@ export function useNichos() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -274,7 +274,7 @@ export function useParametros() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -311,7 +311,7 @@ export function useSectores() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -348,7 +348,7 @@ export function useTarifas() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -385,7 +385,7 @@ export function useTiposContratos() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }
 
@@ -422,6 +422,6 @@ export function useZonas() {
   return {
     data,
     loading,
-    error,
+    error
   };
 }

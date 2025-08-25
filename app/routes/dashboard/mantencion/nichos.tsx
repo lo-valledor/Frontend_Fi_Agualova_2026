@@ -13,7 +13,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Nichos' },
-    { name: 'description', content: ' nichos del sistema' },
+    { name: 'description', content: ' nichos del sistema' }
   ];
 }
 

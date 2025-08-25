@@ -10,10 +10,12 @@ interface DataTableColumnHeaderProps<TData, TValue>
 export function DataTableColumnHeader<TData, TValue>({
   column,
   title,
-  className,
+  className
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn('text-muted-foreground', className)}>{title}</div>;
+    return (
+      <div className={cn('text-muted-foreground', className)}>{title}</div>
+    );
   }
 
   const handleSort = () => {

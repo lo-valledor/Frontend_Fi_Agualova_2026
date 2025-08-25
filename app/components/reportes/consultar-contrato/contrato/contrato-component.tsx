@@ -5,7 +5,7 @@ import {
   Settings,
   TrendingUp,
   User,
-  Zap,
+  Zap
 } from 'lucide-react';
 
 import { memo, useMemo, useState } from 'react';
@@ -28,7 +28,7 @@ import type {
   DetalleLocal,
   DetalleMedidores,
   DetallePropietario,
-  DetalleUbicacion,
+  DetalleUbicacion
 } from '~/types/reportes';
 
 import { facturasTableColumns } from './columns-facturas';
@@ -48,7 +48,7 @@ interface ContratoComponentProps {
 }
 
 const ContratoComponent = memo(function ContratoComponent({
-  detallesContrato,
+  detallesContrato
 }: ContratoComponentProps) {
   const [activeTab, setActiveTab] = useState('resumen');
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const ContratoComponent = memo(function ContratoComponent({
     detalleMedidores,
     detalleUbicacion,
     detalleLecturas,
-    detalleFacturas,
+    detalleFacturas
   } = detallesContrato;
 
   // Columnas para exportación de lecturas - Memoizadas para rendimiento
@@ -73,7 +73,7 @@ const ContratoComponent = memo(function ContratoComponent({
       { key: 'lecturaActual', header: 'Lectura Actual' },
       { key: 'consumoPeriodo', header: 'Consumo Período' },
       { key: 'energiaBase', header: 'Energía Base' },
-      { key: 'sobreconsumo', header: 'Sobreconsumo' },
+      { key: 'sobreconsumo', header: 'Sobreconsumo' }
     ],
     []
   );
@@ -89,19 +89,19 @@ const ContratoComponent = memo(function ContratoComponent({
       {
         key: 'valorNeto',
         header: 'Valor Neto',
-        formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`,
+        formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`
       },
       {
         key: 'iva',
         header: 'IVA',
-        formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`,
+        formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`
       },
       {
         key: 'valorTotal',
         header: 'Valor Total',
-        formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`,
+        formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`
       },
-      { key: 'consumoPeriodo', header: 'Consumo Período' },
+      { key: 'consumoPeriodo', header: 'Consumo Período' }
     ],
     []
   );
@@ -140,7 +140,7 @@ const ContratoComponent = memo(function ContratoComponent({
       promedioConsumo:
         detalleLecturas.length > 0
           ? Math.round(totalConsumo / detalleLecturas.length)
-          : 0,
+          : 0
     };
   }, [detalleFacturas, detalleLecturas]);
 

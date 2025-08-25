@@ -12,7 +12,7 @@ interface ParametrosColumnsProps {
 
 export const createColumns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: ParametrosColumnsProps): ColumnDef<Parametro>[] => [
   {
     accessorKey: 'descripcion',
@@ -26,7 +26,7 @@ export const createColumns = ({
       >
         {row.getValue('descripcion')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'valor',
@@ -37,7 +37,7 @@ export const createColumns = ({
       <div className='max-w-[150px] truncate' title={row.getValue('valor')}>
         {row.getValue('valor')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'sigla',
@@ -48,7 +48,7 @@ export const createColumns = ({
       <Badge variant='outline' className='font-mono'>
         {row.getValue('sigla')}
       </Badge>
-    ),
+    )
   },
   {
     accessorKey: 'estado',
@@ -69,7 +69,7 @@ export const createColumns = ({
           {estado ? 'Activo' : 'Inactivo'}
         </Badge>
       );
-    },
+    }
   },
   {
     id: 'actions',
@@ -81,6 +81,6 @@ export const createColumns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

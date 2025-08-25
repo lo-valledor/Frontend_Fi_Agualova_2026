@@ -6,7 +6,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 
 interface LoadingStateProps {
@@ -24,12 +24,12 @@ export function LoadingState({
   showRetry = false,
   onRetry,
   size = 'md',
-  variant = 'default',
+  variant = 'default'
 }: LoadingStateProps) {
   const sizeClasses = {
     sm: 'w-8 h-8',
     md: 'w-12 h-12',
-    lg: 'w-16 h-16',
+    lg: 'w-16 h-16'
   };
 
   if (variant === 'inline') {
@@ -136,7 +136,7 @@ interface EmptyStateProps {
 
 export function EmptyState({
   message = 'No se encontraron datos',
-  className = '',
+  className = ''
 }: EmptyStateProps) {
   return (
     <Card className={`mt-4 ${className}`}>

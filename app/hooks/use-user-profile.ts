@@ -60,7 +60,7 @@ export function useUserProfile(): UseUserProfileReturn {
           apellidos: user.fullName.split(' ').slice(1).join(' ') || '',
           departamento: 1, // Valor por defecto
           activo: true,
-          fechaCreacion: new Date().toISOString(),
+          fechaCreacion: new Date().toISOString()
         };
 
         setUserData(mockUserData);
@@ -105,7 +105,7 @@ export function useUserProfile(): UseUserProfileReturn {
                     nombres: data.nombres,
                     apellidos: data.apellidos,
                     departamento: data.departamento,
-                    activo: data.activo,
+                    activo: data.activo
                   }
                 : null
             );
@@ -123,7 +123,7 @@ export function useUserProfile(): UseUserProfileReturn {
                   nombres: data.nombres,
                   apellidos: data.apellidos,
                   departamento: data.departamento,
-                  activo: data.activo,
+                  activo: data.activo
                 }
               : null
           );
@@ -155,6 +155,6 @@ export function useUserProfile(): UseUserProfileReturn {
     isLoading,
     error,
     updateProfile,
-    refreshProfile,
+    refreshProfile
   };
 }

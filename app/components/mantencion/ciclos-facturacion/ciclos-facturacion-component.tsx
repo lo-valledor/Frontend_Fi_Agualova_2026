@@ -19,7 +19,7 @@ interface CiclosFacturacionComponentProps {
 }
 
 export default function CiclosFacturacionComponent({
-  ciclosFacturacion,
+  ciclosFacturacion
 }: Readonly<CiclosFacturacionComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCiclo, setSelectedCiclo] = useState<CiclosFacturacion | null>(
@@ -84,7 +84,7 @@ export default function CiclosFacturacionComponent({
             <DataTable
               columns={columns({
                 onEdit: handleEditCiclo,
-                onDelete: handleDeleteCiclo,
+                onDelete: handleDeleteCiclo
               })}
               data={ciclosFacturacion}
             />

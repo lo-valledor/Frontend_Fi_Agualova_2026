@@ -17,7 +17,7 @@ export const columns = ({
   onEdit,
   onDetails,
   editingClienteRut,
-  detailingClienteRut,
+  detailingClienteRut
 }: ClientesColumnsProps): ColumnDef<GetClientes>[] => [
   {
     accessorKey: 'rut',
@@ -42,7 +42,7 @@ export const columns = ({
       );
     },
     minSize: 150,
-    maxSize: 220,
+    maxSize: 220
   },
   {
     accessorKey: 'esEmpresa',
@@ -68,7 +68,7 @@ export const columns = ({
       </Badge>
     ),
     minSize: 80,
-    maxSize: 120,
+    maxSize: 120
   },
   {
     accessorKey: 'direccion',
@@ -86,7 +86,7 @@ export const columns = ({
       </div>
     ),
     minSize: 120,
-    maxSize: 200,
+    maxSize: 200
   },
   {
     accessorKey: 'comuna',
@@ -104,7 +104,7 @@ export const columns = ({
       </div>
     ),
     minSize: 100,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     accessorKey: 'telefono',
@@ -122,7 +122,7 @@ export const columns = ({
       </div>
     ),
     minSize: 110,
-    maxSize: 130,
+    maxSize: 130
   },
   {
     accessorKey: 'contacto',
@@ -140,7 +140,7 @@ export const columns = ({
       </div>
     ),
     minSize: 110,
-    maxSize: 140,
+    maxSize: 140
   },
   {
     accessorKey: 'email',
@@ -158,7 +158,7 @@ export const columns = ({
       </div>
     ),
     minSize: 130,
-    maxSize: 170,
+    maxSize: 170
   },
   {
     id: 'actions',
@@ -182,6 +182,6 @@ export const columns = ({
     },
     minSize: 80,
     maxSize: 100,
-    enableSorting: false,
-  },
+    enableSorting: false
+  }
 ];

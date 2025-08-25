@@ -14,7 +14,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       return <div className='font-medium'>{periodo as string}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'fechaLectura',
@@ -25,7 +25,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       const fecha = row.getValue('fechaLectura');
       return <div>{fecha as string}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'lecturaAnterior',
@@ -36,7 +36,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       const lectura = row.getValue('lecturaAnterior');
       return <div className='text-left'>{lectura?.toLocaleString()}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'lecturaActual',
@@ -49,7 +49,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
         <div className='text-left font-medium'>{lectura?.toLocaleString()}</div>
       );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'consumoPeriodo',
@@ -60,7 +60,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       const consumo = row.getValue('consumoPeriodo');
       return <div className='text-left'>{consumo?.toLocaleString()} kWh</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'energiaBase',
@@ -71,7 +71,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       const energia = row.getValue('energiaBase');
       return <div className='text-left'>{energia?.toLocaleString()} kWh</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'sobreconsumo',
@@ -88,6 +88,6 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
         </div>
       );
     },
-    enableSorting: true,
-  },
+    enableSorting: true
+  }
 ];

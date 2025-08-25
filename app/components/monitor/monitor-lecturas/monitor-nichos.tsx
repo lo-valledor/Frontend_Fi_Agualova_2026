@@ -12,7 +12,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import api from '~/lib/api';
 import type { MedidorNichoItem } from '~/types/monitor';
@@ -24,7 +24,7 @@ import EditarMedidores from './editar-medidores';
 export default function MonitorNichos({
   periodo,
   nicho,
-  onSuccess,
+  onSuccess
 }: Readonly<{
   periodo: string;
   nicho: string;
@@ -43,13 +43,13 @@ export default function MonitorNichos({
   const [needsRefreshOnClose, setNeedsRefreshOnClose] = useState(false);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 15,
+    pageSize: 15
   });
 
   const searchResults = useCallback(async () => {
     const params = new URLSearchParams({
       periodo,
-      nicho,
+      nicho
     });
 
     try {
@@ -90,7 +90,7 @@ export default function MonitorNichos({
   const handleOpenDialog = (id: number, isOpen: boolean) => {
     setOpenDialogs(prev => ({
       ...prev,
-      [id]: isOpen,
+      [id]: isOpen
     }));
   };
 
@@ -154,7 +154,7 @@ export default function MonitorNichos({
     handleOpenDialog,
     openDialogs,
     lastEditedId,
-    handleSuccess,
+    handleSuccess
   };
 
   return (

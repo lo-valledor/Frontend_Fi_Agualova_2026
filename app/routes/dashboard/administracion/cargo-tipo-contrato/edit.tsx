@@ -7,7 +7,7 @@ import type {
   GeCombosConceptos,
   GetCombosTarifas,
   GetCombosTiposMedidor,
-  GetCondicionesContrato,
+  GetCondicionesContrato
 } from '~/types/administracion';
 
 import type { Route } from './+types/edit';
@@ -15,7 +15,7 @@ import type { Route } from './+types/edit';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Cargo Tipo Contrato - Editar' },
-    { name: 'description', content: 'Cargo Tipo Contrato - Editar' },
+    { name: 'description', content: 'Cargo Tipo Contrato - Editar' }
   ];
 }
 
@@ -35,7 +35,7 @@ export default function Edit({ loaderData, params }: Route.ComponentProps) {
   const { cargoTipoContrato } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
-    { label: 'Cargo Tipo Contrato' },
+    { label: 'Cargo Tipo Contrato' }
   ];
 
   // Si no hay datos, mostrar mensaje de error o loading

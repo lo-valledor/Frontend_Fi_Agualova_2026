@@ -7,7 +7,7 @@ import {
   IdCard,
   InfoIcon,
   PlugIcon,
-  ZapIcon,
+  ZapIcon
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
@@ -29,7 +29,7 @@ const formatSafeDate = (date: string | null, formatString: string) => {
 
 export default function DetalleLecturaBT43({
   lecturaId,
-  etapa1,
+  etapa1
 }: {
   lecturaId: number;
   etapa1: EtapaUno[];

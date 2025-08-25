@@ -2,7 +2,7 @@ import {
   AlertCircle,
   AlertTriangle,
   CheckCircle,
-  InfoIcon,
+  InfoIcon
 } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
@@ -15,7 +15,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { cn } from '~/lib/utils';
 
@@ -35,14 +35,21 @@ export default function DialogInformacion() {
         <DialogHeader>
           <DialogTitle className='text-lg sm:text-xl font-semibold text-blue-700 dark:text-blue-300 flex items-center gap-2'>
             <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5' />
-            <span className='hidden sm:inline'>Información de Cierre de Lecturas</span>
+            <span className='hidden sm:inline'>
+              Información de Cierre de Lecturas
+            </span>
             <span className='sm:hidden'>Info Cierre Lecturas</span>
           </DialogTitle>
         </DialogHeader>
         <DialogDescription className='space-y-3 sm:space-y-4 py-3 sm:py-4'>
           <p className='text-xs sm:text-sm'>
-            <span className='hidden sm:inline'>El cierre de lecturas es el proceso que permite validar y confirmar las lecturas de medidores para su facturación.</span>
-            <span className='sm:hidden'>Proceso para validar lecturas de medidores para facturación.</span>
+            <span className='hidden sm:inline'>
+              El cierre de lecturas es el proceso que permite validar y
+              confirmar las lecturas de medidores para su facturación.
+            </span>
+            <span className='sm:hidden'>
+              Proceso para validar lecturas de medidores para facturación.
+            </span>
           </p>
 
           {[
@@ -61,7 +68,7 @@ export default function DialogInformacion() {
             {
               full: 'Una vez cerradas, las lecturas estarán disponibles para facturación.',
               short: 'Lecturas cerradas disponibles para facturación.'
-            },
+            }
           ].map((item, index) => (
             <div key={index} className='flex gap-2 sm:gap-3 items-start'>
               <span
@@ -95,7 +102,9 @@ export default function DialogInformacion() {
                   <span className='sm:hidden'>Roja</span>
                 </Badge>
                 <span className='text-xs text-muted-foreground'>
-                  <span className='hidden sm:inline'>Requiere revisión obligatoria</span>
+                  <span className='hidden sm:inline'>
+                    Requiere revisión obligatoria
+                  </span>
                   <span className='sm:hidden'>Revisión obligatoria</span>
                 </span>
               </div>
@@ -109,7 +118,9 @@ export default function DialogInformacion() {
                   <span className='sm:hidden'>Naranja</span>
                 </Badge>
                 <span className='text-xs text-muted-foreground'>
-                  <span className='hidden sm:inline'>Posible anomalía, revisar</span>
+                  <span className='hidden sm:inline'>
+                    Posible anomalía, revisar
+                  </span>
                   <span className='sm:hidden'>Posible anomalía</span>
                 </span>
               </div>
@@ -123,7 +134,9 @@ export default function DialogInformacion() {
                   <span className='sm:hidden'>OK</span>
                 </Badge>
                 <span className='text-xs text-muted-foreground'>
-                  <span className='hidden sm:inline'>Lecturas verificadas sin problemas</span>
+                  <span className='hidden sm:inline'>
+                    Lecturas verificadas sin problemas
+                  </span>
                   <span className='sm:hidden'>Sin problemas</span>
                 </span>
               </div>
@@ -132,7 +145,12 @@ export default function DialogInformacion() {
         </DialogDescription>
         <DialogFooter className='pt-3 sm:pt-4'>
           <DialogClose asChild>
-            <Button type='button' variant='secondary' size='sm' className='w-full sm:w-auto text-xs sm:text-sm'>
+            <Button
+              type='button'
+              variant='secondary'
+              size='sm'
+              className='w-full sm:w-auto text-xs sm:text-sm'
+            >
               Entendido
             </Button>
           </DialogClose>

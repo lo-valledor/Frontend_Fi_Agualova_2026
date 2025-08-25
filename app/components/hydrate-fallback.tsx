@@ -6,7 +6,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 
 interface HydrateFallbackProps {
@@ -20,7 +20,7 @@ export function HydrateFallback({
   title = 'Cargando aplicación...',
   description = 'Estamos preparando todo para ti. Esto solo tomará un momento.',
   showRetry = false,
-  onRetry,
+  onRetry
 }: HydrateFallbackProps) {
   return (
     <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4'>

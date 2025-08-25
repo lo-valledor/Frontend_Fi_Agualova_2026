@@ -3,7 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import {
   EstadoBadge,
-  TableActions,
+  TableActions
 } from '~/components/data-table/table-helpers';
 import type { GetCargoTipoContrato } from '~/types/administracion';
 
@@ -14,7 +14,7 @@ interface ColumnsProps {
 
 export const columns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: ColumnsProps): ColumnDef<GetCargoTipoContrato>[] => [
   {
     accessorKey: 'tipoContratoDescripcion',
@@ -43,7 +43,7 @@ export const columns = ({
       );
     },
     minSize: 180,
-    maxSize: 250,
+    maxSize: 250
   },
   {
     accessorKey: 'condicionContratoDescripcion',
@@ -62,7 +62,7 @@ export const columns = ({
       );
     },
     minSize: 140,
-    maxSize: 180,
+    maxSize: 180
   },
   {
     accessorKey: 'descripcion',
@@ -81,7 +81,7 @@ export const columns = ({
       );
     },
     minSize: 170,
-    maxSize: 220,
+    maxSize: 220
   },
   {
     accessorKey: 'estado',
@@ -90,7 +90,7 @@ export const columns = ({
     ),
     cell: ({ row }) => <EstadoBadge estado={row.getValue('estado')} />,
     minSize: 100,
-    maxSize: 120,
+    maxSize: 120
   },
   {
     id: 'actions',
@@ -108,6 +108,6 @@ export const columns = ({
       </div>
     ),
     minSize: 100,
-    maxSize: 120,
-  },
+    maxSize: 120
+  }
 ];

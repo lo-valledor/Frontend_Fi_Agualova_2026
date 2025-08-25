@@ -14,26 +14,26 @@ export function useMedidorFilters(
   medidores: GetMedidores[],
   filters: MedidorFilters
 ) {
-  // Extraer opciones únicas de los medidores
+  // Extraer opciones ï¿½nicas de los medidores
   const filterOptions = useMemo((): FilterOptions => {
     const marcas = [
-      ...new Set(medidores.map(m => m.marca).filter(Boolean)),
+      ...new Set(medidores.map(m => m.marca).filter(Boolean))
     ].sort();
     const tipos = [
-      ...new Set(medidores.map(m => m.tipo).filter(Boolean)),
+      ...new Set(medidores.map(m => m.tipo).filter(Boolean))
     ].sort();
     const modelos = [
-      ...new Set(medidores.map(m => m.modelo).filter(Boolean)),
+      ...new Set(medidores.map(m => m.modelo).filter(Boolean))
     ].sort();
     const estados = [
-      ...new Set(medidores.map(m => m.estado).filter(Boolean)),
+      ...new Set(medidores.map(m => m.estado).filter(Boolean))
     ].sort();
 
     return {
       marcas,
       tipos,
       modelos,
-      estados,
+      estados
     };
   }, [medidores]);
 
@@ -75,14 +75,14 @@ export function useMedidorFilters(
         return false;
       }
 
-      // Filtro por rango de dígitos
+      // Filtro por rango de dï¿½gitos
       if (filters.digitosMin || filters.digitosMax) {
         const digitos = medidor.digitos;
-        
+
         if (filters.digitosMin && digitos < parseInt(filters.digitosMin)) {
           return false;
         }
-        
+
         if (filters.digitosMax && digitos > parseInt(filters.digitosMax)) {
           return false;
         }
@@ -91,19 +91,27 @@ export function useMedidorFilters(
       // Filtro por rango de multiplicador
       if (filters.multiplicarMin || filters.multiplicarMax) {
         const multiplicar = medidor.multiplicar;
-        
-        if (filters.multiplicarMin && multiplicar < parseFloat(filters.multiplicarMin)) {
+
+        if (
+          filters.multiplicarMin &&
+          multiplicar < parseFloat(filters.multiplicarMin)
+        ) {
           return false;
         }
-        
-        if (filters.multiplicarMax && multiplicar > parseFloat(filters.multiplicarMax)) {
+
+        if (
+          filters.multiplicarMax &&
+          multiplicar > parseFloat(filters.multiplicarMax)
+        ) {
           return false;
         }
       }
 
-      // Filtro por tiene ubicación
+      // Filtro por tiene ubicaciï¿½n
       if (filters.tieneUbicacion && filters.tieneUbicacion !== 'all') {
-        const tieneUbicacion = Boolean(medidor.ubicacion && medidor.ubicacion.trim() !== '');
+        const tieneUbicacion = Boolean(
+          medidor.ubicacion && medidor.ubicacion.trim() !== ''
+        );
         if (filters.tieneUbicacion === 'true' && !tieneUbicacion) {
           return false;
         }
@@ -114,7 +122,9 @@ export function useMedidorFilters(
 
       // Filtro por tiene acometida
       if (filters.tieneAcometida && filters.tieneAcometida !== 'all') {
-        const tieneAcometida = Boolean(medidor.codigoAcometida && medidor.codigoAcometida.trim() !== '');
+        const tieneAcometida = Boolean(
+          medidor.codigoAcometida && medidor.codigoAcometida.trim() !== ''
+        );
         if (filters.tieneAcometida === 'true' && !tieneAcometida) {
           return false;
         }
@@ -129,7 +139,7 @@ export function useMedidorFilters(
           ? new Date(medidor.fechaInicio)
           : null;
 
-        // Si no hay fecha de inicio y se está filtrando por fechas, excluir
+        // Si no hay fecha de inicio y se estï¿½ filtrando por fechas, excluir
         if (
           !fechaInicio &&
           (filters.fechaInicioDesde || filters.fechaInicioHasta)
@@ -147,7 +157,7 @@ export function useMedidorFilters(
 
           if (filters.fechaInicioHasta) {
             const fechaHasta = new Date(filters.fechaInicioHasta);
-            // Agregar un día para incluir la fecha hasta completa
+            // Agregar un dï¿½a para incluir la fecha hasta completa
             fechaHasta.setDate(fechaHasta.getDate() + 1);
             if (fechaInicio >= fechaHasta) {
               return false;
@@ -171,13 +181,13 @@ export function useMedidorFilters(
       total,
       filtered,
       activeFilters,
-      isFiltered: activeFilters > 0,
+      isFiltered: activeFilters > 0
     };
   }, [medidores.length, filteredMedidores.length, filters]);
 
   return {
     filteredMedidores,
     filterStats,
-    filterOptions,
+    filterOptions
   };
 }

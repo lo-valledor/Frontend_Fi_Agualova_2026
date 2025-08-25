@@ -12,14 +12,14 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '~/components/ui/tooltip';
 import api from '~/lib/api';
 
@@ -30,7 +30,7 @@ interface ReposicionSolicitadaDialogProps {
 
 export function ReposicionSolicitadaDialog({
   acometida,
-  onSuccess,
+  onSuccess
 }: Readonly<ReposicionSolicitadaDialogProps>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,7 +38,7 @@ export function ReposicionSolicitadaDialog({
     setIsSubmitting(true);
     try {
       await api.post('reposicion-solicitada', null, {
-        params: { acometida },
+        params: { acometida }
       });
       toast.success('Reposición solicitada correctamente');
       onSuccess();

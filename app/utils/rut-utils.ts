@@ -19,10 +19,10 @@ export const cleanRut = (rut: string): string => {
 export const formatRut = (rut: string): string => {
   const cleaned = cleanRut(rut);
   if (cleaned.length < 2) return cleaned;
-  
+
   // Si ya tiene guión, devolverlo limpio
   if (cleaned.includes('-')) return cleaned;
-  
+
   // Formatear según la longitud
   if (cleaned.length === 8) {
     // RUT de 7 dígitos + verificador: 1234567K -> 1234567-K
@@ -35,7 +35,7 @@ export const formatRut = (rut: string): string => {
     const verifier = cleaned.slice(8);
     return `${body}-${verifier}`;
   }
-  
+
   // Si no tiene la longitud correcta, devolver sin formatear
   return cleaned;
 };
@@ -83,7 +83,7 @@ export const isValidRut = (rut: string): boolean => {
 
   const [body, verifier] = rut.split('-');
   const calculatedVerifier = calculateRutVerifier(body);
-  
+
   return calculatedVerifier.toUpperCase() === verifier.toUpperCase();
 };
 
@@ -97,9 +97,9 @@ export const formatRutWithDots = (rut: string): string => {
   if (!isValidRutFormat(formatted)) return formatted;
 
   const [body, verifier] = formatted.split('-');
-  
+
   // Agregar puntos cada 3 dígitos desde la derecha
   const bodyWithDots = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  
+
   return `${bodyWithDots}-${verifier}`;
 };

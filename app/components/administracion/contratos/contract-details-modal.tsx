@@ -11,7 +11,7 @@ import {
   Shield,
   User,
   XCircle,
-  Zap,
+  Zap
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
@@ -23,13 +23,13 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Separator } from '~/components/ui/separator';
 import { Skeleton } from '~/components/ui/skeleton';
 import type {
   ContratosDisponiblesPorId,
-  GetContratos,
+  GetContratos
 } from '~/types/administracion';
 
 interface ContractDetailsModalProps {
@@ -41,7 +41,7 @@ interface ContractDetailsModalProps {
 export function ContractDetailsModal({
   isOpen,
   onClose,
-  contract,
+  contract
 }: ContractDetailsModalProps) {
   const [detailsData, setDetailsData] =
     useState<ContratosDisponiblesPorId | null>(null);
@@ -80,7 +80,7 @@ export function ContractDetailsModal({
           esMadreTexto: 'No',
           codigoContratoMadre: '',
           lugarEntrega: contract.direccionEnvio,
-          liberadoCorteTexto: contract.liberadoCorte ? 'Sí' : 'No',
+          liberadoCorteTexto: contract.liberadoCorte ? 'Sí' : 'No'
         };
 
         setDetailsData(mockDetails);
@@ -103,7 +103,7 @@ export function ContractDetailsModal({
       return new Date(dateString).toLocaleDateString('es-CL', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric',
+        year: 'numeric'
       });
     } catch {
       return dateString;

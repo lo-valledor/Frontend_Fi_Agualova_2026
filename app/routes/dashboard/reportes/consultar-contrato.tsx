@@ -11,8 +11,8 @@ export function meta(_args: Route.MetaArgs) {
     {
       title: 'Enerlova | Consultar Contrato',
       description:
-        'Próximamente podrás consultar y revisar todos los detalles de los contratos de manera rápida y eficiente.',
-    },
+        'Próximamente podrás consultar y revisar todos los detalles de los contratos de manera rápida y eficiente.'
+    }
   ];
 }
 
@@ -22,22 +22,22 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
   if (result.error || !result.data) {
     return {
       buscarContratos: [],
-      error: new Error(result.error || 'Error al cargar datos'),
+      error: new Error(result.error || 'Error al cargar datos')
     };
   }
 
   return {
     buscarContratos: result.data.buscarContratos,
-    error: null,
+    error: null
   };
 }
 
 export default function ConsultarContrato({
-  loaderData,
+  loaderData
 }: Readonly<Route.ComponentProps>) {
   const pageBreadcrumbs = [
     { label: 'Reportes' },
-    { label: 'Consulta de Contratos' },
+    { label: 'Consulta de Contratos' }
   ];
   return (
     <div>

@@ -5,12 +5,12 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu';
 import {
   type ExportColumn,
   type ExportFormat,
-  useExportData,
+  useExportData
 } from '~/hooks/shared/use-export-data';
 
 interface ExportButtonProps<T extends Record<string, any>> {
@@ -32,7 +32,7 @@ export function ExportButton<T extends Record<string, any>>({
   size = 'sm',
   variant = 'default',
   showDropdown = true,
-  defaultFormat = 'xlsx',
+  defaultFormat = 'xlsx'
 }: Readonly<ExportButtonProps<T>>) {
   const { isExporting, exportData } = useExportData<T>();
 
@@ -40,7 +40,7 @@ export function ExportButton<T extends Record<string, any>>({
     await exportData(data, columns, {
       format,
       filename,
-      includeHeaders: true,
+      includeHeaders: true
     });
   };
 

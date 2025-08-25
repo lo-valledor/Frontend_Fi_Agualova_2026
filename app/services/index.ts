@@ -19,7 +19,7 @@ export { mantencionService } from './mantencionService';
 // Tipos de servicios
 export type {
   MonitorServiceResponse,
-  MonitorBasicData,
+  MonitorBasicData
 } from './monitorService';
 export type { AdministracionServiceResponse } from './administracionService';
 export type { OperacionesServiceResponse } from './operacionesService';

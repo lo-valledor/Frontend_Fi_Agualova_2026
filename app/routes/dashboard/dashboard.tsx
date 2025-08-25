@@ -8,7 +8,7 @@ import type { GetLimiteInvierno } from '~/types/administracion';
 import type {
   PeriodoAbierto,
   TotalesCorteReposicion,
-  ValidarSectoresPendientes,
+  ValidarSectoresPendientes
 } from '~/types/operaciones';
 
 import type { Route } from './+types/dashboard';
@@ -16,7 +16,7 @@ import type { Route } from './+types/dashboard';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Inicio' },
-    { name: 'description', content: 'Dashboard' },
+    { name: 'description', content: 'Dashboard' }
   ];
 }
 
@@ -25,12 +25,12 @@ export async function clientLoader() {
     periodoAbiertoRes,
     lecturasPendientesRes,
     corteRes,
-    limiteInviernoRes,
+    limiteInviernoRes
   ] = await Promise.all([
     api.get('ConsultarPeriodoAbierto'),
     api.get('validar-lecturas-pendientes'),
     api.get('consulta-registros-revision'),
-    api.get('parametro/limite-invierno'),
+    api.get('parametro/limite-invierno')
   ]);
   const periodoAbierto = periodoAbiertoRes.data as PeriodoAbierto;
   const lecturasPendientes =
@@ -41,7 +41,7 @@ export async function clientLoader() {
     periodoAbierto,
     lecturasPendientes,
     corte,
-    limiteInvierno,
+    limiteInvierno
   };
 }
 

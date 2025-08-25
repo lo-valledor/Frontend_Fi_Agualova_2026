@@ -9,7 +9,7 @@ export function ModernHeader({
   title,
   description,
   actions,
-  className = '',
+  className = ''
 }: Readonly<ModernHeaderProps>) {
   return (
     <div

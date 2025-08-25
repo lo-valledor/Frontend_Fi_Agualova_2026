@@ -13,7 +13,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Conceptos' },
-    { name: 'description', content: ' Conceptos del sistema' },
+    { name: 'description', content: ' Conceptos del sistema' }
   ];
 }
 
@@ -23,14 +23,16 @@ export async function clientLoader() {
   if (result.error || !result.data) {
     return {
       conceptos: [],
-      comboAsociadoConceptos: [],
+      comboAsociadoConceptos: []
     };
   }
 
   return result.data;
 }
 
-export default function Conceptos({ loaderData }: Readonly<Route.ComponentProps>) {
+export default function Conceptos({
+  loaderData
+}: Readonly<Route.ComponentProps>) {
   const { conceptos, comboAsociadoConceptos } = loaderData;
 
   const pageBreadcrumbs = [{ label: 'Mantención' }, { label: 'Conceptos' }];

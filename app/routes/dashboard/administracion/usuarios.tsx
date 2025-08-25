@@ -13,7 +13,7 @@ interface LoaderData {
 export function meta() {
   return [
     { title: 'Enerlova | Usuarios' },
-    { name: 'description', content: ' usuarios del sistema' },
+    { name: 'description', content: ' usuarios del sistema' }
   ];
 }
 

@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -34,7 +34,7 @@ export default function DialogNuevoValorEnerlova({
   fecha_fin,
   valor,
   onSuccess,
-  id,
+  id
 }: DialogNuevoValorEnerlovaProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +44,7 @@ export default function DialogNuevoValorEnerlova({
     fecha_inicio,
     fecha_fin,
     valor,
-    id,
+    id
   });
 
   // Validaciones del formulario
@@ -98,7 +98,7 @@ export default function DialogNuevoValorEnerlova({
     (field: keyof typeof formValues, value: string | number) => {
       setFormValues(prev => ({
         ...prev,
-        [field]: value,
+        [field]: value
       }));
     },
     []
@@ -121,7 +121,7 @@ export default function DialogNuevoValorEnerlova({
         codigo: parseInt(formValues.codigo),
         fechaInicio: formValues.fecha_inicio, // Ya está en formato DD-MM-YYYY
         fechaFin: fechaFinFormateada,
-        valor: formValues.valor,
+        valor: formValues.valor
       };
 
       const response = await api.post(

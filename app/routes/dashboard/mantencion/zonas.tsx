@@ -13,7 +13,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Zonas' },
-    { name: 'description', content: ' zonas del sistema' },
+    { name: 'description', content: ' zonas del sistema' }
   ];
 }
 

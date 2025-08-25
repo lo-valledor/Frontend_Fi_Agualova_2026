@@ -17,7 +17,7 @@ import {
   SheetDescription,
   SheetFooter,
   SheetHeader,
-  SheetTitle,
+  SheetTitle
 } from '~/components/ui/sheet';
 import type { GetCondicionesContrato } from '~/types/administracion';
 import type { Conceptos } from '~/types/mantencion';
@@ -33,7 +33,7 @@ interface CondicionesContratoComponentProps {
 
 export default function CondicionesContratoComponent({
   condicionesContrato,
-  conceptos,
+  conceptos
 }: Readonly<CondicionesContratoComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCondicionContrato, setSelectedCondicionContrato] = useState<
@@ -108,7 +108,7 @@ export default function CondicionesContratoComponent({
               columns={columns({
                 onEdit: handleEditCondicionContrato,
                 onView: handleViewCondicionContrato,
-                editingCondicionContrato: null,
+                editingCondicionContrato: null
               })}
               data={condicionesContrato}
             />

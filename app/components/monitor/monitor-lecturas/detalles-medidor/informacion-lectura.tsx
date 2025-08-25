@@ -12,7 +12,7 @@ interface InformacionLecturaProps {
 
 export default function InformacionLectura({
   data,
-  error,
+  error
 }: InformacionLecturaProps) {
   const lectura = data?.[0];
 

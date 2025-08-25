@@ -17,7 +17,7 @@ interface ColumnsProps {
 export const columnsNichos = ({
   handleOpenDialog,
   openDialogs,
-  lastEditedId,
+  lastEditedId
 }: ColumnsProps): ColumnDef<MedidorNichoItem>[] => [
   {
     id: 'numero',
@@ -30,8 +30,8 @@ export const columnsNichos = ({
     ),
     meta: {
       className:
-        'sticky left-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm min-w-[50px] max-w-[50px]',
-    },
+        'sticky left-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm min-w-[50px] max-w-[50px]'
+    }
   },
   {
     id: 'local',
@@ -46,8 +46,8 @@ export const columnsNichos = ({
       </div>
     ),
     meta: {
-      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[100px]',
-    },
+      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[100px]'
+    }
   },
   {
     id: 'tarifa',
@@ -61,8 +61,8 @@ export const columnsNichos = ({
       </div>
     ),
     meta: {
-      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[70px]',
-    },
+      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[70px]'
+    }
   },
   {
     id: 'numero_serie',
@@ -74,8 +74,8 @@ export const columnsNichos = ({
       </div>
     ),
     meta: {
-      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[85px]',
-    },
+      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[85px]'
+    }
   },
   {
     id: 'constante',
@@ -87,8 +87,8 @@ export const columnsNichos = ({
       </div>
     ),
     meta: {
-      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[60px]',
-    },
+      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[60px]'
+    }
   },
   {
     id: 'anio_anterior',
@@ -103,8 +103,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-slate-50/70 dark:bg-slate-900/40 min-w-[70px]',
-    },
+      className: 'bg-slate-50/70 dark:bg-slate-900/40 min-w-[70px]'
+    }
   },
   {
     id: 'mes_anterior',
@@ -119,8 +119,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-slate-50/70 dark:bg-slate-900/40 min-w-[70px]',
-    },
+      className: 'bg-slate-50/70 dark:bg-slate-900/40 min-w-[70px]'
+    }
   },
   {
     id: 'energia_activa_anterior',
@@ -135,8 +135,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-red-50/70 dark:bg-red-900/20 min-w-[75px]',
-    },
+      className: 'bg-red-50/70 dark:bg-red-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'energia_activa',
@@ -151,8 +151,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-red-50/70 dark:bg-red-900/20 min-w-[75px]',
-    },
+      className: 'bg-red-50/70 dark:bg-red-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'consumo_energia_activa',
@@ -167,8 +167,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-red-50/70 dark:bg-red-900/20 min-w-[75px]',
-    },
+      className: 'bg-red-50/70 dark:bg-red-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'energia_reactiva_anterior',
@@ -183,8 +183,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-green-50/70 dark:bg-green-900/20 min-w-[75px]',
-    },
+      className: 'bg-green-50/70 dark:bg-green-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'energia_reactiva',
@@ -199,8 +199,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-green-50/70 dark:bg-green-900/20 min-w-[75px]',
-    },
+      className: 'bg-green-50/70 dark:bg-green-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'consumo_energia_reactiva',
@@ -215,8 +215,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-green-50/70 dark:bg-green-900/20 min-w-[75px]',
-    },
+      className: 'bg-green-50/70 dark:bg-green-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'demanda_punta',
@@ -231,8 +231,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-orange-50/70 dark:bg-orange-900/20 min-w-[65px]',
-    },
+      className: 'bg-orange-50/70 dark:bg-orange-900/20 min-w-[65px]'
+    }
   },
   {
     id: 'fecha_demanda_punta',
@@ -250,8 +250,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-orange-50/70 dark:bg-orange-900/20 min-w-[75px]',
-    },
+      className: 'bg-orange-50/70 dark:bg-orange-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'hora_demanda_punta',
@@ -266,8 +266,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-orange-50/70 dark:bg-orange-900/20 min-w-[65px]',
-    },
+      className: 'bg-orange-50/70 dark:bg-orange-900/20 min-w-[65px]'
+    }
   },
   {
     id: 'demanda_suministrada',
@@ -282,8 +282,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-blue-50/70 dark:bg-blue-900/20 min-w-[65px]',
-    },
+      className: 'bg-blue-50/70 dark:bg-blue-900/20 min-w-[65px]'
+    }
   },
   {
     id: 'fecha_demanda_suministrada',
@@ -301,8 +301,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-blue-50/70 dark:bg-blue-900/20 min-w-[75px]',
-    },
+      className: 'bg-blue-50/70 dark:bg-blue-900/20 min-w-[75px]'
+    }
   },
   {
     id: 'hora_demanda_suministrada',
@@ -317,8 +317,8 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-blue-50/70 dark:bg-blue-900/20 min-w-[65px]',
-    },
+      className: 'bg-blue-50/70 dark:bg-blue-900/20 min-w-[65px]'
+    }
   },
   {
     id: 'acciones',
@@ -375,9 +375,9 @@ export const columnsNichos = ({
     header: 'Acción',
     meta: {
       className:
-        'sticky right-0 z-20 bg-purple-50/90 dark:bg-purple-900/30 backdrop-blur-sm min-w-[120px] max-w-[120px]',
-    },
-  },
+        'sticky right-0 z-20 bg-purple-50/90 dark:bg-purple-900/30 backdrop-blur-sm min-w-[120px] max-w-[120px]'
+    }
+  }
 ];
 
 // Grupos de columnas para el encabezado agrupado con mejores estilos
@@ -387,14 +387,14 @@ export const columnGroups = [
     title: 'Medidor',
     columns: ['numero', 'local', 'tarifa', 'numero_serie', 'constante'],
     className:
-      'bg-gradient-to-r from-zinc-700 to-zinc-600 text-white font-semibold shadow-sm',
+      'bg-gradient-to-r from-zinc-700 to-zinc-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'consumo_anterior',
     title: 'Consumo Anterior',
     columns: ['anio_anterior', 'mes_anterior'],
     className:
-      'bg-gradient-to-r from-sky-700 to-sky-600 text-white font-semibold shadow-sm',
+      'bg-gradient-to-r from-sky-700 to-sky-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'energia_activa',
@@ -402,10 +402,10 @@ export const columnGroups = [
     columns: [
       'energia_activa_anterior',
       'energia_activa',
-      'consumo_energia_activa',
+      'consumo_energia_activa'
     ],
     className:
-      'bg-gradient-to-r from-red-700 to-red-600 text-white font-semibold shadow-sm',
+      'bg-gradient-to-r from-red-700 to-red-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'energia_reactiva',
@@ -413,17 +413,17 @@ export const columnGroups = [
     columns: [
       'energia_reactiva_anterior',
       'energia_reactiva',
-      'consumo_energia_reactiva',
+      'consumo_energia_reactiva'
     ],
     className:
-      'bg-gradient-to-r from-green-700 to-green-600 text-white font-semibold shadow-sm',
+      'bg-gradient-to-r from-green-700 to-green-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'demanda_punta',
     title: 'Demanda Punta 6.1 (kW)',
     columns: ['demanda_punta', 'fecha_demanda_punta', 'hora_demanda_punta'],
     className:
-      'bg-gradient-to-r from-orange-700 to-orange-600 text-white font-semibold shadow-sm',
+      'bg-gradient-to-r from-orange-700 to-orange-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'demanda_suministrada',
@@ -431,16 +431,16 @@ export const columnGroups = [
     columns: [
       'demanda_suministrada',
       'fecha_demanda_suministrada',
-      'hora_demanda_suministrada',
+      'hora_demanda_suministrada'
     ],
     className:
-      'bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold shadow-sm',
+      'bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'acciones',
     title: 'Acción',
     columns: ['acciones'],
     className:
-      'bg-gradient-to-r from-purple-700 to-purple-600 text-white font-semibold shadow-sm sticky right-0 z-20',
-  },
+      'bg-gradient-to-r from-purple-700 to-purple-600 text-white font-semibold shadow-sm sticky right-0 z-20'
+  }
 ];

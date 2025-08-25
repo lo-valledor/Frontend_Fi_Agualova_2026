@@ -13,7 +13,7 @@ export function hydrateFallback() {
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Tarifas' },
-    { name: 'description', content: ' Tarifas del sistema' },
+    { name: 'description', content: ' Tarifas del sistema' }
   ];
 }
 
@@ -27,7 +27,9 @@ export async function clientLoader() {
   return { tarifas: result.data };
 }
 
-export default function Tarifas({ loaderData }: Readonly<Route.ComponentProps>) {
+export default function Tarifas({
+  loaderData
+}: Readonly<Route.ComponentProps>) {
   const { tarifas } = loaderData;
 
   const pageBreadcrumbs = [{ label: 'Mantención' }, { label: 'Tarifas' }];

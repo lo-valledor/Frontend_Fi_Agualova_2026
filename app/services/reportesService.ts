@@ -11,7 +11,7 @@ import type {
   DetallePropietario,
   DetalleUbicacion,
   FacturacionPorCargo,
-  PeriodosFacturacion,
+  PeriodosFacturacion
 } from '~/types/reportes';
 
 export interface ReportesServiceResponse<T> {
@@ -29,7 +29,7 @@ class ReportesService {
     if (Array.isArray(response.data)) {
       return response.data;
     }
-    
+
     // Si la respuesta tiene una propiedad 'data' que es array
     if (
       response.data &&
@@ -39,12 +39,16 @@ class ReportesService {
     ) {
       return (response.data as { data: T[] }).data;
     }
-    
+
     // Si la respuesta es un objeto único, convertirlo a array
-    if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+    if (
+      response.data &&
+      typeof response.data === 'object' &&
+      !Array.isArray(response.data)
+    ) {
       return [response.data as T];
     }
-    
+
     return [];
   }
 
@@ -67,14 +71,14 @@ class ReportesService {
             this.processApiResponse<ComboEmpalmes>(resComboEmpalmes),
           periodosFacturacion: this.processApiResponse<PeriodosFacturacion>(
             resPeriodosFacturacion
-          ),
+          )
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -93,12 +97,12 @@ class ReportesService {
 
       return {
         data: this.processApiResponse<FacturacionPorCargo>(response),
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -113,14 +117,14 @@ class ReportesService {
       return {
         data: {
           buscarContratos:
-            this.processApiResponse<BuscarContratos>(resBuscarContrato),
+            this.processApiResponse<BuscarContratos>(resBuscarContrato)
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }
@@ -162,7 +166,7 @@ class ReportesService {
         detalleMedidores,
         detalleUbicacion,
         detalleLecturas,
-        detalleFacturas,
+        detalleFacturas
       ] = await Promise.allSettled([
         this.safeApiCall<DetallePropietario>(`${contratoId}/propietario`),
         this.safeApiCall<DetalleCliente>(`${contratoId}/cliente`),
@@ -171,26 +175,40 @@ class ReportesService {
         this.safeApiCall<DetalleMedidores>(`${contratoId}/medidores`),
         this.safeApiCall<DetalleUbicacion>(`${contratoId}/ubicacion`),
         this.safeApiCall<DetalleLecturas>(`${contratoId}/lecturas`),
-        this.safeApiCall<DetalleFacturas>(`${contratoId}/facturas`),
+        this.safeApiCall<DetalleFacturas>(`${contratoId}/facturas`)
       ]);
 
       return {
         data: {
-          detallePropietario: detallePropietario.status === 'fulfilled' ? detallePropietario.value : [],
-          detalleCliente: detalleCliente.status === 'fulfilled' ? detalleCliente.value : [],
-          detalleLocal: detalleLocal.status === 'fulfilled' ? detalleLocal.value : [],
-          detalleContrato: detalleContrato.status === 'fulfilled' ? detalleContrato.value : [],
-          detalleMedidores: detalleMedidores.status === 'fulfilled' ? detalleMedidores.value : [],
-          detalleUbicacion: detalleUbicacion.status === 'fulfilled' ? detalleUbicacion.value : [],
-          detalleLecturas: detalleLecturas.status === 'fulfilled' ? detalleLecturas.value : [],
-          detalleFacturas: detalleFacturas.status === 'fulfilled' ? detalleFacturas.value : [],
+          detallePropietario:
+            detallePropietario.status === 'fulfilled'
+              ? detallePropietario.value
+              : [],
+          detalleCliente:
+            detalleCliente.status === 'fulfilled' ? detalleCliente.value : [],
+          detalleLocal:
+            detalleLocal.status === 'fulfilled' ? detalleLocal.value : [],
+          detalleContrato:
+            detalleContrato.status === 'fulfilled' ? detalleContrato.value : [],
+          detalleMedidores:
+            detalleMedidores.status === 'fulfilled'
+              ? detalleMedidores.value
+              : [],
+          detalleUbicacion:
+            detalleUbicacion.status === 'fulfilled'
+              ? detalleUbicacion.value
+              : [],
+          detalleLecturas:
+            detalleLecturas.status === 'fulfilled' ? detalleLecturas.value : [],
+          detalleFacturas:
+            detalleFacturas.status === 'fulfilled' ? detalleFacturas.value : []
         },
-        error: null,
+        error: null
       };
     } catch (error) {
       return {
         data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido',
+        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

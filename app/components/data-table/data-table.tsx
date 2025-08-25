@@ -11,7 +11,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 
@@ -24,7 +24,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 
 import { DataTablePagination } from './data-table-pagination';
@@ -53,7 +53,7 @@ export function DataTable<TData, TValue>({
   onRowSelectionChange,
   rowIdKey,
   initialSorting = [],
-  meta,
+  meta
 }: DataTableAdvancedProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState('');
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -61,7 +61,7 @@ export function DataTable<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: defaultPageSize,
+    pageSize: defaultPageSize
   });
 
   const table = useReactTable({
@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       rowSelection,
       pagination,
-      globalFilter,
+      globalFilter
     },
     enableRowSelection: true,
     getRowId: rowIdKey ? row => String(row[rowIdKey]) : undefined,
@@ -104,7 +104,7 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedUniqueValues: getFacetedUniqueValues()
   });
 
   return (
@@ -134,7 +134,10 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id} className='hover:bg-transparent'>
                 {headerGroup.headers.map(header => (
-                  <TableHead key={header.id} className='h-10 px-3 text-xs font-medium'>
+                  <TableHead
+                    key={header.id}
+                    className='h-10 px-3 text-xs font-medium'
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(

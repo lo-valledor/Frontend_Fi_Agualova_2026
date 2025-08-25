@@ -15,14 +15,14 @@ import { columns } from './columns';
 import { ContractDetailsModal } from './contract-details-modal';
 import {
   type ContractFilters,
-  ContractFiltersComponent,
+  ContractFiltersComponent
 } from './contract-filters';
 import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { ExportButtons } from './export-buttons';
 import { FilterSummary } from './filter-summary';
 
 export default function ContratosComponent({
-  contratos,
+  contratos
 }: {
   readonly contratos: GetContratos[];
 }) {
@@ -40,7 +40,7 @@ export default function ContratosComponent({
     liberadoCorte: 'all',
     fechaTerminoDesde: '',
     fechaTerminoHasta: '',
-    activo: 'all',
+    activo: 'all'
   });
 
   const { filteredContracts, filterStats, filterOptions } = useContractFilters(
@@ -61,7 +61,7 @@ export default function ContratosComponent({
       liberadoCorte: 'all',
       fechaTerminoDesde: '',
       fechaTerminoHasta: '',
-      activo: 'all',
+      activo: 'all'
     });
   };
 
@@ -97,7 +97,7 @@ export default function ContratosComponent({
   const columnsData = columns({
     onEdit: handleEditContract,
     onDelete: handleDeleteContract,
-    onViewDetails: handleViewDetails,
+    onViewDetails: handleViewDetails
   });
 
   return (

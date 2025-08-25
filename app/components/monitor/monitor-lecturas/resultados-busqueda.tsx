@@ -12,7 +12,7 @@ import {
   Info,
   MapPin,
   Pencil,
-  RefreshCw,
+  RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -29,7 +29,7 @@ import { Card, CardContent } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import {
   Dialog,
@@ -37,13 +37,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '~/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
@@ -51,7 +51,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '~/components/ui/tooltip';
 import { useApiWithLoadingBar } from '~/lib/api';
 import { cn } from '~/lib/utils';
@@ -69,7 +69,7 @@ const getMeterStatus = (claveHtml: string) => {
       textColor: 'text-gray-500',
       label: 'Sin Lectura',
       icon: <History className='h-3.5 w-3.5' />,
-      severity: 1,
+      severity: 1
     },
     SINCLA: {
       color: 'green',
@@ -78,7 +78,7 @@ const getMeterStatus = (claveHtml: string) => {
       textColor: 'text-green-500',
       label: 'Lectura Normal',
       icon: <Grid3X3 className='h-3.5 w-3.5' />,
-      severity: 0,
+      severity: 0
     },
     CLAINF: {
       color: 'yellow',
@@ -87,7 +87,7 @@ const getMeterStatus = (claveHtml: string) => {
       textColor: 'text-yellow-500',
       label: 'Clave Informativa',
       icon: <AlertCircle className='h-3.5 w-3.5' />,
-      severity: 2,
+      severity: 2
     },
     CLAREL: {
       color: 'orange',
@@ -96,7 +96,7 @@ const getMeterStatus = (claveHtml: string) => {
       textColor: 'text-orange-500',
       label: 'Clave Relevante',
       icon: <AlertTriangle className='h-3.5 w-3.5' />,
-      severity: 3,
+      severity: 3
     },
     CLACRI: {
       color: 'red',
@@ -105,7 +105,7 @@ const getMeterStatus = (claveHtml: string) => {
       textColor: 'text-red-500',
       label: 'Clave Crítica',
       icon: <AlertCircle className='h-3.5 w-3.5' />,
-      severity: 4,
+      severity: 4
     },
     LECCER: {
       color: 'blue',
@@ -114,7 +114,7 @@ const getMeterStatus = (claveHtml: string) => {
       textColor: 'text-blue-500',
       label: 'Lectura Cerrada',
       icon: <MapPin className='h-3.5 w-3.5' />,
-      severity: 0,
+      severity: 0
     },
     LECIMP: {
       color: 'purple',
@@ -123,8 +123,8 @@ const getMeterStatus = (claveHtml: string) => {
       textColor: 'text-purple-500',
       label: 'En Facturación',
       icon: <BarChart3 className='h-3.5 w-3.5' />,
-      severity: 0,
-    },
+      severity: 0
+    }
   };
 
   return statusMap[claveHtml as keyof typeof statusMap] || statusMap.SINLEC;
@@ -166,7 +166,7 @@ const calculateTotalStats = (nichos: NichoBusqueda[]) => {
         warning: acc.warning + stats.warning,
         info: acc.info + stats.info,
         normal: acc.normal + stats.normal,
-        sinlec: acc.sinlec + stats.sinlec,
+        sinlec: acc.sinlec + stats.sinlec
       };
     },
     { total: 0, critical: 0, warning: 0, info: 0, normal: 0, sinlec: 0 }
@@ -176,7 +176,7 @@ const calculateTotalStats = (nichos: NichoBusqueda[]) => {
 // Component for status circle indicator
 const StatusIndicator = ({
   status,
-  size = 'md',
+  size = 'md'
 }: {
   status: any;
   size?: 'sm' | 'md' | 'lg';
@@ -184,7 +184,7 @@ const StatusIndicator = ({
   const sizeClasses: { [key in 'sm' | 'md' | 'lg']: string } = {
     sm: 'h-2 w-2',
     md: 'h-3 w-3',
-    lg: 'h-4 w-4',
+    lg: 'h-4 w-4'
   };
 
   return (
@@ -199,7 +199,7 @@ const StatusIndicator = ({
 // Meter card component for reuse
 const MeterCard = ({
   medidor,
-  onRefresh,
+  onRefresh
 }: {
   medidor: any;
   onRefresh: any;
@@ -309,7 +309,7 @@ const MeterCard = ({
 // Componente de fila compacta para vista detallada
 const MeterRowDetailed = ({
   medidor,
-  onRefresh,
+  onRefresh
 }: {
   medidor: any;
   onRefresh: any;
@@ -365,7 +365,7 @@ const MeterRowDetailed = ({
             ? new Date(medidor.fechaLectura).toLocaleString('es-CL', {
                 dateStyle: 'short',
                 timeStyle: 'short',
-                hour12: false,
+                hour12: false
               })
             : 'Sin registro'}
         </div>
@@ -449,7 +449,7 @@ export default function ResultadosBusqueda({
   tipoclave,
   medidor,
   clave,
-  triggerSearch,
+  triggerSearch
 }: {
   sector: string;
   periodo: string;
@@ -499,7 +499,7 @@ export default function ResultadosBusqueda({
       sector,
       periodo,
       stfechaini: formatToYYYYMMDD(stfechaini),
-      stfechafin: formatToYYYYMMDD(stfechafin),
+      stfechafin: formatToYYYYMMDD(stfechafin)
     });
 
     if (tipoclave) params.append('tipoclave', tipoclave);
@@ -535,7 +535,7 @@ export default function ResultadosBusqueda({
       // Aseguramos que cada nicho tenga la propiedad 'nombre'
       const nichos = rawNichos.map((nicho: any, index: number) => ({
         nombre: nicho.nombre || `Nicho ${index + 1}`,
-        filas: Array.isArray(nicho.filas) ? nicho.filas : [],
+        filas: Array.isArray(nicho.filas) ? nicho.filas : []
       }));
 
       setResults({ nichos });
@@ -601,7 +601,7 @@ export default function ResultadosBusqueda({
     const key = `${nichoIndex}-${filaIndex}`;
     setExpandedFilas(prev => ({
       ...prev,
-      [key]: !prev[key],
+      [key]: !prev[key]
     }));
   };
 
@@ -1035,7 +1035,7 @@ export default function ResultadosBusqueda({
                                   'CLAREL',
                                   'CLACRI',
                                   'LECCER',
-                                  'LECIMP',
+                                  'LECIMP'
                                 ].map(claveHtml => {
                                   const status = getMeterStatus(claveHtml);
                                   return (

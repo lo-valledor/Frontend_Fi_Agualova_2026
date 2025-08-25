@@ -8,7 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
@@ -16,7 +16,7 @@ import { type DetalleMedidorNuevoProps } from '~/types/operaciones';
 
 export default function DetalleMedidorNuevo({
   detalleMedidorNuevo,
-  onDetalleMedidorChange,
+  onDetalleMedidorChange
 }: DetalleMedidorNuevoProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -28,8 +28,8 @@ export default function DetalleMedidorNuevo({
         onDetalleMedidorChange({
           target: {
             id,
-            value: numValue.toString(),
-          },
+            value: numValue.toString()
+          }
         } as React.ChangeEvent<HTMLInputElement>);
       }
     } else {
@@ -46,11 +46,15 @@ export default function DetalleMedidorNuevo({
           </div>
           <div className='min-w-0'>
             <CardTitle className='text-emerald-900 dark:text-emerald-100 text-sm sm:text-lg truncate'>
-              <span className='hidden sm:inline'>Detalle del Nuevo Medidor</span>
+              <span className='hidden sm:inline'>
+                Detalle del Nuevo Medidor
+              </span>
               <span className='sm:hidden'>Nuevo Medidor</span>
             </CardTitle>
             <CardDescription className='text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm truncate'>
-              <span className='hidden sm:inline'>Información detallada del medidor a instalar</span>
+              <span className='hidden sm:inline'>
+                Información detallada del medidor a instalar
+              </span>
               <span className='sm:hidden'>Medidor a instalar</span>
             </CardDescription>
           </div>

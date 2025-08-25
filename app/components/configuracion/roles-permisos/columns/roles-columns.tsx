@@ -19,7 +19,7 @@ export const createRolesColumns = (
       >
         #{row.getValue('idRol')}
       </Badge>
-    ),
+    )
   },
   {
     accessorKey: 'nombreRol',
@@ -30,7 +30,7 @@ export const createRolesColumns = (
           {row.getValue('nombreRol')}
         </div>
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'descripcion',
@@ -39,7 +39,7 @@ export const createRolesColumns = (
       <div className='max-w-[300px] truncate text-slate-600 dark:text-slate-400'>
         {row.getValue('descripcion') || 'Sin descripción'}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'estadoRol',
@@ -54,7 +54,7 @@ export const createRolesColumns = (
       >
         {row.getValue('estadoRol') ? 'Activo' : 'Inactivo'}
       </Badge>
-    ),
+    )
   },
   {
     id: 'acciones',
@@ -89,6 +89,6 @@ export const createRolesColumns = (
           </Button>
         </div>
       );
-    },
-  },
+    }
+  }
 ];

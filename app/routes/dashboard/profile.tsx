@@ -7,7 +7,7 @@ import {
   Save,
   Shield,
   User,
-  X,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -30,7 +30,7 @@ import type { ActualizarUsuarioProps } from '~/types/administracion';
 export const meta: MetaFunction = () => {
   return [
     { title: 'Perfil de Usuario' },
-    { name: 'description', content: 'Gestiona tu perfil de usuario' },
+    { name: 'description', content: 'Gestiona tu perfil de usuario' }
   ];
 };
 
@@ -46,7 +46,7 @@ export default function ProfilePage() {
     apellidos: '',
     departamento: 0,
     activo: true,
-    nuevaContrasena: '',
+    nuevaContrasena: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -61,7 +61,7 @@ export default function ProfilePage() {
         apellidos: userData.apellidos,
         departamento: userData.departamento,
         activo: userData.activo,
-        nuevaContrasena: '',
+        nuevaContrasena: ''
       });
     }
   }, [userData]);
@@ -72,7 +72,7 @@ export default function ProfilePage() {
   ) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value,
+      [field]: value
     }));
   };
 
@@ -99,8 +99,8 @@ export default function ProfilePage() {
         contrasena: formData.contrasena || '',
         // Solo incluir nuevaContrasena si se proporcionó
         ...(formData.nuevaContrasena?.trim() && {
-          nuevaContrasena: formData.nuevaContrasena,
-        }),
+          nuevaContrasena: formData.nuevaContrasena
+        })
       };
 
       await updateProfile(dataToUpdate);
@@ -111,7 +111,7 @@ export default function ProfilePage() {
       setFormData(prev => ({
         ...prev,
         contrasena: '',
-        nuevaContrasena: '',
+        nuevaContrasena: ''
       }));
     } catch (error: any) {
       console.error('Error al actualizar perfil:', error);
@@ -132,7 +132,7 @@ export default function ProfilePage() {
         apellidos: userData.apellidos,
         departamento: userData.departamento,
         activo: userData.activo,
-        nuevaContrasena: '',
+        nuevaContrasena: ''
       });
     }
     setIsEditing(false);
@@ -142,7 +142,7 @@ export default function ProfilePage() {
     return new Date(dateString).toLocaleDateString('es-CL', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric',
+      year: 'numeric'
     });
   };
 

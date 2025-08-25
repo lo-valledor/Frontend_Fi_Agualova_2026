@@ -17,23 +17,23 @@ export function useContractFilters(
   // Extraer opciones únicas de los contratos
   const filterOptions = useMemo((): FilterOptions => {
     const tiposContrato = [
-      ...new Set(contracts.map(c => c.tipoContrato).filter(Boolean)),
+      ...new Set(contracts.map(c => c.tipoContrato).filter(Boolean))
     ].sort();
     const ciclosFacturacion = [
-      ...new Set(contracts.map(c => c.cicloFacturacion).filter(Boolean)),
+      ...new Set(contracts.map(c => c.cicloFacturacion).filter(Boolean))
     ].sort();
     const tarifas = [
-      ...new Set(contracts.map(c => c.tarifa).filter(Boolean)),
+      ...new Set(contracts.map(c => c.tarifa).filter(Boolean))
     ].sort();
     const comunas = [
-      ...new Set(contracts.map(c => c.comunaEnvio).filter(Boolean)),
+      ...new Set(contracts.map(c => c.comunaEnvio).filter(Boolean))
     ].sort();
 
     return {
       tiposContrato,
       ciclosFacturacion,
       tarifas,
-      comunas,
+      comunas
     };
   }, [contracts]);
 
@@ -141,13 +141,13 @@ export function useContractFilters(
       total,
       filtered,
       activeFilters,
-      isFiltered: activeFilters > 0,
+      isFiltered: activeFilters > 0
     };
   }, [contracts.length, filteredContracts.length, filters]);
 
   return {
     filteredContracts,
     filterStats,
-    filterOptions,
+    filterOptions
   };
 }

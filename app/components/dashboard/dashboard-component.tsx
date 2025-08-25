@@ -10,7 +10,7 @@ import {
   Settings,
   Snowflake,
   User,
-  Users,
+  Users
 } from 'lucide-react';
 import { Label, Pie, PieChart } from 'recharts';
 
@@ -25,20 +25,20 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from '~/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
+  ChartTooltipContent
 } from '~/components/ui/chart';
 import api from '~/lib/api';
 import type { GetLimiteInvierno } from '~/types/administracion';
 import type {
   PeriodoAbierto,
   TotalesCorteReposicion,
-  ValidarSectoresPendientes,
+  ValidarSectoresPendientes
 } from '~/types/operaciones';
 
 // Datos de atajos rápidos
@@ -48,43 +48,43 @@ const quickActions = [
     description: 'Visualizar y gestionar lecturas de medidores',
     icon: Activity,
     color: 'bg-blue-500',
-    href: '/dashboard/monitor/monitor-lecturas',
+    href: '/dashboard/monitor/monitor-lecturas'
   },
   {
     title: 'Nuevo Contrato',
     description: 'Registrar un nuevo contrato de servicio',
     icon: FileText,
     color: 'bg-green-500',
-    href: '/dashboard/administracion/contratos',
+    href: '/dashboard/administracion/contratos'
   },
   {
     title: 'Periodo Facturación',
     description: 'Gestionar periodos de facturación',
     icon: Settings,
     color: 'bg-purple-500',
-    href: '/dashboard/operaciones/periodo-facturacion',
+    href: '/dashboard/operaciones/periodo-facturacion'
   },
   {
     title: 'Agregar Cliente',
     description: 'Registrar un nuevo cliente en el sistema',
     icon: Users,
     color: 'bg-orange-500',
-    href: '/dashboard/administracion/clientes',
+    href: '/dashboard/administracion/clientes'
   },
   {
     title: 'Registrar Medidor',
     description: 'Añadir nuevo medidor al inventario',
     icon: Package,
     color: 'bg-teal-500',
-    href: '/dashboard/administracion/medidores',
+    href: '/dashboard/administracion/medidores'
   },
   {
     title: 'Preparar Lecturas',
     description: 'Configurar lecturas para el periodo',
     icon: PlusCircle,
     color: 'bg-indigo-500',
-    href: '/dashboard/operaciones/preparar-lecturas',
-  },
+    href: '/dashboard/operaciones/preparar-lecturas'
+  }
 ];
 
 // Componente de Análisis de Administración
@@ -95,7 +95,7 @@ const AdminAnalyticsComponent = () => {
     medidoresPorTipo: {} as { [key: string]: number },
     medidoresPorEstado: {} as { [key: string]: number },
     acometidasPorSector: {} as { [key: string]: number },
-    loading: true,
+    loading: true
   });
 
   useEffect(() => {
@@ -106,7 +106,7 @@ const AdminAnalyticsComponent = () => {
             api.get('contrato/buscar'),
             api.get('ClienteBuscar'),
             api.get('buscarMedidor'),
-            api.get('buscar-Acometida'),
+            api.get('buscar-Acometida')
           ]);
 
         // Procesar contratos por tipo
@@ -171,7 +171,7 @@ const AdminAnalyticsComponent = () => {
           medidoresPorTipo,
           medidoresPorEstado,
           acometidasPorSector,
-          loading: false,
+          loading: false
         });
       } catch (error) {
         console.error('Error al cargar datos de análisis:', error);
@@ -191,7 +191,7 @@ const AdminAnalyticsComponent = () => {
       'bg-teal-500',
       'bg-pink-500',
       'bg-indigo-500',
-      'bg-yellow-500',
+      'bg-yellow-500'
     ];
     return colors[index % colors.length];
   };
@@ -217,15 +217,15 @@ const AdminAnalyticsComponent = () => {
 
   // Configuraciones de chart simplificadas
   const contratosChartConfig = {
-    cantidad: { label: 'Cantidad' },
+    cantidad: { label: 'Cantidad' }
   } satisfies ChartConfig;
 
   const clientesChartConfig = {
-    cantidad: { label: 'Cantidad' },
+    cantidad: { label: 'Cantidad' }
   } satisfies ChartConfig;
 
   const acometidasChartConfig = {
-    cantidad: { label: 'Cantidad' },
+    cantidad: { label: 'Cantidad' }
   } satisfies ChartConfig;
 
   // Preparar datos para gráficos de donut
@@ -234,20 +234,20 @@ const AdminAnalyticsComponent = () => {
     .map(([tipo, cantidad], index) => ({
       tipo,
       cantidad,
-      fill: `var(--chart-${(index % 5) + 1})`,
+      fill: `var(--chart-${(index % 5) + 1})`
     }));
 
   const chartClientesData = [
     {
       tipo: 'empresas',
       cantidad: analyticsData.clientesPorTipo.empresa,
-      fill: 'var(--chart-1)',
+      fill: 'var(--chart-1)'
     },
     {
       tipo: 'personas',
       cantidad: analyticsData.clientesPorTipo.persona,
-      fill: 'var(--chart-2)',
-    },
+      fill: 'var(--chart-2)'
+    }
   ];
 
   const chartAcometidasData = Object.entries(analyticsData.acometidasPorSector)
@@ -255,7 +255,7 @@ const AdminAnalyticsComponent = () => {
     .map(([sector, cantidad], index) => ({
       sector,
       cantidad,
-      fill: `var(--chart-${(index % 5) + 1})`,
+      fill: `var(--chart-${(index % 5) + 1})`
     }));
 
   const totalContratos = Object.values(analyticsData.contratosPorTipo).reduce(
@@ -692,7 +692,7 @@ export default function DashboardComponent({
   periodoAbierto,
   lecturasPendientes,
   corte,
-  limiteInvierno,
+  limiteInvierno
 }: {
   periodoAbierto: PeriodoAbierto;
   lecturasPendientes: ValidarSectoresPendientes;
@@ -707,10 +707,10 @@ export default function DashboardComponent({
       liberado: 0,
       cortado: 0,
       reposicionSolicitada: 0,
-      total: 0,
+      total: 0
     },
     fechaHora: new Date(),
-    loading: true,
+    loading: true
   });
 
   // Estados para mostrar los números desde 0
@@ -721,9 +721,9 @@ export default function DashboardComponent({
       liberado: 0,
       cortado: 0,
       reposicionSolicitada: 0,
-      total: 0,
+      total: 0
     },
-    limiteInvierno: 0,
+    limiteInvierno: 0
   });
 
   // Actualizar reloj cada segundo
@@ -749,7 +749,7 @@ export default function DashboardComponent({
           periodoActual = {
             mes: periodo.mes || 0,
             anio: periodo.anio || 0,
-            estado: 'Abierto',
+            estado: 'Abierto'
           };
         }
 
@@ -770,7 +770,7 @@ export default function DashboardComponent({
           liberado: 0,
           cortado: 0,
           reposicionSolicitada: 0,
-          total: 0,
+          total: 0
         };
 
         if (corte && Array.isArray(corte)) {
@@ -801,7 +801,7 @@ export default function DashboardComponent({
           periodoActual,
           lecturasPendientes: lecturasPendientesCount,
           totalesCorte,
-          loading: false,
+          loading: false
         }));
 
         // Pequeño delay para que se vea el estado de carga, luego animar desde 0
@@ -809,7 +809,7 @@ export default function DashboardComponent({
           setDisplayData({
             lecturasPendientes: lecturasPendientesCount,
             totalesCorte,
-            limiteInvierno: parseInt(limiteInvierno?.valor || '0', 10),
+            limiteInvierno: parseInt(limiteInvierno?.valor || '0', 10)
           });
         }, 100);
       } catch (_error) {
@@ -879,11 +879,11 @@ export default function DashboardComponent({
                     format={{
                       useGrouping: true,
                       minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
+                      maximumFractionDigits: 0
                     }}
                     transformTiming={{
                       duration: 1200,
-                      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+                      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
                     }}
                     plugins={[continuous]}
                     className='tabular-nums'
@@ -917,11 +917,11 @@ export default function DashboardComponent({
                       format={{
                         useGrouping: true,
                         minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
+                        maximumFractionDigits: 0
                       }}
                       transformTiming={{
                         duration: 1500,
-                        easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+                        easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
                       }}
                       plugins={[continuous]}
                       className='tabular-nums'
@@ -959,11 +959,11 @@ export default function DashboardComponent({
                     format={{
                       useGrouping: true,
                       minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
+                      maximumFractionDigits: 0
                     }}
                     transformTiming={{
                       duration: 1800,
-                      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+                      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
                     }}
                     plugins={[continuous]}
                     className='tabular-nums'

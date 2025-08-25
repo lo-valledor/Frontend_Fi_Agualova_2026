@@ -9,19 +9,19 @@ export function useExportMedidores() {
   const medidorColumns: ExportColumn[] = [
     {
       key: 'numeroMedidor',
-      header: 'Número Medidor',
+      header: 'Número Medidor'
     },
     {
       key: 'marca',
-      header: 'Marca',
+      header: 'Marca'
     },
     {
       key: 'modelo',
-      header: 'Modelo',
+      header: 'Modelo'
     },
     {
       key: 'tipoMedidor',
-      header: 'Tipo Medidor',
+      header: 'Tipo Medidor'
     },
     {
       key: 'fechaInstalacion',
@@ -29,24 +29,24 @@ export function useExportMedidores() {
       formatter: (value: string) => {
         if (!value) return '';
         return new Date(value).toLocaleDateString('es-CL');
-      },
+      }
     },
     {
       key: 'estado',
-      header: 'Estado',
+      header: 'Estado'
     },
     {
       key: 'ubicacion',
-      header: 'Ubicación',
+      header: 'Ubicación'
     },
     {
       key: 'lecturaInicial',
-      header: 'Lectura Inicial',
+      header: 'Lectura Inicial'
     },
     {
       key: 'observaciones',
-      header: 'Observaciones',
-    },
+      header: 'Observaciones'
+    }
   ];
 
   // Función para exportar medidores
@@ -55,20 +55,16 @@ export function useExportMedidores() {
     format: 'csv' | 'xlsx' = 'xlsx',
     filename: string = 'medidores'
   ) => {
-    await exportData(
-      data,
-      medidorColumns,
-      {
-        format,
-        filename,
-        includeHeaders: true,
-      }
-    );
+    await exportData(data, medidorColumns, {
+      format,
+      filename,
+      includeHeaders: true
+    });
   };
 
   return {
     isExporting,
     exportMedidores,
-    medidorColumns,
+    medidorColumns
   };
 }

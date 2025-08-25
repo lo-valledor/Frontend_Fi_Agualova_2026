@@ -7,7 +7,7 @@ import {
   Loader2,
   PlayIcon,
   ServerIcon,
-  UsersIcon,
+  UsersIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -23,19 +23,19 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '~/components/ui/table';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
+  TooltipTrigger
 } from '~/components/ui/tooltip';
 import api from '~/lib/api';
 import {
   type ConsultarAsignacionSectores,
   type ConsultarSectores,
-  type TablaAsignacionSectoresProps,
+  type TablaAsignacionSectoresProps
 } from '~/types/operaciones';
 
 interface TablaAsignacionSectoresWithDescriptionProps
@@ -68,7 +68,7 @@ export default function TablaAsignacionSectores({
   sectores = [],
   periodo = '',
   cicloFacturable = '',
-  onRecargarDatos,
+  onRecargarDatos
 }: TablaAsignacionSectoresWithDescriptionProps) {
   // Estados
   const [selectedNichos, setSelectedNichos] = useState<NichoSeleccionado[]>([]);
@@ -96,8 +96,8 @@ export default function TablaAsignacionSectores({
             nichoId: item.nichoId,
             sectorId: item.sectorId,
             cantidad: item.cantidadMedidores,
-            descripcion: item.descripcionNicho,
-          },
+            descripcion: item.descripcionNicho
+          }
         ];
       }
     });
@@ -117,7 +117,7 @@ export default function TablaAsignacionSectores({
         nichoId: item.nichoId,
         sectorId: item.sectorId,
         cantidad: item.cantidadMedidores,
-        descripcion: item.descripcionNicho,
+        descripcion: item.descripcionNicho
       }));
       setSelectedNichos(allNichos);
     }
@@ -143,7 +143,7 @@ export default function TablaAsignacionSectores({
       const results = {
         success: 0,
         errors: 0,
-        messages: [] as string[],
+        messages: [] as string[]
       };
 
       for (const nicho of selectedNichos) {
@@ -151,7 +151,7 @@ export default function TablaAsignacionSectores({
           nichoId: nicho.nichoId,
           cantLecturas: nicho.cantidad,
           cicloFact: cicloFacturable,
-          periodo: periodo,
+          periodo: periodo
         };
 
         try {
@@ -260,11 +260,17 @@ export default function TablaAsignacionSectores({
             </div>
             <div>
               <p className='font-medium text-emerald-800 dark:text-emerald-200 text-sm sm:text-base'>
-                <span className='hidden sm:inline'>{selectedNichos.length} nichos seleccionados</span>
-                <span className='sm:hidden'>{selectedNichos.length} seleccionados</span>
+                <span className='hidden sm:inline'>
+                  {selectedNichos.length} nichos seleccionados
+                </span>
+                <span className='sm:hidden'>
+                  {selectedNichos.length} seleccionados
+                </span>
               </p>
               <p className='text-xs sm:text-sm text-emerald-600 dark:text-emerald-400'>
-                <span className='hidden sm:inline'>Listos para preparar lecturas</span>
+                <span className='hidden sm:inline'>
+                  Listos para preparar lecturas
+                </span>
                 <span className='sm:hidden'>Listos</span>
               </p>
             </div>
@@ -285,8 +291,12 @@ export default function TablaAsignacionSectores({
             ) : (
               <PlayIcon className='h-4 w-4' />
             )}
-            <span className='hidden sm:inline'>{isSubmitting ? 'Procesando...' : 'Preparar Lecturas'}</span>
-            <span className='sm:hidden'>{isSubmitting ? '...' : 'Preparar'}</span>
+            <span className='hidden sm:inline'>
+              {isSubmitting ? 'Procesando...' : 'Preparar Lecturas'}
+            </span>
+            <span className='sm:hidden'>
+              {isSubmitting ? '...' : 'Preparar'}
+            </span>
           </Button>
         </div>
       )}
@@ -499,12 +509,18 @@ export default function TablaAsignacionSectores({
                       </div>
                       <div className='text-center space-y-1'>
                         <p className='text-slate-600 dark:text-slate-400 font-medium text-sm sm:text-base'>
-                          <span className='hidden sm:inline'>No hay sectores disponibles</span>
+                          <span className='hidden sm:inline'>
+                            No hay sectores disponibles
+                          </span>
                           <span className='sm:hidden'>Sin sectores</span>
                         </p>
                         <p className='text-xs sm:text-sm text-muted-foreground'>
-                          <span className='hidden sm:inline'>Selecciona un ciclo y realiza una búsqueda</span>
-                          <span className='sm:hidden'>Realiza una búsqueda</span>
+                          <span className='hidden sm:inline'>
+                            Selecciona un ciclo y realiza una búsqueda
+                          </span>
+                          <span className='sm:hidden'>
+                            Realiza una búsqueda
+                          </span>
                         </p>
                       </div>
                     </div>

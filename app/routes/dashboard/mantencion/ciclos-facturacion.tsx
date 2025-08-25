@@ -15,8 +15,8 @@ export function meta({}: Route.MetaArgs) {
     { title: 'Enerlova | Ciclos de Facturación' },
     {
       name: 'description',
-      content: ' ciclos de facturación del sistema',
-    },
+      content: ' ciclos de facturación del sistema'
+    }
   ];
 }
 
@@ -31,13 +31,13 @@ export async function clientLoader() {
 }
 
 export default function CiclosFacturacion({
-  loaderData,
+  loaderData
 }: Route.ComponentProps) {
   const { ciclosFacturacion } = loaderData;
 
   const pageBreadcrumbs = [
     { label: 'Mantención' },
-    { label: 'Ciclos de Facturación' },
+    { label: 'Ciclos de Facturación' }
   ];
 
   return (

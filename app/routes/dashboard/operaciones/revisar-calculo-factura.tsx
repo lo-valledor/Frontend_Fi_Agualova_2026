@@ -10,31 +10,31 @@ import type { Route } from './+types/revisar-calculo-factura';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Revisar Calculo de Factura' },
-    { name: 'description', content: 'Revisar Calculo de Factura' },
+    { name: 'description', content: 'Revisar Calculo de Factura' }
   ];
 }
 
 export async function clientLoader() {
   const [periodoResult, ciclosResult] = await Promise.all([
     operacionesService.getPeriodoAbierto(),
-    operacionesService.getCiclosFacturacion(),
+    operacionesService.getCiclosFacturacion()
   ]);
 
   return {
     periodoAbierto:
       periodoResult.error || !periodoResult.data ? [] : periodoResult.data,
     ciclosFacturacionActivos:
-      ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data,
+      ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data
   };
 }
 
 export default function RevisarCalculoFactura({
-  loaderData,
+  loaderData
 }: Route.ComponentProps) {
   const { periodoAbierto, ciclosFacturacionActivos } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Revisar Calculo de Factura' },
+    { label: 'Revisar Calculo de Factura' }
   ];
 
   return (

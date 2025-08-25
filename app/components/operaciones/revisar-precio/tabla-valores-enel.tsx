@@ -12,7 +12,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '../../ui/table';
 import DialogModificarPrecio from './dialog-modificar-precio';
 
@@ -21,7 +21,7 @@ export default function TablaValoresEnel({
   isLoading,
   isAuthorized,
   selectedRows,
-  setSelectedRows,
+  setSelectedRows
 }: TablaValoresEnelProps & {
   selectedRows: string[];
   setSelectedRows: React.Dispatch<React.SetStateAction<string[]>>;

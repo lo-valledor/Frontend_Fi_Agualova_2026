@@ -19,7 +19,7 @@ interface ParametrosComponentProps {
 }
 
 export default function ParametrosComponent({
-  parametros,
+  parametros
 }: Readonly<ParametrosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedParametro, setSelectedParametro] = useState<
@@ -71,7 +71,7 @@ export default function ParametrosComponent({
 
   const columns = createColumns({
     onEdit: handleEdit,
-    onDelete: handleDelete,
+    onDelete: handleDelete
   });
 
   return (

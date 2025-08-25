@@ -12,7 +12,7 @@ interface TarifasColumnsProps {
 
 export const createColumns = ({
   onEdit,
-  onDelete,
+  onDelete
 }: TarifasColumnsProps): ColumnDef<Tarifas>[] => [
   {
     accessorKey: 'codigo',
@@ -23,7 +23,7 @@ export const createColumns = ({
       <Badge variant='outline' className='font-mono'>
         {row.getValue('codigo')}
       </Badge>
-    ),
+    )
   },
   {
     accessorKey: 'nombre',
@@ -37,7 +37,7 @@ export const createColumns = ({
       >
         {row.getValue('nombre')}
       </div>
-    ),
+    )
   },
   {
     id: 'actions',
@@ -49,6 +49,6 @@ export const createColumns = ({
         showView={false}
         item={row.original}
       />
-    ),
-  },
+    )
+  }
 ];

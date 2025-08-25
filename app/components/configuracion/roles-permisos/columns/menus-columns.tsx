@@ -18,7 +18,7 @@ export const createMenusColumns = (
       >
         #{row.getValue('idMenu')}
       </Badge>
-    ),
+    )
   },
   {
     accessorKey: 'nombreMenu',
@@ -27,7 +27,7 @@ export const createMenusColumns = (
       <div className='max-w-[200px] truncate font-medium text-slate-900 dark:text-slate-100'>
         {row.getValue('nombreMenu')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'ruta',
@@ -36,7 +36,7 @@ export const createMenusColumns = (
       <div className='max-w-[250px] truncate text-slate-600 dark:text-slate-400 font-mono text-xs'>
         {row.getValue('ruta') || 'Sin ruta'}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'orden',
@@ -45,7 +45,7 @@ export const createMenusColumns = (
       <div className='text-center font-mono text-sm'>
         {row.getValue('orden')}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'icono',
@@ -54,7 +54,7 @@ export const createMenusColumns = (
       <div className='max-w-[150px] truncate text-slate-600 dark:text-slate-400 font-mono text-xs'>
         {row.getValue('icono') || 'Sin icono'}
       </div>
-    ),
+    )
   },
   {
     accessorKey: 'esVisible',
@@ -69,7 +69,7 @@ export const createMenusColumns = (
       >
         {row.getValue('esVisible') ? 'Sí' : 'No'}
       </Badge>
-    ),
+    )
   },
   {
     id: 'acciones',
@@ -96,6 +96,6 @@ export const createMenusColumns = (
           </Button>
         </div>
       );
-    },
-  },
+    }
+  }
 ];

@@ -9,7 +9,7 @@ import type { Route } from './+types/cargo-facturable';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Cargo Facturable' },
-    { name: 'description', content: 'Cargo Facturable' },
+    { name: 'description', content: 'Cargo Facturable' }
   ];
 }
 
@@ -21,7 +21,7 @@ export async function clientLoader() {
       cargos: [],
       conceptos: [],
       tarifas: [],
-      tiposMedidor: [],
+      tiposMedidor: []
     };
   }
 
@@ -32,7 +32,7 @@ export default function CargoFacturable({ loaderData }: Route.ComponentProps) {
   const { cargos, conceptos, tarifas, tiposMedidor } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
-    { label: 'Cargo Facturable' },
+    { label: 'Cargo Facturable' }
   ];
   return (
     <div>

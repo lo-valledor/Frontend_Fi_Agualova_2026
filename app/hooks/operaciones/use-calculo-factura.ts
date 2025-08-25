@@ -6,7 +6,7 @@ import api from '~/lib/api';
 import type {
   CalculoPrefacturaCargoResponse,
   CalculoPrefacturaCompleto,
-  CalculoPrefacturaDetalle,
+  CalculoPrefacturaDetalle
 } from '~/types/operaciones';
 
 interface UseCalculoFacturaProps {
@@ -17,7 +17,7 @@ interface UseCalculoFacturaProps {
 
 export function useCalculoFactura({
   periodoFormateado,
-  cicloId,
+  cicloId
 }: UseCalculoFacturaProps) {
   const [data, setData] = useState<CalculoPrefacturaCompleto[]>([]);
   const [filteredData, setFilteredData] = useState<CalculoPrefacturaCompleto[]>(
@@ -49,7 +49,7 @@ export function useCalculoFactura({
       const cicloParaAPI = obtenerCicloParaAPI(cicloId);
       const requestParams = {
         cicloId: cicloParaAPI,
-        periodo: periodoFormateado,
+        periodo: periodoFormateado
       };
 
       const encabezadoResponse = await api.get(
@@ -67,7 +67,7 @@ export function useCalculoFactura({
       }
 
       const cargosResponse = await api.get('/calculo-prefactura-cargos', {
-        params: requestParams,
+        params: requestParams
       });
       const cargosData =
         cargosResponse.data as CalculoPrefacturaCargoResponse[];
@@ -85,7 +85,7 @@ export function useCalculoFactura({
           return {
             ...encabezado,
             cargos: cargosContrato?.cargos || [],
-            totalFacturado,
+            totalFacturado
           };
         }
       );
@@ -121,6 +121,6 @@ export function useCalculoFactura({
     searchTerm,
     setSearchTerm,
     handleRevisarCalculo,
-    setData, // Export to allow clearing data
+    setData // Export to allow clearing data
   };
 }

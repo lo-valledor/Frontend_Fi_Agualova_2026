@@ -17,7 +17,7 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<'div'>) {
   const [input, setInput] = useState({
     usuario: '',
-    contrasena: '',
+    contrasena: ''
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -67,7 +67,7 @@ export function LoginForm({
     const { name, value } = e.target;
     setInput(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
   };
 

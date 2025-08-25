@@ -11,8 +11,8 @@ export function meta(_args: Route.MetaArgs) {
     {
       title: 'Enerlova | Resumen de Facturación',
       description:
-        'reporte de facturación con análisis detallados y estadísticas avanzadas.',
-    },
+        'reporte de facturación con análisis detallados y estadísticas avanzadas.'
+    }
   ];
 }
 
@@ -23,23 +23,23 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
     return {
       comboEmpalmes: [],
       periodosFacturacion: [],
-      error: new Error(result.error || 'Error al cargar datos'),
+      error: new Error(result.error || 'Error al cargar datos')
     };
   }
 
   return {
     comboEmpalmes: result.data.comboEmpalmes,
     periodosFacturacion: result.data.periodosFacturacion,
-    error: null,
+    error: null
   };
 }
 
 export default function ResumenFacturacion({
-  loaderData,
+  loaderData
 }: Readonly<Route.ComponentProps>) {
   const pageBreadcrumbs = [
     { label: 'Reportes' },
-    { label: 'Resumen de Facturación' },
+    { label: 'Resumen de Facturación' }
   ];
   return (
     <div>

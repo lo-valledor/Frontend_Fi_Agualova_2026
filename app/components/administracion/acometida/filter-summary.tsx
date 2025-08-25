@@ -14,7 +14,7 @@ export function FilterSummary({
   totalAcometidas,
   filteredAcometidas,
   activeFilters,
-  isFiltered,
+  isFiltered
 }: FilterSummaryProps) {
   if (!isFiltered) return null;
 

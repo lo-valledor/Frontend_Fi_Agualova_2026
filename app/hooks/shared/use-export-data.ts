@@ -62,7 +62,7 @@ export function useExportData<T extends Record<string, any>>() {
   ) => {
     const csvContent = convertToCSV(data, columns, includeHeaders);
     const blob = new Blob(['\uFEFF' + csvContent], {
-      type: 'text/csv;charset=utf-8;',
+      type: 'text/csv;charset=utf-8;'
     });
     const link = document.createElement('a');
 
@@ -183,12 +183,12 @@ export function useExportData<T extends Record<string, any>>() {
 
       toast.success(`✅ ${data.length} registros exportados exitosamente`, {
         description: `Archivo: ${baseFilename}_${new Date().toISOString().split('T')[0]}.${options.format}`,
-        duration: 4000,
+        duration: 4000
       });
     } catch (error) {
       console.error('Error al exportar:', error);
       toast.error('Error al exportar los datos', {
-        description: 'Inténtalo de nuevo en unos momentos',
+        description: 'Inténtalo de nuevo en unos momentos'
       });
     } finally {
       setIsExporting(false);
@@ -198,6 +198,6 @@ export function useExportData<T extends Record<string, any>>() {
   return {
     isExporting,
     exportData,
-    formatDateForExport,
+    formatDateForExport
   };
 }

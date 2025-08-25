@@ -16,7 +16,7 @@ import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { UserFormModal } from './user-form-modal';
 
 export default function UsuariosComponent({
-  usuarios: initialUsuarios,
+  usuarios: initialUsuarios
 }: Readonly<{
   usuarios: Usuarios[];
 }>) {
@@ -114,7 +114,7 @@ export default function UsuariosComponent({
             <DataTable
               columns={columns({
                 onEdit: handleEditUser,
-                onDelete: handleDeleteUser,
+                onDelete: handleDeleteUser
               })}
               data={usuarios}
             />

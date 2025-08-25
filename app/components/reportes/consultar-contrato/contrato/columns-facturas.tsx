@@ -15,7 +15,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       return <div className='font-medium'>{periodo as string}</div>;
     },
     enableSorting: true,
-    enableHiding: false,
+    enableHiding: false
   },
   {
     accessorKey: 'nroFactura',
@@ -26,7 +26,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       const nroFactura = row.getValue('nroFactura');
       return <Badge variant='outline'>{nroFactura as string}</Badge>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'tarifa',
@@ -37,7 +37,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       const tarifa = row.getValue('tarifa');
       return <div className='text-left'>{tarifa as string}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'fechaEmision',
@@ -48,7 +48,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       const fecha = row.getValue('fechaEmision');
       return <div className='text-sm'>{fecha as string}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'fechaVencimiento',
@@ -60,7 +60,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
 
       return <div className='text-sm'>{fecha as string}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'valorNeto',
@@ -71,7 +71,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       const valor = row.getValue('valorNeto');
       return <div className='text-left'>${valor?.toLocaleString()}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'iva',
@@ -82,7 +82,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       const iva = row.getValue('iva');
       return <div className='text-left'>${iva?.toLocaleString()}</div>;
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'valorTotal',
@@ -97,7 +97,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
         </div>
       );
     },
-    enableSorting: true,
+    enableSorting: true
   },
   {
     accessorKey: 'consumoPeriodo',
@@ -112,6 +112,6 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
         </div>
       );
     },
-    enableSorting: true,
-  },
+    enableSorting: true
+  }
 ];

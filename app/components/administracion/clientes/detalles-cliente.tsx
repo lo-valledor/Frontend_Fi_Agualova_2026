@@ -11,7 +11,7 @@ import {
   Store,
   User,
   UserCheck,
-  XCircle,
+  XCircle
 } from 'lucide-react';
 
 import { useEffect, useState } from 'react';
@@ -23,7 +23,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '~/components/ui/dialog';
 import { Skeleton } from '~/components/ui/skeleton';
 import type { GetClientesByRut } from '~/types/administracion';
@@ -37,7 +37,7 @@ interface ClienteDetailsModalProps {
 const InfoItem = ({
   icon,
   label,
-  value,
+  value
 }: {
   icon: React.ReactNode;
   label: string;
@@ -63,7 +63,7 @@ const InfoItem = ({
 export function ClienteDetailsModal({
   isOpen,
   onClose,
-  cliente,
+  cliente
 }: ClienteDetailsModalProps) {
   const [detailsData, setDetailsData] = useState<GetClientesByRut | null>(null);
   const [isLoading, setIsLoading] = useState(false);

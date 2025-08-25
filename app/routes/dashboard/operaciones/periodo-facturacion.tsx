@@ -10,7 +10,7 @@ import type { Route } from './+types/periodo-facturacion';
 export function meta({}: Route.MetaArgs) {
   return [
     { title: 'Enerlova | Periodos de Facturación' },
-    { name: 'description', content: 'Periodos de Facturación' },
+    { name: 'description', content: 'Periodos de Facturación' }
   ];
 }
 
@@ -20,7 +20,7 @@ export async function clientLoader() {
   if (result.error || !result.data) {
     return {
       years: [],
-      periodos: [],
+      periodos: []
     };
   }
 
@@ -28,12 +28,12 @@ export async function clientLoader() {
 }
 
 export default function PeriodoFacturacion({
-  loaderData,
+  loaderData
 }: Route.ComponentProps) {
   const { years, periodos } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
-    { label: 'Periodos de Facturación' },
+    { label: 'Periodos de Facturación' }
   ];
 
   return (

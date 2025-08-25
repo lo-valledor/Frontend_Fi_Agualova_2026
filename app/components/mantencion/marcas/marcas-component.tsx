@@ -19,7 +19,7 @@ interface MarcasComponentProps {
 }
 
 export default function MarcasComponent({
-  marcas,
+  marcas
 }: Readonly<MarcasComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMarca, setSelectedMarca] = useState<Marca | null>(null);
@@ -82,7 +82,7 @@ export default function MarcasComponent({
             <DataTable
               columns={columns({
                 onEdit: handleEditMarca,
-                onDelete: handleDeleteMarca,
+                onDelete: handleDeleteMarca
               })}
               data={marcas}
             />

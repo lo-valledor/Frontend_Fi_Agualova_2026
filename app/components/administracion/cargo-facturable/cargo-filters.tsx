@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
 import {
@@ -16,13 +16,13 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from '~/components/ui/select';
 import { Separator } from '~/components/ui/separator';
 import type {
   GeCombosConceptos,
   GetCombosTarifas,
-  GetCombosTiposMedidor,
+  GetCombosTiposMedidor
 } from '~/types/administracion';
 
 export interface CargoFilters {
@@ -49,14 +49,14 @@ export function CargoFiltersComponent({
   onClearFilters,
   conceptos,
   tarifas,
-  tiposMedidor,
+  tiposMedidor
 }: CargoFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof CargoFilters, value: string) => {
     onFiltersChange({
       ...filters,
-      [key]: value,
+      [key]: value
     });
   };
 
@@ -73,17 +73,17 @@ export function CargoFiltersComponent({
     { value: 'Base CH', label: 'Base CH' },
     { value: 'Cargo Fact', label: 'Cargo Fact' },
     { value: 'Condición', label: 'Condición' },
-    { value: 'Cargo Fijo mensual', label: 'Cargo Fijo mensual' },
+    { value: 'Cargo Fijo mensual', label: 'Cargo Fijo mensual' }
   ];
 
   const fijoVariableOptions = [
     { value: 'Fijo', label: 'Fijo' },
-    { value: 'Variable', label: 'Variable' },
+    { value: 'Variable', label: 'Variable' }
   ];
 
   const periodicoEventualOptions = [
     { value: 'Periódico', label: 'Periódico' },
-    { value: 'Eventual', label: 'Eventual' },
+    { value: 'Eventual', label: 'Eventual' }
   ];
 
   return (
