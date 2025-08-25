@@ -25,7 +25,7 @@ export function ThemeProvider({
   defaultTheme = 'system',
   storageKey = 'vite-ui-theme',
   ...props
-}: ThemeProviderProps) {
+}: Readonly<ThemeProviderProps>) {
   // Initialize with defaultTheme, update from localStorage in useEffect
   const [theme, setTheme] = useState<Theme>(defaultTheme);
 

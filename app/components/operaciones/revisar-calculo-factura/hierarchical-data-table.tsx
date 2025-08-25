@@ -113,7 +113,7 @@ export function HierarchicalDataTable({
 
   return (
     <div className='w-full overflow-x-auto'>
-      <div className='rounded-lg border border-border/60 shadow-sm min-w-[1800px]'>
+      <div className='rounded-lg border border-border/60 shadow-sm'>
         <Table className='w-full table-fixed text-[10px]'>
           <TableHeader className='bg-slate-50 dark:bg-slate-900/50 sticky top-0 z-10'>
             {table.getHeaderGroups().map(headerGroup => (
