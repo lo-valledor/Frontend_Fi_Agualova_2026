@@ -1,6 +1,7 @@
 import {
   Activity,
   BarChart3,
+  Info,
   TrendingDown,
   TrendingUp
 } from 'lucide-react';
@@ -24,6 +25,12 @@ import { ExportButton } from '~/components/shared/export-button';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '~/components/ui/tooltip';
 import {
   ChartContainer,
   ChartTooltip,
@@ -84,6 +91,67 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
     }
     
     return lecturas.filter(lectura => lectura.fecha >= cutoffDate.getTime());
+  };
+
+  // Función para calcular proyecciones futuras
+  const calculatePredictions = (data: any[], months: number = 6) => {
+    if (data.length < 2) return [];
+    
+    // Calcular tendencia usando regresión lineal simple
+    const n = data.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    
+    data.forEach((item, index) => {
+      const x = index;
+      const y = item.consumo;
+      sumX += x;
+      sumY += y;
+      sumXY += x * y;
+      sumX2 += x * x;
+    });
+    
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    
+    // Generar predicciones futuras basadas en el último registro real
+    const predictions = [];
+    const lastRecordedDate = new Date(data[data.length - 1].fecha);
+    
+    // Verificar si tenemos registros del mismo mes en años anteriores para mejorar predicción
+    const lastMonth = lastRecordedDate.getMonth();
+    const lastYear = lastRecordedDate.getFullYear();
+    
+    for (let i = 1; i <= months; i++) {
+      // Proyectar desde el último mes registrado, no desde el actual
+      const futureDate = new Date(lastRecordedDate);
+      futureDate.setMonth(futureDate.getMonth() + i);
+      
+      // Buscar datos históricos del mismo mes para ajustar predicción
+      const sameMonthData = data.filter(item => {
+        const itemDate = new Date(item.fecha);
+        return itemDate.getMonth() === futureDate.getMonth() && itemDate.getFullYear() !== futureDate.getFullYear();
+      });
+      
+      let predictedConsumption = Math.max(0, intercept + slope * (n + i - 1));
+      
+      // Ajustar con promedio histórico del mismo mes si existe
+      if (sameMonthData.length > 0) {
+        const sameMonthAverage = sameMonthData.reduce((sum, item) => sum + item.consumo, 0) / sameMonthData.length;
+        // Ponderar: 70% tendencia lineal + 30% promedio histórico del mes
+        predictedConsumption = (predictedConsumption * 0.7) + (sameMonthAverage * 0.3);
+      }
+      
+      predictions.push({
+        periodo: `Proyección ${futureDate.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' })}`,
+        fechaCorta: `${futureDate.toLocaleDateString('es-CL', { month: 'short' })}`,
+        fechaCompleta: futureDate.toLocaleDateString('es-CL'),
+        fecha: futureDate.getTime(),
+        consumo: Math.round(predictedConsumption),
+        isPrediction: true
+      });
+    }
+    
+    return predictions;
   };
 
   // Procesamiento de datos simplificado
@@ -156,6 +224,10 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
     // Filtrar por rango de tiempo
     const filteredLecturas = filterByTimeRange(lecturasProcesadas, timeRange);
 
+    // Calcular predicciones basadas en los datos filtrados
+    const predictions = calculatePredictions(filteredLecturas, 6);
+    const dataWithPredictions = [...filteredLecturas, ...predictions];
+
     const consumos = filteredLecturas.map(l => l.consumo);
     const maxConsumo = consumos.length > 0 ? Math.max(...consumos) : 0;
     const minConsumo = consumos.length > 0 ? Math.min(...consumos) : 0;
@@ -180,6 +252,8 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
       tendencia,
       lecturasProcesadas,
       filteredLecturas,
+      dataWithPredictions,
+      predictions,
       promedioConsumo: Math.round(promedioConsumo)
     };
   }, [detalleLecturas, timeRange]);
@@ -189,13 +263,9 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
       label: 'Consumo (kWh)',
       color: '#3b82f6' // azul
     },
-    energiaBase: {
-      label: 'Energía Base',
+    lecturaAnterior: {
+      label: 'Lectura Anterior',
       color: '#10b981' // verde
-    },
-    sobreconsumo: {
-      label: 'Sobreconsumo', 
-      color: '#f59e0b' // amarillo/naranja
     },
     lecturaActual: {
       label: 'Lectura Actual',
@@ -214,8 +284,9 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
   }
 
   return (
-    <div className='space-y-6'>
-      {/* Filtros de tiempo */}
+    <TooltipProvider>
+      <div className='space-y-6'>
+        {/* Filtros de tiempo */}
       <Card className='border bg-white dark:bg-slate-900'>
         <CardContent className='pt-4'>
           <div className='flex flex-wrap gap-2'>
@@ -360,14 +431,32 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
           </CardContent>
         </Card>
 
-        {/* Composición de Energía (Base + Sobreconsumo) */}
+        {/* Proyección de Consumo Futuro */}
         <Card className='border bg-white dark:bg-slate-900'>
           <CardHeader>
-            <CardTitle className='text-base'>Composición de Energía</CardTitle>
+            <CardTitle className='text-base flex items-center gap-2'>
+              Proyección de Consumo (6 meses)
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className='h-4 w-4 text-muted-foreground cursor-help' />
+                </TooltipTrigger>
+                <TooltipContent className='max-w-xs p-3'>
+                  <div className='space-y-2 text-sm'>
+                    <p className='font-semibold'>¿Cómo funciona la proyección?</p>
+                    <div className='space-y-1'>
+                      <p><strong>• Análisis de tendencia:</strong> Calcula la dirección del consumo usando datos históricos (70%)</p>
+                      <p><strong>• Patrón estacional:</strong> Considera el promedio histórico del mismo mes (30%)</p>
+                      <p><strong>• Proyección desde:</strong> Último mes con datos registrados reales</p>
+                    </div>
+                    <p className='text-xs text-muted-foreground'>Las estimaciones son aproximadas y pueden variar según cambios en el uso energético.</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className='aspect-[4/3]'>
-              <BarChart data={analyticsData.filteredLecturas}>
+              <LineChart data={analyticsData.dataWithPredictions}>
                 <XAxis
                   dataKey='fechaCorta'
                   tickLine={false}
@@ -381,31 +470,53 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                   labelFormatter={(label, payload) => {
                     const item = payload?.[0]?.payload;
                     if (item) {
-                      return item.fechaCompleta !== item.periodo 
-                        ? `${item.periodo} (${item.fechaCompleta})` 
-                        : item.periodo;
+                      return item.isPrediction 
+                        ? `${item.periodo} (Proyección)` 
+                        : item.fechaCompleta !== item.periodo 
+                          ? `${item.periodo} (${item.fechaCompleta})` 
+                          : item.periodo;
                     }
                     return label;
                   }}
-                  formatter={(value, name) => [
-                    `${Number(value).toLocaleString('es-CL')} kWh`,
-                    name === 'energiaBase' ? 'Energía Base' : 'Sobreconsumo'
-                  ]}
+                  formatter={(value, name, props) => {
+                    const isPred = props.payload?.isPrediction;
+                    const prefix = isPred ? '~' : '';
+                    const suffix = isPred ? ' (estimado)' : '';
+                    return [
+                      `${prefix}${Number(value).toLocaleString('es-CL')} kWh${suffix}`,
+                      isPred ? 'Consumo Proyectado' : 'Consumo Real'
+                    ];
+                  }}
                 />
-                <Bar 
-                  dataKey='energiaBase' 
-                  fill='#10b981' 
-                  stackId='energia'
-                  radius={[0, 0, 4, 4]}
+                {/* Línea de datos reales */}
+                <Line
+                  dataKey={(item: any) => !item.isPrediction ? item.consumo : null}
+                  stroke='#3b82f6'
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#3b82f6' }}
+                  connectNulls={false}
                 />
-                <Bar 
-                  dataKey='sobreconsumo' 
-                  fill='#f59e0b' 
-                  stackId='energia'
-                  radius={[4, 4, 0, 0]}
+                {/* Línea de predicciones */}
+                <Line
+                  dataKey={(item: any) => item.isPrediction ? item.consumo : null}
+                  stroke='#f59e0b'
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#f59e0b' }}
+                  strokeDasharray="8 4"
+                  connectNulls={false}
                 />
-              </BarChart>
+              </LineChart>
             </ChartContainer>
+            <div className='mt-3 flex items-center gap-4 text-xs text-muted-foreground'>
+              <div className='flex items-center gap-1'>
+                <div className='w-3 h-0.5 bg-blue-500'></div>
+                <span>Datos reales</span>
+              </div>
+              <div className='flex items-center gap-1'>
+                <div className='w-3 h-0.5 bg-orange-500 opacity-70' style={{borderTop: '2px dashed #f59e0b'}}></div>
+                <span>Proyección</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -436,7 +547,8 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 });
 

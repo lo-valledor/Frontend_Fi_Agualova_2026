@@ -1,6 +1,7 @@
 import {
   DollarSign,
   FileText,
+  Info,
   TrendingUp
 } from 'lucide-react';
 
@@ -21,6 +22,12 @@ import { ExportButton } from '~/components/shared/export-button';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '~/components/ui/tooltip';
 import {
   ChartContainer,
   ChartTooltip,
@@ -97,6 +104,79 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
     return facturas.filter(factura => factura.fecha >= cutoffDate.getTime());
   };
 
+  // Función para calcular proyecciones de facturación futuras
+  const calculateBillingPredictions = (data: any[], months: number = 6) => {
+    if (data.length < 2) return [];
+    
+    // Calcular tendencias para valor total y consumo usando regresión lineal
+    const n = data.length;
+    let sumX = 0, sumYTotal = 0, sumXYTotal = 0, sumX2 = 0;
+    let sumYConsumo = 0, sumXYConsumo = 0;
+    
+    data.forEach((item, index) => {
+      const x = index;
+      sumX += x;
+      sumYTotal += item.valorTotal;
+      sumYConsumo += item.consumo;
+      sumXYTotal += x * item.valorTotal;
+      sumXYConsumo += x * item.consumo;
+      sumX2 += x * x;
+    });
+    
+    const slopeTotal = (n * sumXYTotal - sumX * sumYTotal) / (n * sumX2 - sumX * sumX);
+    const interceptTotal = (sumYTotal - slopeTotal * sumX) / n;
+    
+    const slopeConsumo = (n * sumXYConsumo - sumX * sumYConsumo) / (n * sumX2 - sumX * sumX);
+    const interceptConsumo = (sumYConsumo - slopeConsumo * sumX) / n;
+    
+    // Generar predicciones futuras basadas en el último registro real
+    const predictions = [];
+    const lastRecordedDate = new Date(data[data.length - 1].fecha);
+    
+    for (let i = 1; i <= months; i++) {
+      // Proyectar desde el último mes con factura registrada
+      const futureDate = new Date(lastRecordedDate);
+      futureDate.setMonth(futureDate.getMonth() + i);
+      
+      // Buscar facturas históricas del mismo mes para ajustar predicción
+      const sameMonthData = data.filter(item => {
+        const itemDate = new Date(item.fecha);
+        return itemDate.getMonth() === futureDate.getMonth() && itemDate.getFullYear() !== futureDate.getFullYear();
+      });
+      
+      let predictedTotal = Math.max(0, interceptTotal + slopeTotal * (n + i - 1));
+      let predictedConsumo = Math.max(0, interceptConsumo + slopeConsumo * (n + i - 1));
+      
+      // Ajustar con promedio histórico del mismo mes si existe
+      if (sameMonthData.length > 0) {
+        const sameMonthTotalAvg = sameMonthData.reduce((sum, item) => sum + item.valorTotal, 0) / sameMonthData.length;
+        const sameMonthConsumoAvg = sameMonthData.reduce((sum, item) => sum + item.consumo, 0) / sameMonthData.length;
+        
+        // Ponderar: 70% tendencia lineal + 30% promedio histórico del mes
+        predictedTotal = (predictedTotal * 0.7) + (sameMonthTotalAvg * 0.3);
+        predictedConsumo = (predictedConsumo * 0.7) + (sameMonthConsumoAvg * 0.3);
+      }
+      
+      const predictedNeto = predictedTotal * 0.84; // Aproximación IVA 19%
+      const predictedIva = predictedTotal - predictedNeto;
+      
+      predictions.push({
+        periodo: `Proyección ${futureDate.toLocaleDateString('es-CL', { month: 'short', year: '2-digit' })}`,
+        fechaCorta: `${futureDate.toLocaleDateString('es-CL', { month: 'short' })}`,
+        fechaCompleta: futureDate.toLocaleDateString('es-CL'),
+        fecha: futureDate.getTime(),
+        valorTotal: Math.round(predictedTotal),
+        valorNeto: Math.round(predictedNeto),
+        iva: Math.round(predictedIva),
+        consumo: Math.round(predictedConsumo),
+        consumoNormalizado: predictedConsumo / 1000,
+        isPrediction: true
+      });
+    }
+    
+    return predictions;
+  };
+
   // Procesamiento de datos simplificado
   const analyticsData = useMemo(() => {
     if (detalleFacturas.length === 0) {
@@ -167,12 +247,17 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         valorNeto: factura.valorNeto || 0,
         iva: factura.iva || 0,
         consumo: factura.consumoPeriodo || 0,
+        consumoNormalizado: (factura.consumoPeriodo || 0) / 1000, // Normalizado para que se vea bien en el gráfico
         precioKwh: factura.consumoPeriodo > 0 ? (factura.valorNeto || 0) / factura.consumoPeriodo : 0
       };
     }).sort((a, b) => a.fecha - b.fecha); // Ordenar por fecha
 
     // Filtrar por rango de tiempo
     const filteredFacturas = filterByTimeRange(facturasProcesadas, timeRange);
+
+    // Calcular predicciones basadas en los datos filtrados
+    const billingPredictions = calculateBillingPredictions(filteredFacturas, 6);
+    const dataWithBillingPredictions = [...filteredFacturas, ...billingPredictions];
 
     const totalFacturado = filteredFacturas.reduce((sum, f) => sum + f.valorTotal, 0);
     const promedioFactura = filteredFacturas.length > 0 ? totalFacturado / filteredFacturas.length : 0;
@@ -195,7 +280,9 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
       promedioFactura,
       tendenciaFacturacion,
       facturasProcesadas,
-      filteredFacturas
+      filteredFacturas,
+      dataWithBillingPredictions,
+      billingPredictions
     };
   }, [detalleFacturas, timeRange]);
 
@@ -215,6 +302,10 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
     consumo: {
       label: 'Consumo (kWh)',
       color: '#7c3aed' // violeta
+    },
+    consumoNormalizado: {
+      label: 'Consumo Normalizado',
+      color: '#7c3aed' // violeta
     }
   };
 
@@ -229,8 +320,9 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
   }
 
   return (
-    <div className='space-y-6'>
-      {/* Filtros de tiempo */}
+    <TooltipProvider>
+      <div className='space-y-6'>
+        {/* Filtros de tiempo */}
       <Card className='border bg-white dark:bg-slate-900'>
         <CardContent className='pt-4'>
           <div className='flex flex-wrap gap-2'>
@@ -384,14 +476,33 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           </CardContent>
         </Card>
 
-        {/* Consumo por Período */}
+        {/* Proyección de Facturación Futura */}
         <Card className='border bg-white dark:bg-slate-900'>
           <CardHeader>
-            <CardTitle className='text-base'>Consumo por Período</CardTitle>
+            <CardTitle className='text-base flex items-center gap-2'>
+              Proyección de Facturación (6 meses)
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info className='h-4 w-4 text-muted-foreground cursor-help' />
+                </TooltipTrigger>
+                <TooltipContent className='max-w-xs p-3'>
+                  <div className='space-y-2 text-sm'>
+                    <p className='font-semibold'>¿Cómo funciona la proyección?</p>
+                    <div className='space-y-1'>
+                      <p><strong>• Análisis de tendencia:</strong> Calcula la dirección de facturación usando datos históricos (70%)</p>
+                      <p><strong>• Patrón estacional:</strong> Considera el promedio histórico del mismo mes (30%)</p>
+                      <p><strong>• Proyección desde:</strong> Último mes con factura registrada real</p>
+                      <p><strong>• Incluye:</strong> Estimación de valor neto, IVA y consumo correlacionado</p>
+                    </div>
+                    <p className='text-xs text-muted-foreground'>Las estimaciones son aproximadas. Los valores reales pueden variar según tarifas y cambios regulatorios.</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className='aspect-[4/3]'>
-              <LineChart data={analyticsData.filteredFacturas}>
+              <LineChart data={analyticsData.dataWithBillingPredictions}>
                 <XAxis
                   dataKey='fechaCorta'
                   tickLine={false}
@@ -405,25 +516,53 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                   labelFormatter={(label, payload) => {
                     const item = payload?.[0]?.payload;
                     if (item) {
-                      return item.fechaCompleta !== item.periodo 
-                        ? `${item.periodo} (${item.fechaCompleta})` 
-                        : item.periodo;
+                      return item.isPrediction 
+                        ? `${item.periodo} (Proyección)` 
+                        : item.fechaCompleta !== item.periodo 
+                          ? `${item.periodo} (${item.fechaCompleta})` 
+                          : item.periodo;
                     }
                     return label;
                   }}
-                  formatter={(value) => [
-                    `${Number(value).toLocaleString('es-CL')} kWh`,
-                    'Consumo'
-                  ]}
+                  formatter={(value, name, props) => {
+                    const isPred = props.payload?.isPrediction;
+                    const prefix = isPred ? '~$' : '$';
+                    const suffix = isPred ? ' (estimado)' : '';
+                    return [
+                      `${prefix}${Number(value).toLocaleString('es-CL')}${suffix}`,
+                      isPred ? 'Facturación Proyectada' : 'Facturación Real'
+                    ];
+                  }}
                 />
+                {/* Línea de datos reales */}
                 <Line
-                  dataKey='consumo'
-                  stroke='#7c3aed'
+                  dataKey={(item: any) => !item.isPrediction ? item.valorTotal : null}
+                  stroke='#059669'
                   strokeWidth={2}
-                  dot={{ r: 3, fill: '#7c3aed' }}
+                  dot={{ r: 3, fill: '#059669' }}
+                  connectNulls={false}
+                />
+                {/* Línea de predicciones */}
+                <Line
+                  dataKey={(item: any) => item.isPrediction ? item.valorTotal : null}
+                  stroke='#dc2626'
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#dc2626' }}
+                  strokeDasharray="8 4"
+                  connectNulls={false}
                 />
               </LineChart>
             </ChartContainer>
+            <div className='mt-3 flex items-center gap-4 text-xs text-muted-foreground'>
+              <div className='flex items-center gap-1'>
+                <div className='w-3 h-0.5 bg-green-600'></div>
+                <span>Facturación real</span>
+              </div>
+              <div className='flex items-center gap-1'>
+                <div className='w-3 h-0.5 bg-red-600 opacity-70' style={{borderTop: '2px dashed #dc2626'}}></div>
+                <span>Proyección</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -455,7 +594,8 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 });
 
