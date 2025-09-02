@@ -4,7 +4,10 @@
       "Bash(pnpm typecheck:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "additionalDirectories": [
+      "C:\\c\\Users\\gbourguett\\Documents\\DESARROLLOS-LO-VALLEDOR\\enerlova"
+    ]
   },
   "hooks": [
     {
