@@ -4,7 +4,6 @@ import {
   Info,
   Snowflake,
   Sun,
-  TrendingDown,
   TrendingUp,
   Zap
 } from 'lucide-react';
@@ -16,9 +15,6 @@ import {
   AreaChart,
   Bar,
   BarChart,
-  Line,
-  LineChart,
-  ResponsiveContainer,
   XAxis,
   YAxis
 } from 'recharts';

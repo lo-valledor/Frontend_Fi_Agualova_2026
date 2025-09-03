@@ -8,7 +8,6 @@ import {
   MapPin,
   MapPinned,
   Phone,
-  Store,
   User,
   UserCheck,
   XCircle

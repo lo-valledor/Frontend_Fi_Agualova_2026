@@ -3,7 +3,6 @@ import {
   Hash,
   Loader2,
   Mail,
-  MapPin,
   MapPinned,
   Phone,
   Smartphone,
@@ -14,7 +13,6 @@ import {
 
 import { useEffect, useState } from 'react';
 
-import { Badge } from '~/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   Dialog,

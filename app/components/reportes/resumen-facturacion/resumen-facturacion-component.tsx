@@ -9,9 +9,6 @@ import {
   TrendingDownIcon,
   TrendingUpIcon,
   MinusIcon,
-  DollarSignIcon,
-  ZapIcon,
-  HashIcon,
   BarChart3Icon
 } from 'lucide-react';
 import { toast } from 'sonner';

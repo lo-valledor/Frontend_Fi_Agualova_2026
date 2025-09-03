@@ -1,39 +1,24 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowLeft,
-  Building2,
-  CheckCircle2,
-  FileText,
-  Mail,
-  MapPin,
-  Phone,
   Save,
   User,
-  XCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
 import React, { useEffect, useState } from 'react';
 
-import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
+import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
-import { Checkbox } from '~/components/ui/checkbox';
 import {
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
 } from '~/components/ui/form';
-import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
 import { administracionService } from '~/services';
 import type {
