@@ -1,6 +1,8 @@
 import {
   Activity,
   BarChart3,
+  ChevronDown,
+  ChevronUp,
   Info,
   TrendingDown,
   TrendingUp
@@ -52,6 +54,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
   contratoId
 }: LecturasAnalyticsSimpleProps) {
   const [timeRange, setTimeRange] = useState<'6m' | '1a' | '2a' | '5a' | 'todo'>('todo');
+  const [showDataTable, setShowDataTable] = useState(false);
   // Columnas para exportación
   const lecturasColumns = useMemo(
     (): ExportColumn[] => [
@@ -224,8 +227,8 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
     // Filtrar por rango de tiempo
     const filteredLecturas = filterByTimeRange(lecturasProcesadas, timeRange);
 
-    // Calcular predicciones basadas en los datos filtrados
-    const predictions = calculatePredictions(filteredLecturas, 6);
+    // Calcular predicciones basadas en TODOS los datos (independiente del filtro)
+    const predictions = calculatePredictions(lecturasProcesadas, 6);
     const dataWithPredictions = [...filteredLecturas, ...predictions];
 
     const consumos = filteredLecturas.map(l => l.consumo);
@@ -389,8 +392,8 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
         </Card>
       </div>
 
-      {/* Gráficos simples */}
-      <div className='grid gap-6 lg:grid-cols-2'>
+      {/* Gráfico de evolución */}
+      <div className='grid gap-6 lg:grid-cols-1'>
         {/* Evolución del Consumo */}
         <Card className='border bg-white dark:bg-slate-900'>
           <CardHeader>
@@ -431,122 +434,42 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
           </CardContent>
         </Card>
 
-        {/* Proyección de Consumo Futuro */}
-        <Card className='border bg-white dark:bg-slate-900'>
-          <CardHeader>
-            <CardTitle className='text-base flex items-center gap-2'>
-              Proyección de Consumo (6 meses)
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className='h-4 w-4 text-muted-foreground cursor-help' />
-                </TooltipTrigger>
-                <TooltipContent className='max-w-xs p-3'>
-                  <div className='space-y-2 text-sm'>
-                    <p className='font-semibold'>¿Cómo funciona la proyección?</p>
-                    <div className='space-y-1'>
-                      <p><strong>• Análisis de tendencia:</strong> Calcula la dirección del consumo usando datos históricos (70%)</p>
-                      <p><strong>• Patrón estacional:</strong> Considera el promedio histórico del mismo mes (30%)</p>
-                      <p><strong>• Proyección desde:</strong> Último mes con datos registrados reales</p>
-                    </div>
-                    <p className='text-xs text-muted-foreground'>Las estimaciones son aproximadas y pueden variar según cambios en el uso energético.</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className='aspect-[4/3]'>
-              <LineChart data={analyticsData.dataWithPredictions}>
-                <XAxis
-                  dataKey='fechaCorta'
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  fontSize={12}
-                />
-                <YAxis hide />
-                <ChartTooltip 
-                  content={<ChartTooltipContent />}
-                  labelFormatter={(label, payload) => {
-                    const item = payload?.[0]?.payload;
-                    if (item) {
-                      return item.isPrediction 
-                        ? `${item.periodo} (Proyección)` 
-                        : item.fechaCompleta !== item.periodo 
-                          ? `${item.periodo} (${item.fechaCompleta})` 
-                          : item.periodo;
-                    }
-                    return label;
-                  }}
-                  formatter={(value, name, props) => {
-                    const isPred = props.payload?.isPrediction;
-                    const prefix = isPred ? '~' : '';
-                    const suffix = isPred ? ' (estimado)' : '';
-                    return [
-                      `${prefix}${Number(value).toLocaleString('es-CL')} kWh${suffix}`,
-                      isPred ? 'Consumo Proyectado' : 'Consumo Real'
-                    ];
-                  }}
-                />
-                {/* Línea de datos reales */}
-                <Line
-                  dataKey={(item: any) => !item.isPrediction ? item.consumo : null}
-                  stroke='#3b82f6'
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: '#3b82f6' }}
-                  connectNulls={false}
-                />
-                {/* Línea de predicciones */}
-                <Line
-                  dataKey={(item: any) => item.isPrediction ? item.consumo : null}
-                  stroke='#f59e0b'
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: '#f59e0b' }}
-                  strokeDasharray="8 4"
-                  connectNulls={false}
-                />
-              </LineChart>
-            </ChartContainer>
-            <div className='mt-3 flex items-center gap-4 text-xs text-muted-foreground'>
-              <div className='flex items-center gap-1'>
-                <div className='w-3 h-0.5 bg-blue-500'></div>
-                <span>Datos reales</span>
-              </div>
-              <div className='flex items-center gap-1'>
-                <div className='w-3 h-0.5 bg-orange-500 opacity-70' style={{borderTop: '2px dashed #f59e0b'}}></div>
-                <span>Proyección</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <Separator />
 
-      {/* Tabla de datos */}
+      {/* Tabla de datos colapsable */}
       <Card className='border bg-white dark:bg-slate-900'>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
-          <CardTitle className='text-base'>
+        <CardHeader 
+          className='flex flex-row items-center justify-between space-y-0 pb-4 cursor-pointer'
+          onClick={() => setShowDataTable(!showDataTable)}
+        >
+          <CardTitle className='text-base flex items-center gap-2'>
             Historial de Lecturas ({detalleLecturas.length})
+            {showDataTable ? <ChevronUp className='h-4 w-4' /> : <ChevronDown className='h-4 w-4' />}
           </CardTitle>
           <ExportButton
             data={detalleLecturas}
             columns={lecturasColumns}
             filename={`lecturas_contrato_${contratoId}`}
             size='sm'
+            onClick={(e) => e.stopPropagation()}
           />
         </CardHeader>
-        <CardContent>
-          <div className='overflow-x-auto'>
-            <DataTable
-              columns={lecturasTableColumns}
-              data={detalleLecturas}
-              showSearch={false}
-              defaultPageSize={10}
-            />
-          </div>
-        </CardContent>
+        {showDataTable && (
+          <CardContent>
+            <div className='overflow-x-auto'>
+              <DataTable
+                columns={lecturasTableColumns}
+                data={detalleLecturas}
+                showSearch={false}
+                defaultPageSize={10}
+              />
+            </div>
+          </CardContent>
+        )}
       </Card>
+
       </div>
     </TooltipProvider>
   );

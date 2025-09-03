@@ -6,7 +6,13 @@ import {
   Eraser,
   FileTextIcon,
   SearchIcon,
-  TrendingUpIcon
+  TrendingDownIcon,
+  TrendingUpIcon,
+  MinusIcon,
+  DollarSignIcon,
+  ZapIcon,
+  HashIcon,
+  BarChart3Icon
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -61,6 +67,7 @@ export default function ResumenFacturacionComponent({
   );
   const [isLoading, setIsLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [showDetailedTable, setShowDetailedTable] = useState(false);
 
   // Columnas para exportación
   const exportColumns: ExportColumn[] = [
@@ -123,6 +130,86 @@ export default function ResumenFacturacionComponent({
     setFacturacionData([]);
     setFetchError(null);
     toast.success('Filtros limpiados');
+  };
+
+  // Calcular métricas de resumen
+  const calcularResumen = () => {
+    if (facturacionData.length === 0) return null;
+
+    const totales = facturacionData.reduce(
+      (acc, item) => {
+        const energiaAnterior = parseFloat(
+          item.totalEnergiaPeriodoAnterior.replace(/[^\d.-]/g, '') || '0'
+        );
+        const energiaActual = parseFloat(
+          item.totalEnergiaPeriodoActual.replace(/[^\d.-]/g, '') || '0'
+        );
+        const facturaAnterior = parseFloat(
+          item.totalFacturaPeriodoAnterior.replace(/[^\d.-]/g, '') || '0'
+        );
+        const facturaActual = parseFloat(
+          item.totalFacturaPeriodoActual.replace(/[^\d.-]/g, '') || '0'
+        );
+        const cantAnterior = parseFloat(
+          item.cantidadCargosPeriodoAnterior.replace(/[^\d.-]/g, '') || '0'
+        );
+        const cantActual = parseFloat(
+          item.cantidadCargosPeriodoActual.replace(/[^\d.-]/g, '') || '0'
+        );
+
+        return {
+          energiaAnterior: acc.energiaAnterior + energiaAnterior,
+          energiaActual: acc.energiaActual + energiaActual,
+          facturaAnterior: acc.facturaAnterior + facturaAnterior,
+          facturaActual: acc.facturaActual + facturaActual,
+          cantidadAnterior: acc.cantidadAnterior + cantAnterior,
+          cantidadActual: acc.cantidadActual + cantActual
+        };
+      },
+      {
+        energiaAnterior: 0,
+        energiaActual: 0,
+        facturaAnterior: 0,
+        facturaActual: 0,
+        cantidadAnterior: 0,
+        cantidadActual: 0
+      }
+    );
+
+    const cambioEnergia = totales.energiaAnterior > 0 
+      ? ((totales.energiaActual - totales.energiaAnterior) / totales.energiaAnterior) * 100 
+      : 0;
+    const cambioFactura = totales.facturaAnterior > 0 
+      ? ((totales.facturaActual - totales.facturaAnterior) / totales.facturaAnterior) * 100 
+      : 0;
+    const cambioCantidad = totales.cantidadAnterior > 0 
+      ? ((totales.cantidadActual - totales.cantidadAnterior) / totales.cantidadAnterior) * 100 
+      : 0;
+
+    return { ...totales, cambioEnergia, cambioFactura, cambioCantidad };
+  };
+
+  const resumen = calcularResumen();
+
+  const formatearNumero = (valor: number) => {
+    return new Intl.NumberFormat('es-CL').format(Math.round(valor));
+  };
+
+  const formatearPorcentaje = (valor: number) => {
+    const signo = valor > 0 ? '+' : '';
+    return `${signo}${valor.toFixed(1)}%`;
+  };
+
+  const obtenerIconoPorcentaje = (valor: number) => {
+    if (valor > 0) return <TrendingUpIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
+    if (valor < 0) return <TrendingDownIcon className="w-4 h-4 text-red-600 dark:text-red-400" />;
+    return <MinusIcon className="w-4 h-4 text-slate-500 dark:text-slate-400" />;
+  };
+
+  const obtenerColorPorcentaje = (valor: number) => {
+    if (valor > 0) return 'text-emerald-600 dark:text-emerald-400';
+    if (valor < 0) return 'text-red-600 dark:text-red-400';
+    return 'text-slate-500 dark:text-slate-400';
   };
 
   return (
@@ -261,32 +348,142 @@ export default function ResumenFacturacionComponent({
           </Collapsible>
         </Card>
 
-        {/* Resultados de la búsqueda */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
-          <CardHeader className='p-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-3'>
-                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                  <TrendingUpIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+
+        {/* Comparación por Conceptos */}
+        {!isLoading && !fetchError && facturacionData.length > 0 && (
+          <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+            <CardHeader className='p-4 border-b border-slate-200/60 dark:border-slate-700/60'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
+                    <TrendingUpIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                  </div>
+                  <div>
+                    <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                      Comparación por Conceptos
+                    </CardTitle>
+                    <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                      Análisis detallado de cambios en cada concepto de facturación
+                    </CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
-                    Resumen de Facturación
-                  </CardTitle>
-                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
-                    {facturacionData.length > 0
-                      ? `${facturacionData.length} cargos de facturación encontrados`
-                      : 'No hay datos disponibles'}
-                  </CardDescription>
-                </div>
-              </div>
-              {facturacionData.length > 0 && (
                 <ExportButton
                   data={facturacionData}
                   columns={exportColumns}
                   filename='resumen_facturacion'
                   size='sm'
                 />
+              </div>
+            </CardHeader>
+            <CardContent className='p-4 space-y-3'>
+              {facturacionData.map((item, index) => {
+                const facturaAnterior = parseFloat(item.totalFacturaPeriodoAnterior.replace(/[^\d.-]/g, '') || '0');
+                const facturaActual = parseFloat(item.totalFacturaPeriodoActual.replace(/[^\d.-]/g, '') || '0');
+                const cambio = facturaAnterior > 0 ? ((facturaActual - facturaAnterior) / facturaAnterior) * 100 : 0;
+                const diferencia = facturaActual - facturaAnterior;
+
+                return (
+                  <Card key={index} className={`p-4 border-l-4 ${
+                    cambio > 0 ? 'border-l-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10' :
+                    cambio < 0 ? 'border-l-red-500 bg-red-50/50 dark:bg-red-900/10' :
+                    'border-l-slate-300 dark:border-l-slate-600'
+                  }`}>
+                    <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-3'>
+                      <div className='flex-1'>
+                        <h3 className='font-medium text-sm text-slate-900 dark:text-slate-100 mb-2'>
+                          {item.cargoDescripcion}
+                        </h3>
+                        <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs'>
+                          <div>
+                            <p className='text-slate-600 dark:text-slate-400'>Energía</p>
+                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                              {item.totalEnergiaPeriodoActual}
+                            </p>
+                            <p className='text-slate-500 dark:text-slate-400'>
+                              vs {item.totalEnergiaPeriodoAnterior}
+                            </p>
+                          </div>
+                          <div>
+                            <p className='text-slate-600 dark:text-slate-400'>Factura</p>
+                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                              {item.totalFacturaPeriodoActual}
+                            </p>
+                            <p className='text-slate-500 dark:text-slate-400'>
+                              vs {item.totalFacturaPeriodoAnterior}
+                            </p>
+                          </div>
+                          <div>
+                            <p className='text-slate-600 dark:text-slate-400'>Cantidad</p>
+                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                              {item.cantidadCargosPeriodoActual}
+                            </p>
+                            <p className='text-slate-500 dark:text-slate-400'>
+                              vs {item.cantidadCargosPeriodoAnterior}
+                            </p>
+                          </div>
+                          <div>
+                            <p className='text-slate-600 dark:text-slate-400'>Diferencia</p>
+                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                              {item.diferenciaPeriodos}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='text-right'>
+                        <div className={`flex items-center justify-end gap-2 text-sm font-medium ${obtenerColorPorcentaje(cambio)}`}>
+                          {obtenerIconoPorcentaje(cambio)}
+                          <span>{formatearPorcentaje(cambio)}</span>
+                        </div>
+                        <div className={`text-xs font-medium ${diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                          {diferencia >= 0 ? '+' : ''}${formatearNumero(Math.abs(diferencia))}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Resultados con tabla detallada (colapsible) */}
+        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+          <CardHeader className='p-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
+                  <BarChart3Icon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                </div>
+                <div>
+                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                    Tabla Detallada
+                  </CardTitle>
+                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                    {facturacionData.length > 0
+                      ? `Vista completa de ${facturacionData.length} conceptos de facturación`
+                      : 'No hay datos disponibles'}
+                  </CardDescription>
+                </div>
+              </div>
+              {facturacionData.length > 0 && (
+                <Button
+                  onClick={() => setShowDetailedTable(!showDetailedTable)}
+                  variant='outline'
+                  size='sm'
+                  className='gap-2'
+                >
+                  {showDetailedTable ? (
+                    <>
+                      <ChevronUp className='h-4 w-4' />
+                      Ocultar
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className='h-4 w-4' />
+                      Ver Detalle
+                    </>
+                  )}
+                </Button>
               )}
             </div>
           </CardHeader>
@@ -346,7 +543,7 @@ export default function ResumenFacturacionComponent({
                 </div>
               </div>
             )}
-            {!isLoading && !fetchError && facturacionData.length > 0 && (
+            {!isLoading && !fetchError && facturacionData.length > 0 && showDetailedTable && (
               <div className='space-y-4'>
                 <div className='overflow-x-auto'>
                   <DataTable columns={columns} data={facturacionData} />

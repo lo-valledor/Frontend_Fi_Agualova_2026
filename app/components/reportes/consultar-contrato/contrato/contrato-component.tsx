@@ -1,4 +1,4 @@
-import { ArrowLeft, FileText, Settings, TrendingUp, User } from 'lucide-react';
+import { ArrowLeft, FileText, Settings, TrendingUp, User, Zap } from 'lucide-react';
 
 import { memo, useMemo, useState } from 'react';
 
@@ -24,6 +24,7 @@ import type {
 import FacturasAnalyticsSimple from './facturas-analytics-simple';
 import InformacionContrato from './informacion-contrato';
 import LecturasAnalyticsSimple from './lecturas-analytics-simple';
+import ProyeccionesAvanzadas from './proyecciones-avanzadas';
 
 interface ContratoComponentProps {
   detallesContrato: {
@@ -180,7 +181,7 @@ const ContratoComponent = memo(function ContratoComponent({
           onValueChange={setActiveTab}
           className='space-y-4'
         >
-          <TabsList className='grid w-full grid-cols-2 lg:grid-cols-4 h-11'>
+          <TabsList className='grid w-full grid-cols-3 lg:grid-cols-5 h-11'>
             <TabsTrigger value='resumen' className='gap-2'>
               <User className='h-4 w-4' />
               <span className='hidden sm:inline'>Información</span>
@@ -192,6 +193,10 @@ const ContratoComponent = memo(function ContratoComponent({
             <TabsTrigger value='facturas' className='gap-2'>
               <FileText className='h-4 w-4' />
               <span className='hidden sm:inline'>Facturas</span>
+            </TabsTrigger>
+            <TabsTrigger value='proyecciones' className='gap-2'>
+              <Zap className='h-4 w-4' />
+              <span className='hidden sm:inline'>Proyecciones</span>
             </TabsTrigger>
             <TabsTrigger value='tecnico' className='gap-2'>
               <Settings className='h-4 w-4' />
@@ -222,6 +227,15 @@ const ContratoComponent = memo(function ContratoComponent({
           {/* Tab: Análisis de Facturas */}
           <TabsContent value='facturas' className='space-y-4'>
             <FacturasAnalyticsSimple
+              detalleFacturas={detalleFacturas}
+              contratoId={contratoInfo?.contratoId}
+            />
+          </TabsContent>
+
+          {/* Tab: Proyecciones Avanzadas */}
+          <TabsContent value='proyecciones' className='space-y-4'>
+            <ProyeccionesAvanzadas
+              detalleLecturas={detalleLecturas}
               detalleFacturas={detalleFacturas}
               contratoId={contratoInfo?.contratoId}
             />

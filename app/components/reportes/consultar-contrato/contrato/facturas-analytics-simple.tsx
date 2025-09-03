@@ -1,4 +1,6 @@
 import {
+  ChevronDown,
+  ChevronUp,
   DollarSign,
   FileText,
   Info,
@@ -49,6 +51,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
   contratoId
 }: FacturasAnalyticsSimpleProps) {
   const [timeRange, setTimeRange] = useState<'6m' | '1a' | '2a' | '5a' | 'todo'>('todo');
+  const [showDataTable, setShowDataTable] = useState(false);
   // Columnas para exportación
   const facturasColumns = useMemo(
     (): ExportColumn[] => [
@@ -255,8 +258,8 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
     // Filtrar por rango de tiempo
     const filteredFacturas = filterByTimeRange(facturasProcesadas, timeRange);
 
-    // Calcular predicciones basadas en los datos filtrados
-    const billingPredictions = calculateBillingPredictions(filteredFacturas, 6);
+    // Calcular predicciones basadas en TODOS los datos (independiente del filtro)
+    const billingPredictions = calculateBillingPredictions(facturasProcesadas, 6);
     const dataWithBillingPredictions = [...filteredFacturas, ...billingPredictions];
 
     const totalFacturado = filteredFacturas.reduce((sum, f) => sum + f.valorTotal, 0);
@@ -425,8 +428,8 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         </Card>
       </div>
 
-      {/* Gráficos simples */}
-      <div className='grid gap-6 lg:grid-cols-2'>
+      {/* Gráfico de composición */}
+      <div className='grid gap-6 lg:grid-cols-1'>
         {/* Composición de Facturación (Neto + IVA) */}
         <Card className='border bg-white dark:bg-slate-900'>
           <CardHeader>
@@ -476,124 +479,42 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           </CardContent>
         </Card>
 
-        {/* Proyección de Facturación Futura */}
-        <Card className='border bg-white dark:bg-slate-900'>
-          <CardHeader>
-            <CardTitle className='text-base flex items-center gap-2'>
-              Proyección de Facturación (6 meses)
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info className='h-4 w-4 text-muted-foreground cursor-help' />
-                </TooltipTrigger>
-                <TooltipContent className='max-w-xs p-3'>
-                  <div className='space-y-2 text-sm'>
-                    <p className='font-semibold'>¿Cómo funciona la proyección?</p>
-                    <div className='space-y-1'>
-                      <p><strong>• Análisis de tendencia:</strong> Calcula la dirección de facturación usando datos históricos (70%)</p>
-                      <p><strong>• Patrón estacional:</strong> Considera el promedio histórico del mismo mes (30%)</p>
-                      <p><strong>• Proyección desde:</strong> Último mes con factura registrada real</p>
-                      <p><strong>• Incluye:</strong> Estimación de valor neto, IVA y consumo correlacionado</p>
-                    </div>
-                    <p className='text-xs text-muted-foreground'>Las estimaciones son aproximadas. Los valores reales pueden variar según tarifas y cambios regulatorios.</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer config={chartConfig} className='aspect-[4/3]'>
-              <LineChart data={analyticsData.dataWithBillingPredictions}>
-                <XAxis
-                  dataKey='fechaCorta'
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  fontSize={12}
-                />
-                <YAxis hide />
-                <ChartTooltip
-                  content={<ChartTooltipContent />}
-                  labelFormatter={(label, payload) => {
-                    const item = payload?.[0]?.payload;
-                    if (item) {
-                      return item.isPrediction 
-                        ? `${item.periodo} (Proyección)` 
-                        : item.fechaCompleta !== item.periodo 
-                          ? `${item.periodo} (${item.fechaCompleta})` 
-                          : item.periodo;
-                    }
-                    return label;
-                  }}
-                  formatter={(value, name, props) => {
-                    const isPred = props.payload?.isPrediction;
-                    const prefix = isPred ? '~$' : '$';
-                    const suffix = isPred ? ' (estimado)' : '';
-                    return [
-                      `${prefix}${Number(value).toLocaleString('es-CL')}${suffix}`,
-                      isPred ? 'Facturación Proyectada' : 'Facturación Real'
-                    ];
-                  }}
-                />
-                {/* Línea de datos reales */}
-                <Line
-                  dataKey={(item: any) => !item.isPrediction ? item.valorTotal : null}
-                  stroke='#059669'
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: '#059669' }}
-                  connectNulls={false}
-                />
-                {/* Línea de predicciones */}
-                <Line
-                  dataKey={(item: any) => item.isPrediction ? item.valorTotal : null}
-                  stroke='#dc2626'
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: '#dc2626' }}
-                  strokeDasharray="8 4"
-                  connectNulls={false}
-                />
-              </LineChart>
-            </ChartContainer>
-            <div className='mt-3 flex items-center gap-4 text-xs text-muted-foreground'>
-              <div className='flex items-center gap-1'>
-                <div className='w-3 h-0.5 bg-green-600'></div>
-                <span>Facturación real</span>
-              </div>
-              <div className='flex items-center gap-1'>
-                <div className='w-3 h-0.5 bg-red-600 opacity-70' style={{borderTop: '2px dashed #dc2626'}}></div>
-                <span>Proyección</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-
 
       <Separator />
 
-      {/* Tabla de datos */}
+      {/* Tabla de datos colapsable */}
       <Card className='border bg-white dark:bg-slate-900'>
-        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-4'>
-          <CardTitle className='text-base'>
+        <CardHeader 
+          className='flex flex-row items-center justify-between space-y-0 pb-4 cursor-pointer'
+          onClick={() => setShowDataTable(!showDataTable)}
+        >
+          <CardTitle className='text-base flex items-center gap-2'>
             Historial de Facturas ({detalleFacturas.length})
+            {showDataTable ? <ChevronUp className='h-4 w-4' /> : <ChevronDown className='h-4 w-4' />}
           </CardTitle>
           <ExportButton
             data={detalleFacturas}
             columns={facturasColumns}
             filename={`facturas_contrato_${contratoId}`}
             size='sm'
+            onClick={(e) => e.stopPropagation()}
           />
         </CardHeader>
-        <CardContent>
-          <div className='overflow-x-auto'>
-            <DataTable
-              columns={facturasTableColumns}
-              data={detalleFacturas}
-              showSearch={false}
-              defaultPageSize={10}
-            />
-          </div>
-        </CardContent>
+        {showDataTable && (
+          <CardContent>
+            <div className='overflow-x-auto'>
+              <DataTable
+                columns={facturasTableColumns}
+                data={detalleFacturas}
+                showSearch={false}
+                defaultPageSize={10}
+              />
+            </div>
+          </CardContent>
+        )}
       </Card>
+
       </div>
     </TooltipProvider>
   );
