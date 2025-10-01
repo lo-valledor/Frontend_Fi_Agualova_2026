@@ -108,23 +108,6 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   const [showConsumoExcesivoDSDialog, setShowConsumoExcesivoDSDialog] =
     useState(false);
 
-  // Establecer fechas y horas por defecto al iniciar
-  useEffect(() => {
-    setDemandaData({
-      dp: 0,
-      dpFecha: '',
-      dpHora: '',
-      ds: 0,
-      dsFecha: '',
-      dsHora: ''
-    });
-    // Inicializar inputs de demanda
-    setDpInputValue('');
-    setDsInputValue('');
-    setShowComaWarningDP(false);
-    setShowComaWarningDS(false);
-  }, []);
-
   // Calcular consumo de energía activa (función estable)
   const calcularConsumoActiva = useCallback(
     (value: string) => {
@@ -240,6 +223,71 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     },
     [digito, valorReactivaAnterior, constante]
   );
+
+  // Función para convertir fecha al formato YYYY-MM-DD para input type="date"
+  const formatearFechaParaInput = useCallback((fecha: string): string => {
+    if (!fecha) return '';
+
+    // Si ya está en formato YYYY-MM-DD, retornar tal cual
+    if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
+      return fecha;
+    }
+
+    // Si está en formato DD-MM-YYYY o DD/MM/YYYY, convertir
+    const match = fecha.match(/^(\d{2})[-/](\d{2})[-/](\d{4})$/);
+    if (match) {
+      const [, dia, mes, anio] = match;
+      return `${anio}-${mes}-${dia}`;
+    }
+
+    // Si es una fecha ISO completa (2024-12-06T10:30:00), extraer solo la fecha
+    if (fecha.includes('T')) {
+      return fecha.split('T')[0];
+    }
+
+    return fecha;
+  }, []);
+
+  // Pre-cargar datos existentes si ya hay una lectura registrada
+  useEffect(() => {
+    if (result.LM_FechaLectura && result.LMC_EnergiaActiva > 0) {
+      // Pre-cargar energía activa
+      const lecturaActiva = result.LMC_EnergiaActiva.toString();
+      setInputActivaValue(lecturaActiva);
+      const resultadoActiva = calcularConsumoActiva(lecturaActiva);
+      setConsumoActivaCalculado(resultadoActiva.consumo);
+      setTipoLecturaActiva(resultadoActiva.tipo);
+      setIsActivaValidated(true);
+
+      // Pre-cargar energía reactiva
+      const lecturaReactiva = result.LMC_EnergiaReactiva.toString();
+      setInputReactivaValue(lecturaReactiva);
+      const resultadoReactiva = calcularConsumoReactiva(lecturaReactiva);
+      setConsumoReactivaCalculado(resultadoReactiva.consumo);
+      setTipoLecturaReactiva(resultadoReactiva.tipo);
+      setIsReactivaValidated(true);
+
+      // Pre-cargar demandas
+      const dpValue = parseFloat(result.LMC_DemandaPunta || '0');
+      const dsValue = parseFloat(result.LMC_DemandaSuministrada || '0');
+
+      setDemandaData({
+        dp: dpValue,
+        dpFecha: formatearFechaParaInput(result.LMC_FechaDemandaPunta || ''),
+        dpHora: result.LMC_HoraDemandaPunta || '',
+        ds: dsValue,
+        dsFecha: formatearFechaParaInput(result.LMC_FechaDemandaSuminis || ''),
+        dsHora: result.LMC_HoraDemandaSuminis || ''
+      });
+
+      // Formatear los valores de demanda con coma decimal
+      setDpInputValue(dpValue > 0 ? dpValue.toString().replace('.', ',') : '');
+      setDsInputValue(dsValue > 0 ? dsValue.toString().replace('.', ',') : '');
+    }
+
+    setShowComaWarningDP(false);
+    setShowComaWarningDS(false);
+  }, [result, calcularConsumoActiva, calcularConsumoReactiva, formatearFechaParaInput]);
 
   // Validar que la lectura no exceda el número de dígitos del medidor
   const validarDigitos = useCallback(

@@ -14,11 +14,13 @@ import {
   Pencil,
   RefreshCw
 } from 'lucide-react';
+import { motion } from 'motion/react';
+import NumberFlow from '@number-flow/react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
-
-import ClockLoader from 'react-spinners/ClockLoader';
 
 import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
 import MonitorNichos from '~/components/monitor/monitor-lecturas/monitor-nichos';
@@ -173,7 +175,7 @@ const calculateTotalStats = (nichos: NichoBusqueda[]) => {
   );
 };
 
-// Component for status circle indicator
+// Component for status circle indicator with subtle pulse animation
 const StatusIndicator = ({
   status,
   size = 'md'
@@ -188,7 +190,10 @@ const StatusIndicator = ({
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.2 }}
       className={`rounded-full ${status.bgColor} ${
         sizeClasses[size ?? 'md']
       } flex-shrink-0`}
@@ -196,7 +201,7 @@ const StatusIndicator = ({
   );
 };
 
-// Meter card component for reuse
+// Meter card component for reuse with motion
 const MeterCard = ({
   medidor,
   onRefresh
@@ -207,102 +212,109 @@ const MeterCard = ({
   const status = getMeterStatus(medidor.claveHtml);
 
   return (
-    <Card
-      className={`overflow-hidden transition-all duration-300 hover:shadow-md border-l-4 ${status.borderColor}`}
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      whileHover={{ y: -2 }}
     >
-      <CardContent className='p-2 sm:p-3'>
-        <div className='flex justify-between items-start'>
-          <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-            <StatusIndicator status={status} size='sm' />
-            <div className='min-w-0'>
-              <div className='font-medium text-xs truncate'>
-                {medidor.nSerie}
-              </div>
-              <div className='text-[10px] text-muted-foreground'>
-                ID: {medidor.id}
-              </div>
-            </div>
-          </div>
-
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
-                <Eye className='h-3 w-3' />
-              </Button>
-            </DialogTrigger>
-            <DialogContent className='max-w-[95vw] w-full max-h-[95vh] h-auto sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-hidden flex flex-col'>
-              <DialogHeader className='shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6'>
-                <DialogTitle className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
-                  <div className='flex items-center gap-2 sm:gap-3'>
-                    <div
-                      className={`p-1.5 sm:p-2 rounded-lg ${status.bgColor} text-white`}
-                    >
-                      {status.icon}
-                    </div>
-                    <div>
-                      <h2 className='text-lg sm:text-xl font-semibold tracking-tight'>
-                        Detalle de Lectura
-                      </h2>
-                      <p className='text-xs sm:text-sm text-muted-foreground mt-1'>
-                        ID: {medidor.id} | Medidor: {medidor.nSerie}
-                      </p>
-                    </div>
-                  </div>
-                  <Badge className={`${status.bgColor} text-xs sm:text-sm`}>
-                    {status.label}
-                  </Badge>
-                </DialogTitle>
-              </DialogHeader>
-              <div className='flex-1 overflow-y-auto'>
-                <div className='p-3 sm:p-6'>
-                  <DetallesMedidor
-                    lecturaId={medidor.id}
-                    onSuccess={onRefresh}
-                  />
+      <Card
+        className={`overflow-hidden transition-all duration-200 hover:shadow-lg border-l-4 ${status.borderColor}`}
+      >
+        <CardContent className='p-2'>
+          <div className='flex justify-between items-start'>
+            <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
+              <StatusIndicator status={status} size='sm' />
+              <div className='min-w-0'>
+                <div className='font-medium text-xs truncate'>
+                  {medidor.nSerie}
+                </div>
+                <div className='text-[10px] text-muted-foreground'>
+                  ID: {medidor.id}
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+            </div>
 
-        <div className='mt-2 grid grid-cols-2 gap-1 text-xs'>
-          <div>
-            <div className='text-muted-foreground text-[10px]'>Lectura</div>
-            <div className='font-semibold text-xs'>
-              {medidor.ultimaLectura || '-'}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant='ghost' size='sm' className='h-6 w-6 p-0'>
+                  <Eye className='h-3 w-3' />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className='max-w-[95vw] w-full max-h-[95vh] h-auto sm:max-w-xl md:max-w-2xl lg:max-w-4xl overflow-hidden flex flex-col'>
+                <DialogHeader className='shrink-0 pb-3 sm:pb-4 border-b border-border/40 px-4 sm:px-6'>
+                  <DialogTitle className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
+                    <div className='flex items-center gap-2 sm:gap-3'>
+                      <div
+                        className={`p-1.5 sm:p-2 rounded-lg ${status.bgColor} text-white`}
+                      >
+                        {status.icon}
+                      </div>
+                      <div>
+                        <h2 className='text-lg sm:text-xl font-semibold tracking-tight'>
+                          Detalle de Lectura
+                        </h2>
+                        <p className='text-xs sm:text-sm text-muted-foreground mt-1'>
+                          ID: {medidor.id} | Medidor: {medidor.nSerie}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge className={`${status.bgColor} text-xs sm:text-sm`}>
+                      {status.label}
+                    </Badge>
+                  </DialogTitle>
+                </DialogHeader>
+                <div className='flex-1 overflow-y-auto'>
+                  <div className='p-3 sm:p-6'>
+                    <DetallesMedidor
+                      lecturaId={medidor.id}
+                      onSuccess={onRefresh}
+                    />
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          <div className='mt-2 grid grid-cols-2 gap-1 text-xs'>
+            <div>
+              <div className='text-muted-foreground text-[10px]'>Lectura</div>
+              <div className='font-semibold text-xs'>
+                {medidor.ultimaLectura || '-'}
+              </div>
+            </div>
+            <div>
+              <div className='text-muted-foreground text-[10px]'>Consumo</div>
+              <div className='font-semibold text-xs'>
+                {medidor.consumo || '0'}
+              </div>
+            </div>
+            <div className='col-span-2'>
+              <div className='font-medium text-xs flex items-center gap-1'>
+                <Calendar className='h-3 w-3' />
+                <span className='truncate'>
+                  {medidor.fechaLectura
+                    ? new Date(medidor.fechaLectura).toLocaleString()
+                    : 'Sin registro'}
+                </span>
+              </div>
             </div>
           </div>
-          <div>
-            <div className='text-muted-foreground text-[10px]'>Consumo</div>
-            <div className='font-semibold text-xs'>
-              {medidor.consumo || '0'}
-            </div>
-          </div>
-          <div className='col-span-2'>
-            <div className='font-medium text-xs flex items-center gap-1'>
-              <Calendar className='h-3 w-3' />
-              <span className='truncate'>
-                {medidor.fechaLectura
-                  ? new Date(medidor.fechaLectura).toLocaleString()
-                  : 'Sin registro'}
-              </span>
-            </div>
-          </div>
-        </div>
 
-        <Separator className='my-2' />
+          <Separator className='my-2' />
 
-        <div className='flex justify-center'>
-          <Badge
-            variant='outline'
-            className={`${status.borderColor} ${status.textColor} text-[10px] px-1 py-0`}
-          >
-            <span className='mr-1'>{status.icon}</span>
-            <span className='truncate'>{medidor.clave || status.label}</span>
-          </Badge>
-        </div>
-      </CardContent>
-    </Card>
+          <div className='flex justify-center'>
+            <Badge
+              variant='outline'
+              className={`${status.borderColor} ${status.textColor} text-[10px] px-1 py-0`}
+            >
+              <span className='mr-1'>{status.icon}</span>
+              <span className='truncate'>{medidor.clave || status.label}</span>
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 };
 
@@ -704,12 +716,25 @@ export default function ResultadosBusqueda({
 
       {/* Loading State */}
       {isSearching && (
-        <div className='flex justify-center items-center py-12'>
-          <ClockLoader color='#0ea5e9' size={40} />
-          <span className='ml-4 text-muted-foreground'>
-            Buscando resultados...
-          </span>
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className='space-y-4'
+        >
+          <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3'>
+            {[...Array(6)].map((_, i) => (
+              <Card key={i}>
+                <CardContent className='p-3'>
+                  <Skeleton height={60} />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className='space-y-2'>
+            <Skeleton height={40} />
+            <Skeleton height={200} />
+          </div>
+        </motion.div>
       )}
 
       {/* Error State */}
@@ -724,7 +749,7 @@ export default function ResultadosBusqueda({
         <div className='space-y-6'>
           {/* Quick Stats Summary (if we have data) */}
           {results.nichos.length > 0 && (
-            <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4'>
+            <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
               {(() => {
                 const stats = calculateTotalStats(results.nichos);
                 return (
@@ -732,14 +757,20 @@ export default function ResultadosBusqueda({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Card className='cursor-help hover:shadow-md transition-shadow'>
-                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
-                              <Grid3X3 className='h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mb-2' />
-                              <h3 className='text-lg sm:text-2xl font-bold'>
-                                {stats.total}
-                              </h3>
-                            </CardContent>
-                          </Card>
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.2, delay: 0 }}
+                          >
+                            <Card className='cursor-help hover:shadow-md transition-shadow'>
+                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                <Grid3X3 className='h-5 w-5 text-muted-foreground mb-1' />
+                                <h3 className='text-xl font-bold'>
+                                  <NumberFlow value={stats.total} />
+                                </h3>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Total Medidores</p>
@@ -750,16 +781,22 @@ export default function ResultadosBusqueda({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Card className='border-red-200 dark:border-red-900 cursor-help hover:shadow-md transition-shadow'>
-                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
-                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-2'>
-                                <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-red-500' />
-                              </div>
-                              <h3 className='text-lg sm:text-2xl font-bold text-red-600 dark:text-red-400'>
-                                {stats.critical}
-                              </h3>
-                            </CardContent>
-                          </Card>
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.2, delay: 0.05 }}
+                          >
+                            <Card className='border-red-200 dark:border-red-900 cursor-help hover:shadow-md transition-shadow'>
+                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                <div className='h-5 w-5 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-1'>
+                                  <AlertCircle className='h-3 w-3 text-red-500' />
+                                </div>
+                                <h3 className='text-xl font-bold text-red-600 dark:text-red-400'>
+                                  <NumberFlow value={stats.critical} />
+                                </h3>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Críticos</p>
@@ -770,16 +807,22 @@ export default function ResultadosBusqueda({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Card className='border-orange-200 dark:border-orange-900 cursor-help hover:shadow-md transition-shadow'>
-                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
-                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-2'>
-                                <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
-                              </div>
-                              <h3 className='text-lg sm:text-2xl font-bold text-orange-600 dark:text-orange-400'>
-                                {stats.warning}
-                              </h3>
-                            </CardContent>
-                          </Card>
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.2, delay: 0.1 }}
+                          >
+                            <Card className='border-orange-200 dark:border-orange-900 cursor-help hover:shadow-md transition-shadow'>
+                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                <div className='h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-1'>
+                                  <AlertTriangle className='h-3 w-3 text-orange-500' />
+                                </div>
+                                <h3 className='text-xl font-bold text-orange-600 dark:text-orange-400'>
+                                  <NumberFlow value={stats.warning} />
+                                </h3>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Relevantes</p>
@@ -790,16 +833,22 @@ export default function ResultadosBusqueda({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Card className='border-yellow-200 dark:border-yellow-900 cursor-help hover:shadow-md transition-shadow'>
-                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
-                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-2'>
-                                <Info className='h-4 w-4 sm:h-5 sm:w-5 text-yellow-500' />
-                              </div>
-                              <h3 className='text-lg sm:text-2xl font-bold text-yellow-600 dark:text-yellow-400'>
-                                {stats.info}
-                              </h3>
-                            </CardContent>
-                          </Card>
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.2, delay: 0.15 }}
+                          >
+                            <Card className='border-yellow-200 dark:border-yellow-900 cursor-help hover:shadow-md transition-shadow'>
+                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                <div className='h-5 w-5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-1'>
+                                  <Info className='h-3 w-3 text-yellow-500' />
+                                </div>
+                                <h3 className='text-xl font-bold text-yellow-600 dark:text-yellow-400'>
+                                  <NumberFlow value={stats.info} />
+                                </h3>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Informativos</p>
@@ -810,16 +859,22 @@ export default function ResultadosBusqueda({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Card className='border-gray-200 dark:border-gray-900 cursor-help hover:shadow-md transition-shadow'>
-                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
-                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center mb-2'>
-                                <Info className='h-4 w-4 sm:h-5 sm:w-5 text-gray-500' />
-                              </div>
-                              <h3 className='text-lg sm:text-2xl font-bold text-gray-600 dark:text-gray-400'>
-                                {stats.sinlec}
-                              </h3>
-                            </CardContent>
-                          </Card>
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.2, delay: 0.2 }}
+                          >
+                            <Card className='border-gray-200 dark:border-gray-900 cursor-help hover:shadow-md transition-shadow'>
+                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                <div className='h-5 w-5 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center mb-1'>
+                                  <Info className='h-3 w-3 text-gray-500' />
+                                </div>
+                                <h3 className='text-xl font-bold text-gray-600 dark:text-gray-400'>
+                                  <NumberFlow value={stats.sinlec} />
+                                </h3>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Sin Lectura</p>
@@ -830,16 +885,22 @@ export default function ResultadosBusqueda({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Card className='border-green-200 dark:border-green-900 cursor-help hover:shadow-md transition-shadow'>
-                            <CardContent className='flex flex-col items-center justify-center p-3 sm:p-4 text-center'>
-                              <div className='h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-2'>
-                                <RefreshCw className='h-4 w-4 sm:h-5 sm:w-5 text-green-500' />
-                              </div>
-                              <h3 className='text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400'>
-                                {stats.normal}
-                              </h3>
-                            </CardContent>
-                          </Card>
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.2, delay: 0.25 }}
+                          >
+                            <Card className='border-green-200 dark:border-green-900 cursor-help hover:shadow-md transition-shadow'>
+                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                <div className='h-5 w-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-1'>
+                                  <RefreshCw className='h-3 w-3 text-green-500' />
+                                </div>
+                                <h3 className='text-xl font-bold text-green-600 dark:text-green-400'>
+                                  <NumberFlow value={stats.normal} />
+                                </h3>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Correctas</p>
@@ -979,7 +1040,12 @@ export default function ResultadosBusqueda({
               {results.nichos[selectedNichoIndex] && (
                 <div className='space-y-3'>
                   {/* Nicho Header with Edit Button */}
-                  <div className='flex justify-between items-center p-4 bg-gradient-to-r from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30 rounded-lg border'>
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className='flex justify-between items-center p-3 bg-sky-50/50 dark:bg-sky-950/20 rounded-lg border'
+                  >
                     <div className='flex items-center gap-2'>
                       <div className='p-1.5 bg-sky-100 dark:bg-sky-900/50 rounded-lg'>
                         <MapPin className='h-4 w-4 text-sky-600 dark:text-sky-400' />
@@ -1073,7 +1139,7 @@ export default function ResultadosBusqueda({
                       <DialogTrigger asChild>
                         <Button
                           size='sm'
-                          className='bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white shadow-lg'
+                          className='bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md transition-all'
                           onClick={() => {
                             setIsNichoModalOpen(true);
                           }}
@@ -1110,10 +1176,10 @@ export default function ResultadosBusqueda({
                         </div>
                       </DialogContent>
                     </Dialog>
-                  </div>
+                  </motion.div>
 
                   {/* Filas Container */}
-                  <div className='space-y-3'>
+                  <div className='space-y-2'>
                     {results.nichos[selectedNichoIndex].filas.map(
                       (fila: Fila, filaIndex: number) => {
                         const problemCount = fila.medidores.filter(
@@ -1129,99 +1195,106 @@ export default function ResultadosBusqueda({
                         const isExpanded = expandedFilas[key];
 
                         return (
-                          <Card
+                          <motion.div
                             key={`fila-${selectedNichoIndex}-${filaIndex}`}
-                            className='overflow-hidden border-0 shadow-sm bg-card/50 backdrop-blur-sm'
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                              duration: 0.2,
+                              delay: filaIndex * 0.03
+                            }}
                           >
-                            <Collapsible
-                              open={
-                                isExpanded !== undefined ? isExpanded : true
-                              }
-                              onOpenChange={() =>
-                                toggleFila(selectedNichoIndex, filaIndex)
-                              }
-                            >
-                              <CollapsibleTrigger asChild>
-                                <div className='flex items-center justify-between p-3 cursor-pointer hover:bg-muted/50 transition-colors'>
-                                  <div className='flex items-center gap-2'>
-                                    <div className='p-1 bg-muted rounded-md'>
-                                      <Grid3X3 className='h-3 w-3 text-muted-foreground' />
-                                    </div>
-                                    <div>
-                                      <h4 className='text-base font-medium'>
-                                        Fila {fila.numero}
-                                      </h4>
-                                      <p className='text-xs text-muted-foreground'>
-                                        {fila.medidores.length} medidores
-                                      </p>
-                                    </div>
-                                    {problemCount > 0 && (
-                                      <Badge
-                                        variant='destructive'
-                                        className='ml-2'
-                                      >
-                                        {problemCount} problema
-                                        {problemCount !== 1 && 's'}
-                                      </Badge>
-                                    )}
-                                  </div>
-
-                                  <div className='flex items-center gap-3'>
-                                    <div className='text-sm text-muted-foreground'>
-                                      {isExpanded ? 'Ocultar' : 'Mostrar'}
-                                    </div>
-                                    {isExpanded ? (
-                                      <ChevronUp className='h-5 w-5 text-muted-foreground' />
-                                    ) : (
-                                      <ChevronDown className='h-5 w-5 text-muted-foreground' />
-                                    )}
-                                  </div>
-                                </div>
-                              </CollapsibleTrigger>
-                              <CollapsibleContent>
-                                <div className='p-3 pt-0'>
-                                  {viewMode === 'detailed' ? (
-                                    /* Vista de Lista Compacta */
-                                    <div className='space-y-2'>
-                                      {fila.medidores.map(
-                                        (medidor: Medidor) => {
-                                          return (
-                                            <MeterRowDetailed
-                                              key={medidor.id}
-                                              medidor={medidor}
-                                              onRefresh={handleRefresh}
-                                            />
-                                          );
-                                        }
+                            <Card className='overflow-hidden border-0 shadow-sm bg-card/50 backdrop-blur-sm'>
+                              <Collapsible
+                                open={
+                                  isExpanded !== undefined ? isExpanded : true
+                                }
+                                onOpenChange={() =>
+                                  toggleFila(selectedNichoIndex, filaIndex)
+                                }
+                              >
+                                <CollapsibleTrigger asChild>
+                                  <div className='flex items-center justify-between p-3 cursor-pointer hover:bg-muted/50 transition-colors'>
+                                    <div className='flex items-center gap-2'>
+                                      <div className='p-1 bg-muted rounded-md'>
+                                        <Grid3X3 className='h-3 w-3 text-muted-foreground' />
+                                      </div>
+                                      <div>
+                                        <h4 className='text-base font-medium'>
+                                          Fila {fila.numero}
+                                        </h4>
+                                        <p className='text-xs text-muted-foreground'>
+                                          {fila.medidores.length} medidores
+                                        </p>
+                                      </div>
+                                      {problemCount > 0 && (
+                                        <Badge
+                                          variant='destructive'
+                                          className='ml-2'
+                                        >
+                                          {problemCount} problema
+                                          {problemCount !== 1 && 's'}
+                                        </Badge>
                                       )}
                                     </div>
-                                  ) : (
-                                    <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2 sm:gap-3'>
-                                      {fila.medidores.map(
-                                        (medidor: Medidor) => {
-                                          if (
-                                            viewMode === 'compact' &&
-                                            getMeterStatus(medidor.claveHtml)
-                                              .severity <= 1
-                                          ) {
-                                            return null;
+
+                                    <div className='flex items-center gap-3'>
+                                      <div className='text-sm text-muted-foreground'>
+                                        {isExpanded ? 'Ocultar' : 'Mostrar'}
+                                      </div>
+                                      {isExpanded ? (
+                                        <ChevronUp className='h-5 w-5 text-muted-foreground' />
+                                      ) : (
+                                        <ChevronDown className='h-5 w-5 text-muted-foreground' />
+                                      )}
+                                    </div>
+                                  </div>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                  <div className='p-3 pt-0'>
+                                    {viewMode === 'detailed' ? (
+                                      /* Vista de Lista Compacta */
+                                      <div className='space-y-2'>
+                                        {fila.medidores.map(
+                                          (medidor: Medidor) => {
+                                            return (
+                                              <MeterRowDetailed
+                                                key={medidor.id}
+                                                medidor={medidor}
+                                                onRefresh={handleRefresh}
+                                              />
+                                            );
                                           }
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2'>
+                                        {fila.medidores.map(
+                                          (medidor: Medidor) => {
+                                            if (
+                                              viewMode === 'compact' &&
+                                              getMeterStatus(medidor.claveHtml)
+                                                .severity <= 1
+                                            ) {
+                                              return null;
+                                            }
 
-                                          return (
-                                            <MeterCard
-                                              key={medidor.id}
-                                              medidor={medidor}
-                                              onRefresh={handleRefresh}
-                                            />
-                                          );
-                                        }
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              </CollapsibleContent>
-                            </Collapsible>
-                          </Card>
+                                            return (
+                                              <MeterCard
+                                                key={medidor.id}
+                                                medidor={medidor}
+                                                onRefresh={handleRefresh}
+                                              />
+                                            );
+                                          }
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                </CollapsibleContent>
+                              </Collapsible>
+                            </Card>
+                          </motion.div>
                         );
                       }
                     )}

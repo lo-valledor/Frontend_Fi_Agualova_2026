@@ -160,24 +160,26 @@ export default function MonitorNichos({
   return (
     <div className='w-full h-full flex flex-col'>
       {/* Header compacto para modal */}
-      <div className='flex-shrink-0 border-b border-border/40 pb-3 mb-4'>
-        <div className='flex flex-col xs:flex-row xs:items-center xs:justify-between gap-2'>
-          <div className='flex flex-wrap items-center gap-1.5'>
+      <div className='flex-shrink-0 border-b border-slate-200/60 dark:border-slate-700/60 pb-4 mb-4'>
+        <div className='flex items-center justify-between gap-3 flex-wrap'>
+          <div className='flex items-center gap-2 flex-wrap'>
             <Badge
-              variant='secondary'
-              className='bg-sky-100/80 dark:bg-sky-900/30 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-700 font-medium text-xs py-0.5 px-2'
+              variant='outline'
+              className='h-9 bg-gradient-to-r from-sky-50 to-sky-100/80 dark:from-sky-950/30 dark:to-sky-900/30 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-700 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
             >
+              <div className='w-1.5 h-1.5 rounded-full bg-sky-500 dark:bg-sky-400 mr-2 animate-pulse' />
               Nicho: {nicho}
             </Badge>
             <Badge
-              variant='secondary'
-              className='bg-amber-100/80 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 font-medium text-xs py-0.5 px-2'
+              variant='outline'
+              className='h-9 bg-gradient-to-r from-amber-50 to-amber-100/80 dark:from-amber-950/30 dark:to-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
             >
+              <div className='w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 mr-2' />
               Periodo: {periodo}
             </Badge>
             <Badge
               variant='outline'
-              className='bg-slate-50/80 dark:bg-slate-900/30 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 text-xs py-0.5 px-2'
+              className='h-9 bg-gradient-to-r from-slate-50 to-slate-100/80 dark:from-slate-900/30 dark:to-slate-800/30 text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-600 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
             >
               {results.length} medidores
             </Badge>
@@ -186,18 +188,21 @@ export default function MonitorNichos({
           <Button
             variant='outline'
             size='sm'
-            className='gap-1.5 bg-muted/50 hover:bg-muted/80 active:bg-muted/90 transition-all duration-200 h-7 px-2 text-xs self-start xs:self-auto tap-highlight-transparent touch-manipulation'
+            className='h-9 gap-2 bg-gradient-to-r from-sky-50 to-sky-100/50 dark:from-sky-950/20 dark:to-sky-900/20 hover:from-sky-100 hover:to-sky-200/50 dark:hover:from-sky-900/30 dark:hover:to-sky-800/30 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
             onClick={handleRefresh}
             disabled={isRefreshing}
           >
             {isRefreshing ? (
-              <Loader2 className='h-3 w-3 animate-spin' />
+              <>
+                <Loader2 className='h-4 w-4 animate-spin' />
+                <span className='hidden xs:inline'>Actualizando...</span>
+              </>
             ) : (
-              <RotateCcw className='h-3 w-3' />
+              <>
+                <RotateCcw className='h-4 w-4' />
+                <span className='hidden xs:inline'>Actualizar</span>
+              </>
             )}
-            <span className='hidden xs:inline'>
-              {isRefreshing ? 'Actualizando...' : 'Actualizar'}
-            </span>
           </Button>
         </div>
       </div>

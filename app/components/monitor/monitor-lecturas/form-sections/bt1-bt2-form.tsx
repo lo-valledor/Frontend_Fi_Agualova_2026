@@ -1,7 +1,7 @@
 import { AlertCircle, Calculator, Check, Gauge, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -122,6 +122,21 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     },
     [digito, valorAnterior, constante]
   );
+
+  // Pre-cargar datos existentes si los hay
+  useEffect(() => {
+    // Si hay una fecha de lectura, significa que ya se ingresó una lectura
+    if (result.LM_FechaLectura && result.LMC_EnergiaActiva > 0) {
+      const lecturActual = result.LMC_EnergiaActiva.toString();
+      setInputValue(lecturActual);
+
+      // Calcular el consumo con los datos existentes
+      const resultado = calcularConsumo(lecturActual);
+      setConsumoCalculado(resultado.consumo);
+      setTipoLectura(resultado.tipo);
+      setIsValidated(true); // Marcar como validado porque ya fue guardado
+    }
+  }, [result, calcularConsumo]);
 
   // Actualizar el consumo cuando cambia el input
   const handleInputChange = useCallback(

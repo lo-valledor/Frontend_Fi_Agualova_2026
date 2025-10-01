@@ -73,6 +73,10 @@ const data = {
         {
           title: 'Exportar Lecturas',
           url: '/dashboard/monitor/exportar-lecturas'
+        },
+        {
+          title: 'Importar Lecturas',
+          url: '/dashboard/monitor/importar-lecturas'
         }
       ]
     },
@@ -323,7 +327,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               animate='visible'
               className='space-y-1 sm:space-y-2'
             >
-              {filteredNavMain.map((item, index) => (
+              {filteredNavMain.map((item, index) => {
+                // Verificar si alguno de los items del submenú coincide con la ruta actual
+                const isActive = item.items?.some((subItem) =>
+                  location.pathname === subItem.url
+                );
+
+                return (
                 <motion.div
                   key={item.title}
                   variants={itemVariants}
@@ -333,7 +343,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 >
                   <Collapsible
                     title={item.title}
-                    defaultOpen
+                    defaultOpen={isActive}
                     className='group/collapsible'
                   >
                     <SidebarGroup className='mb-1'>
@@ -431,7 +441,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     </SidebarGroup>
                   </Collapsible>
                 </motion.div>
-              ))}
+                );
+              })}
             </motion.div>
           ) : (
             <motion.div

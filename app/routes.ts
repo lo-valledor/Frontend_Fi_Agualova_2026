@@ -22,6 +22,10 @@ export default [
           route(
             'exportar-lecturas',
             'routes/dashboard/monitor/exportar-lecturas.tsx'
+          ),
+          route(
+            'importar-lecturas',
+            'routes/dashboard/monitor/importar-lecturas.tsx'
           )
         ]),
         ...prefix('operaciones', [

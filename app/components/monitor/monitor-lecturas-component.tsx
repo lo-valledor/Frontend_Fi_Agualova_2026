@@ -12,6 +12,7 @@ import {
   Search,
   Settings2
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import { toast } from 'sonner';
 
 import { Suspense, useEffect, useState } from 'react';
@@ -156,8 +157,13 @@ const MonitorLecturasComponent = ({
         />
 
         {/* Main Control Panel */}
-        <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
-          <CardContent className='p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6'>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card className='border-0 shadow-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+            <CardContent className='p-3 sm:p-4 space-y-3'>
             {/* Sector Selection - Clean Grid */}
             <div className='space-y-3 sm:space-y-4'>
               <div className='flex items-center gap-2 sm:gap-3'>
@@ -175,29 +181,35 @@ const MonitorLecturasComponent = ({
               </div>
 
               {sectores && sectores.length > 0 ? (
-                <div className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3'>
-                  {sectores.map(sector => (
-                    <Button
+                <div className='grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2'>
+                  {sectores.map((sector, index) => (
+                    <motion.div
                       key={sector.sectorId}
-                      variant={
-                        selectedSector?.sectorId === sector.sectorId
-                          ? 'default'
-                          : 'outline'
-                      }
-                      onClick={() => setSelectedSector(sector)}
-                      className={cn(
-                        'h-auto sm:p-4 transition-all duration-200 hover:scale-105 text-center',
-                        selectedSector?.sectorId === sector.sectorId
-                          ? 'bg-gradient-to-r from-blue-500 to-sky-600 text-white shadow-lg border-0'
-                          : 'hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-700 dark:text-slate-300'
-                      )}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.2, delay: index * 0.03 }}
                     >
-                      <div className='text-center w-full'>
-                        <div className='font-semibold text-xs sm:text-sm leading-tight'>
-                          {sector.descripcion}
+                      <Button
+                        variant={
+                          selectedSector?.sectorId === sector.sectorId
+                            ? 'default'
+                            : 'outline'
+                        }
+                        onClick={() => setSelectedSector(sector)}
+                        className={cn(
+                          'h-auto p-3 transition-all duration-200 text-center w-full',
+                          selectedSector?.sectorId === sector.sectorId
+                            ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-md border-0'
+                            : 'hover:border-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/20 text-slate-700 dark:text-slate-300'
+                        )}
+                      >
+                        <div className='text-center w-full'>
+                          <div className='font-semibold text-xs sm:text-sm leading-tight'>
+                            {sector.descripcion}
+                          </div>
                         </div>
-                      </div>
-                    </Button>
+                      </Button>
+                    </motion.div>
                   ))}
                 </div>
               ) : (
@@ -308,7 +320,7 @@ const MonitorLecturasComponent = ({
               <Button
                 onClick={handleSearch}
                 disabled={!selectedSector || !selectedPeriodo}
-                className='bg-gradient-to-r from-blue-500 to-sky-600 hover:from-blue-600 hover:to-sky-700 text-white px-6 py-3 sm:py-2 shadow-lg hover:shadow-xl transition-all duration-200 order-1 sm:order-2'
+                className='bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 sm:py-2 shadow-md hover:shadow-lg transition-all duration-200 order-1 sm:order-2'
               >
                 <Search className='w-4 h-4 mr-2' />
                 <span className='text-sm sm:text-base'>
@@ -423,6 +435,7 @@ const MonitorLecturasComponent = ({
             </Collapsible>
           </CardContent>
         </Card>
+        </motion.div>
 
         {/* Results Section */}
         {shouldSearch && (

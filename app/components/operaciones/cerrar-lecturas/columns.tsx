@@ -169,16 +169,16 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           <Badge
             variant='outline'
             className={cn(
-              'font-bold border-2',
+              'font-bold border-2 text-base px-3 py-1.5 min-w-[60px]',
               cantidadSinLectura === 0
-                ? 'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800'
-                : 'bg-amber-50 text-amber-700 border-amber-300 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800'
+                ? 'bg-green-50 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700'
+                : 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700'
             )}
           >
             {cantidadSinLectura === 0 && (
-              <CheckCircle className='w-3 h-3 mr-1' />
+              <CheckCircle className='w-4 h-4 mr-1.5' />
             )}
-            {cantidadSinLectura > 0 && <Ban className='w-3 h-3 mr-1' />}
+            {cantidadSinLectura > 0 && <Ban className='w-4 h-4 mr-1.5' />}
             {cantidadSinLectura}
           </Badge>
         </div>
@@ -202,9 +202,9 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         <div className='text-center'>
           <Badge
             variant='outline'
-            className='font-bold bg-green-50 text-green-700 border-green-300 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800 border-2'
+            className='font-bold bg-green-50 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-700 border-2 text-base px-3 py-1.5 min-w-[60px]'
           >
-            <TrendingUp className='w-3 h-3 mr-1' />
+            <TrendingUp className='w-4 h-4 mr-1.5' />
             {cantidadLecturasOK}
           </Badge>
         </div>
@@ -229,14 +229,14 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           <Badge
             variant='outline'
             className={cn(
-              'font-bold border-2',
+              'font-bold border-2 text-base px-3 py-1.5 min-w-[60px]',
               cantidadClaveRoja === 0
-                ? 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/20 dark:text-slate-400 dark:border-slate-800'
-                : 'bg-red-50 text-red-700 border-red-300 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 animate-pulse'
+                ? 'bg-slate-50 text-slate-800 border-slate-300 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-700'
+                : 'bg-red-50 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700 animate-pulse'
             )}
           >
-            {cantidadClaveRoja > 0 && <AlertCircle className='w-3 h-3 mr-1' />}
-            {cantidadClaveRoja === 0 && <Shield className='w-3 h-3 mr-1' />}
+            {cantidadClaveRoja > 0 && <AlertCircle className='w-4 h-4 mr-1.5' />}
+            {cantidadClaveRoja === 0 && <Shield className='w-4 h-4 mr-1.5' />}
             {cantidadClaveRoja}
           </Badge>
         </div>
@@ -261,16 +261,16 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           <Badge
             variant='outline'
             className={cn(
-              'font-bold border-2',
+              'font-bold border-2 text-base px-3 py-1.5 min-w-[60px]',
               cantidadClaveNaranja === 0
-                ? 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/20 dark:text-slate-400 dark:border-slate-800'
-                : 'bg-orange-50 text-orange-700 border-orange-300 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800'
+                ? 'bg-slate-50 text-slate-800 border-slate-300 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-700'
+                : 'bg-orange-50 text-orange-800 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-700'
             )}
           >
             {cantidadClaveNaranja > 0 && (
-              <AlertTriangle className='w-3 h-3 mr-1' />
+              <AlertTriangle className='w-4 h-4 mr-1.5' />
             )}
-            {cantidadClaveNaranja === 0 && <Shield className='w-3 h-3 mr-1' />}
+            {cantidadClaveNaranja === 0 && <Shield className='w-4 h-4 mr-1.5' />}
             {cantidadClaveNaranja}
           </Badge>
         </div>
@@ -295,14 +295,14 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
           <Badge
             variant='outline'
             className={cn(
-              'font-bold border-2',
+              'font-bold border-2 text-base px-3 py-1.5 min-w-[60px]',
               cantidadCorregidas === 0
-                ? 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/20 dark:text-slate-400 dark:border-slate-800'
-                : 'bg-purple-50 text-purple-700 border-purple-300 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800'
+                ? 'bg-slate-50 text-slate-800 border-slate-300 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-700'
+                : 'bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700'
             )}
           >
-            {cantidadCorregidas > 0 && <Zap className='w-3 h-3 mr-1' />}
-            {cantidadCorregidas === 0 && <Shield className='w-3 h-3 mr-1' />}
+            {cantidadCorregidas > 0 && <Zap className='w-4 h-4 mr-1.5' />}
+            {cantidadCorregidas === 0 && <Shield className='w-4 h-4 mr-1.5' />}
             {cantidadCorregidas}
           </Badge>
         </div>
