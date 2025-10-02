@@ -7,16 +7,12 @@ import { TableActions } from '~/components/data-table/table-helpers';
 import type { GetContratante } from '~/types/administracion';
 
 interface ContratantesColumnsProps {
-  onEdit: (contratante: GetContratante) => void;
   onDetails: (contratante: GetContratante) => void;
-  editingContratanteRut: string | null;
   detailingContratanteRut: string | null;
 }
 
 export const columns = ({
-  onEdit,
   onDetails,
-  editingContratanteRut,
   detailingContratanteRut
 }: ContratantesColumnsProps): ColumnDef<GetContratante>[] => [
   {
@@ -160,11 +156,10 @@ export const columns = ({
         <div className='flex items-center justify-center'>
           <TableActions
             onView={onDetails}
-            onEdit={onEdit}
             item={row.original}
             showView={true}
+            showEdit={false}
             showDelete={false}
-            loadingEdit={editingContratanteRut === row.original.rut}
             loadingView={detailingContratanteRut === row.original.rut}
           />
         </div>

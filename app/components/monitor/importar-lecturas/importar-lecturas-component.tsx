@@ -127,38 +127,6 @@ export default function ImportarLecturasComponent() {
     return true;
   };
 
-  const parseMedidorField = (medidorValue: string) => {
-    if (!medidorValue) return { local: '', numSerie: '', acometida: '' };
-
-    const parts = medidorValue.split('/').map(p => p.trim());
-
-    if (parts.length === 3) {
-      // Formato: local / numSerie / acometida
-      return {
-        local: parts[0],
-        numSerie: parts[1],
-        acometida: parts[2],
-      };
-    } else if (parts.length === 2) {
-      // Formato: local / acometida (sin número de serie)
-      // El número de serie es el que contiene solo dígitos
-      const isFirstNumeric = /^\d+$/.test(parts[0]);
-      const isSecondNumeric = /^\d+$/.test(parts[1]);
-
-      if (isFirstNumeric && !isSecondNumeric) {
-        // parts[0] es numSerie, parts[1] es acometida
-        return { local: '', numSerie: parts[0], acometida: parts[1] };
-      } else if (!isFirstNumeric && isSecondNumeric) {
-        // parts[0] es local, parts[1] es acometida (probablemente numérica)
-        return { local: parts[0], numSerie: '', acometida: parts[1] };
-      } else {
-        // Caso por defecto: asumimos local / acometida
-        return { local: parts[0], numSerie: '', acometida: parts[1] };
-      }
-    }
-
-    return { local: medidorValue, numSerie: '', acometida: '' };
-  };
 
   const validateColumns = (headers: any[]): { valid: boolean; missing: string[] } => {
     const headerStrings = headers.map(h => String(h).trim());
@@ -207,15 +175,6 @@ export default function ImportarLecturasComponent() {
           headers.forEach((header, index) => {
             obj[header] = row[index] !== undefined ? String(row[index]) : '';
           });
-
-          // Parsear la columna Medidor
-          if (obj['Medidor']) {
-            const medidorParsed = parseMedidorField(obj['Medidor']);
-            obj['Local'] = medidorParsed.local;
-            obj['Número de Serie'] = medidorParsed.numSerie;
-            obj['Acometida'] = medidorParsed.acometida;
-          }
-
           return obj;
         });
 
@@ -469,8 +428,8 @@ export default function ImportarLecturasComponent() {
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              <ScrollArea className="rounded-lg border border-slate-200 dark:border-slate-700">
-                <div className="max-h-[500px]">
+              <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="overflow-auto max-h-[500px]">
                   <Table>
                     <TableHeader className="sticky top-0 bg-slate-100 dark:bg-slate-800 z-10">
                       <TableRow>
@@ -494,7 +453,7 @@ export default function ImportarLecturasComponent() {
                     </TableBody>
                   </Table>
                 </div>
-              </ScrollArea>
+              </div>
 
               <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-slate-700">
                 <p className="text-sm text-muted-foreground">

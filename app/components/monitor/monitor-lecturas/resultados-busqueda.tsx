@@ -280,13 +280,13 @@ const MeterCard = ({
             <div>
               <div className='text-muted-foreground text-[10px]'>Lectura</div>
               <div className='font-semibold text-xs'>
-                {medidor.ultimaLectura || '-'}
+                {medidor.consumo || '0'}
               </div>
             </div>
             <div>
               <div className='text-muted-foreground text-[10px]'>Consumo</div>
               <div className='font-semibold text-xs'>
-                {medidor.consumo || '0'}
+                {medidor.ultimaLectura || '-'}
               </div>
             </div>
             <div className='col-span-2'>
@@ -358,15 +358,15 @@ const MeterRowDetailed = ({
       {/* Lectura */}
       <div className='hidden sm:block text-left'>
         <div className='text-xs text-muted-foreground'>Lectura</div>
-        <div className='font-semibold text-sm'>
-          {medidor.ultimaLectura || '-'}
-        </div>
+        <div className='font-semibold text-sm'>{medidor.consumo || '-'}</div>
       </div>
 
       {/* Consumo */}
       <div className='hidden sm:block text-left'>
         <div className='text-xs text-muted-foreground'>Consumo</div>
-        <div className='font-semibold text-sm'>{medidor.consumo || '0'}</div>
+        <div className='font-semibold text-sm'>
+          {medidor.ultimaLectura || '0'}
+        </div>
       </div>
 
       {/* Fecha */}

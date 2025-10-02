@@ -262,6 +262,7 @@ export default function MonitorNichos({
             <div className='flex-1 overflow-auto'>
               <div className='p-3 sm:p-4 lg:p-6'>
                 <EditarMedidores
+                  key={selectedMedidor.LM_ID}
                   result={selectedMedidor}
                   onSuccess={() => handleSuccess(selectedMedidor.LM_ID)}
                 />

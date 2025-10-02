@@ -37,11 +37,11 @@ const DetailItem = ({
   className?: string;
 }) => (
   <div
-    className={`flex items-start gap-4 p-4 rounded-xl transition-all duration-200 ${className}`}
+    className={`flex items-start gap-3 p-3 sm:gap-4 sm:p-4 rounded-xl transition-all duration-200 ${className}`}
   >
     {Icon && (
-      <div className='flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/5 flex items-center justify-center'>
-        <Icon className='w-5 h-5 text-primary' />
+      <div className='flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-primary/10 dark:bg-primary/5 flex items-center justify-center'>
+        <Icon className='w-4 h-4 sm:w-5 sm:h-5 text-primary' />
       </div>
     )}
     <div className='flex-1 min-w-0'>
@@ -145,20 +145,20 @@ export default function DetallesCondicionesContrato({
   }
 
   return (
-    <div className='space-y-8 max-w-4xl mx-auto p-4'>
+    <div className='space-y-6 pb-6'>
       {/* Header con información principal */}
       <div className='relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/10 dark:border-primary/5'>
         <div className='absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50'></div>
-        <div className='relative p-6'>
-          <div className='flex items-center gap-6'>
-            <div className='w-20 h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/10 dark:to-primary/5 flex items-center justify-center shadow-lg'>
-              <FileText className='w-10 h-10 text-primary' />
+        <div className='relative p-4 sm:p-6'>
+          <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4'>
+            <div className='w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/10 dark:to-primary/5 flex items-center justify-center shadow-lg'>
+              <FileText className='w-8 h-8 sm:w-10 sm:h-10 text-primary' />
             </div>
             <div className='flex-1'>
-              <h2 className='text-2xl font-bold text-foreground mb-2'>
+              <h2 className='text-xl sm:text-2xl font-bold text-foreground mb-2'>
                 {condicion.descripcion}
               </h2>
-              <div className='flex items-center gap-3'>
+              <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
                 <Badge
                   variant={condicion.estado ? 'default' : 'secondary'}
                   className='rounded-lg px-3 py-1'
@@ -174,9 +174,9 @@ export default function DetallesCondicionesContrato({
         </div>
       </div>
 
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
         {/* Información General */}
-        <div className='space-y-6'>
+        <div className='space-y-4'>
           <SectionTitle icon={Info} title='Información General' />
           <div className='rounded-xl border border-border bg-card text-card-foreground shadow-sm overflow-hidden'>
             <div className='divide-y divide-border'>
@@ -201,7 +201,7 @@ export default function DetallesCondicionesContrato({
         </div>
 
         {/* Información de Valores */}
-        <div className='space-y-6'>
+        <div className='space-y-4'>
           <SectionTitle icon={Calculator} title='Configuración de Valores' />
           <div className='rounded-xl border border-border bg-card text-card-foreground shadow-sm overflow-hidden'>
             <div className='divide-y divide-border'>
@@ -231,11 +231,11 @@ export default function DetallesCondicionesContrato({
       </div>
 
       {/* Información Adicional */}
-      <div className='space-y-6'>
+      <div className='space-y-4'>
         <SectionTitle icon={Building} title='Información Adicional' />
         <div className='rounded-xl border border-border bg-card text-card-foreground shadow-sm overflow-hidden'>
-          <div className='p-6'>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <div className='p-4 sm:p-6'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <div className='space-y-2'>
                 <p className='text-sm font-medium text-muted-foreground'>
                   Tipo de Cálculo

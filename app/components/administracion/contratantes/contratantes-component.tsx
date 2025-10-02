@@ -18,7 +18,10 @@ import type {
 import { columns } from './columns';
 import { ContratanteDetailsModal } from './detalles-contratante';
 import { FilterSummary } from './filter-summary';
-import { ContratanteFiltersComponent, type ContratanteFilters } from './contratante-filters';
+import {
+  ContratanteFiltersComponent,
+  type ContratanteFilters
+} from './contratante-filters';
 
 interface ContratantesComponentProps {
   contratantes: GetContratante[];
@@ -37,11 +40,11 @@ export default function ContratantesComponent({
 }: Readonly<ContratantesComponentProps>) {
   const [contratantesList] = useState<GetContratante[]>(contratantes);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [detailedContratante, setDetailedContratante] = useState<GetContratante | null>(null);
-  const [editingContratanteRut] = useState<string | null>(null);
-  const [detailingContratanteRut, setDetailingContratanteRut] = useState<string | null>(
-    null
-  );
+  const [detailedContratante, setDetailedContratante] =
+    useState<GetContratante | null>(null);
+  const [detailingContratanteRut, setDetailingContratanteRut] = useState<
+    string | null
+  >(null);
   const [filters, setFilters] = useState<ContratanteFilters>({
     esEmpresa: 'all',
     comuna: 'all',
@@ -151,10 +154,6 @@ export default function ContratantesComponent({
     router('/dashboard/administracion/contratantes/crear');
   };
 
-  const handleEditContratante = (contratante: GetContratante) => {
-    router(`/dashboard/administracion/contratantes/${contratante.rut}`);
-  };
-
   const handleDetailsContratante = (contratante: GetContratante) => {
     setDetailedContratante(contratante);
     setIsDetailsOpen(true);
@@ -226,8 +225,6 @@ export default function ContratantesComponent({
               <DataTable
                 columns={columns({
                   onDetails: handleDetailsContratante,
-                  onEdit: handleEditContratante,
-                  editingContratanteRut,
                   detailingContratanteRut
                 })}
                 data={filteredContratantes}

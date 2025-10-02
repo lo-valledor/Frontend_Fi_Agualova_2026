@@ -9,16 +9,15 @@ import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { Separator } from '~/components/ui/separator';
 import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle
-} from '~/components/ui/sheet';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle
+} from '~/components/ui/dialog';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import { Separator } from '~/components/ui/separator';
 import type { GetCondicionesContrato } from '~/types/administracion';
 import type { Conceptos } from '~/types/mantencion';
 
@@ -125,31 +124,26 @@ export default function CondicionesContratoComponent({
           conceptos={conceptos}
         />
 
-        {/* Details Sheet */}
-        <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-          <SheetContent className='sm:max-w-2xl'>
-            <SheetHeader>
-              <SheetTitle>Detalles de la Condición de Contrato</SheetTitle>
-              <SheetDescription>
+        {/* Details Dialog */}
+        <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+          <DialogContent className='max-w-4xl max-h-[90vh] p-0'>
+            <DialogHeader className='px-6 pt-6'>
+              <DialogTitle>Detalles de la Condición de Contrato</DialogTitle>
+              <DialogDescription>
                 Información completa de la condición de contrato seleccionada.
-              </SheetDescription>
-            </SheetHeader>
-            <Separator className='my-4' />
-            <div className='h-[calc(100vh-150px)] overflow-y-auto pr-4'>
+              </DialogDescription>
+            </DialogHeader>
+            <Separator />
+            <ScrollArea className='max-h-[calc(90vh-120px)] px-6'>
               {selectedCondicionId && (
                 <DetallesCondicionesContrato
                   condicionId={selectedCondicionId}
                   onClose={() => setIsDetailsOpen(false)}
                 />
               )}
-            </div>
-            <SheetFooter className='mt-4'>
-              <SheetClose asChild>
-                <Button variant='outline'>Cerrar</Button>
-              </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
