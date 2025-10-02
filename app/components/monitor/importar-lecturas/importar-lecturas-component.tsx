@@ -5,8 +5,7 @@ import {
   X,
   AlertCircle,
   CheckCircle2,
-  Database,
-  Info,
+  Info
 } from 'lucide-react';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
@@ -18,26 +17,18 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '~/components/ui/table';
-import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger,
+  CollapsibleTrigger
 } from '~/components/ui/collapsible';
 
 export default function ImportarLecturasComponent() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [previewData, setPreviewData] = useState<any[]>([]);
   const [error, setError] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [isValidFile, setIsValidFile] = useState(false);
   const [showColumnInfo, setShowColumnInfo] = useState(false);
 
   const pageBreadcrumbs = [
@@ -107,7 +98,7 @@ export default function ImportarLecturasComponent() {
   const validateFile = (file: File) => {
     const validTypes = [
       'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     ];
 
     if (!validTypes.includes(file.type) && !file.name.match(/\.(xlsx|xls)$/)) {
@@ -127,18 +118,23 @@ export default function ImportarLecturasComponent() {
     return true;
   };
 
-
-  const validateColumns = (headers: any[]): { valid: boolean; missing: string[] } => {
+  const validateColumns = (
+    headers: any[]
+  ): { valid: boolean; missing: string[] } => {
     const headerStrings = headers.map(h => String(h).trim());
-    const missing = REQUIRED_COLUMNS.filter(col => !headerStrings.includes(col));
+    const missing = REQUIRED_COLUMNS.filter(
+      col => !headerStrings.includes(col)
+    );
     return {
       valid: missing.length === 0,
       missing
     };
   };
 
-  const parseExcelFile = async (file: File) => {
-    setIsLoading(true);
+  const validateExcelStructure = async (file: File) => {
+    setIsValidating(true);
+    setError('');
+
     try {
       const arrayBuffer = await file.arrayBuffer();
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -155,38 +151,26 @@ export default function ImportarLecturasComponent() {
 
       // Validar que el archivo contenga las columnas requeridas
       const validation = validateColumns(headers);
+
       if (!validation.valid) {
         const errorMsg = `El archivo no contiene todas las columnas requeridas. Faltan: ${validation.missing.slice(0, 5).join(', ')}${validation.missing.length > 5 ? ` y ${validation.missing.length - 5} más` : ''}`;
         setError(errorMsg);
         toast.error(errorMsg);
-        setIsLoading(false);
-        setPreviewData([]);
+        setIsValidFile(false);
         setFile(null);
-        return;
+      } else {
+        setIsValidFile(true);
+        toast.success('Archivo válido - listo para cargar');
       }
-
-      const rows = jsonData.slice(3) as any[][];
-
-      // Convertir a objetos
-      const data = rows
-        .filter(row => row.some(cell => cell !== undefined && cell !== ''))
-        .map(row => {
-          const obj: any = {};
-          headers.forEach((header, index) => {
-            obj[header] = row[index] !== undefined ? String(row[index]) : '';
-          });
-          return obj;
-        });
-
-      setPreviewData(data);
-      setIsLoading(false);
-      toast.success(`${data.length} registros cargados correctamente`);
     } catch (_err) {
-      const errorMsg = 'Error al leer el archivo Excel. Verifica que el formato sea correcto.';
+      const errorMsg =
+        'Error al validar el archivo Excel. Verifica que el formato sea correcto.';
       setError(errorMsg);
       toast.error(errorMsg);
-      setIsLoading(false);
-      setPreviewData([]);
+      setIsValidFile(false);
+      setFile(null);
+    } finally {
+      setIsValidating(false);
     }
   };
 
@@ -198,7 +182,7 @@ export default function ImportarLecturasComponent() {
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile && validateFile(droppedFile)) {
       setFile(droppedFile);
-      parseExcelFile(droppedFile);
+      validateExcelStructure(droppedFile);
     }
   };
 
@@ -208,68 +192,100 @@ export default function ImportarLecturasComponent() {
 
     if (selectedFile && validateFile(selectedFile)) {
       setFile(selectedFile);
-      parseExcelFile(selectedFile);
+      validateExcelStructure(selectedFile);
     }
   };
 
   const handleRemoveFile = () => {
     setFile(null);
-    setPreviewData([]);
     setError('');
+    setIsValidFile(false);
   };
 
   const handleImportar = async () => {
-    if (previewData.length === 0) {
-      toast.error('No hay datos para importar');
+    if (!file) {
+      toast.error('No hay archivo seleccionado');
       return;
     }
 
     try {
       setIsImporting(true);
-      // TODO: Implementar la lógica de importación al backend
-      // await api.post('/importar-lecturas', { lecturas: previewData });
 
-      toast.success(`${previewData.length} lecturas importadas correctamente`);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const token = localStorage.getItem('token');
+      const ENERLINK_API_URL = import.meta.env.VITE_API_ENERLINK_URL;
+      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/api';
+      const url = `${baseUrl}/UploadRecaudacion/upload`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        const errorMessage = data?.mensaje || 'Error al cargar el archivo';
+        toast.error(errorMessage);
+        return;
+      }
+
+      const mensaje = data?.mensaje || 'Archivo cargado correctamente';
+      toast.success(mensaje);
       handleRemoveFile();
-    } catch (error) {
-      console.error('Error importing readings:', error);
-      toast.error('Error al importar lecturas');
+    } catch (error: any) {
+      console.error('Error al cargar archivo:', error);
+      const errorMessage = error.message || 'Error al cargar el archivo';
+      toast.error(errorMessage);
     } finally {
       setIsImporting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/30 dark:bg-slate-950/30">
-      <div className="container mx-auto p-3 space-y-4">
+    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='container mx-auto p-3 space-y-4'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Header */}
         <ModernHeader
-          title="Importar Lecturas"
-          description="Carga un archivo Excel con las lecturas de medidores para importarlas al sistema"
+          title='Importar Lecturas'
+          description='Carga un archivo Excel con las lecturas de medidores para importarlas al sistema'
         />
 
         {/* Información de columnas requeridas */}
-        <Alert className="border-sky-200 dark:border-sky-800 bg-sky-50/50 dark:bg-sky-950/20">
-          <Info className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-          <AlertTitle className="text-sky-900 dark:text-sky-100">
+        <Alert className='border-sky-200 dark:border-sky-800 bg-sky-50/50 dark:bg-sky-950/20'>
+          <Info className='h-4 w-4 text-sky-600 dark:text-sky-400' />
+          <AlertTitle className='text-sky-900 dark:text-sky-100'>
             Formato del archivo Excel
           </AlertTitle>
-          <AlertDescription className="text-sky-800 dark:text-sky-200">
-            <div className="space-y-2">
-              <p>El archivo debe contener las columnas en la <strong>fila 3</strong> y los datos desde la <strong>fila 4</strong>.</p>
+          <AlertDescription className='text-sky-800 dark:text-sky-200'>
+            <div className='space-y-2'>
+              <p>
+                El archivo debe contener las columnas en la <strong>fila 3</strong>{' '}
+                y los datos desde la <strong>fila 4</strong>.
+              </p>
               <Collapsible open={showColumnInfo} onOpenChange={setShowColumnInfo}>
                 <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm" className="p-0 h-auto text-sky-700 dark:text-sky-300 hover:bg-transparent">
-                    {showColumnInfo ? 'Ocultar' : 'Ver'} columnas requeridas ({REQUIRED_COLUMNS.length})
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    className='p-0 h-auto text-sky-700 dark:text-sky-300 hover:bg-transparent'
+                  >
+                    {showColumnInfo ? 'Ocultar' : 'Ver'} columnas requeridas (
+                    {REQUIRED_COLUMNS.length})
                   </Button>
                 </CollapsibleTrigger>
-                <CollapsibleContent className="mt-2">
-                  <ScrollArea className="h-32 rounded border border-sky-200 dark:border-sky-800 bg-white dark:bg-slate-900 p-2">
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-1 text-xs">
+                <CollapsibleContent className='mt-2'>
+                  <ScrollArea className='h-32 rounded border border-sky-200 dark:border-sky-800 bg-white dark:bg-slate-900 p-2'>
+                    <div className='grid grid-cols-2 md:grid-cols-3 gap-1 text-xs'>
                       {REQUIRED_COLUMNS.map((col, idx) => (
-                        <div key={idx} className="text-slate-700 dark:text-slate-300">
+                        <div key={idx} className='text-slate-700 dark:text-slate-300'>
                           • {col}
                         </div>
                       ))}
@@ -282,30 +298,33 @@ export default function ImportarLecturasComponent() {
         </Alert>
 
         {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
+          <Alert variant='destructive'>
+            <AlertCircle className='h-4 w-4' />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
         {/* Upload Section */}
-        <Card className="border-slate-200/60 dark:border-slate-700/60">
+        <Card className='border-slate-200/60 dark:border-slate-700/60'>
           <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-sky-100 dark:bg-sky-900/30 rounded-lg flex items-center justify-center">
-                <Upload className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+            <div className='flex items-center gap-3'>
+              <div className='w-8 h-8 bg-sky-100 dark:bg-sky-900/30 rounded-lg flex items-center justify-center'>
+                <Upload className='w-4 h-4 text-sky-600 dark:text-sky-400' />
               </div>
-              <div className="flex-1">
-                <CardTitle className="text-slate-900 dark:text-slate-100">
+              <div className='flex-1'>
+                <CardTitle className='text-slate-900 dark:text-slate-100'>
                   Cargar Archivo
                 </CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className='text-sm text-muted-foreground mt-1'>
                   Sube un archivo Excel (.xlsx, .xls) con las lecturas
                 </p>
               </div>
               {file && (
-                <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-700">
-                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                <Badge
+                  variant='outline'
+                  className='bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-700'
+                >
+                  <CheckCircle2 className='w-3 h-3 mr-1' />
                   Archivo cargado
                 </Badge>
               )}
@@ -319,85 +338,100 @@ export default function ImportarLecturasComponent() {
                 onDrop={handleDrop}
                 className={`
                   border-2 border-dashed rounded-lg p-12 text-center transition-all duration-200
-                  ${isDragging
-                    ? 'border-sky-500 bg-sky-50/50 dark:bg-sky-950/20 scale-[1.02]'
-                    : 'border-slate-300 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600'
+                  ${
+                    isDragging
+                      ? 'border-sky-500 bg-sky-50/50 dark:bg-sky-950/20 scale-[1.02]'
+                      : 'border-slate-300 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600'
                   }
                 `}
               >
-                <div className="flex flex-col items-center gap-4">
-                  <div className={`rounded-full p-4 transition-colors ${
-                    isDragging
-                      ? 'bg-sky-100 dark:bg-sky-900/50'
-                      : 'bg-slate-100 dark:bg-slate-800'
-                  }`}>
-                    <Upload className={`h-8 w-8 ${
+                <div className='flex flex-col items-center gap-4'>
+                  <div
+                    className={`rounded-full p-4 transition-colors ${
                       isDragging
-                        ? 'text-sky-600 dark:text-sky-400'
-                        : 'text-slate-500 dark:text-slate-400'
-                    }`} />
+                        ? 'bg-sky-100 dark:bg-sky-900/50'
+                        : 'bg-slate-100 dark:bg-slate-800'
+                    }`}
+                  >
+                    <Upload
+                      className={`h-8 w-8 ${
+                        isDragging
+                          ? 'text-sky-600 dark:text-sky-400'
+                          : 'text-slate-500 dark:text-slate-400'
+                      }`}
+                    />
                   </div>
                   <div>
-                    <p className="text-lg font-medium text-slate-900 dark:text-slate-100">
+                    <p className='text-lg font-medium text-slate-900 dark:text-slate-100'>
                       Arrastra tu archivo Excel aquí
                     </p>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className='text-sm text-muted-foreground mt-1'>
                       o haz clic para seleccionar
                     </p>
                   </div>
                   <input
-                    type="file"
-                    accept=".xlsx,.xls"
+                    type='file'
+                    accept='.xlsx,.xls'
                     onChange={handleFileInput}
-                    className="hidden"
-                    id="file-upload"
+                    className='hidden'
+                    id='file-upload'
                   />
-                  <Button asChild variant="outline" className="border-sky-200 dark:border-sky-800 hover:bg-sky-50 dark:hover:bg-sky-950/30">
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      <FileSpreadsheet className="w-4 h-4 mr-2" />
+                  <Button
+                    asChild
+                    variant='outline'
+                    className='border-sky-200 dark:border-sky-800 hover:bg-sky-50 dark:hover:bg-sky-950/30'
+                  >
+                    <label htmlFor='file-upload' className='cursor-pointer'>
+                      <FileSpreadsheet className='w-4 h-4 mr-2' />
                       Seleccionar archivo
                     </label>
                   </Button>
-                  <p className="text-xs text-muted-foreground">
+                  <p className='text-xs text-muted-foreground'>
                     Formatos aceptados: .xlsx, .xls • Tamaño máximo: 10MB
                   </p>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-4 p-4 border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center">
-                  <FileSpreadsheet className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className='flex items-center gap-4 p-4 border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800'>
+                <div className='w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center'>
+                  <FileSpreadsheet className='h-6 w-6 text-green-600 dark:text-green-400' />
                 </div>
-                <div className="flex-1">
-                  <p className="font-medium text-slate-900 dark:text-slate-100">{file.name}</p>
-                  <p className="text-sm text-muted-foreground">
+                <div className='flex-1'>
+                  <p className='font-medium text-slate-900 dark:text-slate-100'>
+                    {file.name}
+                  </p>
+                  <p className='text-sm text-muted-foreground'>
                     {(file.size / 1024).toFixed(2)} KB
                   </p>
                 </div>
                 <Button
-                  variant="ghost"
-                  size="icon"
+                  variant='ghost'
+                  size='icon'
                   onClick={handleRemoveFile}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
+                  className='text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20'
                 >
-                  <X className="h-4 w-4" />
+                  <X className='h-4 w-4' />
                 </Button>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {isLoading && (
-          <Card className="border-slate-200/60 dark:border-slate-700/60">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-center py-12">
-                <div className="text-center space-y-4">
-                  <div className="relative">
-                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-200 dark:border-slate-700 border-t-sky-600 dark:border-t-sky-400 mx-auto" />
+        {isValidating && (
+          <Card className='border-slate-200/60 dark:border-slate-700/60'>
+            <CardContent className='pt-6'>
+              <div className='flex items-center justify-center py-12'>
+                <div className='text-center space-y-4'>
+                  <div className='relative'>
+                    <div className='animate-spin rounded-full h-12 w-12 border-4 border-slate-200 dark:border-slate-700 border-t-sky-600 dark:border-t-sky-400 mx-auto' />
                   </div>
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">Procesando archivo...</p>
-                    <p className="text-sm text-muted-foreground mt-1">Esto puede tomar unos momentos</p>
+                    <p className='font-medium text-slate-900 dark:text-slate-100'>
+                      Validando archivo...
+                    </p>
+                    <p className='text-sm text-muted-foreground mt-1'>
+                      Verificando estructura y columnas
+                    </p>
                   </div>
                 </div>
               </div>
@@ -405,90 +439,26 @@ export default function ImportarLecturasComponent() {
           </Card>
         )}
 
-        {!isLoading && previewData.length > 0 && (
-          <Card className="border-slate-200/60 dark:border-slate-700/60">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-sky-100 dark:bg-sky-900/30 rounded-lg flex items-center justify-center">
-                    <Database className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-slate-900 dark:text-slate-100">
-                      Vista Previa de Datos
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Revisa los datos antes de importar
-                    </p>
-                  </div>
-                </div>
-                <Badge variant="outline" className="bg-sky-50 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300 border-sky-200 dark:border-sky-700">
-                  {previewData.length} registros
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
-                <div className="overflow-auto max-h-[500px]">
-                  <Table>
-                    <TableHeader className="sticky top-0 bg-slate-100 dark:bg-slate-800 z-10">
-                      <TableRow>
-                        {Object.keys(previewData[0] || {}).map((header) => (
-                          <TableHead key={header} className="font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-                            {header}
-                          </TableHead>
-                        ))}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {previewData.map((row, index) => (
-                        <TableRow key={index} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                          {Object.values(row).map((cell: any, cellIndex) => (
-                            <TableCell key={cellIndex} className="text-sm whitespace-nowrap">
-                              {cell}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
-
-              <div className="flex justify-between items-center pt-4 border-t border-slate-200 dark:border-slate-700">
-                <p className="text-sm text-muted-foreground">
-                  Los datos se importarán con la estructura mostrada arriba
-                </p>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={handleRemoveFile}
-                    className="border-slate-200 dark:border-slate-700"
-                  >
-                    <X className="w-4 h-4 mr-2" />
-                    Cancelar
-                  </Button>
-                  <Button
-                    onClick={handleImportar}
-                    disabled={isImporting}
-                    className="bg-sky-600 hover:bg-sky-700 text-white"
-                  >
-                    {isImporting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
-                        Importando...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle2 className="w-4 h-4 mr-2" />
-                        Importar Lecturas
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {file && isValidFile && !isValidating && (
+          <div className='flex justify-end'>
+            <Button
+              onClick={handleImportar}
+              disabled={isImporting}
+              className='bg-sky-600 hover:bg-sky-700 text-white'
+            >
+              {isImporting ? (
+                <>
+                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2' />
+                  Cargando...
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className='w-4 h-4 mr-2' />
+                  Cargar Archivo
+                </>
+              )}
+            </Button>
+          </div>
         )}
       </div>
     </div>
