@@ -4,6 +4,7 @@ import pluginReact from 'eslint-plugin-react';
 import unusedImports from 'eslint-plugin-unused-imports';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import airbnb from "eslint-config-airbnb-base";
 
 export default [
   js.configs.recommended,
@@ -60,6 +61,7 @@ export default [
           caughtErrorsIgnorePattern: '^_'
         }
       ],
+      ...airbnb.rules,
 
       // General code quality
       'no-console': 'off',

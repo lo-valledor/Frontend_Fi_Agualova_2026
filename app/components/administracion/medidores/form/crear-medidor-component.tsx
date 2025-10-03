@@ -340,7 +340,7 @@ export default function CrearMedidorComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='marca'>Marca *</Label>
+                  <Label htmlFor='marca'>Marca <span className='text-red-500'>*</span></Label>
                   <Select
                     value={formData.marca}
                     onValueChange={value => handleInputChange('marca', value)}
@@ -364,7 +364,7 @@ export default function CrearMedidorComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='tipo'>Tipo de Medidor *</Label>
+                  <Label htmlFor='tipo'>Tipo de Medidor <span className='text-red-500'>*</span></Label>
                   <Select
                     value={formData.tipo}
                     onValueChange={value => handleInputChange('tipo', value)}
@@ -387,7 +387,7 @@ export default function CrearMedidorComponent({
 
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='modelo'>Modelo *</Label>
+                  <Label htmlFor='modelo'>Modelo <span className='text-red-500'>*</span></Label>
                   <Input
                     id='modelo'
                     value={formData.modelo}
@@ -399,7 +399,7 @@ export default function CrearMedidorComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='serie'>Número de Serie *</Label>
+                  <Label htmlFor='serie'>Número de Serie <span className='text-red-500'>*</span></Label>
                   <Input
                     id='serie'
                     value={formData.serie}
@@ -441,7 +441,7 @@ export default function CrearMedidorComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='fechaInicio'>Fecha de Inicio *</Label>
+                  <Label htmlFor='fechaInicio'>Fecha de Inicio <span className='text-red-500'>*</span></Label>
                   <Input
                     id='fechaInicio'
                     type='date'

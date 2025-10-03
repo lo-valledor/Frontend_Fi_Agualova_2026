@@ -57,13 +57,17 @@ const createContratanteSchema = (existingContratantes: string[]) =>
         }
       ),
     nombre: z.string().min(1, 'El nombre es requerido'),
-    apellido: z.string(),
+    apellido: z.string().optional(),
     esEmpresa: z.boolean(),
     direccion: z.string().min(1, 'La dirección es requerida'),
     codComuna: z.string().min(1, 'La comuna es requerida'),
     contacto: z.string().min(1, 'El contacto es requerido'),
     telefono: z.string().optional(),
-    correo: z.string().optional()
+    correo: z
+      .string()
+      .email('Debe ser un correo válido')
+      .optional()
+      .or(z.literal(''))
   });
 
 type ContratanteFormData = z.infer<ReturnType<typeof createContratanteSchema>>;
@@ -243,7 +247,7 @@ export default function CrearContratanteComponent() {
                       <FormItem>
                         <FormLabel className='flex items-center gap-2'>
                           <FileText className='h-4 w-4' />
-                          RUT
+                          RUT <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
                           <div className='relative'>
@@ -314,7 +318,7 @@ export default function CrearContratanteComponent() {
                       <FormItem>
                         <FormLabel className='flex items-center gap-2'>
                           <User className='h-4 w-4' />
-                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'}
+                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'} <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -373,7 +377,7 @@ export default function CrearContratanteComponent() {
                       <FormItem className='md:col-span-2'>
                         <FormLabel className='flex items-center gap-2'>
                           <MapPin className='h-4 w-4' />
-                          Dirección
+                          Dirección <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -399,7 +403,7 @@ export default function CrearContratanteComponent() {
                         <FormItem className='md:col-span-2'>
                           <FormLabel className='flex items-center gap-2'>
                             <MapPin className='h-4 w-4' />
-                            Comuna
+                            Comuna <span className='text-red-500'>*</span>
                           </FormLabel>
                           <FormControl>
                             <Select
@@ -449,7 +453,7 @@ export default function CrearContratanteComponent() {
                       <FormItem>
                         <FormLabel className='flex items-center gap-2'>
                           <User className='h-4 w-4' />
-                          Contacto
+                          Contacto <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
                           <Input

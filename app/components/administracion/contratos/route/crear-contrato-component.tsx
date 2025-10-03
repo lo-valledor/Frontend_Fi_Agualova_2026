@@ -617,7 +617,7 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='tipoContrato'>Tipo de Contrato *</Label>
+                  <Label htmlFor='tipoContrato'>Tipo de Contrato <span className='text-red-500'>*</span></Label>
                   <Select
                     value={formData.tipoContrato}
                     onValueChange={value =>
@@ -638,7 +638,7 @@ export default function CrearContratoComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='tarifa'>Tarifa *</Label>
+                  <Label htmlFor='tarifa'>Tarifa <span className='text-red-500'>*</span></Label>
                   <Select
                     value={formData.tarifa}
                     onValueChange={value => handleInputChange('tarifa', value)}
@@ -668,7 +668,7 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='nombrePropietario'>Propietario *</Label>
+                  <Label htmlFor='nombrePropietario'>Propietario <span className='text-red-500'>*</span></Label>
                   <div className='flex gap-2'>
                     <Input
                       id='nombrePropietario'
@@ -694,7 +694,7 @@ export default function CrearContratoComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='nombreCliente'>Cliente *</Label>
+                  <Label htmlFor='nombreCliente'>Cliente <span className='text-red-500'>*</span></Label>
                   <div className='flex gap-2'>
                     <Input
                       id='nombreCliente'
@@ -728,7 +728,7 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='local'>Local *</Label>
+                  <Label htmlFor='local'>Local <span className='text-red-500'>*</span></Label>
                   <div className='flex gap-2'>
                     <Input
                       id='local'
@@ -752,7 +752,7 @@ export default function CrearContratoComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='comunaEnvio'>Comuna de Envío *</Label>
+                  <Label htmlFor='comunaEnvio'>Comuna de Envío <span className='text-red-500'>*</span></Label>
                   <div className='flex gap-2'>
                     <Input
                       id='comunaEnvio'
@@ -778,7 +778,7 @@ export default function CrearContratoComponent({
                 </div>
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='direccionEnvio'>Dirección de Envío *</Label>
+                <Label htmlFor='direccionEnvio'>Dirección de Envío <span className='text-red-500'>*</span></Label>
                 <Textarea
                   id='direccionEnvio'
                   value={formData.direccionEnvio}
@@ -800,7 +800,7 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='fechaInicio'>Fecha de Inicio *</Label>
+                  <Label htmlFor='fechaInicio'>Fecha de Inicio <span className='text-red-500'>*</span></Label>
                   <Input
                     id='fechaInicio'
                     type='date'

@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Upload,
   FileSpreadsheet,
   X,
   AlertCircle,
   CheckCircle2,
-  Info
+  Info,
+  Play,
+  RefreshCw
 } from 'lucide-react';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
@@ -22,6 +24,38 @@ import {
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
 
+// Interfaces para los nuevos endpoints
+interface EstadoProcesamiento {
+  periodoActivo: string;
+  registrosPendientes: number;
+  fechaConsulta: string;
+  estado: string;
+}
+
+interface RegistrosPendientes {
+  registrosPendientes: number;
+  mensaje: string;
+}
+
+interface DetalleProcesamientoItem {
+  numeroSerie: string;
+  tarifa: string;
+  lecturaAnteriorKwh: number;
+  consumoEnergiaKwh: number;
+  usuarioCarga: string;
+  estado: string;
+  mensaje: string;
+}
+
+interface ProcesamientoResult {
+  exitoso: boolean;
+  mensaje: string;
+  registrosActualizados: number;
+  fechaProcesamiento: string;
+  periodo: string;
+  detalles: DetalleProcesamientoItem[];
+}
+
 export default function ImportarLecturasComponent() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -30,6 +64,14 @@ export default function ImportarLecturasComponent() {
   const [isValidating, setIsValidating] = useState(false);
   const [isValidFile, setIsValidFile] = useState(false);
   const [showColumnInfo, setShowColumnInfo] = useState(false);
+  
+  // Estados para los nuevos endpoints
+  const [estadoProcesamiento, setEstadoProcesamiento] = useState<EstadoProcesamiento | null>(null);
+  const [registrosPendientes, setRegistrosPendientes] = useState<RegistrosPendientes | null>(null);
+  const [loadingEstado, setLoadingEstado] = useState(false);
+  const [loadingRegistros, setLoadingRegistros] = useState(false);
+  const [processingBT, setProcessingBT] = useState(false);
+  const [procesamientoResult, setProcesamientoResult] = useState<ProcesamientoResult | null>(null);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -247,6 +289,112 @@ export default function ImportarLecturasComponent() {
     }
   };
 
+  // Función para obtener estado de procesamiento
+  const fetchEstadoProcesamiento = async () => {
+    setLoadingEstado(true);
+    try {
+      const token = localStorage.getItem('token');
+      const VITE_API_URL = import.meta.env.VITE_API_URL;
+      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
+      const url = `${baseUrl}/estado-procesamiento`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.mensaje || 'Error al obtener estado');
+      }
+
+      setEstadoProcesamiento(data);
+    } catch (error: any) {
+      console.error('Error al obtener estado:', error);
+      toast.error(error.message || 'Error al obtener estado de procesamiento');
+    } finally {
+      setLoadingEstado(false);
+    }
+  };
+
+  // Función para obtener registros pendientes
+  const fetchRegistrosPendientes = async () => {
+    setLoadingRegistros(true);
+    try {
+      const token = localStorage.getItem('token');
+      const VITE_API_URL = import.meta.env.VITE_API_URL;
+      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
+      const url = `${baseUrl}/registros-pendientes`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.mensaje || 'Error al obtener registros');
+      }
+
+      setRegistrosPendientes(data);
+      toast.success(data.mensaje || 'Registros obtenidos correctamente');
+    } catch (error: any) {
+      console.error('Error al obtener registros:', error);
+      toast.error(error.message || 'Error al obtener registros pendientes');
+    } finally {
+      setLoadingRegistros(false);
+    }
+  };
+
+  // Función para procesar BT1-BT2
+  const procesarBT1BT2 = async () => {
+    setProcessingBT(true);
+    try {
+      const token = localStorage.getItem('token');
+      const ENERLINK_API_URL = import.meta.env.VITE_API_ENERLINK_URL;
+      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/api';
+      const url = `${baseUrl}/procesar-bt1-bt2`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.mensaje || 'Error al procesar');
+      }
+
+      setProcesamientoResult(data);
+      toast.success(data.mensaje || 'Procesamiento completado exitosamente');
+      
+      // Refrescar estado después del procesamiento
+      fetchEstadoProcesamiento();
+    } catch (error: any) {
+      console.error('Error al procesar:', error);
+      toast.error(error.message || 'Error al procesar BT1-BT2');
+    } finally {
+      setProcessingBT(false);
+    }
+  };
+
+  // Cargar estado inicial
+  useEffect(() => {
+    fetchEstadoProcesamiento();
+  }, []);
+
   return (
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
@@ -257,6 +405,194 @@ export default function ImportarLecturasComponent() {
           title='Importar Lecturas'
           description='Carga un archivo Excel con las lecturas de medidores para importarlas al sistema'
         />
+
+        {/* Estado de Procesamiento */}
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          <Card className='border-slate-200/60 dark:border-slate-700/60'>
+            <CardHeader className='pb-3'>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                  Estado de Procesamiento
+                </CardTitle>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={fetchEstadoProcesamiento}
+                  disabled={loadingEstado}
+                >
+                  <RefreshCw className={`h-4 w-4 ${loadingEstado ? 'animate-spin' : ''}`} />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className='space-y-3'>
+              {loadingEstado ? (
+                <div className='flex items-center justify-center py-4'>
+                  <div className='animate-spin rounded-full h-6 w-6 border-2 border-slate-300 border-t-sky-600' />
+                </div>
+              ) : estadoProcesamiento ? (
+                <div className='space-y-2'>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm text-muted-foreground'>Período Activo:</span>
+                    <Badge variant='outline' className='font-mono'>
+                      {estadoProcesamiento.periodoActivo}
+                    </Badge>
+                  </div>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm text-muted-foreground'>Registros Pendientes:</span>
+                    <Badge 
+                      variant={estadoProcesamiento.registrosPendientes > 0 ? 'destructive' : 'default'}
+                      className='font-mono'
+                    >
+                      {estadoProcesamiento.registrosPendientes}
+                    </Badge>
+                  </div>
+                  <div className='flex justify-between items-center'>
+                    <span className='text-sm text-muted-foreground'>Estado:</span>
+                    <Badge 
+                      variant={estadoProcesamiento.registrosPendientes > 0 ? 'secondary' : 'default'}
+                      className='text-xs'
+                    >
+                      {estadoProcesamiento.estado}
+                    </Badge>
+                  </div>
+                  <div className='text-xs text-muted-foreground pt-2 border-t'>
+                    Última consulta: {new Date(estadoProcesamiento.fechaConsulta).toLocaleString()}
+                  </div>
+                </div>
+              ) : (
+                <p className='text-sm text-muted-foreground'>No se pudo cargar el estado</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className='border-slate-200/60 dark:border-slate-700/60'>
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                Acciones de Procesamiento
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-3'>
+              <Button
+                onClick={fetchRegistrosPendientes}
+                disabled={loadingRegistros}
+                variant='outline'
+                className='w-full'
+              >
+                {loadingRegistros ? (
+                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-slate-300 border-t-sky-600 mr-2' />
+                ) : (
+                  <Info className='h-4 w-4 mr-2' />
+                )}
+                Consultar Registros Pendientes
+              </Button>
+              
+              <Button
+                onClick={procesarBT1BT2}
+                //disabled={processingBT || (estadoProcesamiento?.registrosPendientes === 0)}
+                className='w-full bg-orange-600 hover:bg-orange-700 text-white'
+                disabled
+              >
+                {processingBT ? (
+                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2' />
+                ) : (
+                  <Play className='h-4 w-4 mr-2' />
+                )}
+                Procesar BT1-BT2
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Mostrar resultado de registros pendientes */}
+        {registrosPendientes && (
+          <Alert className='border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20'>
+            <Info className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+            <AlertTitle className='text-blue-900 dark:text-blue-100'>
+              Registros Pendientes
+            </AlertTitle>
+            <AlertDescription className='text-blue-800 dark:text-blue-200'>
+              {registrosPendientes.mensaje}
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Mostrar resultado del procesamiento */}
+        {procesamientoResult && (
+          <Card className='border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20'>
+            <CardHeader>
+              <CardTitle className='text-green-900 dark:text-green-100 flex items-center gap-2'>
+                <CheckCircle2 className='h-5 w-5' />
+                Resultado del Procesamiento
+              </CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+                <div className='text-center'>
+                  <div className='text-2xl font-bold text-green-700 dark:text-green-300'>
+                    {procesamientoResult.registrosActualizados}
+                  </div>
+                  <div className='text-xs text-muted-foreground'>Registros Actualizados</div>
+                </div>
+                <div className='text-center'>
+                  <div className='text-sm font-medium text-green-700 dark:text-green-300'>
+                    {procesamientoResult.periodo}
+                  </div>
+                  <div className='text-xs text-muted-foreground'>Período</div>
+                </div>
+                <div className='text-center'>
+                  <Badge variant={procesamientoResult.exitoso ? 'default' : 'destructive'}>
+                    {procesamientoResult.exitoso ? 'Exitoso' : 'Falló'}
+                  </Badge>
+                  <div className='text-xs text-muted-foreground'>Estado</div>
+                </div>
+                <div className='text-center'>
+                  <div className='text-xs text-muted-foreground'>
+                    {new Date(procesamientoResult.fechaProcesamiento).toLocaleString()}
+                  </div>
+                  <div className='text-xs text-muted-foreground'>Fecha</div>
+                </div>
+              </div>
+              
+              <div className='text-sm text-green-800 dark:text-green-200'>
+                {procesamientoResult.mensaje}
+              </div>
+              
+              {procesamientoResult.detalles && procesamientoResult.detalles.length > 0 && (
+                <div className='mt-4'>
+                  <h4 className='text-sm font-medium mb-2'>Detalles del procesamiento:</h4>
+                  <ScrollArea className='h-32 rounded border'>
+                    <div className='p-2 space-y-2'>
+                      {procesamientoResult.detalles.map((detalle, idx) => (
+                        <div key={idx} className='text-xs bg-white dark:bg-slate-900 p-2 rounded border'>
+                          <div className='grid grid-cols-2 gap-2'>
+                            <span><strong>Serie:</strong> {detalle.numeroSerie}</span>
+                            <span><strong>Tarifa:</strong> {detalle.tarifa}</span>
+                            <span><strong>Lectura Ant.:</strong> {detalle.lecturaAnteriorKwh} kWh</span>
+                            <span><strong>Consumo:</strong> {detalle.consumoEnergiaKwh} kWh</span>
+                            <span><strong>Usuario:</strong> {detalle.usuarioCarga}</span>
+                            <span><strong>Estado:</strong> {detalle.estado}</span>
+                          </div>
+                          {detalle.mensaje && (
+                            <div className='mt-1 text-muted-foreground'>{detalle.mensaje}</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              )}
+              
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={() => setProcesamientoResult(null)}
+                className='w-full mt-2'
+              >
+                Cerrar
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Información de columnas requeridas */}
         <Alert className='border-sky-200 dark:border-sky-800 bg-sky-50/50 dark:bg-sky-950/20'>
