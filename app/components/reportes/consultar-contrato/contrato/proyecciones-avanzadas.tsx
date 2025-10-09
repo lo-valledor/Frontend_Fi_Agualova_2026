@@ -1,20 +1,24 @@
 import {
   AlertTriangle,
-  CalendarDays,
+  Brain,
+  Download,
   Info,
-  Snowflake,
-  Sun,
+  Loader2,
+  RefreshCw,
+  Sparkles,
   TrendingUp,
   Zap
 } from 'lucide-react';
 
-import { memo, useMemo, useState } from 'react';
+import React, { memo, useState } from 'react';
+import * as XLSX from 'xlsx';
 
 import {
   Area,
   AreaChart,
   Bar,
   BarChart,
+  Cell,
   XAxis,
   YAxis
 } from 'recharts';
@@ -33,9 +37,34 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '~/components/ui/chart';
-import { Separator } from '~/components/ui/separator';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import type { DetalleFacturas, DetalleLecturas } from '~/types/reportes';
+
+// Tipos para la respuesta del servicio de IA
+interface ProyeccionIA {
+  fecha: string;
+  mes: string;
+  consumoProyectado: number;
+  intervaloInferior: number;
+  intervaloSuperior: number;
+  confianza: 'Alta' | 'Media' | 'Baja';
+}
+
+interface MetadataIA {
+  modeloUsado: string;
+  muestrasEntrenamiento: number;
+  confianzaGeneral: string;
+  fechaEntrenamiento: string;
+  periodoHistorico: string | { from: string; to: string };
+  totalConsumoProyectado: number;
+  promedioMensualConsumo: number;
+}
+
+interface RespuestaIA {
+  contratoId: number;
+  proyecciones: ProyeccionIA[];
+  metadata: MetadataIA;
+}
 
 interface ProyeccionesAvanzadasProps {
   detalleLecturas: DetalleLecturas[];
@@ -43,225 +72,220 @@ interface ProyeccionesAvanzadasProps {
   contratoId?: number;
 }
 
-interface ProyeccionMensual {
-  mes: number;
-  mesNombre: string;
-  mesCorto: string;
-  periodo: string;
-  consumoProyectado: number;
-  facturacionProyectada: number;
-  factorEstacional: number;
-  factorHistorico: number;
-  factorTendencia: number;
-  confianza: 'Alta' | 'Media' | 'Baja';
-  alertas: string[];
-  contexto: string;
-}
-
 const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
   detalleLecturas,
   detalleFacturas,
   contratoId
 }: ProyeccionesAvanzadasProps) {
-  const [periodoProyeccion, setPeriodoProyeccion] = useState<6 | 12 | 24>(12);
-
-  // Definir factores estacionales para hemisferio sur
-  const factoresEstacionales = {
-    1: { factor: 1.15, estacion: 'Verano', descripcion: 'Pico de calor - Mayor uso de refrigeración' }, // Enero
-    2: { factor: 1.20, estacion: 'Verano', descripcion: 'Máximo calor - Pico de aires acondicionados' }, // Febrero
-    3: { factor: 1.05, estacion: 'Otoño', descripcion: 'Temperaturas moderadas' }, // Marzo
-    4: { factor: 0.95, estacion: 'Otoño', descripcion: 'Clima templado - Menor demanda energética' }, // Abril
-    5: { factor: 0.90, estacion: 'Otoño', descripcion: 'Temperaturas frescas' }, // Mayo
-    6: { factor: 1.00, estacion: 'Invierno', descripcion: 'Inicio invierno - Calefacción moderada' }, // Junio
-    7: { factor: 1.10, estacion: 'Invierno', descripcion: 'Pico invernal - Mayor uso calefacción' }, // Julio
-    8: { factor: 1.08, estacion: 'Invierno', descripcion: 'Fin de invierno - Calefacción continua' }, // Agosto
-    9: { factor: 0.95, estacion: 'Primavera', descripcion: 'Clima templado primaveral' }, // Septiembre
-    10: { factor: 0.98, estacion: 'Primavera', descripcion: 'Temperaturas agradables' }, // Octubre
-    11: { factor: 1.02, estacion: 'Primavera', descripcion: 'Pre-verano - Inicio uso refrigeración' }, // Noviembre
-    12: { factor: 1.12, estacion: 'Verano', descripcion: 'Inicio verano - Aumenta refrigeración' } // Diciembre
+  // Formatea periodoHistorico si viene como rango
+  const formatPeriodoHistorico = (ph: MetadataIA['periodoHistorico']) => {
+    if (!ph) return 'N/D';
+    if (typeof ph === 'string') return ph;
+    if (typeof ph === 'object' && 'from' in ph && 'to' in ph) {
+      return `${ph.from} a ${ph.to}`;
+    }
+    try {
+      return JSON.stringify(ph);
+    } catch {
+      return 'N/D';
+    }
+  };
+  // Función para obtener color basado en el nivel de confianza
+  const getConfianzaColor = (confianza: string) => {
+    switch (confianza) {
+      case 'Alta': return '#10b981';
+      case 'Media': return '#f59e0b';
+      case 'Baja': return '#ef4444';
+      default: return '#6b7280';
+    }
   };
 
-  const algoritmoProyeccionAvanzado = useMemo(() => {
-    if (detalleLecturas.length === 0 && detalleFacturas.length === 0) {
-      return { proyecciones: [], resumen: null };
+  const [periodoProyeccion, setPeriodoProyeccion] = useState<6 | 12 | 24>(6);
+  const [proyeccionesData, setProyeccionesData] = useState<RespuestaIA | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [modeloEntrenado, setModeloEntrenado] = useState(false);
+
+  // Servicio de IA URL - usando endpoint de prueba sin autenticación
+  const AI_SERVICE_URL = 'http://localhost:8001';
+
+  const generarProyecciones = async () => {
+    if (!contratoId) {
+      setError('ID de contrato no disponible');
+      return;
     }
 
-    // Procesar datos históricos
-    const datosHistoricos = detalleLecturas.map(lectura => {
-      let fecha;
-      if (lectura.fechaLectura && lectura.fechaLectura !== '-') {
-        if (typeof lectura.fechaLectura === 'string' && lectura.fechaLectura.includes('/')) {
-          const [datePart] = lectura.fechaLectura.split(' ');
-          const [day, month, year] = datePart.split('/');
-          fecha = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-        } else {
-          fecha = new Date(lectura.fechaLectura);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Usar el endpoint de prueba sin autenticación
+      const response = await fetch(
+        `${AI_SERVICE_URL}/api/ai/proyecciones-test/${contratoId}?meses=${periodoProyeccion}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
         }
-      } else {
-        fecha = new Date();
-      }
-
-      const factura = detalleFacturas.find(f => f.periodo === lectura.periodo);
-      
-      return {
-        fecha: fecha.getTime(),
-        mes: fecha.getMonth() + 1,
-        año: fecha.getFullYear(),
-        consumo: lectura.consumoPeriodo || 0,
-        facturacion: factura?.valorTotal || 0,
-        periodo: lectura.periodo
-      };
-    }).sort((a, b) => a.fecha - b.fecha);
-
-    // Calcular promedios históricos por mes
-    const promediosPorMes: { [key: number]: { consumo: number; facturacion: number; count: number } } = {};
-    
-    datosHistoricos.forEach(dato => {
-      if (!promediosPorMes[dato.mes]) {
-        promediosPorMes[dato.mes] = { consumo: 0, facturacion: 0, count: 0 };
-      }
-      promediosPorMes[dato.mes].consumo += dato.consumo;
-      promediosPorMes[dato.mes].facturacion += dato.facturacion;
-      promediosPorMes[dato.mes].count++;
-    });
-
-    Object.keys(promediosPorMes).forEach(mes => {
-      const mesNum = parseInt(mes);
-      promediosPorMes[mesNum].consumo /= promediosPorMes[mesNum].count;
-      promediosPorMes[mesNum].facturacion /= promediosPorMes[mesNum].count;
-    });
-
-    // Calcular tendencia general usando regresión lineal
-    const n = datosHistoricos.length;
-    let sumX = 0, sumYConsumo = 0, sumYFacturacion = 0, sumXYConsumo = 0, sumXYFacturacion = 0, sumX2 = 0;
-    
-    datosHistoricos.forEach((dato, index) => {
-      const x = index;
-      sumX += x;
-      sumYConsumo += dato.consumo;
-      sumYFacturacion += dato.facturacion;
-      sumXYConsumo += x * dato.consumo;
-      sumXYFacturacion += x * dato.facturacion;
-      sumX2 += x * x;
-    });
-    
-    const tendenciaConsumo = n > 1 ? (n * sumXYConsumo - sumX * sumYConsumo) / (n * sumX2 - sumX * sumX) : 0;
-    const interceptConsumo = n > 1 ? (sumYConsumo - tendenciaConsumo * sumX) / n : 0;
-    const tendenciaFacturacion = n > 1 ? (n * sumXYFacturacion - sumX * sumYFacturacion) / (n * sumX2 - sumX * sumX) : 0;
-    const interceptFacturacion = n > 1 ? (sumYFacturacion - tendenciaFacturacion * sumX) / n : 0;
-
-    // Calcular factor tarifario (asumiendo crecimiento promedio del 3% anual)
-    const factorTarifarioAnual = 1.03;
-
-    // Generar proyecciones
-    const ahora = new Date();
-    const proyecciones: ProyeccionMensual[] = [];
-
-    for (let i = 1; i <= periodoProyeccion; i++) {
-      const fechaProyeccion = new Date(ahora);
-      fechaProyeccion.setMonth(fechaProyeccion.getMonth() + i);
-      const mes = fechaProyeccion.getMonth() + 1;
-      const año = fechaProyeccion.getFullYear();
-      
-      // 1. Factor estacional (30%)
-      const factorEstacional = factoresEstacionales[mes as keyof typeof factoresEstacionales].factor;
-      
-      // 2. Promedio histórico del mes (60%)
-      const promedioHistorico = promediosPorMes[mes] || { consumo: 0, facturacion: 0 };
-      
-      // 3. Tendencia lineal (10%)
-      const proyeccionTendencia = {
-        consumo: Math.max(0, interceptConsumo + tendenciaConsumo * (n + i - 1)),
-        facturacion: Math.max(0, interceptFacturacion + tendenciaFacturacion * (n + i - 1))
-      };
-      
-      // 4. Factor tarifario (años futuros)
-      const añosFuturos = Math.max(0, año - ahora.getFullYear());
-      const factorTarifario = Math.pow(factorTarifarioAnual, añosFuturos);
-
-      // Combinar factores
-      const consumoBase = promedioHistorico.consumo || 
-        (datosHistoricos.length > 0 ? sumYConsumo / n : 0);
-      const facturacionBase = promedioHistorico.facturacion || 
-        (datosHistoricos.length > 0 ? sumYFacturacion / n : 0);
-
-      const consumoProyectado = Math.round(
-        (consumoBase * 0.6 + proyeccionTendencia.consumo * 0.1) * factorEstacional + 
-        (consumoBase * 0.3)
       );
 
-      const facturacionProyectada = Math.round(
-        (facturacionBase * 0.6 + proyeccionTendencia.facturacion * 0.1) * 
-        factorEstacional * factorTarifario + (facturacionBase * 0.3 * factorTarifario)
-      );
-
-      // Calcular confianza
-      let confianza: 'Alta' | 'Media' | 'Baja' = 'Media';
-      const datosDelMes = promediosPorMes[mes]?.count || 0;
-      if (datosDelMes >= 3) confianza = 'Alta';
-      else if (datosDelMes < 2) confianza = 'Baja';
-
-      // Generar alertas contextuales
-      const alertas: string[] = [];
-      const contextoEstacional = factoresEstacionales[mes as keyof typeof factoresEstacionales];
-      
-      if (factorEstacional > 1.15) {
-        alertas.push(`⚠️ Mes de alto consumo típico (${contextoEstacional.estacion})`);
-      }
-      if (factorEstacional < 0.95) {
-        alertas.push(`💡 Mes de bajo consumo típico (${contextoEstacional.estacion})`);
-      }
-      if (añosFuturos > 0) {
-        alertas.push(`💰 Incluye proyección tarifaria (+${((factorTarifario - 1) * 100).toFixed(1)}%)`);
-      }
-      if (confianza === 'Baja') {
-        alertas.push(`📊 Pocos datos históricos para este mes`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Error del servidor: ${response.status}`);
       }
 
-      proyecciones.push({
-        mes,
-        mesNombre: fechaProyeccion.toLocaleDateString('es-CL', { month: 'long' }),
-        mesCorto: fechaProyeccion.toLocaleDateString('es-CL', { month: 'short' }),
-        periodo: `${fechaProyeccion.toLocaleDateString('es-CL', { month: 'short' })} ${año}`,
-        consumoProyectado,
-        facturacionProyectada,
-        factorEstacional,
-        factorHistorico: promedioHistorico.consumo > 0 ? 0.6 : 0,
-        factorTendencia: 0.1,
-        confianza,
-        alertas,
-        contexto: contextoEstacional.descripcion
-      });
+      const data: RespuestaIA = await response.json();
+      setProyeccionesData(data);
+      setModeloEntrenado(true);
+    } catch (err) {
+      console.error('Error al generar proyecciones:', err);
+      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setProyeccionesData(null);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    // Calcular resumen
-    const totalConsumoProyectado = proyecciones.reduce((sum, p) => sum + p.consumoProyectado, 0);
-    const totalFacturacionProyectada = proyecciones.reduce((sum, p) => sum + p.facturacionProyectada, 0);
-    const promedioConfianza = proyecciones.filter(p => p.confianza === 'Alta').length / proyecciones.length;
+  const reentrenarModelo = async () => {
+    if (!contratoId) return;
 
-    const resumen = {
-      totalConsumoProyectado,
-      totalFacturacionProyectada,
-      promedioMensualConsumo: Math.round(totalConsumoProyectado / proyecciones.length),
-      promedioMensualFacturacion: Math.round(totalFacturacionProyectada / proyecciones.length),
-      confianzaGeneral: promedioConfianza > 0.6 ? 'Alta' : promedioConfianza > 0.3 ? 'Media' : 'Baja',
-      mesesAltoConsumo: proyecciones.filter(p => p.factorEstacional > 1.1).length,
-      mesesBajoConsumo: proyecciones.filter(p => p.factorEstacional < 0.95).length
-    };
+    setIsLoading(true);
+    setError(null);
 
-    return { proyecciones, resumen };
-  }, [detalleLecturas, detalleFacturas, periodoProyeccion]);
+    try {
+      const response = await fetch(
+        `${AI_SERVICE_URL}/api/ai/proyecciones/reentrenar/${contratoId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || 'Error en reentrenamiento');
+      }
+
+      // Después de reentrenar, generar nuevas proyecciones
+      await generarProyecciones();
+    } catch (err) {
+      console.error('Error al reentrenar:', err);
+      setError(err instanceof Error ? err.message : 'Error en reentrenamiento');
+    }
+  };
+
+  const verificarEstadoModelo = async () => {
+    if (!contratoId) return;
+
+    try {
+      const response = await fetch(`${AI_SERVICE_URL}/api/ai/proyecciones/estado/${contratoId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setModeloEntrenado(data.entrenado || false);
+      }
+    } catch (err) {
+      console.warn('No se pudo verificar el estado del modelo:', err);
+    }
+  };
+
+  // Verificar estado al montar el componente
+  React.useEffect(() => {
+    if (contratoId) {
+      verificarEstadoModelo();
+    }
+  }, [contratoId]);
+
+  // Regenerar cuando cambie el período
+  React.useEffect(() => {
+    if (proyeccionesData && contratoId) {
+      generarProyecciones();
+    }
+  }, [periodoProyeccion]);
+
+  const exportarAExcel = () => {
+    if (!proyeccionesData) return;
+
+    const { proyecciones, metadata } = proyeccionesData;
+    
+    const datosExportacion = proyecciones.map((proyeccion, index) => ({
+      'N°': index + 1,
+      'Período': proyeccion.mes,
+      'Fecha': proyeccion.fecha,
+      'Consumo Proyectado (kWh)': proyeccion.consumoProyectado.toLocaleString('es-CL'),
+      'Intervalo Inferior (kWh)': proyeccion.intervaloInferior.toLocaleString('es-CL'),
+      'Intervalo Superior (kWh)': proyeccion.intervaloSuperior.toLocaleString('es-CL'),
+      'Nivel de Confianza': proyeccion.confianza
+    }));
+
+    const datosResumen = [
+      {},
+      { 'N°': 'RESUMEN EJECUTIVO', 'Período': '', 'Fecha': '', 'Consumo Proyectado (kWh)': '' },
+      {},
+      { 'N°': 'Modelo Usado:', 'Período': metadata.modeloUsado },
+      { 'N°': 'Muestras de Entrenamiento:', 'Período': metadata.muestrasEntrenamiento.toString() },
+      { 'N°': 'Confianza General:', 'Período': metadata.confianzaGeneral },
+      { 'N°': 'Total Consumo Proyectado:', 'Período': `${metadata.totalConsumoProyectado.toLocaleString('es-CL')} kWh` },
+      { 'N°': 'Promedio Mensual:', 'Período': `${metadata.promedioMensualConsumo.toLocaleString('es-CL')} kWh` },
+  { 'N°': 'Período Histórico:', 'Período': formatPeriodoHistorico(metadata.periodoHistorico) },
+      { 'N°': 'Fecha Entrenamiento:', 'Período': metadata.fechaEntrenamiento },
+      {},
+      { 'N°': 'MODELO DE IA', 'Período': '', 'Fecha': '', 'Consumo Proyectado (kWh)': '' },
+      {},
+      { 'N°': '• Algoritmo:', 'Período': 'Prophet (Facebook) - Optimizado para series temporales' },
+      { 'N°': '• Características:', 'Período': 'Detección automática de estacionalidad y tendencias' },
+      { 'N°': '• Intervalos de confianza:', 'Período': 'Calculados automáticamente por el modelo' },
+      { 'N°': '• Ventajas:', 'Período': 'Robusto ante datos faltantes y outliers' }
+    ];
+
+    const todosLosDatos = [...datosExportacion, ...datosResumen];
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(todosLosDatos);
+
+    const columnWidths = [
+      { wch: 5 },   // N°
+      { wch: 15 },  // Período
+      { wch: 12 },  // Fecha
+      { wch: 20 },  // Consumo Proyectado
+      { wch: 22 },  // Intervalo Inferior
+      { wch: 22 },  // Intervalo Superior
+      { wch: 18 }   // Nivel de Confianza
+    ];
+    ws['!cols'] = columnWidths;
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Proyecciones IA');
+
+    const fechaActual = new Date().toLocaleDateString('es-CL').replace(/\//g, '-');
+    const nombreArchivo = `Proyecciones_IA_Contrato${contratoId}_${fechaActual}.xlsx`;
+    XLSX.writeFile(wb, nombreArchivo);
+  };
 
   const chartConfig = {
     consumo: {
       label: 'Consumo Proyectado (kWh)',
       color: '#3b82f6'
     },
-    facturacion: {
-      label: 'Facturación Proyectada ($)',
-      color: '#dc2626'
+    inferior: {
+      label: 'Intervalo Inferior',
+      color: '#93c5fd'
+    },
+    superior: {
+      label: 'Intervalo Superior',
+      color: '#1e40af'
     }
   };
+
+  // Preparar datos para los gráficos
+  const chartData = proyeccionesData?.proyecciones.map(p => ({
+    mes: p.mes,
+    fecha: p.fecha,
+    consumoProyectado: p.consumoProyectado,
+    intervaloInferior: p.intervaloInferior,
+    intervaloSuperior: p.intervaloSuperior,
+    confianza: p.confianza
+  })) || [];
 
   if (detalleLecturas.length === 0 && detalleFacturas.length === 0) {
     return (
@@ -277,463 +301,459 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
     <TooltipProvider>
       <div className='space-y-6'>
         {/* Header y controles */}
-        <Card className='border bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 border-purple-200 dark:border-purple-800'>
+        <Card className='border bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-blue-200 dark:border-blue-800'>
           <CardHeader>
             <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
               <div>
                 <div className='flex items-center gap-2'>
-                  <CardTitle className='text-lg flex items-center gap-2 text-purple-900 dark:text-purple-100'>
-                    🔮 Proyecciones Avanzadas
-                    <Badge variant="outline" className='bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 border-purple-300 dark:border-purple-600'>
-                      Algoritmo Mejorado
+                  <CardTitle className='text-lg flex items-center gap-2 text-blue-900 dark:text-blue-100'>
+                    🤖 Proyecciones con IA
+                    <Badge variant="default" className='bg-blue-600 text-white'>
+                      Prophet AI
                     </Badge>
                   </CardTitle>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info className='h-4 w-4 text-purple-600 dark:text-purple-400 cursor-help' />
+                      <Info className='h-4 w-4 text-blue-600 dark:text-blue-400 cursor-help' />
                     </TooltipTrigger>
                     <TooltipContent className='max-w-md p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
                       <div className='space-y-3 text-sm'>
-                        <p className='font-semibold text-purple-700 dark:text-purple-300'>🔮 ¿Qué son las Proyecciones Avanzadas?</p>
+                        <p className='font-semibold text-blue-700 dark:text-blue-300'>🤖 Proyecciones con Inteligencia Artificial</p>
                         <div className='space-y-2 text-slate-700 dark:text-slate-300'>
-                          <p><strong className='text-slate-900 dark:text-slate-100'>• Algoritmo inteligente:</strong> Combina 4 factores para generar estimaciones más precisas</p>
-                          <p><strong className='text-slate-900 dark:text-slate-100'>• Específico para hemisferio sur:</strong> Considera patrones estacionales locales</p>
-                          <p><strong className='text-slate-900 dark:text-slate-100'>• Datos históricos:</strong> Usa todo tu historial disponible, no solo datos filtrados</p>
-                          <p><strong className='text-slate-900 dark:text-slate-100'>• Proyección dual:</strong> Estima tanto consumo (kWh) como facturación ($)</p>
+                          <p><strong className='text-slate-900 dark:text-slate-100'>• Modelo Prophet:</strong> Algoritmo de Facebook para series temporales</p>
+                          <p><strong className='text-slate-900 dark:text-slate-100'>• Auto-entrenamiento:</strong> Aprende de tus datos históricos reales</p>
+                          <p><strong className='text-slate-900 dark:text-slate-100'>• Intervalos de confianza:</strong> Rango superior e inferior automático</p>
+                          <p><strong className='text-slate-900 dark:text-slate-100'>• Estacionalidad:</strong> Detecta patrones automáticamente</p>
                         </div>
-                        <div className='bg-purple-50 dark:bg-purple-950/50 p-3 rounded border border-purple-200 dark:border-purple-800'>
-                          <p className='font-medium mb-1 text-purple-700 dark:text-purple-300'>💡 ¿Por qué es mejor?</p>
-                          <p className='text-xs text-purple-700 dark:text-purple-300'>A diferencia de proyecciones simples que solo usan tendencias lineales, 
-                          este algoritmo considera la realidad del consumo eléctrico: estaciones, patrones mensuales, 
-                          y alzas tarifarias.</p>
+                        <div className='bg-blue-50 dark:bg-blue-950/50 p-3 rounded border border-blue-200 dark:border-blue-800'>
+                          <p className='font-medium mb-1 text-blue-700 dark:text-blue-300'>🎯 Ventajas del AI</p>
+                          <p className='text-xs text-blue-700 dark:text-blue-300'>El modelo se entrena específicamente con TUS datos, 
+                          capturando patrones únicos de tu consumo que algoritmos genéricos no pueden detectar.</p>
                         </div>
-                        <p className='text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 p-2 rounded border border-amber-200 dark:border-amber-800'>
-                          ⚠️ Recuerda: Son estimaciones estadísticas, no valores garantizados
-                        </p>
                       </div>
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                <p className='text-sm text-purple-700 dark:text-purple-300 mt-1'>
-                  Análisis predictivo con factores estacionales, históricos y tarifarios
+                <p className='text-sm text-blue-700 dark:text-blue-300 mt-1'>
+                  Modelo Prophet entrenado con datos históricos reales del contrato
                 </p>
               </div>
-              <div className='flex items-center gap-2'>
-                <span className='text-sm text-purple-600 dark:text-purple-400'>Período:</span>
-                <div className='flex gap-1'>
-                  {([6, 12, 24] as const).map(periodo => (
+              <div className='flex flex-col sm:flex-row gap-3'>
+                <div className='flex items-center gap-2'>
+                  <span className='text-sm text-blue-600 dark:text-blue-400'>Período:</span>
+                  <div className='flex gap-1'>
+                    {([6, 12, 24] as const).map(periodo => (
+                      <Button
+                        key={periodo}
+                        variant={periodoProyeccion === periodo ? 'default' : 'outline'}
+                        size='sm'
+                        onClick={() => setPeriodoProyeccion(periodo)}
+                        className='text-xs'
+                        disabled={isLoading}
+                      >
+                        {periodo}m
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                <div className='flex gap-2'>
+                  {!proyeccionesData && (
                     <Button
-                      key={periodo}
-                      variant={periodoProyeccion === periodo ? 'default' : 'outline'}
+                      onClick={generarProyecciones}
+                      disabled={isLoading || !contratoId}
+                      className='gap-2'
                       size='sm'
-                      onClick={() => setPeriodoProyeccion(periodo)}
-                      className='text-xs'
                     >
-                      {periodo}m
+                      {isLoading ? (
+                        <>
+                          <Loader2 className='h-4 w-4 animate-spin' />
+                          Generando...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className='h-4 w-4' />
+                          Generar IA
+                        </>
+                      )}
                     </Button>
-                  ))}
+                  )}
+                  {proyeccionesData && (
+                    <>
+                      <Button
+                        onClick={reentrenarModelo}
+                        variant='outline'
+                        size='sm'
+                        disabled={isLoading}
+                        className='gap-2'
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader2 className='h-4 w-4 animate-spin' />
+                            Reentrenando...
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className='h-4 w-4' />
+                            Reentrenar
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        onClick={exportarAExcel}
+                        variant='outline'
+                        size='sm'
+                        className='gap-2 text-green-700 border-green-200 hover:bg-green-50'
+                      >
+                        <Download className='h-4 w-4' />
+                        Excel
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
           </CardHeader>
         </Card>
 
-        {/* Resumen ejecutivo */}
-        {algoritmoProyeccionAvanzado.resumen && (
-          <div className='grid gap-4 md:grid-cols-4'>
-            <Card>
-              <CardContent className='pt-4'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center justify-between cursor-help'>
-                      <div>
-                        <p className='text-sm font-medium'>Consumo Proyectado</p>
-                        <p className='text-2xl font-bold text-blue-600'>
-                          {algoritmoProyeccionAvanzado.resumen.totalConsumoProyectado.toLocaleString('es-CL')}
-                        </p>
-                        <p className='text-xs text-muted-foreground'>kWh total</p>
-                      </div>
-                      <Zap className='h-4 w-4 text-muted-foreground' />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-blue-700 dark:text-blue-300'>💡 Consumo Energético Proyectado</p>
-                      <div className='space-y-1 text-slate-700 dark:text-slate-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Qué es:</strong> Suma total de kWh estimados para el período seleccionado</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Cómo se calcula:</strong> Factor histórico del mes (60%) + factor estacional (30%) + tendencia (10%)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Promedio mensual:</strong> ~{algoritmoProyeccionAvanzado.resumen.promedioMensualConsumo.toLocaleString('es-CL')} kWh/mes</p>
-                      </div>
-                      <p className='text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/50 p-2 rounded border border-blue-200 dark:border-blue-800'>
-                        📊 Este valor NO incluye alzas tarifarias, solo estima el consumo físico de energía
-                      </p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className='pt-4'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center justify-between cursor-help'>
-                      <div>
-                        <p className='text-sm font-medium'>Facturación Proyectada</p>
-                        <p className='text-2xl font-bold text-red-600'>
-                          ${algoritmoProyeccionAvanzado.resumen.totalFacturacionProyectada.toLocaleString('es-CL')}
-                        </p>
-                        <p className='text-xs text-muted-foreground'>total estimado</p>
-                      </div>
-                      <TrendingUp className='h-4 w-4 text-muted-foreground' />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-red-700 dark:text-red-300'>💰 Facturación Total Proyectada</p>
-                      <div className='space-y-1 text-slate-700 dark:text-slate-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Qué es:</strong> Valor total estimado a pagar en el período (incluye IVA)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Incluye:</strong> Consumo proyectado + alzas tarifarias estimadas (~3% anual)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Promedio mensual:</strong> ~${algoritmoProyeccionAvanzado.resumen.promedioMensualFacturacion.toLocaleString('es-CL')}/mes</p>
-                      </div>
-                      <p className='text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/50 p-2 rounded border border-red-200 dark:border-red-800'>
-                        📈 IMPORTANTE: Las alzas tarifarias reales pueden diferir significativamente de la estimación
-                      </p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className='pt-4'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center justify-between cursor-help'>
-                      <div>
-                        <p className='text-sm font-medium'>Confianza General</p>
-                        <Badge variant={
-                          algoritmoProyeccionAvanzado.resumen.confianzaGeneral === 'Alta' ? 'default' :
-                          algoritmoProyeccionAvanzado.resumen.confianzaGeneral === 'Media' ? 'secondary' : 'destructive'
-                        }>
-                          {algoritmoProyeccionAvanzado.resumen.confianzaGeneral}
-                        </Badge>
-                      </div>
-                      <Info className='h-4 w-4 text-muted-foreground' />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-slate-800 dark:text-slate-200'>🎯 Nivel de Confianza</p>
-                      <div className='space-y-1 text-slate-700 dark:text-slate-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Alta:</strong> Más de 3 registros históricos por mes proyectado</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Media:</strong> 2-3 registros históricos por mes</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Baja:</strong> Menos de 2 registros por mes</p>
-                      </div>
-                      <div className='bg-slate-50 dark:bg-slate-900/50 p-2 rounded text-xs border border-slate-200 dark:border-slate-600'>
-                        <p className='text-slate-800 dark:text-slate-200'><strong>Confianza actual:</strong> {algoritmoProyeccionAvanzado.resumen.confianzaGeneral}</p>
-                        <p className='text-slate-600 dark:text-slate-400'>Basada en la cantidad de datos históricos disponibles para hacer la proyección</p>
-                      </div>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className='pt-4'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center justify-between cursor-help'>
-                      <div>
-                        <p className='text-sm font-medium'>Estacionalidad</p>
-                        <div className='flex items-center gap-1 mt-1'>
-                          <Sun className='h-3 w-3 text-orange-500' />
-                          <span className='text-xs'>{algoritmoProyeccionAvanzado.resumen.mesesAltoConsumo}</span>
-                          <Snowflake className='h-3 w-3 text-blue-500 ml-2' />
-                          <span className='text-xs'>{algoritmoProyeccionAvanzado.resumen.mesesBajoConsumo}</span>
-                        </div>
-                        <p className='text-xs text-muted-foreground'>alto/bajo consumo</p>
-                      </div>
-                      <CalendarDays className='h-4 w-4 text-muted-foreground' />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-orange-700 dark:text-orange-300'>🌡️ Análisis Estacional - Hemisferio Sur</p>
-                      <div className='space-y-1 text-slate-700 dark:text-slate-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>☀️ Alto Consumo:</strong> {algoritmoProyeccionAvanzado.resumen.mesesAltoConsumo} meses (Verano: Dic-Feb, Invierno frío)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>❄️ Bajo Consumo:</strong> {algoritmoProyeccionAvanzado.resumen.mesesBajoConsumo} meses (Otoño-Primavera templados)</p>
-                      </div>
-                      <div className='bg-orange-50 dark:bg-orange-950/50 p-2 rounded text-xs border border-orange-200 dark:border-orange-800'>
-                        <p className='text-orange-700 dark:text-orange-300 font-medium mb-1'><strong>Factores considerados:</strong></p>
-                        <div className='text-orange-700 dark:text-orange-300'>
-                          <p>• Verano: +12-20% (aires acondicionados)</p>
-                          <p>• Invierno: +0-10% (calefacción variable)</p>
-                          <p>• Otoño/Primavera: -5% a +5% (templado)</p>
-                        </div>
-                      </div>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </CardContent>
-            </Card>
-          </div>
+        {/* Estado del modelo */}
+        {contratoId && (
+          <Card className='border-l-4 border-l-blue-500 bg-blue-50/50 dark:bg-blue-950/20'>
+            <CardContent className='pt-4'>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-center gap-3'>
+                  <div className={`h-3 w-3 rounded-full ${modeloEntrenado ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                  <div>
+                    <p className='font-medium text-sm'>
+                      Modelo {modeloEntrenado ? 'Entrenado' : 'Pendiente'} - Contrato {contratoId}
+                    </p>
+                    <p className='text-xs text-muted-foreground'>
+                      {modeloEntrenado 
+                        ? 'El modelo de IA está listo para generar proyecciones precisas'
+                        : 'El modelo necesita ser entrenado con los datos históricos disponibles'
+                      }
+                    </p>
+                  </div>
+                </div>
+                {proyeccionesData?.metadata && (
+                  <Badge variant='outline' className='text-xs'>
+                    {proyeccionesData.metadata.muestrasEntrenamiento} muestras
+                  </Badge>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Gráficos de proyección */}
-        <div className='grid gap-6 lg:grid-cols-2'>
-          {/* Consumo proyectado */}
-          <Card>
-            <CardHeader>
-              <div className='flex items-center gap-2'>
-                <CardTitle className='text-base'>Proyección de Consumo por Mes</CardTitle>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className='h-4 w-4 text-muted-foreground cursor-help' />
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-blue-700 dark:text-blue-300'>📊 Gráfico de Consumo Mensual</p>
-                      <div className='space-y-1 text-slate-700 dark:text-slate-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Qué muestra:</strong> kWh estimados para cada mes del período</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Variaciones:</strong> Reflejan patrones estacionales del hemisferio sur</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Barras altas:</strong> Meses de verano/invierno (mayor demanda energética)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Barras bajas:</strong> Meses de otoño/primavera (consumo moderado)</p>
-                      </div>
-                      <p className='text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/50 p-2 rounded border border-blue-200 dark:border-blue-800'>
-                        💡 Pasa el mouse sobre cada barra para ver detalles específicos y nivel de confianza
-                      </p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
+        {/* Error */}
+        {error && (
+          <Alert variant='destructive'>
+            <AlertTriangle className='h-4 w-4' />
+            <AlertDescription>
+              <strong>Error del servicio de IA:</strong> {error}
+              <div className='mt-2 text-xs'>
+                • Verifica que el servicio de IA esté corriendo en http://localhost:8001
+                <br />
+                • Confirma que el contrato {contratoId} tenga datos históricos suficientes
+                <br />
+                • Revisa la conexión a la base de datos del servicio de IA
               </div>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className='aspect-[4/3]'>
-                <BarChart data={algoritmoProyeccionAvanzado.proyecciones}>
-                  <XAxis
-                    dataKey='mesCorto'
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    fontSize={12}
-                  />
-                  <YAxis hide />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                    labelFormatter={(label, payload) => {
-                      const item = payload?.[0]?.payload;
-                      return item ? `${item.periodo} (${item.contexto})` : label;
-                    }}
-                    formatter={(value, name, props) => [
-                      `~${Number(value).toLocaleString('es-CL')} kWh`,
-                      `Estimación (Confianza: ${props.payload?.confianza})`
-                    ]}
-                  />
-                  <Bar
-                    dataKey='consumoProyectado'
-                    fill='#3b82f6'
-                    radius={[4, 4, 0, 0]}
-                    opacity={0.8}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
+            </AlertDescription>
+          </Alert>
+        )}
 
-          {/* Facturación proyectada */}
-          <Card>
-            <CardHeader>
-              <div className='flex items-center gap-2'>
-                <CardTitle className='text-base'>Proyección de Facturación por Mes</CardTitle>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className='h-4 w-4 text-muted-foreground cursor-help' />
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-red-700 dark:text-red-300'>💰 Gráfico de Facturación Mensual</p>
-                      <div className='space-y-1 text-slate-700 dark:text-slate-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Qué muestra:</strong> Monto total estimado a pagar cada mes (incluye IVA)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Incluye:</strong> Consumo proyectado + alzas tarifarias (~3% anual)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Gráfico de área:</strong> Visualiza el flujo acumulativo de gastos</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Variaciones:</strong> Siguen el patrón de consumo + inflación tarifaria</p>
-                      </div>
-                      <p className='text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/50 p-2 rounded border border-red-200 dark:border-red-800'>
-                        ⚠️ Los valores incluyen estimación de alzas eléctricas, que pueden variar significativamente
+        {/* Resultados de IA */}
+        {proyeccionesData && (
+          <>
+            {/* Metadata del modelo */}
+            <Card className='bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border-green-200 dark:border-green-800'>
+              <CardHeader>
+                <CardTitle className='text-base text-green-800 dark:text-green-200'>
+                  📊 Información del Modelo de IA
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+                  <div className='space-y-1'>
+                    <p className='text-sm font-medium'>Algoritmo</p>
+                    <p className='text-sm text-muted-foreground'>{proyeccionesData.metadata.modeloUsado}</p>
+                  </div>
+                  <div className='space-y-1'>
+                    <p className='text-sm font-medium'>Muestras Entrenamiento</p>
+                    <p className='text-sm text-muted-foreground'>{proyeccionesData.metadata.muestrasEntrenamiento} registros</p>
+                  </div>
+                  <div className='space-y-1'>
+                    <p className='text-sm font-medium'>Confianza General</p>
+                    <Badge variant={
+                      proyeccionesData.metadata.confianzaGeneral === 'Excelente' ? 'default' :
+                      proyeccionesData.metadata.confianzaGeneral === 'Buena' ? 'secondary' : 'destructive'
+                    }>
+                      {proyeccionesData.metadata.confianzaGeneral}
+                    </Badge>
+                  </div>
+                  <div className='space-y-1'>
+                    <p className='text-sm font-medium'>Período Histórico</p>
+                    <p className='text-sm text-muted-foreground'>{formatPeriodoHistorico(proyeccionesData.metadata.periodoHistorico)}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Resumen ejecutivo */}
+            <div className='grid gap-4 md:grid-cols-3'>
+              <Card>
+                <CardContent className='pt-4'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-sm font-medium'>Total Proyectado</p>
+                      <p className='text-2xl font-bold text-blue-600'>
+                        {proyeccionesData.metadata.totalConsumoProyectado.toLocaleString('es-CL')}
                       </p>
+                      <p className='text-xs text-muted-foreground'>kWh en {periodoProyeccion} meses</p>
                     </div>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className='aspect-[4/3]'>
-                <AreaChart data={algoritmoProyeccionAvanzado.proyecciones}>
-                  <XAxis
-                    dataKey='mesCorto'
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    fontSize={12}
-                  />
-                  <YAxis hide />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                    labelFormatter={(label, payload) => {
-                      const item = payload?.[0]?.payload;
-                      return item ? `${item.periodo} (${item.contexto})` : label;
-                    }}
-                    formatter={(value, name, props) => [
-                      `~$${Number(value).toLocaleString('es-CL')}`,
-                      `Estimación (Confianza: ${props.payload?.confianza})`
-                    ]}
-                  />
-                  <Area
-                    dataKey='facturacionProyectada'
-                    fill='#dc2626'
-                    fillOpacity={0.2}
-                    stroke='#dc2626'
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
+                    <Zap className='h-5 w-5 text-blue-500' />
+                  </div>
+                </CardContent>
+              </Card>
 
-        {/* Disclaimer importante */}
-        <Alert className='border-amber-200 bg-amber-50 dark:bg-amber-950/10'>
-          <AlertTriangle className='h-4 w-4 text-amber-600' />
-          <AlertDescription className='text-amber-800 dark:text-amber-200'>
-            <strong>Importante:</strong> Estas proyecciones son estimaciones estadísticas basadas en datos históricos, 
-            factores estacionales del hemisferio sur, y tendencias tarifarias. Los valores reales pueden diferir 
-            significativamente debido a cambios en patrones de consumo, condiciones climáticas atípicas, 
-            modificaciones tarifarias no previstas, o cambios en el equipamiento eléctrico.
-          </AlertDescription>
-        </Alert>
+              <Card>
+                <CardContent className='pt-4'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-sm font-medium'>Promedio Mensual</p>
+                      <p className='text-2xl font-bold text-green-600'>
+                        {proyeccionesData.metadata.promedioMensualConsumo.toLocaleString('es-CL')}
+                      </p>
+                      <p className='text-xs text-muted-foreground'>kWh por mes</p>
+                    </div>
+                    <TrendingUp className='h-5 w-5 text-green-500' />
+                  </div>
+                </CardContent>
+              </Card>
 
-        <Separator />
+              <Card>
+                <CardContent className='pt-4'>
+                  <div className='flex items-center justify-between'>
+                    <div>
+                      <p className='text-sm font-medium'>Precisión IA</p>
+                      <p className='text-2xl font-bold text-purple-600'>
+                        {Math.round((proyeccionesData.metadata.muestrasEntrenamiento / Math.max(proyeccionesData.metadata.muestrasEntrenamiento, 50)) * 100)}%
+                      </p>
+                      <p className='text-xs text-muted-foreground'>basado en datos históricos</p>
+                    </div>
+                    <Brain className='h-5 w-5 text-purple-500' />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Metodología y factores */}
-        <Card>
+            {/* Gráficos */}
+            <div className='grid gap-6 lg:grid-cols-2'>
+              {/* Consumo proyectado con intervalos */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='text-base'>Proyección de Consumo con Intervalos de Confianza</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig} className='aspect-[4/3]'>
+                    <AreaChart data={chartData}>
+                      <XAxis
+                        dataKey='mes'
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        fontSize={12}
+                        angle={-45}
+                        textAnchor='end'
+                        height={60}
+                      />
+                      <YAxis hide />
+                      <ChartTooltip
+                        content={<ChartTooltipContent />}
+                        labelFormatter={(label, payload) => {
+                          const item = payload?.[0]?.payload;
+                          return item ? `${item.mes} (${item.fecha})` : label;
+                        }}
+                        formatter={(value, name, props) => {
+                          const formatValue = `${Number(value).toLocaleString('es-CL')} kWh`;
+                          const confianza = props.payload?.confianza;
+                          return [formatValue, `${name} (${confianza})`];
+                        }}
+                      />
+                      <Area
+                        dataKey='intervaloSuperior'
+                        fill='#93c5fd'
+                        fillOpacity={0.3}
+                        stroke='none'
+                      />
+                      <Area
+                        dataKey='intervaloInferior'
+                        fill='#ffffff'
+                        fillOpacity={1}
+                        stroke='none'
+                      />
+                      <Area
+                        dataKey='consumoProyectado'
+                        fill='#3b82f6'
+                        fillOpacity={0.8}
+                        stroke='#1e40af'
+                        strokeWidth={2}
+                      />
+                    </AreaChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+
+              {/* Barras por confianza */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='text-base'>Proyección por Nivel de Confianza</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ChartContainer config={chartConfig} className='aspect-[4/3]'>
+                    <BarChart data={chartData}>
+                      <XAxis
+                        dataKey='mes'
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        fontSize={12}
+                        angle={-45}
+                        textAnchor='end'
+                        height={60}
+                      />
+                      <YAxis hide />
+                      <ChartTooltip
+                        content={<ChartTooltipContent />}
+                        labelFormatter={(label, payload) => {
+                          const item = payload?.[0]?.payload;
+                          return item ? `${item.mes} (${item.fecha})` : label;
+                        }}
+                        formatter={(value, name, props) => {
+                          const formatValue = `${Number(value).toLocaleString('es-CL')} kWh`;
+                          const confianza = props.payload?.confianza;
+                          return [formatValue, `Confianza: ${confianza}`];
+                        }}
+                      />
+                      <Bar
+                        dataKey='consumoProyectado'
+                        radius={[4, 4, 0, 0]}
+                        >
+                          {chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={getConfianzaColor(entry.confianza)} />
+                          ))}
+                        </Bar>
+                    </BarChart>
+                  </ChartContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Tabla detallada */}
+            <Card>
+              <CardHeader>
+                <CardTitle className='text-base'>Detalle de Proyecciones Mensuales</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='overflow-x-auto'>
+                  <table className='w-full text-sm'>
+                    <thead>
+                      <tr className='border-b'>
+                        <th className='text-left p-2'>Período</th>
+                        <th className='text-right p-2'>Proyección (kWh)</th>
+                        <th className='text-right p-2'>Intervalo Inferior</th>
+                        <th className='text-right p-2'>Intervalo Superior</th>
+                        <th className='text-center p-2'>Confianza</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {proyeccionesData.proyecciones.map((proyeccion, index) => (
+                        <tr key={index} className='border-b hover:bg-muted/50'>
+                          <td className='p-2 font-medium'>{proyeccion.mes}</td>
+                          <td className='p-2 text-right font-mono'>
+                            {proyeccion.consumoProyectado.toLocaleString('es-CL')}
+                          </td>
+                          <td className='p-2 text-right font-mono text-muted-foreground'>
+                            {proyeccion.intervaloInferior.toLocaleString('es-CL')}
+                          </td>
+                          <td className='p-2 text-right font-mono text-muted-foreground'>
+                            {proyeccion.intervaloSuperior.toLocaleString('es-CL')}
+                          </td>
+                          <td className='p-2 text-center'>
+                            <Badge variant={
+                              proyeccion.confianza === 'Alta' ? 'default' :
+                              proyeccion.confianza === 'Media' ? 'secondary' : 'destructive'
+                            } className='text-xs'>
+                              {proyeccion.confianza}
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        )}
+
+        {/* Información sobre el modelo Prophet */}
+        <Card className='border-l-4 border-l-purple-500 bg-purple-50/50 dark:bg-purple-950/20'>
           <CardHeader>
-            <CardTitle className='text-base'>Metodología de Proyección Avanzada</CardTitle>
+            <CardTitle className='text-base text-purple-800 dark:text-purple-200'>
+              🧠 Sobre el Modelo Prophet
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-              <div className='space-y-2'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center gap-2 cursor-help'>
-                      <CalendarDays className='h-4 w-4 text-blue-500' />
-                      <span className='font-medium text-sm'>Factor Histórico</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-blue-700 dark:text-blue-300'>📅 Factor Histórico (60% del peso)</p>
-                      <div className='space-y-1 text-slate-700 dark:text-slate-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Qué es:</strong> Promedio de consumo del mismo mes en años anteriores</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Por ejemplo:</strong> Para proyectar enero, usa el promedio de todos los eneros anteriores</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Mayor peso:</strong> Los patrones mensales son el mejor predictor</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Ventaja:</strong> Captura comportamientos específicos de cada mes</p>
-                      </div>
-                      <p className='text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/50 p-2 rounded border border-blue-200 dark:border-blue-800'>
-                        💡 Si enero siempre consume mucho por calor, el algoritmo lo considera automáticamente
-                      </p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-                <p className='text-xs text-muted-foreground'>
-                  60% del peso. Promedio de consumo del mismo mes en años anteriores.
-                </p>
+            <div className='grid gap-4 md:grid-cols-2'>
+              <div className='space-y-3'>
+                <div>
+                  <h4 className='font-medium text-sm'>¿Qué es Prophet?</h4>
+                  <p className='text-xs text-muted-foreground mt-1'>
+                    Prophet es un algoritmo de Machine Learning desarrollado por Facebook, 
+                    especializado en series temporales como el consumo energético.
+                  </p>
+                </div>
+                <div>
+                  <h4 className='font-medium text-sm'>Ventajas principales</h4>
+                  <ul className='text-xs text-muted-foreground mt-1 space-y-1'>
+                    <li>• Detecta automáticamente patrones estacionales</li>
+                    <li>• Robusto ante datos faltantes u outliers</li>
+                    <li>• Calcula intervalos de confianza automáticamente</li>
+                    <li>• Se adapta a cambios en tendencias</li>
+                  </ul>
+                </div>
               </div>
-              <div className='space-y-2'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center gap-2 cursor-help'>
-                      <Sun className='h-4 w-4 text-orange-500' />
-                      <span className='font-medium text-sm'>Factor Estacional</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-orange-900 dark:text-orange-100'>🌡️ Factor Estacional (30% del peso)</p>
-                      <div className='space-y-1 text-gray-700 dark:text-gray-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Hemisferio Sur:</strong> Considera estaciones invertidas vs hemisferio norte</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Verano (Dic-Feb):</strong> +12% a +20% por aires acondicionados</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Invierno (Jun-Ago):</strong> +0% a +10% por calefacción</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Otoño/Primavera:</strong> -5% a +5% por clima templado</p>
-                      </div>
-                      <p className='text-xs text-orange-800 dark:text-orange-200 bg-orange-50 dark:bg-orange-900/30 p-2 rounded border border-orange-200 dark:border-orange-700'>
-                        🇨🇱 Calibrado específicamente para patrones climáticos de Chile/Argentina/Uruguay
-                      </p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-                <p className='text-xs text-muted-foreground'>
-                  30% del peso. Ajuste según hemisferio sur (verano: +20%, invierno variable).
-                </p>
-              </div>
-              <div className='space-y-2'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center gap-2 cursor-help'>
-                      <TrendingUp className='h-4 w-4 text-green-500' />
-                      <span className='font-medium text-sm'>Tendencia Lineal</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-green-900 dark:text-green-100'>📈 Tendencia Lineal (10% del peso)</p>
-                      <div className='space-y-1 text-gray-700 dark:text-gray-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Qué detecta:</strong> Si el consumo está creciendo o disminuyendo a largo plazo</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Regresión lineal:</strong> Encuentra la "línea de tendencia" en los datos históricos</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Ejemplos:</strong> Casa nueva (↑), eficiencia energética (↓), más habitantes (↑)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Peso menor:</strong> Los patrones mensuales son más importantes</p>
-                      </div>
-                      <p className='text-xs text-green-800 dark:text-green-200 bg-green-50 dark:bg-green-900/30 p-2 rounded border border-green-200 dark:border-green-700'>
-                        📊 Útil para detectar cambios graduales en hábitos de consumo
-                      </p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-                <p className='text-xs text-muted-foreground'>
-                  10% del peso. Dirección de crecimiento o decrecimiento histórico.
-                </p>
-              </div>
-              <div className='space-y-2'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className='flex items-center gap-2 cursor-help'>
-                      <Zap className='h-4 w-4 text-purple-500' />
-                      <span className='font-medium text-sm'>Factor Tarifario</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-sm p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700'>
-                    <div className='space-y-2 text-sm'>
-                      <p className='font-semibold text-purple-900 dark:text-purple-100'>💰 Factor Tarifario (Solo facturación)</p>
-                      <div className='space-y-1 text-gray-700 dark:text-gray-300'>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Qué es:</strong> Estimación de alzas eléctricas futuras</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Asunción:</strong> ~3% de aumento anual (promedio histórico)</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Solo facturación:</strong> NO afecta el consumo en kWh, solo el precio</p>
-                        <p><strong className='text-slate-900 dark:text-slate-100'>• Acumulativo:</strong> Se aplica año tras año para períodos largos</p>
-                      </div>
-                      <p className='text-xs text-purple-800 dark:text-purple-200 bg-purple-50 dark:bg-purple-900/30 p-2 rounded border border-purple-200 dark:border-purple-700'>
-                        ⚠️ Las alzas reales dependen de regulación, inflación, costos energéticos, etc.
-                      </p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-                <p className='text-xs text-muted-foreground'>
-                  Proyección de alzas eléctricas (~3% anual) aplicada sobre facturación.
-                </p>
+              <div className='space-y-3'>
+                <div>
+                  <h4 className='font-medium text-sm'>¿Cómo funciona?</h4>
+                  <p className='text-xs text-muted-foreground mt-1'>
+                    El modelo analiza tus datos históricos para encontrar patrones 
+                    (tendencias, estacionalidad) y proyecta estos patrones hacia el futuro.
+                  </p>
+                </div>
+                <div>
+                  <h4 className='font-medium text-sm'>Interpretación</h4>
+                  <ul className='text-xs text-muted-foreground mt-1 space-y-1'>
+                    <li>• <strong>Proyección:</strong> Valor más probable</li>
+                    <li>• <strong>Intervalo Inferior/Superior:</strong> Rango de incertidumbre</li>
+                    <li>• <strong>Confianza:</strong> Calidad de los datos históricos</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* Disclaimer */}
+        <Alert className='border-amber-200 bg-amber-50 dark:bg-amber-950/10'>
+          <AlertTriangle className='h-4 w-4 text-amber-600' />
+          <AlertDescription className='text-amber-800 dark:text-amber-200'>
+            <strong>Importante:</strong> Las proyecciones de IA son estimaciones estadísticas basadas en 
+            patrones históricos. Los valores reales pueden diferir debido a cambios en hábitos, equipamiento, 
+            condiciones climáticas atípicas o factores externos no considerados en el entrenamiento del modelo.
+            Usa estas proyecciones como guía para planificación, no como valores garantizados.
+          </AlertDescription>
+        </Alert>
       </div>
     </TooltipProvider>
   );

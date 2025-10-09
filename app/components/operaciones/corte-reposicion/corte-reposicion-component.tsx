@@ -5,12 +5,16 @@ import {
   ChevronDown,
   Download,
   FileText,
+  HelpCircle,
   ListChecks,
   Loader2,
   Play,
   Search
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
+import './driver-tour.css';
 
 import { useState } from 'react';
 
@@ -169,6 +173,84 @@ export default function CorteReposicionComponent({
     }
   };
 
+  // Pasos del tour interactivo con driver.js
+  const tourSteps = [
+    {
+      element: '#panel-revision',
+      popover: {
+        title: '🔧 Panel de Revisión',
+        description: 'Este es el <strong>panel principal</strong> donde encontrarás todas las herramientas de gestión y control para el proceso de corte y reposición.',
+        position: 'bottom' as const
+      }
+    },
+    {
+      element: '#buscar-btn',
+      popover: {
+        title: '🔍 Buscar Datos',
+        description: '¡Empezar aquí! Este botón <strong>actualiza y carga</strong> los datos más recientes del mantenedor de revisión de corte.',
+        position: 'bottom' as const
+      }
+    },
+    {
+      element: '#ver-totales-btn',
+      popover: {
+        title: '📊 Ver Totales',
+        description: 'Muestra un <strong>resumen estadístico</strong> de todos los estados: Pendientes, Liberados, Cortados y Reposición Solicitada.',
+        position: 'bottom' as const
+      }
+    },
+    {
+      element: '#estadisticas-rapidas',
+      popover: {
+        title: '📈 Estadísticas Rápidas',
+        description: 'Vista rápida de los <strong>totales por estado</strong>. Te permite entender la distribución de casos sin abrir el modal.',
+        position: 'top' as const
+      }
+    },
+    {
+      element: '#proceso-buttons',
+      popover: {
+        title: '⚙️ Activar Actualización',
+        description: 'Primer paso del <strong>flujo de trabajo</strong>: Activa la actualización del proceso de revisión antes de iniciarlo.',
+        position: 'bottom' as const
+      }
+    },
+    {
+      element: '#export-buttons',
+      popover: {
+        title: '💾 Exportar Datos',
+        description: 'Descarga los datos en formato <strong>Excel</strong>. Disponible en dos versiones: Mantenedor completo y Revisión de Corte específica.',
+        position: 'bottom' as const
+      }
+    },
+    {
+      element: '#tabla-datos',
+      popover: {
+        title: '📋 Tabla de Datos',
+        description: 'Listado detallado de todos los registros con <strong>filtros y búsqueda</strong>. Puedes buscar por código, RUT o razón social.',
+        position: 'top' as const
+      }
+    }
+  ];
+
+  // Función para iniciar el tour
+  const startTour = () => {
+    const driverjs = driver({ 
+      showProgress: true,
+      progressText: 'Paso {{current}} de {{total}}',
+      smoothScroll: true,
+      stagePadding: 4,
+      stageRadius: 8,
+      animate: true,
+      nextBtnText: 'Siguiente →',
+      prevBtnText: '← Anterior',
+      doneBtnText: '✓ Finalizar'
+    });
+    
+    driverjs.setSteps(tourSteps);
+    driverjs.drive();
+  };
+
   return (
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
@@ -178,9 +260,22 @@ export default function CorteReposicionComponent({
           description='Gestión integral de procesos de corte y reposición de servicios'
         />
 
+        {/* Botón de Guía Interactiva */}
+        <div className="flex justify-end">
+          <Button
+            onClick={startTour}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2 text-blue-600 border-blue-300 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-blue-950"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Guía Interactiva
+          </Button>
+        </div>
+
         <div className='space-y-4'>
           {/* Panel de Revisión modernizado */}
-          <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
+          <Card id="panel-revision" className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
             <Collapsible open={isRevisionOpen} onOpenChange={setIsRevisionOpen}>
               <CollapsibleTrigger asChild>
                 <div className='p-3 border-b border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'>
@@ -211,6 +306,7 @@ export default function CorteReposicionComponent({
                   {/* Botones de Acción modernizados */}
                   <div className='flex flex-wrap gap-3 justify-center'>
                     <Button
+                      id="buscar-btn"
                       variant='outline'
                       size='sm'
                       onClick={handleBuscar}
@@ -227,6 +323,7 @@ export default function CorteReposicionComponent({
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button
+                          id="ver-totales-btn"
                           variant='outline'
                           size='sm'
                           className='gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300'
@@ -312,6 +409,7 @@ export default function CorteReposicionComponent({
                     </Dialog>
 
                     <Button
+                      id="export-buttons"
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcel}
@@ -330,6 +428,7 @@ export default function CorteReposicionComponent({
                       Exportar Excel Corte
                     </Button>
                     <Button
+                      id="proceso-buttons"
                       variant='default'
                       size='sm'
                       onClick={handleActivarActualizacion}
@@ -396,7 +495,7 @@ export default function CorteReposicionComponent({
               ) : (
                 <div className='space-y-4'>
                   {/* Estadísticas rápidas */}
-                  <div className='grid grid-cols-2 lg:grid-cols-4 gap-3'>
+                  <div id="estadisticas-rapidas" className='grid grid-cols-2 lg:grid-cols-4 gap-3'>
                     <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
                       <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
                         {getCantidadPorCodigo('NULL')}
@@ -432,7 +531,7 @@ export default function CorteReposicionComponent({
                   </div>
 
                   {/* Tabla moderna */}
-                  <div className='border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden'>
+                  <div id="tabla-datos" className='border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden'>
                     <DataTable
                       columns={columns}
                       data={mantenedorCorteData}

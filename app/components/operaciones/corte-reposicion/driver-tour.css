@@ -1,0 +1,193 @@
+/* Estilos personalizados para el tour de driver.js en Corte y Reposición */
+
+/* Overlay principal */
+.driver-overlay {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(2px) !important;
+  animation: fadeIn 0.3s ease-out !important;
+}
+
+/* Contenedor del popover */
+.driver-popover {
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid #e2e8f0 !important;
+  max-width: 380px !important;
+  animation: slideIn 0.4s ease-out !important;
+}
+
+/* Modo oscuro */
+.dark .driver-popover {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Cabecera del popover */
+.driver-popover-title {
+  color: #1e293b !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin-bottom: 8px !important;
+  line-height: 1.4 !important;
+}
+
+.dark .driver-popover-title {
+  color: #f1f5f9 !important;
+}
+
+/* Descripción del popover */
+.driver-popover-description {
+  color: #64748b !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin-bottom: 16px !important;
+}
+
+.dark .driver-popover-description {
+  color: #cbd5e1 !important;
+}
+
+/* Contenedor de botones */
+.driver-popover-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-top: 16px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid #f1f5f9 !important;
+}
+
+.dark .driver-popover-footer {
+  border-top-color: #475569 !important;
+}
+
+/* Texto de progreso */
+.driver-popover-progress-text {
+  color: #64748b !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+.dark .driver-popover-progress-text {
+  color: #94a3b8 !important;
+}
+
+/* Botones del tour */
+.driver-popover-prev-btn,
+.driver-popover-next-btn,
+.driver-popover-close-btn {
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Botón anterior */
+.driver-popover-prev-btn {
+  background: #f8fafc !important;
+  color: #475569 !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.driver-popover-prev-btn:hover {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.dark .driver-popover-prev-btn {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+  border-color: #475569 !important;
+}
+
+.dark .driver-popover-prev-btn:hover {
+  background: #475569 !important;
+}
+
+/* Botón siguiente */
+.driver-popover-next-btn {
+  background: #0ea5e9 !important;
+  color: white !important;
+}
+
+.driver-popover-next-btn:hover {
+  background: #0284c7 !important;
+}
+
+/* Botón cerrar */
+.driver-popover-close-btn {
+  background: #64748b !important;
+  color: white !important;
+}
+
+.driver-popover-close-btn:hover {
+  background: #475569 !important;
+}
+
+/* Elemento resaltado */
+.driver-active-element {
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 4px #0ea5e9, 0 0 0 8px rgba(14, 165, 233, 0.2) !important;
+  z-index: 10000 !important;
+}
+
+/* Flecha del popover */
+.driver-popover-arrow {
+  border-color: transparent transparent white transparent !important;
+}
+
+.dark .driver-popover-arrow {
+  border-color: transparent transparent #1e293b transparent !important;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Texto con énfasis */
+.driver-popover-description strong {
+  color: #0ea5e9 !important;
+  font-weight: 600 !important;
+}
+
+.dark .driver-popover-description strong {
+  color: #38bdf8 !important;
+}
+
+/* Estilos responsivos */
+@media (max-width: 640px) {
+  .driver-popover {
+    max-width: 320px !important;
+    margin: 8px !important;
+  }
+  
+  .driver-popover-title {
+    font-size: 15px !important;
+  }
+  
+  .driver-popover-description {
+    font-size: 13px !important;
+  }
+}

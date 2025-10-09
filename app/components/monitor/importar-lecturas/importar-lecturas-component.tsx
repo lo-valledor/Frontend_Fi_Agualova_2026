@@ -201,10 +201,51 @@ export default function ImportarLecturasComponent() {
         setIsValidFile(false);
         setFile(null);
       } else {
+        // Validar períodos si hay datos y estado disponible
+        if (estadoProcesamiento && jsonData.length > 3) {
+          const dataRows = jsonData.slice(3); // Datos desde la fila 4
+          const periodoColumnIndex = headers.findIndex(h => String(h).trim() === 'Periodo');
+          
+          if (periodoColumnIndex !== -1) {
+            const periodsInFile = new Set();
+            const periodValidationErrors = [];
+            
+            for (let i = 0; i < Math.min(dataRows.length, 10); i++) { // Validar solo las primeras 10 filas para rendimiento
+              const row = dataRows[i] as any[];
+              if (row[periodoColumnIndex]) {
+                const filePeriod = String(row[periodoColumnIndex]).trim();
+                periodsInFile.add(filePeriod);
+                
+                // Normalizar período del archivo para comparación
+                const normalizedFilePeriod = filePeriod.replace('-', '');
+                const expectedPeriod = estadoProcesamiento.periodoActivo;
+                
+                if (normalizedFilePeriod !== expectedPeriod) {
+                  periodValidationErrors.push({
+                    row: i + 4, // +4 porque empezamos desde la fila 4 del Excel
+                    found: filePeriod,
+                    expected: expectedPeriod
+                  });
+                }
+              }
+            }
+            
+            if (periodValidationErrors.length > 0) {
+              const errorMsg = `Error de período detectado: Se encontró "${periodValidationErrors[0].found}" pero se esperaba "${periodValidationErrors[0].expected}". Verifica que el período en el Excel coincida con el período activo del sistema.`;
+              setError(errorMsg);
+              toast.error(errorMsg);
+              setIsValidFile(false);
+              setFile(null);
+              return;
+            }
+          }
+        }
+        
         setIsValidFile(true);
         toast.success('Archivo válido - listo para cargar');
       }
-    } catch (_err) {
+    } catch (err) {
+      console.error('Error al validar archivo:', err);
       const errorMsg =
         'Error al validar el archivo Excel. Verifica que el formato sea correcto.';
       setError(errorMsg);
@@ -257,9 +298,9 @@ export default function ImportarLecturasComponent() {
       formData.append('file', file);
 
       const token = localStorage.getItem('token');
-      const ENERLINK_API_URL = import.meta.env.VITE_API_ENERLINK_URL;
+      const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/api';
-      const url = `${baseUrl}/UploadRecaudacion/upload`;
+      const url = `${baseUrl}/upload`;
 
       const response = await fetch(url, {
         method: 'POST',
@@ -359,8 +400,8 @@ export default function ImportarLecturasComponent() {
     setProcessingBT(true);
     try {
       const token = localStorage.getItem('token');
-      const ENERLINK_API_URL = import.meta.env.VITE_API_ENERLINK_URL;
-      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/api';
+      const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
+      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/Enerlova';
       const url = `${baseUrl}/procesar-bt1-bt2`;
 
       const response = await fetch(url, {
@@ -490,7 +531,6 @@ export default function ImportarLecturasComponent() {
                 onClick={procesarBT1BT2}
                 //disabled={processingBT || (estadoProcesamiento?.registrosPendientes === 0)}
                 className='w-full bg-orange-600 hover:bg-orange-700 text-white'
-                disabled
               >
                 {processingBT ? (
                   <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2' />
@@ -606,6 +646,19 @@ export default function ImportarLecturasComponent() {
                 El archivo debe contener las columnas en la <strong>fila 3</strong>{' '}
                 y los datos desde la <strong>fila 4</strong>.
               </p>
+              {estadoProcesamiento && (
+                <div className='bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mt-2'>
+                  <p className='text-sm font-medium text-amber-800 dark:text-amber-200 mb-1'>
+                    ⚠️ Formato de Período Importante:
+                  </p>
+                  <p className='text-xs text-amber-700 dark:text-amber-300'>
+                    El período en el Excel debe coincidir exactamente con: <strong>{estadoProcesamiento.periodoActivo}</strong>
+                  </p>
+                  <p className='text-xs text-amber-600 dark:text-amber-400 mt-1'>
+                    Formatos aceptados: {estadoProcesamiento.periodoActivo}, {estadoProcesamiento.periodoActivo.slice(0,2)}-{estadoProcesamiento.periodoActivo.slice(2)}
+                  </p>
+                </div>
+              )}
               <Collapsible open={showColumnInfo} onOpenChange={setShowColumnInfo}>
                 <CollapsibleTrigger asChild>
                   <Button
@@ -634,9 +687,25 @@ export default function ImportarLecturasComponent() {
         </Alert>
 
         {error && (
-          <Alert variant='destructive'>
+          <Alert variant='destructive' className='border-red-200 dark:border-red-800'>
             <AlertCircle className='h-4 w-4' />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertTitle>Error de Validación</AlertTitle>
+            <AlertDescription className='space-y-2'>
+              <div>{error}</div>
+              {error.includes('período') && estadoProcesamiento && (
+                <div className='mt-2 p-2 bg-red-50 dark:bg-red-950/20 rounded border border-red-200 dark:border-red-800'>
+                  <p className='text-sm font-medium text-red-800 dark:text-red-200'>
+                    💡 Solución:
+                  </p>
+                  <p className='text-xs text-red-700 dark:text-red-300 mt-1'>
+                    Asegúrate de que la columna "Periodo" en tu Excel contenga exactamente: <strong>{estadoProcesamiento.periodoActivo}</strong>
+                  </p>
+                  <p className='text-xs text-red-600 dark:text-red-400 mt-1'>
+                    Si tu archivo tiene formato "MM-YYYY", cámbialo a "MMYYYY" (sin guión).
+                  </p>
+                </div>
+              )}
+            </AlertDescription>
           </Alert>
         )}
 

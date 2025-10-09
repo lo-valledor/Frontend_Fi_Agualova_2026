@@ -41,6 +41,8 @@ import {
 } from '~/hooks/use-monitor';
 import { cn } from '~/lib/utils';
 import { type Clave, type Periodo, type Sector } from '~/types/monitor';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 interface MonitorLecturasComponentProps {
   periodos: Periodo[];
@@ -146,6 +148,59 @@ const MonitorLecturasComponent = ({
     );
   }
 
+  // Pasos del tour interactivo con driver.js
+  const tourSteps = [
+    {
+      element: '#sector-selector',
+      popover: {
+        title: 'Sector de Monitoreo (Obligatorio)',
+        description: 'Debes seleccionar el área a monitorear para poder buscar lecturas.',
+        position: 'bottom'
+      }
+    },
+    {
+      element: '#periodo-selector',
+      popover: {
+        title: 'Periodo (Obligatorio)',
+        description: 'Selecciona el periodo de monitoreo. Es necesario para realizar la búsqueda.',
+        position: 'bottom'
+      }
+    },
+    {
+      element: '#fecha-fin-selector',
+      popover: {
+        title: 'Fecha Fin',
+        description: 'Puedes ajustar la fecha final del monitoreo si lo requieres.',
+        position: 'bottom'
+      }
+    },
+    {
+      element: '#filtros-avanzados',
+      popover: {
+        title: 'Filtros Opcionales',
+        description: 'Puedes filtrar por clave, estado o número de serie para refinar tu búsqueda.',
+        position: 'bottom'
+      }
+    },
+    {
+      element: '#search-button',
+      popover: {
+        title: 'Buscar',
+        description: 'Haz clic aquí para iniciar la búsqueda una vez que hayas completado los filtros obligatorios.',
+        position: 'bottom'
+      }
+    }
+  ];
+
+  // Función para iniciar el tour
+  const startTour = () => {
+  const driverjs = driver({ 
+    showProgress: true,
+    steps: tourSteps 
+  });
+  driverjs.drive();
+  };
+
   return (
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
@@ -156,6 +211,16 @@ const MonitorLecturasComponent = ({
           description='Gestion, ingreso y visualización de lecturas hechas a medidores'
         />
 
+        {/* Botón para iniciar el tour interactivo */}
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={startTour}
+          className='mb-2'
+        >
+          Guía interactiva
+        </Button>
+
         {/* Main Control Panel */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -165,7 +230,7 @@ const MonitorLecturasComponent = ({
           <Card className='border-0 shadow-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
             <CardContent className='p-3 sm:p-4 space-y-3'>
             {/* Sector Selection - Clean Grid */}
-            <div className='space-y-3 sm:space-y-4'>
+            <div className='space-y-3 sm:space-y-4' id='sector-selector'>
               <div className='flex items-center gap-2 sm:gap-3'>
                 <div className='w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0'>
                   <MapPin className='w-4 h-4 sm:w-5 sm:h-5 text-blue-600 dark:text-blue-400' />
@@ -224,7 +289,7 @@ const MonitorLecturasComponent = ({
 
             <div className='flex flex-col sm:flex-row gap-3 sm:gap-2'>
               {/* Periodo */}
-              <div className='space-y-1 w-full sm:w-1/3'>
+              <div className='space-y-1 w-full sm:w-1/3' id='periodo-selector'>
                 <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1'>
                   <Calendar className='w-3 h-3 text-blue-500 flex-shrink-0' />
                   Periodo
@@ -272,7 +337,7 @@ const MonitorLecturasComponent = ({
               </div>
 
               {/* Fecha Fin */}
-              <div className='space-y-1 w-full sm:w-1/3'>
+              <div className='space-y-1 w-full sm:w-1/3' id='fecha-fin-selector'>
                 <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1'>
                   <Calendar className='w-3 h-3 text-blue-500 flex-shrink-0' />
                   Fecha Fin
@@ -288,7 +353,7 @@ const MonitorLecturasComponent = ({
 
             {/* Search Action */}
             <div className='flex flex-col sm:flex-row gap-3 sm:gap-2 items-stretch sm:items-center justify-between pt-4 border-t'>
-              <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 order-2 sm:order-1'>
+              <div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 order-2 sm:order-1' id='filtros-avanzados'>
                 <Button
                   variant='ghost'
                   size='sm'
@@ -318,6 +383,7 @@ const MonitorLecturasComponent = ({
               </div>
 
               <Button
+                id='search-button'
                 onClick={handleSearch}
                 disabled={!selectedSector || !selectedPeriodo}
                 className='bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 sm:py-2 shadow-md hover:shadow-lg transition-all duration-200 order-1 sm:order-2'
