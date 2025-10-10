@@ -106,8 +106,8 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
   const [error, setError] = useState<string | null>(null);
   const [modeloEntrenado, setModeloEntrenado] = useState(false);
 
-  // Servicio de IA URL - usando endpoint de prueba sin autenticación
-  const AI_SERVICE_URL = 'http://localhost:8001';
+  // Servicio de IA URL - desde variables de entorno
+  const AI_SERVICE_URL = import.meta.env.VITE_AI_API_URL || 'http://localhost:8001';
 
   const generarProyecciones = async () => {
     if (!contratoId) {

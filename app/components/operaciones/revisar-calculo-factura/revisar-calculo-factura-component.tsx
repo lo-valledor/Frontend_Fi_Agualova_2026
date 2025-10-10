@@ -17,7 +17,6 @@ import {
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import './driver-tour.css';
 
 import { useMemo, useState } from 'react';
 
@@ -123,7 +122,8 @@ export default function RevisarCalculoFacturaComponent({
       popover: {
         title: '📅 Período de Facturación',
         description: 'Aquí se muestra el período activo para facturación. Solo se puede trabajar con períodos abiertos.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'start' as const
       }
     },
     {
@@ -131,7 +131,8 @@ export default function RevisarCalculoFacturaComponent({
       popover: {
         title: '🔄 Preparar Cálculo',
         description: '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. Es el primer paso obligatorio.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -139,7 +140,8 @@ export default function RevisarCalculoFacturaComponent({
       popover: {
         title: '👁️ Ver Cálculos',
         description: 'Después de preparar, usa este botón para <strong>visualizar</strong> los cálculos generados y revisar los contratos.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -147,7 +149,8 @@ export default function RevisarCalculoFacturaComponent({
       popover: {
         title: '✅ Aceptar Cálculo',
         description: 'Finaliza el proceso <strong>aceptando</strong> los cálculos seleccionados. Solo funciona con contratos marcados.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -155,7 +158,8 @@ export default function RevisarCalculoFacturaComponent({
       popover: {
         title: '🔄 Actualizar Datos',
         description: 'Refresca los datos mostrados sin perder el estado de preparación del cálculo.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -163,25 +167,32 @@ export default function RevisarCalculoFacturaComponent({
       popover: {
         title: '🧹 Limpiar Todo',
         description: 'Reinicia completamente el proceso: limpia filtros, datos y estados para empezar de nuevo.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     }
   ];
 
   // Función para iniciar el tour
   const startTour = () => {
-    const driverjs = driver({ 
+    const driverjs = driver({
       showProgress: true,
       progressText: 'Paso {{current}} de {{total}}',
       smoothScroll: true,
       stagePadding: 4,
-      stageRadius: 8,
+      stageRadius: 6,
       animate: true,
-      nextBtnText: 'Siguiente →',
-      prevBtnText: '← Anterior',
-      doneBtnText: '✓ Finalizar'
+      allowClose: true,
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: (element) => {
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
     });
-    
+
     driverjs.setSteps(tourSteps);
     driverjs.drive();
   };

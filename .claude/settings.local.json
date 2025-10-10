@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/gbourguett/Documents/DESARROLLOS-LO-VALLEDOR/enerlova/**)"
+      "Bash(pnpm typecheck:*)"
     ],
     "deny": [],
     "ask": [],

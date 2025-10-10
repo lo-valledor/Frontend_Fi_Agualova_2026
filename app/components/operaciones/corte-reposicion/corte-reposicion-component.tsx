@@ -14,7 +14,6 @@ import {
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import './driver-tour.css';
 
 import { useState } from 'react';
 
@@ -180,7 +179,8 @@ export default function CorteReposicionComponent({
       popover: {
         title: '🔧 Panel de Revisión',
         description: 'Este es el <strong>panel principal</strong> donde encontrarás todas las herramientas de gestión y control para el proceso de corte y reposición.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'start' as const
       }
     },
     {
@@ -188,7 +188,8 @@ export default function CorteReposicionComponent({
       popover: {
         title: '🔍 Buscar Datos',
         description: '¡Empezar aquí! Este botón <strong>actualiza y carga</strong> los datos más recientes del mantenedor de revisión de corte.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -196,7 +197,8 @@ export default function CorteReposicionComponent({
       popover: {
         title: '📊 Ver Totales',
         description: 'Muestra un <strong>resumen estadístico</strong> de todos los estados: Pendientes, Liberados, Cortados y Reposición Solicitada.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -204,7 +206,8 @@ export default function CorteReposicionComponent({
       popover: {
         title: '📈 Estadísticas Rápidas',
         description: 'Vista rápida de los <strong>totales por estado</strong>. Te permite entender la distribución de casos sin abrir el modal.',
-        position: 'top' as const
+        side: 'top' as const,
+        align: 'center' as const
       }
     },
     {
@@ -212,7 +215,8 @@ export default function CorteReposicionComponent({
       popover: {
         title: '⚙️ Activar Actualización',
         description: 'Primer paso del <strong>flujo de trabajo</strong>: Activa la actualización del proceso de revisión antes de iniciarlo.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -220,7 +224,8 @@ export default function CorteReposicionComponent({
       popover: {
         title: '💾 Exportar Datos',
         description: 'Descarga los datos en formato <strong>Excel</strong>. Disponible en dos versiones: Mantenedor completo y Revisión de Corte específica.',
-        position: 'bottom' as const
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     },
     {
@@ -228,25 +233,32 @@ export default function CorteReposicionComponent({
       popover: {
         title: '📋 Tabla de Datos',
         description: 'Listado detallado de todos los registros con <strong>filtros y búsqueda</strong>. Puedes buscar por código, RUT o razón social.',
-        position: 'top' as const
+        side: 'top' as const,
+        align: 'start' as const
       }
     }
   ];
 
   // Función para iniciar el tour
   const startTour = () => {
-    const driverjs = driver({ 
+    const driverjs = driver({
       showProgress: true,
       progressText: 'Paso {{current}} de {{total}}',
       smoothScroll: true,
       stagePadding: 4,
-      stageRadius: 8,
+      stageRadius: 6,
       animate: true,
-      nextBtnText: 'Siguiente →',
-      prevBtnText: '← Anterior',
-      doneBtnText: '✓ Finalizar'
+      allowClose: true,
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: (element) => {
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
     });
-    
+
     driverjs.setSteps(tourSteps);
     driverjs.drive();
   };

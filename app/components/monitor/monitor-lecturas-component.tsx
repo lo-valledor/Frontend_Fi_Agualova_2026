@@ -153,52 +153,72 @@ const MonitorLecturasComponent = ({
     {
       element: '#sector-selector',
       popover: {
-        title: 'Sector de Monitoreo (Obligatorio)',
-        description: 'Debes seleccionar el área a monitorear para poder buscar lecturas.',
-        position: 'bottom'
+        title: '📍 Sector de Monitoreo (Obligatorio)',
+        description: 'Debes seleccionar el <strong>área a monitorear</strong> para poder buscar lecturas. Este es un campo requerido.',
+        side: 'bottom' as const,
+        align: 'start' as const
       }
     },
     {
       element: '#periodo-selector',
       popover: {
-        title: 'Periodo (Obligatorio)',
-        description: 'Selecciona el periodo de monitoreo. Es necesario para realizar la búsqueda.',
-        position: 'bottom'
+        title: '📅 Periodo (Obligatorio)',
+        description: 'Selecciona el <strong>periodo de monitoreo</strong>. Es necesario para realizar la búsqueda.',
+        side: 'bottom' as const,
+        align: 'start' as const
       }
     },
     {
       element: '#fecha-fin-selector',
       popover: {
-        title: 'Fecha Fin',
-        description: 'Puedes ajustar la fecha final del monitoreo si lo requieres.',
-        position: 'bottom'
+        title: '📆 Fecha Fin',
+        description: 'Puedes ajustar la <strong>fecha final</strong> del monitoreo si lo requieres para acotar el rango de búsqueda.',
+        side: 'bottom' as const,
+        align: 'start' as const
       }
     },
     {
       element: '#filtros-avanzados',
       popover: {
-        title: 'Filtros Opcionales',
-        description: 'Puedes filtrar por clave, estado o número de serie para refinar tu búsqueda.',
-        position: 'bottom'
+        title: '🔧 Filtros Opcionales',
+        description: 'Puedes filtrar por <strong>clave, estado o número de serie</strong> para refinar tu búsqueda y obtener resultados más específicos.',
+        side: 'bottom' as const,
+        align: 'start' as const
       }
     },
     {
       element: '#search-button',
       popover: {
-        title: 'Buscar',
-        description: 'Haz clic aquí para iniciar la búsqueda una vez que hayas completado los filtros obligatorios.',
-        position: 'bottom'
+        title: '🔍 Buscar',
+        description: 'Haz clic aquí para <strong>iniciar la búsqueda</strong> una vez que hayas completado los filtros obligatorios (Sector y Periodo).',
+        side: 'bottom' as const,
+        align: 'center' as const
       }
     }
   ];
 
   // Función para iniciar el tour
   const startTour = () => {
-  const driverjs = driver({ 
-    showProgress: true,
-    steps: tourSteps 
-  });
-  driverjs.drive();
+    const driverjs = driver({
+      showProgress: true,
+      progressText: 'Paso {{current}} de {{total}}',
+      smoothScroll: true,
+      stagePadding: 4,
+      stageRadius: 6,
+      animate: true,
+      allowClose: true,
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: (element) => {
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    });
+
+    driverjs.setSteps(tourSteps);
+    driverjs.drive();
   };
 
   return (
