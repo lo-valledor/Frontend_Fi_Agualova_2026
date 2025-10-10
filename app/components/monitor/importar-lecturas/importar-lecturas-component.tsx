@@ -7,22 +7,15 @@ import {
   CheckCircle2,
   Info,
   Play,
-  RefreshCw
+  RefreshCw,
+  Eye,
+  ChevronDown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ModernHeader } from '~/components/shared/modern-header';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { ScrollArea } from '~/components/ui/scroll-area';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '~/components/ui/collapsible';
+import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
 
 // Interfaces para los nuevos endpoints
 interface EstadoProcesamiento {
@@ -64,6 +57,7 @@ export default function ImportarLecturasComponent() {
   const [isValidating, setIsValidating] = useState(false);
   const [isValidFile, setIsValidFile] = useState(false);
   const [showColumnInfo, setShowColumnInfo] = useState(false);
+  const [showRequirements, setShowRequirements] = useState(false);
 
   // Estados para los nuevos endpoints
   const [estadoProcesamiento, setEstadoProcesamiento] =
@@ -75,6 +69,7 @@ export default function ImportarLecturasComponent() {
   const [processingBT, setProcessingBT] = useState(false);
   const [procesamientoResult, setProcesamientoResult] =
     useState<ProcesamientoResult | null>(null);
+  const [showResultModal, setShowResultModal] = useState(false);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -443,8 +438,8 @@ export default function ImportarLecturasComponent() {
   }, []);
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
-      <div className='container mx-auto p-3 space-y-4'>
+    <div className='min-h-screen bg-gradient-to-br from-slate-50 via-slate-50/50 to-sky-50/30 dark:from-slate-950 dark:via-slate-950/80 dark:to-slate-900'>
+      <div className='container mx-auto p-6 space-y-6'>
         <BreadcrumbSetter items={pageBreadcrumbs} />
 
         {/* Header */}
@@ -453,379 +448,360 @@ export default function ImportarLecturasComponent() {
           description='Carga un archivo Excel con las lecturas de medidores para importarlas al sistema'
         />
 
-        {/* Estado de Procesamiento */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          <Card className='border-slate-200/60 dark:border-slate-700/60'>
-            <CardHeader className='pb-3'>
-              <div className='flex items-center justify-between'>
-                <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
-                  Estado de Procesamiento
-                </CardTitle>
-                <Button
-                  variant='ghost'
-                  size='sm'
+        {/* Panel de Control Principal */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+          {/* Estado del Sistema - Minimalista */}
+          <div className='lg:col-span-2 bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-shadow'>
+            <div className='p-6'>
+              <div className='flex items-center justify-between mb-6'>
+                <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                  Estado del Sistema
+                </h3>
+                <button
                   onClick={fetchEstadoProcesamiento}
                   disabled={loadingEstado}
+                  className='p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors disabled:opacity-50'
                 >
                   <RefreshCw
-                    className={`h-4 w-4 ${loadingEstado ? 'animate-spin' : ''}`}
+                    className={`h-4 w-4 text-slate-600 dark:text-slate-400 ${loadingEstado ? 'animate-spin' : ''}`}
                   />
-                </Button>
+                </button>
               </div>
-            </CardHeader>
-            <CardContent className='space-y-3'>
+
               {loadingEstado ? (
-                <div className='flex items-center justify-center py-4'>
-                  <div className='animate-spin rounded-full h-6 w-6 border-2 border-slate-300 border-t-sky-600' />
+                <div className='flex items-center justify-center py-12'>
+                  <div className='animate-spin rounded-full h-8 w-8 border-2 border-slate-200 dark:border-slate-700 border-t-sky-500' />
                 </div>
               ) : estadoProcesamiento ? (
-                <div className='space-y-2'>
-                  <div className='flex justify-between items-center'>
-                    <span className='text-sm text-muted-foreground'>
-                      Período Activo:
-                    </span>
-                    <Badge variant='outline' className='font-mono'>
+                <div className='grid grid-cols-3 gap-4'>
+                  <div className='text-center p-4 bg-gradient-to-br from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30 rounded-xl border border-sky-200/50 dark:border-sky-800/50'>
+                    <div className='text-2xl font-bold text-sky-700 dark:text-sky-400 mb-1'>
                       {estadoProcesamiento.periodoActivo}
-                    </Badge>
+                    </div>
+                    <div className='text-xs text-sky-600 dark:text-sky-500 font-medium'>
+                      Período Activo
+                    </div>
                   </div>
-                  <div className='flex justify-between items-center'>
-                    <span className='text-sm text-muted-foreground'>
-                      Registros Pendientes:
-                    </span>
-                    <Badge
-                      variant={
+
+                  <div
+                    className={`text-center p-4 rounded-xl border ${
+                      estadoProcesamiento.registrosPendientes > 0
+                        ? 'bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30 border-orange-200/50 dark:border-orange-800/50'
+                        : 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-200/50 dark:border-green-800/50'
+                    }`}
+                  >
+                    <div
+                      className={`text-2xl font-bold mb-1 ${
                         estadoProcesamiento.registrosPendientes > 0
-                          ? 'destructive'
-                          : 'default'
-                      }
-                      className='font-mono'
+                          ? 'text-orange-700 dark:text-orange-400'
+                          : 'text-green-700 dark:text-green-400'
+                      }`}
                     >
                       {estadoProcesamiento.registrosPendientes}
-                    </Badge>
-                  </div>
-                  <div className='flex justify-between items-center'>
-                    <span className='text-sm text-muted-foreground'>
-                      Estado:
-                    </span>
-                    <Badge
-                      variant={
+                    </div>
+                    <div
+                      className={`text-xs font-medium ${
                         estadoProcesamiento.registrosPendientes > 0
-                          ? 'secondary'
-                          : 'default'
-                      }
-                      className='text-xs'
+                          ? 'text-orange-600 dark:text-orange-500'
+                          : 'text-green-600 dark:text-green-500'
+                      }`}
                     >
-                      {estadoProcesamiento.estado}
-                    </Badge>
+                      Pendientes
+                    </div>
                   </div>
-                  <div className='text-xs text-muted-foreground pt-2 border-t'>
-                    Última consulta:{' '}
-                    {new Date(
-                      estadoProcesamiento.fechaConsulta
-                    ).toLocaleString()}
+
+                  <div className='text-center p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800/30 dark:to-slate-700/30 rounded-xl border border-slate-200/50 dark:border-slate-700/50'>
+                    <div className='text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wide'>
+                      {estadoProcesamiento.estado}
+                    </div>
+                    <div className='text-[10px] text-slate-500 dark:text-slate-500'>
+                      Estado
+                    </div>
                   </div>
                 </div>
               ) : (
-                <p className='text-sm text-muted-foreground'>
+                <div className='text-center py-12 text-slate-500 dark:text-slate-400'>
                   No se pudo cargar el estado
-                </p>
+                </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card className='border-slate-200/60 dark:border-slate-700/60'>
-            <CardHeader className='pb-3'>
-              <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
-                Acciones de Procesamiento
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-3'>
-              <Button
-                onClick={fetchRegistrosPendientes}
-                disabled={loadingRegistros}
-                variant='outline'
-                className='w-full'
-              >
-                {loadingRegistros ? (
-                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-slate-300 border-t-sky-600 mr-2' />
-                ) : (
-                  <Info className='h-4 w-4 mr-2' />
-                )}
-                Consultar Registros Pendientes
-              </Button>
+          {/* Panel de Acciones - Minimalista */}
+          <div className='bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-shadow'>
+            <div className='p-6'>
+              <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100 mb-6'>
+                Acciones
+              </h3>
+              <div className='space-y-3'>
+                <button
+                  onClick={fetchRegistrosPendientes}
+                  disabled={loadingRegistros}
+                  className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-100 dark:bg-green-800 hover:bg-green-200 dark:hover:bg-green-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+                >
+                  {loadingRegistros ? (
+                    <div className='animate-spin rounded-full h-4 w-4 border-2 border-green-400 border-t-transparent' />
+                  ) : (
+                    <Info className='h-4 w-4' />
+                  )}
+                  <span>Consultar Pendientes</span>
+                </button>
 
-              <Button
-                onClick={procesarBT1BT2}
-                //disabled={processingBT || (estadoProcesamiento?.registrosPendientes === 0)}
-                className='w-full bg-orange-600 hover:bg-orange-700 text-white'
-              >
-                {processingBT ? (
-                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2' />
-                ) : (
-                  <Play className='h-4 w-4 mr-2' />
-                )}
-                Procesar BT1-BT2
-              </Button>
-            </CardContent>
-          </Card>
+                <button
+                  onClick={procesarBT1BT2}
+                  disabled={processingBT}
+                  className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed'
+                >
+                  {processingBT ? (
+                    <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent' />
+                  ) : (
+                    <Play className='h-4 w-4' />
+                  )}
+                  <span>Procesar BT1-BT2</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Mostrar resultado de registros pendientes */}
-        {registrosPendientes && (
-          <Alert className='border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20'>
-            <Info className='h-4 w-4 text-blue-600 dark:text-blue-400' />
-            <AlertTitle className='text-blue-900 dark:text-blue-100'>
-              Registros Pendientes
-            </AlertTitle>
-            <AlertDescription className='text-blue-800 dark:text-blue-200'>
-              {registrosPendientes.mensaje}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Mostrar resultado del procesamiento */}
-        {procesamientoResult && (
-          <Card className='border-green-200 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20'>
-            <CardHeader>
-              <CardTitle className='text-green-900 dark:text-green-100 flex items-center gap-2'>
-                <CheckCircle2 className='h-5 w-5' />
-                Resultado del Procesamiento
-              </CardTitle>
-            </CardHeader>
-            <CardContent className='space-y-4'>
-              <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                <div className='text-center'>
-                  <div className='text-2xl font-bold text-green-700 dark:text-green-300'>
-                    {procesamientoResult.registrosActualizados}
-                  </div>
-                  <div className='text-xs text-muted-foreground'>
-                    Registros Actualizados
-                  </div>
+        {/* Notificaciones y Alertas - Minimalistas */}
+        <div className='space-y-3'>
+          {/* Resultado de registros pendientes */}
+          {registrosPendientes && (
+            <div className='bg-gradient-to-r from-blue-50 to-sky-50 dark:from-blue-950/20 dark:to-sky-950/20 rounded-2xl border border-blue-200/50 dark:border-blue-800/50 p-4 shadow-sm'>
+              <div className='flex items-start gap-3'>
+                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
+                  <Info className='h-4 w-4 text-blue-600 dark:text-blue-400' />
                 </div>
-                <div className='text-center'>
-                  <div className='text-sm font-medium text-green-700 dark:text-green-300'>
-                    {procesamientoResult.periodo}
-                  </div>
-                  <div className='text-xs text-muted-foreground'>Período</div>
-                </div>
-                <div className='text-center'>
-                  <Badge
-                    variant={
-                      procesamientoResult.exitoso ? 'default' : 'destructive'
-                    }
-                  >
-                    {procesamientoResult.exitoso ? 'Exitoso' : 'Falló'}
-                  </Badge>
-                  <div className='text-xs text-muted-foreground'>Estado</div>
-                </div>
-                <div className='text-center'>
-                  <div className='text-xs text-muted-foreground'>
-                    {new Date(
-                      procesamientoResult.fechaProcesamiento
-                    ).toLocaleString()}
-                  </div>
-                  <div className='text-xs text-muted-foreground'>Fecha</div>
+                <div className='flex-1'>
+                  <h4 className='font-semibold text-blue-900 dark:text-blue-100 mb-1'>
+                    Registros Pendientes
+                  </h4>
+                  <p className='text-sm text-blue-700 dark:text-blue-300'>
+                    {registrosPendientes.mensaje}
+                  </p>
                 </div>
               </div>
+            </div>
+          )}
 
-              <div className='text-sm text-green-800 dark:text-green-200'>
-                {procesamientoResult.mensaje}
-              </div>
-
-              {procesamientoResult.detalles &&
-                procesamientoResult.detalles.length > 0 && (
-                  <div className='mt-4'>
-                    <h4 className='text-sm font-medium mb-2'>
-                      Detalles del procesamiento:
-                    </h4>
-                    <ScrollArea className='h-32 rounded border'>
-                      <div className='p-2 space-y-2'>
-                        {procesamientoResult.detalles.map((detalle, idx) => (
-                          <div
-                            key={idx}
-                            className='text-xs bg-white dark:bg-slate-900 p-2 rounded border'
-                          >
-                            <div className='grid grid-cols-2 gap-2'>
-                              <span>
-                                <strong>Serie:</strong> {detalle.numeroSerie}
-                              </span>
-                              <span>
-                                <strong>Tarifa:</strong> {detalle.tarifa}
-                              </span>
-                              <span>
-                                <strong>Lectura Ant.:</strong>{' '}
-                                {detalle.lecturaAnteriorKwh} kWh
-                              </span>
-                              <span>
-                                <strong>Consumo:</strong>{' '}
-                                {detalle.consumoEnergiaKwh} kWh
-                              </span>
-                              <span>
-                                <strong>Usuario:</strong> {detalle.usuarioCarga}
-                              </span>
-                              <span>
-                                <strong>Estado:</strong> {detalle.estado}
-                              </span>
-                            </div>
-                            {detalle.mensaje && (
-                              <div className='mt-1 text-muted-foreground'>
-                                {detalle.mensaje}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
+          {/* Resultado del procesamiento */}
+          {procesamientoResult && (
+            <div className='bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 rounded-2xl border border-green-200/50 dark:border-green-800/50 p-4 shadow-sm'>
+              <div className='flex items-start gap-3'>
+                <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-lg'>
+                  <CheckCircle2 className='h-5 w-5 text-green-600 dark:text-green-400' />
+                </div>
+                <div className='flex-1'>
+                  <h4 className='font-semibold text-green-900 dark:text-green-100 mb-1'>
+                    Procesamiento Completado
+                  </h4>
+                  <p className='text-sm text-green-700 dark:text-green-300 mb-2'>
+                    {procesamientoResult.mensaje}
+                  </p>
+                  <div className='flex items-center gap-4 text-xs text-green-600 dark:text-green-400'>
+                    <span className='font-medium'>
+                      {procesamientoResult.registrosActualizados} registros
+                    </span>
+                    <span>•</span>
+                    <span>Período {procesamientoResult.periodo}</span>
+                    {procesamientoResult.detalles &&
+                      procesamientoResult.detalles.length > 0 && (
+                        <>
+                          <span>•</span>
+                          <span>
+                            {procesamientoResult.detalles.length} detalles
+                          </span>
+                        </>
+                      )}
                   </div>
-                )}
-
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => setProcesamientoResult(null)}
-                className='w-full mt-2'
-              >
-                Cerrar
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Información de columnas requeridas */}
-        <Alert className='border-sky-200 dark:border-sky-800 bg-sky-50/50 dark:bg-sky-950/20'>
-          <Info className='h-4 w-4 text-sky-600 dark:text-sky-400' />
-          <AlertTitle className='text-sky-900 dark:text-sky-100'>
-            Formato del archivo Excel
-          </AlertTitle>
-          <AlertDescription className='text-sky-800 dark:text-sky-200'>
-            <div className='space-y-2'>
-              <Collapsible
-                open={showColumnInfo}
-                onOpenChange={setShowColumnInfo}
-              >
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='p-0 h-auto text-sky-700 dark:text-sky-300 hover:bg-transparent'
+                </div>
+                <div className='flex gap-2'>
+                  <button
+                    onClick={() => setShowResultModal(true)}
+                    className='px-3 py-2 bg-white dark:bg-slate-800 hover:bg-green-100 dark:hover:bg-slate-700 text-green-700 dark:text-green-300 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm'
                   >
-                    {showColumnInfo ? 'Ocultar' : 'Ver'} columnas requeridas (
-                    {REQUIRED_COLUMNS.length})
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className='mt-2'>
-                  <ScrollArea className='h-32 rounded border border-sky-200 dark:border-sky-800 bg-white dark:bg-slate-900 p-2'>
-                    <div className='grid grid-cols-2 md:grid-cols-3 gap-1 text-xs'>
+                    <Eye className='h-4 w-4' />
+                    Ver Detalles
+                  </button>
+                  <button
+                    onClick={() => setProcesamientoResult(null)}
+                    className='p-2 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-colors'
+                  >
+                    <X className='h-4 w-4 text-green-600 dark:text-green-400' />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error de validación */}
+          {error && (
+            <div className='bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 rounded-2xl border border-red-200/50 dark:border-red-800/50 p-4 shadow-sm'>
+              <div className='flex items-start gap-3'>
+                <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-lg'>
+                  <AlertCircle className='h-4 w-4 text-red-600 dark:text-red-400' />
+                </div>
+                <div className='flex-1'>
+                  <h4 className='font-semibold text-red-900 dark:text-red-100 mb-1'>
+                    Error de Validación
+                  </h4>
+                  <p className='text-sm text-red-700 dark:text-red-300 mb-2'>
+                    {error}
+                  </p>
+                  {error.includes('período') && estadoProcesamiento && (
+                    <div className='mt-3 p-3 bg-red-100/50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800'>
+                      <p className='text-sm font-medium text-red-800 dark:text-red-200 mb-2'>
+                        💡 Solución
+                      </p>
+                      <p className='text-xs text-red-700 dark:text-red-300'>
+                        Asegúrate de que la columna "Periodo" contenga:{' '}
+                        <code className='px-2 py-0.5 bg-red-200 dark:bg-red-900/50 rounded font-mono'>
+                          {estadoProcesamiento.periodoActivo}
+                        </code>
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Modal de resultado del procesamiento */}
+        <ResultadoProcesamientoModal
+          isOpen={showResultModal}
+          onClose={() => setShowResultModal(false)}
+          resultado={procesamientoResult}
+        />
+
+        {/* Zona de Carga de Archivos - Minimalista y Moderno */}
+        <div className='bg-white/80 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden'>
+          {/* Header con información de requisitos */}
+          <div className='p-6 border-b border-slate-200/50 dark:border-slate-700/50'>
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <div className='p-2 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl'>
+                  <FileSpreadsheet className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                </div>
+                <div>
+                  <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                    Cargar Archivo Excel
+                  </h3>
+                  <p className='text-sm text-slate-600 dark:text-slate-400'>
+                    Arrastra o selecciona un archivo .xlsx / .xls
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowRequirements(!showRequirements)}
+                className='flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors'
+              >
+                <Info className='h-4 w-4' />
+                <span>Requisitos</span>
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${showRequirements ? 'rotate-180' : ''}`}
+                />
+              </button>
+            </div>
+
+            {/* Panel de requisitos colapsable */}
+            {showRequirements && (
+              <div className='mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700'>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-3 text-xs'>
+                  <div className='flex items-center gap-2'>
+                    <div className='w-1.5 h-1.5 rounded-full bg-sky-500' />
+                    <span className='text-slate-700 dark:text-slate-300'>
+                      Formato: .xlsx o .xls
+                    </span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='w-1.5 h-1.5 rounded-full bg-sky-500' />
+                    <span className='text-slate-700 dark:text-slate-300'>
+                      Tamaño máximo: 10 MB
+                    </span>
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    <div className='w-1.5 h-1.5 rounded-full bg-sky-500' />
+                    <span className='text-slate-700 dark:text-slate-300'>
+                      {REQUIRED_COLUMNS.length} columnas requeridas
+                    </span>
+                  </div>
+                </div>
+                {showColumnInfo && (
+                  <div className='mt-3 p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 max-h-40 overflow-y-auto'>
+                    <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
                       {REQUIRED_COLUMNS.map((col, idx) => (
                         <div
                           key={idx}
-                          className='text-slate-700 dark:text-slate-300'
+                          className='text-xs text-slate-600 dark:text-slate-400'
                         >
                           • {col}
                         </div>
                       ))}
                     </div>
-                  </ScrollArea>
-                </CollapsibleContent>
-              </Collapsible>
-            </div>
-          </AlertDescription>
-        </Alert>
-
-        {error && (
-          <Alert
-            variant='destructive'
-            className='border-red-200 dark:border-red-800'
-          >
-            <AlertCircle className='h-4 w-4' />
-            <AlertTitle>Error de Validación</AlertTitle>
-            <AlertDescription className='space-y-2'>
-              <div>{error}</div>
-              {error.includes('período') && estadoProcesamiento && (
-                <div className='mt-2 p-2 bg-red-50 dark:bg-red-950/20 rounded border border-red-200 dark:border-red-800'>
-                  <p className='text-sm font-medium text-red-800 dark:text-red-200'>
-                    💡 Solución:
-                  </p>
-                  <p className='text-xs text-red-700 dark:text-red-300 mt-1'>
-                    Asegúrate de que la columna "Periodo" en tu Excel contenga
-                    exactamente:{' '}
-                    <strong>{estadoProcesamiento.periodoActivo}</strong>
-                  </p>
-                  <p className='text-xs text-red-600 dark:text-red-400 mt-1'>
-                    Si tu archivo tiene formato "MM-YYYY", cámbialo a "MMYYYY"
-                    (sin guión).
-                  </p>
-                </div>
-              )}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Upload Section */}
-        <Card className='border-slate-200/60 dark:border-slate-700/60'>
-          <CardHeader>
-            <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-sky-100 dark:bg-sky-900/30 rounded-lg flex items-center justify-center'>
-                <Upload className='w-4 h-4 text-sky-600 dark:text-sky-400' />
-              </div>
-              <div className='flex-1'>
-                <CardTitle className='text-slate-900 dark:text-slate-100'>
-                  Cargar Archivo
-                </CardTitle>
-                <p className='text-sm text-muted-foreground mt-1'>
-                  Sube un archivo Excel (.xlsx, .xls) con las lecturas
-                </p>
-              </div>
-              {file && (
-                <Badge
-                  variant='outline'
-                  className='bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-700'
+                  </div>
+                )}
+                <button
+                  onClick={() => setShowColumnInfo(!showColumnInfo)}
+                  className='mt-2 text-xs text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 font-medium'
                 >
-                  <CheckCircle2 className='w-3 h-3 mr-1' />
-                  Archivo cargado
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
+                  {showColumnInfo ? 'Ocultar' : 'Ver'} lista de columnas
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Zona de Drop/Upload */}
+          <div className='p-6'>
             {!file ? (
               <div
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`
-                  border-2 border-dashed rounded-lg p-12 text-center transition-all duration-200
-                  ${
-                    isDragging
-                      ? 'border-sky-500 bg-sky-50/50 dark:bg-sky-950/20 scale-[1.02]'
-                      : 'border-slate-300 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600'
-                  }
-                `}
+                className={`relative border-2 border-dashed rounded-2xl p-12 transition-all duration-300 ${
+                  isDragging
+                    ? 'border-sky-400 bg-gradient-to-br from-sky-50 to-blue-50 dark:from-sky-950/30 dark:to-blue-950/30 scale-[1.02]'
+                    : 'border-slate-300 dark:border-slate-700 hover:border-sky-400 dark:hover:border-sky-600 hover:bg-slate-50/50 dark:hover:bg-slate-800/20'
+                }`}
               >
-                <div className='flex flex-col items-center gap-4'>
+                <div className='flex flex-col items-center gap-6 text-center'>
                   <div
-                    className={`rounded-full p-4 transition-colors ${
-                      isDragging
-                        ? 'bg-sky-100 dark:bg-sky-900/50'
-                        : 'bg-slate-100 dark:bg-slate-800'
-                    }`}
+                    className={`relative transition-all duration-300 ${isDragging ? 'scale-110' : ''}`}
                   >
-                    <Upload
-                      className={`h-8 w-8 ${
-                        isDragging
-                          ? 'text-sky-600 dark:text-sky-400'
-                          : 'text-slate-500 dark:text-slate-400'
+                    <div
+                      className={`absolute inset-0 rounded-full blur-xl opacity-30 ${
+                        isDragging ? 'bg-sky-400' : 'bg-slate-400'
                       }`}
                     />
+                    <div
+                      className={`relative p-5 rounded-2xl ${
+                        isDragging
+                          ? 'bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/50 dark:to-blue-900/50'
+                          : 'bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700'
+                      }`}
+                    >
+                      <Upload
+                        className={`h-10 w-10 ${
+                          isDragging
+                            ? 'text-sky-600 dark:text-sky-400'
+                            : 'text-slate-500 dark:text-slate-400'
+                        }`}
+                      />
+                    </div>
                   </div>
+
                   <div>
-                    <p className='text-lg font-medium text-slate-900 dark:text-slate-100'>
-                      Arrastra tu archivo Excel aquí
+                    <p className='text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2'>
+                      {isDragging
+                        ? '¡Suelta el archivo aquí!'
+                        : 'Arrastra tu archivo Excel'}
                     </p>
-                    <p className='text-sm text-muted-foreground mt-1'>
-                      o haz clic para seleccionar
+                    <p className='text-sm text-slate-600 dark:text-slate-400'>
+                      o haz clic en el botón para seleccionar
                     </p>
                   </div>
+
                   <input
                     type='file'
                     accept='.xlsx,.xls'
@@ -833,90 +809,95 @@ export default function ImportarLecturasComponent() {
                     className='hidden'
                     id='file-upload'
                   />
-                  <Button
-                    asChild
-                    variant='outline'
-                    className='border-sky-200 dark:border-sky-800 hover:bg-sky-50 dark:hover:bg-sky-950/30'
+
+                  <label
+                    htmlFor='file-upload'
+                    className='cursor-pointer px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white font-medium rounded-xl shadow-sm hover:shadow-md transition-all flex items-center gap-2'
                   >
-                    <label htmlFor='file-upload' className='cursor-pointer'>
-                      <FileSpreadsheet className='w-4 h-4 mr-2' />
-                      Seleccionar archivo
-                    </label>
-                  </Button>
-                  <p className='text-xs text-muted-foreground'>
-                    Formatos aceptados: .xlsx, .xls • Tamaño máximo: 10MB
-                  </p>
+                    <FileSpreadsheet className='h-4 w-4' />
+                    Seleccionar Archivo
+                  </label>
                 </div>
               </div>
             ) : (
-              <div className='flex items-center gap-4 p-4 border rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800'>
-                <div className='w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center'>
-                  <FileSpreadsheet className='h-6 w-6 text-green-600 dark:text-green-400' />
+              <div className='space-y-4'>
+                {/* Archivo cargado */}
+                <div className='relative bg-gradient-to-r from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/20 dark:via-emerald-950/20 dark:to-teal-950/20 rounded-2xl border-2 border-green-200/50 dark:border-green-800/50 p-4 overflow-hidden'>
+                  <div className='absolute inset-0 bg-gradient-to-r from-green-400/10 to-emerald-400/10 dark:from-green-400/5 dark:to-emerald-400/5' />
+
+                  <div className='relative flex items-center gap-4'>
+                    <div className='p-3 bg-green-100 dark:bg-green-900/30 rounded-xl'>
+                      <FileSpreadsheet className='h-6 w-6 text-green-600 dark:text-green-400' />
+                    </div>
+
+                    <div className='flex-1 min-w-0'>
+                      <div className='flex items-center gap-2 mb-1'>
+                        <p className='font-semibold text-slate-900 dark:text-slate-100 truncate'>
+                          {file.name}
+                        </p>
+                        {isValidFile && (
+                          <div className='px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium rounded-full flex items-center gap-1'>
+                            <CheckCircle2 className='h-3 w-3' />
+                            Validado
+                          </div>
+                        )}
+                      </div>
+                      <p className='text-sm text-slate-600 dark:text-slate-400'>
+                        {(file.size / 1024).toFixed(2)} KB
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={handleRemoveFile}
+                      className='p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 rounded-lg transition-colors'
+                    >
+                      <X className='h-5 w-5' />
+                    </button>
+                  </div>
                 </div>
-                <div className='flex-1'>
-                  <p className='font-medium text-slate-900 dark:text-slate-100'>
-                    {file.name}
-                  </p>
-                  <p className='text-sm text-muted-foreground'>
-                    {(file.size / 1024).toFixed(2)} KB
-                  </p>
-                </div>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={handleRemoveFile}
-                  className='text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20'
-                >
-                  <X className='h-4 w-4' />
-                </Button>
+
+                {/* Botón de importar */}
+                {isValidFile && !isValidating && (
+                  <button
+                    onClick={handleImportar}
+                    disabled={isImporting}
+                    className='w-full py-3 px-6 bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold rounded-xl shadow-sm hover:shadow-md transition-all disabled:cursor-not-allowed flex items-center justify-center gap-2'
+                  >
+                    {isImporting ? (
+                      <>
+                        <div className='animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent' />
+                        <span>Cargando archivo...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className='h-5 w-5' />
+                        <span>Importar Lecturas</span>
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             )}
-          </CardContent>
-        </Card>
 
-        {isValidating && (
-          <Card className='border-slate-200/60 dark:border-slate-700/60'>
-            <CardContent className='pt-6'>
-              <div className='flex items-center justify-center py-12'>
-                <div className='text-center space-y-4'>
-                  <div className='relative'>
-                    <div className='animate-spin rounded-full h-12 w-12 border-4 border-slate-200 dark:border-slate-700 border-t-sky-600 dark:border-t-sky-400 mx-auto' />
-                  </div>
-                  <div>
-                    <p className='font-medium text-slate-900 dark:text-slate-100'>
-                      Validando archivo...
-                    </p>
-                    <p className='text-sm text-muted-foreground mt-1'>
-                      Verificando estructura y columnas
-                    </p>
-                  </div>
+            {/* Estado de validación */}
+            {isValidating && (
+              <div className='mt-4 flex flex-col items-center justify-center py-8 space-y-4'>
+                <div className='relative'>
+                  <div className='animate-spin rounded-full h-12 w-12 border-3 border-slate-200 dark:border-slate-700 border-t-sky-500' />
+                  <div className='absolute inset-0 rounded-full bg-sky-400/20 blur-xl' />
+                </div>
+                <div className='text-center'>
+                  <p className='font-semibold text-slate-900 dark:text-slate-100 mb-1'>
+                    Validando archivo...
+                  </p>
+                  <p className='text-sm text-slate-600 dark:text-slate-400'>
+                    Verificando estructura y columnas requeridas
+                  </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {file && isValidFile && !isValidating && (
-          <div className='flex justify-end'>
-            <Button
-              onClick={handleImportar}
-              disabled={isImporting}
-              className='bg-sky-600 hover:bg-sky-700 text-white'
-            >
-              {isImporting ? (
-                <>
-                  <div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2' />
-                  Cargando...
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className='w-4 h-4 mr-2' />
-                  Cargar Archivo
-                </>
-              )}
-            </Button>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

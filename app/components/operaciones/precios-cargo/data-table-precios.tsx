@@ -123,12 +123,12 @@ export function DataTablePrecios<TData, TValue>({
           <TableHeader className='text-xs'>
             {/* Headers agrupados */}
             {columnGroups.length > 0 && (
-              <TableRow className='border-b-0 h-5'>
+              <TableRow className='border-b-0 h-8'>
                 {columnGroups.map(group => (
                   <TableHead
                     key={group.id}
                     colSpan={getColumnSpan(group.id)}
-                    className={`text-center font-bold text-xs py-1 px-1 border-r last:border-r-0 ${
+                    className={`text-center font-bold text-xs py-2 px-2 border-r last:border-r-0 ${
                       group.className || 'bg-slate-600 text-white'
                     }`}
                   >
@@ -142,14 +142,14 @@ export function DataTablePrecios<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b bg-slate-50 dark:bg-slate-800/50 h-5'
+                className='border-b bg-slate-50 dark:bg-slate-800/50 h-8'
               >
                 {headerGroup.headers.map(header => {
                   const group = getColumnGroup(header.column.id);
                   return (
                     <TableHead
                       key={header.id}
-                      className={`font-semibold text-xs py-0 px-1 border-r last:border-r-0 ${
+                      className={`font-semibold text-xs py-2 px-2 border-r last:border-r-0 ${
                         group ? 'bg-slate-100 dark:bg-slate-700/50' : ''
                       }`}
                       style={{
@@ -177,7 +177,7 @@ export function DataTablePrecios<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b h-5 ${
+                  className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b h-9 ${
                     index % 2 === 0
                       ? 'bg-white dark:bg-slate-900'
                       : 'bg-slate-25 dark:bg-slate-900/50'
@@ -188,7 +188,7 @@ export function DataTablePrecios<TData, TValue>({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`py-0 px-1 text-xs border-r last:border-r-0 ${
+                        className={`py-2 px-2 text-xs border-r last:border-r-0 ${
                           group ? 'border-slate-200 dark:border-slate-700' : ''
                         }`}
                       >
@@ -205,7 +205,7 @@ export function DataTablePrecios<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-6 text-center text-slate-500 dark:text-slate-400 text-xs'
+                  className='h-12 text-center text-slate-500 dark:text-slate-400 text-xs'
                 >
                   No se encontraron resultados.
                 </TableCell>
