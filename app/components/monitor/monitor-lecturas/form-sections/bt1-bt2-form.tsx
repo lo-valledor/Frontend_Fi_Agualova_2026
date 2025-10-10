@@ -1,12 +1,19 @@
 import { AlertCircle, Calculator, Check, Gauge, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { useClaves } from '~/hooks/use-claves';
 import api from '~/lib/api';
 import type { FormDataBT1y2, MedidorNichoItem } from '~/types/monitor';
 
@@ -18,6 +25,14 @@ interface BT1BT2FormProps {
 }
 
 export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
+  // Hook para manejar claves dinámicamente
+  const {
+    getClavesForGroup,
+    getClaveCorrectaId,
+    isLoading: clavesLoading,
+    error: clavesError
+  } = useClaves();
+
   // Valores fijos del medidor
   const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
   const valorAnterior = useMemo(
@@ -251,7 +266,8 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     };
 
     if (tipoLectura === 'mayor') {
-      data.claid = '23';
+      // Usar clave dinámica para lectura correcta
+      data.claid = getClaveCorrectaId();
     } else if (selectedClave !== '0') {
       data.claid = selectedClave;
     } else {
@@ -259,7 +275,14 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     }
 
     return data;
-  }, [inputValue, consumoCalculado, result.LM_ID, tipoLectura, selectedClave]);
+  }, [
+    inputValue,
+    consumoCalculado,
+    result.LM_ID,
+    tipoLectura,
+    selectedClave,
+    getClaveCorrectaId
+  ]);
 
   // Confirmar tipo de lectura y registrar la clave seleccionada
   const handleConfirmLectura = useCallback(
@@ -340,25 +363,36 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     }
   }, [prepararDatosFormulario, onSuccess, result.ME_NSerie]);
 
-  const clavesMenorOptions = useMemo(
-    () => [
-      { value: '0', label: 'Seleccione' },
-      { value: '1', label: 'CSCR - CONSUMO SUPERA CRITERIO DE RANGO' },
-      { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' }
-    ],
-    []
-  );
+  // Opciones de claves dinámicas basadas en los grupos
+  const clavesMenorOptions = useMemo(() => {
+    if (clavesLoading) {
+      return [{ value: '0', label: 'Cargando claves...' }];
+    }
+    if (clavesError) {
+      return [
+        { value: '0', label: 'Seleccione' },
+        { value: '1', label: 'CSCR - CONSUMO SUPERA CRITERIO DE RANGO' },
+        { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' }
+      ];
+    }
+    return getClavesForGroup('100');
+  }, [getClavesForGroup, clavesLoading, clavesError]);
 
-  const clavesIgualOptions = useMemo(
-    () => [
-      { value: '0', label: 'Seleccione' },
-      { value: '3', label: 'RCER - LOCAL CERRADO' },
-      { value: '5', label: 'LENR - LECTURA NO REALIZADA' },
-      { value: '15', label: 'MCRT - MEDIDOR CORTADO' },
-      { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' }
-    ],
-    []
-  );
+  const clavesIgualOptions = useMemo(() => {
+    if (clavesLoading) {
+      return [{ value: '0', label: 'Cargando claves...' }];
+    }
+    if (clavesError) {
+      return [
+        { value: '0', label: 'Seleccione' },
+        { value: '3', label: 'RCER - LOCAL CERRADO' },
+        { value: '5', label: 'LENR - LECTURA NO REALIZADA' },
+        { value: '15', label: 'MCRT - MEDIDOR CORTADO' },
+        { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' }
+      ];
+    }
+    return getClavesForGroup('200');
+  }, [getClavesForGroup, clavesLoading, clavesError]);
 
   return (
     <div className='space-y-3'>
@@ -431,6 +465,13 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
 
           {/* Estados y alertas compactas */}
           <div className='space-y-2'>
+            {clavesError && (
+              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Error cargando claves: usando valores por defecto
+              </div>
+            )}
+
             {Number(consumoCalculado) < 0 && (
               <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />

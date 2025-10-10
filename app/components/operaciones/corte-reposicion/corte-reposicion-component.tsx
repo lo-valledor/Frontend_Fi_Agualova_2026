@@ -178,7 +178,8 @@ export default function CorteReposicionComponent({
       element: '#panel-revision',
       popover: {
         title: '🔧 Panel de Revisión',
-        description: 'Este es el <strong>panel principal</strong> donde encontrarás todas las herramientas de gestión y control para el proceso de corte y reposición.',
+        description:
+          'Este es el <strong>panel principal</strong> donde encontrarás todas las herramientas de gestión y control para el proceso de corte y reposición.',
         side: 'bottom' as const,
         align: 'start' as const
       }
@@ -187,7 +188,8 @@ export default function CorteReposicionComponent({
       element: '#buscar-btn',
       popover: {
         title: '🔍 Buscar Datos',
-        description: '¡Empezar aquí! Este botón <strong>actualiza y carga</strong> los datos más recientes del mantenedor de revisión de corte.',
+        description:
+          '¡Empezar aquí! Este botón <strong>actualiza y carga</strong> los datos más recientes del mantenedor de revisión de corte.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -196,7 +198,8 @@ export default function CorteReposicionComponent({
       element: '#ver-totales-btn',
       popover: {
         title: '📊 Ver Totales',
-        description: 'Muestra un <strong>resumen estadístico</strong> de todos los estados: Pendientes, Liberados, Cortados y Reposición Solicitada.',
+        description:
+          'Muestra un <strong>resumen estadístico</strong> de todos los estados: Pendientes, Liberados, Cortados y Reposición Solicitada.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -205,7 +208,8 @@ export default function CorteReposicionComponent({
       element: '#estadisticas-rapidas',
       popover: {
         title: '📈 Estadísticas Rápidas',
-        description: 'Vista rápida de los <strong>totales por estado</strong>. Te permite entender la distribución de casos sin abrir el modal.',
+        description:
+          'Vista rápida de los <strong>totales por estado</strong>. Te permite entender la distribución de casos sin abrir el modal.',
         side: 'top' as const,
         align: 'center' as const
       }
@@ -214,7 +218,8 @@ export default function CorteReposicionComponent({
       element: '#proceso-buttons',
       popover: {
         title: '⚙️ Activar Actualización',
-        description: 'Primer paso del <strong>flujo de trabajo</strong>: Activa la actualización del proceso de revisión antes de iniciarlo.',
+        description:
+          'Primer paso del <strong>flujo de trabajo</strong>: Activa la actualización del proceso de revisión antes de iniciarlo.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -223,7 +228,8 @@ export default function CorteReposicionComponent({
       element: '#export-buttons',
       popover: {
         title: '💾 Exportar Datos',
-        description: 'Descarga los datos en formato <strong>Excel</strong>. Disponible en dos versiones: Mantenedor completo y Revisión de Corte específica.',
+        description:
+          'Descarga los datos en formato <strong>Excel</strong>. Disponible en dos versiones: Mantenedor completo y Revisión de Corte específica.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -232,7 +238,8 @@ export default function CorteReposicionComponent({
       element: '#tabla-datos',
       popover: {
         title: '📋 Tabla de Datos',
-        description: 'Listado detallado de todos los registros con <strong>filtros y búsqueda</strong>. Puedes buscar por código, RUT o razón social.',
+        description:
+          'Listado detallado de todos los registros con <strong>filtros y búsqueda</strong>. Puedes buscar por código, RUT o razón social.',
         side: 'top' as const,
         align: 'start' as const
       }
@@ -252,7 +259,7 @@ export default function CorteReposicionComponent({
       nextBtnText: 'Siguiente',
       prevBtnText: 'Anterior',
       doneBtnText: 'Finalizar',
-      onHighlightStarted: (element) => {
+      onHighlightStarted: element => {
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -266,28 +273,31 @@ export default function CorteReposicionComponent({
   return (
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='container mx-auto p-3 space-y-4'>
-        {/* Header */}
-        <ModernHeader
-          title='Corte y Reposición'
-          description='Gestión integral de procesos de corte y reposición de servicios'
-        />
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+          {/* Header */}
+          <ModernHeader
+            title='Corte y Reposición'
+            description='Gestión integral de procesos de corte y reposición de servicios'
+          />
 
-        {/* Botón de Guía Interactiva */}
-        <div className="flex justify-end">
+          {/* Botón de Guía Interactiva */}
+          {/* Botón para iniciar el tour interactivo */}
           <Button
+            variant='outline'
+            size='sm'
             onClick={startTour}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2 text-blue-600 border-blue-300 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-blue-950"
+            className='mb-2'
           >
-            <HelpCircle className="h-4 w-4" />
-            Guía Interactiva
+            <HelpCircle className='h-4 w-4' />
           </Button>
         </div>
 
         <div className='space-y-4'>
           {/* Panel de Revisión modernizado */}
-          <Card id="panel-revision" className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
+          <Card
+            id='panel-revision'
+            className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'
+          >
             <Collapsible open={isRevisionOpen} onOpenChange={setIsRevisionOpen}>
               <CollapsibleTrigger asChild>
                 <div className='p-3 border-b border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'>
@@ -318,7 +328,7 @@ export default function CorteReposicionComponent({
                   {/* Botones de Acción modernizados */}
                   <div className='flex flex-wrap gap-3 justify-center'>
                     <Button
-                      id="buscar-btn"
+                      id='buscar-btn'
                       variant='outline'
                       size='sm'
                       onClick={handleBuscar}
@@ -335,7 +345,7 @@ export default function CorteReposicionComponent({
                     <Dialog>
                       <DialogTrigger asChild>
                         <Button
-                          id="ver-totales-btn"
+                          id='ver-totales-btn'
                           variant='outline'
                           size='sm'
                           className='gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300'
@@ -421,7 +431,7 @@ export default function CorteReposicionComponent({
                     </Dialog>
 
                     <Button
-                      id="export-buttons"
+                      id='export-buttons'
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcel}
@@ -440,7 +450,7 @@ export default function CorteReposicionComponent({
                       Exportar Excel Corte
                     </Button>
                     <Button
-                      id="proceso-buttons"
+                      id='proceso-buttons'
                       variant='default'
                       size='sm'
                       onClick={handleActivarActualizacion}
@@ -507,7 +517,10 @@ export default function CorteReposicionComponent({
               ) : (
                 <div className='space-y-4'>
                   {/* Estadísticas rápidas */}
-                  <div id="estadisticas-rapidas" className='grid grid-cols-2 lg:grid-cols-4 gap-3'>
+                  <div
+                    id='estadisticas-rapidas'
+                    className='grid grid-cols-2 lg:grid-cols-4 gap-3'
+                  >
                     <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
                       <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
                         {getCantidadPorCodigo('NULL')}
@@ -543,7 +556,10 @@ export default function CorteReposicionComponent({
                   </div>
 
                   {/* Tabla moderna */}
-                  <div id="tabla-datos" className='border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden'>
+                  <div
+                    id='tabla-datos'
+                    className='border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden'
+                  >
                     <DataTable
                       columns={columns}
                       data={mantenedorCorteData}

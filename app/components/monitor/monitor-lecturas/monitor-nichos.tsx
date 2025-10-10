@@ -1,7 +1,7 @@
 import { type PaginationState } from '@tanstack/react-table';
-import { Loader2, RotateCcw, Settings } from 'lucide-react';
+import { Loader2, RotateCcw, Search, Settings, X } from 'lucide-react';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { EmptyState, LoadingState } from '~/components/loading-state';
@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
 import type { MedidorNichoItem } from '~/types/monitor';
 
@@ -45,6 +46,25 @@ export default function MonitorNichos({
     pageIndex: 0,
     pageSize: 15
   });
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filtrar resultados basado en el término de búsqueda
+  const filteredResults = useMemo(() => {
+    if (!searchTerm.trim()) {
+      return results;
+    }
+
+    const searchLower = searchTerm.toLowerCase().trim();
+    return results.filter(item => {
+      return (
+        item.ME_NSerie?.toLowerCase().includes(searchLower) ||
+        item.ubicacion?.toLowerCase().includes(searchLower) ||
+        item.local?.toLowerCase().includes(searchLower) ||
+        item.tarifa?.toLowerCase().includes(searchLower) ||
+        item.Nro?.toString().includes(searchLower)
+      );
+    });
+  }, [results, searchTerm]);
 
   const searchResults = useCallback(async () => {
     const params = new URLSearchParams({
@@ -149,6 +169,16 @@ export default function MonitorNichos({
     );
   }
 
+  if (filteredResults.length === 0 && searchTerm.trim()) {
+    return (
+      <div className='flex items-center justify-center min-h-[400px]'>
+        <EmptyState
+          message={`No se encontraron medidores que coincidan con "${searchTerm}"`}
+        />
+      </div>
+    );
+  }
+
   // Preparar las props para pasar a la función de columnas
   const columnProps = {
     handleOpenDialog,
@@ -160,7 +190,8 @@ export default function MonitorNichos({
   return (
     <div className='w-full h-full flex flex-col'>
       {/* Header compacto para modal */}
-      <div className='flex-shrink-0 border-b border-slate-200/60 dark:border-slate-700/60 pb-4 mb-4'>
+      <div className='flex-shrink-0 border-b border-slate-200/60 dark:border-slate-700/60 pb-4 mb-4 space-y-3'>
+        {/* Primera fila: Badges y botón actualizar */}
         <div className='flex items-center justify-between gap-3 flex-wrap'>
           <div className='flex items-center gap-2 flex-wrap'>
             <Badge
@@ -181,7 +212,8 @@ export default function MonitorNichos({
               variant='outline'
               className='h-9 bg-gradient-to-r from-slate-50 to-slate-100/80 dark:from-slate-900/30 dark:to-slate-800/30 text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-600 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
             >
-              {results.length} medidores
+              {filteredResults.length} medidores
+              {searchTerm.trim() && ` de ${results.length}`}
             </Badge>
           </div>
 
@@ -205,6 +237,30 @@ export default function MonitorNichos({
             )}
           </Button>
         </div>
+
+        {/* Segunda fila: Buscador */}
+        <div className='flex items-center gap-3'>
+          <div className='relative flex-1 max-w-md'>
+            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500' />
+            <Input
+              type='text'
+              placeholder='Buscar por N° Serie, Ubicación, Local, Tarifa o N°...'
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className='pl-10 pr-10 h-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-sky-300 dark:focus:border-sky-600 focus:ring-sky-200 dark:focus:ring-sky-800 text-sm'
+            />
+            {searchTerm && (
+              <Button
+                variant='ghost'
+                size='sm'
+                className='absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-slate-100 dark:hover:bg-slate-800'
+                onClick={() => setSearchTerm('')}
+              >
+                <X className='h-3 w-3' />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Contenido de la tabla */}
@@ -217,7 +273,7 @@ export default function MonitorNichos({
           <div className='h-full'>
             <DataTableNichos
               columns={columnsNichos(columnProps)}
-              data={results}
+              data={filteredResults}
               columnGroups={columnGroups}
               onRowClick={handleRowClick}
               pagination={pagination}

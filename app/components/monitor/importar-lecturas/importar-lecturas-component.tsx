@@ -64,14 +64,17 @@ export default function ImportarLecturasComponent() {
   const [isValidating, setIsValidating] = useState(false);
   const [isValidFile, setIsValidFile] = useState(false);
   const [showColumnInfo, setShowColumnInfo] = useState(false);
-  
+
   // Estados para los nuevos endpoints
-  const [estadoProcesamiento, setEstadoProcesamiento] = useState<EstadoProcesamiento | null>(null);
-  const [registrosPendientes, setRegistrosPendientes] = useState<RegistrosPendientes | null>(null);
+  const [estadoProcesamiento, setEstadoProcesamiento] =
+    useState<EstadoProcesamiento | null>(null);
+  const [registrosPendientes, setRegistrosPendientes] =
+    useState<RegistrosPendientes | null>(null);
   const [loadingEstado, setLoadingEstado] = useState(false);
   const [loadingRegistros, setLoadingRegistros] = useState(false);
   const [processingBT, setProcessingBT] = useState(false);
-  const [procesamientoResult, setProcesamientoResult] = useState<ProcesamientoResult | null>(null);
+  const [procesamientoResult, setProcesamientoResult] =
+    useState<ProcesamientoResult | null>(null);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -204,22 +207,25 @@ export default function ImportarLecturasComponent() {
         // Validar períodos si hay datos y estado disponible
         if (estadoProcesamiento && jsonData.length > 3) {
           const dataRows = jsonData.slice(3); // Datos desde la fila 4
-          const periodoColumnIndex = headers.findIndex(h => String(h).trim() === 'Periodo');
-          
+          const periodoColumnIndex = headers.findIndex(
+            h => String(h).trim() === 'Periodo'
+          );
+
           if (periodoColumnIndex !== -1) {
             const periodsInFile = new Set();
             const periodValidationErrors = [];
-            
-            for (let i = 0; i < Math.min(dataRows.length, 10); i++) { // Validar solo las primeras 10 filas para rendimiento
+
+            for (let i = 0; i < Math.min(dataRows.length, 10); i++) {
+              // Validar solo las primeras 10 filas para rendimiento
               const row = dataRows[i] as any[];
               if (row[periodoColumnIndex]) {
                 const filePeriod = String(row[periodoColumnIndex]).trim();
                 periodsInFile.add(filePeriod);
-                
+
                 // Normalizar período del archivo para comparación
                 const normalizedFilePeriod = filePeriod.replace('-', '');
                 const expectedPeriod = estadoProcesamiento.periodoActivo;
-                
+
                 if (normalizedFilePeriod !== expectedPeriod) {
                   periodValidationErrors.push({
                     row: i + 4, // +4 porque empezamos desde la fila 4 del Excel
@@ -229,7 +235,7 @@ export default function ImportarLecturasComponent() {
                 }
               }
             }
-            
+
             if (periodValidationErrors.length > 0) {
               const errorMsg = `Error de período detectado: Se encontró "${periodValidationErrors[0].found}" pero se esperaba "${periodValidationErrors[0].expected}". Verifica que el período en el Excel coincida con el período activo del sistema.`;
               setError(errorMsg);
@@ -240,7 +246,7 @@ export default function ImportarLecturasComponent() {
             }
           }
         }
-        
+
         setIsValidFile(true);
         toast.success('Archivo válido - listo para cargar');
       }
@@ -420,7 +426,7 @@ export default function ImportarLecturasComponent() {
 
       setProcesamientoResult(data);
       toast.success(data.mensaje || 'Procesamiento completado exitosamente');
-      
+
       // Refrescar estado después del procesamiento
       fetchEstadoProcesamiento();
     } catch (error: any) {
@@ -461,7 +467,9 @@ export default function ImportarLecturasComponent() {
                   onClick={fetchEstadoProcesamiento}
                   disabled={loadingEstado}
                 >
-                  <RefreshCw className={`h-4 w-4 ${loadingEstado ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`h-4 w-4 ${loadingEstado ? 'animate-spin' : ''}`}
+                  />
                 </Button>
               </div>
             </CardHeader>
@@ -473,35 +481,54 @@ export default function ImportarLecturasComponent() {
               ) : estadoProcesamiento ? (
                 <div className='space-y-2'>
                   <div className='flex justify-between items-center'>
-                    <span className='text-sm text-muted-foreground'>Período Activo:</span>
+                    <span className='text-sm text-muted-foreground'>
+                      Período Activo:
+                    </span>
                     <Badge variant='outline' className='font-mono'>
                       {estadoProcesamiento.periodoActivo}
                     </Badge>
                   </div>
                   <div className='flex justify-between items-center'>
-                    <span className='text-sm text-muted-foreground'>Registros Pendientes:</span>
-                    <Badge 
-                      variant={estadoProcesamiento.registrosPendientes > 0 ? 'destructive' : 'default'}
+                    <span className='text-sm text-muted-foreground'>
+                      Registros Pendientes:
+                    </span>
+                    <Badge
+                      variant={
+                        estadoProcesamiento.registrosPendientes > 0
+                          ? 'destructive'
+                          : 'default'
+                      }
                       className='font-mono'
                     >
                       {estadoProcesamiento.registrosPendientes}
                     </Badge>
                   </div>
                   <div className='flex justify-between items-center'>
-                    <span className='text-sm text-muted-foreground'>Estado:</span>
-                    <Badge 
-                      variant={estadoProcesamiento.registrosPendientes > 0 ? 'secondary' : 'default'}
+                    <span className='text-sm text-muted-foreground'>
+                      Estado:
+                    </span>
+                    <Badge
+                      variant={
+                        estadoProcesamiento.registrosPendientes > 0
+                          ? 'secondary'
+                          : 'default'
+                      }
                       className='text-xs'
                     >
                       {estadoProcesamiento.estado}
                     </Badge>
                   </div>
                   <div className='text-xs text-muted-foreground pt-2 border-t'>
-                    Última consulta: {new Date(estadoProcesamiento.fechaConsulta).toLocaleString()}
+                    Última consulta:{' '}
+                    {new Date(
+                      estadoProcesamiento.fechaConsulta
+                    ).toLocaleString()}
                   </div>
                 </div>
               ) : (
-                <p className='text-sm text-muted-foreground'>No se pudo cargar el estado</p>
+                <p className='text-sm text-muted-foreground'>
+                  No se pudo cargar el estado
+                </p>
               )}
             </CardContent>
           </Card>
@@ -526,7 +553,7 @@ export default function ImportarLecturasComponent() {
                 )}
                 Consultar Registros Pendientes
               </Button>
-              
+
               <Button
                 onClick={procesarBT1BT2}
                 //disabled={processingBT || (estadoProcesamiento?.registrosPendientes === 0)}
@@ -571,7 +598,9 @@ export default function ImportarLecturasComponent() {
                   <div className='text-2xl font-bold text-green-700 dark:text-green-300'>
                     {procesamientoResult.registrosActualizados}
                   </div>
-                  <div className='text-xs text-muted-foreground'>Registros Actualizados</div>
+                  <div className='text-xs text-muted-foreground'>
+                    Registros Actualizados
+                  </div>
                 </div>
                 <div className='text-center'>
                   <div className='text-sm font-medium text-green-700 dark:text-green-300'>
@@ -580,48 +609,76 @@ export default function ImportarLecturasComponent() {
                   <div className='text-xs text-muted-foreground'>Período</div>
                 </div>
                 <div className='text-center'>
-                  <Badge variant={procesamientoResult.exitoso ? 'default' : 'destructive'}>
+                  <Badge
+                    variant={
+                      procesamientoResult.exitoso ? 'default' : 'destructive'
+                    }
+                  >
                     {procesamientoResult.exitoso ? 'Exitoso' : 'Falló'}
                   </Badge>
                   <div className='text-xs text-muted-foreground'>Estado</div>
                 </div>
                 <div className='text-center'>
                   <div className='text-xs text-muted-foreground'>
-                    {new Date(procesamientoResult.fechaProcesamiento).toLocaleString()}
+                    {new Date(
+                      procesamientoResult.fechaProcesamiento
+                    ).toLocaleString()}
                   </div>
                   <div className='text-xs text-muted-foreground'>Fecha</div>
                 </div>
               </div>
-              
+
               <div className='text-sm text-green-800 dark:text-green-200'>
                 {procesamientoResult.mensaje}
               </div>
-              
-              {procesamientoResult.detalles && procesamientoResult.detalles.length > 0 && (
-                <div className='mt-4'>
-                  <h4 className='text-sm font-medium mb-2'>Detalles del procesamiento:</h4>
-                  <ScrollArea className='h-32 rounded border'>
-                    <div className='p-2 space-y-2'>
-                      {procesamientoResult.detalles.map((detalle, idx) => (
-                        <div key={idx} className='text-xs bg-white dark:bg-slate-900 p-2 rounded border'>
-                          <div className='grid grid-cols-2 gap-2'>
-                            <span><strong>Serie:</strong> {detalle.numeroSerie}</span>
-                            <span><strong>Tarifa:</strong> {detalle.tarifa}</span>
-                            <span><strong>Lectura Ant.:</strong> {detalle.lecturaAnteriorKwh} kWh</span>
-                            <span><strong>Consumo:</strong> {detalle.consumoEnergiaKwh} kWh</span>
-                            <span><strong>Usuario:</strong> {detalle.usuarioCarga}</span>
-                            <span><strong>Estado:</strong> {detalle.estado}</span>
+
+              {procesamientoResult.detalles &&
+                procesamientoResult.detalles.length > 0 && (
+                  <div className='mt-4'>
+                    <h4 className='text-sm font-medium mb-2'>
+                      Detalles del procesamiento:
+                    </h4>
+                    <ScrollArea className='h-32 rounded border'>
+                      <div className='p-2 space-y-2'>
+                        {procesamientoResult.detalles.map((detalle, idx) => (
+                          <div
+                            key={idx}
+                            className='text-xs bg-white dark:bg-slate-900 p-2 rounded border'
+                          >
+                            <div className='grid grid-cols-2 gap-2'>
+                              <span>
+                                <strong>Serie:</strong> {detalle.numeroSerie}
+                              </span>
+                              <span>
+                                <strong>Tarifa:</strong> {detalle.tarifa}
+                              </span>
+                              <span>
+                                <strong>Lectura Ant.:</strong>{' '}
+                                {detalle.lecturaAnteriorKwh} kWh
+                              </span>
+                              <span>
+                                <strong>Consumo:</strong>{' '}
+                                {detalle.consumoEnergiaKwh} kWh
+                              </span>
+                              <span>
+                                <strong>Usuario:</strong> {detalle.usuarioCarga}
+                              </span>
+                              <span>
+                                <strong>Estado:</strong> {detalle.estado}
+                              </span>
+                            </div>
+                            {detalle.mensaje && (
+                              <div className='mt-1 text-muted-foreground'>
+                                {detalle.mensaje}
+                              </div>
+                            )}
                           </div>
-                          {detalle.mensaje && (
-                            <div className='mt-1 text-muted-foreground'>{detalle.mensaje}</div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </div>
-              )}
-              
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </div>
+                )}
+
               <Button
                 variant='ghost'
                 size='sm'
@@ -642,24 +699,10 @@ export default function ImportarLecturasComponent() {
           </AlertTitle>
           <AlertDescription className='text-sky-800 dark:text-sky-200'>
             <div className='space-y-2'>
-              <p>
-                El archivo debe contener las columnas en la <strong>fila 3</strong>{' '}
-                y los datos desde la <strong>fila 4</strong>.
-              </p>
-              {estadoProcesamiento && (
-                <div className='bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mt-2'>
-                  <p className='text-sm font-medium text-amber-800 dark:text-amber-200 mb-1'>
-                    ⚠️ Formato de Período Importante:
-                  </p>
-                  <p className='text-xs text-amber-700 dark:text-amber-300'>
-                    El período en el Excel debe coincidir exactamente con: <strong>{estadoProcesamiento.periodoActivo}</strong>
-                  </p>
-                  <p className='text-xs text-amber-600 dark:text-amber-400 mt-1'>
-                    Formatos aceptados: {estadoProcesamiento.periodoActivo}, {estadoProcesamiento.periodoActivo.slice(0,2)}-{estadoProcesamiento.periodoActivo.slice(2)}
-                  </p>
-                </div>
-              )}
-              <Collapsible open={showColumnInfo} onOpenChange={setShowColumnInfo}>
+              <Collapsible
+                open={showColumnInfo}
+                onOpenChange={setShowColumnInfo}
+              >
                 <CollapsibleTrigger asChild>
                   <Button
                     variant='ghost'
@@ -674,7 +717,10 @@ export default function ImportarLecturasComponent() {
                   <ScrollArea className='h-32 rounded border border-sky-200 dark:border-sky-800 bg-white dark:bg-slate-900 p-2'>
                     <div className='grid grid-cols-2 md:grid-cols-3 gap-1 text-xs'>
                       {REQUIRED_COLUMNS.map((col, idx) => (
-                        <div key={idx} className='text-slate-700 dark:text-slate-300'>
+                        <div
+                          key={idx}
+                          className='text-slate-700 dark:text-slate-300'
+                        >
                           • {col}
                         </div>
                       ))}
@@ -687,7 +733,10 @@ export default function ImportarLecturasComponent() {
         </Alert>
 
         {error && (
-          <Alert variant='destructive' className='border-red-200 dark:border-red-800'>
+          <Alert
+            variant='destructive'
+            className='border-red-200 dark:border-red-800'
+          >
             <AlertCircle className='h-4 w-4' />
             <AlertTitle>Error de Validación</AlertTitle>
             <AlertDescription className='space-y-2'>
@@ -698,10 +747,13 @@ export default function ImportarLecturasComponent() {
                     💡 Solución:
                   </p>
                   <p className='text-xs text-red-700 dark:text-red-300 mt-1'>
-                    Asegúrate de que la columna "Periodo" en tu Excel contenga exactamente: <strong>{estadoProcesamiento.periodoActivo}</strong>
+                    Asegúrate de que la columna "Periodo" en tu Excel contenga
+                    exactamente:{' '}
+                    <strong>{estadoProcesamiento.periodoActivo}</strong>
                   </p>
                   <p className='text-xs text-red-600 dark:text-red-400 mt-1'>
-                    Si tu archivo tiene formato "MM-YYYY", cámbialo a "MMYYYY" (sin guión).
+                    Si tu archivo tiene formato "MM-YYYY", cámbialo a "MMYYYY"
+                    (sin guión).
                   </p>
                 </div>
               )}

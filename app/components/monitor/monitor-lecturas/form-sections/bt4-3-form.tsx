@@ -22,6 +22,7 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { useClaves } from '~/hooks/use-claves';
 import api from '~/lib/api';
 import type { FormDataBT43, MedidorNichoItem } from '~/types/monitor';
 
@@ -33,6 +34,14 @@ interface BT43FormProps {
 }
 
 export function BT43Form({ result, onSuccess }: BT43FormProps) {
+  // Hook para manejar claves dinámicamente
+  const {
+    getClavesForGroup,
+    getClaveCorrectaId,
+    isLoading: clavesLoading,
+    error: clavesError
+  } = useClaves();
+
   // Valores fijos del medidor
   const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
   const valorActivaAnterior = useMemo(
@@ -287,7 +296,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
     setShowComaWarningDP(false);
     setShowComaWarningDS(false);
-  }, [result, calcularConsumoActiva, calcularConsumoReactiva, formatearFechaParaInput]);
+  }, [
+    result,
+    calcularConsumoActiva,
+    calcularConsumoReactiva,
+    formatearFechaParaInput
+  ]);
 
   // Validar que la lectura no exceda el número de dígitos del medidor
   const validarDigitos = useCallback(
@@ -714,7 +728,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
     let claveActivaId = '';
     if (tipoLecturaActiva === 'mayor') {
-      claveActivaId = '23';
+      claveActivaId = getClaveCorrectaId();
     } else if (selectedClaveActiva !== '0') {
       claveActivaId = selectedClaveActiva;
     } else {
@@ -723,7 +737,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
     let claveReactivaId = '';
     if (tipoLecturaReactiva === 'mayor') {
-      claveReactivaId = '23';
+      claveReactivaId = getClaveCorrectaId();
     } else if (selectedClaveReactiva !== '0') {
       claveReactivaId = selectedClaveReactiva;
     } else {
@@ -757,7 +771,8 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     tipoLecturaReactiva,
     selectedClaveReactiva,
     demandaData,
-    result.LM_ID
+    result.LM_ID,
+    getClaveCorrectaId
   ]);
 
   // Guardar la lectura
@@ -822,25 +837,36 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     onSuccess
   ]);
 
-  const clavesOptions = useMemo(
-    () => [
-      { value: '0', label: 'Seleccione' },
-      { value: '1', label: 'CSCR - CONSUMO SUPERA CRITERIO DE RANGO' },
-      { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' }
-    ],
-    []
-  );
+  // Opciones de claves dinámicas basadas en los grupos
+  const clavesOptions = useMemo(() => {
+    if (clavesLoading) {
+      return [{ value: '0', label: 'Cargando claves...' }];
+    }
+    if (clavesError) {
+      return [
+        { value: '0', label: 'Seleccione' },
+        { value: '1', label: 'CSCR - CONSUMO SUPERA CRITERIO DE RANGO' },
+        { value: '19', label: 'MRST - MEDIDOR REINICIO LECTURA' }
+      ];
+    }
+    return getClavesForGroup('100');
+  }, [getClavesForGroup, clavesLoading, clavesError]);
 
-  const clavesIgualOptions = useMemo(
-    () => [
-      { value: '0', label: 'Seleccione' },
-      { value: '3', label: 'RCER - LOCAL CERRADO' },
-      { value: '5', label: 'LENR - LECTURA NO REALIZADA' },
-      { value: '15', label: 'MCRT - MEDIDOR CORTADO' },
-      { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' }
-    ],
-    []
-  );
+  const clavesIgualOptions = useMemo(() => {
+    if (clavesLoading) {
+      return [{ value: '0', label: 'Cargando claves...' }];
+    }
+    if (clavesError) {
+      return [
+        { value: '0', label: 'Seleccione' },
+        { value: '3', label: 'RCER - LOCAL CERRADO' },
+        { value: '5', label: 'LENR - LECTURA NO REALIZADA' },
+        { value: '15', label: 'MCRT - MEDIDOR CORTADO' },
+        { value: '25', label: 'SCSM - MEDIDOR NO REGISTRA CONSUMO' }
+      ];
+    }
+    return getClavesForGroup('200');
+  }, [getClavesForGroup, clavesLoading, clavesError]);
 
   return (
     <div className='space-y-4'>
@@ -917,6 +943,13 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
           {/* Estados compactos para Energía Activa */}
           <div className='space-y-2 mt-3'>
+            {clavesError && (
+              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+                <AlertCircle className='h-3 w-3' />
+                Error cargando claves: usando valores por defecto
+              </div>
+            )}
+
             {Number(consumoActivaCalculado) < 0 && (
               <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />

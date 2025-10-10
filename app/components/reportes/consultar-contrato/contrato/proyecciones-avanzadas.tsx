@@ -402,7 +402,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                         onClick={exportarAExcel}
                         variant='outline'
                         size='sm'
-                        className='gap-2 text-green-700 border-green-200 hover:bg-green-50'
+                        className='gap-2 text-green-700 dark:text-green-300 border-green-200 hover:bg-green-500/10 hover:border-green-300 focus:ring-green-300'
                       >
                         <Download className='h-4 w-4' />
                         Excel

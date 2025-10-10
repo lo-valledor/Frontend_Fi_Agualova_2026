@@ -121,7 +121,8 @@ export default function RevisarCalculoFacturaComponent({
       element: '#periodo-info',
       popover: {
         title: '📅 Período de Facturación',
-        description: 'Aquí se muestra el período activo para facturación. Solo se puede trabajar con períodos abiertos.',
+        description:
+          'Aquí se muestra el período activo para facturación. Solo se puede trabajar con períodos abiertos.',
         side: 'bottom' as const,
         align: 'start' as const
       }
@@ -130,7 +131,8 @@ export default function RevisarCalculoFacturaComponent({
       element: '#preparar-calculo-btn',
       popover: {
         title: '🔄 Preparar Cálculo',
-        description: '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. Es el primer paso obligatorio.',
+        description:
+          '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. Es el primer paso obligatorio.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -139,7 +141,8 @@ export default function RevisarCalculoFacturaComponent({
       element: '#ver-calculo-btn',
       popover: {
         title: '👁️ Ver Cálculos',
-        description: 'Después de preparar, usa este botón para <strong>visualizar</strong> los cálculos generados y revisar los contratos.',
+        description:
+          'Después de preparar, usa este botón para <strong>visualizar</strong> los cálculos generados y revisar los contratos.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -148,7 +151,8 @@ export default function RevisarCalculoFacturaComponent({
       element: '#aceptar-calculo-btn',
       popover: {
         title: '✅ Aceptar Cálculo',
-        description: 'Finaliza el proceso <strong>aceptando</strong> los cálculos seleccionados. Solo funciona con contratos marcados.',
+        description:
+          'Finaliza el proceso <strong>aceptando</strong> los cálculos seleccionados. Solo funciona con contratos marcados.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -157,7 +161,8 @@ export default function RevisarCalculoFacturaComponent({
       element: '#actualizar-btn',
       popover: {
         title: '🔄 Actualizar Datos',
-        description: 'Refresca los datos mostrados sin perder el estado de preparación del cálculo.',
+        description:
+          'Refresca los datos mostrados sin perder el estado de preparación del cálculo.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -166,7 +171,8 @@ export default function RevisarCalculoFacturaComponent({
       element: '#limpiar-btn',
       popover: {
         title: '🧹 Limpiar Todo',
-        description: 'Reinicia completamente el proceso: limpia filtros, datos y estados para empezar de nuevo.',
+        description:
+          'Reinicia completamente el proceso: limpia filtros, datos y estados para empezar de nuevo.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -186,7 +192,7 @@ export default function RevisarCalculoFacturaComponent({
       nextBtnText: 'Siguiente',
       prevBtnText: 'Anterior',
       doneBtnText: 'Finalizar',
-      onHighlightStarted: (element) => {
+      onHighlightStarted: element => {
         if (element) {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
@@ -200,22 +206,21 @@ export default function RevisarCalculoFacturaComponent({
   return (
     <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
       <div className='max-w-[1880px] mx-auto p-3 space-y-4'>
-        {/* Header */}
-        <ModernHeader
-          title='Revisar Cálculo de Factura'
-          description='Gestión y revisión de cálculos de facturación por periodo'
-        />
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+          {/* Header */}
+          <ModernHeader
+            title='Revisar Cálculo de Factura'
+            description='Gestión y revisión de cálculos de facturación por periodo'
+          />
 
-        {/* Botón de Guía Interactiva */}
-        <div className="flex justify-end">
+          {/* Botón para iniciar el tour interactivo */}
           <Button
+            variant='outline'
+            size='sm'
             onClick={startTour}
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-2 text-purple-600 border-purple-300 hover:bg-purple-50 dark:text-purple-400 dark:border-purple-500 dark:hover:bg-purple-950"
+            className='mb-2'
           >
-            <HelpCircle className="h-4 w-4" />
-            Guía Interactiva
+            <HelpCircle className='h-4 w-4' />
           </Button>
         </div>
 
@@ -266,7 +271,10 @@ export default function RevisarCalculoFacturaComponent({
                       Periodo Actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div id="periodo-info" className='p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700'>
+                      <div
+                        id='periodo-info'
+                        className='p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700'
+                      >
                         <div className='flex items-center gap-3'>
                           <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center'>
                             <CalendarIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
@@ -335,7 +343,7 @@ export default function RevisarCalculoFacturaComponent({
                   <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2'>
                     {/* Botón principal de preparar cálculo */}
                     <Button
-                      id="preparar-calculo-btn"
+                      id='preparar-calculo-btn'
                       onClick={handleLanzarCalculo}
                       disabled={isLaunching}
                       className='flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white col-span-2 sm:col-span-1'
@@ -359,7 +367,7 @@ export default function RevisarCalculoFacturaComponent({
 
                     {/* Ver cálculos */}
                     <Button
-                      id="ver-calculo-btn"
+                      id='ver-calculo-btn'
                       onClick={handleRevisarCalculo}
                       disabled={isLoading}
                       className='flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white'
@@ -381,7 +389,7 @@ export default function RevisarCalculoFacturaComponent({
 
                     {/* Aceptar cálculo */}
                     <Button
-                      id="aceptar-calculo-btn"
+                      id='aceptar-calculo-btn'
                       onClick={handleAceptarCalculo}
                       disabled={isAccepting || selectedContratos.length === 0}
                       className='flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white'
@@ -406,7 +414,7 @@ export default function RevisarCalculoFacturaComponent({
 
                     {/* Actualizar */}
                     <Button
-                      id="actualizar-btn"
+                      id='actualizar-btn'
                       onClick={handleRefreshData}
                       variant='outline'
                       disabled={isLoading || !isCalculoPreparado}
@@ -419,7 +427,7 @@ export default function RevisarCalculoFacturaComponent({
 
                     {/* Limpiar */}
                     <Button
-                      id="limpiar-btn"
+                      id='limpiar-btn'
                       onClick={handleClearFilters}
                       variant='outline'
                       disabled={isLoading}

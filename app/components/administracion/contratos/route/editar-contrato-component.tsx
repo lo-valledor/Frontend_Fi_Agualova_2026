@@ -303,11 +303,6 @@ export default function EditarContratoComponent({
       return;
     }
 
-    if (!formData.local) {
-      toast.error('El local es obligatorio');
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -323,7 +318,7 @@ export default function EditarContratoComponent({
         tarifa: parseInt(formData.tarifa) || 0,
         propietario: getPropietarioRut(),
         cliente: getClienteRut(),
-        localId: formData.local,
+        localId: formData.local || '',
         fechaInicio: formData.fechaInicio,
         activo: formData.activo,
         fechaTermino: formData.fechaTermino,
@@ -333,7 +328,7 @@ export default function EditarContratoComponent({
         ciclo: 1, // Valor fijo para "Ciclo Día 15"
         potencia: formData.potenciaContratada,
         madre: formData.madre || '',
-        lugar: formData.local,
+        lugar: formData.local || '',
         sinCorte: formData.liberadoCorte ? 1 : 0
       };
 
@@ -520,7 +515,7 @@ export default function EditarContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='local'>Local *</Label>
+                  <Label htmlFor='local'>Local</Label>
                   <div className='flex gap-2'>
                     <Input
                       id='local'
@@ -528,7 +523,6 @@ export default function EditarContratoComponent({
                       onChange={e => handleInputChange('local', e.target.value)}
                       placeholder='Número del local'
                       className='w-full'
-                      required
                       readOnly
                     />
                     <Button
