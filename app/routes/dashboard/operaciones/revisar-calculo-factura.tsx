@@ -20,18 +20,40 @@ export async function clientLoader() {
     operacionesService.getCiclosFacturacion()
   ]);
 
+  const periodoAbierto =
+    periodoResult.error || !periodoResult.data ? [] : periodoResult.data;
+
+  // Verificar estado de cierre de lecturas si hay período abierto
+  let estadoCierreLecturas = null;
+  if (periodoAbierto.length > 0) {
+    const { mes, anio } = periodoAbierto[0];
+    const periodoFormateado = `${mes.toString().padStart(2, '0')}${anio.toString()}`;
+    const cicloId = '1'; // Ciclo día 15 (único ciclo normado)
+
+    const estadoCierreResult =
+      await operacionesService.verificarEstadoCierreLecturas(
+        cicloId,
+        periodoFormateado
+      );
+
+    if (!estadoCierreResult.error && estadoCierreResult.data) {
+      estadoCierreLecturas = estadoCierreResult.data;
+    }
+  }
+
   return {
-    periodoAbierto:
-      periodoResult.error || !periodoResult.data ? [] : periodoResult.data,
+    periodoAbierto,
     ciclosFacturacionActivos:
-      ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data
+      ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data,
+    estadoCierreLecturas
   };
 }
 
 export default function RevisarCalculoFactura({
   loaderData
 }: Route.ComponentProps) {
-  const { periodoAbierto, ciclosFacturacionActivos } = loaderData;
+  const { periodoAbierto, ciclosFacturacionActivos, estadoCierreLecturas } =
+    loaderData;
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
     { label: 'Revisar Calculo de Factura' }
@@ -43,6 +65,7 @@ export default function RevisarCalculoFactura({
       <RevisarCalculoFacturaComponent
         periodoAbierto={periodoAbierto ?? []}
         ciclosFacturacionActivos={ciclosFacturacionActivos ?? []}
+        estadoCierreLecturas={estadoCierreLecturas}
       />
     </div>
   );

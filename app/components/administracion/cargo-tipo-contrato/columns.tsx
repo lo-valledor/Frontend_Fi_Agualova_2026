@@ -27,13 +27,13 @@ export const columns = ({
         <div className='flex items-center space-x-3 min-w-0'>
           <div className='min-w-0'>
             <div
-              className='font-medium text-xs sm:text-sm text-gray-900 dark:text-gray-100 truncate max-w-[150px] lg:max-w-[200px]'
+              className='font-medium text-xs sm:text-sm text-gray-900 dark:text-gray-100 truncate'
               title={data.tipoContratoDescripcion}
             >
               {data.tipoContratoDescripcion}
             </div>
             <div
-              className='text-xs text-gray-500 dark:text-gray-400 truncate max-w-[150px] lg:max-w-[200px]'
+              className='text-xs text-gray-500 dark:text-gray-400 truncate'
               title={data.cargoFacturableDescripcion}
             >
               {data.cargoFacturableDescripcion}
@@ -54,7 +54,7 @@ export const columns = ({
       const condicion = row.getValue('condicionContratoDescripcion') as string;
       return (
         <div
-          className='font-medium text-xs sm:text-sm text-slate-700 dark:text-slate-300 truncate max-w-[120px] lg:max-w-[160px]'
+          className='font-medium text-xs sm:text-sm text-slate-700 dark:text-slate-300 truncate'
           title={condicion}
         >
           {condicion}
@@ -73,7 +73,7 @@ export const columns = ({
       const descripcion = row.getValue('descripcion') as string;
       return (
         <div
-          className='text-xs sm:text-sm text-slate-700 dark:text-slate-300 truncate max-w-[150px] lg:max-w-[200px]'
+          className='text-xs sm:text-sm text-slate-700 dark:text-slate-300 truncate'
           title={descripcion}
         >
           {descripcion}

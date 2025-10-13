@@ -5,6 +5,8 @@ type Theme = 'dark' | 'light' | 'system';
 /**
  * Estilos personalizados para react-select con soporte para modo oscuro
  * Utiliza variables CSS de Tailwind para mantener consistencia con el theme
+ * @param theme - El tema actual ('dark', 'light' o 'system')
+ * @returns Configuración de estilos para react-select
  */
 export const getReactSelectStyles = (theme: Theme): StylesConfig<any> => {
   // Convertir 'system' a 'dark' por defecto para evitar errores
@@ -92,90 +94,150 @@ export const getReactSelectStyles = (theme: Theme): StylesConfig<any> => {
 /**
  * Estilos personalizados para react-select usando variables CSS de Tailwind
  * Ideal para componentes que necesitan mayor flexibilidad en el theming
+ * Detecta automáticamente el tema actual basándose en la clase 'dark' del documento
+ * @template T - Tipo de datos para las opciones del select
+ * @returns Configuración de estilos para react-select con fondos sólidos y mejor contraste
  */
-export const getTailwindSelectStyles = <T = any>(): StylesConfig<T, false> => ({
-  control: (provided, state) => ({
-    ...provided,
-    backgroundColor: 'hsl(var(--background))',
-    borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
-    boxShadow: state.isFocused ? '0 0 0 1px hsl(var(--ring))' : 'none',
-    '&:hover': {
-      borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--input))'
-    },
-    borderRadius: 'var(--radius)',
-    minHeight: '36px',
-    height: '36px'
-  }),
-  menu: provided => ({
-    ...provided,
-    backgroundColor: 'hsl(var(--popover))',
-    border: '1px solid hsl(var(--border))',
-    borderRadius: 'var(--radius)',
-    boxShadow:
-      '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    zIndex: 9999
-  }),
-  menuList: provided => ({
-    ...provided,
-    backgroundColor: 'hsl(var(--popover))',
-    padding: '4px',
-    maxHeight: '200px'
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isSelected
-      ? 'hsl(var(--primary))'
-      : state.isFocused
-        ? 'hsl(var(--muted))'
-        : 'transparent',
-    color: state.isSelected
-      ? 'hsl(var(--primary-foreground))'
-      : 'hsl(var(--foreground))',
-    '&:hover': {
+export const getTailwindSelectStyles = <T = any>(): StylesConfig<T, false> => {
+  // Detectar si estamos en modo oscuro
+  const isDark =
+    typeof window !== 'undefined' &&
+    document.documentElement.classList.contains('dark');
+
+  return {
+    control: (provided, state) => ({
+      ...provided,
+      backgroundColor: isDark ? 'rgb(15 23 42)' : 'rgb(255 255 255)',
+      borderColor: state.isFocused
+        ? isDark
+          ? 'rgb(100 116 139)'
+          : 'rgb(148 163 184)'
+        : isDark
+          ? 'rgb(51 65 85)'
+          : 'rgb(226 232 240)',
+      boxShadow: state.isFocused
+        ? `0 0 0 1px ${isDark ? 'rgb(100 116 139)' : 'rgb(148 163 184)'}`
+        : 'none',
+      '&:hover': {
+        borderColor: state.isFocused
+          ? isDark
+            ? 'rgb(100 116 139)'
+            : 'rgb(148 163 184)'
+          : isDark
+            ? 'rgb(71 85 105)'
+            : 'rgb(203 213 225)'
+      },
+      borderRadius: '0.5rem',
+      minHeight: '40px',
+      cursor: 'pointer',
+      transition: 'all 0.15s ease'
+    }),
+    menu: provided => ({
+      ...provided,
+      backgroundColor: isDark ? 'rgb(15 23 42)' : 'rgb(255 255 255)',
+      border: `1px solid ${isDark ? 'rgb(51 65 85)' : 'rgb(226 232 240)'}`,
+      borderRadius: '0.5rem',
+      boxShadow: isDark
+        ? '0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3)'
+        : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      zIndex: 9999,
+      overflow: 'hidden'
+    }),
+    menuList: provided => ({
+      ...provided,
+      backgroundColor: isDark ? 'rgb(15 23 42)' : 'rgb(255 255 255)',
+      padding: '4px',
+      maxHeight: '200px',
+      '::-webkit-scrollbar': {
+        width: '8px'
+      },
+      '::-webkit-scrollbar-track': {
+        background: isDark ? 'rgb(30 41 59)' : 'rgb(241 245 249)'
+      },
+      '::-webkit-scrollbar-thumb': {
+        background: isDark ? 'rgb(71 85 105)' : 'rgb(203 213 225)',
+        borderRadius: '4px'
+      },
+      '::-webkit-scrollbar-thumb:hover': {
+        background: isDark ? 'rgb(100 116 139)' : 'rgb(148 163 184)'
+      }
+    }),
+    option: (provided, state) => ({
+      ...provided,
       backgroundColor: state.isSelected
-        ? 'hsl(var(--primary))'
-        : 'hsl(var(--muted))',
+        ? isDark
+          ? 'rgb(14 165 233)'
+          : 'rgb(14 165 233)'
+        : state.isFocused
+          ? isDark
+            ? 'rgb(30 41 59)'
+            : 'rgb(241 245 249)'
+          : 'transparent',
       color: state.isSelected
-        ? 'hsl(var(--primary-foreground))'
-        : 'hsl(var(--foreground))'
-    },
-    cursor: 'pointer',
-    padding: '8px 12px',
-    borderRadius: 'calc(var(--radius) - 2px)',
-    margin: '1px 0'
-  }),
-  singleValue: provided => ({
-    ...provided,
-    color: 'hsl(var(--foreground))'
-  }),
-  input: provided => ({
-    ...provided,
-    color: 'hsl(var(--foreground))',
-    margin: '0px'
-  }),
-  placeholder: provided => ({
-    ...provided,
-    color: 'hsl(var(--muted-foreground))'
-  }),
-  indicatorSeparator: () => ({
-    display: 'none'
-  }),
-  valueContainer: provided => ({
-    ...provided,
-    padding: '0 12px'
-  }),
-  dropdownIndicator: provided => ({
-    ...provided,
-    color: 'hsl(var(--muted-foreground))',
-    '&:hover': {
-      color: 'hsl(var(--foreground))'
-    }
-  }),
-  clearIndicator: provided => ({
-    ...provided,
-    color: 'hsl(var(--muted-foreground))',
-    '&:hover': {
-      color: 'hsl(var(--foreground))'
-    }
-  })
-});
+        ? 'rgb(255 255 255)'
+        : isDark
+          ? 'rgb(241 245 249)'
+          : 'rgb(15 23 42)',
+      '&:hover': {
+        backgroundColor: state.isSelected
+          ? isDark
+            ? 'rgb(14 165 233)'
+            : 'rgb(14 165 233)'
+          : isDark
+            ? 'rgb(30 41 59)'
+            : 'rgb(241 245 249)'
+      },
+      cursor: 'pointer',
+      padding: '8px 12px',
+      borderRadius: '0.375rem',
+      margin: '1px 0',
+      transition: 'all 0.1s ease'
+    }),
+    singleValue: provided => ({
+      ...provided,
+      color: isDark ? 'rgb(241 245 249)' : 'rgb(15 23 42)'
+    }),
+    input: provided => ({
+      ...provided,
+      color: isDark ? 'rgb(241 245 249)' : 'rgb(15 23 42)',
+      margin: '0px'
+    }),
+    placeholder: provided => ({
+      ...provided,
+      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)'
+    }),
+    indicatorSeparator: () => ({
+      display: 'none'
+    }),
+    valueContainer: provided => ({
+      ...provided,
+      padding: '0 12px'
+    }),
+    dropdownIndicator: provided => ({
+      ...provided,
+      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      padding: '8px',
+      '&:hover': {
+        color: isDark ? 'rgb(203 213 225)' : 'rgb(71 85 105)'
+      }
+    }),
+    clearIndicator: provided => ({
+      ...provided,
+      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      padding: '8px',
+      '&:hover': {
+        color: isDark ? 'rgb(239 68 68)' : 'rgb(220 38 38)'
+      }
+    }),
+    noOptionsMessage: provided => ({
+      ...provided,
+      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      padding: '12px'
+    }),
+    loadingMessage: provided => ({
+      ...provided,
+      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      padding: '12px'
+    })
+  };
+};

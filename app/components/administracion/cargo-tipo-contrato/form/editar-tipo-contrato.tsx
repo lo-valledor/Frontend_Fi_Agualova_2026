@@ -21,13 +21,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import {
-  SelectContent,
-  SelectItem,
-  Select as SelectPrimitive,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select';
-import {
   Table,
   TableBody,
   TableCell,
@@ -54,8 +47,28 @@ interface CargoOption {
   data: BuscarCargoFacturable;
 }
 
+interface ConceptoOption {
+  value: string;
+  label: string;
+}
+
+interface CondicionOption {
+  value: number;
+  label: string;
+}
+
+interface CargoPorConceptoOption {
+  value: number;
+  label: string;
+  data: BuscarCargoFacturable;
+}
+
 // Usar estilos compartidos para react-select con variables Tailwind
 const selectStyles = getTailwindSelectStyles<CargoOption>();
+const selectStylesConcepto = getTailwindSelectStyles<ConceptoOption>();
+const selectStylesCondicion = getTailwindSelectStyles<CondicionOption>();
+const selectStylesCargoPorConcepto =
+  getTailwindSelectStyles<CargoPorConceptoOption>();
 
 export default function EditarTipoContrato({
   cargoTipoContrato,
@@ -79,9 +92,12 @@ export default function EditarTipoContrato({
   tipoContratoId: number;
 }>) {
   const [tipoContrato] = useState(`Tipo de Contrato ID: ${tipoContratoId}`);
-  const [selectedConcepto, setSelectedConcepto] = useState('');
-  const [selectedCondicion, setSelectedCondicion] = useState('');
-  const [selectedCargo, setSelectedCargo] = useState('');
+  const [selectedConcepto, setSelectedConcepto] =
+    useState<ConceptoOption | null>(null);
+  const [selectedCondicion, setSelectedCondicion] =
+    useState<CondicionOption | null>(null);
+  const [selectedCargo, setSelectedCargo] =
+    useState<CargoPorConceptoOption | null>(null);
   const [descripcion, setDescripcion] = useState('');
 
   // Estado para las condiciones agregadas
@@ -202,10 +218,32 @@ export default function EditarTipoContrato({
     }));
   };
 
+  // Convertir conceptos a opciones para react-select
+  const opcionesConceptos: ConceptoOption[] = conceptos.map(concepto => ({
+    value: concepto.nombre,
+    label: concepto.nombre
+  }));
+
+  // Convertir condiciones a opciones para react-select
+  const opcionesCondiciones: CondicionOption[] = condicionesContrato.map(
+    condicion => ({
+      value: condicion.id,
+      label: condicion.concepto
+    })
+  );
+
   // Obtener cargos filtrados por concepto seleccionado
   const cargosFiltradosPorConcepto = selectedConcepto
-    ? getCargosByConcepto(selectedConcepto)
+    ? getCargosByConcepto(selectedConcepto.value)
     : [];
+
+  // Convertir cargos filtrados a opciones para react-select
+  const opcionesCargoPorConcepto: CargoPorConceptoOption[] =
+    cargosFiltradosPorConcepto.map(cargo => ({
+      value: cargo.id,
+      label: cargo.descripcion,
+      data: cargo
+    }));
 
   // Obtener cargos facturables disponibles por tipo de medidor
   const cargosFacturablesAmbos = getCargosFacturablesByTipoMedidor('Ambos');
@@ -224,9 +262,9 @@ export default function EditarTipoContrato({
   );
 
   // Función para manejar el cambio de concepto
-  const handleConceptoChange = (value: string) => {
-    setSelectedConcepto(value);
-    setSelectedCargo(''); // Resetear cargo cuando cambia el concepto
+  const handleConceptoChange = (option: ConceptoOption | null) => {
+    setSelectedConcepto(option);
+    setSelectedCargo(null); // Resetear cargo cuando cambia el concepto
   };
 
   // Función para agregar condición de contrato
@@ -237,18 +275,16 @@ export default function EditarTipoContrato({
       selectedCondicion &&
       descripcion.trim()
     ) {
-      const cargoSeleccionado = cargos.find(
-        c => c.id.toString() === selectedCargo
-      );
+      const cargoSeleccionado = selectedCargo.data;
       const condicionSeleccionada = condicionesContrato.find(
-        c => c.id.toString() === selectedCondicion
+        c => c.id === selectedCondicion.value
       );
 
       if (cargoSeleccionado && condicionSeleccionada) {
         const nuevaCondicion: CargoTipoDetalle = {
-          cargoId: parseInt(selectedCargo),
+          cargoId: selectedCargo.value,
           cargoDescripcion: cargoSeleccionado.descripcion,
-          condicionId: parseInt(selectedCondicion),
+          condicionId: selectedCondicion.value,
           condicionDescripcion: condicionSeleccionada.concepto,
           descripcion: descripcion.trim()
         };
@@ -256,9 +292,9 @@ export default function EditarTipoContrato({
         setCondicionesAgregadas(prev => [...prev, nuevaCondicion]);
 
         // Limpiar formulario
-        setSelectedConcepto('');
-        setSelectedCargo('');
-        setSelectedCondicion('');
+        setSelectedConcepto(null);
+        setSelectedCargo(null);
+        setSelectedCondicion(null);
         setDescripcion('');
       }
     }
@@ -444,69 +480,49 @@ export default function EditarTipoContrato({
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
               <div className='space-y-2'>
                 <Label className='text-sm font-medium'>Concepto</Label>
-                <SelectPrimitive
+                <Select
                   value={selectedConcepto}
-                  onValueChange={handleConceptoChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder='Selecciona un concepto' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {conceptos.map(concepto => (
-                      <SelectItem key={concepto.id} value={concepto.nombre}>
-                        {concepto.nombre}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectPrimitive>
+                  onChange={handleConceptoChange}
+                  options={opcionesConceptos}
+                  styles={selectStylesConcepto}
+                  placeholder='Selecciona un concepto'
+                  isClearable
+                  isSearchable
+                  noOptionsMessage={() => 'No hay conceptos disponibles'}
+                />
               </div>
 
               <div className='space-y-2'>
                 <Label className='text-sm font-medium'>Cargo</Label>
-                <SelectPrimitive
+                <Select
                   value={selectedCargo}
-                  onValueChange={setSelectedCargo}
-                  disabled={!selectedConcepto}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        selectedConcepto
-                          ? 'Seleccione..'
-                          : 'Primero selecciona un concepto'
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cargosFiltradosPorConcepto.map(cargo => (
-                      <SelectItem key={cargo.id} value={cargo.id.toString()}>
-                        {cargo.descripcion}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectPrimitive>
+                  onChange={setSelectedCargo}
+                  options={opcionesCargoPorConcepto}
+                  styles={selectStylesCargoPorConcepto}
+                  placeholder={
+                    selectedConcepto
+                      ? 'Seleccione..'
+                      : 'Primero selecciona un concepto'
+                  }
+                  isDisabled={!selectedConcepto}
+                  isClearable
+                  isSearchable
+                  noOptionsMessage={() => 'No hay cargos disponibles'}
+                />
               </div>
 
               <div className='space-y-2'>
                 <Label className='text-sm font-medium'>Condición</Label>
-                <SelectPrimitive
+                <Select
                   value={selectedCondicion}
-                  onValueChange={setSelectedCondicion}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder='Selecciona una condición' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {condicionesContrato.map(condicion => (
-                      <SelectItem
-                        key={condicion.id}
-                        value={condicion.id.toString()}
-                      >
-                        {condicion.concepto}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectPrimitive>
+                  onChange={setSelectedCondicion}
+                  options={opcionesCondiciones}
+                  styles={selectStylesCondicion}
+                  placeholder='Selecciona una condición'
+                  isClearable
+                  isSearchable
+                  noOptionsMessage={() => 'No hay condiciones disponibles'}
+                />
               </div>
 
               <div className='space-y-2'>

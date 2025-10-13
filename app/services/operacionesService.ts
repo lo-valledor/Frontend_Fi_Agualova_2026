@@ -729,6 +729,51 @@ class OperacionesService {
       };
     }
   }
+
+  /**
+   * Verifica el estado de cierre de lecturas para un ciclo y período
+   *
+   * Consulta si hay lecturas cerradas disponibles para poder procesar
+   * el cálculo de facturación. Retorna información del estado de cierre.
+   *
+   * @param cicloFacturable - ID del ciclo de facturación ('1' o '2')
+   * @param periodo - Período en formato MMYYYY (ej: '012024')
+   * @returns Promise con array de estados de cierre de lecturas o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.verificarEstadoCierreLecturas('1', '012024');
+   * if (data && data.length > 0) {
+   *   const hayLecturasCerradas = data.some(item =>
+   *     item.cantidadLecturasOK > 0 || item.cantidadCorregidas > 0
+   *   );
+   * }
+   * ```
+   */
+  async verificarEstadoCierreLecturas(
+    cicloFacturable: string,
+    periodo: string
+  ): Promise<OperacionesServiceResponse<any[]>> {
+    try {
+      const params = new URLSearchParams();
+      params.append('cicloFacturable', cicloFacturable);
+      params.append('periodo', periodo);
+
+      const response = await api.get('/estado-cierre-lecturas', {
+        params
+      });
+
+      return {
+        data: response.data as any[],
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
 }
 
 export const operacionesService = new OperacionesService();

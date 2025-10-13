@@ -29,7 +29,7 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm '
               title={row.original.nombreCompleto}
             >
               {row.original.nombreCompleto}
@@ -78,7 +78,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
         <span
-          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[100px] lg:max-w-[160px]'
+          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
           title={row.getValue('direccion') || 'Sin dirección'}
         >
           {row.getValue('direccion') || 'N/A'}
@@ -96,7 +96,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
         <span
-          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[80px] lg:max-w-[100px]'
+          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm '
           title={row.getValue('comuna') || 'Sin comuna'}
         >
           {row.getValue('comuna') || 'N/A'}
@@ -104,6 +104,25 @@ export const columns = ({
       </div>
     ),
     minSize: 100,
+    maxSize: 140
+  },
+
+  {
+    accessorKey: 'contacto',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Contacto' />
+    ),
+    cell: ({ row }) => (
+      <div className='flex items-center gap-2'>
+        <span
+          className='text-sm text-slate-700 dark:text-slate-300 truncate'
+          title={row.getValue('contacto') || 'Sin contacto'}
+        >
+          {row.getValue('contacto') || 'N/A'}
+        </span>
+      </div>
+    ),
+    minSize: 110,
     maxSize: 140
   },
   {
@@ -125,24 +144,6 @@ export const columns = ({
     maxSize: 130
   },
   {
-    accessorKey: 'contacto',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Contacto' />
-    ),
-    cell: ({ row }) => (
-      <div className='flex items-center gap-2'>
-        <span
-          className='text-sm text-slate-700 dark:text-slate-300 truncate max-w-[120px]'
-          title={row.getValue('contacto') || 'Sin contacto'}
-        >
-          {row.getValue('contacto') || 'N/A'}
-        </span>
-      </div>
-    ),
-    minSize: 110,
-    maxSize: 140
-  },
-  {
     accessorKey: 'email',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Email' />
@@ -150,7 +151,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-2'>
         <span
-          className='font-mono text-sm text-slate-700 dark:text-slate-300 truncate max-w-[140px]'
+          className='font-mono text-sm text-slate-700 dark:text-slate-300 truncate'
           title={row.getValue('email') || 'Sin email'}
         >
           {row.getValue('email') || 'N/A'}

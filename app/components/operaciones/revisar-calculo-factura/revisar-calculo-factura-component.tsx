@@ -1,10 +1,12 @@
 import {
   AlertCircleIcon,
+  AlertTriangle,
   CalendarIcon,
   CheckCircle,
   ChevronDown,
   ChevronRight,
   ChevronUp,
+  CircleCheckBig,
   Eraser,
   FileSpreadsheet,
   FileTextIcon,
@@ -12,7 +14,8 @@ import {
   RefreshCw,
   SearchIcon,
   SettingsIcon,
-  TrendingUp
+  TrendingUp,
+  XCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
@@ -20,7 +23,9 @@ import 'driver.js/dist/driver.css';
 
 import { useMemo, useState } from 'react';
 
+import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
@@ -31,23 +36,33 @@ import {
   CardTitle
 } from '~/components/ui/card';
 // Removido useOperaciones ya que los datos vienen como props
-import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 // Import hooks
 import { useCalculoFactura } from '~/hooks/operaciones/use-calculo-factura';
 import { useCalculoProceso } from '~/hooks/operaciones/use-calculo-proceso';
-import { type Ciclo, type PeriodoAbierto } from '~/types/operaciones';
+import {
+  type Ciclo,
+  type EstadoCierreLecturas,
+  type PeriodoAbierto
+} from '~/types/operaciones';
 
 import { columns } from './columnsPrecalculo';
 import { HierarchicalDataTable } from './hierarchical-data-table';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
-  ciclosFacturacionActivos: _ciclosFacturacionActivos
+  ciclosFacturacionActivos: _ciclosFacturacionActivos,
+  estadoCierreLecturas
 }: Readonly<{
   periodoAbierto: PeriodoAbierto[];
   ciclosFacturacionActivos: Ciclo[];
+  estadoCierreLecturas: EstadoCierreLecturas[] | null;
 }>) {
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
@@ -61,6 +76,21 @@ export default function RevisarCalculoFacturaComponent({
     }
     return '';
   }, [periodoAbierto]);
+
+  // Verificar si hay lecturas cerradas disponibles
+  const hayLecturasCerradas = useMemo(() => {
+    if (!estadoCierreLecturas || estadoCierreLecturas.length === 0) {
+      return false;
+    }
+
+    // Verifica si hay al menos un registro con lecturas válidas cerradas
+    return estadoCierreLecturas.some(
+      item =>
+        item.cantidadLecturasOK > 0 ||
+        item.cantidadCorregidas > 0 ||
+        item.cantidadClaveNaranja > 0
+    );
+  }, [estadoCierreLecturas]);
 
   // Usar los hooks personalizados
   const {
@@ -114,6 +144,46 @@ export default function RevisarCalculoFacturaComponent({
     setIsCalculoPreparado(false);
     setSelectedContratos([]);
   };
+
+  // Columnas para exportación
+  const exportColumns = [
+    { header: 'Sector', key: 'sector' },
+    { header: 'Contrato ID', key: 'contratoId' },
+    { header: 'Código Tarifa', key: 'codigoTarifa' },
+    { header: 'RUT Cliente', key: 'rutCliente' },
+    { header: 'Nombre Cliente', key: 'nombreCliente' },
+    { header: 'Local ID', key: 'localId' },
+    { header: 'Dirección', key: 'direccion' },
+    { header: 'Comuna', key: 'comuna' },
+    { header: 'Número Serie', key: 'numeroSerie' },
+    { header: 'Fecha Lectura', key: 'fechaLectura' },
+    { header: 'Consumo Periodo', key: 'consumoPeriodo' },
+    { header: 'Lectura ID', key: 'lecturaId' },
+    { header: 'Total Facturado', key: 'totalFacturado' }
+  ];
+
+  // Preparar datos para exportación con cargos detallados
+  const dataParaExportar = useMemo(() => {
+    return filteredData.map(item => {
+      const cargosPorLinea = item.cargos
+        .map(
+          (cargo, idx) =>
+            `Cargo ${idx + 1}: ${cargo.descripcion} (${cargo.codigoEnerlova}) - Cant: ${cargo.cantidad} - Precio: $${cargo.precioUnitario.toLocaleString()} - Subtotal: $${cargo.subtotal.toLocaleString()}`
+        )
+        .join(' | ');
+
+      return {
+        ...item,
+        cargosDetalle: cargosPorLinea
+      };
+    });
+  }, [filteredData]);
+
+  // Columnas de exportación con detalle de cargos
+  const exportColumnsConCargos = [
+    ...exportColumns,
+    { header: 'Detalle de Cargos', key: 'cargosDetalle' }
+  ];
 
   // Pasos del tour interactivo con driver.js
   const tourSteps = [
@@ -176,6 +246,16 @@ export default function RevisarCalculoFacturaComponent({
         side: 'bottom' as const,
         align: 'center' as const
       }
+    },
+    {
+      element: '#exportar-btn',
+      popover: {
+        title: '📥 Exportar Resultados',
+        description:
+          'Descarga los resultados del cálculo en formato <strong>Excel (.xlsx)</strong> o <strong>CSV (.csv)</strong> con todos los detalles de cargos.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
     }
   ];
 
@@ -223,6 +303,101 @@ export default function RevisarCalculoFacturaComponent({
             <HelpCircle className='h-4 w-4' />
           </Button>
         </div>
+
+        {/* Alerta de estado de lecturas */}
+        {estadoCierreLecturas !== null && (
+          <Alert
+            variant={hayLecturasCerradas ? 'default' : 'destructive'}
+            className={
+              hayLecturasCerradas
+                ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
+                : ''
+            }
+          >
+            {hayLecturasCerradas ? (
+              <>
+                <CircleCheckBig className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                <AlertTitle className='text-emerald-800 dark:text-emerald-200'>
+                  Lecturas Cerradas Disponibles
+                </AlertTitle>
+                <AlertDescription className='text-emerald-700 dark:text-emerald-300'>
+                  <div>
+                    Hay lecturas cerradas para el período actual. Puede proceder
+                    con el cálculo de facturación.
+                  </div>
+                  {estadoCierreLecturas.length > 0 && (
+                    <Collapsible className='mt-3'>
+                      <CollapsibleTrigger asChild>
+                        <Button
+                          variant='ghost'
+                          size='sm'
+                          className='text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 hover:bg-emerald-100 dark:hover:bg-emerald-800/50 p-0 h-auto font-medium'
+                        >
+                          <span className='text-xs flex items-center gap-1'>
+                            Ver detalle ({estadoCierreLecturas.length} nicho
+                            {estadoCierreLecturas.length !== 1 ? 's' : ''})
+                            <ChevronDown className='h-3 w-3' />
+                          </span>
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className='mt-2'>
+                        <div className='grid lg:grid-cols-12 md:grid-cols-4 sm:grid-cols-2 grid-cols-2 gap-2'>
+                          {estadoCierreLecturas.map(item => (
+                            <div
+                              key={item.nichoId}
+                              className='flex flex-col gap-1 text-xs bg-emerald-100 dark:bg-emerald-800/50 px-3 py-2 rounded-md border border-emerald-200 dark:border-emerald-700'
+                            >
+                              <div className='flex items-center gap-1 font-medium text-emerald-800 dark:text-emerald-200'>
+                                <CheckCircle className='h-3 w-3' />
+                                {item.nichoDescripcion}
+                              </div>
+                              <div className='text-emerald-700 dark:text-emerald-300 ml-4'>
+                                {item.cantidadLecturasOK +
+                                  item.cantidadCorregidas +
+                                  item.cantidadClaveNaranja}{' '}
+                                lecturas cerradas
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  )}
+                </AlertDescription>
+              </>
+            ) : (
+              <>
+                <XCircle className='h-5 w-5' />
+                <AlertTitle>No hay Lecturas Cerradas</AlertTitle>
+                <AlertDescription>
+                  <p className='mb-2'>
+                    No se encontraron lecturas cerradas para el período actual
+                    (Ciclo día 15). Debe cerrar las lecturas antes de poder
+                    realizar el cálculo de facturación.
+                  </p>
+                  <div className='flex flex-col sm:flex-row gap-2 mt-3'>
+                    <Button
+                      variant='outline'
+                      size='sm'
+                      onClick={() =>
+                        (window.location.href =
+                          '/dashboard/operaciones/cerrar-lecturas')
+                      }
+                      className='bg-white dark:bg-slate-900 border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20'
+                    >
+                      <AlertTriangle className='h-4 w-4 mr-2' />
+                      Ir a Cerrar Lecturas
+                    </Button>
+                    <span className='text-xs text-red-700 dark:text-red-300 flex items-center'>
+                      Los botones de cálculo estarán deshabilitados hasta que
+                      cierre las lecturas
+                    </span>
+                  </div>
+                </AlertDescription>
+              </>
+            )}
+          </Alert>
+        )}
 
         {/* Panel de Control */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
@@ -340,14 +515,19 @@ export default function RevisarCalculoFacturaComponent({
                 {/* Acciones */}
                 <div className='pt-4 border-t border-slate-200 dark:border-slate-700'>
                   {/* Todos los botones en una sola fila responsive */}
-                  <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2'>
+                  <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
                     {/* Botón principal de preparar cálculo */}
                     <Button
                       id='preparar-calculo-btn'
                       onClick={handleLanzarCalculo}
-                      disabled={isLaunching}
+                      disabled={isLaunching || !hayLecturasCerradas}
                       className='flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white col-span-2 sm:col-span-1'
                       size='sm'
+                      title={
+                        !hayLecturasCerradas
+                          ? 'Debe cerrar lecturas antes de preparar el cálculo'
+                          : 'Preparar cálculo de facturación'
+                      }
                     >
                       {isLaunching ? (
                         <>
@@ -369,9 +549,14 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       id='ver-calculo-btn'
                       onClick={handleRevisarCalculo}
-                      disabled={isLoading}
-                      className='flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white'
+                      disabled={isLoading || !hayLecturasCerradas}
+                      className='flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white'
                       size='sm'
+                      title={
+                        !hayLecturasCerradas
+                          ? 'Debe cerrar lecturas antes de ver los cálculos'
+                          : 'Ver cálculos de facturación'
+                      }
                     >
                       {isLoading ? (
                         <>
@@ -391,9 +576,20 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       id='aceptar-calculo-btn'
                       onClick={handleAceptarCalculo}
-                      disabled={isAccepting || selectedContratos.length === 0}
+                      disabled={
+                        isAccepting ||
+                        selectedContratos.length === 0 ||
+                        !hayLecturasCerradas
+                      }
                       className='flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white'
                       size='sm'
+                      title={
+                        !hayLecturasCerradas
+                          ? 'Debe cerrar lecturas antes de aceptar cálculos'
+                          : selectedContratos.length === 0
+                            ? 'Seleccione al menos un contrato'
+                            : 'Aceptar cálculos seleccionados'
+                      }
                     >
                       {isAccepting ? (
                         <>
@@ -437,6 +633,17 @@ export default function RevisarCalculoFacturaComponent({
                       <Eraser className='h-4 w-4' />
                       <span className='hidden lg:inline'>Limpiar</span>
                     </Button>
+
+                    {/* Exportar */}
+                    <ExportButton
+                      data={dataParaExportar}
+                      columns={exportColumnsConCargos}
+                      filename={`calculo_factura_${periodoFormateado}`}
+                      size='sm'
+                      variant='default'
+                      showDropdown={true}
+                      className='flex items-center justify-center gap-2'
+                    />
                   </div>
                 </div>
               </CardContent>

@@ -225,7 +225,8 @@ export default function ContratantesComponent({
               <DataTable
                 columns={columns({
                   onDetails: handleDetailsContratante,
-                  detailingContratanteRut
+                  detailingContratanteRut,
+                  comunas
                 })}
                 data={filteredContratantes}
                 searchPlaceholder='Buscar por RUT, nombre o email...'

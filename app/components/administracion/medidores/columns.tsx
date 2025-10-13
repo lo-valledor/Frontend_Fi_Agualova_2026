@@ -68,7 +68,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2'>
           <span
-            className='font-medium text-slate-900 dark:text-slate-100 text-sm truncate max-w-[120px]'
+            className='font-medium text-slate-900 dark:text-slate-100 text-sm truncate'
             title={medidor.serie}
           >
             {medidor.serie}
@@ -88,7 +88,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300 truncate max-w-[100px]'>
+          <span className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300 truncate'>
             {medidor.codigo}
           </span>
         </div>
@@ -107,7 +107,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2'>
           <span
-            className='text-sm text-slate-700 dark:text-slate-300 truncate max-w-[100px]'
+            className='text-sm text-slate-700 dark:text-slate-300 truncate'
             title={medidor.marca}
           >
             {medidor.marca}
@@ -128,7 +128,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2'>
           <span
-            className='text-sm text-slate-700 dark:text-slate-300 truncate max-w-[100px]'
+            className='text-sm text-slate-700 dark:text-slate-300 truncate'
             title={medidor.modelo}
           >
             {medidor.modelo}

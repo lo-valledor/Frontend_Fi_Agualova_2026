@@ -4,16 +4,18 @@ import { format } from 'rut.js';
 import { Badge } from '~/components/ui/badge';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
-import type { GetContratante } from '~/types/administracion';
+import type { GetContratante, GetComunas } from '~/types/administracion';
 
 interface ContratantesColumnsProps {
   onDetails: (contratante: GetContratante) => void;
   detailingContratanteRut: string | null;
+  comunas: GetComunas[];
 }
 
 export const columns = ({
   onDetails,
-  detailingContratanteRut
+  detailingContratanteRut,
+  comunas
 }: ContratantesColumnsProps): ColumnDef<GetContratante>[] => [
   {
     accessorKey: 'rut',
@@ -25,12 +27,9 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
               title={row.original.rut}
             >
-              {row.original.rut}
-            </div>
-            <div className='text-xs text-slate-500 dark:text-slate-400 font-mono truncate'>
               {format(row.getValue('rut'))}
             </div>
           </div>
@@ -46,7 +45,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
-      const nombreCompleto = row.original.esEmpresa 
+      const nombreCompleto = row.original.esEmpresa
         ? row.original.nombre
         : `${row.original.nombre} ${row.original.apellido || ''}`.trim();
 
@@ -54,7 +53,7 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
               title={nombreCompleto}
             >
               {nombreCompleto}
@@ -80,17 +79,22 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Dirección' />
     ),
     cell: ({ row }) => {
+      // Buscar el nombre de la comuna por su código
+      const comunaNombre =
+        comunas.find(c => c.codigo === row.original.comuna)?.nombre ||
+        row.original.comuna;
+
       return (
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
               title={row.original.direccion || 'No especificada'}
             >
               {row.original.direccion || 'No especificada'}
             </div>
             <div className='text-xs text-slate-500 dark:text-slate-400 truncate'>
-              {row.original.comuna}
+              {comunaNombre}
             </div>
           </div>
         </div>
@@ -109,7 +113,7 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
               title={row.original.contacto || 'No especificado'}
             >
               {row.original.contacto || 'No especificado'}
@@ -134,7 +138,7 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm max-w-[120px] lg:max-w-[160px]'
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
               title={row.original.email || 'No especificado'}
             >
               {row.original.email || 'No especificado'}
