@@ -27,7 +27,20 @@ export interface OperacionesServiceResponse<T> {
 
 class OperacionesService {
   /**
-   * Obtiene datos básicos de período abierto
+   * Obtiene el período de facturación actualmente abierto
+   *
+   * Consulta el sistema para determinar qué período está disponible
+   * para registro de lecturas y operaciones de facturación.
+   *
+   * @returns Promise con array de períodos abiertos o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getPeriodoAbierto();
+   * if (data && data.length > 0) {
+   *   console.log(`Período activo: ${data[0].mes}/${data[0].anio}`);
+   * }
+   * ```
    */
   async getPeriodoAbierto(): Promise<
     OperacionesServiceResponse<PeriodoAbierto[]>
@@ -47,7 +60,18 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene ciclos de facturación activos
+   * Obtiene lista de ciclos de facturación activos
+   *
+   * Retorna todos los ciclos configurados y habilitados para
+   * procesamiento de facturación en el sistema.
+   *
+   * @returns Promise con array de ciclos activos o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getCiclosFacturacion();
+   * // data: [{ cicloId: 1, descripcion: 'Ciclo 01', diaFacturacion: '15' }, ...]
+   * ```
    */
   async getCiclosFacturacion(): Promise<OperacionesServiceResponse<Ciclo[]>> {
     try {
@@ -65,7 +89,22 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene datos para preparar lecturas
+   * Obtiene datos consolidados para preparar lecturas de medidores
+   *
+   * Carga en paralelo: período abierto, validación de lecturas pendientes,
+   * sectores disponibles y opciones de preparación. Usado en la pantalla
+   * de preparación inicial de lecturas.
+   *
+   * @returns Promise con objeto conteniendo periodo, sectores, opciones y validaciones, o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getPrepararLecturasData();
+   * if (data) {
+   *   console.log(`Sectores disponibles: ${data.sectores.length}`);
+   *   console.log(`Lecturas pendientes: ${data.lecturasPendientes.cantidad}`);
+   * }
+   * ```
    */
   async getPrepararLecturasData(): Promise<
     OperacionesServiceResponse<{
@@ -103,7 +142,19 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene asignación de sectores
+   * Obtiene la asignación de sectores para un ciclo y período específicos
+   *
+   * Consulta qué sectores están asignados para lectura en un ciclo
+   * de facturación y período determinado.
+   *
+   * @param cicloFacturable - ID del ciclo de facturación
+   * @param periodo - Período de facturación (formato: YYYYMM)
+   * @returns Promise con array de asignaciones de sectores o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getAsignacionSectores('1', '202401');
+   * ```
    */
   async getAsignacionSectores(
     cicloFacturable: string,
@@ -131,7 +182,23 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene datos de precios de cargo
+   * Obtiene tablas de precios de cargo ENEL y Enerlova
+   *
+   * Carga en paralelo las dos tablas de precios necesarias para
+   * la gestión de cargos: precios ENEL y precios Enerlova.
+   *
+   * @param mes - Mes numérico (1-12)
+   * @param anio - Año (formato: YYYY)
+   * @returns Promise con objeto conteniendo ambas tablas de precios o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getPreciosCargoData('01', '2024');
+   * if (data) {
+   *   console.log(`Precios ENEL: ${data.tablaEnel.length}`);
+   *   console.log(`Precios Enerlova: ${data.tablaEnerlova.length}`);
+   * }
+   * ```
    */
   async getPreciosCargoData(
     mes: string,
@@ -164,7 +231,23 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene datos para revisar precio
+   * Obtiene datos consolidados para revisión de precios de facturación
+   *
+   * Carga período abierto, ciclos de facturación y dos conjuntos de
+   * precios (tabla 1 y tabla 2) para revisión y validación antes de facturar.
+   * Valida existencia de período abierto y ciclo válido para el mes.
+   *
+   * @param dia - Día de facturación para consulta de precios (por defecto '15')
+   * @returns Promise con objeto conteniendo período, precios y ciclos, o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getRevisarPrecioData('15');
+   * if (data) {
+   *   console.log(`Precios tipo 1: ${data.dataConsultarPreciosUno.length}`);
+   *   console.log(`Precios tipo 2: ${data.dataConsultarPreciosDos.length}`);
+   * }
+   * ```
    */
   async getRevisarPrecioData(dia: string = '15'): Promise<
     OperacionesServiceResponse<{
@@ -233,7 +316,21 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene datos de corte y reposición
+   * Obtiene datos de corte y reposición de suministros
+   *
+   * Carga totales de cortes/reposiciones y el mantenedor de revisión
+   * de cortes para gestión operativa.
+   *
+   * @returns Promise con objeto conteniendo totales y mantenedor de cortes, o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getCorteReposicionData();
+   * if (data) {
+   *   console.log(`Cortes pendientes: ${data.totalesData.length}`);
+   *   console.log(`Registros mantenedor: ${data.mantenedorCorteData.length}`);
+   * }
+   * ```
    */
   async getCorteReposicionData(): Promise<
     OperacionesServiceResponse<{
@@ -264,7 +361,21 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene datos para cerrar lecturas
+   * Obtiene datos necesarios para cerrar período de lecturas
+   *
+   * Carga período abierto y ciclos de facturación activos, utilizados
+   * para validar y ejecutar el cierre de lecturas del período.
+   *
+   * @returns Promise con objeto conteniendo período abierto y ciclos, o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getCerrarLecturasData();
+   * if (data) {
+   *   console.log(`Período: ${data.periodoAbierto[0].mes}/${data.periodoAbierto[0].anio}`);
+   *   console.log(`Ciclos disponibles: ${data.ciclosFacturacion.length}`);
+   * }
+   * ```
    */
   async getCerrarLecturasData(): Promise<
     OperacionesServiceResponse<{
@@ -294,7 +405,21 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene datos para período de facturación
+   * Obtiene catálogos de años y períodos disponibles para facturación
+   *
+   * Carga listas de años y períodos configurados en el sistema,
+   * utilizados en selectores de pantallas de facturación.
+   *
+   * @returns Promise con objeto conteniendo arrays de años y períodos, o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getPeriodoFacturacionData();
+   * if (data) {
+   *   console.log(`Años disponibles: ${data.years.map(y => y.año).join(', ')}`);
+   *   console.log(`Períodos: ${data.periodos.length}`);
+   * }
+   * ```
    */
   async getPeriodoFacturacionData(): Promise<
     OperacionesServiceResponse<{
@@ -324,7 +449,24 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene precios específicos para un ciclo
+   * Obtiene precios específicos para un ciclo de facturación
+   *
+   * Consulta los dos conjuntos de precios (tipo 1 y tipo 2) configurados
+   * para un mes, año y día de facturación específicos.
+   *
+   * @param mes - Mes numérico (1-12)
+   * @param anio - Año (formato: YYYY)
+   * @param dia - Día de facturación del ciclo
+   * @returns Promise con objeto conteniendo precios tipo 1 y tipo 2, o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.getPreciosPorCiclo(1, 2024, '15');
+   * if (data) {
+   *   console.log(`Precios 1: ${data.preciosUno.length}`);
+   *   console.log(`Precios 2: ${data.preciosDos.length}`);
+   * }
+   * ```
    */
   async getPreciosPorCiclo(
     mes: number,
@@ -361,7 +503,19 @@ class OperacionesService {
   // ============ MÉTODOS PARA FLUJO DE CÁLCULO DE FACTURACIÓN ============
 
   /**
-   * Lanza el cálculo de facturación (Paso 1)
+   * Lanza el proceso de cálculo de facturación (Paso 1 del flujo)
+   *
+   * Inicia el proceso asíncrono de cálculo de facturas para un ciclo
+   * y período específicos. Este es el paso inicial del flujo de facturación.
+   *
+   * @param cicloFacturacion - ID numérico del ciclo de facturación
+   * @param periodoFacturable - Período en formato YYYYMM (ej: '202401')
+   * @returns Promise con respuesta del servidor o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.lanzarCalculoFacturacion(1, '202401');
+   * ```
    */
   async lanzarCalculoFacturacion(
     cicloFacturacion: number,
@@ -385,7 +539,23 @@ class OperacionesService {
   }
 
   /**
-   * Obtiene el identificador del proceso (Paso 2)
+   * Obtiene el identificador del proceso de facturación (Paso 2 del flujo)
+   *
+   * Consulta el ID del proceso asíncrono lanzado en el paso 1. Este ID
+   * se utiliza para hacer seguimiento del estado del cálculo.
+   *
+   * @param cicloId - ID del ciclo de facturación
+   * @param periodoId - ID del período de facturación
+   * @param modo - Modo de consulta (por defecto 1)
+   * @returns Promise con array de identificadores de proceso o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.obtenerIdentificadorProceso('1', '202401', 1);
+   * if (data && data.length > 0) {
+   *   const procesoId = data[0].procesoId;
+   * }
+   * ```
    */
   async obtenerIdentificadorProceso(
     cicloId: string,
@@ -409,7 +579,21 @@ class OperacionesService {
   }
 
   /**
-   * Verifica el estado del proceso (Paso 3)
+   * Verifica el estado del proceso de facturación (Paso 3 del flujo)
+   *
+   * Consulta si el proceso de cálculo ha finalizado. Debe polling hasta
+   * que el proceso complete (estado 'COMPLETADO' o 'ERROR').
+   *
+   * @param procesoId - ID del proceso obtenido en paso 2
+   * @returns Promise con array de estados del proceso o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.verificarEstadoProceso('12345');
+   * if (data && data[0].estado === 'COMPLETADO') {
+   *   // Proceder al paso 4
+   * }
+   * ```
    */
   async verificarEstadoProceso(
     procesoId: string
@@ -431,7 +615,22 @@ class OperacionesService {
   }
 
   /**
-   * Consulta encabezado de prefactura (Paso 4)
+   * Consulta encabezado de prefactura (Paso 4 del flujo)
+   *
+   * Una vez completado el proceso de cálculo, obtiene los encabezados
+   * de las prefacturas generadas para revisión antes de aprobar.
+   *
+   * @param cicloId - ID del ciclo de facturación
+   * @param periodo - Período en formato YYYYMM
+   * @returns Promise con array de detalles de prefactura o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.consultarEncabezadoPrefactura('1', '202401');
+   * if (data) {
+   *   console.log(`Prefacturas generadas: ${data.length}`);
+   * }
+   * ```
    */
   async consultarEncabezadoPrefactura(
     cicloId: string,
@@ -454,7 +653,22 @@ class OperacionesService {
   }
 
   /**
-   * Consulta cargos de prefactura (Paso 5)
+   * Consulta cargos de prefactura (Paso 5 del flujo)
+   *
+   * Obtiene el detalle de cargos calculados para las prefacturas,
+   * incluyendo consumos, servicios y otros ítems facturables.
+   *
+   * @param cicloId - ID del ciclo de facturación
+   * @param periodo - Período en formato YYYYMM
+   * @returns Promise con array de cargos de prefactura o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.consultarCargosPrefactura('1', '202401');
+   * if (data) {
+   *   console.log(`Total cargos: ${data.length}`);
+   * }
+   * ```
    */
   async consultarCargosPrefactura(
     cicloId: string,
@@ -477,7 +691,23 @@ class OperacionesService {
   }
 
   /**
-   * Genera detalle de factura (Paso 6)
+   * Genera detalle de factura final (Paso 6 del flujo)
+   *
+   * Convierte una prefactura aprobada en factura definitiva, generando
+   * el documento final con todos los detalles y cálculos confirmados.
+   * Este es el paso final del flujo de facturación.
+   *
+   * @param lecturaId - ID de la lectura asociada a la factura
+   * @param periodoId - ID del período de facturación
+   * @returns Promise con respuesta del servidor o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.generarDetalleFactura(12345, '202401');
+   * if (data) {
+   *   console.log('Factura generada exitosamente');
+   * }
+   * ```
    */
   async generarDetalleFactura(
     lecturaId: number,

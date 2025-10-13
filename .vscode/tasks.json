@@ -1,0 +1,118 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "📚 Generar Documentación Completa",
+            "type": "shell",
+            "command": "pnpm",
+            "args": ["run", "docs:all"],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "problemMatcher": [],
+            "detail": "Genera toda la documentación automática (custom + TypeDoc)"
+        },
+        {
+            "label": "📋 Generar Docs de Componentes",
+            "type": "shell", 
+            "command": "pnpm",
+            "args": ["run", "docs:components"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Genera documentación solo de componentes React"
+        },
+        {
+            "label": "🔧 Generar Docs de Servicios",
+            "type": "shell",
+            "command": "pnpm", 
+            "args": ["run", "docs:services"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Genera documentación solo de servicios"
+        },
+        {
+            "label": "📖 Generar TypeDoc",
+            "type": "shell",
+            "command": "pnpm",
+            "args": ["run", "docs:typedoc"],
+            "group": "build", 
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Genera documentación TypeDoc automática"
+        },
+        {
+            "label": "🚀 Docs + Abrir en Navegador",
+            "type": "shell",
+            "command": "pnpm",
+            "args": ["run", "docs:all"],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always", 
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "Genera documentación y la abre en el navegador",
+            "dependsOrder": "sequence",
+            "dependsOn": ["📚 Generar Documentación Completa"]
+        },
+        {
+            "label": "🔍 Validar JSDoc",
+            "type": "shell",
+            "command": "npx",
+            "args": [
+                "jsdoc",
+                "-t", "templates/haruki", 
+                "-c", "jsdoc.json",
+                "-d", "docs/jsdoc-validation",
+                "--dry-run"
+            ],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": {
+                "owner": "jsdoc",
+                "fileLocation": "relative",
+                "pattern": {
+                    "regexp": "^ERROR: (.+):(\\d+):(\\d+): (.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "message": 4
+                }
+            },
+            "detail": "Valida sintaxis y completitud de JSDoc"
+        }
+    ]
+}

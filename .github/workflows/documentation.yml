@@ -1,0 +1,135 @@
+name: 📚 Auto-Generate Documentation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "app/services/**"
+      - "app/components/**"
+      - "app/hooks/**"
+      - "app/types/**"
+      - "app/lib/**"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "app/services/**"
+      - "app/components/**"
+      - "app/hooks/**"
+      - "app/types/**"
+      - "app/lib/**"
+
+jobs:
+  generate-docs:
+    name: 🤖 Generate Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+
+      - name: 📥 Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: 📚 Install dependencies
+        run: pnpm install
+
+      - name: 🔍 Install TypeDoc
+        run: pnpm add -D typedoc typedoc-plugin-markdown
+
+      - name: 🐧 Setup PowerShell on Linux
+        run: |
+          # Install PowerShell
+          wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.3.8/powershell_7.3.8-1.deb_amd64.deb
+          sudo dpkg -i powershell_7.3.8-1.deb_amd64.deb
+          sudo apt-get install -f
+
+      - name: 🤖 Generate documentation
+        run: |
+          # Crear directorio de documentación si no existe
+          mkdir -p docs/generated
+
+          # Generar documentación usando PowerShell
+          pwsh -ExecutionPolicy Bypass -File ./scripts/generate-docs.ps1 -Target all
+
+          # Generar TypeDoc si está configurado
+          if [ -f "typedoc.json" ]; then
+            pnpm run docs:typedoc
+          fi
+
+      - name: 📊 Check for changes
+        id: verify-changed-files
+        run: |
+          if [ -n "$(git status --porcelain docs/)" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📝 Commit and push changes
+        if: steps.verify-changed-files.outputs.changed == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Documentation Bot"
+          git add docs/
+          git commit -m "📚 Auto-update documentation [skip ci]" || exit 0
+          git push
+
+      - name: 💬 Comment on PR
+        if: steps.verify-changed-files.outputs.changed == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo, number } = context.issue;
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: number,
+              body: `## 📚 Documentación Actualizada Automáticamente
+              
+              Este PR incluye cambios que requieren actualización de documentación. 
+              La documentación ha sido regenerada automáticamente.
+              
+              ### 🤖 Archivos generados:
+              - \`docs/generated/components.md\` - Documentación de componentes
+              - \`docs/generated/services.md\` - Documentación de servicios  
+              - \`docs/generated/api.md\` - Documentación de API
+              - \`docs/typedoc/\` - Documentación TypeDoc
+              
+              ### ⚙️ Comandos disponibles:
+              \`\`\`bash
+              pnpm run docs:generate    # Generar docs personalizadas
+              pnpm run docs:typedoc     # Generar TypeDoc
+              pnpm run docs:all         # Generar toda la documentación
+              \`\`\`
+              
+              *Generado automáticamente por GitHub Actions* 🤖`
+            });
+
+      - name: 📤 Upload documentation artifacts
+        if: steps.verify-changed-files.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: |
+            docs/generated/
+            docs/typedoc/
+          retention-days: 30
+
+      - name: 🚀 Deploy to GitHub Pages (optional)
+        if: steps.verify-changed-files.outputs.changed == 'true' && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          destination_dir: documentation

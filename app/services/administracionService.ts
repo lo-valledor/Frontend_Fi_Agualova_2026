@@ -33,14 +33,55 @@ import type {
 } from '~/types/administracion';
 import type { Conceptos, Marca } from '~/types/mantencion';
 
+/**
+ * Interfaz estándar para respuestas del servicio de administración
+ * Encapsula el resultado exitoso o error de operaciones
+ *
+ * @template T - Tipo de datos que retorna la operación exitosa
+ */
 export interface AdministracionServiceResponse<T> {
+  /** Datos devueltos en caso de éxito, null si hay error */
   data: T | null;
+  /** Mensaje de error si falla la operación, null si es exitosa */
   error: string | null;
 }
 
+/**
+ * Servicio para operaciones de administración del sistema
+ *
+ * Maneja las operaciones CRUD y consultas para entidades de administración como:
+ * - Acometidas
+ * - Clientes
+ * - Contratos
+ * - Medidores
+ * - Propietarios
+ * - Contratantes
+ * - Giros
+ * - Comunas
+ * - Usuarios
+ * - Marcas
+ * - Cargo Tipo Contrato
+ * - Condiciones Contrato
+ * - Cargo Facturable
+ *
+ * Todas las operaciones retornan un objeto AdministracionServiceResponse
+ * que encapsula el resultado o error.
+ */
 class AdministracionService {
   /**
-   * Función helper para procesar respuestas de API con formato flexible
+   * Normaliza respuestas de API con formato variable
+   *
+   * El backend puede retornar datos en dos formatos diferentes:
+   * - Formato anidado: `{ data: { data: T[] } }`
+   * - Formato directo: `{ data: T[] }`
+   *
+   * Este método normaliza ambos casos y retorna siempre un array.
+   *
+   * @template T - Tipo de elementos del array esperado
+   * @param response - Respuesta de axios con estructura variable
+   * @returns Array de tipo T, o array vacío si no se encuentra data válida
+   *
+   * @private
    */
   private processApiResponse<T>(response: any): T[] {
     if (
@@ -58,6 +99,18 @@ class AdministracionService {
 
   /**
    * Obtiene datos de acometidas con todos sus combos
+   *
+   * @returns Promise con objeto conteniendo todos los datos o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getAcometidasData();
+   * if (error) {
+   *   console.error('Error al obtener acometidas:', error);
+   * } else {
+   *   console.log('Datos de acometidas:', data);
+   * }
+   * ```
    */
   async getAcometidasData(): Promise<
     AdministracionServiceResponse<{
@@ -107,6 +160,17 @@ class AdministracionService {
 
   /**
    * Obtiene datos de clientes con giros y regiones
+   *
+   * @returns Promise con clientes, giros y comunas o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getClientesData();
+   * if (data) {
+   *   console.log('Clientes:', data.clientes);
+   *   console.log('Giros:', data.giros);
+   * }
+   * ```
    */
   async getClientesData(): Promise<
     AdministracionServiceResponse<{
@@ -139,7 +203,17 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos de contratos con todos sus combos
+   * Obtiene datos de contratos del sistema
+   *
+   * @returns Promise con lista de contratos o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getContratosData();
+   * if (data) {
+   *   console.log('Total contratos:', data.contratos.length);
+   * }
+   * ```
    */
   async getContratosData(): Promise<
     AdministracionServiceResponse<{
@@ -164,7 +238,17 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos de propietarios para contratos
+   * Obtiene datos de propietarios y contratantes
+   *
+   * @returns Promise con propietarios y contratantes o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getPropietariosData();
+   * if (data) {
+   *   console.log('Propietarios:', data.propietarios);
+   * }
+   * ```
    */
   async getPropietariosData(): Promise<
     AdministracionServiceResponse<{
@@ -195,7 +279,17 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos de contratantes con giros y comunas
+   * Obtiene datos de contratantes con sus datos relacionados
+   *
+   * @returns Promise con contratantes, giros y comunas o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getContratantesData();
+   * if (data) {
+   *   console.log('Total contratantes:', data.contratantes.length);
+   * }
+   * ```
    */
   async getContratantesData(): Promise<
     AdministracionServiceResponse<{
@@ -229,7 +323,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos de clientes para contratos
+   * Obtiene lista completa de clientes del sistema
+   *
+   * @returns Promise con array de clientes o error
    */
   async getClientesBuscar(): Promise<
     AdministracionServiceResponse<GetClientes[]>
@@ -249,7 +345,18 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene contrato por ID
+   * Obtiene un contrato específico por su ID con todos sus datos relacionados
+   *
+   * @param id - ID del contrato a buscar
+   * @returns Promise con datos completos del contrato o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getContratoById(123);
+   * if (data) {
+   *   console.log('Contrato:', data.contrato.nombreContrato);
+   * }
+   * ```
    */
   async getContratoById(id: number): Promise<
     AdministracionServiceResponse<{
@@ -297,7 +404,12 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene solo los propietarios, local, comuna y madres
+   * Obtiene datos necesarios para crear un contrato nuevo
+   *
+   * Retorna propietarios, locales, comunas, madres y clientes que se
+   * necesitan para los formularios de creación de contratos
+   *
+   * @returns Promise con todos los datos de creación o error
    */
   async getDataCreacionContrato(): Promise<
     AdministracionServiceResponse<{
@@ -337,7 +449,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos de medidores con marcas
+   * Obtiene datos de medidores con sus marcas asociadas
+   *
+   * @returns Promise con medidores y marcas o error
    */
   async getMedidoresData(): Promise<
     AdministracionServiceResponse<{
@@ -367,7 +481,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos de medidores con marcas
+   * Obtiene marcas y tipos de medidor para formularios de creación
+   *
+   * @returns Promise con marcas y tipos de medidor o error
    */
   async postMedidoresData(): Promise<
     AdministracionServiceResponse<{
@@ -397,7 +513,11 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos de medidores con marcas
+   * Obtiene un medidor específico por su código con marca y tipo
+   *
+   * @param params - Objeto con parámetros de búsqueda
+   * @param params.codigo - Código del medidor a buscar
+   * @returns Promise con medidor, marca y tipo o error
    */
   async getMedidoresByCodigo({ codigo }: { codigo: string }): Promise<
     AdministracionServiceResponse<{
@@ -430,7 +550,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene usuarios
+   * Obtiene lista completa de usuarios del sistema
+   *
+   * @returns Promise con array de usuarios o error
    */
   async getUsuarios(): Promise<AdministracionServiceResponse<Usuarios[]>> {
     try {
@@ -448,7 +570,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene cargo tipo contrato
+   * Obtiene lista de relaciones entre cargos y tipos de contrato
+   *
+   * @returns Promise con array de cargo-tipo-contrato o error
    */
   async getCargoTipoContrato(): Promise<
     AdministracionServiceResponse<GetCargoTipoContrato[]>
@@ -468,7 +592,13 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene datos completos de cargo tipo contrato por ID
+   * Obtiene datos completos de una relación cargo-tipo-contrato específica
+   *
+   * Incluye datos de edición, detalles, listbox y todos los combos necesarios
+   * para la visualización y edición del registro
+   *
+   * @param cargoTipoContratoId - ID de la relación cargo-tipo-contrato
+   * @returns Promise con todos los datos relacionados o error
    */
   async getCargoTipoContratoById(cargoTipoContratoId: number): Promise<
     AdministracionServiceResponse<{
@@ -530,7 +660,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene condiciones contrato con conceptos
+   * Obtiene condiciones de contrato con sus conceptos asociados
+   *
+   * @returns Promise con condiciones y conceptos o error
    */
   async getCondicionesContratoData(): Promise<
     AdministracionServiceResponse<{
@@ -562,7 +694,11 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene cargo facturable con combos
+   * Obtiene cargos facturables con sus datos de configuración
+   *
+   * Incluye conceptos, tarifas y tipos de medidor asociados
+   *
+   * @returns Promise con cargos y combos relacionados o error
    */
   async getCargoFacturableData(): Promise<
     AdministracionServiceResponse<{
@@ -599,7 +735,19 @@ class AdministracionService {
   }
 
   /**
-   * Crear un nuevo contrato
+   * Crea un nuevo contrato en el sistema
+   *
+   * @param contratoData - Datos del contrato a crear
+   * @returns Promise con confirmación de creación o error
+   *
+   * @example
+   * ```typescript
+   * const nuevoContrato: CrearContratoProps = { ... };
+   * const { data, error } = await administracionService.crearContrato(nuevoContrato);
+   * if (error) {
+   *   console.error('Error:', error);
+   * }
+   * ```
    */
   async crearContrato(
     contratoData: CrearContratoProps
@@ -623,7 +771,19 @@ class AdministracionService {
   }
 
   /**
-   * Modificar un contrato existente
+   * Modifica un contrato existente
+   *
+   * Realiza validación y actualización completa del contrato.
+   * Incluye manejo detallado de errores de validación del backend.
+   *
+   * @param contratoData - Datos actualizados del contrato
+   * @returns Promise con confirmación o error detallado
+   *
+   * @example
+   * ```typescript
+   * const datosActualizados: ModificarContratoProps = { id: 123, ... };
+   * const { data, error } = await administracionService.modificarContrato(datosActualizados);
+   * ```
    */
   async modificarContrato(
     contratoData: ModificarContratoProps
@@ -671,7 +831,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene giros
+   * Obtiene catálogo completo de giros comerciales
+   *
+   * @returns Promise con array de giros o error
    */
   async getGiros(): Promise<AdministracionServiceResponse<GetGiros[]>> {
     try {
@@ -689,7 +851,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene comunas
+   * Obtiene listado de comunas organizadas por región
+   *
+   * @returns Promise con array de comunas o error
    */
   async getComunas(): Promise<AdministracionServiceResponse<GetComunas[]>> {
     try {
@@ -707,7 +871,9 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene todos los clientes por RUT
+   * Obtiene lista completa de clientes indexados por RUT
+   *
+   * @returns Promise con array de clientes o error
    */
   async getClientesByRut(): Promise<
     AdministracionServiceResponse<GetClientesByRut[]>
@@ -727,7 +893,15 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene un cliente específico por RUT
+   * Busca un cliente específico por su RUT
+   *
+   * @param rut - RUT del cliente (con o sin formato)
+   * @returns Promise con datos del cliente o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getClienteByRut('12345678-9');
+   * ```
    */
   async getClienteByRut(
     rut: string
@@ -753,15 +927,23 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene un contratante específico por RUT
+   * Busca un contratante específico por su RUT
+   *
+   * @param rut - RUT del contratante (con o sin formato)
+   * @returns Promise con datos del contratante o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getContratanteByRut('12345678-9');
+   * ```
    */
   async getContratanteByRut(
     rut: string
   ): Promise<AdministracionServiceResponse<GetContratante>> {
     try {
-      const response = await api.get(`/contratante/${rut}`);
+      const response = await api.get(`Contratante/${rut}`);
       return {
-        data: response.data as GetContratante,
+        data: this.processApiResponse<GetContratante>(response)[0],
         error: null
       };
     } catch (error) {
@@ -773,7 +955,15 @@ class AdministracionService {
   }
 
   /**
-   * Obtiene un propietario específico por RUT
+   * Busca un propietario específico por su RUT
+   *
+   * @param rut - RUT del propietario (con o sin formato)
+   * @returns Promise con datos del propietario o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.getPropietarioByRut('12345678-9');
+   * ```
    */
   async getPropietarioByRut(
     rut: string
@@ -793,7 +983,19 @@ class AdministracionService {
   }
 
   /**
-   * Crea un nuevo medidor
+   * Crea un nuevo medidor en el sistema
+   *
+   * @param data - Datos del medidor a crear (código, tipo, ubicación, etc.)
+   * @returns Promise con el ID del medidor creado o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.crearMedidor({
+   *   codigo: 'M001',
+   *   tipo: 'Digital',
+   *   ubicacion: 'Local 123'
+   * });
+   * ```
    */
   async crearMedidor(
     data: CrearMedidorProps
@@ -813,7 +1015,19 @@ class AdministracionService {
   }
 
   /**
-   * Modifica un medidor existente
+   * Actualiza los datos de un medidor existente
+   *
+   * @param data - Datos actualizados del medidor (incluye ID del medidor a modificar)
+   * @returns Promise con respuesta de actualización o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.modificarMedidor({
+   *   id: 123,
+   *   codigo: 'M001-UPD',
+   *   estado: 'Activo'
+   * });
+   * ```
    */
   async modificarMedidor(
     data: ActualizarMedidorProps
@@ -837,7 +1051,19 @@ class AdministracionService {
   }
 
   /**
-   * Crea un nuevo contratante
+   * Crea un nuevo contratante en el sistema
+   *
+   * @param contratanteData - Datos del contratante (RUT, nombre, dirección, contacto, etc.)
+   * @returns Promise con datos del contratante creado o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.crearContratante({
+   *   rut: '12345678-9',
+   *   nombre: 'Juan Pérez',
+   *   email: 'juan@example.com'
+   * });
+   * ```
    */
   async crearContratante(
     contratanteData: any
@@ -861,12 +1087,27 @@ class AdministracionService {
   }
 
   /**
-   * Sincroniza propietarios con locales asociados
+   * Sincroniza propietarios con sus locales asociados
+   *
+   * Actualiza la relación entre propietarios y locales en el sistema,
+   * asegurando consistencia de datos entre ambas entidades.
+   *
+   * @returns Promise con número de registros afectados y mensaje de confirmación, o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await administracionService.sincronizarPropietarios();
+   * if (data) {
+   *   console.log(`Sincronizados ${data.registrosAfectados} registros`);
+   * }
+   * ```
    */
-  async sincronizarPropietarios(): Promise<AdministracionServiceResponse<{
-    registrosAfectados: number;
-    mensaje: string;
-  }>> {
+  async sincronizarPropietarios(): Promise<
+    AdministracionServiceResponse<{
+      registrosAfectados: number;
+      mensaje: string;
+    }>
+  > {
     try {
       const response = await api.put('/contrato/actualizar-propietarios-local');
       return {
