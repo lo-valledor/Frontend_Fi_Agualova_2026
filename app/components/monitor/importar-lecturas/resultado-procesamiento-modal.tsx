@@ -9,7 +9,6 @@ import {
   DialogTitle,
   DialogDescription
 } from '~/components/ui/dialog';
-import { ScrollArea } from '~/components/ui/scroll-area';
 import {
   Table,
   TableBody,
@@ -134,7 +133,7 @@ export function ResultadoProcesamientoModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='max-w-6xl max-h-[90vh] flex flex-col'>
+      <DialogContent className='max-w-[95vw] w-full max-h-[90vh] flex flex-col'>
         <DialogHeader>
           <div className='flex items-center justify-between'>
             <div>
@@ -209,23 +208,23 @@ export function ResultadoProcesamientoModal({
                 </Badge>
               </div>
 
-              <ScrollArea className='flex-1 border rounded-lg'>
+              <div className='flex-1 border rounded-lg overflow-auto'>
                 <Table>
-                  <TableHeader>
+                  <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10'>
                     <TableRow>
-                      <TableHead className='w-[150px]'>
+                      <TableHead className='min-w-[140px]'>
                         Número de Serie
                       </TableHead>
-                      <TableHead>Tarifa</TableHead>
-                      <TableHead className='text-right'>
+                      <TableHead className='min-w-[80px]'>Tarifa</TableHead>
+                      <TableHead className='text-right min-w-[150px]'>
                         Lectura Ant. (kWh)
                       </TableHead>
-                      <TableHead className='text-right'>
+                      <TableHead className='text-right min-w-[140px]'>
                         Consumo (kWh)
                       </TableHead>
-                      <TableHead>Usuario</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead className='min-w-[200px]'>Mensaje</TableHead>
+                      <TableHead className='min-w-[120px]'>Usuario</TableHead>
+                      <TableHead className='min-w-[110px]'>Estado</TableHead>
+                      <TableHead className='min-w-[250px]'>Mensaje</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -249,7 +248,7 @@ export function ResultadoProcesamientoModal({
                         <TableCell>
                           <Badge
                             variant={
-                              detalle.estado === 'EXITOSO'
+                              detalle.estado === 'Actualizado'
                                 ? 'default'
                                 : 'destructive'
                             }
@@ -265,7 +264,7 @@ export function ResultadoProcesamientoModal({
                     ))}
                   </TableBody>
                 </Table>
-              </ScrollArea>
+              </div>
             </div>
           )}
         </div>

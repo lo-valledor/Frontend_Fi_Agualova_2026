@@ -264,13 +264,13 @@ export default function MonitorNichos({
       </div>
 
       {/* Contenido de la tabla */}
-      <div className='flex-1 min-h-0 overflow-hidden'>
+      <div className='flex-1 min-h-0 overflow-auto'>
         {isLoading ? (
           <div className='flex items-center justify-center h-full min-h-[300px]'>
             <LoadingSpinner />
           </div>
         ) : (
-          <div className='h-full'>
+          <div className='h-full overflow-auto'>
             <DataTableNichos
               columns={columnsNichos(columnProps)}
               data={filteredResults}

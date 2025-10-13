@@ -1,21 +1,81 @@
 import api from '~/lib/api';
 import type { Clave, Periodo, Sector } from '~/types/monitor';
 
+/**
+ * Interfaz estándar para respuestas del servicio de monitor
+ * Encapsula el resultado exitoso o error de operaciones
+ *
+ * @template T - Tipo de datos que retorna la operación exitosa
+ */
 export interface MonitorServiceResponse<T> {
+  /** Datos devueltos en caso de éxito, null si hay error */
   data: T | null;
+  /** Mensaje de error si falla la operación, null si es exitosa */
   error: string | null;
 }
 
+/**
+ * Interfaz para datos básicos del monitor
+ * Contiene la información principal necesaria para el módulo de monitoreo
+ */
 export interface MonitorBasicData {
+  /** Lista de períodos de facturación disponibles */
   periodos: Periodo[];
+  /** Lista de sectores de lectura configurados */
   sectores: Sector[];
+  /** Lista de claves de lectura del sistema */
   claves: Clave[];
+  /** ID del período actualmente activo (EstadoPeriodo = 2), null si no hay periodo activo */
   activePeriodoId: number | null;
 }
 
+/**
+ * Servicio para operaciones de monitoreo del sistema
+ *
+ * Maneja las operaciones de consulta para el módulo de monitoreo:
+ * - Períodos de facturación y su estado
+ * - Sectores de lectura configurados
+ * - Claves de lectura del sistema
+ * - Identificación de períodos activos
+ *
+ * Todas las operaciones retornan un objeto MonitorServiceResponse
+ * que encapsula el resultado o error.
+ *
+ * @example
+ * ```typescript
+ * import { monitorService } from '~/services/monitorService';
+ *
+ * const { data, error } = await monitorService.getBasicData();
+ * if (error) {
+ *   console.error('Error:', error);
+ * } else {
+ *   console.log('Período activo:', data?.activePeriodoId);
+ * }
+ * ```
+ */
 class MonitorService {
   /**
-   * Obtiene los datos básicos del monitor (períodos, sectores, claves)
+   * Obtiene los datos básicos del monitor en una sola operación
+   *
+   * Realiza tres peticiones en paralelo para optimizar el tiempo de carga:
+   * - Períodos de facturación
+   * - Sectores de lectura
+   * - Claves del sistema
+   *
+   * Además identifica automáticamente el período activo (EstadoPeriodo = 2).
+   *
+   * @returns Promise con objeto conteniendo periodos, sectores, claves y periodo activo, o error
+   *
+   * @throws {Error} Si no hay token de autenticación
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await monitorService.getBasicData();
+   * if (data) {
+   *   const { periodos, sectores, claves, activePeriodoId } = data;
+   *   console.log(`Períodos: ${periodos.length}, Sectores: ${sectores.length}`);
+   * }
+   * ```
    */
   async getBasicData(): Promise<MonitorServiceResponse<MonitorBasicData>> {
     try {
@@ -69,7 +129,24 @@ class MonitorService {
   }
 
   /**
-   * Obtiene solo períodos y sectores (para exportar lecturas)
+   * Obtiene períodos y sectores para exportación de lecturas
+   *
+   * Versión optimizada que solo carga períodos y sectores sin las claves,
+   * reduciendo el tiempo de carga cuando no se necesita información completa.
+   * Útil para pantallas de exportación y reportes.
+   *
+   * @returns Promise con objeto conteniendo periodos, sectores y periodo activo, o error
+   *
+   * @throws {Error} Si no hay token de autenticación
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await monitorService.getPeriodosAndSectores();
+   * if (data) {
+   *   // Usar para filtros de exportación
+   *   console.log(`Sectores disponibles: ${data.sectores.length}`);
+   * }
+   * ```
    */
   async getPeriodosAndSectores(): Promise<
     MonitorServiceResponse<{
@@ -126,7 +203,19 @@ class MonitorService {
   }
 
   /**
-   * Obtiene solo períodos
+   * Obtiene la lista de períodos de facturación
+   *
+   * @returns Promise con array de períodos o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await monitorService.getPeriodos();
+   * if (data) {
+   *   data.forEach(periodo => {
+   *     console.log(`Período ${periodo.IdPeriodo}: ${periodo.EstadoPeriodo}`);
+   *   });
+   * }
+   * ```
    */
   async getPeriodos(): Promise<MonitorServiceResponse<Periodo[]>> {
     try {
@@ -146,7 +235,17 @@ class MonitorService {
   }
 
   /**
-   * Obtiene solo sectores
+   * Obtiene la lista de sectores de lectura
+   *
+   * @returns Promise con array de sectores o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await monitorService.getSectores();
+   * if (data) {
+   *   console.log(`Total sectores: ${data.length}`);
+   * }
+   * ```
    */
   async getSectores(): Promise<MonitorServiceResponse<Sector[]>> {
     try {
@@ -166,7 +265,17 @@ class MonitorService {
   }
 
   /**
-   * Obtiene solo claves
+   * Obtiene la lista de claves del sistema
+   *
+   * @returns Promise con array de claves o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await monitorService.getClaves();
+   * if (data) {
+   *   console.log(`Claves disponibles: ${data.length}`);
+   * }
+   * ```
    */
   async getClaves(): Promise<MonitorServiceResponse<Clave[]>> {
     try {
@@ -187,6 +296,21 @@ class MonitorService {
 
   /**
    * Encuentra el período activo de una lista de períodos
+   *
+   * Busca el período con EstadoPeriodo = 2 (activo) en la lista proporcionada.
+   * Útil para procesar listas de períodos obtenidas previamente.
+   *
+   * @param periodos - Array de períodos donde buscar el activo
+   * @returns ID del período activo o null si no hay ninguno activo
+   *
+   * @example
+   * ```typescript
+   * const { data } = await monitorService.getPeriodos();
+   * if (data) {
+   *   const activoId = monitorService.findActivePeriodo(data);
+   *   console.log(`Período activo: ${activoId}`);
+   * }
+   * ```
    */
   findActivePeriodo(periodos: Periodo[]): number | null {
     if (!periodos || periodos.length === 0) return null;
@@ -199,4 +323,14 @@ class MonitorService {
   }
 }
 
+/**
+ * Instancia singleton del servicio de monitor
+ *
+ * @example
+ * ```typescript
+ * import { monitorService } from '~/services/monitorService';
+ *
+ * const { data, error } = await monitorService.getBasicData();
+ * ```
+ */
 export const monitorService = new MonitorService();

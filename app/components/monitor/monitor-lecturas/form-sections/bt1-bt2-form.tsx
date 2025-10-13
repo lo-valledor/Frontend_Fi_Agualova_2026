@@ -138,18 +138,30 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     [digito, valorAnterior, constante]
   );
 
-  // Pre-cargar datos existentes si los hay
+  // Pre-cargar datos existentes si los hay (incluye datos importados)
   useEffect(() => {
-    // Si hay una fecha de lectura, significa que ya se ingresó una lectura
-    if (result.LM_FechaLectura && result.LMC_EnergiaActiva > 0) {
-      const lecturActual = result.LMC_EnergiaActiva.toString();
-      setInputValue(lecturActual);
+    // Verificar si hay datos de energía activa (puede ser de lectura ingresada o importada)
+    const energiaActiva = result.LMC_EnergiaActiva;
+
+    // Si existe un valor de energía activa válido (mayor o igual a 0)
+    if (
+      energiaActiva !== undefined &&
+      energiaActiva !== null &&
+      energiaActiva >= 0
+    ) {
+      const lecturaActual = energiaActiva.toString();
+      setInputValue(lecturaActual);
 
       // Calcular el consumo con los datos existentes
-      const resultado = calcularConsumo(lecturActual);
+      const resultado = calcularConsumo(lecturaActual);
       setConsumoCalculado(resultado.consumo);
       setTipoLectura(resultado.tipo);
-      setIsValidated(true); // Marcar como validado porque ya fue guardado
+
+      // Marcar como validado solo si tiene fecha de lectura (ya fue guardado)
+      // Si NO tiene fecha, es un dato importado pendiente de guardar
+      if (result.LM_FechaLectura) {
+        setIsValidated(true);
+      }
     }
   }, [result, calcularConsumo]);
 
@@ -197,22 +209,41 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     [calcularConsumo, validarDigitos, maxValuePermitido, digito]
   );
 
-  // Detectar si el consumo es excesivamente alto
-  const esConsumoExcesivo = useCallback(() => {
-    const consumoAnterior = result.LM_ConsumoMesAnterior || 0;
+  // Detectar consumos anómalos (muy altos o negativos con muchos 9s)
+  const detectarConsumoAnomalo = useCallback(() => {
     const consumoActual = Number(consumoCalculado);
 
-    // Si no hay consumo anterior o es 0, usar un umbral base de 500 kWh
+    // Caso 1: Detectar consumo con muchos 9s (probable error de decimal truncado)
+    const consumoStr = consumoCalculado.toString();
+    const countNines = (consumoStr.match(/9/g) || []).length;
+    const esPatronDe9s = countNines >= 4 && consumoStr.length >= 5;
+
+    // Caso 2: Consumo negativo aparente (valor muy alto por rollover incorrecto)
+    const maxConsumoEsperado = Math.pow(10, digito) * constante;
+    const esRolloverIncorrecto = consumoActual > maxConsumoEsperado * 0.8;
+
+    // Caso 3: Detectar si el consumo es excesivamente alto comparado con histórico
+    const consumoAnterior = result.LM_ConsumoMesAnterior || 0;
     const umbralBase =
       Number(consumoAnterior) > 0 ? Number(consumoAnterior) : 500;
-
-    // Considerar excesivo si el consumo actual es más de 3 veces el anterior
-    // o más de 2000 kWh si no hay referencia anterior
     const factorMultiplicador = 3;
     const umbralMaximo = Math.max(umbralBase * factorMultiplicador, 2000);
+    const esConsumoExcesivo = consumoActual > umbralMaximo;
 
-    return consumoActual > umbralMaximo;
-  }, [consumoCalculado, result.LM_ConsumoMesAnterior]);
+    return {
+      esAnomalo: esPatronDe9s || esRolloverIncorrecto || esConsumoExcesivo,
+      tipo: esPatronDe9s
+        ? 'decimal_truncado'
+        : esRolloverIncorrecto
+          ? 'rollover_incorrecto'
+          : 'excesivo',
+      mensaje: esPatronDe9s
+        ? '⚠️ El consumo calculado contiene muchos "9s" consecutivos. Esto puede indicar un error en los decimales de la lectura importada.'
+        : esRolloverIncorrecto
+          ? '⚠️ El consumo calculado es anormalmente alto. Verifique que los valores de lectura anterior y actual sean correctos.'
+          : '⚠️ El consumo calculado es significativamente mayor al histórico. Verifique los valores ingresados.'
+    };
+  }, [consumoCalculado, result.LM_ConsumoMesAnterior, digito, constante]);
 
   // Validar la lectura
   const validarLectura = useCallback(() => {
@@ -229,8 +260,9 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
       return;
     }
 
-    // Verificar si el consumo es excesivamente alto
-    if (esConsumoExcesivo()) {
+    // Detectar consumos anómalos antes de continuar
+    const anomalia = detectarConsumoAnomalo();
+    if (anomalia.esAnomalo) {
       setShowConsumoExcesivoDialog(true);
       return;
     }
@@ -250,8 +282,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     validarDigitos,
     maxValuePermitido,
     digito,
-    result.ME_NSerie,
-    esConsumoExcesivo
+    detectarConsumoAnomalo
   ]);
 
   // Preparar datos para enviar
@@ -472,6 +503,30 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
               </div>
             )}
 
+            {(() => {
+              const anomalia = detectarConsumoAnomalo();
+              if (anomalia.esAnomalo && consumoCalculado) {
+                return (
+                  <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-md border border-red-200 dark:border-red-800'>
+                    <AlertCircle className='h-4 w-4 flex-shrink-0 mt-0.5' />
+                    <div className='flex-1'>
+                      <div className='font-semibold mb-1'>
+                        Consumo anómalo detectado
+                      </div>
+                      <div className='text-xs leading-relaxed'>
+                        {anomalia.tipo === 'decimal_truncado'
+                          ? 'El consumo contiene patrón de 9s (posible error de decimales en importación). Verifique la lectura antes de validar.'
+                          : anomalia.tipo === 'rollover_incorrecto'
+                            ? 'Consumo anormalmente alto. Verifique que los valores sean correctos.'
+                            : 'El consumo supera significativamente el promedio histórico.'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
             {Number(consumoCalculado) < 0 && (
               <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />
@@ -578,8 +633,30 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
       <ConfirmationDialog
         isOpen={showConsumoExcesivoDialog}
         onOpenChange={setShowConsumoExcesivoDialog}
-        title='⚠️ Consumo Excesivamente Alto'
-        message={`El consumo calculado (${Number(consumoCalculado).toLocaleString('es-CL')} kWh) es significativamente mayor al consumo anterior (${(result.LM_ConsumoMesAnterior || 0).toLocaleString('es-CL')} kWh). ¿Está seguro de que la lectura es correcta?`}
+        title='⚠️ Consumo Anómalo Detectado'
+        message={(() => {
+          const anomalia = detectarConsumoAnomalo();
+          const consumoFormateado =
+            Number(consumoCalculado).toLocaleString('es-CL');
+          const consumoAnteriorFormateado = (
+            result.LM_ConsumoMesAnterior || 0
+          ).toLocaleString('es-CL');
+
+          return `${anomalia.mensaje}
+
+Consumo calculado: ${consumoFormateado} kWh
+Consumo anterior: ${consumoAnteriorFormateado} kWh
+Lectura actual: ${inputValue}
+Lectura anterior: ${valorAnterior}
+
+${
+  anomalia.tipo === 'decimal_truncado'
+    ? '💡 Sugerencia: Si esta lectura fue importada, verifique que los valores con decimales estén correctos. Los decimales pueden haberse perdido durante la importación.'
+    : '💡 Sugerencia: Verifique los valores de lectura anterior y actual antes de continuar.'
+}
+
+¿Desea continuar de todas formas?`;
+        })()}
         alertColor='red'
         onConfirm={handleConfirmConsumoExcesivo}
         isSubmitting={isSubmitting}

@@ -257,16 +257,27 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     return fecha;
   }, []);
 
-  // Pre-cargar datos existentes si ya hay una lectura registrada
+  // Pre-cargar datos existentes si ya hay una lectura registrada (incluye importados)
   useEffect(() => {
-    if (result.LM_FechaLectura && result.LMC_EnergiaActiva > 0) {
+    const energiaActiva = result.LMC_EnergiaActiva;
+    const energiaReactiva = result.LMC_EnergiaReactiva;
+
+    // Verificar si hay datos de energía activa (puede ser de lectura ingresada o importada)
+    if (
+      energiaActiva !== undefined &&
+      energiaActiva !== null &&
+      energiaActiva >= 0
+    ) {
       // Pre-cargar energía activa
       const lecturaActiva = result.LMC_EnergiaActiva.toString();
       setInputActivaValue(lecturaActiva);
       const resultadoActiva = calcularConsumoActiva(lecturaActiva);
       setConsumoActivaCalculado(resultadoActiva.consumo);
       setTipoLecturaActiva(resultadoActiva.tipo);
-      setIsActivaValidated(true);
+      // Marcar como validado solo si tiene fecha de lectura (ya fue guardado)
+      if (result.LM_FechaLectura) {
+        setIsActivaValidated(true);
+      }
 
       // Pre-cargar energía reactiva
       const lecturaReactiva = result.LMC_EnergiaReactiva.toString();
@@ -405,40 +416,81 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     [detectarOlvidoComa, convertirComANumero]
   );
 
-  // Detectar si el consumo de energía activa es excesivo
-  const esConsumoActivaExcesivo = useCallback(() => {
+  // Detectar consumos anómalos en energía activa (muy altos o negativos con muchos 9s)
+  const detectarConsumoActivaAnomalo = useCallback(() => {
     if (!consumoActivaCalculado || isNaN(Number(consumoActivaCalculado))) {
-      return false;
+      return { esAnomalo: false, tipo: '', mensaje: '' };
     }
 
     const consumoActual = Number(consumoActivaCalculado);
 
-    // Si hay consumo anterior, verificar si es más de 3 veces mayor
-    if (consumoAnterior > 0) {
-      return consumoActual > consumoAnterior * 3;
-    }
+    // Caso 1: Detectar consumo con muchos 9s (probable error de decimal truncado)
+    const consumoStr = consumoActivaCalculado.toString();
+    const countNines = (consumoStr.match(/9/g) || []).length;
+    const esPatronDe9s = countNines >= 4 && consumoStr.length >= 5;
 
-    // Si no hay consumo anterior, considerar excesivo si es mayor a 500 kWh
-    return consumoActual > 500;
-  }, [consumoActivaCalculado, consumoAnterior]);
+    // Caso 2: Consumo negativo aparente (valor muy alto por rollover incorrecto)
+    const maxConsumoEsperado = Math.pow(10, digito) * constante;
+    const esRolloverIncorrecto = consumoActual > maxConsumoEsperado * 0.8;
 
-  // Detectar si el consumo de energía reactiva es excesivo
-  const esConsumoReactivaExcesivo = useCallback(() => {
+    // Caso 3: Detectar si el consumo es excesivamente alto comparado con histórico
+    const umbralBase = consumoAnterior > 0 ? consumoAnterior : 500;
+    const factorMultiplicador = 3;
+    const umbralMaximo = Math.max(umbralBase * factorMultiplicador, 2000);
+    const esConsumoExcesivo = consumoActual > umbralMaximo;
+
+    return {
+      esAnomalo: esPatronDe9s || esRolloverIncorrecto || esConsumoExcesivo,
+      tipo: esPatronDe9s
+        ? 'decimal_truncado'
+        : esRolloverIncorrecto
+          ? 'rollover_incorrecto'
+          : 'excesivo',
+      mensaje: esPatronDe9s
+        ? '⚠️ El consumo de energía activa calculado contiene muchos "9s" consecutivos. Esto puede indicar un error en los decimales de la lectura importada.'
+        : esRolloverIncorrecto
+          ? '⚠️ El consumo de energía activa calculado es anormalmente alto. Verifique que los valores de lectura anterior y actual sean correctos.'
+          : '⚠️ El consumo de energía activa calculado es significativamente mayor al histórico. Verifique los valores ingresados.'
+    };
+  }, [consumoActivaCalculado, consumoAnterior, digito, constante]);
+
+  // Detectar consumos anómalos en energía reactiva (muy altos o negativos con muchos 9s)
+  const detectarConsumoReactivaAnomalo = useCallback(() => {
     if (!consumoReactivaCalculado || isNaN(Number(consumoReactivaCalculado))) {
-      return false;
+      return { esAnomalo: false, tipo: '', mensaje: '' };
     }
 
     const consumoActual = Number(consumoReactivaCalculado);
 
-    // Para energía reactiva, usar un umbral más alto ya que suele ser menor
-    // Si hay consumo anterior, verificar si es más de 5 veces mayor
-    if (consumoAnterior > 0) {
-      return consumoActual > consumoAnterior * 3;
-    }
+    // Caso 1: Detectar consumo con muchos 9s (probable error de decimal truncado)
+    const consumoStr = consumoReactivaCalculado.toString();
+    const countNines = (consumoStr.match(/9/g) || []).length;
+    const esPatronDe9s = countNines >= 4 && consumoStr.length >= 5;
 
-    // Si no hay consumo anterior, considerar excesivo si es mayor a 1000 kVArh
-    return consumoActual > 1000;
-  }, [consumoReactivaCalculado, consumoAnterior]);
+    // Caso 2: Consumo negativo aparente (valor muy alto por rollover incorrecto)
+    const maxConsumoEsperado = Math.pow(10, digito) * constante;
+    const esRolloverIncorrecto = consumoActual > maxConsumoEsperado * 0.8;
+
+    // Caso 3: Para energía reactiva, usar umbral más alto ya que suele ser menor
+    const umbralBase = consumoAnterior > 0 ? consumoAnterior : 1000;
+    const factorMultiplicador = 3;
+    const umbralMaximo = Math.max(umbralBase * factorMultiplicador, 2000);
+    const esConsumoExcesivo = consumoActual > umbralMaximo;
+
+    return {
+      esAnomalo: esPatronDe9s || esRolloverIncorrecto || esConsumoExcesivo,
+      tipo: esPatronDe9s
+        ? 'decimal_truncado'
+        : esRolloverIncorrecto
+          ? 'rollover_incorrecto'
+          : 'excesivo',
+      mensaje: esPatronDe9s
+        ? '⚠️ El consumo de energía reactiva calculado contiene muchos "9s" consecutivos. Esto puede indicar un error en los decimales de la lectura importada.'
+        : esRolloverIncorrecto
+          ? '⚠️ El consumo de energía reactiva calculado es anormalmente alto. Verifique que los valores de lectura anterior y actual sean correctos.'
+          : '⚠️ El consumo de energía reactiva calculado es significativamente mayor al histórico. Verifique los valores ingresados.'
+    };
+  }, [consumoReactivaCalculado, consumoAnterior, digito, constante]);
 
   // Calcular el máximo valor permitido para mostrar al usuario
   const maxValuePermitido = useMemo(() => {
@@ -561,8 +613,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return;
     }
 
-    // Verificar si el consumo es excesivo antes de otros diálogos
-    if (esConsumoActivaExcesivo()) {
+    // Detectar consumos anómalos antes de continuar
+    const anomalia = detectarConsumoActivaAnomalo();
+    if (anomalia.esAnomalo) {
       setShowConsumoExcesivoActivaDialog(true);
       return;
     }
@@ -582,7 +635,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     validarDigitos,
     maxValuePermitido,
     digito,
-    esConsumoActivaExcesivo
+    detectarConsumoActivaAnomalo
   ]);
 
   // Validar la lectura de energía reactiva
@@ -602,8 +655,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return;
     }
 
-    // Verificar si el consumo es excesivo antes de otros diálogos
-    if (esConsumoReactivaExcesivo()) {
+    // Detectar consumos anómalos antes de continuar
+    const anomalia = detectarConsumoReactivaAnomalo();
+    if (anomalia.esAnomalo) {
       setShowConsumoExcesivoReactivaDialog(true);
       return;
     }
@@ -623,7 +677,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     validarDigitos,
     maxValuePermitido,
     digito,
-    esConsumoReactivaExcesivo
+    detectarConsumoReactivaAnomalo
   ]);
 
   // Confirmar tipo de lectura activa y registrar la clave seleccionada
@@ -950,6 +1004,30 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </div>
             )}
 
+            {(() => {
+              const anomalia = detectarConsumoActivaAnomalo();
+              if (anomalia.esAnomalo && consumoActivaCalculado) {
+                return (
+                  <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-md border border-red-200 dark:border-red-800'>
+                    <AlertCircle className='h-4 w-4 flex-shrink-0 mt-0.5' />
+                    <div className='flex-1'>
+                      <div className='font-semibold mb-1'>
+                        Consumo anómalo detectado (Activa)
+                      </div>
+                      <div className='text-xs leading-relaxed'>
+                        {anomalia.tipo === 'decimal_truncado'
+                          ? 'El consumo contiene patrón de 9s (posible error de decimales en importación). Verifique la lectura antes de validar.'
+                          : anomalia.tipo === 'rollover_incorrecto'
+                            ? 'Consumo anormalmente alto. Verifique que los valores sean correctos.'
+                            : 'El consumo supera significativamente el promedio histórico.'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
             {Number(consumoActivaCalculado) < 0 && (
               <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />
@@ -1039,6 +1117,30 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
           {/* Estados compactos para Energía Reactiva */}
           <div className='space-y-2 mt-3'>
+            {(() => {
+              const anomalia = detectarConsumoReactivaAnomalo();
+              if (anomalia.esAnomalo && consumoReactivaCalculado) {
+                return (
+                  <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-md border border-red-200 dark:border-red-800'>
+                    <AlertCircle className='h-4 w-4 flex-shrink-0 mt-0.5' />
+                    <div className='flex-1'>
+                      <div className='font-semibold mb-1'>
+                        Consumo anómalo detectado (Reactiva)
+                      </div>
+                      <div className='text-xs leading-relaxed'>
+                        {anomalia.tipo === 'decimal_truncado'
+                          ? 'El consumo contiene patrón de 9s (posible error de decimales en importación). Verifique la lectura antes de validar.'
+                          : anomalia.tipo === 'rollover_incorrecto'
+                            ? 'Consumo anormalmente alto. Verifique que los valores sean correctos.'
+                            : 'El consumo supera significativamente el promedio histórico.'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
             {Number(consumoReactivaCalculado) < 0 && (
               <div className='flex items-center gap-2 text-xs text-destructive bg-destructive/10 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />
@@ -1347,8 +1449,30 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showConsumoExcesivoActivaDialog}
         onOpenChange={setShowConsumoExcesivoActivaDialog}
-        title='Consumo de Energía Activa Muy Alto'
-        message={`El consumo calculado (${consumoActivaCalculado} kWh) es significativamente mayor al consumo anterior (${consumoAnterior} kWh). ¿Está seguro de que desea continuar con esta lectura?`}
+        title='⚠️ Consumo de Energía Activa Anómalo'
+        message={(() => {
+          const anomalia = detectarConsumoActivaAnomalo();
+          const consumoFormateado = Number(
+            consumoActivaCalculado
+          ).toLocaleString('es-CL');
+          const consumoAnteriorFormateado =
+            consumoAnterior.toLocaleString('es-CL');
+
+          return `${anomalia.mensaje}
+
+Consumo calculado: ${consumoFormateado} kWh
+Consumo anterior: ${consumoAnteriorFormateado} kWh
+Lectura actual: ${inputActivaValue}
+Lectura anterior: ${valorActivaAnterior}
+
+${
+  anomalia.tipo === 'decimal_truncado'
+    ? '💡 Sugerencia: Si esta lectura fue importada, verifique que los valores con decimales estén correctos. Los decimales pueden haberse perdido durante la importación.'
+    : '💡 Sugerencia: Verifique los valores de lectura anterior y actual antes de continuar.'
+}
+
+¿Desea continuar de todas formas?`;
+        })()}
         alertColor='red'
         onConfirm={handleConfirmConsumoExcesivoActiva}
         isSubmitting={isSubmitting}
@@ -1357,8 +1481,30 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <ConfirmationDialog
         isOpen={showConsumoExcesivoReactivaDialog}
         onOpenChange={setShowConsumoExcesivoReactivaDialog}
-        title='Consumo de Energía Reactiva Muy Alto'
-        message={`El consumo calculado (${consumoReactivaCalculado} kVArh) es significativamente mayor al consumo anterior (${consumoAnterior} kVArh). ¿Está seguro de que desea continuar con esta lectura?`}
+        title='⚠️ Consumo de Energía Reactiva Anómalo'
+        message={(() => {
+          const anomalia = detectarConsumoReactivaAnomalo();
+          const consumoFormateado = Number(
+            consumoReactivaCalculado
+          ).toLocaleString('es-CL');
+          const consumoAnteriorFormateado =
+            consumoAnterior.toLocaleString('es-CL');
+
+          return `${anomalia.mensaje}
+
+Consumo calculado: ${consumoFormateado} kVArh
+Consumo anterior: ${consumoAnteriorFormateado} kVArh
+Lectura actual: ${inputReactivaValue}
+Lectura anterior: ${valorReactivaAnterior}
+
+${
+  anomalia.tipo === 'decimal_truncado'
+    ? '💡 Sugerencia: Si esta lectura fue importada, verifique que los valores con decimales estén correctos. Los decimales pueden haberse perdido durante la importación.'
+    : '💡 Sugerencia: Verifique los valores de lectura anterior y actual antes de continuar.'
+}
+
+¿Desea continuar de todas formas?`;
+        })()}
         alertColor='red'
         onConfirm={handleConfirmConsumoExcesivoReactiva}
         isSubmitting={isSubmitting}

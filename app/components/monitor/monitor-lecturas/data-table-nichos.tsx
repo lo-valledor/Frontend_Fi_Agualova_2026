@@ -39,12 +39,19 @@ interface DataTableNichosProps<TData, TValue> {
 // Configuración de visibilidad responsiva para columnas
 const responsiveColumnVisibility = {
   // En mobile (< 640px) solo mostrar columnas esenciales
-  mobile: ['numero', 'numero_serie', 'consumo_energia_activa', 'acciones'],
+  mobile: [
+    'numero',
+    'numero_serie',
+    'estado_guardado',
+    'consumo_energia_activa',
+    'acciones'
+  ],
   // En tablet portrait (640px - 768px) agregar algunas columnas
   tabletPortrait: [
     'numero',
     'local',
     'numero_serie',
+    'estado_guardado',
     'energia_activa',
     'consumo_energia_activa',
     'acciones'
@@ -54,6 +61,7 @@ const responsiveColumnVisibility = {
     'numero',
     'local',
     'numero_serie',
+    'estado_guardado',
     'energia_activa_anterior',
     'energia_activa',
     'consumo_energia_activa',
@@ -68,6 +76,7 @@ const responsiveColumnVisibility = {
     'local',
     'tarifa',
     'numero_serie',
+    'estado_guardado',
     'constante',
     'anio_anterior',
     'mes_anterior',

@@ -1,9 +1,21 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Check, CreditCard, PencilIcon, RotateCcw } from 'lucide-react';
+import {
+  Check,
+  CheckCircle2,
+  CreditCard,
+  PencilIcon,
+  RotateCcw
+} from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Dialog, DialogTrigger } from '~/components/ui/dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '~/components/ui/tooltip';
 import type { MedidorNichoItem } from '~/types/monitor';
 
 // Tipo para las props que se pasan a la función de columnas
@@ -75,6 +87,76 @@ export const columnsNichos = ({
     ),
     meta: {
       className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[85px]'
+    }
+  },
+  {
+    id: 'estado_guardado',
+    accessorKey: 'LM_FechaLectura',
+    header: () => <div className='text-center'>Estado</div>,
+    cell: ({ row }) => {
+      const fechaLectura = row.original.LM_FechaLectura;
+      const esGuardado = fechaLectura !== null && fechaLectura !== '';
+
+      const formatearFecha = (fecha: string) => {
+        try {
+          return new Date(fecha).toLocaleString('es-CL', {
+            dateStyle: 'short',
+            timeStyle: 'short',
+            hour12: false
+          });
+        } catch {
+          return fecha;
+        }
+      };
+
+      return (
+        <div className='flex justify-center'>
+          {esGuardado ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant='outline'
+                    className='bg-green-50 dark:bg-green-950/30 text-green-700 dark:text-green-400 border-green-300 dark:border-green-700 font-semibold text-xs px-2 py-0.5 h-5 gap-1 cursor-help'
+                  >
+                    <CheckCircle2 className='h-3 w-3' />
+                    Guardado
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className='text-xs'>
+                    Guardado el:{' '}
+                    <span className='font-semibold'>
+                      {formatearFecha(fechaLectura)}
+                    </span>
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant='outline'
+                    className='bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-700 font-semibold text-xs px-2 py-0.5 h-5 cursor-help'
+                  >
+                    Pendiente
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className='text-xs'>
+                    Esta lectura aún no ha sido guardada
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+      );
+    },
+    meta: {
+      className: 'bg-zinc-50/70 dark:bg-zinc-900/40 min-w-[100px]'
     }
   },
   {
@@ -385,7 +467,14 @@ export const columnGroups = [
   {
     id: 'medidor',
     title: 'Medidor',
-    columns: ['numero', 'local', 'tarifa', 'numero_serie', 'constante'],
+    columns: [
+      'numero',
+      'local',
+      'tarifa',
+      'numero_serie',
+      'estado_guardado',
+      'constante'
+    ],
     className:
       'bg-gradient-to-r from-zinc-700 to-zinc-600 text-white font-semibold shadow-sm'
   },

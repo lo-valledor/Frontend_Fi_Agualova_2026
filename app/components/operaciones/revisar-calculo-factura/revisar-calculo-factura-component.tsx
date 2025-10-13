@@ -1,12 +1,10 @@
 import {
   AlertCircleIcon,
-  AlertTriangle,
   CalendarIcon,
   CheckCircle,
   ChevronDown,
   ChevronRight,
   ChevronUp,
-  CircleCheckBig,
   Eraser,
   FileSpreadsheet,
   FileTextIcon,
@@ -14,8 +12,7 @@ import {
   RefreshCw,
   SearchIcon,
   SettingsIcon,
-  TrendingUp,
-  XCircle
+  TrendingUp
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
@@ -25,7 +22,6 @@ import { useMemo, useState } from 'react';
 
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
@@ -36,11 +32,7 @@ import {
   CardTitle
 } from '~/components/ui/card';
 // Removido useOperaciones ya que los datos vienen como props
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger
-} from '~/components/ui/collapsible';
+import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 // Import hooks
@@ -303,101 +295,6 @@ export default function RevisarCalculoFacturaComponent({
             <HelpCircle className='h-4 w-4' />
           </Button>
         </div>
-
-        {/* Alerta de estado de lecturas */}
-        {estadoCierreLecturas !== null && (
-          <Alert
-            variant={hayLecturasCerradas ? 'default' : 'destructive'}
-            className={
-              hayLecturasCerradas
-                ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800'
-                : ''
-            }
-          >
-            {hayLecturasCerradas ? (
-              <>
-                <CircleCheckBig className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
-                <AlertTitle className='text-emerald-800 dark:text-emerald-200'>
-                  Lecturas Cerradas Disponibles
-                </AlertTitle>
-                <AlertDescription className='text-emerald-700 dark:text-emerald-300'>
-                  <div>
-                    Hay lecturas cerradas para el período actual. Puede proceder
-                    con el cálculo de facturación.
-                  </div>
-                  {estadoCierreLecturas.length > 0 && (
-                    <Collapsible className='mt-3'>
-                      <CollapsibleTrigger asChild>
-                        <Button
-                          variant='ghost'
-                          size='sm'
-                          className='text-emerald-700 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-100 hover:bg-emerald-100 dark:hover:bg-emerald-800/50 p-0 h-auto font-medium'
-                        >
-                          <span className='text-xs flex items-center gap-1'>
-                            Ver detalle ({estadoCierreLecturas.length} nicho
-                            {estadoCierreLecturas.length !== 1 ? 's' : ''})
-                            <ChevronDown className='h-3 w-3' />
-                          </span>
-                        </Button>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className='mt-2'>
-                        <div className='grid lg:grid-cols-12 md:grid-cols-4 sm:grid-cols-2 grid-cols-2 gap-2'>
-                          {estadoCierreLecturas.map(item => (
-                            <div
-                              key={item.nichoId}
-                              className='flex flex-col gap-1 text-xs bg-emerald-100 dark:bg-emerald-800/50 px-3 py-2 rounded-md border border-emerald-200 dark:border-emerald-700'
-                            >
-                              <div className='flex items-center gap-1 font-medium text-emerald-800 dark:text-emerald-200'>
-                                <CheckCircle className='h-3 w-3' />
-                                {item.nichoDescripcion}
-                              </div>
-                              <div className='text-emerald-700 dark:text-emerald-300 ml-4'>
-                                {item.cantidadLecturasOK +
-                                  item.cantidadCorregidas +
-                                  item.cantidadClaveNaranja}{' '}
-                                lecturas cerradas
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </CollapsibleContent>
-                    </Collapsible>
-                  )}
-                </AlertDescription>
-              </>
-            ) : (
-              <>
-                <XCircle className='h-5 w-5' />
-                <AlertTitle>No hay Lecturas Cerradas</AlertTitle>
-                <AlertDescription>
-                  <p className='mb-2'>
-                    No se encontraron lecturas cerradas para el período actual
-                    (Ciclo día 15). Debe cerrar las lecturas antes de poder
-                    realizar el cálculo de facturación.
-                  </p>
-                  <div className='flex flex-col sm:flex-row gap-2 mt-3'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={() =>
-                        (window.location.href =
-                          '/dashboard/operaciones/cerrar-lecturas')
-                      }
-                      className='bg-white dark:bg-slate-900 border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20'
-                    >
-                      <AlertTriangle className='h-4 w-4 mr-2' />
-                      Ir a Cerrar Lecturas
-                    </Button>
-                    <span className='text-xs text-red-700 dark:text-red-300 flex items-center'>
-                      Los botones de cálculo estarán deshabilitados hasta que
-                      cierre las lecturas
-                    </span>
-                  </div>
-                </AlertDescription>
-              </>
-            )}
-          </Alert>
-        )}
 
         {/* Panel de Control */}
         <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
@@ -707,7 +604,7 @@ export default function RevisarCalculoFacturaComponent({
                         <p className='text-sm text-rose-600 dark:text-rose-400 mt-1'>
                           {error.includes('No se han encontrado prefacturas')
                             ? 'No se han encontrado prefacturas para el ciclo y periodo elegidos. Verifique que el ciclo y periodo sean correctos.'
-                            : 'Los datos no han sido cargados completamente. Recuerde que debe hacer clic en Preparar Cálculo Factura y luego en Ver Cálculo Facturas'}
+                            : 'Los datos no han sido cargados completamente. Recuerde que primero debe tener lecturas en estado Cerradas, con ello cumplido debe hacer clic en Preparar Cálculo Factura y luego en Ver Cálculo Facturas'}
                         </p>
 
                         <Button

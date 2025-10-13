@@ -24,32 +24,13 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
-              title={row.original.rut}
-            >
-              {format(row.getValue('rut'))}
-            </div>
-          </div>
-        </div>
-      );
-    },
-    minSize: 150,
-    maxSize: 220
-  },
-  {
-    accessorKey: 'nombre',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
-    ),
-    cell: ({ row }) => {
-      return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
-            <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
+              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm '
               title={row.original.nombre}
             >
               {row.original.nombre}
+            </div>
+            <div className='text-xs text-slate-500 dark:text-slate-400 font-mono truncate'>
+              {format(row.getValue('rut'))}
             </div>
           </div>
         </div>

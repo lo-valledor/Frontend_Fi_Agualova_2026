@@ -1148,7 +1148,7 @@ export default function ResultadosBusqueda({
                           Ingresar Lecturas
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className='max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto overflow-hidden flex flex-col'>
+                      <DialogContent className='max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto flex flex-col'>
                         <DialogHeader className='shrink-0 pb-2 sm:pb-3 lg:pb-4 border-b border-border/40 px-3 sm:px-4 lg:px-6'>
                           <DialogTitle>
                             <div className='text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500'>
@@ -1165,7 +1165,7 @@ export default function ResultadosBusqueda({
                             </div>
                           </DialogTitle>
                         </DialogHeader>
-                        <div className='flex-1 overflow-hidden min-h-0'>
+                        <div className='flex-1 overflow-auto min-h-0'>
                           <div className='h-full p-2 sm:p-3 lg:p-4 xl:p-6'>
                             <MonitorNichos
                               periodo={periodo}
