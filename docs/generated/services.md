@@ -1,5 +1,5 @@
 # Documentación de Servicios
-*Generado automáticamente el 2025-10-13 16:44:09*
+*Generado automáticamente el 2025-10-14 10:10:41*
 
 ## Índice de Servicios
 
@@ -32,6 +32,13 @@
 
 **Exports**:
 
+
+### insercionAutomaticaService
+**Archivo**: `app/services/insercionAutomaticaService.ts`
+
+**Exports**:
+- `validarLecturaParaInsercionAutomatica`
+- `analizarMedidoresParaInsercion`
 
 ### mantencionService
 **Archivo**: `app/services/mantencionService.ts`

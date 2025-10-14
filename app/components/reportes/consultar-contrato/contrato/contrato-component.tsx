@@ -1,4 +1,11 @@
-import { ArrowLeft, FileText, Settings, TrendingUp, User, Zap } from 'lucide-react';
+import {
+  ArrowLeft,
+  FileText,
+  Settings,
+  TrendingUp,
+  User,
+  Zap
+} from 'lucide-react';
 
 import { memo, useMemo, useState } from 'react';
 
@@ -181,27 +188,33 @@ const ContratoComponent = memo(function ContratoComponent({
           onValueChange={setActiveTab}
           className='space-y-4'
         >
-          <TabsList className='grid w-full grid-cols-3 lg:grid-cols-5 h-11'>
-            <TabsTrigger value='resumen' className='gap-2'>
-              <User className='h-4 w-4' />
+          <TabsList className='grid w-full grid-cols-2 sm:grid-cols-4 h-auto sm:h-11 gap-1 p-1'>
+            <TabsTrigger value='resumen' className='gap-2 h-10 sm:h-9'>
+              <User className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Información</span>
+              <span className='sm:hidden text-xs'>Info</span>
             </TabsTrigger>
-            <TabsTrigger value='lecturas' className='gap-2'>
-              <TrendingUp className='h-4 w-4' />
+            <TabsTrigger value='lecturas' className='gap-2 h-10 sm:h-9'>
+              <TrendingUp className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Lecturas</span>
+              <span className='sm:hidden text-xs'>Lect.</span>
             </TabsTrigger>
-            <TabsTrigger value='facturas' className='gap-2'>
-              <FileText className='h-4 w-4' />
+            <TabsTrigger value='facturas' className='gap-2 h-10 sm:h-9'>
+              <FileText className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Facturas</span>
+              <span className='sm:hidden text-xs'>Fact.</span>
             </TabsTrigger>
-            <TabsTrigger value='proyecciones' className='gap-2'>
-              <Zap className='h-4 w-4' />
-              <span className='hidden sm:inline'>Proyecciones</span>
-            </TabsTrigger>
-            <TabsTrigger value='tecnico' className='gap-2'>
-              <Settings className='h-4 w-4' />
+
+            <TabsTrigger value='tecnico' className='gap-2 h-10 sm:h-9'>
+              <Settings className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Técnico</span>
+              <span className='sm:hidden text-xs'>Téc.</span>
             </TabsTrigger>
+            {/* <TabsTrigger value='proyecciones' className='gap-2 h-10 sm:h-9'>
+              <Zap className='h-4 w-4 flex-shrink-0' />
+              <span className='hidden sm:inline'>Proyecciones</span>
+              <span className='sm:hidden text-xs'>Proy.</span>
+            </TabsTrigger> */}
           </TabsList>
 
           {/* Tab: Resumen General - Simple */}
@@ -233,13 +246,13 @@ const ContratoComponent = memo(function ContratoComponent({
           </TabsContent>
 
           {/* Tab: Proyecciones Avanzadas */}
-          <TabsContent value='proyecciones' className='space-y-4'>
+          {/* <TabsContent value='proyecciones' className='space-y-4'>
             <ProyeccionesAvanzadas
               detalleLecturas={detalleLecturas}
               detalleFacturas={detalleFacturas}
               contratoId={contratoInfo?.contratoId}
             />
-          </TabsContent>
+          </TabsContent> */}
 
           {/* Tab: Información Técnica - Simple */}
           <TabsContent value='tecnico' className='space-y-4'>

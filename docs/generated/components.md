@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-13 16:44:08*
+*Generado automáticamente el 2025-10-14 10:10:41*
 
 ## Índice de Componentes
 
@@ -733,6 +733,16 @@
 **Archivo**: `app/components/monitor/monitor-lecturas/editar-medidores.tsx`
 ⚠️ *Sin documentación JSDoc*
 
+
+### insercion-automatica-dialog
+**Archivo**: `app/components/monitor/monitor-lecturas/insercion-automatica-dialog.tsx`
+**Documentación**:
+```typescript
+/**
+ * Componente de diálogo para inserción automática de lecturas
+ * Muestra resumen de validación y procesa inserciones en lote
+ */
+```
 
 ### monitor-nichos
 **Archivo**: `app/components/monitor/monitor-lecturas/monitor-nichos.tsx`

@@ -1,5 +1,5 @@
 import { type PaginationState } from '@tanstack/react-table';
-import { Loader2, RotateCcw, Search, Settings, X } from 'lucide-react';
+import { Loader2, RotateCcw, Search, Settings, X, Zap } from 'lucide-react';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -15,12 +15,19 @@ import {
   DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '~/components/ui/tooltip';
 import api from '~/lib/api';
 import type { MedidorNichoItem } from '~/types/monitor';
 
 import { columnGroups, columnsNichos } from './columns-nichos';
 import { DataTableNichos } from './data-table-nichos';
 import EditarMedidores from './editar-medidores';
+import { InsercionAutomaticaDialog } from './insercion-automatica-dialog';
 
 export default function MonitorNichos({
   periodo,
@@ -47,6 +54,8 @@ export default function MonitorNichos({
     pageSize: 15
   });
   const [searchTerm, setSearchTerm] = useState('');
+  const [isInsercionAutomaticaOpen, setIsInsercionAutomaticaOpen] =
+    useState(false);
 
   // Filtrar resultados basado en el término de búsqueda
   const filteredResults = useMemo(() => {
@@ -217,25 +226,52 @@ export default function MonitorNichos({
             </Badge>
           </div>
 
-          <Button
-            variant='outline'
-            size='sm'
-            className='h-9 gap-2 bg-gradient-to-r from-sky-50 to-sky-100/50 dark:from-sky-950/20 dark:to-sky-900/20 hover:from-sky-100 hover:to-sky-200/50 dark:hover:from-sky-900/30 dark:hover:to-sky-800/30 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-          >
-            {isRefreshing ? (
-              <>
-                <Loader2 className='h-4 w-4 animate-spin' />
-                <span className='hidden xs:inline'>Actualizando...</span>
-              </>
-            ) : (
-              <>
-                <RotateCcw className='h-4 w-4' />
-                <span className='hidden xs:inline'>Actualizar</span>
-              </>
-            )}
-          </Button>
+          <div className='flex items-center gap-2'>
+            {/* Botón de Inserción Automática */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    className='h-9 gap-2 bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-950/20 dark:to-amber-900/20 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-900/30 dark:hover:to-amber-800/30 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
+                    onClick={() => setIsInsercionAutomaticaOpen(true)}
+                    disabled={isRefreshing || results.length === 0}
+                  >
+                    <Zap className='h-4 w-4' />
+                    <span className='hidden sm:inline'>Autovalidar</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Insertar automáticamente lecturas importadas válidas (solo
+                    BT1/BT2)
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* Botón de Actualizar */}
+            <Button
+              variant='outline'
+              size='sm'
+              className='h-9 gap-2 bg-gradient-to-r from-sky-50 to-sky-100/50 dark:from-sky-950/20 dark:to-sky-900/20 hover:from-sky-100 hover:to-sky-200/50 dark:hover:from-sky-900/30 dark:hover:to-sky-800/30 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+            >
+              {isRefreshing ? (
+                <>
+                  <Loader2 className='h-4 w-4 animate-spin' />
+                  <span className='hidden xs:inline'>Actualizando...</span>
+                </>
+              ) : (
+                <>
+                  <RotateCcw className='h-4 w-4' />
+                  <span className='hidden xs:inline'>Actualizar</span>
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* Segunda fila: Buscador */}
@@ -327,6 +363,15 @@ export default function MonitorNichos({
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Diálogo de Inserción Automática */}
+      <InsercionAutomaticaDialog
+        open={isInsercionAutomaticaOpen}
+        onOpenChange={setIsInsercionAutomaticaOpen}
+        medidores={results}
+        periodo={periodo}
+        onSuccess={handleRefresh}
+      />
     </div>
   );
 }
