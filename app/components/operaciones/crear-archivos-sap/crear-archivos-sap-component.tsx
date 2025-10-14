@@ -1,4 +1,5 @@
-import { ChevronDown, Download, FileArchive } from 'lucide-react';
+import { ChevronDown, Download, FileArchive, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { useState } from 'react';
 
@@ -20,6 +21,8 @@ import api from '~/lib/api';
 
 export default function CrearArchivosSapComponent() {
   const [isConfigOpen, setIsConfigOpen] = useState(true);
+  const [isDownloadingEncabezado, setIsDownloadingEncabezado] = useState(false);
+  const [isDownloadingDetalle, setIsDownloadingDetalle] = useState(false);
 
   // Helper function to extract filename from Content-Disposition header
   const extractFilenameFromHeaders = (headers: any): string => {
@@ -48,50 +51,100 @@ export default function CrearArchivosSapComponent() {
   };
 
   const handleDescargarEncabezado = async () => {
+    setIsDownloadingEncabezado(true);
     try {
+      toast.info('Generando archivo de encabezado...');
+
       const response = await api.get('/exportar-encabezado', {
         responseType: 'blob'
       });
+
       // Extract filename from headers or use fallback with proper format
       const filename =
         extractFilenameFromHeaders(response.headers) ||
         generateFallbackFilename('FAC');
 
-      const blob = new Blob([response.data as BlobPart], { type: 'text/csv' });
+      // Create blob with explicit CSV type and charset
+      const blob = new Blob([response.data as BlobPart], {
+        type: 'text/csv;charset=utf-8;'
+      });
+
+      // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
+      link.style.display = 'none';
+
+      // Trigger download
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
+
+      // Cleanup after a small delay
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+
+      toast.success(`Archivo "${filename}" descargado exitosamente`);
+    } catch (error: any) {
       console.error('Error al descargar archivo de encabezado:', error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'Error al descargar el archivo';
+      toast.error(`Error: ${errorMessage}`);
+    } finally {
+      setIsDownloadingEncabezado(false);
     }
   };
 
   const handleDescargarDetalle = async () => {
+    setIsDownloadingDetalle(true);
     try {
+      toast.info('Generando archivo de detalle...');
+
       const response = await api.get('/exportar-detalle', {
         responseType: 'blob'
       });
+
       // Extract filename from headers or use fallback with proper format
       const filename =
         extractFilenameFromHeaders(response.headers) ||
         generateFallbackFilename('DET');
 
-      const blob = new Blob([response.data as BlobPart], { type: 'text/csv' });
+      // Create blob with explicit CSV type and charset
+      const blob = new Blob([response.data as BlobPart], {
+        type: 'text/csv;charset=utf-8;'
+      });
+
+      // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
+      link.style.display = 'none';
+
+      // Trigger download
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
+
+      // Cleanup after a small delay
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+
+      toast.success(`Archivo "${filename}" descargado exitosamente`);
+    } catch (error: any) {
       console.error('Error al descargar archivo de detalle:', error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        'Error al descargar el archivo';
+      toast.error(`Error: ${errorMessage}`);
+    } finally {
+      setIsDownloadingDetalle(false);
     }
   };
 
@@ -149,10 +202,20 @@ export default function CrearArchivosSapComponent() {
                       variant='default'
                       size='sm'
                       onClick={handleDescargarEncabezado}
-                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
+                      disabled={isDownloadingEncabezado}
+                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white disabled:opacity-50'
                     >
-                      <Download className='h-4 w-4' />
-                      Descargar
+                      {isDownloadingEncabezado ? (
+                        <>
+                          <Loader2 className='h-4 w-4 animate-spin' />
+                          Descargando...
+                        </>
+                      ) : (
+                        <>
+                          <Download className='h-4 w-4' />
+                          Descargar
+                        </>
+                      )}
                     </Button>
                   </div>
 
@@ -170,10 +233,20 @@ export default function CrearArchivosSapComponent() {
                       variant='default'
                       size='sm'
                       onClick={handleDescargarDetalle}
-                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
+                      disabled={isDownloadingDetalle}
+                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white disabled:opacity-50'
                     >
-                      <Download className='h-4 w-4' />
-                      Descargar
+                      {isDownloadingDetalle ? (
+                        <>
+                          <Loader2 className='h-4 w-4 animate-spin' />
+                          Descargando...
+                        </>
+                      ) : (
+                        <>
+                          <Download className='h-4 w-4' />
+                          Descargar
+                        </>
+                      )}
                     </Button>
                   </div>
                 </CardContent>

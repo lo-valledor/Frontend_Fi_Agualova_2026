@@ -260,7 +260,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   // Pre-cargar datos existentes si ya hay una lectura registrada (incluye importados)
   useEffect(() => {
     const energiaActiva = result.LMC_EnergiaActiva;
-    const energiaReactiva = result.LMC_EnergiaReactiva;
+    //const energiaReactiva = result.LMC_EnergiaReactiva;
 
     // Verificar si hay datos de energía activa (puede ser de lectura ingresada o importada)
     if (

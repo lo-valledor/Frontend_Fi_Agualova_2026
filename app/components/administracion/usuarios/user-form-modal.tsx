@@ -1,9 +1,11 @@
-import { Eye, EyeOff, User } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, EyeOff, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
+import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
+import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -28,6 +30,7 @@ import type {
   CrearUsuarioProps,
   Usuarios
 } from '~/types/administracion';
+import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
 
 interface UserFormModalProps {
   isOpen: boolean;
@@ -46,6 +49,11 @@ export function UserFormModal({
 }: UserFormModalProps) {
   const { createUsuario, updateUsuario, loadingState } = useAdministracion();
   const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string>('');
 
   const [formData, setFormData] = useState<CrearUsuarioProps>({
     nombreDeUsuario: '',
@@ -104,31 +112,82 @@ export function UserFormModal({
         activo: true
       });
     }
+    // Resetear estados de contraseña
+    setCurrentPassword('');
+    setConfirmPassword('');
+    setPasswordError('');
   }, [user, mode, isOpen]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setPasswordError('');
 
     try {
+      // Validaciones de contraseña
       if (mode === 'add') {
-        // Validar que la contraseña esté presente para crear usuario
+        // Modo crear: contraseña es obligatoria
         if (!formData.contrasena.trim()) {
-          toast.error('La contraseña es requerida para crear un usuario');
+          setPasswordError('La contraseña es requerida para crear un usuario');
+          toast.error('La contraseña es requerida');
+          return;
+        }
+
+        // Validar que la contraseña sea segura
+        const passwordCheck = isPasswordSecure(formData.contrasena);
+        if (!passwordCheck.isSecure) {
+          setPasswordError(passwordCheck.reason || 'La contraseña no cumple con los requisitos de seguridad');
+          toast.error('La contraseña no es suficientemente segura');
+          return;
+        }
+
+        // Validar que las contraseñas coincidan
+        if (!passwordsMatch(formData.contrasena, confirmPassword)) {
+          setPasswordError('Las contraseñas no coinciden');
+          toast.error('Las contraseñas no coinciden');
           return;
         }
 
         await createUsuario(formData);
         toast.success('Usuario creado exitosamente');
       } else if (mode === 'edit' && user) {
-        // Para actualizar, si hay nueva contraseña, incluirla en el campo nuevaContrasena
+        // Modo editar: requiere contraseña actual para cualquier actualización
+        if (!currentPassword.trim()) {
+          setPasswordError('Debe ingresar su contraseña actual para realizar cambios');
+          toast.error('Contraseña actual requerida');
+          return;
+        }
+
         const { contrasena: _contrasena, ...restOfUpdateData } = updateData;
 
         const updatePayload: ActualizarUsuarioProps = {
           ...restOfUpdateData,
-          contrasena: updateData.contrasena
+          contrasena: currentPassword // Contraseña actual para validación
         };
 
+        // Si se proporciona una nueva contraseña, validarla
         if (formData.contrasena.trim()) {
+          // Validar que la nueva contraseña sea segura
+          const passwordCheck = isPasswordSecure(formData.contrasena);
+          if (!passwordCheck.isSecure) {
+            setPasswordError(passwordCheck.reason || 'La contraseña no cumple con los requisitos de seguridad');
+            toast.error('La nueva contraseña no es suficientemente segura');
+            return;
+          }
+
+          // Validar que las contraseñas coincidan
+          if (!passwordsMatch(formData.contrasena, confirmPassword)) {
+            setPasswordError('Las contraseñas no coinciden');
+            toast.error('Las contraseñas no coinciden');
+            return;
+          }
+
+          // Validar que la nueva contraseña sea diferente de la actual
+          if (formData.contrasena === currentPassword) {
+            setPasswordError('La nueva contraseña debe ser diferente de la actual');
+            toast.error('La nueva contraseña debe ser diferente de la actual');
+            return;
+          }
+
           updatePayload.nuevaContrasena = formData.contrasena;
         }
 
@@ -221,6 +280,47 @@ export function UserFormModal({
             />
           </div>
 
+          {/* Contraseña Actual (solo en modo edición) */}
+          {mode === 'edit' && (
+            <div className='space-y-2'>
+              <Label htmlFor='currentPassword' className='flex items-center gap-2'>
+                Contraseña Actual
+                <span className='text-red-500'>*</span>
+              </Label>
+              <div className='relative'>
+                <Input
+                  id='currentPassword'
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  value={currentPassword}
+                  onChange={e => {
+                    setCurrentPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  placeholder='Ingrese su contraseña actual'
+                  required
+                  disabled={isLoading}
+                  className='pr-10'
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700'
+                  tabIndex={-1}
+                >
+                  {showCurrentPassword ? (
+                    <EyeOff className='h-5 w-5' />
+                  ) : (
+                    <Eye className='h-5 w-5' />
+                  )}
+                </button>
+              </div>
+              <p className='text-xs text-muted-foreground'>
+                Por seguridad, debe ingresar su contraseña actual para realizar cualquier cambio
+              </p>
+            </div>
+          )}
+
+          {/* Contraseña / Nueva Contraseña */}
           <div className='space-y-2'>
             <Label htmlFor='contrasena'>
               {mode === 'add' ? 'Contraseña' : 'Nueva Contraseña (opcional)'}
@@ -230,10 +330,13 @@ export function UserFormModal({
                 id='contrasena'
                 type={showPassword ? 'text' : 'password'}
                 value={formData.contrasena}
-                onChange={e => handleInputChange('contrasena', e.target.value)}
+                onChange={e => {
+                  handleInputChange('contrasena', e.target.value);
+                  setPasswordError('');
+                }}
                 placeholder={
                   mode === 'add'
-                    ? 'Ingresa la contraseña'
+                    ? 'Ingresa una contraseña segura'
                     : 'Dejar vacío para mantener la actual'
                 }
                 required={mode === 'add'}
@@ -243,7 +346,8 @@ export function UserFormModal({
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500'
+                className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700'
+                tabIndex={-1}
               >
                 {showPassword ? (
                   <EyeOff className='h-5 w-5' />
@@ -252,7 +356,79 @@ export function UserFormModal({
                 )}
               </button>
             </div>
+
+            {/* Indicador de fortaleza */}
+            {formData.contrasena && (
+              <PasswordStrengthIndicator
+                password={formData.contrasena}
+                showRules={true}
+                showWarnings={true}
+              />
+            )}
           </div>
+
+          {/* Confirmar Contraseña */}
+          {(mode === 'add' || formData.contrasena.trim()) && (
+            <div className='space-y-2'>
+              <Label htmlFor='confirmPassword'>Confirmar Contraseña</Label>
+              <div className='relative'>
+                <Input
+                  id='confirmPassword'
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={e => {
+                    setConfirmPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  placeholder='Confirma tu contraseña'
+                  required={mode === 'add' || formData.contrasena.trim().length > 0}
+                  disabled={isLoading}
+                  className='pr-10'
+                />
+                <button
+                  type='button'
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700'
+                  tabIndex={-1}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className='h-5 w-5' />
+                  ) : (
+                    <Eye className='h-5 w-5' />
+                  )}
+                </button>
+              </div>
+
+              {/* Validación de coincidencia */}
+              {confirmPassword && formData.contrasena && (
+                <div className='flex items-center gap-2 text-xs'>
+                  {passwordsMatch(formData.contrasena, confirmPassword) ? (
+                    <>
+                      <CheckCircle2 className='h-3.5 w-3.5 text-green-600 dark:text-green-400' />
+                      <span className='text-green-700 dark:text-green-400 font-medium'>
+                        Las contraseñas coinciden
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className='h-3.5 w-3.5 text-red-600 dark:text-red-400' />
+                      <span className='text-red-700 dark:text-red-400'>
+                        Las contraseñas no coinciden
+                      </span>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Error de contraseña */}
+          {passwordError && (
+            <Alert variant='destructive'>
+              <AlertCircle className='h-4 w-4' />
+              <AlertDescription>{passwordError}</AlertDescription>
+            </Alert>
+          )}
 
           <div className='space-y-2'>
             <Label htmlFor='departamento'>Departamento</Label>

@@ -4,7 +4,7 @@ import {
   Settings,
   TrendingUp,
   User,
-  Zap
+  //Zap
 } from 'lucide-react';
 
 import { memo, useMemo, useState } from 'react';
@@ -31,7 +31,7 @@ import type {
 import FacturasAnalyticsSimple from './facturas-analytics-simple';
 import InformacionContrato from './informacion-contrato';
 import LecturasAnalyticsSimple from './lecturas-analytics-simple';
-import ProyeccionesAvanzadas from './proyecciones-avanzadas';
+//import ProyeccionesAvanzadas from './proyecciones-avanzadas';
 
 interface ContratoComponentProps {
   detallesContrato: {

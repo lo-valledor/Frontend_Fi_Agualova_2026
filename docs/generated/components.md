@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-14 10:10:41*
+*Generado automáticamente el 2025-10-14 17:32:50*
 
 ## Índice de Componentes
 
@@ -1306,6 +1306,19 @@
 **Archivo**: `app/components/ui/pagination.tsx`
 ⚠️ *Sin documentación JSDoc*
 
+
+### password-strength-indicator
+**Archivo**: `app/components/ui/password-strength-indicator.tsx`
+**Documentación**:
+```typescript
+/**
+ * Componente de indicador de fortaleza de contraseña
+ * Muestra visualmente qué tan segura es una contraseña
+ */
+/**
+ * Obtiene el color de texto según el score de fortaleza
+ */
+```
 
 ### popover
 **Archivo**: `app/components/ui/popover.tsx`
