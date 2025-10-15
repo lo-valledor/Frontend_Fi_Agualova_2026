@@ -381,7 +381,7 @@ export default function EditarContratoComponent({
                 </Button>
                 <Button
                   onClick={handleSubmit}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  className='gap-2 bg-primary hover:bg-primary/90'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
@@ -395,11 +395,11 @@ export default function EditarContratoComponent({
 
       {/* Contenido principal */}
       <div className='container mx-auto px-4 py-6 space-y-6'>
-        <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+        <div className='bg-background rounded-xl shadow-sm border border-border'>
           <form className='p-6 space-y-6'>
             {/* Información básica del contrato */}
             <div className='space-y-4'>
-              <h3 className='text-sm font-medium text-sky-800 dark:text-sky-200'>
+              <h3 className='text-sm font-medium text-primary'>
                 Información del Contrato
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
@@ -450,7 +450,7 @@ export default function EditarContratoComponent({
 
             {/* Información de personas */}
             <div className='space-y-4'>
-              <h3 className='text-sm font-medium text-emerald-800 dark:text-emerald-200'>
+              <h3 className='text-sm font-medium text-success'>
                 Información de Personas
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
@@ -510,7 +510,7 @@ export default function EditarContratoComponent({
 
             {/* Información de ubicación */}
             <div className='space-y-4'>
-              <h3 className='text-sm font-medium text-violet-800 dark:text-violet-200'>
+              <h3 className='text-sm font-medium text-secondary'>
                 Información de Ubicación
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
@@ -581,7 +581,7 @@ export default function EditarContratoComponent({
 
             {/* Fechas y configuración */}
             <div className='space-y-4'>
-              <h3 className='text-sm font-medium text-amber-800 dark:text-amber-200'>
+              <h3 className='text-sm font-medium text-warning'>
                 Fechas y Configuración
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
@@ -719,8 +719,8 @@ export default function EditarContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
-                  <User className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                <div className='p-2 bg-success/10 rounded-xl'>
+                  <User className='h-5 w-5 text-success' />
                 </div>
                 <div>
                   <DialogTitle>Seleccionar Propietario</DialogTitle>
@@ -743,10 +743,10 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[500px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead>RUT</TableHead>
                         <TableHead>Nombre</TableHead>
@@ -761,11 +761,11 @@ export default function EditarContratoComponent({
                             className='text-center py-12 text-muted-foreground'
                           >
                             <div className='flex flex-col items-center gap-3'>
-                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <div className='p-3 bg-background rounded-full'>
                                 <User className='h-8 w-8 opacity-50' />
                               </div>
                               <div className='space-y-1'>
-                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                <p className='font-medium'>
                                   No se encontraron propietarios
                                 </p>
                                 <p className='text-sm'>
@@ -779,10 +779,7 @@ export default function EditarContratoComponent({
                         </TableRow>
                       )}
                       {propietariosFiltrados.map(prop => (
-                        <TableRow
-                          key={prop.rut}
-                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
-                        >
+                        <TableRow key={prop.rut} className='hover:bg-muted/50'>
                           <TableCell className='font-medium font-mono text-sm'>
                             {prop.rut}
                           </TableCell>
@@ -793,7 +790,7 @@ export default function EditarContratoComponent({
                             <Button
                               size='sm'
                               onClick={() => handleSelectPropietario(prop.rut)}
-                              className='bg-emerald-600 hover:bg-emerald-700 text-white'
+                              className='bg-success hover:bg-success/90'
                             >
                               Seleccionar
                             </Button>
@@ -813,8 +810,8 @@ export default function EditarContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg'>
-                  <Building2 className='h-5 w-5 text-violet-600 dark:text-violet-400' />
+                <div className='p-2 bg-secondary/10 rounded-xl'>
+                  <Building2 className='h-5 w-5 text-secondary' />
                 </div>
                 <div>
                   <DialogTitle>Seleccionar Local</DialogTitle>
@@ -836,10 +833,10 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[500px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead>Número</TableHead>
                         <TableHead>Empresa</TableHead>
@@ -854,11 +851,11 @@ export default function EditarContratoComponent({
                             className='text-center py-12 text-muted-foreground'
                           >
                             <div className='flex flex-col items-center gap-3'>
-                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <div className='p-3 bg-background rounded-full'>
                                 <Building2 className='h-8 w-8 opacity-50' />
                               </div>
                               <div className='space-y-1'>
-                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                <p className='font-medium'>
                                   No se encontraron locales
                                 </p>
                                 <p className='text-sm'>
@@ -874,7 +871,7 @@ export default function EditarContratoComponent({
                       {localesFiltrados.map(loc => (
                         <TableRow
                           key={loc.numeroLocal}
-                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                          className='hover:bg-muted/50'
                         >
                           <TableCell className='font-medium font-mono text-sm'>
                             {loc.numeroLocal}
@@ -886,7 +883,7 @@ export default function EditarContratoComponent({
                             <Button
                               size='sm'
                               onClick={() => handleSelectLocal(loc.numeroLocal)}
-                              className='bg-violet-600 hover:bg-violet-700 text-white'
+                              className='bg-secondary hover:bg-secondary/90'
                             >
                               Seleccionar
                             </Button>
@@ -906,8 +903,8 @@ export default function EditarContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg'>
-                  <Network className='h-5 w-5 text-amber-600 dark:text-amber-400' />
+                <div className='p-2 bg-warning/10 rounded-xl'>
+                  <Network className='h-5 w-5 text-warning' />
                 </div>
                 <div>
                   <DialogTitle>Seleccionar Contrato Madre</DialogTitle>
@@ -929,10 +926,10 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[500px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead>Código</TableHead>
                         <TableHead>Propietario</TableHead>
@@ -947,11 +944,11 @@ export default function EditarContratoComponent({
                             className='text-center py-12 text-muted-foreground'
                           >
                             <div className='flex flex-col items-center gap-3'>
-                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <div className='p-3 bg-background rounded-full'>
                                 <Network className='h-8 w-8 opacity-50' />
                               </div>
                               <div className='space-y-1'>
-                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                <p className='font-medium'>
                                   No se encontraron contratos madre
                                 </p>
                                 <p className='text-sm'>
@@ -967,7 +964,7 @@ export default function EditarContratoComponent({
                       {madresFiltradas.map(mad => (
                         <TableRow
                           key={mad.codigoContrato}
-                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                          className='hover:bg-muted/50'
                         >
                           <TableCell className='font-medium font-mono text-sm'>
                             {mad.codigoContrato}
@@ -981,7 +978,7 @@ export default function EditarContratoComponent({
                               onClick={() =>
                                 handleSelectMadre(mad.codigoContrato)
                               }
-                              className='bg-amber-600 hover:bg-amber-700 text-white'
+                              className='bg-warning hover:bg-warning/90'
                             >
                               Seleccionar
                             </Button>
@@ -1001,8 +998,8 @@ export default function EditarContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-                  <User className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+                <div className='p-2 bg-primary/10 rounded-xl'>
+                  <User className='h-5 w-5 ' />
                 </div>
                 <div>
                   <DialogTitle>Seleccionar Cliente</DialogTitle>
@@ -1024,10 +1021,10 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[600px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead>RUT</TableHead>
                         <TableHead>Nombre</TableHead>
@@ -1043,11 +1040,11 @@ export default function EditarContratoComponent({
                             className='text-center py-12 text-muted-foreground'
                           >
                             <div className='flex flex-col items-center gap-3'>
-                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <div className='p-3 bg-background rounded-full'>
                                 <User className='h-8 w-8 opacity-50' />
                               </div>
                               <div className='space-y-1'>
-                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                <p className='font-medium'>
                                   No se encontraron clientes
                                 </p>
                                 <p className='text-sm'>
@@ -1063,7 +1060,7 @@ export default function EditarContratoComponent({
                       {clientesFiltrados.map(cliente => (
                         <TableRow
                           key={cliente.rut}
-                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                          className='hover:bg-muted/50'
                         >
                           <TableCell className='font-medium font-mono text-sm'>
                             {cliente.rut}
@@ -1077,8 +1074,8 @@ export default function EditarContratoComponent({
                             <span
                               className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                                 cliente.esEmpresa
-                                  ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                  : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                  ? 'bg-secondary/10 text-secondary'
+                                  : 'bg-success/10 text-success'
                               }`}
                             >
                               {cliente.esEmpresa ? 'Empresa' : 'Persona'}
@@ -1088,7 +1085,7 @@ export default function EditarContratoComponent({
                             <Button
                               size='sm'
                               onClick={() => handleSelectCliente(cliente.rut)}
-                              className='bg-blue-600 hover:bg-blue-700 text-white'
+                              className='bg-primary hover:bg-primary/90'
                             >
                               Seleccionar
                             </Button>
@@ -1108,8 +1105,8 @@ export default function EditarContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
-                  <MapPin className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                <div className='p-2 bg-primary/10 rounded-xl'>
+                  <MapPin className='h-5 w-5' />
                 </div>
                 <div>
                   <DialogTitle>Seleccionar Comuna</DialogTitle>
@@ -1131,10 +1128,10 @@ export default function EditarContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[500px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead>Código</TableHead>
                         <TableHead>Nombre</TableHead>
@@ -1149,11 +1146,11 @@ export default function EditarContratoComponent({
                             className='text-center py-12 text-muted-foreground'
                           >
                             <div className='flex flex-col items-center gap-3'>
-                              <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                              <div className='p-3 bg-background rounded-full'>
                                 <MapPin className='h-8 w-8 opacity-50' />
                               </div>
                               <div className='space-y-1'>
-                                <p className='font-medium text-slate-700 dark:text-slate-300'>
+                                <p className='font-medium'>
                                   No se encontraron comunas
                                 </p>
                                 <p className='text-sm'>
@@ -1169,7 +1166,7 @@ export default function EditarContratoComponent({
                       {comunasFiltradas.map(com => (
                         <TableRow
                           key={com.codigo}
-                          className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                          className='hover:bg-muted/50'
                         >
                           <TableCell className='font-medium font-mono text-sm'>
                             {com.codigo}
@@ -1181,7 +1178,7 @@ export default function EditarContratoComponent({
                             <Button
                               size='sm'
                               onClick={() => handleSelectComuna(com.codigo)}
-                              className='bg-sky-600 hover:bg-sky-700 text-white'
+                              className='bg-primary hover:bg-primary/90'
                             >
                               Seleccionar
                             </Button>

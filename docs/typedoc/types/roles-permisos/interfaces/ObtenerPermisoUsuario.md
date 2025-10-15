@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/roles-permisos](../README.md) / ObtenerPermisoUsuario
 
@@ -16,7 +16,7 @@ Defined in: [app/types/roles-permisos.ts:17](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:18](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L18)
 
-***
+---
 
 ### nombreMenu
 
@@ -24,7 +24,7 @@ Defined in: [app/types/roles-permisos.ts:18](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:19](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L19)
 
-***
+---
 
 ### ruta
 
@@ -32,7 +32,7 @@ Defined in: [app/types/roles-permisos.ts:19](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:20](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L20)
 
-***
+---
 
 ### puedeVer
 
@@ -40,7 +40,7 @@ Defined in: [app/types/roles-permisos.ts:20](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:21](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L21)
 
-***
+---
 
 ### puedeCrear
 
@@ -48,7 +48,7 @@ Defined in: [app/types/roles-permisos.ts:21](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:22](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L22)
 
-***
+---
 
 ### puedeEditar
 
@@ -56,7 +56,7 @@ Defined in: [app/types/roles-permisos.ts:22](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:23](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L23)
 
-***
+---
 
 ### puedeEliminar
 

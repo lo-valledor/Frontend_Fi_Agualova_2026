@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [components/auth/auto-redirect](../README.md) / AutoRedirect
 

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / Claves
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:14](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:15](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L15)
 
-***
+---
 
 ### descripcion
 
@@ -26,7 +26,7 @@ Defined in: [app/types/mantencion.ts:15](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:16](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L16)
 
-***
+---
 
 ### estado
 
@@ -34,7 +34,7 @@ Defined in: [app/types/mantencion.ts:16](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:17](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L17)
 
-***
+---
 
 ### tipo
 
@@ -42,7 +42,7 @@ Defined in: [app/types/mantencion.ts:17](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:18](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L18)
 
-***
+---
 
 ### codigo
 

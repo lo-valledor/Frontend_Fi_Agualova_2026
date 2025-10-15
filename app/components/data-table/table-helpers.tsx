@@ -69,11 +69,7 @@ export function EstadoBadge({ estado }: { estado: boolean | string }) {
   return (
     <Badge
       variant={isActive ? 'default' : 'destructive'}
-      className={
-        isActive
-          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-          : ''
-      }
+      className={isActive ? 'bg-emerald-500 text-white' : ''}
     >
       {isActive ? 'Activo' : 'Inactivo'}
     </Badge>
@@ -84,7 +80,7 @@ export function EstadoBadge({ estado }: { estado: boolean | string }) {
 export function FechaCell({ fecha }: { fecha: string | Date }) {
   const date = typeof fecha === 'string' ? new Date(fecha) : fecha;
   return (
-    <div className='text-sm text-gray-600 dark:text-gray-300'>
+    <div className='text-sm text-muted-foreground'>
       {isNaN(date.getTime()) ? '' : date.toLocaleDateString('es-ES')}
     </div>
   );

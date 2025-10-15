@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / CalculoPrefacturaCompleto
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:201](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`sector`](CalculoPrefacturaDetalle.md#sector)
 
-***
+---
 
 ### contratoId
 
@@ -36,7 +36,7 @@ Defined in: [app/types/operaciones.ts:202](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`contratoId`](CalculoPrefacturaDetalle.md#contratoid)
 
-***
+---
 
 ### codigoTarifa
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:203](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`codigoTarifa`](CalculoPrefacturaDetalle.md#codigotarifa)
 
-***
+---
 
 ### rutCliente
 
@@ -60,7 +60,7 @@ Defined in: [app/types/operaciones.ts:204](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`rutCliente`](CalculoPrefacturaDetalle.md#rutcliente)
 
-***
+---
 
 ### nombreCliente
 
@@ -72,7 +72,7 @@ Defined in: [app/types/operaciones.ts:205](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`nombreCliente`](CalculoPrefacturaDetalle.md#nombrecliente)
 
-***
+---
 
 ### localId
 
@@ -84,7 +84,7 @@ Defined in: [app/types/operaciones.ts:206](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`localId`](CalculoPrefacturaDetalle.md#localid)
 
-***
+---
 
 ### direccion
 
@@ -96,7 +96,7 @@ Defined in: [app/types/operaciones.ts:207](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`direccion`](CalculoPrefacturaDetalle.md#direccion)
 
-***
+---
 
 ### comuna
 
@@ -108,7 +108,7 @@ Defined in: [app/types/operaciones.ts:208](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`comuna`](CalculoPrefacturaDetalle.md#comuna)
 
-***
+---
 
 ### numeroSerie
 
@@ -120,7 +120,7 @@ Defined in: [app/types/operaciones.ts:209](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`numeroSerie`](CalculoPrefacturaDetalle.md#numeroserie)
 
-***
+---
 
 ### fechaLectura
 
@@ -132,7 +132,7 @@ Defined in: [app/types/operaciones.ts:210](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`fechaLectura`](CalculoPrefacturaDetalle.md#fechalectura)
 
-***
+---
 
 ### consumoPeriodo
 
@@ -144,7 +144,7 @@ Defined in: [app/types/operaciones.ts:211](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`consumoPeriodo`](CalculoPrefacturaDetalle.md#consumoperiodo)
 
-***
+---
 
 ### lecturaId
 
@@ -156,7 +156,7 @@ Defined in: [app/types/operaciones.ts:212](https://github.com/lo-valledor/front-
 
 [`CalculoPrefacturaDetalle`](CalculoPrefacturaDetalle.md).[`lecturaId`](CalculoPrefacturaDetalle.md#lecturaid)
 
-***
+---
 
 ### cargos
 
@@ -164,7 +164,7 @@ Defined in: [app/types/operaciones.ts:212](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:231](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L231)
 
-***
+---
 
 ### totalFacturado
 

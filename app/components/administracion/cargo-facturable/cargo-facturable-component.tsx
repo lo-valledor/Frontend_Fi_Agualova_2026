@@ -127,7 +127,7 @@ export default function CargoFacturableComponent({
   ];
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -145,7 +145,7 @@ export default function CargoFacturableComponent({
               />
               <Button
                 onClick={handleAddCargo}
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700'
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -174,7 +174,7 @@ export default function CargoFacturableComponent({
         />
 
         {/* Table */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
             <div className='overflow-x-auto'>
               <DataTable

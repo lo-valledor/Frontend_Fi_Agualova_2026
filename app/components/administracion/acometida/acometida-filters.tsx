@@ -70,7 +70,7 @@ export function AcometidaFiltersComponent({
           <CardHeader className='cursor-pointer hover:bg-violet-50/50 dark:hover:bg-violet-900/10 transition-colors'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg'>
+                <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-xl'>
                   <Filter className='h-4 w-4 text-violet-600 dark:text-violet-400' />
                 </div>
                 <div>
@@ -115,7 +115,7 @@ export function AcometidaFiltersComponent({
               <div className='space-y-2'>
                 <Label
                   htmlFor='empalmeDescripcion'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
+                  className='text-sm font-medium'
                 >
                   Empalme
                 </Label>
@@ -143,7 +143,7 @@ export function AcometidaFiltersComponent({
               <div className='space-y-2'>
                 <Label
                   htmlFor='nichoDescripcion'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
+                  className='text-sm font-medium'
                 >
                   Nicho
                 </Label>
@@ -171,7 +171,7 @@ export function AcometidaFiltersComponent({
               <div className='space-y-2'>
                 <Label
                   htmlFor='sectorDescripcion'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
+                  className='text-sm font-medium'
                 >
                   Sector
                 </Label>
@@ -200,7 +200,7 @@ export function AcometidaFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
               {/* Rango de Límite de Potencia */}
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                <Label className='text-sm font-medium'>
                   Límite Potencia (Min)
                 </Label>
                 <Input
@@ -216,7 +216,7 @@ export function AcometidaFiltersComponent({
               </div>
 
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                <Label className='text-sm font-medium'>
                   Límite Potencia (Max)
                 </Label>
                 <Input
@@ -236,10 +236,7 @@ export function AcometidaFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4'>
               {/* Tiene Ubicación */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tieneUbicacion'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tieneUbicacion' className='text-sm font-medium'>
                   Tiene Ubicación
                 </Label>
                 <Select
@@ -261,10 +258,7 @@ export function AcometidaFiltersComponent({
 
               {/* Tiene Medidor */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tieneMedidor'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tieneMedidor' className='text-sm font-medium'>
                   Tiene Medidor
                 </Label>
                 <Select
@@ -288,7 +282,7 @@ export function AcometidaFiltersComponent({
               <div className='space-y-2'>
                 <Label
                   htmlFor='tieneLimitePotencia'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
+                  className='text-sm font-medium'
                 >
                   Tiene Límite Potencia
                 </Label>
@@ -316,7 +310,7 @@ export function AcometidaFiltersComponent({
                 <Separator />
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
-                    <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                    <span className='text-sm font-medium'>
                       Filtros activos:
                     </span>
                     <div className='flex flex-wrap gap-1 sm:gap-2'>
@@ -466,7 +460,7 @@ export function AcometidaFiltersComponent({
                     variant='outline'
                     size='sm'
                     onClick={onClearFilters}
-                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400'
+                    className='hover:text-red-600 dark:hover:text-red-400'
                   >
                     <RotateCcw className='h-4 w-4 mr-1' />
                     Limpiar Filtros

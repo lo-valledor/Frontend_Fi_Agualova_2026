@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetMedidorByCodigo
 
@@ -10,21 +10,21 @@ Defined in: [app/types/administracion.ts:448](https://github.com/lo-valledor/fro
 
 ## Properties
 
-### mM\_ID
+### mM_ID
 
-> **mM\_ID**: `string`
+> **mM_ID**: `string`
 
 Defined in: [app/types/administracion.ts:449](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L449)
 
-***
+---
 
-### tM\_ID
+### tM_ID
 
-> **tM\_ID**: `number`
+> **tM_ID**: `number`
 
 Defined in: [app/types/administracion.ts:450](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L450)
 
-***
+---
 
 ### modelo
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:450](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:451](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L451)
 
-***
+---
 
 ### numeroSerie
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:451](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:452](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L452)
 
-***
+---
 
 ### estadoId
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:452](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:453](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L453)
 
-***
+---
 
 ### fechaInicio
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:453](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:454](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L454)
 
-***
+---
 
 ### digitos
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:454](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:455](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L455)
 
-***
+---
 
 ### constanteMultiplicar
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:455](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:456](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L456)
 
-***
+---
 
 ### subEmpalmeId
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:456](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:457](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L457)
 
-***
+---
 
 ### codigoSubEmpalme
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:457](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:458](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L458)
 
-***
+---
 
 ### estadoNombre
 

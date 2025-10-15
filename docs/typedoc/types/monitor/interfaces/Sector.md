@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / Sector
 
@@ -16,7 +16,7 @@ Defined in: [app/types/monitor.ts:13](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:14](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L14)
 
-***
+---
 
 ### descripcion
 
@@ -24,7 +24,7 @@ Defined in: [app/types/monitor.ts:14](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:15](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L15)
 
-***
+---
 
 ### infoAdicional
 
@@ -32,7 +32,7 @@ Defined in: [app/types/monitor.ts:15](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:16](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L16)
 
-***
+---
 
 ### estado
 
@@ -40,7 +40,7 @@ Defined in: [app/types/monitor.ts:16](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:17](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L17)
 
-***
+---
 
 ### color
 

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/roles-permisos](../README.md) / UsuarioRol
 
@@ -16,7 +16,7 @@ Defined in: [app/types/roles-permisos.ts:37](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:38](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L38)
 
-***
+---
 
 ### nombreRol
 
@@ -24,7 +24,7 @@ Defined in: [app/types/roles-permisos.ts:38](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:39](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L39)
 
-***
+---
 
 ### descripcion
 
@@ -32,7 +32,7 @@ Defined in: [app/types/roles-permisos.ts:39](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:40](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L40)
 
-***
+---
 
 ### estadoRol
 

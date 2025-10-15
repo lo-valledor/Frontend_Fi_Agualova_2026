@@ -17,7 +17,7 @@ export default function DetalleMedidorAntiguo({
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
-    <Card className='rounded-xl border border-amber-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-amber-800/40 dark:bg-gray-900/50 overflow-hidden'>
+    <Card className='rounded-xl border border-border bg-card/50 backdrop-blur-sm shadow-lg overflow-hidden'>
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className='w-full'>
         <CollapsibleHeader
           isOpen={isOpen}

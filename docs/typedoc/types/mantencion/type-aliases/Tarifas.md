@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / Tarifas
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:102](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/mantencion.ts:103](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L103)
 
-***
+---
 
 ### codigo
 
@@ -26,7 +26,7 @@ Defined in: [app/types/mantencion.ts:103](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/mantencion.ts:104](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L104)
 
-***
+---
 
 ### nombre
 

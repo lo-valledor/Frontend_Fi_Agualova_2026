@@ -175,7 +175,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
 
   return (
     <>
-      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+      <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
         <CardHeader className='pb-3'>
           <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0'>
             <CardTitle className='text-base sm:text-lg'>
@@ -183,7 +183,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
             </CardTitle>
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
-                <Button className='w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white'>
+                <Button className='w-full sm:w-auto bg-sky-600 hover:bg-sky-700'>
                   <Plus className='h-4 w-4 mr-2' />
                   Crear Nuevo Menú
                 </Button>

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/reportes](../README.md) / FacturacionPorCargo
 
@@ -16,7 +16,7 @@ Defined in: [app/types/reportes.ts:91](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:92](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L92)
 
-***
+---
 
 ### totalEnergiaPeriodoAnterior
 
@@ -24,7 +24,7 @@ Defined in: [app/types/reportes.ts:92](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:93](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L93)
 
-***
+---
 
 ### totalFacturaPeriodoAnterior
 
@@ -32,7 +32,7 @@ Defined in: [app/types/reportes.ts:93](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:94](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L94)
 
-***
+---
 
 ### cantidadCargosPeriodoAnterior
 
@@ -40,7 +40,7 @@ Defined in: [app/types/reportes.ts:94](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:95](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L95)
 
-***
+---
 
 ### totalEnergiaPeriodoActual
 
@@ -48,7 +48,7 @@ Defined in: [app/types/reportes.ts:95](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:96](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L96)
 
-***
+---
 
 ### totalFacturaPeriodoActual
 
@@ -56,7 +56,7 @@ Defined in: [app/types/reportes.ts:96](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:97](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L97)
 
-***
+---
 
 ### cantidadCargosPeriodoActual
 
@@ -64,7 +64,7 @@ Defined in: [app/types/reportes.ts:97](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:98](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L98)
 
-***
+---
 
 ### diferenciaPeriodos
 

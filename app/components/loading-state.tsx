@@ -38,15 +38,13 @@ export function LoadingState({
         <div className='flex items-center gap-3'>
           <div className='relative'>
             <div
-              className={`${sizeClasses[size]} rounded-full border-2 border-slate-200 dark:border-slate-700`}
+              className={`${sizeClasses[size]} rounded-full border-2 border-border`}
             ></div>
             <div
-              className={`absolute top-0 left-0 ${sizeClasses[size]} rounded-full border-2 border-transparent border-t-blue-600 dark:border-t-blue-400 animate-spin`}
+              className={`absolute top-0 left-0 ${sizeClasses[size]} rounded-full border-2 border-transparent  animate-spin`}
             ></div>
           </div>
-          <div className='text-sm text-slate-600 dark:text-slate-400'>
-            {title}
-          </div>
+          <div className='text-sm'>{title}</div>
         </div>
       </div>
     );
@@ -54,26 +52,22 @@ export function LoadingState({
 
   if (variant === 'fullscreen') {
     return (
-      <div className='min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 flex items-center justify-center p-4'>
+      <div className='min-h-screen flex items-center justify-center p-4'>
         <div className='w-full max-w-md'>
-          <Card className='border-0 shadow-2xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm'>
+          <Card className='border-0 shadow-2xl bg-background backdrop-blur-sm'>
             <CardHeader className='text-center pb-4'>
-              <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg'>
-                <Zap className='h-8 w-8 text-white' />
+              <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full  shadow-lg'>
+                <Zap className='h-8 w-8' />
               </div>
-              <CardTitle className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
-                {title}
-              </CardTitle>
-              <CardDescription className='text-slate-600 dark:text-slate-400'>
-                {description}
-              </CardDescription>
+              <CardTitle className='text-xl font-semibold'>{title}</CardTitle>
+              <CardDescription className=''>{description}</CardDescription>
             </CardHeader>
 
             <CardContent className='space-y-6'>
               <div className='flex justify-center'>
                 <div className='relative'>
-                  <div className='h-12 w-12 rounded-full border-4 border-slate-200 dark:border-slate-700'></div>
-                  <div className='absolute top-0 left-0 h-12 w-12 rounded-full border-4 border-transparent border-t-blue-600 dark:border-t-blue-400 animate-spin'></div>
+                  <div className='h-12 w-12 rounded-full border-4 border-border'></div>
+                  <div className='absolute top-0 left-0 h-12 w-12 rounded-full border-4 border-transparent  animate-spin'></div>
                 </div>
               </div>
 
@@ -101,20 +95,16 @@ export function LoadingState({
     <div className='flex flex-col items-center justify-center p-8 space-y-4'>
       <div className='relative'>
         <div
-          className={`${sizeClasses[size]} rounded-full border-2 border-slate-200 dark:border-slate-700`}
+          className={`${sizeClasses[size]} rounded-full border-2 border-border`}
         ></div>
         <div
-          className={`absolute top-0 left-0 ${sizeClasses[size]} rounded-full border-2 border-transparent border-t-blue-600 dark:border-t-blue-400 animate-spin`}
+          className={`absolute top-0 left-0 ${sizeClasses[size]} rounded-full border-2 border-transparent  animate-spin`}
         ></div>
       </div>
 
       <div className='text-center space-y-2'>
-        <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
-          {title}
-        </h3>
-        <p className='text-sm text-slate-600 dark:text-slate-400'>
-          {description}
-        </p>
+        <h3 className='text-lg font-semibold'>{title}</h3>
+        <p className='text-sm'>{description}</p>
       </div>
 
       {showRetry && onRetry && (
@@ -141,7 +131,7 @@ export function EmptyState({
   return (
     <Card className={`mt-4 ${className}`}>
       <CardContent className='flex items-center justify-center p-8'>
-        <p className='text-gray-500 dark:text-gray-400'>{message}</p>
+        <p className=''>{message}</p>
       </CardContent>
     </Card>
   );

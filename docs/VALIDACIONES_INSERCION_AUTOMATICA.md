@@ -24,15 +24,21 @@ Asegurar que la inserción automática procese únicamente lecturas que cumplan 
 ```typescript
 const tarifa = medidor.tarifa?.toUpperCase();
 if (!tarifa || (!tarifa.includes('BT-1') && !tarifa.includes('BT-2'))) {
-  return { valido: false, razones: ['Solo BT1 y BT2 califican'], severidad: 'error' };
+  return {
+    valido: false,
+    razones: ['Solo BT1 y BT2 califican'],
+    severidad: 'error'
+  };
 }
 ```
 
 **Casos que pasan:**
+
 - `"BT-1"`, `"BT1"`, `"bt-1"`
 - `"BT-2"`, `"BT2"`, `"bt-2"`
 
 **Casos que fallan:**
+
 - `"BT-3"`, `"BT-4"`, `"BT4-3"`
 - `null`, `undefined`, `""`
 
@@ -48,27 +54,42 @@ if (!tarifa || (!tarifa.includes('BT-1') && !tarifa.includes('BT-2'))) {
 const energiaActiva = medidor.LMC_EnergiaActiva;
 
 // Validar existencia
-if (energiaActiva === undefined || energiaActiva === null || energiaActiva < 0) {
-  return { valido: false, razones: ['Sin datos de energía activa importados'], severidad: 'error' };
+if (
+  energiaActiva === undefined ||
+  energiaActiva === null ||
+  energiaActiva < 0
+) {
+  return {
+    valido: false,
+    razones: ['Sin datos de energía activa importados'],
+    severidad: 'error'
+  };
 }
 
 // Validar que no sea cero (NUEVA VALIDACIÓN)
 if (energiaActiva === 0) {
-  return { valido: false, razones: ['Lectura actual es 0 - requiere revisión manual'], severidad: 'error' };
+  return {
+    valido: false,
+    razones: ['Lectura actual es 0 - requiere revisión manual'],
+    severidad: 'error'
+  };
 }
 ```
 
 **Casos que pasan:**
+
 - `LMC_EnergiaActiva: 874`
 - `LMC_EnergiaActiva: 10850`
 
 **Casos que fallan:**
+
 - `LMC_EnergiaActiva: 0` ❌ (Ejemplo del screenshot 1)
 - `LMC_EnergiaActiva: null`
 - `LMC_EnergiaActiva: undefined`
 - `LMC_EnergiaActiva: -100`
 
 **Razón de la validación de cero:**
+
 - Un valor de `0` en la lectura actual no es típico de datos importados válidos
 - Puede indicar un error en la importación o un medidor sin datos
 - Requiere revisión manual para confirmar si es un valor legítimo o un error
@@ -83,8 +104,16 @@ if (energiaActiva === 0) {
 
 ```typescript
 const lecturaAnterior = medidor.LM_ValorUltimaLectura;
-if (lecturaAnterior === undefined || lecturaAnterior === null || lecturaAnterior < 0) {
-  return { valido: false, razones: ['Sin lectura anterior válida'], severidad: 'error' };
+if (
+  lecturaAnterior === undefined ||
+  lecturaAnterior === null ||
+  lecturaAnterior < 0
+) {
+  return {
+    valido: false,
+    razones: ['Sin lectura anterior válida'],
+    severidad: 'error'
+  };
 }
 ```
 
@@ -98,7 +127,11 @@ if (lecturaAnterior === undefined || lecturaAnterior === null || lecturaAnterior
 
 ```typescript
 if (energiaActiva === lecturaAnterior) {
-  return { valido: false, razones: ['Lectura actual igual a la anterior (consumo 0)'], severidad: 'warning' };
+  return {
+    valido: false,
+    razones: ['Lectura actual igual a la anterior (consumo 0)'],
+    severidad: 'warning'
+  };
 }
 ```
 
@@ -109,6 +142,7 @@ if (energiaActiva === lecturaAnterior) {
 **Condición:** El consumo calculado importado (C8) debe coincidir **EXACTAMENTE** con la diferencia `(8 - Ant)`
 
 **Motivo:** Si hay una discrepancia entre el consumo importado y la diferencia calculada, puede indicar:
+
 - Ajustes manuales en el sistema externo
 - Errores de redondeo o truncamiento
 - Inconsistencias en los datos de importación
@@ -138,9 +172,9 @@ if (
 // Datos del screenshot 3
 const medidor = {
   tarifa: 'BT1',
-  LMC_EnergiaActiva: 336,        // Columna "8"
-  LM_ValorUltimaLectura: 307,    // Columna "Ant"
-  LMC_ConsumoEnergiaActiva: 28   // Columna "C8" ❌
+  LMC_EnergiaActiva: 336, // Columna "8"
+  LM_ValorUltimaLectura: 307, // Columna "Ant"
+  LMC_ConsumoEnergiaActiva: 28 // Columna "C8" ❌
 };
 
 // Cálculo esperado: 336 - 307 = 29
@@ -193,7 +227,11 @@ const resultado = validarLecturaParaInsercionAutomatica(medidor);
 const consumoStr = Math.abs(consumo).toString();
 const tiene9s = /9{4,}/.test(consumoStr);
 if (tiene9s) {
-  return { anomalo: true, tipo: 'decimal_truncado', razon: 'Consumo sospechoso - posible decimal truncado' };
+  return {
+    anomalo: true,
+    tipo: 'decimal_truncado',
+    razon: 'Consumo sospechoso - posible decimal truncado'
+  };
 }
 ```
 
@@ -204,7 +242,11 @@ if (tiene9s) {
 ```typescript
 const ratio = consumo / consumoAnterior;
 if (ratio > 3) {
-  return { anomalo: true, tipo: 'excesivo', razon: `Consumo ${ratio.toFixed(1)}x mayor al anterior` };
+  return {
+    anomalo: true,
+    tipo: 'excesivo',
+    razon: `Consumo ${ratio.toFixed(1)}x mayor al anterior`
+  };
 }
 ```
 
@@ -214,7 +256,11 @@ if (ratio > 3) {
 
 ```typescript
 if (consumo > 2000) {
-  return { anomalo: true, tipo: 'excesivo_absoluto', razon: `Consumo muy alto (${consumo} kWh)` };
+  return {
+    anomalo: true,
+    tipo: 'excesivo_absoluto',
+    razon: `Consumo muy alto (${consumo} kWh)`
+  };
 }
 ```
 
@@ -224,7 +270,11 @@ if (consumo > 2000) {
 
 ```typescript
 if (ratio < 0.3 && consumo > 100) {
-  return { anomalo: true, tipo: 'muy_bajo', razon: `Consumo ${ratio.toFixed(1)}x menor al anterior` };
+  return {
+    anomalo: true,
+    tipo: 'muy_bajo',
+    razon: `Consumo ${ratio.toFixed(1)}x menor al anterior`
+  };
 }
 ```
 
@@ -240,15 +290,21 @@ if (ratio < 0.3 && consumo > 100) {
 
 ```typescript
 if (medidor.LM_FechaLectura) {
-  return { valido: false, razones: ['Lectura ya guardada anteriormente'], severidad: 'error' };
+  return {
+    valido: false,
+    razones: ['Lectura ya guardada anteriormente'],
+    severidad: 'error'
+  };
 }
 ```
 
 **Casos que pasan:**
+
 - `LM_FechaLectura: null`
 - `LM_FechaLectura: undefined`
 
 **Casos que fallan:**
+
 - `LM_FechaLectura: "2025-09-15"`
 - `LM_FechaLectura: "N/A"` (cualquier valor no null)
 
@@ -256,25 +312,25 @@ if (medidor.LM_FechaLectura) {
 
 ## 📊 Matriz de Decisión Completa
 
-| # | Validación | Valor | Resultado | Razón |
-|---|------------|-------|-----------|-------|
-| 1 | Tarifa | `BT1` o `BT2` | ✅ Continuar | Tarifa simple |
-| 1 | Tarifa | `BT3` o `BT4` | ❌ Rechazar | Requiere validación compleja |
-| 2 | `LMC_EnergiaActiva` | `> 0` | ✅ Continuar | Lectura válida |
-| 2 | `LMC_EnergiaActiva` | `= 0` | ❌ Rechazar | No es dato importado válido |
-| 2 | `LMC_EnergiaActiva` | `null/undefined` | ❌ Rechazar | Sin datos importados |
-| 3 | `LM_ValorUltimaLectura` | `≥ 0` | ✅ Continuar | Lectura anterior válida |
-| 3 | `LM_ValorUltimaLectura` | `null/undefined` | ❌ Rechazar | Sin referencia anterior |
-| 4 | `8 - Ant` | `≠ 0` | ✅ Continuar | Hay consumo |
-| 4 | `8 - Ant` | `= 0` | ❌ Rechazar | Sin consumo detectado |
-| 5 | `C8 = (8 - Ant)` | `Sí` | ✅ Continuar | Datos consistentes |
-| 5 | `C8 ≠ (8 - Ant)` | `No` | ❌ Rechazar | **Inconsistencia crítica** |
-| 6 | Consumo | `1-1999 kWh` | ✅ Continuar | Rango normal |
-| 6 | Consumo | `> 2000 kWh` | ❌ Rechazar | Excesivo absoluto |
-| 6 | Consumo | `> 3x anterior` | ❌ Rechazar | Excesivo relativo |
-| 6 | Patrón | `9999+` | ❌ Rechazar | Posible decimal truncado |
-| 7 | `LM_FechaLectura` | `null` | ✅ Continuar | No guardada |
-| 7 | `LM_FechaLectura` | `!= null` | ❌ Rechazar | Ya guardada |
+| #   | Validación              | Valor            | Resultado    | Razón                        |
+| --- | ----------------------- | ---------------- | ------------ | ---------------------------- |
+| 1   | Tarifa                  | `BT1` o `BT2`    | ✅ Continuar | Tarifa simple                |
+| 1   | Tarifa                  | `BT3` o `BT4`    | ❌ Rechazar  | Requiere validación compleja |
+| 2   | `LMC_EnergiaActiva`     | `> 0`            | ✅ Continuar | Lectura válida               |
+| 2   | `LMC_EnergiaActiva`     | `= 0`            | ❌ Rechazar  | No es dato importado válido  |
+| 2   | `LMC_EnergiaActiva`     | `null/undefined` | ❌ Rechazar  | Sin datos importados         |
+| 3   | `LM_ValorUltimaLectura` | `≥ 0`            | ✅ Continuar | Lectura anterior válida      |
+| 3   | `LM_ValorUltimaLectura` | `null/undefined` | ❌ Rechazar  | Sin referencia anterior      |
+| 4   | `8 - Ant`               | `≠ 0`            | ✅ Continuar | Hay consumo                  |
+| 4   | `8 - Ant`               | `= 0`            | ❌ Rechazar  | Sin consumo detectado        |
+| 5   | `C8 = (8 - Ant)`        | `Sí`             | ✅ Continuar | Datos consistentes           |
+| 5   | `C8 ≠ (8 - Ant)`        | `No`             | ❌ Rechazar  | **Inconsistencia crítica**   |
+| 6   | Consumo                 | `1-1999 kWh`     | ✅ Continuar | Rango normal                 |
+| 6   | Consumo                 | `> 2000 kWh`     | ❌ Rechazar  | Excesivo absoluto            |
+| 6   | Consumo                 | `> 3x anterior`  | ❌ Rechazar  | Excesivo relativo            |
+| 6   | Patrón                  | `9999+`          | ❌ Rechazar  | Posible decimal truncado     |
+| 7   | `LM_FechaLectura`       | `null`           | ✅ Continuar | No guardada                  |
+| 7   | `LM_FechaLectura`       | `!= null`        | ❌ Rechazar  | Ya guardada                  |
 
 ---
 
@@ -289,11 +345,11 @@ const medidores = [
   {
     ME_NSerie: 'B-0017',
     tarifa: 'BT2',
-    LMC_EnergiaActiva: 0,        // ❌
+    LMC_EnergiaActiva: 0, // ❌
     LM_ValorUltimaLectura: 9427,
     LMC_ConsumoEnergiaActiva: 0, // ❌
     LM_FechaLectura: null
-  },
+  }
   // ... otros medidores similares
 ];
 
@@ -303,6 +359,7 @@ const analisis = analizarMedidoresParaInsercion(medidores);
 ```
 
 **Resultado esperado:**
+
 - ❌ 0 medidores auto-insertables
 - ⚠️ 7 medidores requieren revisión manual
 - Razón: "Lectura actual es 0 - requiere revisión manual"
@@ -320,9 +377,9 @@ const medidores = [
     tarifa: 'BT1',
     LMC_EnergiaActiva: 874,
     LM_ValorUltimaLectura: 783,
-    LMC_ConsumoEnergiaActiva: 91,  // ✅ 874 - 783 = 91
-    LM_FechaLectura: null,         // ✅ No guardado
-    Estado: 4                      // Guardado (estado verde)
+    LMC_ConsumoEnergiaActiva: 91, // ✅ 874 - 783 = 91
+    LM_FechaLectura: null, // ✅ No guardado
+    Estado: 4 // Guardado (estado verde)
   },
   {
     ME_NSerie: 'CB-754',
@@ -330,8 +387,8 @@ const medidores = [
     LMC_EnergiaActiva: 9254,
     LM_ValorUltimaLectura: 8412,
     LMC_ConsumoEnergiaActiva: 842, // ✅ 9254 - 8412 = 842
-    LM_FechaLectura: null,         // ✅ No guardado
-    Estado: 3                      // Pendiente
+    LM_FechaLectura: null, // ✅ No guardado
+    Estado: 3 // Pendiente
   }
   // ... más medidores
 ];
@@ -341,6 +398,7 @@ const analisis = analizarMedidoresParaInsercion(medidores);
 ```
 
 **Resultado esperado:**
+
 - ✅ N medidores auto-insertables (aquellos con `LM_FechaLectura: null` y datos consistentes)
 - ⚠️ M medidores requieren revisión (aquellos con `LM_FechaLectura !== null` o con anomalías)
 
@@ -356,7 +414,7 @@ const medidor = {
   tarifa: 'BT1',
   LMC_EnergiaActiva: 336,
   LM_ValorUltimaLectura: 307,
-  LMC_ConsumoEnergiaActiva: 28,  // ❌ 336 - 307 = 29, pero muestra 28
+  LMC_ConsumoEnergiaActiva: 28, // ❌ 336 - 307 = 29, pero muestra 28
   LM_ConsumoMesAnterior: '38',
   LM_FechaLectura: null
 };
@@ -367,11 +425,13 @@ const resultado = validarLecturaParaInsercionAutomatica(medidor);
 ```
 
 **Resultado esperado:**
+
 - ❌ No auto-insertable
 - Razón: Inconsistencia de 1 kWh detectada entre C8 y la diferencia calculada
 - Acción: Requiere revisión manual para determinar si es un ajuste legítimo o un error
 
 **¿Por qué es importante?**
+
 - Una diferencia de 1 kWh puede parecer pequeña, pero indica que:
   - Los datos fueron ajustados manualmente en el sistema externo
   - Hay un error de cálculo o redondeo
@@ -384,12 +444,13 @@ const resultado = validarLecturaParaInsercionAutomatica(medidor);
 
 En un lote típico de 100 medidores:
 
-| Categoría | Cantidad Esperada | % |
-|-----------|-------------------|---|
-| Auto-insertables | 70-85 | 70-85% |
-| Requieren revisión | 15-30 | 15-30% |
+| Categoría          | Cantidad Esperada | %      |
+| ------------------ | ----------------- | ------ |
+| Auto-insertables   | 70-85             | 70-85% |
+| Requieren revisión | 15-30             | 15-30% |
 
 **Razones comunes de rechazo:**
+
 1. Lectura actual = 0 (5-10%)
 2. Inconsistencia C8 vs (8-Ant) (3-8%)
 3. Consumo anómalo (2-5%)
@@ -405,15 +466,17 @@ En un lote típico de 100 medidores:
 Actualmente se usa una tolerancia de `0.01 kWh` para comparar C8 vs (8-Ant):
 
 ```typescript
-Math.abs(consumoImportado - diferenciaSinRollover) > 0.01
+Math.abs(consumoImportado - diferenciaSinRollover) > 0.01;
 ```
 
 **¿Por qué 0.01 kWh?**
+
 - Evita falsos positivos por errores de precisión de punto flotante
 - Es lo suficientemente estricta para detectar inconsistencias reales
 - Equivale a 10 Wh, un margen despreciable
 
 **Si se necesita ajustar:**
+
 ```typescript
 const TOLERANCIA_CONSUMO = 0.01; // kWh
 
@@ -428,10 +491,10 @@ Los umbrales actuales son:
 
 ```typescript
 const UMBRALES = {
-  CONSUMO_EXCESIVO_ABSOLUTO: 2000,  // kWh
-  CONSUMO_EXCESIVO_RATIO: 3,         // veces el consumo anterior
-  CONSUMO_BAJO_RATIO: 0.3,           // veces el consumo anterior
-  CONSUMO_BAJO_MIN: 100              // kWh mínimo para validar ratio bajo
+  CONSUMO_EXCESIVO_ABSOLUTO: 2000, // kWh
+  CONSUMO_EXCESIVO_RATIO: 3, // veces el consumo anterior
+  CONSUMO_BAJO_RATIO: 0.3, // veces el consumo anterior
+  CONSUMO_BAJO_MIN: 100 // kWh mínimo para validar ratio bajo
 };
 ```
 

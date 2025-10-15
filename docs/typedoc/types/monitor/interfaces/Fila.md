@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / Fila
 
@@ -16,7 +16,7 @@ Defined in: [app/types/monitor.ts:146](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:147](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L147)
 
-***
+---
 
 ### medidores
 

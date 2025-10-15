@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [routes/dashboard/operaciones/revisar-precio](../README.md) / meta
 

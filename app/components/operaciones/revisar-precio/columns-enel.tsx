@@ -54,7 +54,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-xs font-medium text-blue-600 dark:text-blue-400'>
+      <div className='font-mono text-xs font-medium '>
         {row.getValue('codigo')}
       </div>
     ),
@@ -86,7 +86,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className='text-xs text-slate-900 dark:text-slate-100 max-w-xs truncate'>
+      <div className='text-xs max-w-xs truncate'>
         {row.getValue('descripcion')}
       </div>
     ),
@@ -139,7 +139,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       if (confirmacion === 'Confirmado') {
         return (
           <div className='flex items-center justify-center'>
-            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1 text-xs px-2 py-1'>
+            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-border flex items-center gap-1 text-xs px-2 py-1'>
               <CheckCircle className='w-3 h-3' />
               Confirmado
             </Badge>
@@ -172,11 +172,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
   },
   {
     id: 'acciones',
-    header: () => (
-      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold'>
-        Acciones
-      </div>
-    ),
+    header: () => <div className='text-center font-semibold'>Acciones</div>,
     cell: ({ row }) => {
       const confirmacion = row.getValue('confirmacion') as string;
       const indice = row.original.indice;
@@ -184,7 +180,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
       return (
         <div className='flex items-center justify-center'>
           {confirmacion === 'Confirmado' ? (
-            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 flex items-center gap-1'>
+            <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-border flex items-center gap-1'>
               <CheckCircle className='w-3 h-3' />
               Confirmado
             </Badge>

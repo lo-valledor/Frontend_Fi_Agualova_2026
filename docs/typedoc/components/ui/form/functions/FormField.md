@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [components/ui/form](../README.md) / FormField
 
@@ -14,11 +14,11 @@ Defined in: [app/components/ui/form.tsx:32](https://github.com/lo-valledor/front
 
 ### TFieldValues
 
-`TFieldValues` *extends* `FieldValues` = `FieldValues`
+`TFieldValues` _extends_ `FieldValues` = `FieldValues`
 
 ### TName
 
-`TName` *extends* `string` = `FieldPath`\<`TFieldValues`\>
+`TName` _extends_ `string` = `FieldPath`\<`TFieldValues`\>
 
 ## Parameters
 

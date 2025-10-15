@@ -20,31 +20,37 @@ Este documento describe la arquitectura, patrones y organización del frontend d
 ## Stack Tecnológico
 
 ### Core
+
 - **React 19** - Biblioteca UI principal
 - **React Router 7** - Enrutamiento basado en archivos (TanStack Router)
 - **TypeScript 5.8** - Tipado estático con modo strict
 - **Vite 6** - Build tool y dev server
 
 ### Estilos y UI
+
 - **Tailwind CSS 4** - Framework CSS utility-first
 - **Radix UI** - Primitivas accesibles para componentes
 - **Shadcn/ui** - Componentes base construidos sobre Radix
 - **Lucide React** - Sistema de iconos
 
 ### Formularios y Validación
+
 - **React Hook Form 7** - Manejo de formularios performante
 - **Zod 3** - Schema validation TypeScript-first
 
 ### Data Fetching y Estado
+
 - **Axios 1.9** - Cliente HTTP con interceptores
 - **React Context** - Estado compartido (Auth, Breadcrumbs, Loading)
 - **No state manager global** - Estado local por componente/ruta
 
 ### Tablas y Data Display
+
 - **TanStack Table 8** - Tablas con sorting, filtering, pagination
 - **Recharts 2** - Gráficos y visualizaciones
 
 ### Utilerías
+
 - **date-fns 4** - Manipulación de fechas
 - **jwt-decode 4** - Decodificación de JWT
 - **Sonner** - Toast notifications
@@ -127,7 +133,9 @@ app/
 El sistema está organizado en **6 módulos principales** de negocio:
 
 ### 1. **Administración** (`administracion`)
+
 Gestión de entidades del negocio:
+
 - **Clientes**: CRUD de empresas clientes
 - **Propietarios**: Gestión de propietarios
 - **Contratantes**: Gestión de contratantes
@@ -142,7 +150,9 @@ Gestión de entidades del negocio:
 **Servicio**: `administracionService.ts`
 
 ### 2. **Mantención** (`mantencion`)
+
 Mantenimiento de catálogos y parámetros del sistema:
+
 - **Ciclos de Facturación**: Períodos de facturación
 - **Claves**: Claves del sistema
 - **Conceptos**: Conceptos de facturación
@@ -158,14 +168,18 @@ Mantenimiento de catálogos y parámetros del sistema:
 **Servicio**: `mantencionService.ts`
 
 ### 3. **Monitor** (`monitor`)
+
 Monitoreo y visualización de lecturas:
+
 - **Monitor de Lecturas**: Visualización de lecturas por medidor
 - **Exportar Lecturas**: Exportación de datos a Excel/CSV
 
 **Servicio**: `monitorService.ts`
 
 ### 4. **Operaciones** (`operaciones`)
+
 Procesos operacionales de facturación:
+
 - **Preparar Lecturas**: Importación y preparación de lecturas
 - **Cerrar Lecturas**: Cierre de período de lecturas
 - **Período de Facturación**: Gestión de períodos
@@ -177,14 +191,18 @@ Procesos operacionales de facturación:
 **Servicio**: `operacionesService.ts`
 
 ### 5. **Reportes** (`reportes`)
+
 Generación de reportes y consultas:
+
 - **Consultar Contrato**: Vista detallada de contratos
 - **Resumen de Facturación**: Reportes consolidados
 
 **Servicio**: `reportesService.ts`
 
 ### 6. **Configuración** (`configuracion`)
+
 Configuración del sistema:
+
 - **Roles y Permisos**: Gestión de roles, permisos y menús
 
 **Servicio**: `rolesPermisosService.ts`
@@ -230,10 +248,12 @@ export const miServicio = new MiServicio();
 Configuración centralizada de axios con:
 
 #### Request Interceptor
+
 - Agrega automáticamente el token JWT a los headers
 - Lee token desde `localStorage.getItem('token')`
 
 #### Response Interceptor
+
 - **Manejo de errores por código HTTP**:
   - `400`: Valida datos y muestra mensaje
   - `401`: Intenta refresh token automático
@@ -275,6 +295,7 @@ const response = await api.get('/buscarCiclo');
 **Archivo**: `app/context/AuthContext.tsx`
 
 Provee:
+
 - `user`: Usuario autenticado decodificado del JWT
 - `loading`: Estado de carga
 - `login()`: Función de login
@@ -293,6 +314,7 @@ if (user) {
 **Componente**: `ProtectedRoute`
 
 Valida token antes de renderizar rutas protegidas:
+
 - Revisa si existe token en localStorage
 - Valida que no esté expirado
 - Redirige a `/auth/login` si no hay token válido
@@ -361,11 +383,13 @@ export function hydrateFallback() {
 ### Loaders vs Client-side Fetching
 
 **Usa `clientLoader` cuando**:
+
 - Los datos se necesitan antes de renderizar
 - Quieres aprovechar el caching de React Router
 - Los datos son críticos para la ruta
 
 **Usa fetching en componente cuando**:
+
 - Los datos son opcionales o secundarios
 - Necesitas refetch por acciones del usuario
 - Los datos se actualizan frecuentemente
@@ -407,6 +431,7 @@ Cada vista de módulo típicamente tiene:
 **Ubicación**: `app/components/ui/`
 
 Componentes reutilizables basados en Radix UI + Tailwind:
+
 - `button.tsx`
 - `input.tsx`
 - `dialog.tsx`
@@ -491,18 +516,23 @@ const onSubmit = async (data: FormData) => {
 ### Estrategia de Manejo de Errores
 
 #### 1. **Axios Interceptor** (Global)
+
 Maneja errores HTTP automáticamente con toasts.
 
 #### 2. **Try-Catch en Servicios**
+
 Cada método de servicio captura errores y retorna `{ data: null, error: string }`.
 
 #### 3. **Loader Error Boundaries**
+
 Si un loader falla, React Router muestra error boundary.
 
 #### 4. **Component Error Boundaries**
+
 Componente `ErrorBoundary` captura errores de renderizado.
 
 #### 5. **Form Validation Errors**
+
 React Hook Form + Zod muestran errores inline.
 
 ### Toast Notifications
@@ -551,6 +581,7 @@ Ordenado automáticamente por Prettier:
 ### TypeScript Strict Mode
 
 El proyecto usa `"strict": true` en `tsconfig.json`:
+
 - `noImplicitAny`: true
 - `strictNullChecks`: true
 - `strictFunctionTypes`: true
@@ -577,6 +608,7 @@ El proyecto usa `"strict": true` en `tsconfig.json`:
 ⚠️ **PENDIENTE**: El proyecto actualmente no tiene tests configurados.
 
 **Recomendaciones futuras**:
+
 - **Vitest** para unit tests
 - **Testing Library** para component tests
 - **Playwright** o **Cypress** para E2E tests

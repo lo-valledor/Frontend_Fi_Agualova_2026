@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / ProyeccionIAResponse
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:42](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:43](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L43)
 
-***
+---
 
 ### metadata
 

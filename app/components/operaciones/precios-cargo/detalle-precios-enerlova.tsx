@@ -250,7 +250,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
       <SheetContent className='w-[95vw] sm:max-w-[800px] p-0 max-h-[95vh] overflow-hidden'>
         <SheetHeader className='px-3 sm:px-6 py-3 sm:py-4 border-b border-border/60 bg-muted/40'>
           <SheetTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
-            <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
+            <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5' />
             <span className='hidden sm:inline'>
               Detalle de Precios de Cargo
             </span>
@@ -262,7 +262,7 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
           <ScrollArea className='h-[calc(95vh-180px)] sm:h-[calc(100vh-200px)] pr-2 sm:pr-4 -mr-2 sm:-mr-4'>
             {isLoading ? (
               <div className='flex justify-center items-center h-40 sm:h-60'>
-                <Loader2 className='h-6 w-6 sm:h-8 sm:w-8 animate-spin text-sky-600 dark:text-sky-400' />
+                <Loader2 className='h-6 w-6 sm:h-8 sm:w-8 animate-spin' />
               </div>
             ) : data && data.length > 0 ? (
               <div className='space-y-4 sm:space-y-6'>

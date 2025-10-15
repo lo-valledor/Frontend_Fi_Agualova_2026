@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [hooks/shared/use-export-data](../README.md) / useExportData
 
@@ -14,7 +14,7 @@ Defined in: [app/hooks/shared/use-export-data.ts:19](https://github.com/lo-valle
 
 ### T
 
-`T` *extends* `Record`\<`string`, `any`\>
+`T` _extends_ `Record`\<`string`, `any`\>
 
 ## Returns
 

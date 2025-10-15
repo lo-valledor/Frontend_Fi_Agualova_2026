@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetLocal
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:58](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:59](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L59)
 
-***
+---
 
 ### empresa
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:59](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:60](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L60)
 
-***
+---
 
 ### estadoHabilitado
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:60](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:61](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L61)
 
-***
+---
 
 ### propietario
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:61](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:62](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L62)
 
-***
+---
 
 ### sector
 

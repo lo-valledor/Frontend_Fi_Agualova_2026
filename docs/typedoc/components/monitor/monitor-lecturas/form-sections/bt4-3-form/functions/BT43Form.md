@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../../modules.md) / [components/monitor/monitor-lecturas/form-sections/bt4-3-form](../README.md) / BT43Form
 

@@ -431,7 +431,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
         <CardHeader className='px-0 pb-2'>
           <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
             <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
-              <Gauge className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+              <Gauge className='h-3 w-3 ' />
             </div>
             <span>Lectura BT-1/BT-2</span>
             <div className='text-xs text-muted-foreground font-mono bg-muted px-1.5 py-0.5 rounded'>

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / AnomaliaResponse
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:60](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:61](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L61)
 
-***
+---
 
 ### tipoAnomalia?
 
@@ -24,7 +24,7 @@ Defined in: [app/services/aiService.ts:61](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:62](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L62)
 
-***
+---
 
 ### scoreConfianza
 
@@ -32,7 +32,7 @@ Defined in: [app/services/aiService.ts:62](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:63](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L63)
 
-***
+---
 
 ### scoreNormalizado
 
@@ -40,7 +40,7 @@ Defined in: [app/services/aiService.ts:63](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:64](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L64)
 
-***
+---
 
 ### consumoActual
 
@@ -48,7 +48,7 @@ Defined in: [app/services/aiService.ts:64](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:65](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L65)
 
-***
+---
 
 ### estadisticas
 
@@ -56,7 +56,7 @@ Defined in: [app/services/aiService.ts:65](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:66](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L66)
 
-***
+---
 
 ### claveRecomendada
 
@@ -64,7 +64,7 @@ Defined in: [app/services/aiService.ts:66](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:67](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L67)
 
-***
+---
 
 ### recomendacion
 
@@ -72,7 +72,7 @@ Defined in: [app/services/aiService.ts:67](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:68](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L68)
 
-***
+---
 
 ### confianza
 
@@ -80,7 +80,7 @@ Defined in: [app/services/aiService.ts:68](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:69](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L69)
 
-***
+---
 
 ### muestrasAnalizadas
 

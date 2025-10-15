@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/mantencion/empalmes/empalmes-component](../README.md) / default
 

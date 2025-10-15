@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [routes/dashboard/reportes/consultar-contrato](../README.md) / meta
 

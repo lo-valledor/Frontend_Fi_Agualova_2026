@@ -46,7 +46,7 @@ export default function ClavesLectura({
               </div>
             </div>
           ) : (
-            <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-lg border border-red-200 dark:border-red-800'>
+            <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
               <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
               <span>{error}</span>
             </div>
@@ -56,7 +56,7 @@ export default function ClavesLectura({
             {data.map((item, index) => (
               <div
                 key={index}
-                className='p-3 sm:p-4 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'
+                className='p-3 sm:p-4 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'
               >
                 <div className='flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-4'>
                   {/* Código */}
@@ -116,7 +116,7 @@ export default function ClavesLectura({
         {/* Sección de acción solo cuando hay clave crítica */}
         {hasClaveCritica && (
           <div className='space-y-3 pt-2 border-t border-border/30'>
-            <div className='flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800'>
+            <div className='flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-xl border border-orange-200 dark:border-orange-800'>
               <History className='h-4 w-4 text-orange-600 dark:text-orange-400 flex-shrink-0' />
               <span className='text-sm text-orange-700 dark:text-orange-300 font-medium'>
                 Resolver lectura con clave para lectura crítica

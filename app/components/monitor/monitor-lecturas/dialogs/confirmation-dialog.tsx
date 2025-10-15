@@ -63,7 +63,7 @@ export function ConfirmationDialog({
   const iconStyles = {
     red: 'text-red-600 dark:text-red-400',
     yellow: 'text-amber-600 dark:text-amber-400',
-    blue: 'text-blue-600 dark:text-blue-400',
+    blue: '',
     orange: 'text-orange-600 dark:text-orange-400'
   };
 
@@ -76,10 +76,10 @@ export function ConfirmationDialog({
 
   const getConfirmButtonClass = () => {
     if (isDestructive) {
-      return 'bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500 text-white';
+      return 'bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-500';
     }
     if (alertColor === 'blue') {
-      return 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white';
+      return 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500';
     }
     if (alertColor === 'orange') {
       return 'bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500';
@@ -104,7 +104,7 @@ export function ConfirmationDialog({
 
         {/* Mensaje compacto */}
         <div
-          className={`flex items-start gap-2 text-xs px-3 py-2 rounded-lg border ${alertStyles[alertColor]}`}
+          className={`flex items-start gap-2 text-xs px-3 py-2 rounded-xl border ${alertStyles[alertColor]}`}
         >
           <AlertCircle
             className={`h-3 w-3 mt-0.5 flex-shrink-0 ${iconStyles[alertColor]}`}

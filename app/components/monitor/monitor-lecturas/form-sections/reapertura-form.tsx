@@ -128,7 +128,7 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
   return (
     <div className='space-y-3'>
       {/* Alerta informativa compacta */}
-      <div className='flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-lg border border-amber-200 dark:border-amber-800'>
+      <div className='flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-xl border border-border'>
         <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
         <span>
           Medición cerrada. Seleccione un motivo y proporcione una descripción
@@ -140,8 +140,8 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
       <Card className='border-0 shadow-none bg-transparent'>
         <CardHeader className='px-0 pb-2'>
           <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
-            <div className='h-5 w-5 rounded bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center'>
-              <RotateCcw className='h-3 w-3 text-orange-600 dark:text-orange-400' />
+            <div className='h-5 w-5 rounded bg-primary/10 flex items-center justify-center'>
+              <RotateCcw className='h-3 w-3 text-primary' />
             </div>
             <span>Reapertura de Medición</span>
           </CardTitle>
@@ -186,7 +186,7 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
                 className={
                   descripcionReapertura.length < 10
                     ? 'text-destructive'
-                    : 'text-green-600'
+                    : 'text-emerald-500'
                 }
               >
                 {descripcionReapertura.length}/10
@@ -199,7 +199,7 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
             <Button
               onClick={handleReaperturaMedicion}
               disabled={isSubmitting}
-              className='px-4 h-8 text-xs bg-orange-600 hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500'
+              className='px-4 h-8 text-xs bg-primary hover:bg-primary/90'
             >
               {isSubmitting ? (
                 <>

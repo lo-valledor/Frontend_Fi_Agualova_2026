@@ -262,7 +262,7 @@ export function DataTableNichos<TData, TValue>({
 
   return (
     <div className='space-y-3'>
-      <div className='rounded-lg border border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
+      <div className='rounded-xl border border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
         <div className='relative overflow-hidden'>
           {/* Contenedor con scroll horizontal mejorado */}
           <div className='overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-muted/10 hover:scrollbar-thumb-muted-foreground/50 transition-colors'>

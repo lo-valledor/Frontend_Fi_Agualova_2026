@@ -77,7 +77,7 @@ export default function DetalleLecturaBT43({
               <CardHeader className='px-0 pb-2'>
                 <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
                   <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
-                    <InfoIcon className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                    <InfoIcon className='h-3 w-3 ' />
                   </div>
                   <span>Información General</span>
                 </CardTitle>
@@ -85,9 +85,9 @@ export default function DetalleLecturaBT43({
               <CardContent className='px-0 space-y-3'>
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3'>
                   {/* Fecha Lectura */}
-                  <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+                  <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
-                      <CalendarIcon className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                      <CalendarIcon className='h-3 w-3 ' />
                       <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                         Fecha
                       </span>
@@ -103,7 +103,7 @@ export default function DetalleLecturaBT43({
                   </div>
 
                   {/* Medidor */}
-                  <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+                  <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
                       <IdCard className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
                       <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -116,7 +116,7 @@ export default function DetalleLecturaBT43({
                   </div>
 
                   {/* Tipo Empalme */}
-                  <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+                  <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
                       <PlugIcon className='h-3 w-3 text-amber-600 dark:text-amber-400' />
                       <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -129,7 +129,7 @@ export default function DetalleLecturaBT43({
                   </div>
 
                   {/* Constante */}
-                  <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+                  <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
                       <Gauge className='h-3 w-3 text-purple-600 dark:text-purple-400' />
                       <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -149,9 +149,9 @@ export default function DetalleLecturaBT43({
               <CardContent className='px-0 space-y-3'>
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3'>
                   {/* Demanda Punta */}
-                  <div className='p-3 bg-blue-50/50 dark:bg-blue-950/30 rounded-lg border border-blue-200/30 dark:border-blue-800/30 hover:bg-blue-50/70 dark:hover:bg-blue-950/40 transition-colors'>
+                  <div className='p-3 bg-blue-50/50 dark:bg-blue-950/30 rounded-xl border border-blue-200/30 dark:border-blue-800/30 hover:bg-blue-50/70 dark:hover:bg-blue-950/40 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
-                      <GaugeIcon className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                      <GaugeIcon className='h-3 w-3 ' />
                       <span className='text-xs font-medium text-blue-700 dark:text-blue-300 uppercase tracking-wide'>
                         D. Punta
                       </span>
@@ -186,7 +186,7 @@ export default function DetalleLecturaBT43({
                   </div>
 
                   {/* Demanda Suministrada */}
-                  <div className='p-3 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200/30 dark:border-emerald-800/30 hover:bg-emerald-50/70 dark:hover:bg-emerald-950/40 transition-colors'>
+                  <div className='p-3 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-xl border border-emerald-200/30 dark:border-emerald-800/30 hover:bg-emerald-50/70 dark:hover:bg-emerald-950/40 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
                       <GaugeIcon className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
                       <span className='text-xs font-medium text-emerald-700 dark:text-emerald-300 uppercase tracking-wide'>
@@ -223,7 +223,7 @@ export default function DetalleLecturaBT43({
                   </div>
 
                   {/* Energía Activa */}
-                  <div className='p-3 bg-amber-50/50 dark:bg-amber-950/30 rounded-lg border border-amber-200/30 dark:border-amber-800/30 hover:bg-amber-50/70 dark:hover:bg-amber-950/40 transition-colors'>
+                  <div className='p-3 bg-amber-50/50 dark:bg-amber-950/30 rounded-xl border border-amber-200/30 dark:border-amber-800/30 hover:bg-amber-50/70 dark:hover:bg-amber-950/40 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
                       <ZapIcon className='h-3 w-3 text-amber-600 dark:text-amber-400' />
                       <span className='text-xs font-medium text-amber-700 dark:text-amber-300 uppercase tracking-wide'>
@@ -241,7 +241,7 @@ export default function DetalleLecturaBT43({
                   </div>
 
                   {/* Energía Reactiva */}
-                  <div className='p-3 bg-rose-50/50 dark:bg-rose-950/30 rounded-lg border border-rose-200/30 dark:border-rose-800/30 hover:bg-rose-50/70 dark:hover:bg-rose-950/40 transition-colors'>
+                  <div className='p-3 bg-rose-50/50 dark:bg-rose-950/30 rounded-xl border border-rose-200/30 dark:border-rose-800/30 hover:bg-rose-50/70 dark:hover:bg-rose-950/40 transition-colors'>
                     <div className='flex items-center gap-2 mb-1.5'>
                       <ActivityIcon className='h-3 w-3 text-rose-600 dark:text-rose-400' />
                       <span className='text-xs font-medium text-rose-700 dark:text-rose-300 uppercase tracking-wide'>
@@ -264,15 +264,15 @@ export default function DetalleLecturaBT43({
                 {/* Sección de Consumos y Lecturas */}
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
                   {/* Consumo del Mes */}
-                  <div className='p-3 bg-sky-50/30 dark:bg-sky-950/20 rounded-lg border border-sky-200/30 dark:border-sky-800/30 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-colors'>
+                  <div className='p-3 bg-sky-50/30 dark:bg-sky-950/20 rounded-xl border border-sky-200/30 dark:border-sky-800/30 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-colors'>
                     <div className='flex items-center gap-2 mb-2'>
-                      <ActivityIcon className='h-3 w-3 text-sky-600 dark:text-sky-400' />
+                      <ActivityIcon className='h-3 w-3' />
                       <span className='text-sm font-medium text-sky-800 dark:text-sky-200'>
                         Consumo del Mes
                       </span>
                     </div>
                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
-                      <div className='p-2 bg-white/60 dark:bg-sky-900/20 rounded border border-sky-200/30 dark:border-sky-700/30'>
+                      <div className='p-2 bg-background rounded border border-sky-200/30 dark:border-sky-700/30'>
                         <span className='text-xs text-muted-foreground font-medium block mb-1'>
                           E. Activa
                         </span>
@@ -285,7 +285,7 @@ export default function DetalleLecturaBT43({
                           </span>
                         </div>
                       </div>
-                      <div className='p-2 bg-white/60 dark:bg-sky-900/20 rounded border border-sky-200/30 dark:border-sky-700/30'>
+                      <div className='p-2 bg-background rounded border border-sky-200/30 dark:border-sky-700/30'>
                         <span className='text-xs text-muted-foreground font-medium block mb-1'>
                           E. Reactiva
                         </span>
@@ -302,7 +302,7 @@ export default function DetalleLecturaBT43({
                   </div>
 
                   {/* Última Lectura */}
-                  <div className='p-3 bg-violet-50/30 dark:bg-violet-950/20 rounded-lg border border-violet-200/30 dark:border-violet-800/30 hover:bg-violet-50/50 dark:hover:bg-violet-950/30 transition-colors'>
+                  <div className='p-3 bg-violet-50/30 dark:bg-violet-950/20 rounded-xl border border-violet-200/30 dark:border-violet-800/30 hover:bg-violet-50/50 dark:hover:bg-violet-950/30 transition-colors'>
                     <div className='flex items-center gap-2 mb-2'>
                       <ZapIcon className='h-3 w-3 text-violet-600 dark:text-violet-400' />
                       <span className='text-sm font-medium text-violet-800 dark:text-violet-200'>
@@ -341,7 +341,7 @@ export default function DetalleLecturaBT43({
                 </div>
 
                 {/* Multa Factor de Potencia */}
-                <div className='mt-3 p-3 bg-red-50/30 dark:bg-red-950/20 rounded-lg border border-red-200/30 dark:border-red-800/30 hover:bg-red-50/50 dark:hover:bg-red-950/30 transition-colors'>
+                <div className='mt-3 p-3 bg-red-50/30 dark:bg-red-950/20 rounded-xl border border-red-200/30 dark:border-red-800/30 hover:bg-red-50/50 dark:hover:bg-red-950/30 transition-colors'>
                   <div className='flex items-center gap-2 mb-2'>
                     <InfoIcon className='h-3 w-3 text-red-600 dark:text-red-400' />
                     <span className='text-sm font-medium text-red-800 dark:text-red-200'>
@@ -390,7 +390,7 @@ function LoadingSkeleton() {
             {[1, 2, 3, 4].map(i => (
               <div
                 key={i}
-                className='p-2 bg-muted/30 rounded-lg border border-border/30 space-y-1'
+                className='p-2 bg-muted/30 rounded-xl border border-border/30 space-y-1'
               >
                 <div className='flex items-center gap-1.5'>
                   <Skeleton className='h-3 w-3 rounded bg-muted' />
@@ -413,7 +413,7 @@ function LoadingSkeleton() {
             {[1, 2, 3, 4].map(i => (
               <div
                 key={i}
-                className='p-3 bg-muted/30 rounded-lg border border-border/30'
+                className='p-3 bg-muted/30 rounded-xl border border-border/30'
               >
                 <div className='flex items-center justify-between mb-2'>
                   <Skeleton className='h-2 w-16 bg-muted' />
@@ -441,7 +441,7 @@ function LoadingSkeleton() {
             {[1, 2].map(i => (
               <div
                 key={i}
-                className='p-3 bg-muted/30 rounded-lg border border-border/30'
+                className='p-3 bg-muted/30 rounded-xl border border-border/30'
               >
                 <div className='flex items-center gap-2 mb-2'>
                   <Skeleton className='h-5 w-5 rounded bg-muted' />
@@ -465,7 +465,7 @@ function LoadingSkeleton() {
             ))}
           </div>
 
-          <div className='mt-3 p-3 bg-red-50/30 dark:bg-red-950/20 rounded-lg border border-red-200/30 dark:border-red-800/30'>
+          <div className='mt-3 p-3 bg-red-50/30 dark:bg-red-950/20 rounded-xl border border-red-200/30 dark:border-red-800/30'>
             <div className='flex items-center gap-2 mb-2'>
               <Skeleton className='h-5 w-5 rounded bg-red-200 dark:bg-red-700' />
               <Skeleton className='h-3 w-32 bg-red-200 dark:bg-red-700' />

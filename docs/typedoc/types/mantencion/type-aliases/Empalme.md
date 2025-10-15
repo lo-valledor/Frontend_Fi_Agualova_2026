@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / Empalme
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:40](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:41](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L41)
 
-***
+---
 
 ### nombre
 
@@ -26,7 +26,7 @@ Defined in: [app/types/mantencion.ts:41](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:42](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L42)
 
-***
+---
 
 ### codigoCliente
 
@@ -34,7 +34,7 @@ Defined in: [app/types/mantencion.ts:42](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:43](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L43)
 
-***
+---
 
 ### potenciaContratada
 
@@ -42,7 +42,7 @@ Defined in: [app/types/mantencion.ts:43](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:44](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L44)
 
-***
+---
 
 ### tarifa
 

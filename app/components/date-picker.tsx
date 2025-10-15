@@ -117,17 +117,11 @@ export function DatePicker({
         ref={triggerRef}
         type='button'
         onClick={() => setIsOpen(!isOpen)}
-        className='w-full px-3 py-2 text-left border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200 flex items-center justify-between'
+        className='w-full px-3 py-2 text-left border rounded-md bg-background border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200 flex items-center justify-between'
       >
         <div className='flex items-center'>
-          <CalendarIcon className='mr-2 h-4 w-4 text-gray-500 dark:text-gray-400' />
-          <span
-            className={
-              dateValue
-                ? 'text-gray-900 dark:text-gray-100'
-                : 'text-gray-500 dark:text-gray-400'
-            }
-          >
+          <CalendarIcon className='mr-2 h-4 w-4 ' />
+          <span className={dateValue ? '' : ''}>
             {dateValue && isValid(dateValue)
               ? format(dateValue, 'dd-MM-yyyy')
               : placeholder}
@@ -137,7 +131,7 @@ export function DatePicker({
           <button
             type='button'
             onClick={handleClear}
-            className='ml-2 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors'
+            className='ml-2 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700  hover:text-gray-700 dark:hover:text-gray-200 transition-colors'
           >
             <X className='h-3 w-3' />
           </button>
@@ -148,7 +142,7 @@ export function DatePicker({
       {isOpen && (
         <div
           ref={popoverRef}
-          className='absolute z-50 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4 min-w-[280px]'
+          className='absolute z-50 mt-1 bg-background border border-border rounded-xl shadow-lg p-4 min-w-[280px]'
           style={{
             left: 0,
             top: '100%'
@@ -164,7 +158,7 @@ export function DatePicker({
               <ChevronLeft className='h-4 w-4' />
             </button>
 
-            <h2 className='text-sm font-semibold text-gray-900 dark:text-gray-100'>
+            <h2 className='text-sm font-semibold '>
               {format(currentMonth, 'MMMM yyyy', { locale: es })}
             </h2>
 
@@ -180,10 +174,7 @@ export function DatePicker({
           {/* Días de la semana */}
           <div className='grid grid-cols-7 gap-1 mb-2'>
             {weekDays.map(day => (
-              <div
-                key={day}
-                className='p-2 text-center text-xs font-medium text-gray-500 dark:text-gray-400'
-              >
+              <div key={day} className='p-2 text-center text-xs font-medium '>
                 {day}
               </div>
             ))}
@@ -211,14 +202,14 @@ export function DatePicker({
                     p-2 text-sm rounded-md transition-colors duration-150 relative
                     ${
                       isSelected
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        ? 'bg-blue-600 hover:bg-blue-700'
                         : isCurrentMonth
-                          ? 'text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          ? ' hover:bg-gray-100 dark:hover:bg-gray-700'
                           : 'text-gray-400 dark:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
                     }
                     ${
                       isTodayDate && !isSelected
-                        ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-semibold'
+                        ? 'bg-blue-50 dark:bg-blue-900/20  font-semibold'
                         : ''
                     }
                     focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400
@@ -235,7 +226,7 @@ export function DatePicker({
 
           {/* Footer con botón limpiar */}
           {dateValue && (
-            <div className='mt-3 pt-3 border-t border-gray-200 dark:border-gray-700'>
+            <div className='mt-3 pt-3 border-t border-border'>
               <button
                 type='button'
                 onClick={() => {

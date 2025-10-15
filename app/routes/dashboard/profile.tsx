@@ -187,11 +187,11 @@ export default function ProfilePage() {
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
         <div className='space-y-1'>
           <div className='flex items-center gap-3'>
-            <div className='p-3 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl shadow-sm'>
-              <User className='h-6 w-6 text-sky-600 dark:text-sky-400' />
+            <div className='p-3 bg-primary/10 rounded-xl shadow-sm'>
+              <User className='h-6 w-6 text-primary' />
             </div>
             <div>
-              <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-sky-900 dark:text-sky-100'>
+              <h1 className='text-2xl md:text-3xl font-bold tracking-tight text-foreground'>
                 Mi Perfil
               </h1>
               <p className='text-muted-foreground'>
@@ -204,7 +204,7 @@ export default function ProfilePage() {
           {!isEditing ? (
             <Button
               onClick={() => setIsEditing(true)}
-              className='bg-sky-600 hover:bg-sky-700 text-white'
+              className='bg-primary hover:bg-primary/90 text-primary-foreground'
             >
               <Edit className='mr-2 h-4 w-4' />
               Editar Perfil
@@ -218,7 +218,7 @@ export default function ProfilePage() {
               <Button
                 onClick={handleSave}
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-primary hover:bg-primary/90 text-primary-foreground'
               >
                 <Save className='mr-2 h-4 w-4' />
                 {isLoading ? 'Guardando...' : 'Guardar'}
@@ -232,11 +232,11 @@ export default function ProfilePage() {
         {/* Información Principal */}
         <div className='lg:col-span-2 space-y-6'>
           {/* Información Personal */}
-          <Card className='border-sky-200/50 dark:border-sky-800/50'>
-            <CardHeader className='bg-gradient-to-r from-sky-50/80 to-blue-50/80 dark:from-sky-900/20 dark:to-blue-900/20 rounded-t-lg'>
+          <Card className='border-border'>
+            <CardHeader className='bg-muted/30 rounded-t-lg'>
               <div className='flex items-center gap-2'>
-                <User className='h-5 w-5 text-sky-600 dark:text-sky-400' />
-                <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
+                <User className='h-5 w-5 text-primary' />
+                <CardTitle className='text-lg text-foreground'>
                   Información Personal
                 </CardTitle>
               </div>
@@ -309,7 +309,7 @@ export default function ProfilePage() {
 
           {/* Información de Seguridad */}
           <Card className='border-emerald-200/50 dark:border-emerald-800/50'>
-            <CardHeader className='bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg'>
+            <CardHeader className='bg-muted/30 rounded-t-lg'>
               <div className='flex items-center gap-2'>
                 <Shield className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
                 <CardTitle className='text-lg text-emerald-800 dark:text-emerald-200'>
@@ -398,7 +398,7 @@ export default function ProfilePage() {
         <div className='space-y-6'>
           {/* Información de la Cuenta */}
           <Card className='border-violet-200/50 dark:border-violet-800/50'>
-            <CardHeader className='bg-gradient-to-r from-violet-50/80 to-purple-50/80 dark:from-violet-900/20 dark:to-purple-900/20 rounded-t-lg'>
+            <CardHeader className='bg-muted/30 rounded-t-lg'>
               <div className='flex items-center gap-2'>
                 <Building className='h-5 w-5 text-violet-600 dark:text-violet-400' />
                 <CardTitle className='text-lg text-violet-800 dark:text-violet-200'>
@@ -408,17 +408,13 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className='pt-6 space-y-4'>
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                  ID de Usuario
-                </Label>
-                <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+                <Label className='text-sm font-medium'>ID de Usuario</Label>
+                <p className='font-mono text-sm font-medium'>
                   {userData.idUsuario}
                 </p>
               </div>
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                  Perfil
-                </Label>
+                <Label className='text-sm font-medium'>Perfil</Label>
                 <Badge
                   variant='outline'
                   className='bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-800'
@@ -427,9 +423,7 @@ export default function ProfilePage() {
                 </Badge>
               </div>
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                  Departamento
-                </Label>
+                <Label className='text-sm font-medium'>Departamento</Label>
                 <Badge
                   variant='outline'
                   className='bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
@@ -438,9 +432,7 @@ export default function ProfilePage() {
                 </Badge>
               </div>
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                  Estado
-                </Label>
+                <Label className='text-sm font-medium'>Estado</Label>
                 <Badge
                   variant={userData.activo ? 'default' : 'secondary'}
                   className={
@@ -457,7 +449,7 @@ export default function ProfilePage() {
 
           {/* Información de Sesión */}
           <Card className='border-amber-200/50 dark:border-amber-800/50'>
-            <CardHeader className='bg-gradient-to-r from-amber-50/80 to-orange-50/80 dark:from-amber-900/20 dark:to-orange-900/20 rounded-t-lg'>
+            <CardHeader className='bg-muted/30 rounded-t-lg'>
               <div className='flex items-center gap-2'>
                 <Calendar className='h-5 w-5 text-amber-600 dark:text-amber-400' />
                 <CardTitle className='text-lg text-amber-800 dark:text-amber-200'>
@@ -467,17 +459,13 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className='pt-6 space-y-4'>
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                  Fecha de Creación
-                </Label>
-                <p className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                <Label className='text-sm font-medium'>Fecha de Creación</Label>
+                <p className='text-sm font-medium'>
                   {formatDate(userData.fechaCreacion)}
                 </p>
               </div>
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-600 dark:text-slate-400'>
-                  Rol Actual
-                </Label>
+                <Label className='text-sm font-medium'>Rol Actual</Label>
                 <Badge
                   variant='outline'
                   className='bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800'

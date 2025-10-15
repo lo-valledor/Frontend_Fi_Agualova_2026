@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / HealthResponse
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:96](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:97](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L97)
 
-***
+---
 
 ### database
 
@@ -24,15 +24,15 @@ Defined in: [app/services/aiService.ts:97](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:98](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L98)
 
-***
+---
 
-### database\_path
+### database_path
 
-> **database\_path**: `string`
+> **database_path**: `string`
 
 Defined in: [app/services/aiService.ts:99](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L99)
 
-***
+---
 
 ### stats
 
@@ -52,35 +52,35 @@ Defined in: [app/services/aiService.ts:100](https://github.com/lo-valledor/front
 
 > **contratos**: `number`
 
-#### modelos\_entrenados
+#### modelos_entrenados
 
-> **modelos\_entrenados**: `number`
+> **modelos_entrenados**: `number`
 
-#### anomalias\_pendientes
+#### anomalias_pendientes
 
-> **anomalias\_pendientes**: `number`
+> **anomalias_pendientes**: `number`
 
-#### ultima\_sincronizacion?
+#### ultima_sincronizacion?
 
-> `optional` **ultima\_sincronizacion**: `string`
+> `optional` **ultima_sincronizacion**: `string`
 
-#### fecha\_minima?
+#### fecha_minima?
 
-> `optional` **fecha\_minima**: `string`
+> `optional` **fecha_minima**: `string`
 
-#### fecha\_maxima?
+#### fecha_maxima?
 
-> `optional` **fecha\_maxima**: `string`
+> `optional` **fecha_maxima**: `string`
 
-***
+---
 
-### ultima\_sincronizacion?
+### ultima_sincronizacion?
 
-> `optional` **ultima\_sincronizacion**: `string`
+> `optional` **ultima_sincronizacion**: `string`
 
 Defined in: [app/services/aiService.ts:110](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L110)
 
-***
+---
 
 ### timestamp
 

@@ -62,7 +62,7 @@ export function NavDocuments({
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className='w-20 sm:w-24 rounded-lg text-xs sm:text-sm'
+                className='w-20 sm:w-24 rounded-xl text-xs sm:text-sm'
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}
               >

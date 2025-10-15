@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/rolesPermisosService](../README.md) / ActualizarMenuData
 
@@ -16,7 +16,7 @@ Defined in: [app/services/rolesPermisosService.ts:29](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:30](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L30)
 
-***
+---
 
 ### nombre
 
@@ -24,7 +24,7 @@ Defined in: [app/services/rolesPermisosService.ts:30](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L31)
 
-***
+---
 
 ### url?
 
@@ -32,7 +32,7 @@ Defined in: [app/services/rolesPermisosService.ts:31](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:32](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L32)
 
-***
+---
 
 ### icono?
 
@@ -40,7 +40,7 @@ Defined in: [app/services/rolesPermisosService.ts:32](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:33](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L33)
 
-***
+---
 
 ### orden?
 
@@ -48,7 +48,7 @@ Defined in: [app/services/rolesPermisosService.ts:33](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:34](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L34)
 
-***
+---
 
 ### menuPadreId?
 

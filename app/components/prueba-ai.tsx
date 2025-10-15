@@ -7,7 +7,7 @@ import { Label } from '~/components/ui/label';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Brain, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 
-type PruebaAIProps = unknown
+type PruebaAIProps = unknown;
 
 export const PruebaAI: React.FC<PruebaAIProps> = () => {
   const [contratoId, setContratoId] = useState<number>(1001);
@@ -15,14 +15,16 @@ export const PruebaAI: React.FC<PruebaAIProps> = () => {
   const [loading, setLoading] = useState(false);
   const [resultado, setResultado] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [servicioDisponible, setServicioDisponible] = useState<boolean | null>(null);
+  const [servicioDisponible, setServicioDisponible] = useState<boolean | null>(
+    null
+  );
 
   const verificarServicio = async () => {
     try {
       setLoading(true);
       const disponible = await aiService.isAvailable();
       setServicioDisponible(disponible);
-      
+
       if (disponible) {
         const health = await aiService.checkHealth();
         console.log('Estado del servicio:', health);
@@ -69,37 +71,45 @@ export const PruebaAI: React.FC<PruebaAIProps> = () => {
   }, []);
 
   return (
-    <div className="p-6 space-y-6">
+    <div className='p-6 space-y-6'>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5" />
+          <CardTitle className='flex items-center gap-2'>
+            <Brain className='h-5 w-5' />
             Prueba del Servicio de IA
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className='space-y-4'>
           {/* Estado del Servicio */}
-          <div className="flex items-center gap-2">
-            <Button 
-              onClick={verificarServicio} 
+          <div className='flex items-center gap-2'>
+            <Button
+              onClick={verificarServicio}
               disabled={loading}
-              variant="outline" 
-              size="sm"
+              variant='outline'
+              size='sm'
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Verificar Servicio'}
+              {loading ? (
+                <Loader2 className='h-4 w-4 animate-spin' />
+              ) : (
+                'Verificar Servicio'
+              )}
             </Button>
-            
+
             {servicioDisponible !== null && (
-              <div className="flex items-center gap-2">
+              <div className='flex items-center gap-2'>
                 {servicioDisponible ? (
                   <>
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm text-green-600">Servicio disponible</span>
+                    <CheckCircle className='h-4 w-4 text-green-500' />
+                    <span className='text-sm text-green-600'>
+                      Servicio disponible
+                    </span>
                   </>
                 ) : (
                   <>
-                    <AlertCircle className="h-4 w-4 text-red-500" />
-                    <span className="text-sm text-red-600">Servicio no disponible</span>
+                    <AlertCircle className='h-4 w-4 text-red-500' />
+                    <span className='text-sm text-red-600'>
+                      Servicio no disponible
+                    </span>
                   </>
                 )}
               </div>
@@ -107,24 +117,26 @@ export const PruebaAI: React.FC<PruebaAIProps> = () => {
           </div>
 
           {/* Formulario de Prueba */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className='grid grid-cols-2 gap-4'>
             <div>
-              <Label htmlFor="contrato">ID del Contrato</Label>
+              <Label htmlFor='contrato'>ID del Contrato</Label>
               <Input
-                id="contrato"
-                type="number"
+                id='contrato'
+                type='number'
                 value={contratoId}
-                onChange={(e) => setContratoId(Number(e.target.value))}
-                placeholder="Ej: 1001"
+                onChange={e => setContratoId(Number(e.target.value))}
+                placeholder='Ej: 1001'
               />
             </div>
             <div>
-              <Label htmlFor="meses">Meses de Proyección</Label>
+              <Label htmlFor='meses'>Meses de Proyección</Label>
               <select
-                id="meses"
+                id='meses'
                 value={mesesProyeccion}
-                onChange={(e) => setMesesProyeccion(Number(e.target.value) as 6 | 12 | 24)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                onChange={e =>
+                  setMesesProyeccion(Number(e.target.value) as 6 | 12 | 24)
+                }
+                className='w-full px-3 py-2 border border-gray-300 rounded-md'
               >
                 <option value={6}>6 meses</option>
                 <option value={12}>12 meses</option>
@@ -133,14 +145,14 @@ export const PruebaAI: React.FC<PruebaAIProps> = () => {
             </div>
           </div>
 
-          <Button 
-            onClick={generarProyecciones} 
+          <Button
+            onClick={generarProyecciones}
             disabled={loading || servicioDisponible === false}
-            className="w-full"
+            className='w-full'
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <Loader2 className='h-4 w-4 animate-spin mr-2' />
                 Generando Proyecciones...
               </>
             ) : (
@@ -150,8 +162,8 @@ export const PruebaAI: React.FC<PruebaAIProps> = () => {
 
           {/* Mostrar Error */}
           {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+            <Alert variant='destructive'>
+              <AlertCircle className='h-4 w-4' />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -160,69 +172,91 @@ export const PruebaAI: React.FC<PruebaAIProps> = () => {
           {resultado && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Resultado de Proyección</CardTitle>
+                <CardTitle className='text-lg'>
+                  Resultado de Proyección
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
+                <div className='space-y-4'>
                   {/* Metadata */}
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className='grid grid-cols-2 gap-4 text-sm'>
                     <div>
-                      <strong>Modelo:</strong> {resultado.metadata?.modeloUsado || 'N/A'}
+                      <strong>Modelo:</strong>{' '}
+                      {resultado.metadata?.modeloUsado || 'N/A'}
                     </div>
                     <div>
-                      <strong>Muestras:</strong> {resultado.metadata?.muestrasEntrenamiento || 'N/A'}
+                      <strong>Muestras:</strong>{' '}
+                      {resultado.metadata?.muestrasEntrenamiento || 'N/A'}
                     </div>
                     <div>
-                      <strong>Confianza:</strong> {resultado.metadata?.confianzaGeneral || 'N/A'}
+                      <strong>Confianza:</strong>{' '}
+                      {resultado.metadata?.confianzaGeneral || 'N/A'}
                     </div>
                     <div>
-                      <strong>Total Proyectado:</strong> {resultado.metadata?.totalConsumoProyectado?.toFixed(2) || 'N/A'} kWh
+                      <strong>Total Proyectado:</strong>{' '}
+                      {resultado.metadata?.totalConsumoProyectado?.toFixed(2) ||
+                        'N/A'}{' '}
+                      kWh
                     </div>
                   </div>
 
                   {/* Proyecciones */}
-                  {resultado.proyecciones && resultado.proyecciones.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">Proyecciones Mensuales:</h4>
-                      <div className="max-h-60 overflow-y-auto">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b">
-                              <th className="text-left p-2">Mes</th>
-                              <th className="text-right p-2">Consumo (kWh)</th>
-                              <th className="text-right p-2">Confianza</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {resultado.proyecciones.map((proj: any, index: number) => (
-                              <tr key={index} className="border-b">
-                                <td className="p-2">{proj.mes} {proj.año}</td>
-                                <td className="p-2 text-right">
-                                  {proj.consumoProyectado?.toFixed(2) || 'N/A'}
-                                </td>
-                                <td className="p-2 text-right">
-                                  <span className={`px-2 py-1 rounded text-xs ${
-                                    proj.confianza === 'Alta' ? 'bg-green-100 text-green-800' :
-                                    proj.confianza === 'Media' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-red-100 text-red-800'
-                                  }`}>
-                                    {proj.confianza}
-                                  </span>
-                                </td>
+                  {resultado.proyecciones &&
+                    resultado.proyecciones.length > 0 && (
+                      <div>
+                        <h4 className='font-medium mb-2'>
+                          Proyecciones Mensuales:
+                        </h4>
+                        <div className='max-h-60 overflow-y-auto'>
+                          <table className='w-full text-sm'>
+                            <thead>
+                              <tr className='border-b'>
+                                <th className='text-left p-2'>Mes</th>
+                                <th className='text-right p-2'>
+                                  Consumo (kWh)
+                                </th>
+                                <th className='text-right p-2'>Confianza</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {resultado.proyecciones.map(
+                                (proj: any, index: number) => (
+                                  <tr key={index} className='border-b'>
+                                    <td className='p-2'>
+                                      {proj.mes} {proj.año}
+                                    </td>
+                                    <td className='p-2 text-right'>
+                                      {proj.consumoProyectado?.toFixed(2) ||
+                                        'N/A'}
+                                    </td>
+                                    <td className='p-2 text-right'>
+                                      <span
+                                        className={`px-2 py-1 rounded text-xs ${
+                                          proj.confianza === 'Alta'
+                                            ? 'bg-green-100 text-green-800'
+                                            : proj.confianza === 'Media'
+                                              ? 'bg-yellow-100 text-yellow-800'
+                                              : 'bg-red-100 text-red-800'
+                                        }`}
+                                      >
+                                        {proj.confianza}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                )
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   {/* Raw Data para Debug */}
-                  <details className="mt-4">
-                    <summary className="cursor-pointer text-sm text-gray-600">
+                  <details className='mt-4'>
+                    <summary className='cursor-pointer text-sm text-gray-600'>
                       Ver datos completos (Debug)
                     </summary>
-                    <pre className="mt-2 p-3 bg-gray-100 rounded text-xs overflow-auto max-h-40">
+                    <pre className='mt-2 p-3 bg-gray-100 rounded text-xs overflow-auto max-h-40'>
                       {JSON.stringify(resultado, null, 2)}
                     </pre>
                   </details>

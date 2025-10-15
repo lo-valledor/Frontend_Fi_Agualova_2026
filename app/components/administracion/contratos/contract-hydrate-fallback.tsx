@@ -19,7 +19,7 @@ export const ContractHydrateFallback: React.FC = () => {
       <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
         <div className='space-y-1'>
           <div className='flex items-center gap-3'>
-            <Skeleton className='h-8 w-8 rounded-lg' />
+            <Skeleton className='h-8 w-8 rounded-xl' />
             <div>
               <Skeleton className='h-8 w-48 mb-2' />
               <Skeleton className='h-4 w-64' />
@@ -108,15 +108,15 @@ export const ContractHydrateFallback: React.FC = () => {
 
       {/* Indicador de carga central */}
       <div className='fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50'>
-        <Card className='w-full max-w-md border-0 shadow-2xl bg-white/90 dark:bg-slate-900/90'>
+        <Card className='w-full max-w-md border-0 shadow-2xl bg-background'>
           <CardHeader className='text-center pb-4'>
             <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 shadow-lg'>
-              <FileText className='h-8 w-8 text-white' />
+              <FileText className='h-8 w-8' />
             </div>
-            <CardTitle className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+            <CardTitle className='text-xl font-semibold'>
               Cargando Módulo de Contratos
             </CardTitle>
-            <CardDescription className='text-slate-600 dark:text-slate-400'>
+            <CardDescription className=''>
               Inicializando componentes y preparando datos...
             </CardDescription>
           </CardHeader>
@@ -125,18 +125,18 @@ export const ContractHydrateFallback: React.FC = () => {
             {/* Loading Animation */}
             <div className='flex justify-center'>
               <div className='relative'>
-                <div className='h-12 w-12 rounded-full border-4 border-slate-200 dark:border-slate-700'></div>
+                <div className='h-12 w-12 rounded-full border-4 border-border'></div>
                 <div className='absolute top-0 left-0 h-12 w-12 rounded-full border-4 border-transparent border-t-sky-600 dark:border-t-sky-400 animate-spin'></div>
               </div>
             </div>
 
             {/* Progress Bar */}
             <div className='space-y-2'>
-              <div className='flex justify-between text-sm text-slate-600 dark:text-slate-400'>
+              <div className='flex justify-between text-sm'>
                 <span>Inicializando módulos...</span>
                 <span className='font-mono'>85%</span>
               </div>
-              <div className='h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden'>
+              <div className='h-2 bg-background rounded-full overflow-hidden'>
                 <div
                   className='h-full bg-gradient-to-r from-sky-500 to-indigo-600 rounded-full animate-pulse'
                   style={{ width: '85%' }}
@@ -146,15 +146,15 @@ export const ContractHydrateFallback: React.FC = () => {
 
             {/* Status Messages */}
             <div className='space-y-2 text-sm'>
-              <div className='flex items-center gap-2 text-slate-600 dark:text-slate-400'>
+              <div className='flex items-center gap-2'>
                 <div className='h-2 w-2 rounded-full bg-green-500 animate-pulse'></div>
                 <span>Cargando componentes UI</span>
               </div>
-              <div className='flex items-center gap-2 text-slate-600 dark:text-slate-400'>
+              <div className='flex items-center gap-2'>
                 <div className='h-2 w-2 rounded-full bg-blue-500 animate-pulse'></div>
                 <span>Inicializando servicios de contratos</span>
               </div>
-              <div className='flex items-center gap-2 text-slate-600 dark:text-slate-400'>
+              <div className='flex items-center gap-2'>
                 <div className='h-2 w-2 rounded-full bg-yellow-500 animate-pulse'></div>
                 <span>Preparando datos de contratos</span>
               </div>
@@ -173,7 +173,7 @@ export const ContractHydrateFallback: React.FC = () => {
             </div>
 
             {/* Tips */}
-            <div className='text-xs text-slate-500 dark:text-slate-500 text-center pt-4 border-t border-slate-200 dark:border-slate-700'>
+            <div className='text-xs text-slate-500 dark:text-slate-500 text-center pt-4 border-t border-border'>
               <p>
                 💡 Tip: Si la carga toma más de 30 segundos, intenta recargar la
                 página

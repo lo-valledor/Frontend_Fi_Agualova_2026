@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / LecturaFaltanteResponse
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:79](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:80](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L80)
 
-***
+---
 
 ### confianza
 
@@ -24,7 +24,7 @@ Defined in: [app/services/aiService.ts:80](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:81](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L81)
 
-***
+---
 
 ### metodoUsado
 
@@ -32,7 +32,7 @@ Defined in: [app/services/aiService.ts:81](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:82](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L82)
 
-***
+---
 
 ### basadoEn
 
@@ -56,7 +56,7 @@ Defined in: [app/services/aiService.ts:83](https://github.com/lo-valledor/front-
 
 > **pesoHistorico**: `number`
 
-***
+---
 
 ### metadata
 

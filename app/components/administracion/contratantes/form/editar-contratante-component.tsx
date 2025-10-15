@@ -1,9 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  ArrowLeft,
-  Save,
-  User,
-} from 'lucide-react';
+import { ArrowLeft, Save, User } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -16,9 +12,7 @@ import { ModernHeader } from '~/components/shared/modern-header';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
-import {
-  Form,
-} from '~/components/ui/form';
+import { Form } from '~/components/ui/form';
 import api from '~/lib/api';
 import { administracionService } from '~/services';
 import type {
@@ -28,7 +22,10 @@ import type {
 } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
 
-const createContratanteSchema = (existingContratantes: string[], currentRut?: string) =>
+const createContratanteSchema = (
+  existingContratantes: string[],
+  currentRut?: string
+) =>
   z.object({
     rut: z
       .string()
@@ -65,14 +62,19 @@ export default function EditarContratanteComponent() {
   const [contratante, setContratante] = useState<GetContratante | null>(null);
   const [giros, setGiros] = useState<GetGiros[]>([]);
   const [comunas, setComunas] = useState<GetComunas[]>([]);
-  const [existingContratantes, setExistingContratantes] = useState<string[]>([]);
+  const [existingContratantes, setExistingContratantes] = useState<string[]>(
+    []
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [rutValidationStatus, setRutValidationStatus] = useState<
     'idle' | 'checking' | 'valid' | 'invalid'
   >('idle');
 
-  const contratanteSchema = createContratanteSchema(existingContratantes, contratante?.rut);
+  const contratanteSchema = createContratanteSchema(
+    existingContratantes,
+    contratante?.rut
+  );
 
   const form = useForm<ContratanteFormData>({
     resolver: zodResolver(contratanteSchema),
@@ -113,7 +115,9 @@ export default function EditarContratanteComponent() {
         if (contratantesDataResult.data) {
           setGiros(contratantesDataResult.data.giros);
           setComunas(contratantesDataResult.data.comunas);
-          setExistingContratantes(contratantesDataResult.data.contratantes.map(c => c.rut));
+          setExistingContratantes(
+            contratantesDataResult.data.contratantes.map(c => c.rut)
+          );
         }
 
         if (contratanteResult.error) {
@@ -208,7 +212,9 @@ export default function EditarContratanteComponent() {
       <div className='min-h-screen bg-background flex items-center justify-center'>
         <div className='text-center'>
           <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'></div>
-          <p className='text-muted-foreground'>Cargando datos del contratante...</p>
+          <p className='text-muted-foreground'>
+            Cargando datos del contratante...
+          </p>
         </div>
       </div>
     );
@@ -241,7 +247,9 @@ export default function EditarContratanteComponent() {
               <>
                 <Button
                   variant='ghost'
-                  onClick={() => navigate('/dashboard/administracion/contratantes')}
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratantes')
+                  }
                   disabled={isSubmitting}
                   className='gap-2'
                 >
@@ -250,14 +258,16 @@ export default function EditarContratanteComponent() {
                 </Button>
                 <Button
                   variant='outline'
-                  onClick={() => navigate('/dashboard/administracion/contratantes')}
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratantes')
+                  }
                   disabled={isSubmitting}
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
-                  className='gap-2 bg-orange-600 hover:bg-orange-700 text-white'
+                  className='gap-2 bg-orange-600 hover:bg-orange-700'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
@@ -270,7 +280,7 @@ export default function EditarContratanteComponent() {
       </div>
 
       <div className='container mx-auto px-4 py-6 space-y-6'>
-        <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+        <div className='bg-background rounded-xl shadow-sm border border-border'>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}

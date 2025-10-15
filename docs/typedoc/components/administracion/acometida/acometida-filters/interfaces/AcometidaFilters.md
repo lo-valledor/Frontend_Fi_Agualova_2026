@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/administracion/acometida/acometida-filters](../README.md) / AcometidaFilters
 
@@ -16,7 +16,7 @@ Defined in: [app/components/administracion/acometida/acometida-filters.tsx:25](h
 
 Defined in: [app/components/administracion/acometida/acometida-filters.tsx:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/acometida/acometida-filters.tsx#L26)
 
-***
+---
 
 ### nichoDescripcion
 
@@ -24,7 +24,7 @@ Defined in: [app/components/administracion/acometida/acometida-filters.tsx:26](h
 
 Defined in: [app/components/administracion/acometida/acometida-filters.tsx:27](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/acometida/acometida-filters.tsx#L27)
 
-***
+---
 
 ### sectorDescripcion
 
@@ -32,7 +32,7 @@ Defined in: [app/components/administracion/acometida/acometida-filters.tsx:27](h
 
 Defined in: [app/components/administracion/acometida/acometida-filters.tsx:28](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/acometida/acometida-filters.tsx#L28)
 
-***
+---
 
 ### limitePotenciaMin
 
@@ -40,7 +40,7 @@ Defined in: [app/components/administracion/acometida/acometida-filters.tsx:28](h
 
 Defined in: [app/components/administracion/acometida/acometida-filters.tsx:29](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/acometida/acometida-filters.tsx#L29)
 
-***
+---
 
 ### limitePotenciaMax
 
@@ -48,7 +48,7 @@ Defined in: [app/components/administracion/acometida/acometida-filters.tsx:29](h
 
 Defined in: [app/components/administracion/acometida/acometida-filters.tsx:30](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/acometida/acometida-filters.tsx#L30)
 
-***
+---
 
 ### tieneUbicacion
 
@@ -56,7 +56,7 @@ Defined in: [app/components/administracion/acometida/acometida-filters.tsx:30](h
 
 Defined in: [app/components/administracion/acometida/acometida-filters.tsx:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/acometida/acometida-filters.tsx#L31)
 
-***
+---
 
 ### tieneMedidor
 
@@ -64,7 +64,7 @@ Defined in: [app/components/administracion/acometida/acometida-filters.tsx:31](h
 
 Defined in: [app/components/administracion/acometida/acometida-filters.tsx:32](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/acometida/acometida-filters.tsx#L32)
 
-***
+---
 
 ### tieneLimitePotencia
 

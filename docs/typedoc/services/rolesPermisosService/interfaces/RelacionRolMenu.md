@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/rolesPermisosService](../README.md) / RelacionRolMenu
 
@@ -16,7 +16,7 @@ Defined in: [app/services/rolesPermisosService.ts:90](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:91](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L91)
 
-***
+---
 
 ### idRol
 
@@ -24,7 +24,7 @@ Defined in: [app/services/rolesPermisosService.ts:91](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:92](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L92)
 
-***
+---
 
 ### idMenu
 
@@ -32,7 +32,7 @@ Defined in: [app/services/rolesPermisosService.ts:92](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:93](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L93)
 
-***
+---
 
 ### permisos
 
@@ -56,7 +56,7 @@ Defined in: [app/services/rolesPermisosService.ts:94](https://github.com/lo-vall
 
 > **eliminacion**: `boolean`
 
-***
+---
 
 ### fechaCreacion?
 
@@ -64,7 +64,7 @@ Defined in: [app/services/rolesPermisosService.ts:94](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:100](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L100)
 
-***
+---
 
 ### fechaModificacion?
 

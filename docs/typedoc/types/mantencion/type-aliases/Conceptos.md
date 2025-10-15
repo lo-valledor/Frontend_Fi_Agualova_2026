@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / Conceptos
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:24](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:25](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L25)
 
-***
+---
 
 ### denominacion
 
@@ -26,7 +26,7 @@ Defined in: [app/types/mantencion.ts:25](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L26)
 
-***
+---
 
 ### descripcion
 
@@ -34,7 +34,7 @@ Defined in: [app/types/mantencion.ts:26](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:27](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L27)
 
-***
+---
 
 ### unidad
 
@@ -42,7 +42,7 @@ Defined in: [app/types/mantencion.ts:27](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:28](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L28)
 
-***
+---
 
 ### fijoVariable
 
@@ -50,7 +50,7 @@ Defined in: [app/types/mantencion.ts:28](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:29](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L29)
 
-***
+---
 
 ### asociadoId?
 

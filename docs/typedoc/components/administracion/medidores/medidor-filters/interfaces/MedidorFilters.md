@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/administracion/medidores/medidor-filters](../README.md) / MedidorFilters
 
@@ -16,7 +16,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:25](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L26)
 
-***
+---
 
 ### tipo
 
@@ -24,7 +24,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:26](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:27](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L27)
 
-***
+---
 
 ### modelo
 
@@ -32,7 +32,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:27](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:28](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L28)
 
-***
+---
 
 ### estado
 
@@ -40,7 +40,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:28](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:29](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L29)
 
-***
+---
 
 ### digitosMin
 
@@ -48,7 +48,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:29](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:30](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L30)
 
-***
+---
 
 ### digitosMax
 
@@ -56,7 +56,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:30](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L31)
 
-***
+---
 
 ### multiplicarMin
 
@@ -64,7 +64,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:31](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:32](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L32)
 
-***
+---
 
 ### multiplicarMax
 
@@ -72,7 +72,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:32](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:33](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L33)
 
-***
+---
 
 ### fechaInicioDesde
 
@@ -80,7 +80,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:33](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:34](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L34)
 
-***
+---
 
 ### fechaInicioHasta
 
@@ -88,7 +88,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:34](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:35](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L35)
 
-***
+---
 
 ### tieneUbicacion
 
@@ -96,7 +96,7 @@ Defined in: [app/components/administracion/medidores/medidor-filters.tsx:35](htt
 
 Defined in: [app/components/administracion/medidores/medidor-filters.tsx:36](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/medidores/medidor-filters.tsx#L36)
 
-***
+---
 
 ### tieneAcometida
 

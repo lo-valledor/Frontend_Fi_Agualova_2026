@@ -101,7 +101,7 @@ export default function ContratosComponent({
   });
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -118,7 +118,7 @@ export default function ContratosComponent({
                 onClick={() =>
                   router('/dashboard/administracion/contratos/crear')
                 }
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700'
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -147,12 +147,12 @@ export default function ContratosComponent({
         />
 
         {/* Table */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <CardContent className='relative p-2 sm:p-4 lg:p-6'>
             {filteredContracts.length === 0 ? (
-              <div className='flex flex-col items-center justify-center py-8 sm:py-12 text-slate-500 dark:text-slate-400'>
+              <div className='flex flex-col items-center justify-center py-8 sm:py-12'>
                 <div className='flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
-                  <FileText className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400 dark:text-slate-500' />
+                  <FileText className='h-6 w-6 sm:h-8 sm:w-8' />
                 </div>
                 <p className='text-base sm:text-lg font-medium text-center'>
                   No se encontraron contratos
@@ -166,7 +166,7 @@ export default function ContratosComponent({
             ) : (
               <div className='space-y-4'>
                 {/* Tabla moderna con scroll horizontal para móvil */}
-                <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm shadow-lg overflow-hidden'>
+                <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-background backdrop-blur-sm shadow-lg overflow-hidden'>
                   <div className='overflow-x-auto'>
                     <DataTable
                       columns={columnsData}

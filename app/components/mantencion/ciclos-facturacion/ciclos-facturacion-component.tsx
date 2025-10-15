@@ -58,7 +58,7 @@ export default function CiclosFacturacionComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -68,7 +68,7 @@ export default function CiclosFacturacionComponent({
             <div className='flex gap-2'>
               <Button
                 onClick={handleAddCiclo}
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700'
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -79,7 +79,7 @@ export default function CiclosFacturacionComponent({
         />
 
         {/* Table */}
-        <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
           <CardContent className='relative'>
             <DataTable
               columns={columns({

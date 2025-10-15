@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/rolesPermisosService](../README.md) / RolMenu
 
@@ -16,7 +16,7 @@ Defined in: [app/services/rolesPermisosService.ts:77](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:78](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L78)
 
-***
+---
 
 ### idMenu
 
@@ -24,7 +24,7 @@ Defined in: [app/services/rolesPermisosService.ts:78](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:79](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L79)
 
-***
+---
 
 ### nombreRol
 
@@ -32,7 +32,7 @@ Defined in: [app/services/rolesPermisosService.ts:79](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:80](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L80)
 
-***
+---
 
 ### nombreMenu
 
@@ -40,7 +40,7 @@ Defined in: [app/services/rolesPermisosService.ts:80](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:81](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L81)
 
-***
+---
 
 ### permisos
 

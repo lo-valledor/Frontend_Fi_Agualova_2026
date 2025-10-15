@@ -9,7 +9,11 @@ import {
 export default [
   index('routes/home.tsx'),
   route('session-expired', 'routes/session-expired.tsx'),
-  route('auth/login', 'routes/auth/login.tsx'),
+  ...prefix('auth', [
+    route('login', 'routes/auth/login.tsx'),
+    route('forgot-password', 'routes/auth/forgot-password.tsx'),
+    route('reset-password', 'routes/auth/reset-password.tsx')
+  ]),
   layout('routes/protected-route.tsx', [
     layout('routes/dashboard/layout.tsx', [
       ...prefix('dashboard', [

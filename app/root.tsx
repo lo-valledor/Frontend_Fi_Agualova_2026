@@ -104,7 +104,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
         <h1 className='text-3xl font-bold text-red-600 mb-4'>{message}</h1>
         <p className='text-lg mb-4'>{details}</p>
 
-        <div className='bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-4'>
+        <div className='bg-card p-4 rounded-xl mb-4'>
           <h2 className='font-semibold mb-2'>Información de depuración:</h2>
           <ul className='text-sm space-y-1'>
             <li>
@@ -125,7 +125,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
             <summary className='cursor-pointer font-semibold'>
               Ver stack trace completo
             </summary>
-            <pre className='w-full p-4 overflow-x-auto bg-gray-100 dark:bg-gray-800 rounded mt-2 text-xs'>
+            <pre className='w-full p-4 overflow-x-auto bg-card rounded mt-2 text-xs'>
               <code>{stack}</code>
             </pre>
           </details>
@@ -134,7 +134,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
         <div className='flex gap-4'>
           <button
             onClick={() => window.location.reload()}
-            className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700'
+            className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700'
           >
             Recargar página
           </button>
@@ -143,7 +143,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
               localStorage.clear();
               window.location.href = '/auth/login';
             }}
-            className='px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700'
+            className='px-4 py-2 bg-red-600 rounded hover:bg-red-700'
           >
             Limpiar sesión y volver al login
           </button>

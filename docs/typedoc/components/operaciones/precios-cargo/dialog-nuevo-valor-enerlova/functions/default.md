@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/operaciones/precios-cargo/dialog-nuevo-valor-enerlova](../README.md) / default
 

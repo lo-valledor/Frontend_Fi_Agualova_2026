@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/reportes](../README.md) / BuscarContratos
 
@@ -10,29 +10,29 @@ Defined in: [app/types/reportes.ts:1](https://github.com/lo-valledor/front-respa
 
 ## Properties
 
-### cT\_ID
+### cT_ID
 
-> **cT\_ID**: `number`
+> **cT_ID**: `number`
 
 Defined in: [app/types/reportes.ts:2](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L2)
 
-***
+---
 
-### lC\_ID
+### lC_ID
 
-> **lC\_ID**: `string`
+> **lC_ID**: `string`
 
 Defined in: [app/types/reportes.ts:3](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L3)
 
-***
+---
 
-### cL\_RUT
+### cL_RUT
 
-> **cL\_RUT**: `string`
+> **cL_RUT**: `string`
 
 Defined in: [app/types/reportes.ts:4](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L4)
 
-***
+---
 
 ### nombreCliente
 
@@ -40,15 +40,15 @@ Defined in: [app/types/reportes.ts:4](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/reportes.ts:5](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L5)
 
-***
+---
 
-### pR\_RUT
+### pR_RUT
 
-> **pR\_RUT**: `string`
+> **pR_RUT**: `string`
 
 Defined in: [app/types/reportes.ts:6](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L6)
 
-***
+---
 
 ### nombrePropietario
 
@@ -56,34 +56,34 @@ Defined in: [app/types/reportes.ts:6](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/reportes.ts:7](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L7)
 
-***
+---
 
-### mE\_NSerie
+### mE_NSerie
 
-> **mE\_NSerie**: `string`
+> **mE_NSerie**: `string`
 
 Defined in: [app/types/reportes.ts:8](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L8)
 
-***
+---
 
-### cT\_ID\_Madre
+### cT_ID_Madre
 
-> **cT\_ID\_Madre**: `number`
+> **cT_ID_Madre**: `number`
 
 Defined in: [app/types/reportes.ts:9](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L9)
 
-***
+---
 
-### cT\_esMadre
+### cT_esMadre
 
-> **cT\_esMadre**: `boolean`
+> **cT_esMadre**: `boolean`
 
 Defined in: [app/types/reportes.ts:10](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L10)
 
-***
+---
 
-### se\_codigo
+### se_codigo
 
-> **se\_codigo**: `string`
+> **se_codigo**: `string`
 
 Defined in: [app/types/reportes.ts:11](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L11)

@@ -128,7 +128,7 @@ export function ContractDetailsModal({
         <DialogHeader className='space-y-3 pb-6'>
           <div className='flex items-center gap-3'>
             <div className='p-3 bg-gradient-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-xl shadow-sm'>
-              <FileText className='h-6 w-6 text-sky-600 dark:text-sky-400' />
+              <FileText className='h-6 w-6' />
             </div>
             <div>
               <DialogTitle className='text-2xl font-bold bg-gradient-to-r from-sky-800 to-blue-800 dark:from-sky-200 dark:to-blue-200 bg-clip-text text-transparent'>
@@ -187,7 +187,7 @@ export function ContractDetailsModal({
             <Card className='border-sky-200/50 dark:border-sky-800/50 shadow-sm'>
               <CardHeader className='bg-gradient-to-r from-sky-50/80 to-blue-50/80 dark:from-sky-900/20 dark:to-blue-900/20 rounded-t-lg'>
                 <div className='flex items-center gap-2'>
-                  <FileText className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                  <FileText className='h-5 w-5' />
                   <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
                     Información del Contrato
                   </CardTitle>
@@ -196,13 +196,11 @@ export function ContractDetailsModal({
               <CardContent className='pt-6 space-y-4'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg'>
+                    <div className='p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl'>
                       <Building className='h-4 w-4 text-indigo-600 dark:text-indigo-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Tipo de Contrato
-                      </p>
+                      <p className='text-xs font-medium'>Tipo de Contrato</p>
                       <p className='font-semibold text-slate-800 dark:text-slate-200'>
                         {detailsData.tipoContrato}
                       </p>
@@ -210,13 +208,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
+                    <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl'>
                       <Zap className='h-4 w-4 text-purple-600 dark:text-purple-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Tarifa
-                      </p>
+                      <p className='text-xs font-medium'>Tarifa</p>
                       <Badge
                         variant='outline'
                         className='bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800'
@@ -227,13 +223,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+                    <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
                       <CheckCircle className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Estado
-                      </p>
+                      <p className='text-xs font-medium'>Estado</p>
                       <Badge
                         variant={
                           detailsData.activoTexto === 'Activo'
@@ -252,13 +246,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg'>
+                    <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl'>
                       <Gauge className='h-4 w-4 text-amber-600 dark:text-amber-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Potencia Contratada
-                      </p>
+                      <p className='text-xs font-medium'>Potencia Contratada</p>
                       <p className='font-semibold text-slate-800 dark:text-slate-200'>
                         {detailsData.potenciaContratada}
                       </p>
@@ -280,9 +272,9 @@ export function ContractDetailsModal({
               </CardHeader>
               <CardContent className='pt-6 space-y-6'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                  <div className='p-4 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-lg border border-emerald-200 dark:border-emerald-800'>
+                  <div className='p-4 bg-emerald-50/50 dark:bg-emerald-900/10 rounded-xl border border-border'>
                     <div className='flex items-center gap-3 mb-3'>
-                      <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+                      <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
                         <User className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
                       </div>
                       <h3 className='font-semibold text-emerald-800 dark:text-emerald-200'>
@@ -302,17 +294,17 @@ export function ContractDetailsModal({
                         <p className='text-xs font-medium text-emerald-600 dark:text-emerald-400'>
                           RUT
                         </p>
-                        <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+                        <p className='font-mono text-sm font-medium'>
                           {formatRut(detailsData.rutPropietario)}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className='p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-lg border border-blue-200 dark:border-blue-800'>
+                  <div className='p-4 bg-blue-50/50 dark:bg-blue-900/10 rounded-xl border border-blue-200 dark:border-blue-800'>
                     <div className='flex items-center gap-3 mb-3'>
-                      <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-                        <User className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                      <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
+                        <User className='h-4 w-4 ' />
                       </div>
                       <h3 className='font-semibold text-blue-800 dark:text-blue-200'>
                         Cliente
@@ -320,18 +312,14 @@ export function ContractDetailsModal({
                     </div>
                     <div className='space-y-2'>
                       <div>
-                        <p className='text-xs font-medium text-blue-600 dark:text-blue-400'>
-                          Nombre
-                        </p>
+                        <p className='text-xs font-medium '>Nombre</p>
                         <p className='font-medium text-slate-800 dark:text-slate-200'>
                           {detailsData.nombreCliente}
                         </p>
                       </div>
                       <div>
-                        <p className='text-xs font-medium text-blue-600 dark:text-blue-400'>
-                          RUT
-                        </p>
-                        <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+                        <p className='text-xs font-medium '>RUT</p>
+                        <p className='font-mono text-sm font-medium'>
                           {formatRut(detailsData.rutCliente)}
                         </p>
                       </div>
@@ -354,41 +342,35 @@ export function ContractDetailsModal({
               <CardContent className='pt-6 space-y-4'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg'>
+                    <div className='p-2 bg-teal-100 dark:bg-teal-900/30 rounded-xl'>
                       <Hash className='h-4 w-4 text-teal-600 dark:text-teal-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        ID Local
-                      </p>
-                      <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+                      <p className='text-xs font-medium'>ID Local</p>
+                      <p className='font-mono text-sm font-medium'>
                         {detailsData.localId}
                       </p>
                     </div>
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg'>
+                    <div className='p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl'>
                       <Building className='h-4 w-4 text-cyan-600 dark:text-cyan-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Código Local
-                      </p>
-                      <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+                      <p className='text-xs font-medium'>Código Local</p>
+                      <p className='font-mono text-sm font-medium'>
                         {detailsData.codigoLocal}
                       </p>
                     </div>
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg'>
+                    <div className='p-2 bg-pink-100 dark:bg-pink-900/30 rounded-xl'>
                       <MapPin className='h-4 w-4 text-pink-600 dark:text-pink-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Dirección
-                      </p>
+                      <p className='text-xs font-medium'>Dirección</p>
                       <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {detailsData.direccion}
                       </p>
@@ -396,13 +378,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
+                    <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl'>
                       <MapPin className='h-4 w-4 text-orange-600 dark:text-orange-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Comuna
-                      </p>
+                      <p className='text-xs font-medium'>Comuna</p>
                       <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {detailsData.comunaNombre} ({detailsData.codigoComuna})
                       </p>
@@ -425,13 +405,11 @@ export function ContractDetailsModal({
               <CardContent className='pt-6 space-y-4'>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg'>
+                    <div className='p-2 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl'>
                       <Calendar className='h-4 w-4 text-cyan-600 dark:text-cyan-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Fecha de Inicio
-                      </p>
+                      <p className='text-xs font-medium'>Fecha de Inicio</p>
                       <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {formatDate(detailsData.fechaInicio)}
                       </p>
@@ -439,13 +417,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
+                    <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl'>
                       <Calendar className='h-4 w-4 text-orange-600 dark:text-orange-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Fecha de Término
-                      </p>
+                      <p className='text-xs font-medium'>Fecha de Término</p>
                       <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {formatDate(detailsData.fechaTermino)}
                       </p>
@@ -453,11 +429,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-                      <Calendar className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                    <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
+                      <Calendar className='h-4 w-4 ' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+                      <p className='text-xs font-medium'>
                         Ciclo de Facturación
                       </p>
                       <Badge
@@ -470,13 +446,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-lg'>
+                    <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-xl'>
                       <Gauge className='h-4 w-4 text-red-600 dark:text-red-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Límite Invierno
-                      </p>
+                      <p className='text-xs font-medium'>Límite Invierno</p>
                       <p className='font-medium text-slate-800 dark:text-slate-200'>
                         {detailsData.limiteInvierno.toLocaleString('es-CL')} kWh
                       </p>
@@ -488,13 +462,11 @@ export function ContractDetailsModal({
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-lg'>
+                    <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-xl'>
                       <Shield className='h-4 w-4 text-green-600 dark:text-green-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Liberado de Corte
-                      </p>
+                      <p className='text-xs font-medium'>Liberado de Corte</p>
                       <Badge
                         variant={
                           detailsData.liberadoCorteTexto === 'Sí'
@@ -513,13 +485,11 @@ export function ContractDetailsModal({
                   </div>
 
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
+                    <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl'>
                       <Building className='h-4 w-4 text-purple-600 dark:text-purple-400' />
                     </div>
                     <div>
-                      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        ¿Es Madre?
-                      </p>
+                      <p className='text-xs font-medium'>¿Es Madre?</p>
                       <Badge
                         variant={
                           detailsData.esMadreTexto === 'Sí'
@@ -536,14 +506,14 @@ export function ContractDetailsModal({
                 {detailsData.codigoContratoMadre && (
                   <div className='pt-2'>
                     <div className='flex items-center gap-3'>
-                      <div className='p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg'>
+                      <div className='p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl'>
                         <FileText className='h-4 w-4 text-indigo-600 dark:text-indigo-400' />
                       </div>
                       <div>
-                        <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+                        <p className='text-xs font-medium'>
                           Código Contrato Madre
                         </p>
-                        <p className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300'>
+                        <p className='font-mono text-sm font-medium'>
                           {detailsData.codigoContratoMadre}
                         </p>
                       </div>

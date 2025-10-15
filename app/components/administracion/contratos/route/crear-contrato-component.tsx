@@ -594,7 +594,7 @@ export default function CrearContratoComponent({
                 </Button>
                 <Button
                   onClick={handleSubmit}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  className='gap-2 bg-sky-600 hover:bg-sky-700'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
@@ -608,7 +608,7 @@ export default function CrearContratoComponent({
 
       {/* Contenido principal */}
       <div className='container mx-auto px-4 py-6 space-y-6'>
-        <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+        <div className='bg-background rounded-xl shadow-sm border border-border'>
           <form className='p-6 space-y-6'>
             {/* Información básica del contrato */}
             <div className='space-y-4'>
@@ -617,7 +617,9 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='tipoContrato'>Tipo de Contrato <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='tipoContrato'>
+                    Tipo de Contrato <span className='text-red-500'>*</span>
+                  </Label>
                   <Select
                     value={formData.tipoContrato}
                     onValueChange={value =>
@@ -638,7 +640,9 @@ export default function CrearContratoComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='tarifa'>Tarifa <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='tarifa'>
+                    Tarifa <span className='text-red-500'>*</span>
+                  </Label>
                   <Select
                     value={formData.tarifa}
                     onValueChange={value => handleInputChange('tarifa', value)}
@@ -668,7 +672,9 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='nombrePropietario'>Propietario <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='nombrePropietario'>
+                    Propietario <span className='text-red-500'>*</span>
+                  </Label>
                   <div className='flex gap-2'>
                     <Input
                       id='nombrePropietario'
@@ -694,7 +700,9 @@ export default function CrearContratoComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='nombreCliente'>Cliente <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='nombreCliente'>
+                    Cliente <span className='text-red-500'>*</span>
+                  </Label>
                   <div className='flex gap-2'>
                     <Input
                       id='nombreCliente'
@@ -728,7 +736,9 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='local'>Local <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='local'>
+                    Local <span className='text-red-500'>*</span>
+                  </Label>
                   <div className='flex gap-2'>
                     <Input
                       id='local'
@@ -752,7 +762,9 @@ export default function CrearContratoComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='comunaEnvio'>Comuna de Envío <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='comunaEnvio'>
+                    Comuna de Envío <span className='text-red-500'>*</span>
+                  </Label>
                   <div className='flex gap-2'>
                     <Input
                       id='comunaEnvio'
@@ -778,7 +790,9 @@ export default function CrearContratoComponent({
                 </div>
               </div>
               <div className='space-y-2'>
-                <Label htmlFor='direccionEnvio'>Dirección de Envío <span className='text-red-500'>*</span></Label>
+                <Label htmlFor='direccionEnvio'>
+                  Dirección de Envío <span className='text-red-500'>*</span>
+                </Label>
                 <Textarea
                   id='direccionEnvio'
                   value={formData.direccionEnvio}
@@ -800,7 +814,9 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='fechaInicio'>Fecha de Inicio <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='fechaInicio'>
+                    Fecha de Inicio <span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                     id='fechaInicio'
                     type='date'
@@ -933,7 +949,7 @@ export default function CrearContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+                <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
                   <User className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
                 </div>
                 <div>
@@ -957,10 +973,10 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[500px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
                           RUT
@@ -1016,7 +1032,7 @@ export default function CrearContratoComponent({
                                 onClick={() =>
                                   handleSelectPropietario(prop.rut)
                                 }
-                                className='h-7 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white'
+                                className='h-7 px-3 text-xs bg-emerald-600 hover:bg-emerald-700'
                               >
                                 Seleccionar
                               </Button>
@@ -1037,7 +1053,7 @@ export default function CrearContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg'>
+                <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-xl'>
                   <Building2 className='h-5 w-5 text-violet-600 dark:text-violet-400' />
                 </div>
                 <div>
@@ -1060,10 +1076,10 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[450px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead className='w-[100px] sm:w-[120px] text-xs sm:text-sm'>
                           Número
@@ -1119,7 +1135,7 @@ export default function CrearContratoComponent({
                                 onClick={() =>
                                   handleSelectLocal(loc.numeroLocal)
                                 }
-                                className='h-7 px-3 text-xs bg-violet-600 hover:bg-violet-700 text-white'
+                                className='h-7 px-3 text-xs bg-violet-600 hover:bg-violet-700'
                               >
                                 Seleccionar
                               </Button>
@@ -1140,7 +1156,7 @@ export default function CrearContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg'>
+                <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl'>
                   <Network className='h-5 w-5 text-amber-600 dark:text-amber-400' />
                 </div>
                 <div>
@@ -1163,10 +1179,10 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[450px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
                           Código
@@ -1222,7 +1238,7 @@ export default function CrearContratoComponent({
                                 onClick={() =>
                                   handleSelectMadre(mad.codigoContrato)
                                 }
-                                className='h-7 px-3 text-xs bg-amber-600 hover:bg-amber-700 text-white'
+                                className='h-7 px-3 text-xs bg-amber-600 hover:bg-amber-700'
                               >
                                 Seleccionar
                               </Button>
@@ -1243,8 +1259,8 @@ export default function CrearContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-                  <User className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
+                  <User className='h-5 w-5 ' />
                 </div>
                 <div>
                   <DialogTitle>Seleccionar Cliente</DialogTitle>
@@ -1267,10 +1283,10 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[600px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
                           RUT
@@ -1341,7 +1357,7 @@ export default function CrearContratoComponent({
                                   onClick={() =>
                                     handleSelectCliente(cliente.rut)
                                   }
-                                  className='h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white'
+                                  className='h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700'
                                 >
                                   Seleccionar
                                 </Button>
@@ -1363,8 +1379,8 @@ export default function CrearContratoComponent({
           <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
-                  <MapPin className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
+                  <MapPin className='h-5 w-5' />
                 </div>
                 <div>
                   <DialogTitle>Seleccionar Comuna</DialogTitle>
@@ -1386,10 +1402,10 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-lg bg-white dark:bg-slate-900 h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
                 <div className='min-w-[400px]'>
                   <Table>
-                    <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10 border-b'>
+                    <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead className='w-[80px] sm:w-[100px] text-xs sm:text-sm'>
                           Código
@@ -1443,7 +1459,7 @@ export default function CrearContratoComponent({
                               <Button
                                 size='sm'
                                 onClick={() => handleSelectComuna(com.codigo)}
-                                className='h-7 px-3 text-xs bg-sky-600 hover:bg-sky-700 text-white'
+                                className='h-7 px-3 text-xs bg-sky-600 hover:bg-sky-700'
                               >
                                 Seleccionar
                               </Button>
@@ -1487,7 +1503,7 @@ export default function CrearContratoComponent({
                 </AlertTitle>
                 <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
                   {contratoCreado?.id && (
-                    <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
+                    <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
                       <div>
                         <p className='font-medium'>ID del Contrato:</p>
                         <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
@@ -1538,7 +1554,7 @@ export default function CrearContratoComponent({
                     setContratoCreado(null);
                     navigate('/dashboard/administracion/contratos');
                   }}
-                  className='flex-1 gap-2 bg-green-600 hover:bg-green-700 text-white'
+                  className='flex-1 gap-2 bg-green-600 hover:bg-green-700'
                 >
                   <ArrowLeft className='h-4 w-4' />
                   Volver a Contratos

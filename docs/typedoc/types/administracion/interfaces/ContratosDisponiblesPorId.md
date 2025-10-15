@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ContratosDisponiblesPorId
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:172](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:173](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L173)
 
-***
+---
 
 ### tarifa
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:173](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:174](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L174)
 
-***
+---
 
 ### nombrePropietario
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:174](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:175](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L175)
 
-***
+---
 
 ### rutPropietario
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:175](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:176](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L176)
 
-***
+---
 
 ### nombreCliente
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:176](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:177](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L177)
 
-***
+---
 
 ### rutCliente
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:177](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:178](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L178)
 
-***
+---
 
 ### localId
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:178](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:179](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L179)
 
-***
+---
 
 ### codigoLocal
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:179](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:180](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L180)
 
-***
+---
 
 ### fechaInicio
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:180](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:181](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L181)
 
-***
+---
 
 ### activoTexto
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:181](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:182](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L182)
 
-***
+---
 
 ### fechaTermino
 
@@ -96,7 +96,7 @@ Defined in: [app/types/administracion.ts:182](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:183](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L183)
 
-***
+---
 
 ### direccion
 
@@ -104,7 +104,7 @@ Defined in: [app/types/administracion.ts:183](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:184](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L184)
 
-***
+---
 
 ### codigoComuna
 
@@ -112,7 +112,7 @@ Defined in: [app/types/administracion.ts:184](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:185](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L185)
 
-***
+---
 
 ### limiteInvierno
 
@@ -120,7 +120,7 @@ Defined in: [app/types/administracion.ts:185](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:186](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L186)
 
-***
+---
 
 ### cicloFacturacion
 
@@ -128,7 +128,7 @@ Defined in: [app/types/administracion.ts:186](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:187](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L187)
 
-***
+---
 
 ### potenciaContratada
 
@@ -136,7 +136,7 @@ Defined in: [app/types/administracion.ts:187](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:188](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L188)
 
-***
+---
 
 ### comunaNombre
 
@@ -144,7 +144,7 @@ Defined in: [app/types/administracion.ts:188](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:189](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L189)
 
-***
+---
 
 ### esMadreTexto
 
@@ -152,7 +152,7 @@ Defined in: [app/types/administracion.ts:189](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:190](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L190)
 
-***
+---
 
 ### codigoContratoMadre
 
@@ -160,7 +160,7 @@ Defined in: [app/types/administracion.ts:190](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:191](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L191)
 
-***
+---
 
 ### lugarEntrega
 
@@ -168,7 +168,7 @@ Defined in: [app/types/administracion.ts:191](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:192](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L192)
 
-***
+---
 
 ### liberadoCorteTexto
 

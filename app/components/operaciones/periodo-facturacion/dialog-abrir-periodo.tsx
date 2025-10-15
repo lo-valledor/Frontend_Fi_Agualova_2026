@@ -112,7 +112,7 @@ export default function DialogAbrirPeriodo({
       <DialogContent className='w-[95vw] max-w-md mx-auto'>
         <DialogHeader>
           <DialogTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
-            <CalendarRange className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
+            <CalendarRange className='h-4 w-4 sm:h-5 sm:w-5' />
             Confirmar Apertura
           </DialogTitle>
           <DialogDescription className='text-xs sm:text-sm text-muted-foreground'>

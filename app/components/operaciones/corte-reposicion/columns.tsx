@@ -35,7 +35,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const codigo = row.getValue('seCodigo');
       return (
-        <div className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
+        <div className='font-mono text-xs sm:text-sm font-medium'>
           {codigo as string}
         </div>
       );
@@ -50,9 +50,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const serie = row.getValue('meNSerie');
       return (
-        <div className='font-mono text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-          {serie as string}
-        </div>
+        <div className='font-mono text-xs sm:text-sm'>{serie as string}</div>
       );
     },
     size: 140
@@ -65,7 +63,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const rut = row.getValue('clRut');
       return (
-        <div className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
+        <div className='font-mono text-xs sm:text-sm font-medium'>
           {rut as string}
         </div>
       );
@@ -80,7 +78,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const razonSocial = row.getValue('clRazonSocialCompleto');
       return (
-        <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100'>
+        <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm'>
           {razonSocial as string}
         </div>
       );
@@ -95,7 +93,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     cell: ({ row }) => {
       const descripcion = row.getValue('niDescripcion');
       return (
-        <div className='max-w-[100px] sm:max-w-[150px] truncate text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
+        <div className='max-w-[100px] sm:max-w-[150px] truncate text-xs sm:text-sm'>
           {descripcion as string}
         </div>
       );
@@ -109,11 +107,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
     ),
     cell: ({ row }) => {
       const seccion = row.getValue('secDescripcion');
-      return (
-        <div className='text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
-          {seccion as string}
-        </div>
-      );
+      return <div className='text-xs sm:text-sm'>{seccion as string}</div>;
     },
     size: 120
   },
@@ -198,7 +192,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
         <div className='text-center'>
           <Badge
             variant='outline'
-            className='font-mono text-xs bg-slate-50 dark:bg-slate-800 px-1 sm:px-2'
+            className='font-mono text-xs bg-background px-1 sm:px-2'
           >
             {documentos as number}
           </Badge>
@@ -223,7 +217,7 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
 
       return (
         <div className='text-right'>
-          <span className='font-mono text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100'>
+          <span className='font-mono text-xs sm:text-sm font-medium'>
             {formattedDeuda}
           </span>
         </div>

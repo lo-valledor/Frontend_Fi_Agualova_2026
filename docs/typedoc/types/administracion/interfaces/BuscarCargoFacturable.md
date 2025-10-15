@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / BuscarCargoFacturable
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:376](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:377](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L377)
 
-***
+---
 
 ### cuenta
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:377](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:378](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L378)
 
-***
+---
 
 ### descripcion
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:378](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:379](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L379)
 
-***
+---
 
 ### fijoVariable
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:379](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:380](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L380)
 
-***
+---
 
 ### periodicoEventual
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:380](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:381](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L381)
 
-***
+---
 
 ### concepto
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:381](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:382](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L382)
 
-***
+---
 
 ### tarifa
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:382](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:383](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L383)
 
-***
+---
 
 ### tipoMedidor
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:383](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:384](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L384)
 
-***
+---
 
 ### tipo
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:384](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:385](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L385)
 
-***
+---
 
 ### codigoEnerlova
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:385](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:386](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L386)
 
-***
+---
 
 ### mostrarValorCero
 

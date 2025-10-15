@@ -3,7 +3,7 @@ import { Eye, EyeOff, Lock, Moon, Sun, User } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
-import { useLocation } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
@@ -74,9 +74,9 @@ export function LoginForm({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl transition-all duration-500 ease-in-out',
-        'bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm',
-        'shadow-xl border border-sky-100 dark:border-sky-900/30',
+        'relative overflow-hidden rounded-xl transition-all duration-500 ease-in-out',
+        'bg-card/90 backdrop-blur-sm',
+        'shadow-xl border border-border',
         'transform opacity-0 translate-y-4',
         mounted && 'opacity-100 translate-y-0',
         className
@@ -84,16 +84,16 @@ export function LoginForm({
       {...props}
     >
       {/* Decorative elements */}
-      <div className='absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-sky-400 to-sky-600 dark:from-sky-600 dark:to-sky-800 rounded-full opacity-20 blur-2xl animate-pulse'></div>
+      <div className='absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full opacity-20 blur-2xl animate-pulse'></div>
       <div
-        className='absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-tr from-sky-500 to-teal-400 dark:from-sky-700 dark:to-teal-600 rounded-full opacity-20 blur-2xl animate-pulse'
+        className='absolute -bottom-24 -left-24 w-48 h-48 bg-accent/20 rounded-full opacity-20 blur-2xl animate-pulse'
         style={{ animationDuration: '8s' }}
       ></div>
 
       {/* Theme toggle */}
       <button
         onClick={toggleTheme}
-        className='absolute top-4 right-4 p-2 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200'
+        className='absolute top-4 right-4 p-2 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200'
         aria-label='Toggle theme'
       >
         {theme === 'light' ? (
@@ -105,21 +105,10 @@ export function LoginForm({
 
       {/* Logo and header */}
       <div className='pt-8 pb-4 px-8'>
-        <div className='flex justify-center mb-6 transform transition-transform duration-700 hover:scale-110'>
-          <div className='bg-gradient-to-r from-slate-500 to-teal-600 dark:from-slate-600 dark:to-teal-700 p-2 rounded-full shadow-lg'>
-            {/* <Bolt className="h-8 w-8 text-white animate-pulse"  /> */}
-            <img
-              src='/logo-enerlova.png'
-              alt='Enerlova'
-              className='h-10'
-              style={{ animationDuration: '3s' }}
-            />
-          </div>
-        </div>
-        <h1 className='text-2xl font-bold text-center bg-gradient-to-r from-sky-600 to-teal-700 dark:from-sky-400 dark:to-teal-500 bg-clip-text text-transparent'>
-          Bienvenido a Enerlova
+        <h1 className='text-2xl font-bold text-center text-primary'>
+          Iniciar Sesión
         </h1>
-        <p className='text-center text-gray-500 dark:text-gray-400 mt-2 text-sm'>
+        <p className='text-center text-muted-foreground mt-2 text-sm'>
           Ingrese sus credenciales para acceder al sistema
         </p>
       </div>
@@ -128,7 +117,7 @@ export function LoginForm({
       <div className='p-8 pt-2'>
         <form onSubmit={handleSubmitEvent} className='space-y-6'>
           {errorMessage && (
-            <div className='p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm animate-fadeIn'>
+            <div className='p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm animate-fadeIn'>
               {errorMessage}
             </div>
           )}
@@ -137,13 +126,13 @@ export function LoginForm({
             <div className='space-y-2'>
               <label
                 htmlFor='usuario'
-                className='block text-sm font-medium text-gray-700 dark:text-gray-300'
+                className='block text-sm font-medium text-foreground'
               >
                 Usuario
               </label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <User className='h-5 w-5 text-gray-400 dark:text-gray-500 group-focus-within:text-sky-500 dark:group-focus-within:text-sky-400 transition-colors duration-200' />
+                  <User className='h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors duration-200' />
                 </div>
                 <Input
                   id='usuario'
@@ -153,7 +142,7 @@ export function LoginForm({
                   value={input.usuario}
                   onChange={handleInput}
                   required
-                  className='pl-10 bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-600 focus:ring-sky-500 dark:focus:ring-sky-600 rounded-lg transition-all duration-200 focus:shadow-md dark:focus:shadow-sky-900/20'
+                  className='pl-10 bg-muted/50 border-border focus:border-primary focus:ring-primary rounded-xl transition-all duration-200 focus:shadow-md'
                 />
               </div>
             </div>
@@ -162,14 +151,20 @@ export function LoginForm({
               <div className='flex items-center justify-between'>
                 <label
                   htmlFor='contrasena'
-                  className='block text-sm font-medium text-gray-700 dark:text-gray-300'
+                  className='block text-sm font-medium text-foreground'
                 >
                   Contraseña
                 </label>
+                <Link
+                  to='/auth/forgot-password'
+                  className='text-xs text-primary hover:text-primary/80 transition-colors duration-200'
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <Lock className='h-5 w-5 text-gray-400 dark:text-gray-500 group-focus-within:text-sky-500 dark:group-focus-within:text-sky-400 transition-colors duration-200' />
+                  <Lock className='h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors duration-200' />
                 </div>
                 <Input
                   id='contrasena'
@@ -179,12 +174,12 @@ export function LoginForm({
                   value={input.contrasena}
                   onChange={handleInput}
                   required
-                  className='pl-10 pr-10 bg-gray-50 dark:bg-gray-700/50 border-gray-200 dark:border-gray-700 focus:border-sky-500 dark:focus:border-sky-600 focus:ring-sky-500 dark:focus:ring-sky-600 rounded-lg transition-all duration-200 focus:shadow-md dark:focus:shadow-sky-900/20'
+                  className='pl-10 pr-10 bg-muted/50 border-border focus:border-primary focus:ring-primary rounded-xl transition-all duration-200 focus:shadow-md'
                 />
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500'
+                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors'
                 >
                   {showPassword ? (
                     <EyeOff className='h-5 w-5' />
@@ -199,15 +194,13 @@ export function LoginForm({
           <Button
             type='submit'
             disabled={loading}
-            className='w-full py-6 rounded-lg relative overflow-hidden group'
+            className='w-full py-6 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300'
           >
-            <div className='absolute inset-0 bg-gradient-to-r from-sky-500 to-teal-600 dark:from-sky-600 dark:to-teal-700 transition-all duration-300 group-hover:scale-105'></div>
-            <div className='absolute inset-0 opacity-0 group-hover:opacity-20 bg-white dark:bg-black transition-opacity duration-300'></div>
-            <span className='relative text-white font-medium'>
+            <span className='font-medium'>
               {loading ? (
                 <div className='flex items-center justify-center'>
                   <svg
-                    className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+                    className='animate-spin -ml-1 mr-3 h-5 w-5 text-primary-foreground'
                     xmlns='http://www.w3.org/2000/svg'
                     fill='none'
                     viewBox='0 0 24 24'

@@ -32,7 +32,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
     ),
     accessorKey: 'cd_codigoenerlova',
     cell: ({ row }) => (
-      <div className='font-mono text-xs sm:text-sm text-blue-600 dark:text-blue-400'>
+      <div className='font-mono text-xs sm:text-sm '>
         {row.getValue('cd_codigoenerlova')}
       </div>
     ),
@@ -48,7 +48,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
     ),
     accessorKey: 'CD_Descripcion',
     cell: ({ row }) => (
-      <div className='text-xs sm:text-sm text-slate-900 dark:text-slate-100 max-w-[150px] sm:max-w-lg truncate'>
+      <div className='text-xs sm:text-sm max-w-[150px] sm:max-w-lg truncate'>
         {row.getValue('CD_Descripcion')}
       </div>
     ),
@@ -104,7 +104,7 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
   {
     id: 'actions',
     header: () => (
-      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm'>
+      <div className='text-center font-semibold text-xs sm:text-sm'>
         <span className='hidden sm:inline'>Detalles</span>
         <span className='sm:hidden'>Det.</span>
       </div>

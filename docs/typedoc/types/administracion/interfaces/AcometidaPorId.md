@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / AcometidaPorId
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:314](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:315](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L315)
 
-***
+---
 
 ### ubicacion
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:315](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:316](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L316)
 
-***
+---
 
 ### contratoId
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:316](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:317](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L317)
 
-***
+---
 
 ### empalmeId
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:317](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:318](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L318)
 
-***
+---
 
 ### nichoId
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:318](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:319](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L319)
 
-***
+---
 
 ### codigo
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:319](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:320](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L320)
 
-***
+---
 
 ### limitePotencia
 

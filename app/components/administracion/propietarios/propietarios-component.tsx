@@ -48,7 +48,6 @@ export default function PropietariosComponent({
     tieneEmail: 'all'
   });
 
-
   // Filter options from data
   const filterOptions = useMemo((): FilterOptions => {
     const comunas = [
@@ -132,7 +131,6 @@ export default function PropietariosComponent({
     { header: 'Email', key: 'email' }
   ];
 
-
   const handleDetailsPropietario = (propietario: GetPropietario) => {
     setDetailedPropietario(propietario);
     setIsDetailsOpen(true);
@@ -142,7 +140,7 @@ export default function PropietariosComponent({
     setIsSyncing(true);
     try {
       const result = await administracionService.sincronizarPropietarios();
-      
+
       if (result.error) {
         toast.error(result.error);
         return;
@@ -177,7 +175,7 @@ export default function PropietariosComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -195,11 +193,13 @@ export default function PropietariosComponent({
               />
               <Button
                 onClick={handleSyncPropietarios}
-                className='bg-emerald-600 hover:bg-emerald-700 text-white'
+                className='bg-emerald-600 hover:bg-emerald-700'
                 size='sm'
                 disabled={isSyncing}
               >
-                <RefreshCw className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                <RefreshCw
+                  className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+                />
                 {isSyncing ? 'Sincronizando...' : 'Sincronizar con Locales'}
               </Button>
             </div>
@@ -223,7 +223,7 @@ export default function PropietariosComponent({
         />
 
         {/* Table */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
             <div className='overflow-x-auto'>
               <DataTable

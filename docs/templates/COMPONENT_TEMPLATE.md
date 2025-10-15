@@ -4,7 +4,7 @@ Esta plantilla te ayuda a documentar componentes React de forma consistente.
 
 ## Componente Simple
 
-```typescript
+````typescript
 import React from 'react';
 
 /**
@@ -57,13 +57,13 @@ export function MiComponente({
     </div>
   );
 }
-```
+````
 
 ---
 
 ## Componente Complejo (Vista de Módulo)
 
-```typescript
+````typescript
 import { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
 import { columns } from './columns';
@@ -121,13 +121,13 @@ export default function MiModuloComponent({
     </div>
   );
 }
-```
+````
 
 ---
 
 ## Hook Personalizado
 
-```typescript
+````typescript
 import { useState, useEffect } from 'react';
 
 /**
@@ -179,9 +179,7 @@ interface UseMiHookReturn {
  * }
  * ```
  */
-export function useMiHook(
-  options: UseMiHookOptions = {}
-): UseMiHookReturn {
+export function useMiHook(options: UseMiHookOptions = {}): UseMiHookReturn {
   const { intervalo, autoStart = true } = options;
 
   const [datos, setDatos] = useState<MiTipo | null>(null);
@@ -220,7 +218,7 @@ export function useMiHook(
 
   return { datos, loading, error, refetch };
 }
-```
+````
 
 ---
 
@@ -229,12 +227,14 @@ export function useMiHook(
 ### ¿Qué documentar en componentes?
 
 #### SIEMPRE documenta:
+
 - ✅ Propósito y funcionalidad del componente
 - ✅ Props y su significado
 - ✅ Ejemplo de uso básico
 - ✅ Componentes complejos o no obvios
 
 #### Documenta CUANDO sea relevante:
+
 - 🔸 Arquitectura interna de componentes grandes
 - 🔸 Dependencias de otros componentes
 - 🔸 Side effects importantes
@@ -242,6 +242,7 @@ export function useMiHook(
 - 🔸 Estado interno complejo
 
 #### NO documentes:
+
 - ❌ Componentes UI simples y obvios (Button, Input)
 - ❌ Props auto-explicativos con tipos claros
 - ❌ Implementación DOM interna
@@ -249,6 +250,7 @@ export function useMiHook(
 ### Niveles de Documentación por Tipo
 
 #### Componentes UI Base (`app/components/ui/`)
+
 **Documentación mínima**: Solo si tiene comportamiento no estándar
 
 ```typescript
@@ -270,6 +272,7 @@ export function CreatableSelect({ ... }) { ... }
 ```
 
 #### Componentes de Vista/Módulo
+
 **Documentación completa**: Siempre documenta
 
 ```typescript
@@ -289,6 +292,7 @@ export default function ContratosComponent({ contratos, clientes }) { ... }
 ```
 
 #### Hooks Personalizados
+
 **Documentación completa**: Siempre documenta
 
 ```typescript
@@ -311,7 +315,7 @@ export function useAuth() { ... }
 
 ### Componente con Props Complejos
 
-```typescript
+````typescript
 interface GraficoCONFiguration {
   /** Tipo de gráfico a renderizar */
   tipo: 'linea' | 'barra' | 'pie';
@@ -356,11 +360,11 @@ interface GraficoCONFiguration {
  * ```
  */
 export function Grafico({ datos, config }: GraficoProps) { ... }
-```
+````
 
 ### Componente con Children Pattern
 
-```typescript
+````typescript
 /**
  * Layout de página con sidebar colapsable
  *
@@ -387,7 +391,7 @@ export function PageLayout({
   sidebar,
   showFooter = false
 }: PageLayoutProps) { ... }
-```
+````
 
 ---
 

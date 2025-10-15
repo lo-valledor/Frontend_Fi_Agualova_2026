@@ -87,7 +87,7 @@ export default function CargoTipoContratoComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         <ModernHeader
           title='Cargo Tipo Contrato'
@@ -96,7 +96,7 @@ export default function CargoTipoContratoComponent({
             <div className='flex gap-2'>
               <Button
                 onClick={handleAdd}
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700'
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -105,10 +105,10 @@ export default function CargoTipoContratoComponent({
             </div>
           }
         />
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <CardContent className='relative p-4'>
             {isLoading && (
-              <div className='absolute inset-0 bg-white/50 dark:bg-black/50 flex items-center justify-center rounded-lg z-10'>
+              <div className='absolute inset-0 bg-background flex items-center justify-center rounded-xl z-10'>
                 <LoadingSpinner />
               </div>
             )}

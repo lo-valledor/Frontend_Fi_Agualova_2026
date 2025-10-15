@@ -22,7 +22,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-2 min-w-0'>
         <span
-          className='font-mono text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100 truncate'
+          className='font-mono text-xs sm:text-sm font-medium truncate'
           title={row.original.cuenta}
         >
           {row.original.cuenta}
@@ -59,7 +59,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-2 min-w-0'>
         <div
-          className='font-medium text-xs sm:text-sm text-slate-900 dark:text-slate-100 truncate'
+          className='font-medium text-xs sm:text-sm truncate'
           title={row.original.descripcion}
         >
           {row.original.descripcion}

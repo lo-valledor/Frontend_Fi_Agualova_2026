@@ -271,7 +271,7 @@ export default function CorteReposicionComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
           {/* Header */}
@@ -294,29 +294,26 @@ export default function CorteReposicionComponent({
 
         <div className='space-y-4'>
           {/* Panel de Revisión modernizado */}
-          <Card
-            id='panel-revision'
-            className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'
-          >
+          <Card id='panel-revision' className='border-border bg-card'>
             <Collapsible open={isRevisionOpen} onOpenChange={setIsRevisionOpen}>
               <CollapsibleTrigger asChild>
-                <div className='p-3 border-b border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'>
+                <div className='p-3 border-b border-border cursor-pointer hover:bg-muted/30 transition-colors'>
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
-                      <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
-                        <ListChecks className='h-4 w-4' />
+                      <div className='flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10'>
+                        <ListChecks className='h-4 w-4 text-primary' />
                       </div>
                       <div>
-                        <CardTitle className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                        <CardTitle className='text-lg font-semibold'>
                           Panel de Revisión
                         </CardTitle>
-                        <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                        <CardDescription className='text-sm'>
                           Herramientas de gestión y control
                         </CardDescription>
                       </div>
                     </div>
                     <ChevronDown
-                      className={`h-5 w-5 text-slate-600 dark:text-slate-400 transition-transform duration-200 ${
+                      className={`h-5 w-5 transition-transform duration-200 ${
                         isRevisionOpen ? 'rotate-180' : ''
                       }`}
                     />
@@ -333,7 +330,7 @@ export default function CorteReposicionComponent({
                       size='sm'
                       onClick={handleBuscar}
                       disabled={isSearching}
-                      className='gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300'
+                      className='gap-1.5'
                     >
                       {isSearching ? (
                         <Loader2 className='h-4 w-4 animate-spin' />
@@ -348,79 +345,77 @@ export default function CorteReposicionComponent({
                           id='ver-totales-btn'
                           variant='outline'
                           size='sm'
-                          className='gap-1.5 border-slate-200 hover:bg-slate-50 text-slate-700 dark:border-slate-700 dark:hover:bg-slate-800 dark:text-slate-300'
+                          className='gap-1.5'
                         >
                           <BarChart3 className='h-4 w-4' />
                           Ver Totales
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className='sm:max-w-md border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'>
+                      <DialogContent className='sm:max-w-md'>
                         <DialogHeader>
-                          <DialogTitle className='flex items-center gap-2 text-slate-900 dark:text-slate-100'>
-                            <div className='flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
-                              <BarChart3 className='h-4 w-4' />
+                          <DialogTitle className='flex items-center gap-2'>
+                            <div className='flex h-6 w-6 items-center justify-center rounded-xl bg-primary/10'>
+                              <BarChart3 className='h-4 w-4 text-primary' />
                             </div>
                             Totales de Corte y Reposición
                           </DialogTitle>
-                          <DialogDescription className='text-slate-600 dark:text-slate-400'>
+                          <DialogDescription className='text-muted-foreground'>
                             Resumen de estados de corte y reposición
                           </DialogDescription>
                         </DialogHeader>
                         <div className='py-4'>
-                          <Table className='border border-slate-200 dark:border-slate-700'>
+                          <Table className='border-border'>
                             <TableBody>
-                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
-                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
+                              <TableRow className='border-b border-border hover:bg-muted/30'>
+                                <TableCell className='py-2 font-medium'>
                                   Pendiente
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
+                                <TableCell className='py-2 text-center'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
+                                <TableCell className='py-2 text-right font-semibold'>
                                   {getCantidadPorCodigo('NULL')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
-                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
+                              <TableRow className='border-b border-border hover:bg-muted/30'>
+                                <TableCell className='py-2 font-medium'>
                                   Liberado
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
+                                <TableCell className='py-2 text-center'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
+                                <TableCell className='py-2 text-right font-semibold'>
                                   {getCantidadPorCodigo('1')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
-                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
+                              <TableRow className='border-b border-border hover:bg-muted/30'>
+                                <TableCell className='py-2 font-medium'>
                                   Cortado
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
+                                <TableCell className='py-2 text-center'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
+                                <TableCell className='py-2 text-right font-semibold'>
                                   {getCantidadPorCodigo('2')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='border-b border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50'>
-                                <TableCell className='py-2 font-medium text-slate-900 dark:text-slate-100'>
+                              <TableRow className='border-b border-border hover:bg-muted/30'>
+                                <TableCell className='py-2 font-medium'>
                                   Reposición Solicitada
                                 </TableCell>
-                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
+                                <TableCell className='py-2 text-center'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right font-semibold text-slate-800 dark:text-slate-200'>
+                                <TableCell className='py-2 text-right font-semibold'>
                                   {getCantidadPorCodigo('3')}
                                 </TableCell>
                               </TableRow>
-                              <TableRow className='bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 font-bold'>
-                                <TableCell className='py-2 text-slate-900 dark:text-slate-100'>
-                                  TOTAL
-                                </TableCell>
-                                <TableCell className='py-2 text-center text-slate-600 dark:text-slate-400'>
+                              <TableRow className='bg-muted/50 border-b border-border font-bold'>
+                                <TableCell className='py-2'>TOTAL</TableCell>
+                                <TableCell className='py-2 text-center'>
                                   :
                                 </TableCell>
-                                <TableCell className='py-2 text-right text-slate-900 dark:text-slate-100'>
+                                <TableCell className='py-2 text-right'>
                                   {getCantidadPorCodigo('TOTAL')}
                                 </TableCell>
                               </TableRow>
@@ -435,7 +430,7 @@ export default function CorteReposicionComponent({
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcel}
-                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
+                      className='gap-1.5 bg-emerald-500 hover:bg-emerald-600'
                     >
                       <Download className='h-4 w-4' />
                       Exportar Excel
@@ -444,7 +439,7 @@ export default function CorteReposicionComponent({
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcelCorte}
-                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white'
+                      className='gap-1.5 bg-emerald-500 hover:bg-emerald-600'
                     >
                       <Download className='h-4 w-4' />
                       Exportar Excel Corte
@@ -454,25 +449,25 @@ export default function CorteReposicionComponent({
                       variant='default'
                       size='sm'
                       onClick={handleActivarActualizacion}
-                      className='gap-1.5 bg-slate-600 hover:bg-slate-700 text-white'
+                      className='gap-1.5'
                     >
                       <ArrowUpToLine className='h-4 w-4' />
                       Activar Actualización
                     </Button>
                     <Button
-                      variant='default'
+                      variant='destructive'
                       size='sm'
                       onClick={handleIniciar}
-                      className='gap-1.5 bg-slate-600 hover:bg-slate-700 text-white'
+                      className='gap-1.5'
                     >
                       <Play className='h-4 w-4' />
                       Iniciar
                     </Button>
                     <Button
-                      variant='default'
+                      variant='secondary'
                       size='sm'
                       onClick={handleFinalizar}
-                      className='gap-1.5 bg-slate-600 hover:bg-slate-700 text-white'
+                      className='gap-1.5'
                     >
                       <CheckCircle2 className='h-4 w-4' />
                       Finalizar
@@ -484,17 +479,17 @@ export default function CorteReposicionComponent({
           </Card>
 
           {/* Panel de Datos de Mantenedor modernizado */}
-          <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
-            <div className='p-4 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <Card className='border-border bg-card'>
+            <div className='p-4 border-b border-border'>
               <div className='flex items-center gap-3'>
-                <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
-                  <FileText className='h-4 w-4' />
+                <div className='flex h-8 w-8 items-center justify-center rounded-xl bg-primary/10'>
+                  <FileText className='h-4 w-4 text-primary' />
                 </div>
                 <div>
-                  <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                  <h3 className='text-lg font-semibold'>
                     Mantenedor de Revisión de Corte
                   </h3>
-                  <p className='text-sm text-slate-600 dark:text-slate-400'>
+                  <p className='text-sm text-muted-foreground'>
                     Listado de registros de mantenimiento (
                     {mantenedorCorteData.length} registros)
                   </p>
@@ -503,14 +498,14 @@ export default function CorteReposicionComponent({
             </div>
             <div className='p-4'>
               {mantenedorCorteData.length === 0 ? (
-                <div className='flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400'>
-                  <div className='flex h-16 w-16 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 mb-4'>
-                    <FileText className='h-8 w-8 text-slate-400 dark:text-slate-500' />
+                <div className='flex flex-col items-center justify-center py-12'>
+                  <div className='flex h-16 w-16 items-center justify-center rounded-xl bg-muted/30 mb-4'>
+                    <FileText className='h-8 w-8 text-muted-foreground' />
                   </div>
                   <p className='text-lg font-medium'>
                     No se encontraron registros
                   </p>
-                  <p className='text-sm'>
+                  <p className='text-sm text-muted-foreground'>
                     No hay datos de mantenimiento disponibles
                   </p>
                 </div>
@@ -521,35 +516,35 @@ export default function CorteReposicionComponent({
                     id='estadisticas-rapidas'
                     className='grid grid-cols-2 lg:grid-cols-4 gap-3'
                   >
-                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
-                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
+                    <div className='bg-card rounded-xl p-3 border border-border'>
+                      <div className='text-2xl font-bold'>
                         {getCantidadPorCodigo('NULL')}
                       </div>
-                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
+                      <div className='text-xs text-muted-foreground font-medium'>
                         Pendientes
                       </div>
                     </div>
-                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
-                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
+                    <div className='bg-card rounded-xl p-3 border border-border'>
+                      <div className='text-2xl font-bold'>
                         {getCantidadPorCodigo('1')}
                       </div>
-                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
+                      <div className='text-xs text-muted-foreground font-medium'>
                         Liberados
                       </div>
                     </div>
-                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
-                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
+                    <div className='bg-card rounded-xl p-3 border border-border'>
+                      <div className='text-2xl font-bold'>
                         {getCantidadPorCodigo('2')}
                       </div>
-                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
+                      <div className='text-xs text-muted-foreground font-medium'>
                         Cortados
                       </div>
                     </div>
-                    <div className='bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-200 dark:border-slate-700'>
-                      <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
+                    <div className='bg-card rounded-xl p-3 border border-border'>
+                      <div className='text-2xl font-bold'>
                         {getCantidadPorCodigo('3')}
                       </div>
-                      <div className='text-xs text-slate-600 dark:text-slate-400 font-medium'>
+                      <div className='text-xs text-muted-foreground font-medium'>
                         Reposición Solicitada
                       </div>
                     </div>
@@ -558,7 +553,7 @@ export default function CorteReposicionComponent({
                   {/* Tabla moderna */}
                   <div
                     id='tabla-datos'
-                    className='border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden'
+                    className='border-border bg-card overflow-hidden'
                   >
                     <DataTable
                       columns={columns}

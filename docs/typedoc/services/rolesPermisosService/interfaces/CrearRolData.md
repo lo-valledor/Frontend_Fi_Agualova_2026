@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/rolesPermisosService](../README.md) / CrearRolData
 
@@ -16,7 +16,7 @@ Defined in: [app/services/rolesPermisosService.ts:10](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:11](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L11)
 
-***
+---
 
 ### descripcion?
 

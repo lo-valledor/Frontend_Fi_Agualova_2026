@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / AntiguoMedidorFormProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:317](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:318](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L318)
 
-***
+---
 
 ### isLoading
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:318](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:319](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L319)
 
-***
+---
 
 ### onMedidorChange()
 
@@ -42,7 +42,7 @@ Defined in: [app/types/operaciones.ts:320](https://github.com/lo-valledor/front-
 
 `void`
 
-***
+---
 
 ### onBuscar()
 
@@ -54,7 +54,7 @@ Defined in: [app/types/operaciones.ts:321](https://github.com/lo-valledor/front-
 
 `Promise`\<`void`\>
 
-***
+---
 
 ### onLimpiar()
 

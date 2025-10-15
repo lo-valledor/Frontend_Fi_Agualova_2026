@@ -234,7 +234,7 @@ export default function EditarMedidor({
               </AlertTitle>
               <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
                 {medidorModificado?.id && (
-                  <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
+                  <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
                     <div>
                       <p className='font-medium'>ID del Medidor:</p>
                       <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
@@ -284,7 +284,7 @@ export default function EditarMedidor({
                   setMedidorModificado(null);
                   navigate('/dashboard/administracion/medidores');
                 }}
-                className='flex-1 gap-2 bg-green-600 hover:bg-green-700 text-white'
+                className='flex-1 gap-2 bg-green-600 hover:bg-green-700'
               >
                 <ArrowLeft className='h-4 w-4' />
                 Volver a Medidores

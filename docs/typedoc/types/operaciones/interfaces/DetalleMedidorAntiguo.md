@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / DetalleMedidorAntiguo
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:290](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:291](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L291)
 
-***
+---
 
 ### constante
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:291](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:292](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L292)
 
-***
+---
 
 ### marca
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:292](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:293](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L293)
 
-***
+---
 
 ### ultimaLectura
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:293](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:294](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L294)
 
-***
+---
 
 ### numeroMedidor
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:294](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:295](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L295)
 
-***
+---
 
 ### tipo
 
@@ -56,7 +56,7 @@ Defined in: [app/types/operaciones.ts:295](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:296](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L296)
 
-***
+---
 
 ### modelo
 
@@ -64,7 +64,7 @@ Defined in: [app/types/operaciones.ts:296](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:297](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L297)
 
-***
+---
 
 ### lecturaActual
 
@@ -72,7 +72,7 @@ Defined in: [app/types/operaciones.ts:297](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:298](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L298)
 
-***
+---
 
 ### medidorId
 

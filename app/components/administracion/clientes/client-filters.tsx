@@ -67,8 +67,8 @@ export function ClientFiltersComponent({
           <CardHeader className='cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-                  <Filter className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
+                  <Filter className='h-4 w-4 ' />
                 </div>
                 <div>
                   <CardTitle className='text-lg text-blue-800 dark:text-blue-200'>
@@ -90,11 +90,7 @@ export function ClientFiltersComponent({
                     {activeFiltersCount !== 1 ? 's' : ''}
                   </Badge>
                 )}
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className='text-blue-600 dark:text-blue-400'
-                >
+                <Button variant='ghost' size='sm' className=''>
                   {isOpen ? 'Ocultar' : 'Mostrar'}
                 </Button>
               </div>
@@ -110,10 +106,7 @@ export function ClientFiltersComponent({
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
               {/* Tipo de Cliente */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='esEmpresa'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='esEmpresa' className='text-sm font-medium'>
                   Tipo de Cliente
                 </Label>
                 <Select
@@ -135,10 +128,7 @@ export function ClientFiltersComponent({
 
               {/* Comuna */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='comuna'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='comuna' className='text-sm font-medium'>
                   Comuna
                 </Label>
                 <Select
@@ -161,10 +151,7 @@ export function ClientFiltersComponent({
 
               {/* Código de Comuna */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='codigoComuna'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='codigoComuna' className='text-sm font-medium'>
                   Código Comuna
                 </Label>
                 <Select
@@ -192,10 +179,7 @@ export function ClientFiltersComponent({
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
               {/* Tiene Contacto */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tieneContacto'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tieneContacto' className='text-sm font-medium'>
                   Tiene Contacto
                 </Label>
                 <Select
@@ -217,10 +201,7 @@ export function ClientFiltersComponent({
 
               {/* Tiene Teléfono */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tieneTelefono'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tieneTelefono' className='text-sm font-medium'>
                   Tiene Teléfono
                 </Label>
                 <Select
@@ -242,10 +223,7 @@ export function ClientFiltersComponent({
 
               {/* Tiene Email */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tieneEmail'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tieneEmail' className='text-sm font-medium'>
                   Tiene Email
                 </Label>
                 <Select
@@ -272,7 +250,7 @@ export function ClientFiltersComponent({
                 <Separator />
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
-                    <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                    <span className='text-sm font-medium'>
                       Filtros activos:
                     </span>
                     <div className='flex flex-wrap gap-2'>
@@ -390,7 +368,7 @@ export function ClientFiltersComponent({
                     variant='outline'
                     size='sm'
                     onClick={onClearFilters}
-                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400'
+                    className='hover:text-red-600 dark:hover:text-red-400'
                   >
                     <RotateCcw className='h-4 w-4 mr-1' />
                     Limpiar Filtros

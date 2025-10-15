@@ -86,7 +86,7 @@ export function CorteRegistradoDialog({
       <DialogContent className='mx-4 sm:max-w-md rounded-xl border border-rose-200/40 bg-white/95 backdrop-blur-sm dark:border-rose-800/40 dark:bg-gray-900/95'>
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2 text-rose-900 dark:text-rose-100 text-base sm:text-lg'>
-            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white flex-shrink-0'>
+            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 flex-shrink-0'>
               <Scissors className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
             </div>
             <span className='truncate'>Registrar Corte</span>
@@ -154,7 +154,7 @@ export function CorteRegistradoDialog({
             type='submit'
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className='w-full sm:w-auto bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white text-sm sm:text-base'
+            className='w-full sm:w-auto bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-sm sm:text-base'
           >
             {isSubmitting ? 'Guardando...' : 'Guardar'}
           </Button>

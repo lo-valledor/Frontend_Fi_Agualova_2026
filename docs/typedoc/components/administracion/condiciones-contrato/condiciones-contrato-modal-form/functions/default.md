@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/administracion/condiciones-contrato/condiciones-contrato-modal-form](../README.md) / default
 

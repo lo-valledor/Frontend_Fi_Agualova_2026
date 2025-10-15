@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetClienteById
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:545](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:546](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L546)
 
-***
+---
 
 ### nombre
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:546](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:547](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L547)
 
-***
+---
 
 ### apellido
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:547](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:548](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L548)
 
-***
+---
 
 ### esEmpresa
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:548](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:549](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L549)
 
-***
+---
 
 ### direccion
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:549](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:550](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L550)
 
-***
+---
 
 ### comuna
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:550](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:551](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L551)
 
-***
+---
 
 ### codComuna
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:551](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:552](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L552)
 
-***
+---
 
 ### contacto
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:552](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:553](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L553)
 
-***
+---
 
 ### telefono
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:553](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:554](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L554)
 
-***
+---
 
 ### email
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:554](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:555](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L555)
 
-***
+---
 
 ### codigoGiro
 
@@ -96,7 +96,7 @@ Defined in: [app/types/administracion.ts:555](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:556](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L556)
 
-***
+---
 
 ### giro
 

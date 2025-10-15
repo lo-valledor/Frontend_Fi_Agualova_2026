@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / ComboAsociadoConceptos
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:33](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:34](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L34)
 
-***
+---
 
 ### descripcion
 

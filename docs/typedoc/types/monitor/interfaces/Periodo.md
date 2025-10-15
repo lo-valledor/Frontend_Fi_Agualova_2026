@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / Periodo
 
@@ -16,7 +16,7 @@ Defined in: [app/types/monitor.ts:4](https://github.com/lo-valledor/front-respal
 
 Defined in: [app/types/monitor.ts:5](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L5)
 
-***
+---
 
 ### FechaInicio
 
@@ -24,7 +24,7 @@ Defined in: [app/types/monitor.ts:5](https://github.com/lo-valledor/front-respal
 
 Defined in: [app/types/monitor.ts:6](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L6)
 
-***
+---
 
 ### FechaFin
 
@@ -32,7 +32,7 @@ Defined in: [app/types/monitor.ts:6](https://github.com/lo-valledor/front-respal
 
 Defined in: [app/types/monitor.ts:7](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L7)
 
-***
+---
 
 ### FechaOrden
 
@@ -40,7 +40,7 @@ Defined in: [app/types/monitor.ts:7](https://github.com/lo-valledor/front-respal
 
 Defined in: [app/types/monitor.ts:8](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L8)
 
-***
+---
 
 ### DescripcionPeriodo
 
@@ -48,7 +48,7 @@ Defined in: [app/types/monitor.ts:8](https://github.com/lo-valledor/front-respal
 
 Defined in: [app/types/monitor.ts:9](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L9)
 
-***
+---
 
 ### EstadoPeriodo
 

@@ -5,12 +5,14 @@ Esta guía explica cómo documentar código en el proyecto Enerlova Frontend.
 ## 📚 Recursos Disponibles
 
 ### Documentación Principal
+
 - **[ARCHITECTURE.md](../ARCHITECTURE.md)** - Arquitectura completa del sistema
 - **[CLAUDE.md](../CLAUDE.md)** - Guía para Claude Code
 - **[DEPLOY-README.md](../DEPLOY-README.md)** - Guía de deployment
 - **[README.md](../README.md)** - README principal
 
 ### Plantillas de Documentación
+
 - **[SERVICE_TEMPLATE.md](./templates/SERVICE_TEMPLATE.md)** - Plantilla para servicios
 - **[COMPONENT_TEMPLATE.md](./templates/COMPONENT_TEMPLATE.md)** - Plantilla para componentes
 
@@ -21,14 +23,17 @@ Esta guía explica cómo documentar código en el proyecto Enerlova Frontend.
 ### Principios
 
 1. **Documenta el POR QUÉ, no el QUÉ**
+
    - ❌ "Llama a la API" (obvio)
    - ✅ "Usa Promise.all para hacer requests en paralelo y reducir tiempo de carga" (útil)
 
 2. **TypeScript ya documenta los tipos**
+
    - No repitas información de tipos en JSDoc
    - Enfócate en comportamiento, no en firma
 
 3. **Los ejemplos valen más que mil palabras**
+
    - Incluye ejemplos de uso en métodos públicos
    - Muestra casos comunes y edge cases
 
@@ -43,6 +48,7 @@ Esta guía explica cómo documentar código en el proyecto Enerlova Frontend.
 ### ✅ SIEMPRE Documenta
 
 #### Servicios (app/services/)
+
 - [ ] Interfaz de respuesta (`ServiceResponse`)
 - [ ] Clase de servicio con descripción general
 - [ ] Todos los métodos públicos
@@ -51,6 +57,7 @@ Esta guía explica cómo documentar código en el proyecto Enerlova Frontend.
 - [ ] Al menos un `@example` en métodos principales
 
 #### Componentes Complejos
+
 - [ ] Componentes de vista de módulo (CRUD completos)
 - [ ] Hooks personalizados
 - [ ] Componentes con lógica no trivial
@@ -58,6 +65,7 @@ Esta guía explica cómo documentar código en el proyecto Enerlova Frontend.
 - [ ] Ejemplo de uso
 
 #### Utilidades
+
 - [ ] Funciones helper complejas
 - [ ] Funciones con side effects
 - [ ] Funciones reutilizadas en múltiples lugares
@@ -87,12 +95,14 @@ Esta guía explica cómo documentar código en el proyecto Enerlova Frontend.
 **Configurado en**: `eslint.config.js`
 
 Valida automáticamente la calidad de JSDoc:
+
 - Alineación y formato
 - Nombres de parámetros
 - Descripciones requeridas
 - Consistencia
 
 **Ejecución**:
+
 ```bash
 pnpm lint        # Ver warnings de documentación
 pnpm lint:fix    # Fix automático de formato
@@ -103,7 +113,9 @@ pnpm lint:fix    # Fix automático de formato
 Instala estas extensiones para mejorar la experiencia:
 
 #### **Better Comments**
+
 Colorea comentarios especiales:
+
 ```typescript
 // TODO: Implementar validación
 // FIXME: Bug en el cálculo de fecha
@@ -112,12 +124,15 @@ Colorea comentarios especiales:
 ```
 
 #### **Document This**
+
 Genera JSDoc automáticamente:
+
 - Posiciona cursor sobre función
 - `Ctrl+Alt+D` (Windows) o `Cmd+Alt+D` (Mac)
 - Genera plantilla JSDoc
 
 #### **TypeScript JSDoc Generator**
+
 Similar a Document This pero más completo.
 
 ---
@@ -126,7 +141,7 @@ Similar a Document This pero más completo.
 
 ### Servicios (`.ts` en `app/services/`)
 
-```typescript
+````typescript
 /**
  * Servicio para operaciones de [MÓDULO]
  *
@@ -154,7 +169,7 @@ class MiServicio {
     // Implementación...
   }
 }
-```
+````
 
 **Ver**: [SERVICE_TEMPLATE.md](./templates/SERVICE_TEMPLATE.md)
 
@@ -163,9 +178,11 @@ class MiServicio {
 ### Componentes (`.tsx` en `app/components/`)
 
 #### Componentes Simples
+
 No necesitan documentación si son obvios.
 
 #### Componentes de Módulo
+
 ```typescript
 /**
  * Componente principal para la gestión de [entidades]
@@ -188,7 +205,7 @@ export default function MiModuloComponent({ datos }: Props) {
 
 ### Hooks (`app/hooks/`)
 
-```typescript
+````typescript
 /**
  * Hook para [DESCRIPCIÓN]
  *
@@ -207,13 +224,13 @@ export default function MiModuloComponent({ datos }: Props) {
 export function useMiHook(options: Options): Return {
   // Implementación...
 }
-```
+````
 
 ---
 
 ### Utilidades (`app/utils/`)
 
-```typescript
+````typescript
 /**
  * Formatea un RUT chileno con guión y puntos
  *
@@ -228,7 +245,7 @@ export function useMiHook(options: Options): Return {
 export function formatRut(rut: string): string {
   // Implementación...
 }
-```
+````
 
 ---
 
@@ -306,6 +323,7 @@ private processApiResponse<T>(response: any): T[] {
 ```
 
 **Por qué es bueno:**
+
 - ✅ Explica el POR QUÉ (backend inconsistente)
 - ✅ Documenta formatos específicos con ejemplos
 - ✅ Describe comportamiento de fallback
@@ -325,6 +343,7 @@ async getCiclosFacturacion(): Promise<ServiceResponse<CiclosFacturacion[]>> {
 ```
 
 **Por qué es bueno:**
+
 - ✅ Conciso y claro
 - ✅ No repite información obvia
 - ✅ TypeScript ya documenta los tipos
@@ -344,6 +363,7 @@ async getCiclosFacturacion(): Promise<ServiceResponse<CiclosFacturacion[]>> {
 ```
 
 **Por qué es malo:**
+
 - ❌ Descripción vacía/inútil
 - ❌ Mezcla inglés y español
 - ❌ Tags innecesarios (@memberof)
@@ -355,12 +375,12 @@ async getCiclosFacturacion(): Promise<ServiceResponse<CiclosFacturacion[]>> {
 
 ### Objetivo del Proyecto
 
-| Categoría | Meta | Estado Actual |
-|-----------|------|---------------|
-| Servicios | 100% métodos públicos | ~80% ✅ |
-| Componentes de módulo | 100% componentes principales | ~20% ⚠️ |
-| Hooks personalizados | 100% | ~0% ❌ |
-| Utilidades | 80% funciones complejas | ~30% ⚠️ |
+| Categoría             | Meta                         | Estado Actual |
+| --------------------- | ---------------------------- | ------------- |
+| Servicios             | 100% métodos públicos        | ~80% ✅       |
+| Componentes de módulo | 100% componentes principales | ~20% ⚠️       |
+| Hooks personalizados  | 100%                         | ~0% ❌        |
+| Utilidades            | 80% funciones complejas      | ~30% ⚠️       |
 
 ### Cómo Mejorar
 
@@ -374,24 +394,31 @@ async getCiclosFacturacion(): Promise<ServiceResponse<CiclosFacturacion[]>> {
 ## 🆘 FAQ
 
 ### ¿Debo documentar componentes UI simples como Button?
+
 **No**. Si el componente es obvio y sigue patrones estándar, no necesita JSDoc.
 
 ### ¿Qué hago si el autogenerador crea JSDoc vacío?
+
 **Bórralo y escribe uno útil**. JSDoc autogenerado sin contenido es peor que nada.
 
 ### ¿Debo documentar en español o inglés?
+
 **Español** para descripciones, **inglés** para nombres de código (funciones, variables).
 
 ### ¿Los tags @param y @returns son obligatorios?
+
 **Sí** para métodos con parámetros/retorno no triviales. ESLint te avisará si faltan.
 
 ### ¿Necesito ejemplos en todos los métodos?
+
 **No**, solo en:
+
 - Métodos públicos principales
 - Hooks personalizados
 - APIs no obvias
 
 ### ¿Qué hago si no sé qué documentar?
+
 1. Lee las **plantillas** en `docs/templates/`
 2. Mira **ejemplos reales** en `app/services/mantencionService.ts`
 3. Pregunta en tu PR
@@ -415,6 +442,7 @@ Este documento será actualizado conforme el proyecto evolucione.
 **Última actualización**: 2025-01-13
 
 **Próximos pasos**:
+
 - [ ] Documentar hooks personalizados existentes
 - [ ] Completar JSDoc en componentes de módulo
 - [ ] Agregar más ejemplos en utilidades

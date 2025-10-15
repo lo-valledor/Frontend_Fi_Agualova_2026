@@ -22,7 +22,7 @@ export default function InformacionLectura({
     value: string | number | null | undefined,
     unit?: string
   ) => (
-    <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+    <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
       <div className='flex items-center gap-2 mb-1.5'>
         {icon}
         <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -52,12 +52,12 @@ export default function InformacionLectura({
       </CardHeader>
       <CardContent className='px-0 space-y-3'>
         {error ? (
-          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-lg border border-red-200 dark:border-red-800'>
+          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
             <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
             <span>{error}</span>
           </div>
         ) : !lectura ? (
-          <div className='flex items-start gap-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/20 px-3 py-2 rounded-lg border border-blue-200 dark:border-blue-800'>
+          <div className='flex items-start gap-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/20 px-3 py-2 rounded-xl border border-blue-200 dark:border-blue-800'>
             <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
             <span>No hay datos de la lectura del período en consulta.</span>
           </div>
@@ -65,7 +65,7 @@ export default function InformacionLectura({
           <div className='space-y-3'>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
               {renderInfoCard(
-                <Calendar className='h-3 w-3 text-sky-600 dark:text-sky-400' />,
+                <Calendar className='h-3 w-3 text-primary' />,
                 'Fecha Lectura',
                 lectura.LM_FechaLectura
                   ? format(
@@ -88,7 +88,7 @@ export default function InformacionLectura({
               )}
             </div>
             {lectura.LM_Observaciones && (
-              <div className='p-3 bg-muted/30 rounded-lg border border-border/20'>
+              <div className='p-3 bg-muted/30 rounded-xl border border-border/20'>
                 <div className='flex items-center gap-2 mb-1.5'>
                   <StickyNote className='h-3 w-3 text-yellow-600 dark:text-yellow-400' />
                   <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>

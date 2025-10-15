@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [utils/token-sync](../README.md) / TokenData
 
@@ -16,7 +16,7 @@ Defined in: [app/utils/token-sync.ts:4](https://github.com/lo-valledor/front-res
 
 Defined in: [app/utils/token-sync.ts:5](https://github.com/lo-valledor/front-respaldo/blob/develop/app/utils/token-sync.ts#L5)
 
-***
+---
 
 ### name
 
@@ -24,7 +24,7 @@ Defined in: [app/utils/token-sync.ts:5](https://github.com/lo-valledor/front-res
 
 Defined in: [app/utils/token-sync.ts:6](https://github.com/lo-valledor/front-respaldo/blob/develop/app/utils/token-sync.ts#L6)
 
-***
+---
 
 ### NombreUsuario
 
@@ -32,7 +32,7 @@ Defined in: [app/utils/token-sync.ts:6](https://github.com/lo-valledor/front-res
 
 Defined in: [app/utils/token-sync.ts:7](https://github.com/lo-valledor/front-respaldo/blob/develop/app/utils/token-sync.ts#L7)
 
-***
+---
 
 ### role
 
@@ -40,7 +40,7 @@ Defined in: [app/utils/token-sync.ts:7](https://github.com/lo-valledor/front-res
 
 Defined in: [app/utils/token-sync.ts:8](https://github.com/lo-valledor/front-respaldo/blob/develop/app/utils/token-sync.ts#L8)
 
-***
+---
 
 ### exp
 
@@ -48,7 +48,7 @@ Defined in: [app/utils/token-sync.ts:8](https://github.com/lo-valledor/front-res
 
 Defined in: [app/utils/token-sync.ts:9](https://github.com/lo-valledor/front-respaldo/blob/develop/app/utils/token-sync.ts#L9)
 
-***
+---
 
 ### iss
 
@@ -56,7 +56,7 @@ Defined in: [app/utils/token-sync.ts:9](https://github.com/lo-valledor/front-res
 
 Defined in: [app/utils/token-sync.ts:10](https://github.com/lo-valledor/front-respaldo/blob/develop/app/utils/token-sync.ts#L10)
 
-***
+---
 
 ### aud
 

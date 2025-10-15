@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / ProyeccionMetadata
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:30](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L31)
 
-***
+---
 
 ### muestrasEntrenamiento
 
@@ -24,7 +24,7 @@ Defined in: [app/services/aiService.ts:31](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:32](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L32)
 
-***
+---
 
 ### confianzaGeneral
 
@@ -32,7 +32,7 @@ Defined in: [app/services/aiService.ts:32](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:33](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L33)
 
-***
+---
 
 ### fechaEntrenamiento
 
@@ -40,7 +40,7 @@ Defined in: [app/services/aiService.ts:33](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:34](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L34)
 
-***
+---
 
 ### periodoHistorico
 
@@ -48,7 +48,7 @@ Defined in: [app/services/aiService.ts:34](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:35](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L35)
 
-***
+---
 
 ### totalConsumoProyectado
 
@@ -56,7 +56,7 @@ Defined in: [app/services/aiService.ts:35](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:36](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L36)
 
-***
+---
 
 ### totalFacturacionProyectada
 
@@ -64,7 +64,7 @@ Defined in: [app/services/aiService.ts:36](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:37](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L37)
 
-***
+---
 
 ### promedioMensualConsumo
 
@@ -72,7 +72,7 @@ Defined in: [app/services/aiService.ts:37](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:38](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L38)
 
-***
+---
 
 ### promedioMensualFacturacion
 

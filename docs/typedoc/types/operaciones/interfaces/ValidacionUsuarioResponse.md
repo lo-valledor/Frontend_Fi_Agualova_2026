@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / ValidacionUsuarioResponse
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:72](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:73](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L73)
 
-***
+---
 
 ### nombreCompleto
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:73](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:74](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L74)
 
-***
+---
 
 ### fechaIngreso
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:74](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:75](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L75)
 
-***
+---
 
 ### idPerfil
 

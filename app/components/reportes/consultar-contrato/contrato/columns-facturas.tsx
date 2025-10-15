@@ -92,9 +92,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     cell: ({ row }) => {
       const total = row.getValue('valorTotal');
       return (
-        <div className='text-left font-bold text-slate-900 dark:text-slate-100'>
-          ${total?.toLocaleString()}
-        </div>
+        <div className='text-left font-bold'>${total?.toLocaleString()}</div>
       );
     },
     enableSorting: true

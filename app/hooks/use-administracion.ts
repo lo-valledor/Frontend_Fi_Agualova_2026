@@ -452,11 +452,22 @@ export function useAdministracion() {
     }
   };
 
+  const getUsuarioById = async (idUsuario: number): Promise<Usuarios> => {
+    try {
+      const response = await api.get(`/obtener/${idUsuario}`);
+      return response.data as Usuarios;
+    } catch (error) {
+      console.error('Error al obtener usuario:', error);
+      throw error;
+    }
+  };
+
   return {
     createUsuario,
     updateUsuario,
     deleteUsuario,
     fetchUsuarios,
+    getUsuarioById,
     loadingState
   };
 }

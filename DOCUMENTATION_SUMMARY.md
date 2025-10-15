@@ -7,6 +7,7 @@
 **Archivo**: `app/services/mantencionService.ts`
 
 **Cambios realizados**:
+
 - ✅ Eliminados JSDoc duplicados y autogenerados vacíos
 - ✅ Agregadas descripciones útiles y contextuales
 - ✅ Documentadas interfaces con `@template`
@@ -26,6 +27,7 @@
 **Archivo**: `ARCHITECTURE.md`
 
 **Contenido**:
+
 - 📚 Stack tecnológico completo
 - 🗂️ Estructura del proyecto explicada
 - 🏗️ 6 módulos de negocio documentados:
@@ -50,9 +52,11 @@
 ### 3. **Creadas Plantillas de Documentación** ✅
 
 #### **Plantilla de Servicios**
+
 **Archivo**: `docs/templates/SERVICE_TEMPLATE.md`
 
 **Incluye**:
+
 - Estructura básica de servicios
 - Ejemplos de métodos CRUD
 - Documentación de métodos con Promise.all
@@ -64,9 +68,11 @@
 **Ver archivo**: [docs/templates/SERVICE_TEMPLATE.md](docs/templates/SERVICE_TEMPLATE.md)
 
 #### **Plantilla de Componentes**
+
 **Archivo**: `docs/templates/COMPONENT_TEMPLATE.md`
 
 **Incluye**:
+
 - Componentes simples
 - Componentes complejos de módulo
 - Hooks personalizados
@@ -82,10 +88,12 @@
 ### 4. **Configurado eslint-plugin-jsdoc** ✅
 
 **Archivos modificados**:
+
 - `package.json` - Agregado `eslint-plugin-jsdoc`
 - `eslint.config.js` - Configuradas reglas de JSDoc
 
 **Reglas activadas**:
+
 - ✅ `jsdoc/check-alignment` - Verifica alineación
 - ✅ `jsdoc/check-indentation` - Verifica indentación
 - ✅ `jsdoc/check-param-names` - Valida nombres de parámetros
@@ -97,6 +105,7 @@
 - ✅ `jsdoc/require-returns-description` - Requiere descripción de returns
 
 **Uso**:
+
 ```bash
 pnpm lint        # Ver warnings de documentación
 pnpm lint:fix    # Fix automático de formato
@@ -109,6 +118,7 @@ pnpm lint:fix    # Fix automático de formato
 **Archivo**: `docs/DOCUMENTATION_GUIDE.md`
 
 **Contenido**:
+
 - 🎯 Filosofía de documentación del proyecto
 - 📝 Qué documentar (y qué no)
 - 🛠️ Herramientas instaladas y cómo usarlas
@@ -128,6 +138,7 @@ pnpm lint:fix    # Fix automático de formato
 **Archivo**: `docs/README.md`
 
 **Contenido**:
+
 - 📖 Enlaces a toda la documentación principal
 - 📝 Índice de plantillas
 - 🗂️ Documentación organizada por módulo
@@ -144,6 +155,7 @@ pnpm lint:fix    # Fix automático de formato
 ## 📊 Métricas de Mejora
 
 ### Antes
+
 - ❌ 0 documentos de arquitectura
 - ⚠️ JSDoc inconsistente y autogenerado
 - ❌ Sin plantillas de documentación
@@ -151,6 +163,7 @@ pnpm lint:fix    # Fix automático de formato
 - ❌ Sin guías para desarrolladores
 
 ### Después
+
 - ✅ Arquitectura completa documentada
 - ✅ JSDoc limpio y útil en servicio ejemplo
 - ✅ 2 plantillas completas (servicios y componentes)
@@ -165,6 +178,7 @@ pnpm lint:fix    # Fix automático de formato
 ### Corto Plazo (1-2 semanas)
 
 1. **Completar JSDoc en servicios restantes**
+
    - [ ] `administracionService.ts`
    - [ ] `monitorService.ts`
    - [ ] `operacionesService.ts`
@@ -176,6 +190,7 @@ pnpm lint:fix    # Fix automático de formato
    **Referencia**: Usar `mantencionService.ts` como ejemplo
 
 2. **Documentar hooks personalizados**
+
    - [ ] `useAuth.ts`
    - [ ] `useBreadcrumb.ts`
    - [ ] `useLoadingBar.ts`
@@ -189,6 +204,7 @@ pnpm lint:fix    # Fix automático de formato
 ### Mediano Plazo (1 mes)
 
 4. **Documentar componentes principales de módulo**
+
    - [ ] Componentes CRUD de cada módulo
    - [ ] Al menos descripción general y props
 
@@ -200,10 +216,12 @@ pnpm lint:fix    # Fix automático de formato
 ### Largo Plazo (Opcional)
 
 6. **Storybook para componentes UI**
+
    - Catálogo visual de componentes `app/components/ui/`
    - Documentación interactiva
 
 7. **TypeDoc para generación automática**
+
    - Docs HTML generadas de JSDoc
    - Publicadas en subdirectorio `/docs`
 
@@ -226,11 +244,13 @@ pnpm lint:fix    # Fix automático de formato
 ### Para Desarrolladores Existentes
 
 1. **Instala extensiones VSCode recomendadas**:
+
    - Better Comments
    - Document This
    - TypeScript JSDoc Generator
 
 2. **Al crear código nuevo**:
+
    - Consulta plantillas en `docs/templates/`
    - Ejecuta `pnpm lint` para validar JSDoc
    - Revisa `mantencionService.ts` como ejemplo
@@ -242,6 +262,7 @@ pnpm lint:fix    # Fix automático de formato
 ### Para Claude Code
 
 Claude ahora tiene contexto completo del proyecto en:
+
 - `CLAUDE.md` - Guía específica
 - `ARCHITECTURE.md` - Arquitectura completa
 - `docs/` - Toda la documentación
@@ -251,6 +272,7 @@ Claude ahora tiene contexto completo del proyecto en:
 ## 📝 Archivos Creados/Modificados
 
 ### Archivos Nuevos
+
 - ✅ `ARCHITECTURE.md`
 - ✅ `DOCUMENTATION_SUMMARY.md` (este archivo)
 - ✅ `docs/README.md`
@@ -259,11 +281,13 @@ Claude ahora tiene contexto completo del proyecto en:
 - ✅ `docs/templates/COMPONENT_TEMPLATE.md`
 
 ### Archivos Modificados
+
 - ✅ `app/services/mantencionService.ts` - JSDoc mejorado
 - ✅ `package.json` - Agregado `eslint-plugin-jsdoc`
 - ✅ `eslint.config.js` - Configuradas reglas JSDoc
 
 ### Archivos Existentes (Sin cambios)
+
 - `CLAUDE.md` - Ya existía
 - `DEPLOY-README.md` - Ya existía
 - `README.md` - Ya existía

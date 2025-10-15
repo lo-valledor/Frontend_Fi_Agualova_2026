@@ -55,12 +55,12 @@ export function NavUser({ user }: NavUserProps) {
             >
               <SidebarMenuButton
                 size='lg'
-                className='group relative overflow-hidden rounded-lg transition-all duration-200 hover:bg-accent/50 active:bg-accent data-[state=open]:bg-accent px-2 sm:px-3 py-2 sm:py-3'
+                className='group relative overflow-hidden rounded-xl transition-all duration-200 hover:bg-accent/50 active:bg-accent data-[state=open]:bg-accent px-2 sm:px-3 py-2 sm:py-3'
               >
-                <div className='absolute inset-0 bg-gradient-to-r from-sky-500/10 to-blue-500/10 opacity-0 transition-opacity group-hover:opacity-100' />
-                <Avatar className='h-7 w-7 sm:h-9 sm:w-9 rounded-lg ring-2 ring-border ring-offset-1 sm:ring-offset-2 ring-offset-background transition-all duration-200 group-hover:ring-sky-500'>
+                <div className='absolute inset-0 bg-accent/50 opacity-0 transition-opacity group-hover:opacity-100' />
+                <Avatar className='h-7 w-7 sm:h-9 sm:w-9 rounded-xl ring-2 ring-border ring-offset-1 sm:ring-offset-2 ring-offset-background transition-all duration-200 group-hover:ring-primary'>
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg bg-gradient-to-br from-sky-500 to-blue-500 text-white text-xs sm:text-sm'>
+                  <AvatarFallback className='rounded-xl bg-primary text-primary-foreground text-xs sm:text-sm'>
                     {user.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -69,16 +69,16 @@ export function NavUser({ user }: NavUserProps) {
             </motion.div>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className='w-[--radix-dropdown-menu-trigger-width] min-w-48 sm:min-w-56 rounded-lg text-xs sm:text-sm'
+            className='w-[--radix-dropdown-menu-trigger-width] min-w-48 sm:min-w-56 rounded-xl text-xs sm:text-sm'
             side={isMobile ? 'bottom' : 'right'}
             align='end'
             sideOffset={8}
           >
             <DropdownMenuLabel className='font-normal p-1 sm:p-2'>
               <div className='flex items-center gap-2 sm:gap-3 p-1 sm:p-2'>
-                <Avatar className='h-7 w-7 sm:h-9 sm:w-9 rounded-lg'>
+                <Avatar className='h-7 w-7 sm:h-9 sm:w-9 rounded-xl'>
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className='rounded-lg bg-gradient-to-br from-sky-500 to-blue-500 text-white text-xs sm:text-sm'>
+                  <AvatarFallback className='rounded-xl bg-primary text-primary-foreground text-xs sm:text-sm'>
                     {user.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>

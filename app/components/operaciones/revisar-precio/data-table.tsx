@@ -126,7 +126,7 @@ export function DataTable<TData, TValue>({
                   className='h-16 text-center'
                 >
                   <div className='flex justify-center items-center'>
-                    <Loader2 className='h-5 w-5 animate-spin text-sky-600 dark:text-sky-400' />
+                    <Loader2 className='h-5 w-5 animate-spin' />
                     <span className='ml-2 text-muted-foreground text-sm'>
                       Actualizando datos...
                     </span>

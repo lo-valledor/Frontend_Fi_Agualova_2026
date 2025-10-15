@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / ConsultaMedidorNuevoResponse
 
@@ -10,29 +10,29 @@ Defined in: [app/types/operaciones.ts:274](https://github.com/lo-valledor/front-
 
 ## Properties
 
-### medidor\_id
+### medidor_id
 
-> **medidor\_id**: `number`
+> **medidor_id**: `number`
 
 Defined in: [app/types/operaciones.ts:275](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L275)
 
-***
+---
 
-### tipo\_medidor
+### tipo_medidor
 
-> **tipo\_medidor**: `string`
+> **tipo_medidor**: `string`
 
 Defined in: [app/types/operaciones.ts:276](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L276)
 
-***
+---
 
-### constante\_multiplicar
+### constante_multiplicar
 
-> **constante\_multiplicar**: `number`
+> **constante_multiplicar**: `number`
 
 Defined in: [app/types/operaciones.ts:277](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L277)
 
-***
+---
 
 ### marca
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:277](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:278](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L278)
 
-***
+---
 
 ### modelo
 
@@ -48,18 +48,18 @@ Defined in: [app/types/operaciones.ts:278](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:279](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L279)
 
-***
+---
 
-### numero\_serie
+### numero_serie
 
-> **numero\_serie**: `string`
+> **numero_serie**: `string`
 
 Defined in: [app/types/operaciones.ts:280](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L280)
 
-***
+---
 
-### estado\_medidor
+### estado_medidor
 
-> **estado\_medidor**: `number`
+> **estado_medidor**: `number`
 
 Defined in: [app/types/operaciones.ts:281](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L281)

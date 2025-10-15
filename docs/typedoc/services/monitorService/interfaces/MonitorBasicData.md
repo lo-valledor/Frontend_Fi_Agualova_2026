@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/monitorService](../README.md) / MonitorBasicData
 
@@ -16,7 +16,7 @@ Defined in: [app/services/monitorService.ts:9](https://github.com/lo-valledor/fr
 
 Defined in: [app/services/monitorService.ts:10](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/monitorService.ts#L10)
 
-***
+---
 
 ### sectores
 
@@ -24,7 +24,7 @@ Defined in: [app/services/monitorService.ts:10](https://github.com/lo-valledor/f
 
 Defined in: [app/services/monitorService.ts:11](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/monitorService.ts#L11)
 
-***
+---
 
 ### claves
 
@@ -32,7 +32,7 @@ Defined in: [app/services/monitorService.ts:11](https://github.com/lo-valledor/f
 
 Defined in: [app/services/monitorService.ts:12](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/monitorService.ts#L12)
 
-***
+---
 
 ### activePeriodoId
 

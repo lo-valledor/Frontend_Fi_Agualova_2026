@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/reportes](../README.md) / DetalleMedidores
 
@@ -16,7 +16,7 @@ Defined in: [app/types/reportes.ts:52](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:53](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L53)
 
-***
+---
 
 ### tipoMedidor
 
@@ -24,7 +24,7 @@ Defined in: [app/types/reportes.ts:53](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:54](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L54)
 
-***
+---
 
 ### constanteMultiplicadora
 
@@ -32,7 +32,7 @@ Defined in: [app/types/reportes.ts:54](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:55](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L55)
 
-***
+---
 
 ### digitos
 

@@ -30,7 +30,7 @@ export function DeleteConfirmationDialog({
       <AlertDialogContent className='w-[95vw] sm:max-w-[500px]'>
         <AlertDialogHeader className='space-y-3'>
           <div className='flex items-center gap-3'>
-            <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-lg'>
+            <div className='p-2 bg-red-100 dark:bg-red-900/30 rounded-xl'>
               <Gauge className='h-5 w-5 text-red-600 dark:text-red-400' />
             </div>
             <AlertDialogTitle className='text-lg sm:text-xl font-semibold'>
@@ -43,7 +43,7 @@ export function DeleteConfirmationDialog({
               medidor del sistema.
             </p>
             {medidor && (
-              <div className='bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800'>
+              <div className='bg-red-50 dark:bg-red-900/20 p-3 rounded-xl border border-red-200 dark:border-red-800'>
                 <div className='flex items-center gap-2 mb-2'>
                   <Gauge className='h-4 w-4 text-red-600 dark:text-red-400' />
                   <span className='font-medium text-red-900 dark:text-red-100 text-sm'>

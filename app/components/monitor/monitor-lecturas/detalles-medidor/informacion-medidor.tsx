@@ -39,23 +39,23 @@ export default function InformacionMedidor({
       <CardHeader className='px-0 pb-2'>
         <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
           <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
-            <Gauge className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+            <Gauge className='h-3 w-3 ' />
           </div>
           <span>Información del Medidor</span>
         </CardTitle>
       </CardHeader>
       <CardContent className='px-0 space-y-3'>
         {error ? (
-          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-lg border border-red-200 dark:border-red-800'>
+          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
             <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
             <span>{error}</span>
           </div>
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
             {/* Medidor */}
-            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
               <div className='flex items-center gap-2 mb-1.5'>
-                <IdCard className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+                <IdCard className='h-3 w-3 ' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                   Medidor
                 </span>
@@ -66,7 +66,7 @@ export default function InformacionMedidor({
             </div>
 
             {/* Tipo */}
-            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
               <div className='flex items-center gap-2 mb-1.5'>
                 <Zap className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -79,7 +79,7 @@ export default function InformacionMedidor({
             </div>
 
             {/* Tarifa */}
-            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
               <div className='flex items-center justify-between mb-1.5'>
                 <div className='flex items-center gap-2 min-w-0'>
                   <Key className='h-3 w-3 text-amber-600 dark:text-amber-400' />
@@ -131,7 +131,7 @@ export default function InformacionMedidor({
             </div>
 
             {/* Constante */}
-            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
               <div className='flex items-center gap-2 mb-1.5'>
                 <Gauge className='h-3 w-3 text-purple-600 dark:text-purple-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -144,7 +144,7 @@ export default function InformacionMedidor({
             </div>
 
             {/* Subempalme */}
-            <div className='p-3 bg-muted/30 rounded-lg border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
               <div className='flex items-center gap-2 mb-1.5'>
                 <PlugIcon className='h-3 w-3 text-orange-600 dark:text-orange-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>

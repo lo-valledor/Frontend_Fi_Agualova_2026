@@ -21,8 +21,7 @@ const getTipoBadgeProps = (tipo: string) => {
     case 'trifasico':
       return {
         variant: 'outline' as const,
-        className:
-          'border-blue-500 text-blue-600 dark:text-blue-400 text-xs sm:text-sm px-1 sm:px-2',
+        className: 'border-blue-500  text-xs sm:text-sm px-1 sm:px-2',
         shortText: 'Tri',
         fullText: 'Trifásico'
       };
@@ -67,10 +66,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span
-            className='font-medium text-slate-900 dark:text-slate-100 text-sm truncate'
-            title={medidor.serie}
-          >
+          <span className='font-medium text-sm truncate' title={medidor.serie}>
             {medidor.serie}
           </span>
         </div>
@@ -88,7 +84,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span className='font-mono text-sm font-medium text-slate-700 dark:text-slate-300 truncate'>
+          <span className='font-mono text-sm font-medium truncate'>
             {medidor.codigo}
           </span>
         </div>
@@ -106,10 +102,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span
-            className='text-sm text-slate-700 dark:text-slate-300 truncate'
-            title={medidor.marca}
-          >
+          <span className='text-sm truncate' title={medidor.marca}>
             {medidor.marca}
           </span>
         </div>
@@ -127,10 +120,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span
-            className='text-sm text-slate-700 dark:text-slate-300 truncate'
-            title={medidor.modelo}
-          >
+          <span className='text-sm truncate' title={medidor.modelo}>
             {medidor.modelo}
           </span>
         </div>
@@ -148,9 +138,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium text-slate-900 dark:text-slate-100'>
-            {medidor.digitos}
-          </span>
+          <span className='text-sm font-medium'>{medidor.digitos}</span>
         </div>
       );
     },
@@ -166,9 +154,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium text-slate-900 dark:text-slate-100'>
-            {medidor.multiplicar}
-          </span>
+          <span className='text-sm font-medium'>{medidor.multiplicar}</span>
         </div>
       );
     },
@@ -230,7 +216,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2'>
           <span
-            className='text-sm text-slate-700 dark:text-slate-300 truncate max-w-[120px]'
+            className='text-sm truncate max-w-[120px]'
             title={medidor.ubicacion}
           >
             {medidor.ubicacion}
@@ -250,7 +236,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap'>
+          <span className='text-sm font-medium whitespace-nowrap'>
             {medidor.fechaInicio}
           </span>
         </div>

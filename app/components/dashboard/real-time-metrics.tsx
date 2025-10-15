@@ -82,9 +82,9 @@ export function RealTimeMetrics() {
           {metrics.map((metric, index) => (
             <div
               key={index}
-              className='flex items-center gap-3 p-3 rounded-lg bg-muted/50'
+              className='flex items-center gap-3 p-3 rounded-xl bg-muted/50'
             >
-              <div className={`p-2 rounded-lg bg-background ${metric.color}`}>
+              <div className={`p-2 rounded-xl bg-background ${metric.color}`}>
                 <metric.icon className='h-4 w-4' />
               </div>
               <div className='flex-1'>

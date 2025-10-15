@@ -15,7 +15,7 @@ export const createRolesColumns = (
     cell: ({ row }: any) => (
       <Badge
         variant='secondary'
-        className='font-mono text-xs bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+        className='font-mono text-xs bg-background  dark:text-slate-300'
       >
         #{row.getValue('idRol')}
       </Badge>
@@ -26,9 +26,7 @@ export const createRolesColumns = (
     header: 'Rol',
     cell: ({ row }: any) => (
       <div className='flex items-center gap-2'>
-        <div className='font-medium text-slate-900 dark:text-slate-100'>
-          {row.getValue('nombreRol')}
-        </div>
+        <div className='font-medium'>{row.getValue('nombreRol')}</div>
       </div>
     )
   },
@@ -36,7 +34,7 @@ export const createRolesColumns = (
     accessorKey: 'descripcion',
     header: 'Descripción',
     cell: ({ row }: any) => (
-      <div className='max-w-[300px] truncate text-slate-600 dark:text-slate-400'>
+      <div className='max-w-[300px] truncate'>
         {row.getValue('descripcion') || 'Sin descripción'}
       </div>
     )
@@ -48,8 +46,8 @@ export const createRolesColumns = (
       <Badge
         className={
           row.getValue('estadoRol')
-            ? 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700'
-            : 'bg-gray-500 hover:bg-gray-600 text-white dark:bg-gray-600 dark:hover:bg-gray-700'
+            ? 'bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700'
+            : 'bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700'
         }
       >
         {row.getValue('estadoRol') ? 'Activo' : 'Inactivo'}

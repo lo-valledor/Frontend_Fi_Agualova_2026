@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-14 17:32:50*
+*Generado automáticamente el 2025-10-15 17:07:43*
 
 ## Índice de Componentes
 
@@ -429,8 +429,18 @@
 /** Mensaje de carga personalizado */
 ```
 
+### forgot-form
+**Archivo**: `app/components/auth/forgot-form.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### login-form
 **Archivo**: `app/components/auth/login-form.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### reset-form
+**Archivo**: `app/components/auth/reset-form.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 
@@ -1202,6 +1212,11 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### button-group
+**Archivo**: `app/components/ui/button-group.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### button
 **Archivo**: `app/components/ui/button.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1267,6 +1282,16 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### empty
+**Archivo**: `app/components/ui/empty.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### field
+**Archivo**: `app/components/ui/field.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### form
 **Archivo**: `app/components/ui/form.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1277,6 +1302,11 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### input-group
+**Archivo**: `app/components/ui/input-group.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### input-otp
 **Archivo**: `app/components/ui/input-otp.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1284,6 +1314,16 @@
 
 ### input
 **Archivo**: `app/components/ui/input.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### item
+**Archivo**: `app/components/ui/item.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### kbd
+**Archivo**: `app/components/ui/kbd.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 
@@ -1317,6 +1357,7 @@
  */
 /**
  * Obtiene el color de texto según el score de fortaleza
+ * @param score
  */
 ```
 
@@ -1377,6 +1418,11 @@
 
 ### sonner
 **Archivo**: `app/components/ui/sonner.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### spinner
+**Archivo**: `app/components/ui/spinner.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 

@@ -21,8 +21,9 @@ import { toast } from 'sonner';
 import { useEffect } from 'react';
 
 import { Controller, useForm } from 'react-hook-form';
-import Select, { type StylesConfig } from 'react-select';
+import Select from 'react-select';
 
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
@@ -105,34 +106,8 @@ export default function CargoFacturableModalForm({
     }
   });
 
-  const selectStyles: StylesConfig = {
-    control: styles => ({
-      ...styles,
-      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF',
-      borderColor: theme === 'dark' ? '#334155' : '#E2E8F0',
-      minHeight: '44px'
-    }),
-    menu: styles => ({
-      ...styles,
-      backgroundColor: theme === 'dark' ? '#020617' : '#FFFFFF'
-    }),
-    option: (styles, { isFocused, isSelected }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? theme === 'dark'
-          ? '#166534'
-          : '#16A34A'
-        : isFocused
-          ? theme === 'dark'
-            ? '#1E293B'
-            : '#F1F5F9'
-          : 'transparent'
-    }),
-    singleValue: styles => ({
-      ...styles,
-      color: theme === 'dark' ? '#FFFFFF' : '#000000'
-    })
-  };
+  // Usar estilos compartidos para react-select
+  const selectStyles = getReactSelectStyles(theme);
 
   const isLoading = form.formState.isSubmitting;
 

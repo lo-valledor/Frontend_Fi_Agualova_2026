@@ -427,7 +427,7 @@ export default function EditarTipoContrato({
                 </Button>
                 <Button
                   onClick={handleGuardar}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  className='gap-2 bg-sky-600 hover:bg-sky-700'
                 >
                   <Save className='h-4 w-4' />
                   Guardar
@@ -444,7 +444,7 @@ export default function EditarTipoContrato({
         <Card className='border-0 shadow-sm'>
           <CardHeader className='pb-4'>
             <div className='flex items-center gap-2'>
-              <FileText className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+              <FileText className='h-5 w-5' />
               <CardTitle className='text-lg font-medium'>
                 Tipo de Contrato
               </CardTitle>
@@ -469,7 +469,7 @@ export default function EditarTipoContrato({
         <Card className='border-0 shadow-sm'>
           <CardHeader className='pb-4'>
             <div className='flex items-center gap-2'>
-              <CheckCircle2 className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+              <CheckCircle2 className='h-5 w-5' />
               <CardTitle className='text-lg font-medium'>
                 Condiciones de Contrato
               </CardTitle>
@@ -536,7 +536,7 @@ export default function EditarTipoContrato({
             </div>
 
             <Button
-              className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+              className='gap-2 bg-sky-600 hover:bg-sky-700'
               disabled={
                 !selectedConcepto ||
                 !selectedCargo ||
@@ -551,7 +551,7 @@ export default function EditarTipoContrato({
 
             {/* Tabla de condiciones */}
             {condicionesAgregadas.length > 0 && (
-              <div className='rounded-lg border'>
+              <div className='rounded-xl border'>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -617,7 +617,7 @@ export default function EditarTipoContrato({
         <Card className='border-0 shadow-sm'>
           <CardHeader className='pb-4'>
             <div className='flex items-center gap-2'>
-              <Zap className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+              <Zap className='h-5 w-5' />
               <CardTitle className='text-lg font-medium'>
                 Cargos Facturables
               </CardTitle>
@@ -646,7 +646,7 @@ export default function EditarTipoContrato({
                   </div>
                   <Button
                     size='sm'
-                    className='w-full bg-sky-600 text-white hover:bg-sky-700'
+                    className='w-full bg-sky-600 hover:bg-sky-700'
                     disabled={!selectedCargoMonofasico}
                     onClick={handleAgregarCargoMonofasico}
                   >
@@ -708,7 +708,7 @@ export default function EditarTipoContrato({
                   </div>
                   <Button
                     size='sm'
-                    className='w-full bg-sky-600 text-white hover:bg-sky-700'
+                    className='w-full bg-sky-600 hover:bg-sky-700'
                     disabled={!selectedCargoTrifasico}
                     onClick={handleAgregarCargoTrifasico}
                   >
@@ -770,7 +770,7 @@ export default function EditarTipoContrato({
                   </div>
                   <Button
                     size='sm'
-                    className='w-full bg-sky-600 text-white hover:bg-sky-700'
+                    className='w-full bg-sky-600 hover:bg-sky-700'
                     disabled={!selectedCargoAmbos}
                     onClick={handleAgregarCargoAmbos}
                   >

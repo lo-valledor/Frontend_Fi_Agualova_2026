@@ -928,13 +928,13 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <Card className='border-0 shadow-none bg-transparent'>
         <CardHeader className='px-0 pb-2'>
           <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
-            <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
-              <Zap className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+            <div className='h-5 w-5 rounded bg-primary/10 flex items-center justify-center'>
+              <Zap className='h-3 w-3 text-primary' />
             </div>
             <span>Energía Activa</span>
             {isActivaValidated && (
-              <div className='h-4 w-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
-                <Check className='h-2.5 w-2.5 text-green-600 dark:text-green-400' />
+              <div className='h-4 w-4 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center'>
+                <Check className='h-2.5 w-2.5 text-emerald-500' />
               </div>
             )}
           </CardTitle>
@@ -998,7 +998,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           {/* Estados compactos para Energía Activa */}
           <div className='space-y-2 mt-3'>
             {clavesError && (
-              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+              <div className='flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />
                 Error cargando claves: usando valores por defecto
               </div>
@@ -1035,7 +1035,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </div>
             )}
             {Number(consumoActivaCalculado) === 0 && inputActivaValue && (
-              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+              <div className='flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />
                 Consumo cero - Verifique la lectura
               </div>
@@ -1053,8 +1053,8 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
             </div>
             <span>Energía Reactiva</span>
             {isReactivaValidated && (
-              <div className='h-4 w-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center'>
-                <Check className='h-2.5 w-2.5 text-green-600 dark:text-green-400' />
+              <div className='h-4 w-4 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center'>
+                <Check className='h-2.5 w-2.5 text-emerald-500' />
               </div>
             )}
           </CardTitle>
@@ -1148,7 +1148,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               </div>
             )}
             {Number(consumoReactivaCalculado) === 0 && inputReactivaValue && (
-              <div className='flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-1 rounded'>
+              <div className='flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded'>
                 <AlertCircle className='h-3 w-3' />
                 Consumo cero - Verifique la lectura
               </div>
@@ -1161,8 +1161,8 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       <Card className='border-0 shadow-none bg-transparent'>
         <CardHeader className='px-0 pb-2'>
           <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
-            <div className='h-5 w-5 rounded bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center'>
-              <BarChart2 className='h-3 w-3 text-amber-600 dark:text-amber-400' />
+            <div className='h-5 w-5 rounded bg-secondary/50 flex items-center justify-center'>
+              <BarChart2 className='h-3 w-3 text-foreground' />
             </div>
             <span>Demandas kW</span>
             {(!isActivaValidated || !isReactivaValidated) && (
@@ -1176,7 +1176,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
             {/* Demanda Punta */}
             <div className='space-y-2'>
-              <div className='flex items-center gap-1.5 text-sm font-medium text-blue-700 dark:text-blue-400'>
+              <div className='flex items-center gap-1.5 text-sm font-medium text-foreground'>
                 <BarChart2 className='h-3 w-3' />
                 Demanda Punta
               </div>

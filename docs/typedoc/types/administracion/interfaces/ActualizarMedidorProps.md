@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ActualizarMedidorProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:479](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:480](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L480)
 
-***
+---
 
 ### marcaId
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:480](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:481](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L481)
 
-***
+---
 
 ### modelo
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:481](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:482](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L482)
 
-***
+---
 
 ### serie
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:482](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:483](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L483)
 
-***
+---
 
 ### estadoId
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:483](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:484](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L484)
 
-***
+---
 
 ### fechaInicio
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:484](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:485](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L485)
 
-***
+---
 
 ### digitos
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:485](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:486](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L486)
 
-***
+---
 
 ### multiplicar
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:486](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:487](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L487)
 
-***
+---
 
 ### tipoId
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:487](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:488](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L488)
 
-***
+---
 
 ### subempalmeCodigo
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:488](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:489](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L489)
 
-***
+---
 
 ### primeraLectura
 
@@ -96,7 +96,7 @@ Defined in: [app/types/administracion.ts:489](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:490](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L490)
 
-***
+---
 
 ### fechaPrimeraLectura
 

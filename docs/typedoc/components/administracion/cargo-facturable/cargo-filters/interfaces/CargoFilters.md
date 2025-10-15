@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/administracion/cargo-facturable/cargo-filters](../README.md) / CargoFilters
 
@@ -16,7 +16,7 @@ Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:28
 
 Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:29](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/cargo-facturable/cargo-filters.tsx#L29)
 
-***
+---
 
 ### fijoVariable
 
@@ -24,7 +24,7 @@ Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:29
 
 Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:30](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/cargo-facturable/cargo-filters.tsx#L30)
 
-***
+---
 
 ### periodicoEventual
 
@@ -32,7 +32,7 @@ Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:30
 
 Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/cargo-facturable/cargo-filters.tsx#L31)
 
-***
+---
 
 ### concepto
 
@@ -40,7 +40,7 @@ Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:31
 
 Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:32](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/cargo-facturable/cargo-filters.tsx#L32)
 
-***
+---
 
 ### tarifa
 
@@ -48,7 +48,7 @@ Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:32
 
 Defined in: [app/components/administracion/cargo-facturable/cargo-filters.tsx:33](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/cargo-facturable/cargo-filters.tsx#L33)
 
-***
+---
 
 ### tipoMedidor
 

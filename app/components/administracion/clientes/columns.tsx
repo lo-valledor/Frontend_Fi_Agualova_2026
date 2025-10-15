@@ -29,12 +29,12 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm '
+              className='font-medium truncate text-xs sm:text-sm '
               title={row.original.nombreCompleto}
             >
               {row.original.nombreCompleto}
             </div>
-            <div className='text-xs text-slate-500 dark:text-slate-400 font-mono truncate'>
+            <div className='text-xs font-mono truncate'>
               {format(row.getValue('rut'))}
             </div>
           </div>
@@ -78,7 +78,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
         <span
-          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
+          className='font-medium truncate text-xs sm:text-sm'
           title={row.getValue('direccion') || 'Sin dirección'}
         >
           {row.getValue('direccion') || 'N/A'}
@@ -96,7 +96,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
         <span
-          className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm '
+          className='font-medium truncate text-xs sm:text-sm '
           title={row.getValue('comuna') || 'Sin comuna'}
         >
           {row.getValue('comuna') || 'N/A'}
@@ -115,7 +115,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-2'>
         <span
-          className='text-sm text-slate-700 dark:text-slate-300 truncate'
+          className='text-sm truncate'
           title={row.getValue('contacto') || 'Sin contacto'}
         >
           {row.getValue('contacto') || 'N/A'}
@@ -133,7 +133,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-2'>
         <span
-          className='font-mono text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap'
+          className='font-mono text-sm whitespace-nowrap'
           title={row.getValue('telefono') || 'Sin teléfono'}
         >
           {row.getValue('telefono') || 'N/A'}
@@ -151,7 +151,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-2'>
         <span
-          className='font-mono text-sm text-slate-700 dark:text-slate-300 truncate'
+          className='font-mono text-sm truncate'
           title={row.getValue('email') || 'Sin email'}
         >
           {row.getValue('email') || 'N/A'}

@@ -253,9 +253,9 @@ export default function TablaAsignacionSectores({
     <div className='space-y-4'>
       {/* Contador de selección y botón de acción */}
       {selectedNichos.length > 0 && (
-        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200 dark:border-emerald-800'>
+        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-background border border-border'>
           <div className='flex items-center gap-2 sm:gap-3'>
-            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg flex items-center justify-center flex-shrink-0'>
+            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 dark:bg-emerald-800/50 rounded-xl flex items-center justify-center flex-shrink-0'>
               <CheckCircle2 className='w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400' />
             </div>
             <div>
@@ -283,7 +283,7 @@ export default function TablaAsignacionSectores({
               !periodo ||
               !cicloFacturable
             }
-            className='gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white w-full sm:w-auto'
+            className='gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 w-full sm:w-auto'
             size='sm'
           >
             {isSubmitting ? (
@@ -314,7 +314,7 @@ export default function TablaAsignacionSectores({
         >
           <div className='flex gap-3 items-start mb-3'>
             <div
-              className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                 submitResults.errors === 0
                   ? 'bg-green-100 dark:bg-green-800/50'
                   : submitResults.success === 0
@@ -368,11 +368,11 @@ export default function TablaAsignacionSectores({
       )}
 
       {/* Tabla modernizada */}
-      <div className='rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900 shadow-sm'>
+      <div className='rounded-xl border-border overflow-hidden bg-background shadow-sm'>
         <ScrollArea className='h-[calc(100vh-500px)]'>
           <Table>
             <TableHeader>
-              <TableRow className='bg-gradient-to-r from-slate-50 to-emerald-50 dark:from-slate-900 dark:to-emerald-900/20 hover:from-slate-100 hover:to-emerald-100 dark:hover:from-slate-800 dark:hover:to-emerald-900/30'>
+              <TableRow className='hover:from-slate-100 hover:to-emerald-100 dark:hover:from-slate-800 dark:hover:to-emerald-900/30'>
                 <TableHead className='w-[50px] text-center'>
                   <Checkbox
                     checked={selectAll}
@@ -380,34 +380,34 @@ export default function TablaAsignacionSectores({
                     aria-label='Seleccionar todos'
                   />
                 </TableHead>
-                <TableHead className='text-center font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm px-2 sm:px-4'>
+                <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4'>
                   <div className='flex items-center justify-center gap-1 sm:gap-2'>
                     <ServerIcon className='w-3 h-3 sm:w-4 sm:h-4 text-slate-500' />
                     <span className='hidden sm:inline'>Sector</span>
                     <span className='sm:hidden'>Sect</span>
                   </div>
                 </TableHead>
-                <TableHead className='text-center font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm px-2 sm:px-4'>
+                <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4'>
                   <div className='flex items-center justify-center gap-1 sm:gap-2'>
                     <HashIcon className='w-3 h-3 sm:w-4 sm:h-4 text-emerald-500' />
                     <span className='hidden sm:inline'>Nicho</span>
                     <span className='sm:hidden'>Nich</span>
                   </div>
                 </TableHead>
-                <TableHead className='font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm px-2 sm:px-4 hidden sm:table-cell'>
+                <TableHead className='font-semibold text-xs sm:text-sm px-2 sm:px-4 hidden sm:table-cell'>
                   <div className='flex items-center gap-2'>
                     <FileTextIcon className='w-4 h-4 text-teal-500' />
                     Descripción Nicho
                   </div>
                 </TableHead>
-                <TableHead className='text-center font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm px-2 sm:px-4'>
+                <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4'>
                   <div className='flex items-center justify-center gap-1 sm:gap-2'>
                     <UsersIcon className='w-3 h-3 sm:w-4 sm:h-4 text-blue-500' />
                     <span className='hidden sm:inline'>Medidores</span>
                     <span className='sm:hidden'>Med</span>
                   </div>
                 </TableHead>
-                <TableHead className='text-center font-semibold text-slate-700 dark:text-slate-300 text-xs sm:text-sm px-2 sm:px-4 w-[80px] sm:w-[120px]'>
+                <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4 w-[80px] sm:w-[120px]'>
                   Estado
                 </TableHead>
               </TableRow>
@@ -418,8 +418,8 @@ export default function TablaAsignacionSectores({
                   <TableCell colSpan={6} className='text-center h-32'>
                     <div className='flex justify-center items-center flex-col gap-3'>
                       <div className='relative'>
-                        <div className='w-12 h-12 rounded-full border-4 border-emerald-200 dark:border-emerald-800'></div>
-                        <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-emerald-600 border-t-transparent animate-spin'></div>
+                        <div className='w-12 h-12 rounded-full border-4 border-border'></div>
+                        <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-border border-t-transparent animate-spin'></div>
                       </div>
                       <span className='text-emerald-700 dark:text-emerald-300 font-medium'>
                         Cargando sectores...
@@ -433,8 +433,8 @@ export default function TablaAsignacionSectores({
                     key={index}
                     className={
                       isNichoSelected(item.nichoId)
-                        ? 'bg-gradient-to-r from-emerald-50/50 to-teal-50/50 dark:from-emerald-900/10 dark:to-teal-900/10 hover:from-emerald-50 hover:to-teal-50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 border-l-4 border-emerald-400'
-                        : 'hover:bg-slate-50/50 dark:hover:bg-slate-800/50'
+                        ? ' hover:from-emerald-50 hover:to-teal-50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 border-l-4 border-border'
+                        : 'hover:bg-muted'
                     }
                   >
                     <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
@@ -448,7 +448,7 @@ export default function TablaAsignacionSectores({
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-1 sm:px-2 py-1 rounded-md inline-block'>
+                            <div className='font-mono text-xs sm:text-sm font-medium bg-background px-1 sm:px-2 py-1 rounded-md inline-block'>
                               {item.sectorId}
                             </div>
                           </TooltipTrigger>
@@ -467,7 +467,7 @@ export default function TablaAsignacionSectores({
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <div className='max-w-[250px] truncate text-slate-700 dark:text-slate-300 text-sm'>
+                            <div className='max-w-[250px] truncate text-sm'>
                               {item.descripcionNicho}
                             </div>
                           </TooltipTrigger>
@@ -478,20 +478,20 @@ export default function TablaAsignacionSectores({
                       </TooltipProvider>
                     </TableCell>
                     <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
-                      <div className='font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/30 px-2 sm:px-3 py-1 rounded-full inline-block text-xs sm:text-sm'>
+                      <div className='font-medium bg-background px-2 sm:px-3 py-1 rounded-full inline-block text-xs sm:text-sm'>
                         {item.cantidadMedidores}
                       </div>
                     </TableCell>
                     <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
                       {isNichoSelected(item.nichoId) ? (
-                        <Badge className='bg-gradient-to-r from-emerald-500 to-teal-600 text-white border-0 text-xs px-1 sm:px-2'>
+                        <Badge className='bg-gradient-to-r from-emerald-500 to-teal-600 border-0 text-xs px-1 sm:px-2'>
                           <span className='hidden sm:inline'>Seleccionado</span>
                           <span className='sm:hidden'>Sel</span>
                         </Badge>
                       ) : (
                         <Badge
                           variant='outline'
-                          className='bg-slate-50 dark:bg-slate-900/20 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 text-xs px-1 sm:px-2'
+                          className='bg-background border-border text-xs px-1 sm:px-2'
                         >
                           <span className='hidden sm:inline'>Pendiente</span>
                           <span className='sm:hidden'>Pend</span>
@@ -504,11 +504,11 @@ export default function TablaAsignacionSectores({
                 <TableRow>
                   <TableCell colSpan={6} className='text-center h-32 px-4'>
                     <div className='flex justify-center items-center flex-col gap-2 sm:gap-3'>
-                      <div className='w-12 h-12 sm:w-16 sm:h-16 bg-slate-50 dark:bg-slate-900/20 rounded-2xl flex items-center justify-center'>
+                      <div className='w-12 h-12 sm:w-16 sm:h-16 bg-background rounded-xl flex items-center justify-center'>
                         <Info className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400' />
                       </div>
                       <div className='text-center space-y-1'>
-                        <p className='text-slate-600 dark:text-slate-400 font-medium text-sm sm:text-base'>
+                        <p className='font-medium text-sm sm:text-base'>
                           <span className='hidden sm:inline'>
                             No hay sectores disponibles
                           </span>

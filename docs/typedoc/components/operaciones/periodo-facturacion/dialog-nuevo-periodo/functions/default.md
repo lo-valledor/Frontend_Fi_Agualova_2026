@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/operaciones/periodo-facturacion/dialog-nuevo-periodo](../README.md) / default
 

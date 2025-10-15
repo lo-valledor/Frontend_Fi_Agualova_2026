@@ -15,12 +15,12 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
           variant='ghost'
           size='sm'
           onClick={() => row.toggleExpanded()}
-          className='p-0 h-6 w-6 hover:bg-purple-50 dark:hover:bg-purple-900/20'
+          className='p-0 h-6 w-6 hover:muted '
         >
           {row.getIsExpanded() ? (
-            <ChevronDown className='h-3 w-3 text-purple-600 dark:text-purple-400' />
+            <ChevronDown className='h-3 w-3 text-muted-foreground' />
           ) : (
-            <ChevronRight className='h-3 w-3 text-purple-600 dark:text-purple-400' />
+            <ChevronRight className='h-3 w-3 text-muted-foreground' />
           )}
         </Button>
       );
@@ -37,7 +37,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
           checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Seleccionar todo'
-          className='border-purple-300 data-[state=checked]:bg-purple-600 h-3 w-3'
+          className='h-3 w-3'
         />
       </div>
     ),
@@ -47,7 +47,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
           checked={row.getIsSelected()}
           onCheckedChange={value => row.toggleSelected(!!value)}
           aria-label='Seleccionar fila'
-          className='border-purple-300 data-[state=checked]:bg-purple-600 h-3 w-3'
+          className='h-3 w-3'
         />
       </div>
     ),
@@ -66,7 +66,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const sector = row.getValue('sector');
       return (
         <div className='text-center'>
-          <span className='text-xs font-mono bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded'>
+          <span className='text-xs font-mono bg-primary/10 text-primary px-1 py-0.5 rounded'>
             {sector as string}
           </span>
         </div>
@@ -84,7 +84,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     cell: ({ row }) => {
       const contrato = row.getValue('contratoId');
       return (
-        <span className='font-mono text-xs text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-900/20 px-1 py-0.5 rounded'>
+        <span className='font-mono text-xs text-primary bg-primary/10 px-1 py-0.5 rounded'>
           {contrato as string}
         </span>
       );
@@ -134,7 +134,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const nombre = row.getValue('nombreCliente');
       return (
         <span
-          className='text-xs text-slate-700 dark:text-slate-300 truncate block max-w-[140px]'
+          className='text-xs truncate block max-w-[140px]'
           title={nombre as string}
         >
           {nombre as string}
@@ -154,7 +154,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const local = row.getValue('localId');
       return (
         <div className='text-center'>
-          <span className='text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1 py-0.5 rounded'>
+          <span className='text-xs bg-primary/10 text-primary px-1 py-0.5 rounded'>
             {local as string}
           </span>
         </div>
@@ -171,7 +171,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const direccion = row.getValue('direccion');
       return (
         <span
-          className='text-xs text-slate-600 dark:text-slate-400 truncate block max-w-[120px]'
+          className='text-xs truncate block max-w-[120px]'
           title={direccion as string}
         >
           {direccion as string}
@@ -189,7 +189,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const comuna = row.getValue('comuna');
       return (
         <span
-          className='text-xs text-slate-700 dark:text-slate-300 truncate block max-w-[80px]'
+          className='text-xs truncate block max-w-[80px]'
           title={comuna as string}
         >
           {comuna as string}
@@ -208,7 +208,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     cell: ({ row }) => {
       const serie = row.getValue('numeroSerie');
       return (
-        <span className='font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded'>
+        <span className='font-mono text-xs bg-background px-1 py-0.5 rounded'>
           {serie as string}
         </span>
       );
@@ -225,7 +225,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     cell: ({ row }) => {
       const fecha = row.getValue('fechaLectura');
       return fecha ? (
-        <span className='text-xs text-slate-700 dark:text-slate-300'>
+        <span className='text-xs'>
           {new Date(fecha as string).toLocaleDateString('es-CL', {
             day: '2-digit',
             month: '2-digit',
@@ -249,7 +249,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const consumo = row.getValue('consumoPeriodo');
       return (
         <div className='text-right'>
-          <span className='text-xs text-slate-700 dark:text-slate-300'>
+          <span className='text-xs'>
             {((consumo as number) || 0).toLocaleString('es-CL') || '0'}
           </span>
         </div>
@@ -288,7 +288,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
 
       return (
         <div className='text-right'>
-          <span className='text-xs font-medium text-indigo-700 dark:text-indigo-300'>
+          <span className='text-xs font-medium text-primary'>
             ${((totalFacturado as number) || 0).toLocaleString('es-CL')}
           </span>
         </div>
@@ -306,7 +306,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     cell: () => {
       return (
         <div className='text-center'>
-          <span className='text-xs bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 px-1 py-0.5 rounded'>
+          <span className='text-xs bg-emerald-500 text-white px-1 py-0.5 rounded'>
             Todos
           </span>
         </div>

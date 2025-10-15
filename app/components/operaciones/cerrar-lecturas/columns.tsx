@@ -95,7 +95,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
         <div className='text-center'>
           <Badge
             variant='outline'
-            className='bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-900/20 dark:text-slate-400 dark:border-slate-800 font-mono text-xs'
+            className='bg-background border-border font-mono text-xs'
           >
             {nichoId}
           </Badge>
@@ -231,11 +231,13 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
             className={cn(
               'font-bold border-2 text-base px-3 py-1.5 min-w-[60px]',
               cantidadClaveRoja === 0
-                ? 'bg-slate-50 text-slate-800 border-slate-300 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-700'
+                ? 'bg-slate-50 text-slate-800 border-border dark:text-slate-300 dark:border-slate-700'
                 : 'bg-red-50 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700 animate-pulse'
             )}
           >
-            {cantidadClaveRoja > 0 && <AlertCircle className='w-4 h-4 mr-1.5' />}
+            {cantidadClaveRoja > 0 && (
+              <AlertCircle className='w-4 h-4 mr-1.5' />
+            )}
             {cantidadClaveRoja === 0 && <Shield className='w-4 h-4 mr-1.5' />}
             {cantidadClaveRoja}
           </Badge>
@@ -263,14 +265,16 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
             className={cn(
               'font-bold border-2 text-base px-3 py-1.5 min-w-[60px]',
               cantidadClaveNaranja === 0
-                ? 'bg-slate-50 text-slate-800 border-slate-300 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-700'
+                ? 'bg-slate-50 text-slate-800 border-border dark:text-slate-300 dark:border-slate-700'
                 : 'bg-orange-50 text-orange-800 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-700'
             )}
           >
             {cantidadClaveNaranja > 0 && (
               <AlertTriangle className='w-4 h-4 mr-1.5' />
             )}
-            {cantidadClaveNaranja === 0 && <Shield className='w-4 h-4 mr-1.5' />}
+            {cantidadClaveNaranja === 0 && (
+              <Shield className='w-4 h-4 mr-1.5' />
+            )}
             {cantidadClaveNaranja}
           </Badge>
         </div>
@@ -297,7 +301,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
             className={cn(
               'font-bold border-2 text-base px-3 py-1.5 min-w-[60px]',
               cantidadCorregidas === 0
-                ? 'bg-slate-50 text-slate-800 border-slate-300 dark:bg-slate-900/30 dark:text-slate-300 dark:border-slate-700'
+                ? 'bg-slate-50 text-slate-800 border-border dark:text-slate-300 dark:border-slate-700'
                 : 'bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700'
             )}
           >

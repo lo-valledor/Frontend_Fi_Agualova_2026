@@ -46,9 +46,7 @@ const InfoItem = ({
   <div className='flex items-start gap-3'>
     <div className='flex-shrink-0'>{icon}</div>
     <div className='flex-1 min-w-0'>
-      <p className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-        {label}
-      </p>
+      <p className='text-xs font-medium'>{label}</p>
       <div className='font-semibold text-slate-800 dark:text-slate-200 break-words'>
         {value || (
           <span className='text-sm font-normal text-slate-400 italic'>
@@ -92,9 +90,9 @@ export function ClienteDetailsModal({
           <div className='flex items-center gap-4'>
             <div className='p-3 bg-gradient-to-br from-blue-100 to-sky-100 dark:from-blue-900/30 dark:to-sky-900/30 rounded-xl shadow-sm'>
               {detailsData?.esEmpresa ? (
-                <Building2 className='h-6 w-6 text-blue-600 dark:text-blue-400' />
+                <Building2 className='h-6 w-6 ' />
               ) : (
-                <User className='h-6 w-6 text-blue-600 dark:text-blue-400' />
+                <User className='h-6 w-6 ' />
               )}
             </div>
             <div>
@@ -151,9 +149,9 @@ export function ClienteDetailsModal({
         ) : detailsData ? (
           <div className='space-y-6'>
             <Card className='border-blue-200/50 dark:border-blue-800/50 shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-blue-50/80 to-sky-50/80 dark:from-blue-900/20 dark:to-sky-900/20 rounded-t-lg'>
+              <CardHeader className='bg-background rounded-t-lg'>
                 <div className='flex items-center gap-2'>
-                  <UserCheck className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+                  <UserCheck className='h-5 w-5 ' />
                   <CardTitle className='text-lg text-blue-800 dark:text-blue-200'>
                     Información de Contacto
                   </CardTitle>
@@ -164,8 +162,8 @@ export function ClienteDetailsModal({
                   label='RUT'
                   value={detailsData.rut}
                   icon={
-                    <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                      <Hash className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                    <div className='p-2 bg-background rounded-xl'>
+                      <Hash className='h-4 w-4' />
                     </div>
                   }
                 />
@@ -179,8 +177,8 @@ export function ClienteDetailsModal({
                     </Badge>
                   }
                   icon={
-                    <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                      <Briefcase className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                    <div className='p-2 bg-background rounded-xl'>
+                      <Briefcase className='h-4 w-4' />
                     </div>
                   }
                 />
@@ -188,8 +186,8 @@ export function ClienteDetailsModal({
                   label='Persona de Contacto'
                   value={detailsData.contacto}
                   icon={
-                    <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                      <User className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                    <div className='p-2 bg-background rounded-xl'>
+                      <User className='h-4 w-4' />
                     </div>
                   }
                 />
@@ -197,8 +195,8 @@ export function ClienteDetailsModal({
                   label='Teléfono'
                   value={detailsData.telefono}
                   icon={
-                    <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                      <Phone className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                    <div className='p-2 bg-background rounded-xl'>
+                      <Phone className='h-4 w-4' />
                     </div>
                   }
                 />
@@ -206,8 +204,8 @@ export function ClienteDetailsModal({
                   label='Correo Electrónico'
                   value={detailsData.correo}
                   icon={
-                    <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                      <Mail className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                    <div className='p-2 bg-background rounded-xl'>
+                      <Mail className='h-4 w-4' />
                     </div>
                   }
                 />
@@ -228,8 +226,8 @@ export function ClienteDetailsModal({
                   label='Dirección'
                   value={detailsData.direccion}
                   icon={
-                    <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                      <MapPin className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                    <div className='p-2 bg-background rounded-xl'>
+                      <MapPin className='h-4 w-4' />
                     </div>
                   }
                 />
@@ -237,8 +235,8 @@ export function ClienteDetailsModal({
                   label='Comuna'
                   value={detailsData.comuna}
                   icon={
-                    <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                      <Building className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                    <div className='p-2 bg-background rounded-xl'>
+                      <Building className='h-4 w-4' />
                     </div>
                   }
                 />
@@ -260,8 +258,8 @@ export function ClienteDetailsModal({
                     label='Código de Giro'
                     value={detailsData.codigoGiro}
                     icon={
-                      <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                        <Hash className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                      <div className='p-2 bg-background rounded-xl'>
+                        <Hash className='h-4 w-4' />
                       </div>
                     }
                   />
@@ -269,8 +267,8 @@ export function ClienteDetailsModal({
                     label='Giro Comercial'
                     value={detailsData.giro}
                     icon={
-                      <div className='p-2 bg-slate-100 dark:bg-slate-900/30 rounded-lg'>
-                        <Briefcase className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                      <div className='p-2 bg-background rounded-xl'>
+                        <Briefcase className='h-4 w-4' />
                       </div>
                     }
                   />

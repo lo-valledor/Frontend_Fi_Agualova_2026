@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / EtapaDos
 
@@ -10,40 +10,40 @@ Defined in: [app/types/monitor.ts:87](https://github.com/lo-valledor/front-respa
 
 ## Properties
 
-### LM\_Periodo
+### LM_Periodo
 
-> **LM\_Periodo**: `string`
+> **LM_Periodo**: `string`
 
 Defined in: [app/types/monitor.ts:88](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L88)
 
-***
+---
 
-### LM\_FechaLectura
+### LM_FechaLectura
 
-> **LM\_FechaLectura**: `string`
+> **LM_FechaLectura**: `string`
 
 Defined in: [app/types/monitor.ts:89](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L89)
 
-***
+---
 
-### LM\_ValorLecturaActual
+### LM_ValorLecturaActual
 
-> **LM\_ValorLecturaActual**: `number`
+> **LM_ValorLecturaActual**: `number`
 
 Defined in: [app/types/monitor.ts:90](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L90)
 
-***
+---
 
-### LM\_ConsumoPeriodo
+### LM_ConsumoPeriodo
 
-> **LM\_ConsumoPeriodo**: `number`
+> **LM_ConsumoPeriodo**: `number`
 
 Defined in: [app/types/monitor.ts:91](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L91)
 
-***
+---
 
-### LM\_Observaciones
+### LM_Observaciones
 
-> **LM\_Observaciones**: `string`
+> **LM_Observaciones**: `string`
 
 Defined in: [app/types/monitor.ts:92](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L92)

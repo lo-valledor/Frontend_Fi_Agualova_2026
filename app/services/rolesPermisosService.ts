@@ -104,6 +104,7 @@ export interface RelacionRolMenu {
 class RolesPermisosService {
   /**
    * Función helper para procesar respuestas de API que devuelven arrays
+   * @param response
    */
   private processApiResponse<T>(response: any): T[] {
     if (Array.isArray(response.data)) {
@@ -132,6 +133,7 @@ class RolesPermisosService {
 
   /**
    * Función helper para procesar respuestas de API que devuelven objetos únicos
+   * @param response
    */
   private processSingleApiResponse<T>(response: any): T | null {
     if (response?.data) {
@@ -167,6 +169,7 @@ class RolesPermisosService {
 
   /**
    * Obtiene los detalles de un rol específico por su ID
+   * @param id
    */
   async getRolById(id: number): Promise<RolesPermisosServiceResponse<Roles>> {
     try {
@@ -185,6 +188,7 @@ class RolesPermisosService {
 
   /**
    * Crea un nuevo rol en el sistema
+   * @param rolData
    */
   async crearRol(
     rolData: CrearRolData
@@ -222,6 +226,7 @@ class RolesPermisosService {
 
   /**
    * Actualiza la información de un rol existente
+   * @param rolData
    */
   async actualizarRol(
     rolData: ActualizarRolData
@@ -259,6 +264,7 @@ class RolesPermisosService {
 
   /**
    * Elimina un rol del sistema por su ID
+   * @param id
    */
   async eliminarRol(
     id: number
@@ -304,6 +310,7 @@ class RolesPermisosService {
 
   /**
    * Obtiene los detalles de un menú específico por su ID
+   * @param idMenu
    */
   async getMenuById(
     idMenu: number
@@ -324,6 +331,7 @@ class RolesPermisosService {
 
   /**
    * Crea un nuevo menú en el sistema
+   * @param menuData
    */
   async crearMenu(
     menuData: CrearMenuData
@@ -363,6 +371,7 @@ class RolesPermisosService {
 
   /**
    * Actualiza la información de un menú existente
+   * @param menuData
    */
   async actualizarMenu(
     menuData: ActualizarMenuData
@@ -405,6 +414,7 @@ class RolesPermisosService {
 
   /**
    * Elimina un menú del sistema
+   * @param idMenu
    */
   async eliminarMenu(
     idMenu: number
@@ -432,6 +442,7 @@ class RolesPermisosService {
 
   /**
    * Obtiene los permisos de menú asignados a un usuario específico
+   * @param codigoUsuario
    */
   async getPermisosUsuario(
     codigoUsuario: string
@@ -456,6 +467,7 @@ class RolesPermisosService {
 
   /**
    * Lista todos los menús y permisos asociados a un rol específico
+   * @param idRol
    */
   async getMenusPorRol(
     idRol: number
@@ -476,6 +488,8 @@ class RolesPermisosService {
 
   /**
    * Obtiene la relación específica entre un rol y un menú determinado
+   * @param idRol
+   * @param idMenu
    */
   async getRelacionRolMenu(
     idRol: number,
@@ -497,6 +511,7 @@ class RolesPermisosService {
 
   /**
    * Asigna o actualiza los permisos de un rol sobre un menú
+   * @param permisosData
    */
   async asignarPermisos(
     permisosData: AsignarPermisosData
@@ -539,6 +554,7 @@ class RolesPermisosService {
 
   /**
    * Asigna permisos usando el formato directo del API
+   * @param permisoData
    */
   async asignarPermisoDirecto(
     permisoData: AsignarPermisoDirecto
@@ -576,6 +592,8 @@ class RolesPermisosService {
 
   /**
    * Elimina la relación de permisos entre un rol y un menú
+   * @param idRol
+   * @param idMenu
    */
   async eliminarRelacionRolMenu(
     idRol: number,
@@ -604,6 +622,7 @@ class RolesPermisosService {
 
   /**
    * Obtiene los roles asignados a un usuario
+   * @param codigoUsuario
    */
   async getRolesUsuario(
     codigoUsuario: string
@@ -624,6 +643,8 @@ class RolesPermisosService {
 
   /**
    * Asigna uno o más roles a un usuario
+   * @param codigoUsuario
+   * @param rolesData
    */
   async asignarRolesUsuario(
     codigoUsuario: string,
@@ -658,6 +679,8 @@ class RolesPermisosService {
 
   /**
    * Quita un rol específico a un usuario
+   * @param codigoUsuario
+   * @param idRol
    */
   async quitarRolUsuario(
     codigoUsuario: string,

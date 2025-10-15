@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / DetallepreciosCargoEnerlova
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:40](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:41](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L41)
 
-***
+---
 
 ### descripcion
 
@@ -24,23 +24,23 @@ Defined in: [app/types/operaciones.ts:41](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:42](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L42)
 
-***
+---
 
-### fecha\_inicio
+### fecha_inicio
 
-> **fecha\_inicio**: `string`
+> **fecha_inicio**: `string`
 
 Defined in: [app/types/operaciones.ts:43](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L43)
 
-***
+---
 
-### fecha\_fin
+### fecha_fin
 
-> **fecha\_fin**: `string`
+> **fecha_fin**: `string`
 
 Defined in: [app/types/operaciones.ts:44](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L44)
 
-***
+---
 
 ### valor
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:44](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:45](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L45)
 
-***
+---
 
 ### ultimo
 
@@ -56,7 +56,7 @@ Defined in: [app/types/operaciones.ts:45](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:46](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L46)
 
-***
+---
 
 ### id
 

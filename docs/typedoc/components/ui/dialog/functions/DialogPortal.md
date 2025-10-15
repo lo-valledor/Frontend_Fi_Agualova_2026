@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [components/ui/dialog](../README.md) / DialogPortal
 
@@ -14,7 +14,7 @@ Defined in: [app/components/ui/dialog.tsx:20](https://github.com/lo-valledor/fro
 
 ### \_\_namedParameters
 
-`Readonly`\<`React.ComponentProps`\<*typeof* `DialogPrimitive.Portal`\>\>
+`Readonly`\<`React.ComponentProps`\<_typeof_ `DialogPrimitive.Portal`\>\>
 
 ## Returns
 

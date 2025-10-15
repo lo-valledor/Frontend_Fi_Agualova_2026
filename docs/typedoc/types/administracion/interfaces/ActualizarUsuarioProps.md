@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ActualizarUsuarioProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:22](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:23](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L23)
 
-***
+---
 
 ### contrasena
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:23](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:24](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L24)
 
-***
+---
 
 ### nuevaContrasena?
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:24](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:25](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L25)
 
-***
+---
 
 ### nombres
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:25](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L26)
 
-***
+---
 
 ### apellidos
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:26](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:27](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L27)
 
-***
+---
 
 ### departamento
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:27](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:28](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L28)
 
-***
+---
 
 ### activo
 

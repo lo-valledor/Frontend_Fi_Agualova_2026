@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/operacionesService](../README.md) / OperacionesServiceResponse
 
@@ -22,7 +22,7 @@ Defined in: [app/services/operacionesService.ts:23](https://github.com/lo-valled
 
 Defined in: [app/services/operacionesService.ts:24](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/operacionesService.ts#L24)
 
-***
+---
 
 ### error
 

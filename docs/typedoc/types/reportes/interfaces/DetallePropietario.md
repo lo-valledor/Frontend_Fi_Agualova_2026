@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/reportes](../README.md) / DetallePropietario
 
@@ -16,7 +16,7 @@ Defined in: [app/types/reportes.ts:14](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:15](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L15)
 
-***
+---
 
 ### nombre
 
@@ -24,7 +24,7 @@ Defined in: [app/types/reportes.ts:15](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:16](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L16)
 
-***
+---
 
 ### direccion
 
@@ -32,7 +32,7 @@ Defined in: [app/types/reportes.ts:16](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:17](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L17)
 
-***
+---
 
 ### comuna
 
@@ -40,7 +40,7 @@ Defined in: [app/types/reportes.ts:17](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:18](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L18)
 
-***
+---
 
 ### contacto
 
@@ -48,7 +48,7 @@ Defined in: [app/types/reportes.ts:18](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:19](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L19)
 
-***
+---
 
 ### telefono
 
@@ -56,7 +56,7 @@ Defined in: [app/types/reportes.ts:19](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:20](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L20)
 
-***
+---
 
 ### email
 

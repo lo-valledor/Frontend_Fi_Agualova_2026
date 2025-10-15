@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [hooks/operaciones/use-calculo-facturacion-flow](../README.md) / FlowStep
 
@@ -16,7 +16,7 @@ Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:11](https://g
 
 Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:12](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/operaciones/use-calculo-facturacion-flow.ts#L12)
 
-***
+---
 
 ### name
 
@@ -24,7 +24,7 @@ Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:12](https://g
 
 Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:13](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/operaciones/use-calculo-facturacion-flow.ts#L13)
 
-***
+---
 
 ### description
 
@@ -32,7 +32,7 @@ Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:13](https://g
 
 Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:14](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/operaciones/use-calculo-facturacion-flow.ts#L14)
 
-***
+---
 
 ### status
 
@@ -40,7 +40,7 @@ Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:14](https://g
 
 Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:15](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/operaciones/use-calculo-facturacion-flow.ts#L15)
 
-***
+---
 
 ### data?
 
@@ -48,7 +48,7 @@ Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:15](https://g
 
 Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:16](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/operaciones/use-calculo-facturacion-flow.ts#L16)
 
-***
+---
 
 ### error?
 
@@ -56,7 +56,7 @@ Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:16](https://g
 
 Defined in: [app/hooks/operaciones/use-calculo-facturacion-flow.ts:17](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/operaciones/use-calculo-facturacion-flow.ts#L17)
 
-***
+---
 
 ### timestamp?
 

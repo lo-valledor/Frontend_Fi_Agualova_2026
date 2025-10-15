@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/roles-permisos](../README.md) / Menus
 
@@ -16,7 +16,7 @@ Defined in: [app/types/roles-permisos.ts:8](https://github.com/lo-valledor/front
 
 Defined in: [app/types/roles-permisos.ts:9](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L9)
 
-***
+---
 
 ### nombreMenu
 
@@ -24,7 +24,7 @@ Defined in: [app/types/roles-permisos.ts:9](https://github.com/lo-valledor/front
 
 Defined in: [app/types/roles-permisos.ts:10](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L10)
 
-***
+---
 
 ### ruta
 
@@ -32,7 +32,7 @@ Defined in: [app/types/roles-permisos.ts:10](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:11](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L11)
 
-***
+---
 
 ### orden
 
@@ -40,7 +40,7 @@ Defined in: [app/types/roles-permisos.ts:11](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:12](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L12)
 
-***
+---
 
 ### icono
 
@@ -48,7 +48,7 @@ Defined in: [app/types/roles-permisos.ts:12](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/roles-permisos.ts:13](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/roles-permisos.ts#L13)
 
-***
+---
 
 ### esVisible
 

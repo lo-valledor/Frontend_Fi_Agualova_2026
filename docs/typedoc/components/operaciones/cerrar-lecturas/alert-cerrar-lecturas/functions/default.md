@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/operaciones/cerrar-lecturas/alert-cerrar-lecturas](../README.md) / default
 

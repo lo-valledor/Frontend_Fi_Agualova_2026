@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [hooks/shared/use-export-data](../README.md) / ExportColumn
 
@@ -16,7 +16,7 @@ Defined in: [app/hooks/shared/use-export-data.ts:13](https://github.com/lo-valle
 
 Defined in: [app/hooks/shared/use-export-data.ts:14](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/shared/use-export-data.ts#L14)
 
-***
+---
 
 ### header
 
@@ -24,7 +24,7 @@ Defined in: [app/hooks/shared/use-export-data.ts:14](https://github.com/lo-valle
 
 Defined in: [app/hooks/shared/use-export-data.ts:15](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/shared/use-export-data.ts#L15)
 
-***
+---
 
 ### formatter()?
 

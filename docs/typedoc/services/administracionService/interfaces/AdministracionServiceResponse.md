@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/administracionService](../README.md) / AdministracionServiceResponse
 
@@ -29,7 +29,7 @@ Defined in: [app/services/administracionService.ts:44](https://github.com/lo-val
 
 Datos devueltos en caso de éxito, null si hay error
 
-***
+---
 
 ### error
 

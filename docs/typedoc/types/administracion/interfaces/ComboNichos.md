@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ComboNichos
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:364](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:365](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L365)
 
-***
+---
 
 ### nombre
 

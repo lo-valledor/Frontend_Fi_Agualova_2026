@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/administracion/clientes/client-filters](../README.md) / ClientFilters
 
@@ -16,7 +16,7 @@ Defined in: [app/components/administracion/clientes/client-filters.tsx:24](https
 
 Defined in: [app/components/administracion/clientes/client-filters.tsx:25](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/clientes/client-filters.tsx#L25)
 
-***
+---
 
 ### comuna
 
@@ -24,7 +24,7 @@ Defined in: [app/components/administracion/clientes/client-filters.tsx:25](https
 
 Defined in: [app/components/administracion/clientes/client-filters.tsx:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/clientes/client-filters.tsx#L26)
 
-***
+---
 
 ### codigoComuna
 
@@ -32,7 +32,7 @@ Defined in: [app/components/administracion/clientes/client-filters.tsx:26](https
 
 Defined in: [app/components/administracion/clientes/client-filters.tsx:27](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/clientes/client-filters.tsx#L27)
 
-***
+---
 
 ### tieneContacto
 
@@ -40,7 +40,7 @@ Defined in: [app/components/administracion/clientes/client-filters.tsx:27](https
 
 Defined in: [app/components/administracion/clientes/client-filters.tsx:28](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/clientes/client-filters.tsx#L28)
 
-***
+---
 
 ### tieneTelefono
 
@@ -48,7 +48,7 @@ Defined in: [app/components/administracion/clientes/client-filters.tsx:28](https
 
 Defined in: [app/components/administracion/clientes/client-filters.tsx:29](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/clientes/client-filters.tsx#L29)
 
-***
+---
 
 ### tieneEmail
 

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / MedidorAntiguo
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:285](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:286](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L286)
 
-***
+---
 
 ### numeroSerie
 

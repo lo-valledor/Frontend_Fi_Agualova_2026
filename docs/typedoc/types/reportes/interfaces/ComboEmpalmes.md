@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/reportes](../README.md) / ComboEmpalmes
 
@@ -16,7 +16,7 @@ Defined in: [app/types/reportes.ts:106](https://github.com/lo-valledor/front-res
 
 Defined in: [app/types/reportes.ts:107](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L107)
 
-***
+---
 
 ### descripcion
 

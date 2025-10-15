@@ -61,14 +61,14 @@ export function DebugFlowComponent({
   };
 
   return (
-    <Card className='border border-slate-200/60 dark:border-slate-700/60'>
+    <Card className='border border-border'>
       <Collapsible open={isOpen} onOpenChange={onToggle}>
         <CollapsibleTrigger asChild>
-          <CardHeader className='cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'>
+          <CardHeader className='cursor-pointer hover:bg-muted transition-colors'>
             <div className='flex items-center justify-between'>
               <CardTitle className='text-lg flex items-center gap-3'>
-                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                  <Clock className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
+                  <Clock className='w-4 h-4' />
                 </div>
                 Debug del Flujo de Cálculo
               </CardTitle>
@@ -106,7 +106,7 @@ export function DebugFlowComponent({
                 return (
                   <div
                     key={step.id}
-                    className={`p-4 rounded-lg border transition-all ${borderClass}`}
+                    className={`p-4 rounded-xl border transition-all ${borderClass}`}
                   >
                     {/* Encabezado del paso */}
                     <div className='flex items-center justify-between mb-2'>
@@ -147,12 +147,12 @@ export function DebugFlowComponent({
                     {step.data && (
                       <Collapsible>
                         <CollapsibleTrigger asChild>
-                          <button className='mt-2 text-xs text-blue-600 dark:text-blue-400 hover:underline'>
+                          <button className='mt-2 text-xs  hover:underline'>
                             Ver datos de respuesta
                           </button>
                         </CollapsibleTrigger>
                         <CollapsibleContent>
-                          <div className='mt-2 p-2 bg-slate-100 dark:bg-slate-800 rounded text-xs'>
+                          <div className='mt-2 p-2 bg-background rounded text-xs'>
                             <pre className='text-slate-700 dark:text-slate-300 overflow-x-auto whitespace-pre-wrap'>
                               {step.data}
                             </pre>

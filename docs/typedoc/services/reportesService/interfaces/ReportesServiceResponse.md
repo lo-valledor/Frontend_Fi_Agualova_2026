@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/reportesService](../README.md) / ReportesServiceResponse
 
@@ -22,7 +22,7 @@ Defined in: [app/services/reportesService.ts:17](https://github.com/lo-valledor/
 
 Defined in: [app/services/reportesService.ts:18](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/reportesService.ts#L18)
 
-***
+---
 
 ### error
 

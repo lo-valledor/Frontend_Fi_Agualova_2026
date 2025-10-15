@@ -155,7 +155,7 @@ export function FormModal({
     name: 'cargoMonofasicoIds' | 'cargoTrifasicoIds' | 'cargoAmbosIds',
     title: string
   ) => (
-    <div className='space-y-3 sm:space-y-4 rounded-lg border p-3 sm:p-4'>
+    <div className='space-y-3 sm:space-y-4 rounded-xl border p-3 sm:p-4'>
       <h4 className='text-sm sm:text-md font-medium'>{title}</h4>
       <ScrollArea className='h-36 sm:h-48'>
         <div className='space-y-1 sm:space-y-2 pr-2 sm:pr-4'>
@@ -292,7 +292,7 @@ export function FormModal({
                   {fields.map((item, index) => (
                     <div
                       key={item.id}
-                      className='grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-3 sm:gap-4 items-start p-3 border rounded-lg'
+                      className='grid grid-cols-1 sm:grid-cols-[1fr_1fr_1fr_auto] gap-3 sm:gap-4 items-start p-3 border rounded-xl'
                     >
                       <FormField
                         control={form.control}

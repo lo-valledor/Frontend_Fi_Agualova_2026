@@ -317,7 +317,7 @@ export default function CrearMedidorComponent({
                 </Button>
                 <Button
                   onClick={handleSubmit}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  className='gap-2 bg-sky-600 hover:bg-sky-700'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
@@ -331,7 +331,7 @@ export default function CrearMedidorComponent({
 
       {/* Contenido principal */}
       <div className='container mx-auto px-4 py-6 space-y-6'>
-        <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+        <div className='bg-background rounded-xl shadow-sm border border-border'>
           <form className='p-6 space-y-6'>
             {/* Información básica del medidor */}
             <div className='space-y-4'>
@@ -340,7 +340,9 @@ export default function CrearMedidorComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='marca'>Marca <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='marca'>
+                    Marca <span className='text-red-500'>*</span>
+                  </Label>
                   <Select
                     value={formData.marca}
                     onValueChange={value => handleInputChange('marca', value)}
@@ -364,7 +366,9 @@ export default function CrearMedidorComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='tipo'>Tipo de Medidor <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='tipo'>
+                    Tipo de Medidor <span className='text-red-500'>*</span>
+                  </Label>
                   <Select
                     value={formData.tipo}
                     onValueChange={value => handleInputChange('tipo', value)}
@@ -387,7 +391,9 @@ export default function CrearMedidorComponent({
 
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='modelo'>Modelo <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='modelo'>
+                    Modelo <span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                     id='modelo'
                     value={formData.modelo}
@@ -399,7 +405,9 @@ export default function CrearMedidorComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='serie'>Número de Serie <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='serie'>
+                    Número de Serie <span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                     id='serie'
                     value={formData.serie}
@@ -441,7 +449,9 @@ export default function CrearMedidorComponent({
                 </div>
 
                 <div className='space-y-2'>
-                  <Label htmlFor='fechaInicio'>Fecha de Inicio <span className='text-red-500'>*</span></Label>
+                  <Label htmlFor='fechaInicio'>
+                    Fecha de Inicio <span className='text-red-500'>*</span>
+                  </Label>
                   <Input
                     id='fechaInicio'
                     type='date'
@@ -563,7 +573,7 @@ export default function CrearMedidorComponent({
                 <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
                   <div className='space-y-3'>
                     {medidorCreado?.codigo && (
-                      <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
+                      <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
                         <div>
                           <p className='font-medium'>Código del Medidor:</p>
                           <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
@@ -585,7 +595,7 @@ export default function CrearMedidorComponent({
                     )}
 
                     {medidorCreado?.id && (
-                      <div className='flex items-center justify-between bg-white dark:bg-green-900/30 p-3 rounded-lg border border-green-200 dark:border-green-700'>
+                      <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
                         <div>
                           <p className='font-medium'>ID del Medidor:</p>
                           <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
@@ -635,7 +645,7 @@ export default function CrearMedidorComponent({
                     setMedidorCreado(null);
                     navigate('/dashboard/administracion/medidores');
                   }}
-                  className='flex-1 gap-2 bg-green-600 hover:bg-green-700 text-white'
+                  className='flex-1 gap-2 bg-green-600 hover:bg-green-700'
                 >
                   <ArrowLeft className='h-4 w-4' />
                   Volver a Medidores

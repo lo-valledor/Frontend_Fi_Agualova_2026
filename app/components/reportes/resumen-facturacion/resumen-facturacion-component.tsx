@@ -173,15 +173,24 @@ export default function ResumenFacturacionComponent({
       }
     );
 
-    const cambioEnergia = totales.energiaAnterior > 0 
-      ? ((totales.energiaActual - totales.energiaAnterior) / totales.energiaAnterior) * 100 
-      : 0;
-    const cambioFactura = totales.facturaAnterior > 0 
-      ? ((totales.facturaActual - totales.facturaAnterior) / totales.facturaAnterior) * 100 
-      : 0;
-    const cambioCantidad = totales.cantidadAnterior > 0 
-      ? ((totales.cantidadActual - totales.cantidadAnterior) / totales.cantidadAnterior) * 100 
-      : 0;
+    const cambioEnergia =
+      totales.energiaAnterior > 0
+        ? ((totales.energiaActual - totales.energiaAnterior) /
+            totales.energiaAnterior) *
+          100
+        : 0;
+    const cambioFactura =
+      totales.facturaAnterior > 0
+        ? ((totales.facturaActual - totales.facturaAnterior) /
+            totales.facturaAnterior) *
+          100
+        : 0;
+    const cambioCantidad =
+      totales.cantidadAnterior > 0
+        ? ((totales.cantidadActual - totales.cantidadAnterior) /
+            totales.cantidadAnterior) *
+          100
+        : 0;
 
     return { ...totales, cambioEnergia, cambioFactura, cambioCantidad };
   };
@@ -198,9 +207,15 @@ export default function ResumenFacturacionComponent({
   };
 
   const obtenerIconoPorcentaje = (valor: number) => {
-    if (valor > 0) return <TrendingUpIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
-    if (valor < 0) return <TrendingDownIcon className="w-4 h-4 text-red-600 dark:text-red-400" />;
-    return <MinusIcon className="w-4 h-4 text-slate-500 dark:text-slate-400" />;
+    if (valor > 0)
+      return (
+        <TrendingUpIcon className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
+      );
+    if (valor < 0)
+      return (
+        <TrendingDownIcon className='w-4 h-4 text-red-600 dark:text-red-400' />
+      );
+    return <MinusIcon className='w-4 h-4' />;
   };
 
   const obtenerColorPorcentaje = (valor: number) => {
@@ -210,7 +225,7 @@ export default function ResumenFacturacionComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
 
@@ -220,21 +235,21 @@ export default function ResumenFacturacionComponent({
         />
 
         {/* Filtros de Búsqueda */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className='flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
+              className='flex justify-between items-center p-3 cursor-pointer hover:bg-muted transition-colors'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
               <div className='flex items-center gap-3'>
-                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                  <SearchIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border'>
+                  <SearchIcon className='w-4 h-4' />
                 </div>
                 <div>
-                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                  <CardTitle className='text-base font-medium'>
                     Criterios de Búsqueda
                   </CardTitle>
-                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                  <CardDescription className='text-sm'>
                     Selecciona período y empalme para consultar facturación
                   </CardDescription>
                 </div>
@@ -255,9 +270,9 @@ export default function ResumenFacturacionComponent({
                   <div className='space-y-2'>
                     <Label
                       htmlFor='periodo'
-                      className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'
+                      className='text-sm font-medium flex items-center gap-2'
                     >
-                      <CalendarIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <CalendarIcon className='w-4 h-4' />
                       Período de Facturación
                     </Label>
                     <Select
@@ -266,7 +281,7 @@ export default function ResumenFacturacionComponent({
                     >
                       <SelectTrigger
                         id='periodo'
-                        className='h-10 bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 focus:border-sky-400 focus:ring-sky-400/20 w-full'
+                        className='h-10 bg-background border-border focus:border-ring focus:ring w-full'
                       >
                         <SelectValue placeholder='Seleccionar período' />
                       </SelectTrigger>
@@ -275,7 +290,7 @@ export default function ResumenFacturacionComponent({
                           <SelectItem
                             key={periodo.pF_ID}
                             value={periodo.pF_ID}
-                            className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                            className='hover:bg-muted'
                           >
                             {periodo.pF_Descripcion}
                           </SelectItem>
@@ -288,9 +303,9 @@ export default function ResumenFacturacionComponent({
                   <div className='space-y-2'>
                     <Label
                       htmlFor='empalme'
-                      className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2 w-full'
+                      className='text-sm font-medium flex items-center gap-2 w-full'
                     >
-                      <FileTextIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <FileTextIcon className='w-4 h-4' />
                       Empalme
                     </Label>
                     <Select
@@ -299,7 +314,7 @@ export default function ResumenFacturacionComponent({
                     >
                       <SelectTrigger
                         id='empalme'
-                        className='h-10 bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 focus:border-sky-400 focus:ring-sky-400/20 w-full'
+                        className='h-10 bg-backgroundborder-border focus:border-sky-400 focus:ring-sky-400/20 w-full'
                       >
                         <SelectValue placeholder='Seleccionar empalme' />
                       </SelectTrigger>
@@ -308,7 +323,7 @@ export default function ResumenFacturacionComponent({
                           <SelectItem
                             key={empalme.emId}
                             value={empalme.emId.toString()}
-                            className='hover:bg-slate-50 dark:hover:bg-slate-800'
+                            className='hover:bg-muted'
                           >
                             {empalme.descripcion}
                           </SelectItem>
@@ -319,12 +334,12 @@ export default function ResumenFacturacionComponent({
                 </div>
 
                 {/* Botones de acción */}
-                <div className='flex justify-end gap-3 pt-3 border-t border-slate-200/60 dark:border-slate-700/60'>
+                <div className='flex justify-end gap-3 pt-3 border-t border-border'>
                   <Button
                     onClick={handleClearFilters}
                     variant='outline'
                     disabled={isLoading}
-                    className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
+                    className='gap-2 border-slate-200 hover:bg-muted-50 dark:border-slate-700 dark:hover:bg-muted-800'
                     size='sm'
                   >
                     <Eraser className='h-4 w-4' />
@@ -333,7 +348,7 @@ export default function ResumenFacturacionComponent({
                   <Button
                     onClick={handleConsultar}
                     disabled={isLoading || !selectedPeriodo || !selectedEmpalme}
-                    className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                    className='gap-2 bg-sky-600 hover:bg-sky-700'
                     size='sm'
                   >
                     <SearchIcon className='h-4 w-4' />
@@ -345,22 +360,22 @@ export default function ResumenFacturacionComponent({
           </Collapsible>
         </Card>
 
-
         {/* Comparación por Conceptos */}
         {!isLoading && !fetchError && facturacionData.length > 0 && (
-          <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
-            <CardHeader className='p-4 border-b border-slate-200/60 dark:border-slate-700/60'>
+          <Card className='border border-border shadow-sm'>
+            <CardHeader className='p-4 border-b border-border'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
-                  <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                    <TrendingUpIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                  <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border'>
+                    <TrendingUpIcon className='w-4 h-4' />
                   </div>
                   <div>
-                    <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                    <CardTitle className='text-base font-medium'>
                       Comparación por Conceptos
                     </CardTitle>
-                    <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
-                      Análisis detallado de cambios en cada concepto de facturación
+                    <CardDescription className='text-sm'>
+                      Análisis detallado de cambios en cada concepto de
+                      facturación
                     </CardDescription>
                   </div>
                 </div>
@@ -374,26 +389,40 @@ export default function ResumenFacturacionComponent({
             </CardHeader>
             <CardContent className='p-4 space-y-3'>
               {facturacionData.map((item, index) => {
-                const facturaAnterior = parseFloat(item.totalFacturaPeriodoAnterior.replace(/[^\d.-]/g, '') || '0');
-                const facturaActual = parseFloat(item.totalFacturaPeriodoActual.replace(/[^\d.-]/g, '') || '0');
-                const cambio = facturaAnterior > 0 ? ((facturaActual - facturaAnterior) / facturaAnterior) * 100 : 0;
+                const facturaAnterior = parseFloat(
+                  item.totalFacturaPeriodoAnterior.replace(/[^\d.-]/g, '') ||
+                    '0'
+                );
+                const facturaActual = parseFloat(
+                  item.totalFacturaPeriodoActual.replace(/[^\d.-]/g, '') || '0'
+                );
+                const cambio =
+                  facturaAnterior > 0
+                    ? ((facturaActual - facturaAnterior) / facturaAnterior) *
+                      100
+                    : 0;
                 const diferencia = facturaActual - facturaAnterior;
 
                 return (
-                  <Card key={index} className={`p-4 border-l-4 ${
-                    cambio > 0 ? 'border-l-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10' :
-                    cambio < 0 ? 'border-l-red-500 bg-red-50/50 dark:bg-red-900/10' :
-                    'border-l-slate-300 dark:border-l-slate-600'
-                  }`}>
+                  <Card
+                    key={index}
+                    className={`p-4 border-l-4 ${
+                      cambio > 0
+                        ? 'border-l-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/10'
+                        : cambio < 0
+                          ? 'border-l-red-500 bg-red-50/50 dark:bg-red-900/10'
+                          : 'border-l-slate-300 dark:border-l-slate-600'
+                    }`}
+                  >
                     <div className='flex flex-col lg:flex-row lg:items-center justify-between gap-3'>
                       <div className='flex-1'>
-                        <h3 className='font-medium text-sm text-slate-900 dark:text-slate-100 mb-2'>
+                        <h3 className='font-medium text-sm mb-2'>
                           {item.cargoDescripcion}
                         </h3>
                         <div className='grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs'>
                           <div>
-                            <p className='text-slate-600 dark:text-slate-400'>Energía</p>
-                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                            <p className=''>Energía</p>
+                            <p className='font-medium'>
                               {item.totalEnergiaPeriodoActual}
                             </p>
                             <p className='text-slate-500 dark:text-slate-400'>
@@ -401,8 +430,8 @@ export default function ResumenFacturacionComponent({
                             </p>
                           </div>
                           <div>
-                            <p className='text-slate-600 dark:text-slate-400'>Factura</p>
-                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                            <p className=''>Factura</p>
+                            <p className='font-medium'>
                               {item.totalFacturaPeriodoActual}
                             </p>
                             <p className='text-slate-500 dark:text-slate-400'>
@@ -410,8 +439,8 @@ export default function ResumenFacturacionComponent({
                             </p>
                           </div>
                           <div>
-                            <p className='text-slate-600 dark:text-slate-400'>Cantidad</p>
-                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                            <p className=''>Cantidad</p>
+                            <p className='font-medium'>
                               {item.cantidadCargosPeriodoActual}
                             </p>
                             <p className='text-slate-500 dark:text-slate-400'>
@@ -419,20 +448,25 @@ export default function ResumenFacturacionComponent({
                             </p>
                           </div>
                           <div>
-                            <p className='text-slate-600 dark:text-slate-400'>Diferencia</p>
-                            <p className='font-medium text-slate-900 dark:text-slate-100'>
+                            <p className=''>Diferencia</p>
+                            <p className='font-medium'>
                               {item.diferenciaPeriodos}
                             </p>
                           </div>
                         </div>
                       </div>
                       <div className='text-right'>
-                        <div className={`flex items-center justify-end gap-2 text-sm font-medium ${obtenerColorPorcentaje(cambio)}`}>
+                        <div
+                          className={`flex items-center justify-end gap-2 text-sm font-medium ${obtenerColorPorcentaje(cambio)}`}
+                        >
                           {obtenerIconoPorcentaje(cambio)}
                           <span>{formatearPorcentaje(cambio)}</span>
                         </div>
-                        <div className={`text-xs font-medium ${diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
-                          {diferencia >= 0 ? '+' : ''}${formatearNumero(Math.abs(diferencia))}
+                        <div
+                          className={`text-xs font-medium ${diferencia >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}
+                        >
+                          {diferencia >= 0 ? '+' : ''}$
+                          {formatearNumero(Math.abs(diferencia))}
                         </div>
                       </div>
                     </div>
@@ -444,18 +478,18 @@ export default function ResumenFacturacionComponent({
         )}
 
         {/* Resultados con tabla detallada (colapsible) */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
-          <CardHeader className='p-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+        <Card className='border border-border shadow-sm'>
+          <CardHeader className='p-3 border-b border-border'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                  <BarChart3Icon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border'>
+                  <BarChart3Icon className='w-4 h-4' />
                 </div>
                 <div>
-                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                  <CardTitle className='text-base font-medium'>
                     Tabla Detallada
                   </CardTitle>
-                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                  <CardDescription className='text-sm'>
                     {facturacionData.length > 0
                       ? `Vista completa de ${facturacionData.length} conceptos de facturación`
                       : 'No hay datos disponibles'}
@@ -493,17 +527,15 @@ export default function ResumenFacturacionComponent({
                     <p className='text-slate-700 dark:text-slate-300 font-medium text-sm'>
                       Consultando datos...
                     </p>
-                    <p className='text-xs text-slate-500 dark:text-slate-400'>
-                      Por favor espere
-                    </p>
+                    <p className='text-xs'>Por favor espere</p>
                   </div>
                 </div>
               </div>
             )}
             {!isLoading && fetchError && (
-              <div className='p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-700/60'>
+              <div className='p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-700/60'>
                 <div className='flex items-start gap-3'>
-                  <div className='w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-lg flex items-center justify-center'>
+                  <div className='w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-xl flex items-center justify-center'>
                     <AlertCircleIcon className='w-4 h-4 text-red-600 dark:text-red-400' />
                   </div>
                   <div className='flex-1'>
@@ -527,26 +559,29 @@ export default function ResumenFacturacionComponent({
             )}
             {!isLoading && !fetchError && facturacionData.length === 0 && (
               <div className='flex flex-col items-center justify-center h-48 gap-3'>
-                <div className='w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                  <SearchIcon className='w-6 h-6 text-slate-500 dark:text-slate-400' />
+                <div className='w-12 h-12 bg-background rounded-xl flex items-center justify-center'>
+                  <SearchIcon className='w-6 h-6' />
                 </div>
                 <div className='text-center'>
-                  <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                  <p className='font-medium text-sm'>
                     Realizar consulta de facturación
                   </p>
-                  <p className='text-xs text-slate-500 dark:text-slate-400'>
+                  <p className='text-xs'>
                     Selecciona período y empalme, luego haz clic en "Consultar"
                   </p>
                 </div>
               </div>
             )}
-            {!isLoading && !fetchError && facturacionData.length > 0 && showDetailedTable && (
-              <div className='space-y-4'>
-                <div className='overflow-x-auto'>
-                  <DataTable columns={columns} data={facturacionData} />
+            {!isLoading &&
+              !fetchError &&
+              facturacionData.length > 0 &&
+              showDetailedTable && (
+                <div className='space-y-4'>
+                  <div className='overflow-x-auto'>
+                    <DataTable columns={columns} data={facturacionData} />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </CardContent>
         </Card>
       </div>

@@ -3,7 +3,7 @@ import {
   FileText,
   Settings,
   TrendingUp,
-  User,
+  User
   //Zap
 } from 'lucide-react';
 
@@ -98,7 +98,7 @@ const ContratoComponent = memo(function ContratoComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto px-3 sm:px-4 lg:px-6 py-4 space-y-4 sm:space-y-6'>
         {/* Header con navegación y estadísticas */}
         <div className='space-y-4'>
@@ -116,11 +116,11 @@ const ContratoComponent = memo(function ContratoComponent({
           </div>
 
           {/* Header principal mejorado */}
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 sm:pb-4 border-b border-slate-200/60 dark:border-slate-700/60 space-y-2 sm:space-y-0'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 sm:pb-4 border-b border-border space-y-2 sm:space-y-0'>
             <div className='text-center sm:text-left'>
               <div className='flex items-center gap-2 justify-center sm:justify-start mb-2'>
                 <FileText className='h-5 w-5 text-blue-600' />
-                <h1 className='text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900 dark:text-slate-100'>
+                <h1 className='text-lg sm:text-xl lg:text-2xl font-semibold'>
                   Contrato {contratoInfo?.contratoId}
                 </h1>
                 {contratoInfo?.estadoContrato && (
@@ -135,7 +135,7 @@ const ContratoComponent = memo(function ContratoComponent({
                   </Badge>
                 )}
               </div>
-              <p className='text-xs sm:text-sm text-slate-600 dark:text-slate-400'>
+              <p className='text-xs sm:text-sm'>
                 {propietarioInfo?.nombre} • {localInfo?.empresa}
               </p>
             </div>
@@ -143,14 +143,14 @@ const ContratoComponent = memo(function ContratoComponent({
             {/* Estadísticas rápidas con colores mejorados */}
             <div className='flex items-center gap-4 text-xs sm:text-sm'>
               <div className='text-center'>
-                <div className='font-semibold text-slate-700 dark:text-slate-300'>
+                <div className='font-semibold'>
                   <NumberFlow value={estadisticasHeader.totalFacturas} />
                 </div>
                 <div className='text-slate-500'>Facturas</div>
               </div>
               <Separator orientation='vertical' className='h-8' />
               <div className='text-center'>
-                <div className='font-semibold text-slate-700 dark:text-slate-300'>
+                <div className='font-semibold'>
                   <NumberFlow
                     value={estadisticasHeader.totalConsumo}
                     format={{
@@ -165,7 +165,7 @@ const ContratoComponent = memo(function ContratoComponent({
               </div>
               <Separator orientation='vertical' className='h-8' />
               <div className='text-center'>
-                <div className='font-semibold text-slate-700 dark:text-slate-300'>
+                <div className='font-semibold'>
                   $
                   <NumberFlow
                     value={estadisticasHeader.totalFacturado}
@@ -258,9 +258,9 @@ const ContratoComponent = memo(function ContratoComponent({
           <TabsContent value='tecnico' className='space-y-4'>
             <div className='grid gap-4 md:grid-cols-2'>
               {/* Detalles del Medidor */}
-              <Card className='border bg-white dark:bg-slate-900'>
+              <Card className='border bg-background'>
                 <CardHeader>
-                  <CardTitle className='text-base font-medium text-slate-700 dark:text-slate-300'>
+                  <CardTitle className='text-base font-medium'>
                     Especificaciones del Medidor
                   </CardTitle>
                 </CardHeader>
@@ -268,25 +268,21 @@ const ContratoComponent = memo(function ContratoComponent({
                   {medidorInfo && (
                     <>
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
-                          Número de Serie:
-                        </span>
+                        <span className='text-sm'>Número de Serie:</span>
                         <span className='text-sm font-medium'>
                           {medidorInfo.nroSerie}
                         </span>
                       </div>
                       <Separator />
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
-                          Tipo de Medidor:
-                        </span>
+                        <span className='text-sm'>Tipo de Medidor:</span>
                         <span className='text-sm font-medium'>
                           {medidorInfo.tipoMedidor}
                         </span>
                       </div>
                       <Separator />
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
+                        <span className='text-sm'>
                           Constante Multiplicadora:
                         </span>
                         <span className='text-sm font-medium'>
@@ -295,9 +291,7 @@ const ContratoComponent = memo(function ContratoComponent({
                       </div>
                       <Separator />
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
-                          Dígitos de Display:
-                        </span>
+                        <span className='text-sm'>Dígitos de Display:</span>
                         <span className='text-sm font-medium'>
                           {medidorInfo.digitos}
                         </span>
@@ -308,9 +302,9 @@ const ContratoComponent = memo(function ContratoComponent({
               </Card>
 
               {/* Información de la Instalación */}
-              <Card className='border bg-white dark:bg-slate-900'>
+              <Card className='border bg-background'>
                 <CardHeader>
-                  <CardTitle className='text-base font-medium text-slate-700 dark:text-slate-300'>
+                  <CardTitle className='text-base font-medium'>
                     Detalles de la Instalación
                   </CardTitle>
                 </CardHeader>
@@ -318,9 +312,7 @@ const ContratoComponent = memo(function ContratoComponent({
                   {contratoInfo && (
                     <>
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
-                          Límite de Inversión:
-                        </span>
+                        <span className='text-sm'>Límite de Inversión:</span>
                         <span className='text-sm font-medium'>
                           $
                           {contratoInfo.limiteInversionVigente?.toLocaleString(
@@ -330,27 +322,21 @@ const ContratoComponent = memo(function ContratoComponent({
                       </div>
                       <Separator />
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
-                          Potencia Contratada:
-                        </span>
+                        <span className='text-sm'>Potencia Contratada:</span>
                         <span className='text-sm font-medium'>
                           {contratoInfo.potenciaContratada} kW
                         </span>
                       </div>
                       <Separator />
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
-                          Ciclo de Facturación:
-                        </span>
+                        <span className='text-sm'>Ciclo de Facturación:</span>
                         <span className='text-sm font-medium'>
                           {contratoInfo.cicloFacturacion}
                         </span>
                       </div>
                       <Separator />
                       <div className='grid grid-cols-2 gap-2'>
-                        <span className='text-sm text-slate-600 dark:text-slate-400'>
-                          Fecha de Inicio:
-                        </span>
+                        <span className='text-sm'>Fecha de Inicio:</span>
                         <span className='text-sm font-medium'>
                           {new Date(
                             contratoInfo.fechaInicio

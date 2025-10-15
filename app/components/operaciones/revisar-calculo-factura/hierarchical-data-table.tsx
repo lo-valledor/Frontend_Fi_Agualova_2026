@@ -77,16 +77,12 @@ export function HierarchicalDataTable({
 
       {/* N° Serie - vacío para cargos */}
       <TableCell className='py-0 px-0.5'>
-        <span className='font-medium text-slate-700 dark:text-slate-300 col-span-2'>
-          {cargo.codigoEnerlova}
-        </span>
+        <span className='font-medium col-span-2'>{cargo.codigoEnerlova}</span>
       </TableCell>
 
       {/* Descripción Cargo - esta es la primera columna con contenido */}
       <TableCell colSpan={2} className='pl-2 py-0 px-0.5'>
-        <span className='font-medium text-slate-700 dark:text-slate-300 col-span-2'>
-          {cargo.descripcion}
-        </span>
+        <span className='font-medium col-span-2'>{cargo.descripcion}</span>
       </TableCell>
 
       {/* Cantidad - alineada con consumo */}
@@ -113,9 +109,9 @@ export function HierarchicalDataTable({
 
   return (
     <div className='w-full overflow-x-auto'>
-      <div className='rounded-lg border border-border/60 shadow-sm'>
+      <div className='rounded-xl border border-border/60 shadow-sm'>
         <Table className='w-full table-fixed text-[10px]'>
-          <TableHeader className='bg-slate-50 dark:bg-slate-900/50 sticky top-0 z-10'>
+          <TableHeader className='bg-background/50 sticky top-0 z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
@@ -125,7 +121,7 @@ export function HierarchicalDataTable({
                   return (
                     <TableHead
                       key={header.id}
-                      className='font-semibold text-slate-700 dark:text-slate-300 py-0.5 px-1 whitespace-nowrap text-[10px] h-6 overflow-hidden'
+                      className='font-semibold py-0.5 px-1 whitespace-nowrap text-[10px] h-6 overflow-hidden'
                       style={{
                         width: header.getSize(),
                         minWidth:
@@ -152,7 +148,7 @@ export function HierarchicalDataTable({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && 'selected'}
-                    className='hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-border/40 h-6'
+                    className='hover:bg-muted transition-colors border-b border-border/40 h-6'
                   >
                     {row.getVisibleCells().map(cell => (
                       <TableCell
@@ -224,7 +220,7 @@ export function HierarchicalDataTable({
                   className='h-32 text-center'
                 >
                   <div className='flex flex-col items-center gap-3 text-muted-foreground'>
-                    <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                    <div className='p-3 bg-background rounded-full'>
                       <span className='text-2xl'>📊</span>
                     </div>
                     <p className='font-medium'>No se encontraron resultados</p>

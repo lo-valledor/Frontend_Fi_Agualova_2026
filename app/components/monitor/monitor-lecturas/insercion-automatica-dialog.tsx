@@ -134,8 +134,8 @@ export function InsercionAutomaticaDialog({
     <Dialog open={open} onOpenChange={handleCerrar}>
       <DialogContent className='min-w-[800px] max-h-[90vh] overflow-hidden flex flex-col'>
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-2 text-sky-800 dark:text-sky-200'>
-            <Zap className='h-5 w-5 text-amber-500' />
+          <DialogTitle className='flex items-center gap-2 text-foreground'>
+            <Zap className='h-5 w-5 text-primary' />
             Validación Automática de Lecturas
           </DialogTitle>
           <DialogDescription>
@@ -159,25 +159,25 @@ export function InsercionAutomaticaDialog({
               >
                 {/* Resumen general */}
                 <div className='grid grid-cols-3 gap-4'>
-                  <div className='bg-slate-50 dark:bg-slate-900 rounded-lg p-4 border'>
+                  <div className='bg-background rounded-xl p-4 border'>
                     <div className='text-sm text-muted-foreground mb-1'>
                       Total de Medidores
                     </div>
                     <div className='text-2xl font-bold'>{medidores.length}</div>
                   </div>
-                  <div className='bg-green-50 dark:bg-green-950/30 rounded-lg p-4 border border-green-200 dark:border-green-800'>
-                    <div className='text-sm text-green-700 dark:text-green-300 mb-1'>
+                  <div className='bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-border'>
+                    <div className='text-sm text-emerald-700 dark:text-emerald-300 mb-1'>
                       Auto-Validables
                     </div>
-                    <div className='text-2xl font-bold text-green-700 dark:text-green-300'>
+                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-300'>
                       {autoInsertables.length}
                     </div>
                   </div>
-                  <div className='bg-amber-50 dark:bg-amber-950/30 rounded-lg p-4 border border-amber-200 dark:border-amber-800'>
-                    <div className='text-sm text-amber-700 dark:text-amber-300 mb-1'>
+                  <div className='bg-muted/50 rounded-xl p-4 border border-border'>
+                    <div className='text-sm text-muted-foreground mb-1'>
                       Requieren Revisión
                     </div>
-                    <div className='text-2xl font-bold text-amber-700 dark:text-amber-300'>
+                    <div className='text-2xl font-bold text-foreground'>
                       {requierenRevision.length}
                     </div>
                   </div>
@@ -198,12 +198,12 @@ export function InsercionAutomaticaDialog({
                 )}
 
                 {autoInsertables.length > 0 && (
-                  <Alert className='border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30'>
-                    <CheckCircle2 className='h-4 w-4 text-green-600 dark:text-green-400' />
-                    <AlertTitle className='text-green-800 dark:text-green-200'>
+                  <Alert className='border-border bg-emerald-50 dark:bg-emerald-950/30'>
+                    <CheckCircle2 className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
+                    <AlertTitle className='text-emerald-800 dark:text-emerald-200'>
                       Listo para inserción automática
                     </AlertTitle>
-                    <AlertDescription className='text-green-700 dark:text-green-300'>
+                    <AlertDescription className='text-emerald-700 dark:text-emerald-300'>
                       {autoInsertables.length} lecturas han pasado todas las
                       validaciones y están listas para ser insertadas
                       automáticamente.
@@ -214,10 +214,10 @@ export function InsercionAutomaticaDialog({
                 {/* Tabla de lecturas auto-insertables */}
                 {autoInsertables.length > 0 && (
                   <div className='space-y-2'>
-                    <h3 className='font-semibold text-sm text-green-700 dark:text-green-300'>
+                    <h3 className='font-semibold text-sm text-emerald-700 dark:text-emerald-300'>
                       Lecturas que se insertarán automáticamente:
                     </h3>
-                    <ScrollArea className='h-[200px] border rounded-lg'>
+                    <ScrollArea className='h-[200px] border rounded-xl'>
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -256,7 +256,7 @@ export function InsercionAutomaticaDialog({
                                 {lectura.consumoCalculado.toLocaleString()} kWh
                               </TableCell>
                               <TableCell>
-                                <Badge className='bg-green-500 text-white'>
+                                <Badge className='bg-green-500'>
                                   <CheckCircle2 className='h-3 w-3 mr-1' />
                                   Válido
                                 </Badge>
@@ -272,10 +272,10 @@ export function InsercionAutomaticaDialog({
                 {/* Tabla de lecturas que requieren revisión */}
                 {requierenRevision.length > 0 && (
                   <div className='space-y-2'>
-                    <h3 className='font-semibold text-sm text-amber-700 dark:text-amber-300'>
+                    <h3 className='font-semibold text-sm text-muted-foreground'>
                       Lecturas que requieren revisión manual:
                     </h3>
-                    <ScrollArea className='h-[200px] border rounded-lg'>
+                    <ScrollArea className='h-[200px] border rounded-xl'>
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -303,7 +303,7 @@ export function InsercionAutomaticaDialog({
                                         key={idx}
                                         className='text-xs text-muted-foreground flex items-start gap-1'
                                       >
-                                        <AlertCircle className='h-3 w-3 text-amber-500 flex-shrink-0 mt-0.5' />
+                                        <AlertCircle className='h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5' />
                                         <span>{razon}</span>
                                       </div>
                                     )
@@ -328,7 +328,7 @@ export function InsercionAutomaticaDialog({
                 animate={{ opacity: 1 }}
                 className='flex flex-col items-center justify-center py-12 space-y-4'
               >
-                <Loader2 className='h-12 w-12 animate-spin text-sky-600 dark:text-sky-400' />
+                <Loader2 className='h-12 w-12 animate-spin text-primary' />
                 <div className='text-center space-y-2'>
                   <p className='text-lg font-semibold'>
                     Insertando lecturas automáticamente...
@@ -356,15 +356,15 @@ export function InsercionAutomaticaDialog({
               >
                 {/* Resumen de resultados */}
                 <div className='grid grid-cols-3 gap-4'>
-                  <div className='bg-green-50 dark:bg-green-950/30 rounded-lg p-4 border border-green-200 dark:border-green-800'>
-                    <div className='text-sm text-green-700 dark:text-green-300 mb-1'>
-                      Exitosas
+                  <div className='bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-4 border border-border'>
+                    <div className='text-sm text-emerald-700 dark:text-emerald-300 mb-1'>
+                      Exitosos
                     </div>
-                    <div className='text-2xl font-bold text-green-700 dark:text-green-300'>
+                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-300'>
                       {resultado.exitosas}
                     </div>
                   </div>
-                  <div className='bg-red-50 dark:bg-red-950/30 rounded-lg p-4 border border-red-200 dark:border-red-800'>
+                  <div className='bg-red-50 dark:bg-red-950/30 rounded-xl p-4 border border-red-200 dark:border-red-800'>
                     <div className='text-sm text-red-700 dark:text-red-300 mb-1'>
                       Fallidas
                     </div>
@@ -372,7 +372,7 @@ export function InsercionAutomaticaDialog({
                       {resultado.fallidas}
                     </div>
                   </div>
-                  <div className='bg-slate-50 dark:bg-slate-900 rounded-lg p-4 border'>
+                  <div className='bg-background rounded-xl p-4 border'>
                     <div className='text-sm text-muted-foreground mb-1'>
                       Omitidas
                     </div>
@@ -387,7 +387,7 @@ export function InsercionAutomaticaDialog({
                   <h3 className='font-semibold text-sm'>
                     Detalle de resultados:
                   </h3>
-                  <ScrollArea className='h-[300px] border rounded-lg'>
+                  <ScrollArea className='h-[300px] border rounded-xl'>
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -404,7 +404,7 @@ export function InsercionAutomaticaDialog({
                             </TableCell>
                             <TableCell>
                               {detalle.estado === 'exitosa' && (
-                                <Badge className='bg-green-500 text-white'>
+                                <Badge className='bg-green-500'>
                                   <CheckCircle2 className='h-3 w-3 mr-1' />
                                   Exitosa
                                 </Badge>
@@ -441,7 +441,7 @@ export function InsercionAutomaticaDialog({
               <Button
                 onClick={handleProcesar}
                 disabled={autoInsertables.length === 0}
-                className='bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800'
+                className='bg-primary hover:bg-primary/90'
               >
                 <Zap className='h-4 w-4 mr-2' />
                 Validar {autoInsertables.length} Lecturas

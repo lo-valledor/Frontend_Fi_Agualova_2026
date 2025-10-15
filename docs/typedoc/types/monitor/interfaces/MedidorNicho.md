@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / MedidorNicho
 
@@ -16,15 +16,15 @@ Defined in: [app/types/monitor.ts:36](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:37](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L37)
 
-***
+---
 
-### LM\_Periodo
+### LM_Periodo
 
-> **LM\_Periodo**: `string`
+> **LM_Periodo**: `string`
 
 Defined in: [app/types/monitor.ts:38](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L38)
 
-***
+---
 
 ### sector
 
@@ -32,7 +32,7 @@ Defined in: [app/types/monitor.ts:38](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:39](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L39)
 
-***
+---
 
 ### nicho
 
@@ -40,7 +40,7 @@ Defined in: [app/types/monitor.ts:39](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:40](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L40)
 
-***
+---
 
 ### ubicacion
 
@@ -48,7 +48,7 @@ Defined in: [app/types/monitor.ts:40](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:41](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L41)
 
-***
+---
 
 ### tarifa
 
@@ -56,7 +56,7 @@ Defined in: [app/types/monitor.ts:41](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:42](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L42)
 
-***
+---
 
 ### local
 
@@ -64,231 +64,231 @@ Defined in: [app/types/monitor.ts:42](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:43](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L43)
 
-***
+---
 
-### SE\_ID
+### SE_ID
 
-> **SE\_ID**: `number`
+> **SE_ID**: `number`
 
 Defined in: [app/types/monitor.ts:44](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L44)
 
-***
+---
 
-### se\_ordenlectura
+### se_ordenlectura
 
-> **se\_ordenlectura**: `number`
+> **se_ordenlectura**: `number`
 
 Defined in: [app/types/monitor.ts:45](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L45)
 
-***
+---
 
-### ME\_ID
+### ME_ID
 
-> **ME\_ID**: `number`
+> **ME_ID**: `number`
 
 Defined in: [app/types/monitor.ts:46](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L46)
 
-***
+---
 
-### SE\_ID1
+### SE_ID1
 
-> **SE\_ID1**: `number`
+> **SE_ID1**: `number`
 
 Defined in: [app/types/monitor.ts:47](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L47)
 
-***
+---
 
-### ME\_NSerie
+### ME_NSerie
 
-> **ME\_NSerie**: `string`
+> **ME_NSerie**: `string`
 
 Defined in: [app/types/monitor.ts:48](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L48)
 
-***
+---
 
-### ME\_Digitos
+### ME_Digitos
 
-> **ME\_Digitos**: `number`
+> **ME_Digitos**: `number`
 
 Defined in: [app/types/monitor.ts:49](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L49)
 
-***
+---
 
-### ME\_ConstanteMultiplicar
+### ME_ConstanteMultiplicar
 
-> **ME\_ConstanteMultiplicar**: `number`
+> **ME_ConstanteMultiplicar**: `number`
 
 Defined in: [app/types/monitor.ts:50](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L50)
 
-***
+---
 
-### LM\_ID
+### LM_ID
 
-> **LM\_ID**: `number`
+> **LM_ID**: `number`
 
 Defined in: [app/types/monitor.ts:51](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L51)
 
-***
+---
 
-### LM\_FechaLectura
+### LM_FechaLectura
 
-> **LM\_FechaLectura**: `string` \| `null`
+> **LM_FechaLectura**: `string` \| `null`
 
 Defined in: [app/types/monitor.ts:52](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L52)
 
-***
+---
 
-### LM\_ValorUltimaLectura
+### LM_ValorUltimaLectura
 
-> **LM\_ValorUltimaLectura**: `number`
+> **LM_ValorUltimaLectura**: `number`
 
 Defined in: [app/types/monitor.ts:53](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L53)
 
-***
+---
 
-### LMC\_ValorUltimaLectEnergiaReactiva
+### LMC_ValorUltimaLectEnergiaReactiva
 
-> **LMC\_ValorUltimaLectEnergiaReactiva**: `number`
+> **LMC_ValorUltimaLectEnergiaReactiva**: `number`
 
 Defined in: [app/types/monitor.ts:54](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L54)
 
-***
+---
 
-### LM\_ConsumoMesAnterior
+### LM_ConsumoMesAnterior
 
-> **LM\_ConsumoMesAnterior**: `string`
+> **LM_ConsumoMesAnterior**: `string`
 
 Defined in: [app/types/monitor.ts:55](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L55)
 
-***
+---
 
-### LM\_ConsumoAñoAnterior
+### LM_ConsumoAñoAnterior
 
-> **LM\_ConsumoAñoAnterior**: `string`
+> **LM_ConsumoAñoAnterior**: `string`
 
 Defined in: [app/types/monitor.ts:56](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L56)
 
-***
+---
 
-### LMC\_EnergiaActiva
+### LMC_EnergiaActiva
 
-> **LMC\_EnergiaActiva**: `number`
+> **LMC_EnergiaActiva**: `number`
 
 Defined in: [app/types/monitor.ts:57](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L57)
 
-***
+---
 
-### LMC\_ConsumoEnergiaActiva
+### LMC_ConsumoEnergiaActiva
 
-> **LMC\_ConsumoEnergiaActiva**: `number`
+> **LMC_ConsumoEnergiaActiva**: `number`
 
 Defined in: [app/types/monitor.ts:58](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L58)
 
-***
+---
 
-### LMC\_EnergiaReactiva
+### LMC_EnergiaReactiva
 
-> **LMC\_EnergiaReactiva**: `number`
+> **LMC_EnergiaReactiva**: `number`
 
 Defined in: [app/types/monitor.ts:59](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L59)
 
-***
+---
 
-### LMC\_DemandaSuministrada
+### LMC_DemandaSuministrada
 
-> **LMC\_DemandaSuministrada**: `string`
+> **LMC_DemandaSuministrada**: `string`
 
 Defined in: [app/types/monitor.ts:60](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L60)
 
-***
+---
 
-### LMC\_FechaDemandaSuminis
+### LMC_FechaDemandaSuminis
 
-> **LMC\_FechaDemandaSuminis**: `string`
+> **LMC_FechaDemandaSuminis**: `string`
 
 Defined in: [app/types/monitor.ts:61](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L61)
 
-***
+---
 
-### LMC\_HoraDemandaSuminis
+### LMC_HoraDemandaSuminis
 
-> **LMC\_HoraDemandaSuminis**: `string`
+> **LMC_HoraDemandaSuminis**: `string`
 
 Defined in: [app/types/monitor.ts:62](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L62)
 
-***
+---
 
-### LMC\_DemandaPunta
+### LMC_DemandaPunta
 
-> **LMC\_DemandaPunta**: `string`
+> **LMC_DemandaPunta**: `string`
 
 Defined in: [app/types/monitor.ts:63](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L63)
 
-***
+---
 
-### LMC\_FechaDemandaPunta
+### LMC_FechaDemandaPunta
 
-> **LMC\_FechaDemandaPunta**: `string`
+> **LMC_FechaDemandaPunta**: `string`
 
 Defined in: [app/types/monitor.ts:64](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L64)
 
-***
+---
 
-### LMC\_HoraDemandaPunta
+### LMC_HoraDemandaPunta
 
-> **LMC\_HoraDemandaPunta**: `string`
+> **LMC_HoraDemandaPunta**: `string`
 
 Defined in: [app/types/monitor.ts:65](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L65)
 
-***
+---
 
-### LMC\_ConsumoEnergiaReactiva
+### LMC_ConsumoEnergiaReactiva
 
-> **LMC\_ConsumoEnergiaReactiva**: `number`
+> **LMC_ConsumoEnergiaReactiva**: `number`
 
 Defined in: [app/types/monitor.ts:66](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L66)
 
-***
+---
 
-### LMC\_ValorUltimaLectEnergiaActiva
+### LMC_ValorUltimaLectEnergiaActiva
 
-> **LMC\_ValorUltimaLectEnergiaActiva**: `string`
+> **LMC_ValorUltimaLectEnergiaActiva**: `string`
 
 Defined in: [app/types/monitor.ts:67](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L67)
 
-***
+---
 
-### LMC\_ValorUltimaLectEnergiaReactiva1
+### LMC_ValorUltimaLectEnergiaReactiva1
 
-> **LMC\_ValorUltimaLectEnergiaReactiva1**: `string`
+> **LMC_ValorUltimaLectEnergiaReactiva1**: `string`
 
 Defined in: [app/types/monitor.ts:68](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L68)
 
-***
+---
 
-### LMC\_ConsAñoAnteriorEnActiva
+### LMC_ConsAñoAnteriorEnActiva
 
-> **LMC\_ConsAñoAnteriorEnActiva**: `string`
+> **LMC_ConsAñoAnteriorEnActiva**: `string`
 
 Defined in: [app/types/monitor.ts:69](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L69)
 
-***
+---
 
-### LMC\_ConsAñoAnteriorEnReactiva
+### LMC_ConsAñoAnteriorEnReactiva
 
-> **LMC\_ConsAñoAnteriorEnReactiva**: `string`
+> **LMC_ConsAñoAnteriorEnReactiva**: `string`
 
 Defined in: [app/types/monitor.ts:70](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L70)
 
-***
+---
 
-### LMC\_PorcentajeMultaMalFactorPotencia
+### LMC_PorcentajeMultaMalFactorPotencia
 
-> **LMC\_PorcentajeMultaMalFactorPotencia**: `string`
+> **LMC_PorcentajeMultaMalFactorPotencia**: `string`
 
 Defined in: [app/types/monitor.ts:71](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L71)
 
-***
+---
 
 ### Estado
 

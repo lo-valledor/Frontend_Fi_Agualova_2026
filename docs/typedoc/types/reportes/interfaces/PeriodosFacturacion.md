@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/reportes](../README.md) / PeriodosFacturacion
 
@@ -10,16 +10,16 @@ Defined in: [app/types/reportes.ts:111](https://github.com/lo-valledor/front-res
 
 ## Properties
 
-### pF\_ID
+### pF_ID
 
-> **pF\_ID**: `string`
+> **pF_ID**: `string`
 
 Defined in: [app/types/reportes.ts:112](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L112)
 
-***
+---
 
-### pF\_Descripcion
+### pF_Descripcion
 
-> **pF\_Descripcion**: `string`
+> **pF_Descripcion**: `string`
 
 Defined in: [app/types/reportes.ts:113](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L113)

@@ -78,7 +78,9 @@ export default function CrearContratanteComponent() {
 
   const [giros, setGiros] = useState<GetGiros[]>([]);
   const [comunas, setComunas] = useState<GetComunas[]>([]);
-  const [existingContratantes, setExistingContratantes] = useState<string[]>([]);
+  const [existingContratantes, setExistingContratantes] = useState<string[]>(
+    []
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rutValidationStatus, setRutValidationStatus] = useState<
     'idle' | 'checking' | 'valid' | 'invalid'
@@ -117,7 +119,9 @@ export default function CrearContratanteComponent() {
         if (contratantesDataResult.data) {
           setGiros(contratantesDataResult.data.giros);
           setComunas(contratantesDataResult.data.comunas);
-          setExistingContratantes(contratantesDataResult.data.contratantes.map(c => c.rut));
+          setExistingContratantes(
+            contratantesDataResult.data.contratantes.map(c => c.rut)
+          );
         }
       } catch (error) {
         console.error('Error loading data:', error);
@@ -162,8 +166,9 @@ export default function CrearContratanteComponent() {
         rut: formatRut(data.rut)
       };
 
-      const result = await administracionService.crearContratante(formattedData);
-      
+      const result =
+        await administracionService.crearContratante(formattedData);
+
       if (result.error) {
         toast.error(result.error);
         return;
@@ -190,7 +195,9 @@ export default function CrearContratanteComponent() {
               <>
                 <Button
                   variant='ghost'
-                  onClick={() => navigate('/dashboard/administracion/contratantes')}
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratantes')
+                  }
                   disabled={isSubmitting}
                   className='gap-2'
                 >
@@ -199,14 +206,16 @@ export default function CrearContratanteComponent() {
                 </Button>
                 <Button
                   variant='outline'
-                  onClick={() => navigate('/dashboard/administracion/contratantes')}
+                  onClick={() =>
+                    navigate('/dashboard/administracion/contratantes')
+                  }
                   disabled={isSubmitting}
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
-                  className='gap-2 bg-orange-600 hover:bg-orange-700 text-white'
+                  className='gap-2 bg-orange-600 hover:bg-orange-700'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
@@ -221,13 +230,15 @@ export default function CrearContratanteComponent() {
       <div className='container mx-auto px-4 py-6 space-y-6'>
         {/* Disclaimer */}
         <Alert className='border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-800'>
-          <Info className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+          <Info className='h-4 w-4 ' />
           <AlertDescription className='text-blue-800 dark:text-blue-200'>
-            <strong>Información:</strong> Al crear un contratante, este aparecerá automáticamente en el submódulo de <strong>Propietarios</strong> para su consulta y gestión.
+            <strong>Información:</strong> Al crear un contratante, este
+            aparecerá automáticamente en el submódulo de{' '}
+            <strong>Propietarios</strong> para su consulta y gestión.
           </AlertDescription>
         </Alert>
 
-        <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+        <div className='bg-background rounded-xl shadow-sm border border-border'>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -294,7 +305,7 @@ export default function CrearContratanteComponent() {
                     control={form.control}
                     name='esEmpresa'
                     render={({ field }) => (
-                      <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4 bg-muted/30'>
+                      <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 bg-muted/30'>
                         <FormControl>
                           <Checkbox
                             checked={field.value}
@@ -318,7 +329,10 @@ export default function CrearContratanteComponent() {
                       <FormItem>
                         <FormLabel className='flex items-center gap-2'>
                           <User className='h-4 w-4' />
-                          {form.watch('esEmpresa') ? 'Razón Social' : 'Nombre'} <span className='text-red-500'>*</span>
+                          {form.watch('esEmpresa')
+                            ? 'Razón Social'
+                            : 'Nombre'}{' '}
+                          <span className='text-red-500'>*</span>
                         </FormLabel>
                         <FormControl>
                           <Input

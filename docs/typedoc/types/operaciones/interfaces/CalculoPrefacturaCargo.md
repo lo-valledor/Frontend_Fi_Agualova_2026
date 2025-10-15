@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / CalculoPrefacturaCargo
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:216](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:217](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L217)
 
-***
+---
 
 ### descripcion
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:217](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:218](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L218)
 
-***
+---
 
 ### cantidad
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:218](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:219](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L219)
 
-***
+---
 
 ### precioUnitario
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:219](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:220](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L220)
 
-***
+---
 
 ### subtotal
 

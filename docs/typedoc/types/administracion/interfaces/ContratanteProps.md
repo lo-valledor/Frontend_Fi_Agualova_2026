@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ContratanteProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:34](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:35](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L35)
 
-***
+---
 
 ### nombre
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:35](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:36](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L36)
 
-***
+---
 
 ### apellido
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:36](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:37](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L37)
 
-***
+---
 
 ### esEmpresa
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:37](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:38](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L38)
 
-***
+---
 
 ### direccion
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:38](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:39](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L39)
 
-***
+---
 
 ### comuna
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:39](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:40](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L40)
 
-***
+---
 
 ### contacto
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:40](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:41](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L41)
 
-***
+---
 
 ### telefono
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:41](https://github.com/lo-valledor/fron
 
 Defined in: [app/types/administracion.ts:42](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L42)
 
-***
+---
 
 ### email
 

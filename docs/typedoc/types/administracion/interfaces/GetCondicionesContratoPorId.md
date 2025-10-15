@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetCondicionesContratoPorId
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:662](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:663](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L663)
 
-***
+---
 
 ### descripcion
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:663](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:664](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L664)
 
-***
+---
 
 ### conceptoId
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:664](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:665](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L665)
 
-***
+---
 
 ### usaPorcentaje
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:665](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:666](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L666)
 
-***
+---
 
 ### valor
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:666](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:667](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L667)
 
-***
+---
 
 ### estado
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:667](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:668](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L668)
 
-***
+---
 
 ### factorPorcentual
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:668](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:669](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L669)
 
-***
+---
 
 ### valorFijo
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:669](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:670](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L670)
 
-***
+---
 
 ### tipo
 

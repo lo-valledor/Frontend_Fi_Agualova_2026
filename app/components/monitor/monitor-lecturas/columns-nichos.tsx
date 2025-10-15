@@ -36,13 +36,11 @@ export const columnsNichos = ({
     accessorKey: 'Nro',
     header: '#',
     cell: ({ row }) => (
-      <div className='font-semibold text-xs text-slate-700 dark:text-slate-300'>
-        {row.getValue('numero')}
-      </div>
+      <div className='font-semibold text-xs'>{row.getValue('numero')}</div>
     ),
     meta: {
       className:
-        'sticky left-0 z-10 bg-slate-50/95 dark:bg-slate-900/95 backdrop-blur-sm min-w-[50px] max-w-[50px]'
+        'sticky left-0 z-10 bg-background backdrop-blur-sm min-w-[50px] max-w-[50px]'
     }
   },
   {
@@ -51,7 +49,7 @@ export const columnsNichos = ({
     header: () => <div className='text-center'>Local</div>,
     cell: ({ row }) => (
       <div
-        className='font-medium text-xs text-center text-slate-600 dark:text-slate-400 truncate max-w-[100px]'
+        className='font-medium text-xs text-center truncate max-w-[100px]'
         title={row.getValue('local')}
       >
         {row.getValue('local')}
@@ -81,7 +79,7 @@ export const columnsNichos = ({
     accessorKey: 'ME_NSerie',
     header: () => <div className='text-center'>Nro</div>,
     cell: ({ row }) => (
-      <div className='font-mono text-xs text-center text-slate-700 dark:text-slate-300'>
+      <div className='font-mono text-xs text-center'>
         {row.getValue('numero_serie')}
       </div>
     ),
@@ -185,7 +183,7 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-slate-50/70 dark:bg-slate-900/40 min-w-[70px]'
+      className: 'bg-background min-w-[70px]'
     }
   },
   {
@@ -201,7 +199,7 @@ export const columnsNichos = ({
       );
     },
     meta: {
-      className: 'bg-slate-50/70 dark:bg-slate-900/40 min-w-[70px]'
+      className: 'bg-background min-w-[70px]'
     }
   },
   {
@@ -443,7 +441,7 @@ export const columnsNichos = ({
                 <Button
                   variant='ghost'
                   size='sm'
-                  className='h-6 w-6 text-sky-700 dark:text-sky-300 hover:bg-sky-50 dark:hover:bg-sky-900/30 transition-all duration-200 p-0'
+                  className='h-6 w-6 text-primary hover:bg-primary/10 transition-all duration-200 p-0'
                 >
                   <PencilIcon className='h-3.5 w-3.5' />
                   <span className='sr-only'>Editar medidor</span>
@@ -476,14 +474,14 @@ export const columnGroups = [
       'constante'
     ],
     className:
-      'bg-gradient-to-r from-zinc-700 to-zinc-600 text-white font-semibold shadow-sm'
+      'bg-gradient-to-r from-zinc-700 to-zinc-600 font-semibold shadow-sm'
   },
   {
     id: 'consumo_anterior',
     title: 'Consumo Anterior',
     columns: ['anio_anterior', 'mes_anterior'],
     className:
-      'bg-gradient-to-r from-sky-700 to-sky-600 text-white font-semibold shadow-sm'
+      'bg-gradient-to-r from-sky-700 to-sky-600 font-semibold shadow-sm'
   },
   {
     id: 'energia_activa',
@@ -494,7 +492,7 @@ export const columnGroups = [
       'consumo_energia_activa'
     ],
     className:
-      'bg-gradient-to-r from-red-700 to-red-600 text-white font-semibold shadow-sm'
+      'bg-gradient-to-r from-red-700 to-red-600 font-semibold shadow-sm'
   },
   {
     id: 'energia_reactiva',
@@ -505,14 +503,14 @@ export const columnGroups = [
       'consumo_energia_reactiva'
     ],
     className:
-      'bg-gradient-to-r from-green-700 to-green-600 text-white font-semibold shadow-sm'
+      'bg-gradient-to-r from-green-700 to-green-600 font-semibold shadow-sm'
   },
   {
     id: 'demanda_punta',
     title: 'Demanda Punta 6.1 (kW)',
     columns: ['demanda_punta', 'fecha_demanda_punta', 'hora_demanda_punta'],
     className:
-      'bg-gradient-to-r from-orange-700 to-orange-600 text-white font-semibold shadow-sm'
+      'bg-gradient-to-r from-orange-700 to-orange-600 font-semibold shadow-sm'
   },
   {
     id: 'demanda_suministrada',
@@ -523,13 +521,13 @@ export const columnGroups = [
       'hora_demanda_suministrada'
     ],
     className:
-      'bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold shadow-sm'
+      'bg-gradient-to-r from-blue-700 to-blue-600 font-semibold shadow-sm'
   },
   {
     id: 'acciones',
     title: 'Acción',
     columns: ['acciones'],
     className:
-      'bg-gradient-to-r from-purple-700 to-purple-600 text-white font-semibold shadow-sm sticky right-0 z-20'
+      'bg-gradient-to-r from-purple-700 to-purple-600 font-semibold shadow-sm sticky right-0 z-20'
   }
 ];

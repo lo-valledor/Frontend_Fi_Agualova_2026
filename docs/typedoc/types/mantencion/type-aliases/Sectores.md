@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / Sectores
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:93](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:94](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L94)
 
-***
+---
 
 ### nombre
 
@@ -26,7 +26,7 @@ Defined in: [app/types/mantencion.ts:94](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:95](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L95)
 
-***
+---
 
 ### zona
 
@@ -34,7 +34,7 @@ Defined in: [app/types/mantencion.ts:95](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:96](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L96)
 
-***
+---
 
 ### estado
 

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/monitorService](../README.md) / MonitorServiceResponse
 
@@ -22,7 +22,7 @@ Defined in: [app/services/monitorService.ts:4](https://github.com/lo-valledor/fr
 
 Defined in: [app/services/monitorService.ts:5](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/monitorService.ts#L5)
 
-***
+---
 
 ### error
 

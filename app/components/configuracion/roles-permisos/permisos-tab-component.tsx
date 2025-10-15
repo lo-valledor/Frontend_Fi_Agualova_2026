@@ -91,10 +91,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   const MobileView = () => (
     <div className='space-y-4'>
       {filteredMenus.map(menu => (
-        <Card
-          key={menu.idMenu}
-          className='border border-slate-200 dark:border-slate-700'
-        >
+        <Card key={menu.idMenu} className='border-border'>
           <CardHeader className='pb-3'>
             <div className='flex items-center justify-between'>
               <div className='space-y-1'>
@@ -119,7 +116,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                 return (
                   <div
                     key={rol.idRol}
-                    className='border border-slate-100 dark:border-slate-700 rounded-lg p-3'
+                    className='border border-slate-100 dark:border-slate-700 rounded-xl p-3'
                   >
                     <div className='flex items-center justify-between mb-3'>
                       <div className='flex items-center gap-2'>
@@ -220,9 +217,9 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
   if (roles.length === 0 || menus.length === 0) {
     return (
-      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+      <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
         <CardContent className='p-6'>
-          <div className='text-center text-slate-500 dark:text-slate-400'>
+          <div className='text-center'>
             <p>No hay roles o menús disponibles para configurar permisos.</p>
             <p className='text-sm mt-2'>
               Primero debe crear roles y menús en las pestañas correspondientes.
@@ -235,7 +232,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
   return (
     <TooltipProvider>
-      <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+      <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
         <CardHeader className='pb-4'>
           <div className='flex flex-col space-y-4'>
             {/* Header principal */}
@@ -245,7 +242,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               </CardTitle>
               <div className='flex items-center gap-2'>
                 {/* Toggle de vista */}
-                <div className='flex items-center border border-slate-200 dark:border-slate-700 rounded-lg p-1'>
+                <div className='flex items-center border-border rounded-xl p-1'>
                   <Button
                     variant={viewMode === 'table' ? 'default' : 'ghost'}
                     size='sm'
@@ -296,9 +293,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
               {/* Selector de roles */}
               <div className='flex flex-wrap gap-1 items-center'>
-                <span className='text-sm text-slate-600 dark:text-slate-400 mr-2'>
-                  Roles:
-                </span>
+                <span className='text-sm mr-2'>Roles:</span>
                 {roles.slice(0, 3).map(role => (
                   <Button
                     key={role.idRol}
@@ -340,7 +335,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
             </div>
 
             {/* Leyenda */}
-            <div className='flex flex-wrap gap-4 text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg'>
+            <div className='flex flex-wrap gap-4 text-xs bg-background p-3 rounded-xl'>
               <div className='flex items-center gap-1'>
                 <div className='w-3 h-3 bg-blue-500 rounded-sm'></div>
                 <span>Ver</span>
@@ -361,7 +356,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
             {/* Información de filtros activos */}
             {(searchTerm || selectedRoles.length > 0) && (
-              <div className='text-sm text-slate-600 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg'>
+              <div className='text-sm bg-blue-50 dark:bg-blue-900/20 p-2 rounded-xl'>
                 Mostrando {filteredMenus.length} menús
                 {selectedRoles.length > 0 &&
                   ` para ${visibleRoles.length} roles seleccionados`}
@@ -379,11 +374,11 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               <div className='absolute top-0 right-0 z-20 bg-gradient-to-l from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
               <div className='absolute top-0 left-64 z-20 bg-gradient-to-r from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
 
-              <div className='overflow-auto border rounded-lg bg-white dark:bg-slate-900 max-h-[80vh]'>
+              <div className='overflow-auto border rounded-xl bg-background max-h-[80vh]'>
                 <table className='w-full border-collapse relative'>
-                  <thead className='sticky top-0 bg-slate-50 dark:bg-slate-800 z-10'>
+                  <thead className='sticky top-0 bg-background z-10'>
                     <tr>
-                      <th className='text-left p-3 border-b font-medium sticky left-0 bg-slate-50 dark:bg-slate-800 z-20 min-w-[280px] shadow-r'>
+                      <th className='text-left p-3 border-b font-medium sticky left-0 bg-background z-20 min-w-[280px] shadow-r'>
                         <div className='flex items-center gap-2'>
                           <span>Menú</span>
                           <Badge variant='outline' className='text-xs'>
@@ -433,7 +428,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                               </Tooltip>
                             </div>
                             {!compactView && (
-                              <div className='grid grid-cols-4 gap-1 text-xs text-slate-600 dark:text-slate-400'>
+                              <div className='grid grid-cols-4 gap-1 text-xs'>
                                 <div className='bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 p-1 rounded text-center'>
                                   V
                                 </div>
@@ -457,10 +452,8 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                     {filteredMenus.map((menu, index) => (
                       <tr
                         key={menu.idMenu}
-                        className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 ${
-                          index % 2 === 0
-                            ? 'bg-white dark:bg-slate-900'
-                            : 'bg-slate-25 dark:bg-slate-900/50'
+                        className={`hover:muted ${
+                          index % 2 === 0 ? 'bg-background' : 'bg-background'
                         }`}
                       >
                         <td

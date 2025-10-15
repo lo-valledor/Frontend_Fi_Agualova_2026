@@ -22,19 +22,19 @@ export default function NuevoMedidorForm({
   const [isOpen, setIsOpen] = React.useState(true);
 
   return (
-    <Card className='rounded-xl border border-emerald-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-emerald-800/40 dark:bg-gray-900/50'>
+    <Card className='rounded-xl border border-border bg-card/50 backdrop-blur-sm shadow-lg'>
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className='w-full'>
         <CollapsibleTrigger asChild>
-          <div className='flex justify-between items-center p-3 sm:p-4 cursor-pointer hover:bg-emerald-50/50 rounded-t-xl dark:hover:bg-emerald-900/20'>
+          <div className='flex justify-between items-center p-3 sm:p-4 cursor-pointer hover:bg-muted/30 rounded-t-xl'>
             <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-              <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm'>
-                <Zap className='h-3 w-3 sm:h-4 sm:w-4' />
+              <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-500 shadow-sm'>
+                <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-white' />
               </div>
               <div className='min-w-0'>
-                <h3 className='text-base sm:text-lg font-semibold text-emerald-900 dark:text-emerald-100 truncate'>
+                <h3 className='text-base sm:text-lg font-semibold text-foreground truncate'>
                   Nuevo Medidor
                 </h3>
-                <p className='text-xs sm:text-sm text-emerald-700 dark:text-emerald-300 truncate'>
+                <p className='text-xs sm:text-sm text-muted-foreground truncate'>
                   <span className='hidden sm:inline'>
                     Buscar el nuevo medidor a instalar
                   </span>
@@ -45,12 +45,12 @@ export default function NuevoMedidorForm({
             <Button
               variant='ghost'
               size='icon'
-              className='h-6 w-6 sm:h-8 sm:w-8 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-900/50 flex-shrink-0'
+              className='h-6 w-6 sm:h-8 sm:w-8 rounded-full hover:bg-muted flex-shrink-0'
             >
               {isOpen ? (
-                <ChevronUp className='h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400' />
+                <ChevronUp className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
               ) : (
-                <ChevronDown className='h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 dark:text-emerald-400' />
+                <ChevronDown className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
               )}
               <span className='sr-only'>Abrir/Cerrar panel</span>
             </Button>
@@ -63,7 +63,7 @@ export default function NuevoMedidorForm({
               <div className='space-y-1 sm:space-y-2'>
                 <Label
                   htmlFor='nuevo-serie'
-                  className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                  className='text-xs sm:text-sm font-medium text-foreground'
                 >
                   Número de Serie
                 </Label>
@@ -97,7 +97,7 @@ export default function NuevoMedidorForm({
                   size='sm'
                   onClick={onBuscar}
                   disabled={isLoading}
-                  className='h-8 sm:h-9 gap-1 sm:gap-1.5 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-sm text-sm sm:text-base px-3 sm:px-4'
+                  className='h-8 sm:h-9 gap-1 sm:gap-1.5 bg-emerald-500 hover:bg-emerald-600 shadow-sm text-sm sm:text-base px-3 sm:px-4'
                 >
                   {isLoading ? (
                     <div className='h-3 w-3 sm:h-3.5 sm:w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent' />

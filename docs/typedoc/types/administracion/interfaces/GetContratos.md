@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetContratos
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:105](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:106](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L106)
 
-***
+---
 
 ### acometida
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:106](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:107](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L107)
 
-***
+---
 
 ### tipoContrato
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:107](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:108](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L108)
 
-***
+---
 
 ### tarifa
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:108](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:109](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L109)
 
-***
+---
 
 ### nombrePropietario
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:109](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:110](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L110)
 
-***
+---
 
 ### nombreCliente
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:110](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:111](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L111)
 
-***
+---
 
 ### local
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:111](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:112](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L112)
 
-***
+---
 
 ### fechaInicio
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:112](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:113](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L113)
 
-***
+---
 
 ### activo
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:113](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:114](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L114)
 
-***
+---
 
 ### fechaTermino
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:114](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:115](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L115)
 
-***
+---
 
 ### comunaEnvio
 
@@ -96,7 +96,7 @@ Defined in: [app/types/administracion.ts:115](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:116](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L116)
 
-***
+---
 
 ### direccionEnvio
 
@@ -104,7 +104,7 @@ Defined in: [app/types/administracion.ts:116](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:117](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L117)
 
-***
+---
 
 ### limiteInvierno
 
@@ -112,7 +112,7 @@ Defined in: [app/types/administracion.ts:117](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:118](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L118)
 
-***
+---
 
 ### promedioAnual
 
@@ -120,7 +120,7 @@ Defined in: [app/types/administracion.ts:118](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:119](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L119)
 
-***
+---
 
 ### cicloFacturacion
 
@@ -128,7 +128,7 @@ Defined in: [app/types/administracion.ts:119](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:120](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L120)
 
-***
+---
 
 ### potenciaContratada
 
@@ -136,7 +136,7 @@ Defined in: [app/types/administracion.ts:120](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:121](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L121)
 
-***
+---
 
 ### liberadoCorte
 
@@ -144,7 +144,7 @@ Defined in: [app/types/administracion.ts:121](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:122](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L122)
 
-***
+---
 
 ### madre?
 

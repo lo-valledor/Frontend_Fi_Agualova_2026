@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / DialogAgregarPreciosProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:50](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:51](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L51)
 
-***
+---
 
 ### valor2
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:51](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:52](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L52)
 
-***
+---
 
 ### valor3
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:52](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:53](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L53)
 
-***
+---
 
 ### codigo
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:53](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:54](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L54)
 
-***
+---
 
 ### mes
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:54](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:55](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L55)
 
-***
+---
 
 ### anio
 
@@ -56,7 +56,7 @@ Defined in: [app/types/operaciones.ts:55](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:56](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L56)
 
-***
+---
 
 ### onSuccess()?
 

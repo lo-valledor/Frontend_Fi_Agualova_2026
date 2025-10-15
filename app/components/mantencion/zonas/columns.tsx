@@ -24,9 +24,7 @@ export const columns = ({
       return (
         <div className='flex items-center space-x-3'>
           <div>
-            <div className='font-medium text-gray-900 dark:text-gray-100'>
-              {zona.nombre}
-            </div>
+            <div className='font-medium '>{zona.nombre}</div>
           </div>
         </div>
       );

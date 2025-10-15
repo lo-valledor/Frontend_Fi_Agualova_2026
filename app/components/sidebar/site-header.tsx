@@ -24,7 +24,7 @@ export function SiteHeader() {
   const { user } = useAuth();
 
   return (
-    <header className='group-has-data-[collapsible=icon]/sidebar-wrapper:h-10 sm:group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-10 sm:h-12 shrink-0 items-center gap-1 sm:gap-2 border-b transition-[width,height] ease-linear'>
+    <header className='sticky top-0 z-10 bg-background group-has-data-[collapsible=icon]/sidebar-wrapper:h-10 sm:group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-10 sm:h-12 shrink-0 items-center gap-1 sm:gap-2 border-b transition-[width,height] ease-linear'>
       <div className='flex w-full items-center gap-1 px-2 sm:px-4 lg:gap-2 lg:px-6'>
         <SidebarTrigger className='-ml-0.5 sm:-ml-1 h-6 w-6 sm:h-8 sm:w-8' />
         <Separator

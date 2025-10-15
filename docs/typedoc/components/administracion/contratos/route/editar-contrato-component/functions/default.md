@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../../modules.md) / [components/administracion/contratos/route/editar-contrato-component](../README.md) / default
 

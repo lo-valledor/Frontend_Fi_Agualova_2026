@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [context/AuthContext](../README.md) / UserData
 
@@ -16,7 +16,7 @@ Defined in: [app/context/AuthContext.tsx:9](https://github.com/lo-valledor/front
 
 Defined in: [app/context/AuthContext.tsx:10](https://github.com/lo-valledor/front-respaldo/blob/develop/app/context/AuthContext.tsx#L10)
 
-***
+---
 
 ### username
 
@@ -24,7 +24,7 @@ Defined in: [app/context/AuthContext.tsx:10](https://github.com/lo-valledor/fron
 
 Defined in: [app/context/AuthContext.tsx:11](https://github.com/lo-valledor/front-respaldo/blob/develop/app/context/AuthContext.tsx#L11)
 
-***
+---
 
 ### role
 
@@ -32,7 +32,7 @@ Defined in: [app/context/AuthContext.tsx:11](https://github.com/lo-valledor/fron
 
 Defined in: [app/context/AuthContext.tsx:12](https://github.com/lo-valledor/front-respaldo/blob/develop/app/context/AuthContext.tsx#L12)
 
-***
+---
 
 ### profileId
 
@@ -40,7 +40,7 @@ Defined in: [app/context/AuthContext.tsx:12](https://github.com/lo-valledor/fron
 
 Defined in: [app/context/AuthContext.tsx:13](https://github.com/lo-valledor/front-respaldo/blob/develop/app/context/AuthContext.tsx#L13)
 
-***
+---
 
 ### fullName
 

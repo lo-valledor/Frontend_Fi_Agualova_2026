@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / NuevoContratoFormProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:343](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:344](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L344)
 
-***
+---
 
 ### onCodigoChange()
 
@@ -34,7 +34,7 @@ Defined in: [app/types/operaciones.ts:345](https://github.com/lo-valledor/front-
 
 `void`
 
-***
+---
 
 ### isLoading
 
@@ -42,7 +42,7 @@ Defined in: [app/types/operaciones.ts:345](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:346](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L346)
 
-***
+---
 
 ### isFormValid
 
@@ -50,7 +50,7 @@ Defined in: [app/types/operaciones.ts:346](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:347](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L347)
 
-***
+---
 
 ### onCambioMedidor()
 

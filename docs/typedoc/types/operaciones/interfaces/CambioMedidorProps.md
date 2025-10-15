@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / CambioMedidorProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:351](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:352](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L352)
 
-***
+---
 
 ### medidorNuevoID
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:352](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:353](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L353)
 
-***
+---
 
 ### valorUltimo
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:353](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:354](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L354)
 
-***
+---
 
 ### valorLecturaActual
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:354](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:355](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L355)
 
-***
+---
 
 ### valorPrimeraLectura
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:355](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:356](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L356)
 
-***
+---
 
 ### acometidaCodigo
 
@@ -56,7 +56,7 @@ Defined in: [app/types/operaciones.ts:356](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:357](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L357)
 
-***
+---
 
 ### usuario
 
@@ -64,7 +64,7 @@ Defined in: [app/types/operaciones.ts:357](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:358](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L358)
 
-***
+---
 
 ### fechaCierre
 
@@ -72,7 +72,7 @@ Defined in: [app/types/operaciones.ts:358](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:359](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L359)
 
-***
+---
 
 ### codigoContrato
 

@@ -21,7 +21,7 @@ export default function ConsultarContratoComponent({
   }
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto px-3 sm:px-4 lg:px-6 py-4 space-y-4 sm:space-y-6'>
         {/* Header */}
         <ModernHeader
@@ -30,7 +30,7 @@ export default function ConsultarContratoComponent({
         />
 
         {/* Table */}
-        <Card className='border-0 shadow-lg bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm'>
+        <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
           <CardContent className='relative p-0 sm:p-4'>
             <div className='overflow-x-auto'>
               <div className='min-w-full p-3 sm:p-0'>

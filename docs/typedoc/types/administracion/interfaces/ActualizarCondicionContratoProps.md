@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ActualizarCondicionContratoProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:682](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:683](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L683)
 
-***
+---
 
 ### nombre
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:683](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:684](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L684)
 
-***
+---
 
 ### conceptoId
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:684](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:685](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L685)
 
-***
+---
 
 ### usaPorcentaje
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:685](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:686](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L686)
 
-***
+---
 
 ### valor
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:686](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:687](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L687)
 
-***
+---
 
 ### estado
 

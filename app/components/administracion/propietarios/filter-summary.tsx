@@ -19,7 +19,9 @@ export function FilterSummary({
   if (!isFiltered) return null;
 
   const percentageShown =
-    totalPropietarios > 0 ? Math.round((filteredPropietarios / totalPropietarios) * 100) : 0;
+    totalPropietarios > 0
+      ? Math.round((filteredPropietarios / totalPropietarios) * 100)
+      : 0;
   const isReduced = filteredPropietarios < totalPropietarios;
 
   return (
@@ -28,11 +30,12 @@ export function FilterSummary({
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-3'>
             <div className='p-1.5 bg-blue-100 dark:bg-blue-900/30 rounded-md'>
-              <Filter className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+              <Filter className='h-4 w-4 ' />
             </div>
             <div className='flex items-center gap-2'>
               <span className='text-sm font-medium text-blue-800 dark:text-blue-200'>
-                Mostrando {filteredPropietarios} de {totalPropietarios} propietarios
+                Mostrando {filteredPropietarios} de {totalPropietarios}{' '}
+                propietarios
               </span>
               <Badge
                 variant='outline'

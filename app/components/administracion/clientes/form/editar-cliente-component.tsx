@@ -275,7 +275,7 @@ export default function EditarClienteComponent() {
                 </Button>
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  className='gap-2 bg-sky-600 hover:bg-sky-700'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
@@ -288,7 +288,7 @@ export default function EditarClienteComponent() {
       </div>
 
       <div className='container mx-auto px-4 py-6 space-y-6'>
-        <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+        <div className='bg-background rounded-xl shadow-sm border border-border'>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -355,7 +355,7 @@ export default function EditarClienteComponent() {
                     control={form.control}
                     name='esEmpresa'
                     render={({ field }) => (
-                      <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4 bg-muted/30'>
+                      <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-xl border p-4 bg-muted/30'>
                         <FormControl>
                           <Checkbox
                             checked={field.value}

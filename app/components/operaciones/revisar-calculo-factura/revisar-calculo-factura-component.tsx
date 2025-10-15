@@ -276,7 +276,7 @@ export default function RevisarCalculoFacturaComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='max-w-[1880px] mx-auto p-3 space-y-4'>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
           {/* Header */}
@@ -297,10 +297,10 @@ export default function RevisarCalculoFacturaComponent({
         </div>
 
         {/* Panel de Control */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <button
-              className='w-full flex justify-between items-center p-4 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors text-left'
+              className='w-full flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 transition-colors text-left'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -312,23 +312,23 @@ export default function RevisarCalculoFacturaComponent({
               aria-controls='filters-content'
             >
               <div className='flex items-center gap-3'>
-                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                  <FileSpreadsheet className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
+                  <FileSpreadsheet className='w-4 h-4' />
                 </div>
                 <div>
-                  <CardTitle className='text-base text-slate-900 dark:text-slate-100'>
+                  <CardTitle className='text-base'>
                     Configuración de Búsqueda
                   </CardTitle>
-                  <CardDescription className='text-slate-600 dark:text-slate-400 text-xs'>
+                  <CardDescription className='text-xs'>
                     Configure periodo y parámetros de consulta
                   </CardDescription>
                 </div>
               </div>
               <div className='flex items-center'>
                 {isFiltersOpen ? (
-                  <ChevronUp className='h-4 w-4 text-slate-500' />
+                  <ChevronUp className='h-4 w-4 text-muted-foreground' />
                 ) : (
-                  <ChevronDown className='h-4 w-4 text-slate-500' />
+                  <ChevronDown className='h-4 w-4 text-muted-foreground' />
                 )}
               </div>
             </button>
@@ -338,43 +338,43 @@ export default function RevisarCalculoFacturaComponent({
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
                   {/* Periodo */}
                   <div className='space-y-2'>
-                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
+                    <Label className='text-sm font-medium flex items-center gap-2'>
                       <CalendarIcon className='w-4 h-4' />
                       Periodo Actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
                       <div
                         id='periodo-info'
-                        className='p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700'
+                        className='p-3 rounded-xl bg-background border-border'
                       >
                         <div className='flex items-center gap-3'>
-                          <div className='w-8 h-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center'>
-                            <CalendarIcon className='w-4 h-4 text-blue-600 dark:text-blue-400' />
+                          <div className='w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center'>
+                            <CalendarIcon className='w-4 h-4 text-primary' />
                           </div>
                           <div>
-                            <div className='font-semibold text-slate-900 dark:text-slate-100'>
+                            <div className='font-semibold'>
                               {periodoAbierto[0].mes
                                 .toString()
                                 .padStart(2, '0')}
                               /{periodoAbierto[0].anio}
                             </div>
-                            <p className='text-xs text-slate-600 dark:text-slate-400'>
+                            <p className='text-xs'>
                               Periodo activo para facturación
                             </p>
                           </div>
                         </div>
                       </div>
                     ) : (
-                      <div className='p-3 rounded-lg bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700'>
+                      <div className='p-3 rounded-xl bg-muted/50 border border-border'>
                         <div className='flex items-center gap-3'>
-                          <div className='w-8 h-8 bg-amber-100 dark:bg-amber-800/50 rounded-lg flex items-center justify-center'>
-                            <AlertCircleIcon className='w-4 h-4 text-amber-600 dark:text-amber-400' />
+                          <div className='w-8 h-8 bg-muted rounded-xl flex items-center justify-center'>
+                            <AlertCircleIcon className='w-4 h-4 text-muted-foreground' />
                           </div>
                           <div>
-                            <div className='font-medium text-amber-800 dark:text-amber-200'>
+                            <div className='font-medium text-foreground'>
                               No hay periodo abierto
                             </div>
-                            <p className='text-xs text-amber-600 dark:text-amber-400'>
+                            <p className='text-xs text-muted-foreground'>
                               Contacte al administrador del sistema
                             </p>
                           </div>
@@ -385,22 +385,22 @@ export default function RevisarCalculoFacturaComponent({
 
                   {/* Ciclo de facturación */}
                   <div className='space-y-2'>
-                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
+                    <Label className='text-sm font-medium flex items-center gap-2'>
                       <FileTextIcon className='w-4 h-4' />
                       Ciclo de Facturación
                     </Label>
-                    <div className='p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700'>
+                    <div className='p-3 rounded-xl bg-background border-border'>
                       <div className='flex items-center gap-3'>
-                        <div className='w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center'>
+                        <div className='w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center'>
                           <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
                         </div>
                         <div className='flex-1'>
                           <Input
                             value='Ciclo día 15 (Único ciclo normado)'
                             disabled
-                            className='bg-transparent border-0 text-slate-900 dark:text-slate-100 font-medium p-0 h-auto cursor-default'
+                            className='bg-transparent border-0 font-medium p-0 h-auto cursor-default'
                           />
-                          <p className='text-xs text-slate-600 dark:text-slate-400'>
+                          <p className='text-xs'>
                             ✓ Ciclo autorizado por normativa vigente
                           </p>
                         </div>
@@ -410,7 +410,7 @@ export default function RevisarCalculoFacturaComponent({
                 </div>
 
                 {/* Acciones */}
-                <div className='pt-4 border-t border-slate-200 dark:border-slate-700'>
+                <div className='pt-4 border-t border-border'>
                   {/* Todos los botones en una sola fila responsive */}
                   <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
                     {/* Botón principal de preparar cálculo */}
@@ -418,7 +418,7 @@ export default function RevisarCalculoFacturaComponent({
                       id='preparar-calculo-btn'
                       onClick={handleLanzarCalculo}
                       disabled={isLaunching || !hayLecturasCerradas}
-                      className='flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white col-span-2 sm:col-span-1'
+                      className='flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 col-span-2 sm:col-span-1'
                       size='sm'
                       title={
                         !hayLecturasCerradas
@@ -447,7 +447,7 @@ export default function RevisarCalculoFacturaComponent({
                       id='ver-calculo-btn'
                       onClick={handleRevisarCalculo}
                       disabled={isLoading || !hayLecturasCerradas}
-                      className='flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 text-white'
+                      className='flex items-center justify-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground'
                       size='sm'
                       title={
                         !hayLecturasCerradas
@@ -478,7 +478,7 @@ export default function RevisarCalculoFacturaComponent({
                         selectedContratos.length === 0 ||
                         !hayLecturasCerradas
                       }
-                      className='flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white'
+                      className='flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white'
                       size='sm'
                       title={
                         !hayLecturasCerradas
@@ -549,17 +549,17 @@ export default function RevisarCalculoFacturaComponent({
         </Card>
 
         {/* Resultados */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
-          <CardHeader className='border-b border-slate-200/60 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/50 p-4'>
+        <Card className='border border-border shadow-sm'>
+          <CardHeader className='border-b border-border bg-background p-4'>
             <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                <TrendingUp className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+              <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
+                <TrendingUp className='w-4 h-4' />
               </div>
               <div>
-                <CardTitle className='text-base text-slate-900 dark:text-slate-100'>
+                <CardTitle className='text-base'>
                   Resultados de Consulta
                 </CardTitle>
-                <CardDescription className='text-slate-600 dark:text-slate-400 text-xs'>
+                <CardDescription className='text-xs'>
                   Contratos y cálculos de facturación
                 </CardDescription>
               </div>
@@ -572,11 +572,11 @@ export default function RevisarCalculoFacturaComponent({
                   <div className='flex justify-center items-center h-40'>
                     <div className='flex flex-col items-center gap-4'>
                       <div className='relative'>
-                        <div className='w-12 h-12 rounded-full border-4 border-sky-200 dark:border-sky-800'></div>
-                        <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-sky-600 border-t-transparent animate-spin'></div>
+                        <div className='w-12 h-12 rounded-full border-4 border-primary/20'></div>
+                        <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin'></div>
                       </div>
                       <div className='text-center'>
-                        <p className='text-sky-700 dark:text-sky-300 font-medium'>
+                        <p className='text-foreground font-medium'>
                           Cargando resultados...
                         </p>
                         <p className='text-xs text-muted-foreground mt-1'>
@@ -590,9 +590,9 @@ export default function RevisarCalculoFacturaComponent({
 
               if (error) {
                 return (
-                  <div className='p-6 rounded-lg bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm'>
+                  <div className='p-6 rounded-xl bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-800 shadow-sm'>
                     <div className='flex items-start gap-3'>
-                      <div className='p-2 bg-rose-100 dark:bg-rose-900/50 rounded-lg shadow-sm'>
+                      <div className='p-2 bg-rose-100 dark:bg-rose-900/50 rounded-xl shadow-sm'>
                         <AlertCircleIcon className='h-5 w-5 text-rose-600 dark:text-rose-400' />
                       </div>
                       <div className='flex-1'>
@@ -624,11 +624,11 @@ export default function RevisarCalculoFacturaComponent({
               if (data.length === 0) {
                 return (
                   <div className='flex flex-col items-center justify-center h-40 gap-4 text-muted-foreground'>
-                    <div className='p-4 bg-sky-50 dark:bg-sky-900/20 rounded-full'>
-                      <SearchIcon className='h-8 w-8 text-sky-500 dark:text-sky-400' />
+                    <div className='p-4 bg-primary/10 rounded-full'>
+                      <SearchIcon className='h-8 w-8 text-primary' />
                     </div>
                     <div className='text-center'>
-                      <p className='font-medium text-slate-700 dark:text-slate-300 text-sm sm:text-base'>
+                      <p className='font-medium text-sm sm:text-base'>
                         <span className='hidden sm:inline'>
                           Realizar consulta de precálculos
                         </span>
@@ -651,28 +651,28 @@ export default function RevisarCalculoFacturaComponent({
               return (
                 <div className='space-y-6'>
                   {/* Resumen estadístico */}
-                  <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700'>
+                  <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-background rounded-xl border-border'>
                     <div className='text-center'>
-                      <div className='text-2xl font-semibold text-slate-900 dark:text-slate-100'>
+                      <div className='text-2xl font-semibold'>
                         {filteredData.length}
                       </div>
-                      <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+                      <div className='text-xs font-medium'>
                         Lecturas Cerradas
                       </div>
                     </div>
                     <div className='text-center'>
-                      <div className='text-2xl font-semibold text-slate-900 dark:text-slate-100'>
+                      <div className='text-2xl font-semibold'>
                         {filteredData.reduce(
                           (sum, item) => sum + (item.cargos?.length || 0),
                           0
                         )}
                       </div>
-                      <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+                      <div className='text-xs font-medium'>
                         Cargos Detallados
                       </div>
                     </div>
                     <div className='text-center'>
-                      <div className='text-xl font-semibold text-slate-900 dark:text-slate-100'>
+                      <div className='text-xl font-semibold'>
                         {new Intl.NumberFormat('es-CL', {
                           style: 'currency',
                           currency: 'CLP',
@@ -685,12 +685,10 @@ export default function RevisarCalculoFacturaComponent({
                           )
                         )}
                       </div>
-                      <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Total Facturado
-                      </div>
+                      <div className='text-xs font-medium'>Total Facturado</div>
                     </div>
                     <div className='text-center'>
-                      <div className='text-2xl font-semibold text-slate-900 dark:text-slate-100'>
+                      <div className='text-2xl font-semibold'>
                         {filteredData
                           .reduce(
                             (sum, item) => sum + (item.consumoPeriodo || 0),
@@ -698,9 +696,7 @@ export default function RevisarCalculoFacturaComponent({
                           )
                           .toLocaleString('es-CL')}
                       </div>
-                      <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
-                        Consumo Kwh
-                      </div>
+                      <div className='text-xs font-medium'>Consumo Kwh</div>
                     </div>
                   </div>
 
@@ -715,7 +711,7 @@ export default function RevisarCalculoFacturaComponent({
                       className='pl-10'
                     />
                     {searchTerm && (
-                      <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-slate-500'>
+                      <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground'>
                         {filteredData.length} de {data.length}
                       </div>
                     )}
@@ -723,10 +719,10 @@ export default function RevisarCalculoFacturaComponent({
 
                   {/* Contratos seleccionados */}
                   {selectedContratos.length > 0 && (
-                    <div className='p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg'>
+                    <div className='p-4 bg-muted/50 border border-border rounded-xl'>
                       <div className='flex items-center gap-2 mb-3'>
-                        <FileTextIcon className='h-4 w-4 text-amber-600 dark:text-amber-400' />
-                        <h4 className='font-medium text-amber-800 dark:text-amber-200'>
+                        <FileTextIcon className='h-4 w-4 text-primary' />
+                        <h4 className='font-medium text-foreground'>
                           Contratos Seleccionados ({selectedContratos.length})
                         </h4>
                       </div>
@@ -735,7 +731,7 @@ export default function RevisarCalculoFacturaComponent({
                           <Badge
                             key={lecturaId}
                             variant='outline'
-                            className='bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-800/50 dark:text-amber-300 dark:border-amber-600'
+                            className='bg-primary/10 text-primary border-primary/20'
                           >
                             Lectura: {lecturaId}
                           </Badge>
@@ -745,15 +741,15 @@ export default function RevisarCalculoFacturaComponent({
                   )}
 
                   {/* Encabezado de tabla */}
-                  <div className='flex items-center justify-between py-3 border-b border-slate-200 dark:border-slate-700'>
+                  <div className='flex items-center justify-between py-3 border-b border-border'>
                     <div className='flex items-center gap-2'>
-                      <FileTextIcon className='h-4 w-4 text-slate-600 dark:text-slate-400' />
-                      <span className='font-medium text-slate-900 dark:text-slate-100'>
+                      <FileTextIcon className='h-4 w-4' />
+                      <span className='font-medium'>
                         {filteredData.length} registros
                         {searchTerm && ` (de ${data.length} total)`}
                       </span>
                     </div>
-                    <div className='flex items-center gap-2 text-xs text-slate-500'>
+                    <div className='flex items-center gap-2 text-xs text-muted-foreground'>
                       <ChevronRight className='h-3 w-3' />
                       <span>Expandir para ver detalles</span>
                     </div>

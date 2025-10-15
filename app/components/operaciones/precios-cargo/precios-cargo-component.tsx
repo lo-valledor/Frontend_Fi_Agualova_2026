@@ -120,18 +120,16 @@ export default function PreciosCargoComponent({
   // Mostrar error si existe
   if (error) {
     return (
-      <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='min-h-screen bg-background'>
         <div className='container mx-auto p-3 space-y-4'>
           <div className='text-center py-8'>
-            <div className='inline-flex items-center justify-center w-12 h-12 bg-red-50 dark:bg-red-900/30 rounded-lg mb-3'>
-              <TrendingUp className='w-6 h-6 text-red-600 dark:text-red-400' />
+            <div className='inline-flex items-center justify-center w-12 h-12 bg-destructive/10 rounded-xl mb-3'>
+              <TrendingUp className='w-6 h-6 text-destructive' />
             </div>
-            <h1 className='text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2'>
+            <h1 className='text-xl font-semibold mb-2'>
               Error al cargar datos
             </h1>
-            <p className='text-sm text-slate-600 dark:text-slate-400'>
-              {error}
-            </p>
+            <p className='text-sm text-muted-foreground'>{error}</p>
           </div>
         </div>
       </div>
@@ -139,7 +137,7 @@ export default function PreciosCargoComponent({
   }
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -147,28 +145,28 @@ export default function PreciosCargoComponent({
           description='Gestión de precios de cargo para facturación'
         />
         {/* Filtros */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className='p-4 border-b border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
+              className='p-4 border-b border-border cursor-pointer hover:bg-muted/50 transition-colors'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-3'>
-                  <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
+                  <div className='flex h-8 w-8 items-center justify-center rounded-xl bg-muted'>
                     <Calendar className='h-4 w-4' />
                   </div>
                   <div>
-                    <h3 className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                    <h3 className='text-base font-medium'>
                       Período de Consulta
                     </h3>
-                    <p className='text-xs text-slate-600 dark:text-slate-400'>
+                    <p className='text-xs text-muted-foreground'>
                       Selecciona el período para consultar los precios de cargo
                     </p>
                   </div>
                 </div>
                 <ChevronDown
-                  className={`h-4 w-4 text-slate-600 dark:text-slate-400 transition-transform duration-200 ${
+                  className={`h-4 w-4 transition-transform duration-200 ${
                     isFiltersOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -177,12 +175,10 @@ export default function PreciosCargoComponent({
 
             {/* Período seleccionado */}
             <div className='px-4 pb-4'>
-              <div className='flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-200 dark:border-slate-700'>
+              <div className='flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border'>
                 <div className='flex items-center gap-2'>
-                  <Calendar className='w-4 h-4 text-blue-600 dark:text-blue-400' />
-                  <span className='text-sm font-medium text-slate-900 dark:text-slate-100'>
-                    Período:
-                  </span>
+                  <Calendar className='w-4 h-4 text-primary' />
+                  <span className='text-sm font-medium'>Período:</span>
                 </div>
                 <Badge variant='outline' className='text-sm'>
                   {months.find(m => m.value === mes)?.label} {anio}
@@ -195,9 +191,7 @@ export default function PreciosCargoComponent({
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
                   {/* Mes */}
                   <div className='space-y-2'>
-                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
-                      Mes
-                    </Label>
+                    <Label className='text-sm font-medium'>Mes</Label>
                     <Select value={mes} onValueChange={setMes}>
                       <SelectTrigger className='h-9 w-full'>
                         <SelectValue placeholder='Selecciona un mes' />
@@ -214,9 +208,7 @@ export default function PreciosCargoComponent({
 
                   {/* Año */}
                   <div className='space-y-2'>
-                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
-                      Año
-                    </Label>
+                    <Label className='text-sm font-medium'>Año</Label>
                     <Select value={anio} onValueChange={setAnio}>
                       <SelectTrigger className='h-9 w-full'>
                         <SelectValue placeholder='Selecciona un año' />
@@ -233,7 +225,7 @@ export default function PreciosCargoComponent({
                 </div>
 
                 {/* Acciones */}
-                <div className='flex gap-2 justify-end pt-3 border-t border-slate-200 dark:border-slate-700'>
+                <div className='flex gap-2 justify-end pt-3 border-t border-border'>
                   <Button
                     variant='outline'
                     size='sm'
@@ -248,11 +240,11 @@ export default function PreciosCargoComponent({
                     size='sm'
                     onClick={handleSearch}
                     disabled={isLoading}
-                    className='gap-2 bg-blue-600 hover:bg-blue-700 text-white'
+                    className='gap-2'
                   >
                     {isLoading ? (
                       <>
-                        <div className='w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                        <div className='w-4 h-4 animate-spin rounded-full border-2 border-primary-foreground border-t-transparent' />
                         Buscando...
                       </>
                     ) : (
@@ -268,20 +260,20 @@ export default function PreciosCargoComponent({
           </Collapsible>
         </Card>{' '}
         {/* Tablas de Precios */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
+        <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
             <Tabs defaultValue='enel' className='w-full'>
-              <TabsList className='grid w-full grid-cols-2 bg-slate-50 dark:bg-slate-800 h-10'>
+              <TabsList className='grid w-full grid-cols-2 bg-muted h-10'>
                 <TabsTrigger
                   value='enel'
-                  className='data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100'
+                  className='data-[state=active]:bg-background'
                 >
                   <Building2 className='mr-2 h-4 w-4' />
                   Precios Enel
                 </TabsTrigger>
                 <TabsTrigger
                   value='enerlova'
-                  className='data-[state=active]:bg-white dark:data-[state=active]:bg-slate-900 data-[state=active]:text-slate-900 dark:data-[state=active]:text-slate-100'
+                  className='data-[state=active]:bg-background'
                 >
                   <BarChart className='mr-2 h-4 w-4' />
                   Precios Enerlova
@@ -291,18 +283,18 @@ export default function PreciosCargoComponent({
               <TabsContent value='enel' className='space-y-3 pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div className='flex-1'>
-                    <h3 className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                    <h3 className='text-base font-medium'>
                       Precios de Cargo - Enel
                     </h3>
-                    <div className='text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2 mt-1'>
-                      <Info className='w-4 h-4 text-blue-500 dark:text-blue-300' />
+                    <div className='text-xs text-muted-foreground flex items-center gap-2 mt-1'>
+                      <Info className='w-4 h-4 text-primary' />
                       <span>Valores vigentes publicados por Enel</span>
                       <span>-</span>
                       <a
                         href='https://www.enel.cl/es/clientes/tarifas-y-regulacion/tarifas.html'
                         target='_blank'
                         rel='noopener noreferrer'
-                        className='underline text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100'
+                        className='underline text-primary hover:text-primary/80'
                       >
                         enel.cl - Tarifas
                       </a>
@@ -312,7 +304,7 @@ export default function PreciosCargoComponent({
                     {months.find(m => m.value === mes)?.label} {anio}
                   </Badge>
                 </div>
-                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden'>
+                <div className='rounded-xl border border-border overflow-hidden'>
                   <DataTablePrecios
                     columns={columnsEnel(mes, anio, handleDataUpdate)}
                     data={tablaEnel}
@@ -325,13 +317,13 @@ export default function PreciosCargoComponent({
                         id: 'identificacion',
                         title: 'Identificación',
                         columns: ['codigo', 'codigoener', 'descripcion'],
-                        className: 'bg-slate-600 text-white'
+                        className: 'bg-primary text-primary-foreground'
                       },
                       {
                         id: 'valores',
                         title: 'Valores Anteriores',
                         columns: ['valor', 'valor2', 'valor3'],
-                        className: 'bg-orange-600 text-white'
+                        className: 'bg-warning text-warning-foreground'
                       },
                       {
                         id: 'valoresActuales',
@@ -341,13 +333,13 @@ export default function PreciosCargoComponent({
                           'valoractual2',
                           'valoractual3'
                         ],
-                        className: 'bg-emerald-600 text-white'
+                        className: 'bg-success text-success-foreground'
                       },
                       {
                         id: 'acciones',
                         title: 'Estado',
                         columns: ['actions'],
-                        className: 'bg-blue-600 text-white'
+                        className: 'bg-accent text-accent-foreground'
                       }
                     ]}
                   />
@@ -357,11 +349,11 @@ export default function PreciosCargoComponent({
               <TabsContent value='enerlova' className='space-y-3 pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div className='flex-1'>
-                    <h3 className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                    <h3 className='text-base font-medium'>
                       Precios de Cargo - Enerlova
                     </h3>
-                    <p className='text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2 mt-1'>
-                      <Info className='w-4 h-4 text-emerald-500 dark:text-emerald-300' />
+                    <p className='text-xs text-muted-foreground flex items-center gap-2 mt-1'>
+                      <Info className='w-4 h-4 text-success' />
                       <span>
                         Precios fijados directamente por Enerlova para el
                         período consultado
@@ -372,7 +364,7 @@ export default function PreciosCargoComponent({
                     Precios actuales
                   </Badge>
                 </div>
-                <div className='rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden'>
+                <div className='rounded-xl border border-border overflow-hidden'>
                   <DataTablePrecios
                     columns={columns}
                     data={tablaEnerlova}
@@ -389,19 +381,19 @@ export default function PreciosCargoComponent({
                           'cd_codigoenerlova',
                           'CD_Descripcion'
                         ],
-                        className: 'bg-slate-600 text-white'
+                        className: 'bg-primary text-primary-foreground'
                       },
                       {
                         id: 'valores',
                         title: 'Valores',
                         columns: ['valor', 'dias'],
-                        className: 'bg-emerald-600 text-white'
+                        className: 'bg-success text-success-foreground'
                       },
                       {
                         id: 'acciones',
                         title: 'Detalles',
                         columns: ['actions'],
-                        className: 'bg-blue-600 text-white'
+                        className: 'bg-accent text-accent-foreground'
                       }
                     ]}
                   />

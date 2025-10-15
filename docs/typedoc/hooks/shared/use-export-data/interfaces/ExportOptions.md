@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [hooks/shared/use-export-data](../README.md) / ExportOptions
 
@@ -16,7 +16,7 @@ Defined in: [app/hooks/shared/use-export-data.ts:7](https://github.com/lo-valled
 
 Defined in: [app/hooks/shared/use-export-data.ts:8](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/shared/use-export-data.ts#L8)
 
-***
+---
 
 ### filename?
 
@@ -24,7 +24,7 @@ Defined in: [app/hooks/shared/use-export-data.ts:8](https://github.com/lo-valled
 
 Defined in: [app/hooks/shared/use-export-data.ts:9](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/shared/use-export-data.ts#L9)
 
-***
+---
 
 ### includeHeaders?
 

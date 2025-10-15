@@ -83,7 +83,7 @@ export function MarcarLiberarDialog({
       <DialogContent className='mx-4 sm:max-w-md rounded-xl border border-emerald-200/40 bg-white/95 backdrop-blur-sm dark:border-emerald-800/40 dark:bg-gray-900/95'>
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2 text-emerald-900 dark:text-emerald-100 text-base sm:text-lg'>
-            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white flex-shrink-0'>
+            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 flex-shrink-0'>
               <Unlock className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
             </div>
             <span className='truncate'>Marcar como Liberado</span>
@@ -113,9 +113,7 @@ export function MarcarLiberarDialog({
               className='min-h-[80px] sm:min-h-[100px] resize-none text-sm sm:text-base'
               maxLength={500}
             />
-            <div className='text-xs text-slate-500 dark:text-slate-400 text-right'>
-              {comentario.length}/500
-            </div>
+            <div className='text-xs text-right'>{comentario.length}/500</div>
           </div>
         </div>
         <DialogFooter>
@@ -123,7 +121,7 @@ export function MarcarLiberarDialog({
             type='submit'
             onClick={handleSubmit}
             disabled={!comentario.trim() || isSubmitting}
-            className='w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white text-sm sm:text-base'
+            className='w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-sm sm:text-base'
           >
             {isSubmitting ? 'Guardando...' : 'Guardar'}
           </Button>

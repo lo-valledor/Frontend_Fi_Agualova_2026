@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / ProyeccionMensual
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:15](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:16](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L16)
 
-***
+---
 
 ### mes
 
@@ -24,7 +24,7 @@ Defined in: [app/services/aiService.ts:16](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:17](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L17)
 
-***
+---
 
 ### mesNumero
 
@@ -32,7 +32,7 @@ Defined in: [app/services/aiService.ts:17](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:18](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L18)
 
-***
+---
 
 ### año
 
@@ -40,7 +40,7 @@ Defined in: [app/services/aiService.ts:18](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:19](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L19)
 
-***
+---
 
 ### consumoProyectado
 
@@ -48,7 +48,7 @@ Defined in: [app/services/aiService.ts:19](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:20](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L20)
 
-***
+---
 
 ### intervaloInferior
 
@@ -56,7 +56,7 @@ Defined in: [app/services/aiService.ts:20](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:21](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L21)
 
-***
+---
 
 ### intervaloSuperior
 
@@ -64,7 +64,7 @@ Defined in: [app/services/aiService.ts:21](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:22](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L22)
 
-***
+---
 
 ### facturacionProyectada?
 
@@ -72,7 +72,7 @@ Defined in: [app/services/aiService.ts:22](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:23](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L23)
 
-***
+---
 
 ### facturacionInferior?
 
@@ -80,7 +80,7 @@ Defined in: [app/services/aiService.ts:23](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:24](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L24)
 
-***
+---
 
 ### facturacionSuperior?
 
@@ -88,7 +88,7 @@ Defined in: [app/services/aiService.ts:24](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:25](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L25)
 
-***
+---
 
 ### precioPorKwh?
 
@@ -96,7 +96,7 @@ Defined in: [app/services/aiService.ts:25](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L26)
 
-***
+---
 
 ### confianza
 

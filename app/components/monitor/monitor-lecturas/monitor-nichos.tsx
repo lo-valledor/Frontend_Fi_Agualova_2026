@@ -199,27 +199,27 @@ export default function MonitorNichos({
   return (
     <div className='w-full h-full flex flex-col'>
       {/* Header compacto para modal */}
-      <div className='flex-shrink-0 border-b border-slate-200/60 dark:border-slate-700/60 pb-4 mb-4 space-y-3'>
+      <div className='flex-shrink-0 border-b border-border pb-4 mb-4 space-y-3'>
         {/* Primera fila: Badges y botón actualizar */}
         <div className='flex items-center justify-between gap-3 flex-wrap'>
           <div className='flex items-center gap-2 flex-wrap'>
             <Badge
               variant='outline'
-              className='h-9 bg-gradient-to-r from-sky-50 to-sky-100/80 dark:from-sky-950/30 dark:to-sky-900/30 text-sky-800 dark:text-sky-200 border-sky-300 dark:border-sky-700 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
+              className='h-9 bg-primary/10 text-primary border-primary/20 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
             >
-              <div className='w-1.5 h-1.5 rounded-full bg-sky-500 dark:bg-sky-400 mr-2 animate-pulse' />
+              <div className='w-1.5 h-1.5 rounded-full bg-primary mr-2 animate-pulse' />
               Nicho: {nicho}
             </Badge>
             <Badge
               variant='outline'
-              className='h-9 bg-gradient-to-r from-amber-50 to-amber-100/80 dark:from-amber-950/30 dark:to-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
+              className='h-9 bg-secondary/50 text-secondary-foreground border-border font-semibold text-sm px-3 shadow-sm inline-flex items-center'
             >
               <div className='w-1.5 h-1.5 rounded-full bg-amber-500 dark:bg-amber-400 mr-2' />
               Periodo: {periodo}
             </Badge>
             <Badge
               variant='outline'
-              className='h-9 bg-gradient-to-r from-slate-50 to-slate-100/80 dark:from-slate-900/30 dark:to-slate-800/30 text-slate-800 dark:text-slate-200 border-slate-300 dark:border-slate-600 font-semibold text-sm px-3 shadow-sm inline-flex items-center'
+              className='h-9 bg-muted text-muted-foreground border-border font-semibold text-sm px-3 shadow-sm inline-flex items-center'
             >
               {filteredResults.length} medidores
               {searchTerm.trim() && ` de ${results.length}`}
@@ -234,7 +234,7 @@ export default function MonitorNichos({
                   <Button
                     variant='outline'
                     size='sm'
-                    className='h-9 gap-2 bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-950/20 dark:to-amber-900/20 hover:from-amber-100 hover:to-amber-200/50 dark:hover:from-amber-900/30 dark:hover:to-amber-800/30 border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
+                    className='h-9 gap-2 bg-secondary hover:bg-secondary/80 border-border text-secondary-foreground transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
                     onClick={() => setIsInsercionAutomaticaOpen(true)}
                     disabled={isRefreshing || results.length === 0}
                   >
@@ -255,7 +255,7 @@ export default function MonitorNichos({
             <Button
               variant='outline'
               size='sm'
-              className='h-9 gap-2 bg-gradient-to-r from-sky-50 to-sky-100/50 dark:from-sky-950/20 dark:to-sky-900/20 hover:from-sky-100 hover:to-sky-200/50 dark:hover:from-sky-900/30 dark:hover:to-sky-800/30 border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
+              className='h-9 gap-2 bg-primary/10 hover:bg-primary/20 border-primary/20 text-primary transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
               onClick={handleRefresh}
               disabled={isRefreshing}
             >
@@ -277,19 +277,19 @@ export default function MonitorNichos({
         {/* Segunda fila: Buscador */}
         <div className='flex items-center gap-3'>
           <div className='relative flex-1 max-w-md'>
-            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400 dark:text-slate-500' />
+            <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4' />
             <Input
               type='text'
               placeholder='Buscar por N° Serie, Ubicación, Local, Tarifa o N°...'
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className='pl-10 pr-10 h-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 focus:border-sky-300 dark:focus:border-sky-600 focus:ring-sky-200 dark:focus:ring-sky-800 text-sm'
+              className='pl-10 pr-10 h-9 bg-background border-border focus:border-primary focus:ring-primary text-sm'
             />
             {searchTerm && (
               <Button
                 variant='ghost'
                 size='sm'
-                className='absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-slate-100 dark:hover:bg-slate-800'
+                className='absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-background dark:hover:bg-muted-800'
                 onClick={() => setSearchTerm('')}
               >
                 <X className='h-3 w-3' />
@@ -324,12 +324,12 @@ export default function MonitorNichos({
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className='max-w-[98vw] sm:max-w-[95vw] md:max-w-4xl lg:max-w-5xl xl:max-w-6xl max-h-[98vh] sm:max-h-[95vh] h-auto overflow-hidden flex flex-col'>
             <DialogHeader className='shrink-0 pb-3 sm:pb-4 border-b border-border/40'>
-              <DialogTitle className='text-lg sm:text-xl flex flex-col sm:flex-row sm:items-center gap-2 text-sky-800 dark:text-sky-200'>
+              <DialogTitle className='text-lg sm:text-xl flex flex-col sm:flex-row sm:items-center gap-2 text-foreground'>
                 <div className='flex items-center gap-2'>
                   {selectedMedidor.Estado === 4 ? (
-                    <RotateCcw className='h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400' />
+                    <RotateCcw className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
                   ) : (
-                    <Settings className='h-4 w-4 sm:h-5 sm:w-5 text-sky-600 dark:text-sky-400' />
+                    <Settings className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
                   )}
                   <span className='text-base sm:text-lg'>
                     {selectedMedidor.Estado === 4
@@ -339,7 +339,7 @@ export default function MonitorNichos({
                 </div>
                 <Badge
                   variant='outline'
-                  className='bg-sky-50/80 dark:bg-sky-900/30 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-700 font-mono text-xs sm:text-sm'
+                  className='bg-primary/10 text-primary border-primary/20 font-mono text-xs sm:text-sm'
                 >
                   {selectedMedidor.ME_NSerie}
                 </Badge>

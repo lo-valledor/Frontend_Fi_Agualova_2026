@@ -27,7 +27,7 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
+              className='font-medium truncate text-xs sm:text-sm'
               title={row.original.rut}
             >
               {format(row.getValue('rut'))}
@@ -53,7 +53,7 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
+              className='font-medium truncate text-xs sm:text-sm'
               title={nombreCompleto}
             >
               {nombreCompleto}
@@ -88,14 +88,12 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
+              className='font-medium truncate text-xs sm:text-sm'
               title={row.original.direccion || 'No especificada'}
             >
               {row.original.direccion || 'No especificada'}
             </div>
-            <div className='text-xs text-slate-500 dark:text-slate-400 truncate'>
-              {comunaNombre}
-            </div>
+            <div className='text-xs truncate'>{comunaNombre}</div>
           </div>
         </div>
       );
@@ -113,12 +111,12 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
+              className='font-medium truncate text-xs sm:text-sm'
               title={row.original.contacto || 'No especificado'}
             >
               {row.original.contacto || 'No especificado'}
             </div>
-            <div className='text-xs text-slate-500 dark:text-slate-400 truncate'>
+            <div className='text-xs truncate'>
               {row.original.telefono || 'Sin teléfono'}
             </div>
           </div>
@@ -138,7 +136,7 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium text-slate-900 dark:text-slate-100 truncate text-xs sm:text-sm'
+              className='font-medium truncate text-xs sm:text-sm'
               title={row.original.email || 'No especificado'}
             >
               {row.original.email || 'No especificado'}

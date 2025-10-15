@@ -325,7 +325,7 @@ export default function AnalisisConsumo({
     color?: 'blue' | 'green' | 'amber' | 'purple' | 'red';
   }) => {
     const colorClasses = {
-      blue: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400',
+      blue: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 ',
       green:
         'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800 text-green-600 dark:text-green-400',
       amber:
@@ -336,7 +336,7 @@ export default function AnalisisConsumo({
     };
 
     return (
-      <div className={`p-4 rounded-lg border ${colorClasses[color]}`}>
+      <div className={`p-4 rounded-xl border ${colorClasses[color]}`}>
         <div className='flex items-start justify-between mb-3'>
           <div className='flex items-center gap-2'>
             {icon}
@@ -364,10 +364,10 @@ export default function AnalisisConsumo({
 
   // Componente para historial simplificado
   const HistoryCard = ({ item }: { item: EtapaCuatro; index: number }) => (
-    <div className='p-3 bg-muted/30 rounded-lg border border-border/20'>
+    <div className='p-3 bg-muted/30 rounded-xl border border-border/20'>
       <div className='flex items-center justify-between mb-2'>
         <div className='flex items-center gap-2'>
-          <Calendar className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+          <Calendar className='h-3 w-3 ' />
           <span className='font-mono text-sm font-medium'>
             {item.LM_Periodo}
           </span>
@@ -398,19 +398,19 @@ export default function AnalisisConsumo({
       <CardHeader className='px-0 pb-2'>
         <CardTitle className='flex items-center gap-2 text-foreground text-sm font-medium'>
           <div className='h-5 w-5 rounded bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center'>
-            <TrendingUp className='h-3 w-3 text-blue-600 dark:text-blue-400' />
+            <TrendingUp className='h-3 w-3 ' />
           </div>
           <span>Análisis de Consumo</span>
         </CardTitle>
       </CardHeader>
       <CardContent className='px-0 space-y-3'>
         {error ? (
-          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-lg border border-red-200 dark:border-red-800'>
+          <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
             <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
             <span>{error}</span>
           </div>
         ) : !tieneDatosValidos(dataEtapaCuatro) ? (
-          <div className='flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-lg border border-amber-200 dark:border-amber-800'>
+          <div className='flex items-start gap-2 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/20 px-3 py-2 rounded-xl border border-amber-200 dark:border-amber-800'>
             <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
             <span>
               No se encontraron datos válidos de consumo para este medidor. Esto
@@ -509,7 +509,7 @@ export default function AnalisisConsumo({
 
                 {/* Información adicional compacta */}
                 {estadisticas && (
-                  <div className='p-3 bg-muted/30 rounded-lg border border-border/20'>
+                  <div className='p-3 bg-muted/30 rounded-xl border border-border/20'>
                     <h4 className='text-sm font-medium text-foreground mb-2'>
                       Resumen Estadístico
                     </h4>
@@ -589,7 +589,7 @@ export default function AnalisisConsumo({
                 {/* Gráficas integradas - Solo en desktop */}
                 <div className='hidden md:block space-y-6'>
                   {/* Gráfico de evolución */}
-                  <div className='bg-background/95 rounded-lg border border-border/40 overflow-hidden'>
+                  <div className='bg-background/95 rounded-xl border border-border/40 overflow-hidden'>
                     <div className='p-4 border-b border-border/40'>
                       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
                         <div>
@@ -701,7 +701,7 @@ export default function AnalisisConsumo({
                       item.consumoActual !== null &&
                       item.consumoAnterior !== null
                   ).length > 0 && (
-                    <div className='bg-background/95 rounded-lg border border-border/40 overflow-hidden'>
+                    <div className='bg-background/95 rounded-xl border border-border/40 overflow-hidden'>
                       <div className='p-4 border-b border-border/40'>
                         <h3 className='text-base font-semibold text-foreground'>
                           Comparativa Mensual por Años
@@ -817,7 +817,7 @@ export default function AnalisisConsumo({
 
                 {/* Tabla completa - Solo desktop */}
                 <div className='hidden md:block mt-6'>
-                  <div className='bg-background/95 rounded-lg border border-border/40 overflow-hidden'>
+                  <div className='bg-background/95 rounded-xl border border-border/40 overflow-hidden'>
                     <div className='p-4 border-b border-border/40'>
                       <h3 className='text-base font-semibold text-foreground'>
                         Historial Completo de Consumos
@@ -880,7 +880,7 @@ export default function AnalisisConsumo({
                 {/* Indicadores de tendencia simplificados */}
                 <div className='grid grid-cols-1 gap-3'>
                   {variacionMesAnterior !== null && (
-                    <div className='p-3 bg-muted/30 rounded-lg border border-border/20'>
+                    <div className='p-3 bg-muted/30 rounded-xl border border-border/20'>
                       <div className='flex items-center justify-between mb-2'>
                         <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                           Tendencia Mensual
@@ -907,9 +907,9 @@ export default function AnalisisConsumo({
                     </div>
                   )}
 
-                  <div className='p-3 bg-muted/30 rounded-lg border border-border/20'>
+                  <div className='p-3 bg-muted/30 rounded-xl border border-border/20'>
                     <div className='flex items-center gap-2 mb-2'>
-                      <BarChart3 className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                      <BarChart3 className='h-4 w-4 ' />
                       <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
                         Análisis General
                       </span>

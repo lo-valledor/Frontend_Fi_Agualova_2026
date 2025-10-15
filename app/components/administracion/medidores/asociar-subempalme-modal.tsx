@@ -106,8 +106,8 @@ export function AsociarSubempalmeModal({
       <DialogContent className='sm:min-w-full md:min-w-full lg:min-w-[800px] xl:min-w-[1000px] max-h-[90vh] overflow-auto'>
         <DialogHeader className='space-y-3 pb-4'>
           <div className='flex items-center gap-3'>
-            <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-              <Gauge className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+            <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
+              <Gauge className='h-5 w-5 ' />
             </div>
             <div className='min-w-0 flex-1'>
               <DialogTitle className='text-lg sm:text-xl font-semibold'>
@@ -115,7 +115,7 @@ export function AsociarSubempalmeModal({
               </DialogTitle>
               <DialogDescription className='text-sm sm:text-base mt-1'>
                 Seleccione el subempalme que desea asociar al medidor{' '}
-                <span className='font-mono font-semibold text-blue-600 dark:text-blue-400'>
+                <span className='font-mono font-semibold '>
                   {medidor?.codigo}
                 </span>
               </DialogDescription>
@@ -136,7 +136,7 @@ export function AsociarSubempalmeModal({
           </div>
 
           {/* Tabla de subempalmes con mejor responsividad */}
-          <div className='border rounded-lg overflow-hidden'>
+          <div className='border rounded-xl overflow-hidden'>
             <ScrollArea className='h-[50vh] sm:h-[60vh]'>
               <Table>
                 <TableHeader className='bg-muted/50'>
@@ -250,7 +250,7 @@ export function AsociarSubempalmeModal({
                           size='sm'
                           onClick={() => handleAsociarSubempalme(subempalme.id)}
                           disabled={isAsociando}
-                          className='bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3'
+                          className='bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3'
                         >
                           {isAsociando ? 'Asociando...' : 'Asociar'}
                         </Button>

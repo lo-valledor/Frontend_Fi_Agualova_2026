@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 
 /**
  * Formatea una fecha a formato DD-MM-YYYY
+ * @param dateString
  */
 export function formatToDate(dateString: string | null): string {
   if (!dateString) return '-';
@@ -17,6 +18,7 @@ export function formatToDate(dateString: string | null): string {
 
 /**
  * Formatea una fecha a formato HH:mm:ss
+ * @param dateString
  */
 export function formatToTime(dateString: string | null): string {
   if (!dateString) return '-';
@@ -32,6 +34,7 @@ export function formatToTime(dateString: string | null): string {
 
 /**
  * Formatea una fecha al formato YYYYMMDD (usado en las consultas a la API)
+ * @param dateString
  */
 export function formatToYYYYMMDD(dateString: string): string {
   if (!dateString) return '';

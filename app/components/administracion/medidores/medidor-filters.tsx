@@ -74,7 +74,7 @@ export function MedidorFiltersComponent({
           <CardHeader className='cursor-pointer hover:bg-emerald-50/50 dark:hover:bg-emerald-900/10 transition-colors'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+                <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
                   <Filter className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
                 </div>
                 <div>
@@ -117,10 +117,7 @@ export function MedidorFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
               {/* Marca */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='marca'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='marca' className='text-sm font-medium'>
                   Marca
                 </Label>
                 <Select
@@ -143,10 +140,7 @@ export function MedidorFiltersComponent({
 
               {/* Tipo */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tipo'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tipo' className='text-sm font-medium'>
                   Tipo
                 </Label>
                 <Select
@@ -169,10 +163,7 @@ export function MedidorFiltersComponent({
 
               {/* Modelo */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='modelo'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='modelo' className='text-sm font-medium'>
                   Modelo
                 </Label>
                 <Select
@@ -195,10 +186,7 @@ export function MedidorFiltersComponent({
 
               {/* Estado */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='estado'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='estado' className='text-sm font-medium'>
                   Estado
                 </Label>
                 <Select
@@ -224,9 +212,7 @@ export function MedidorFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
               {/* Rango de D�gitos */}
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
-                  Dígitos (Min)
-                </Label>
+                <Label className='text-sm font-medium'>Dígitos (Min)</Label>
                 <Input
                   type='number'
                   value={filters.digitosMin}
@@ -234,14 +220,12 @@ export function MedidorFiltersComponent({
                     handleFilterChange('digitosMin', e.target.value)
                   }
                   placeholder='Desde'
-                  className='border-emerald-200 dark:border-emerald-800 focus:border-emerald-400 dark:focus:border-emerald-600'
+                  className='border-border focus:border-border dark:focus:border-emerald-600'
                 />
               </div>
 
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
-                  Dígitos (Max)
-                </Label>
+                <Label className='text-sm font-medium'>Dígitos (Max)</Label>
                 <Input
                   type='number'
                   value={filters.digitosMax}
@@ -249,13 +233,13 @@ export function MedidorFiltersComponent({
                     handleFilterChange('digitosMax', e.target.value)
                   }
                   placeholder='Hasta'
-                  className='border-emerald-200 dark:border-emerald-800 focus:border-emerald-400 dark:focus:border-emerald-600'
+                  className='border-border focus:border-border dark:focus:border-emerald-600'
                 />
               </div>
 
               {/* Rango de Multiplicador */}
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                <Label className='text-sm font-medium'>
                   Multiplicador (Min)
                 </Label>
                 <Input
@@ -266,12 +250,12 @@ export function MedidorFiltersComponent({
                     handleFilterChange('multiplicarMin', e.target.value)
                   }
                   placeholder='Desde'
-                  className='border-emerald-200 dark:border-emerald-800 focus:border-emerald-400 dark:focus:border-emerald-600'
+                  className='border-border focus:border-border dark:focus:border-emerald-600'
                 />
               </div>
 
               <div className='space-y-2'>
-                <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                <Label className='text-sm font-medium'>
                   Multiplicador (Max)
                 </Label>
                 <Input
@@ -282,7 +266,7 @@ export function MedidorFiltersComponent({
                     handleFilterChange('multiplicarMax', e.target.value)
                   }
                   placeholder='Hasta'
-                  className='border-emerald-200 dark:border-emerald-800 focus:border-emerald-400 dark:focus:border-emerald-600'
+                  className='border-border focus:border-border dark:focus:border-emerald-600'
                 />
               </div>
             </div>
@@ -291,10 +275,7 @@ export function MedidorFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
               {/* Tiene Ubicaci�n */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tieneUbicacion'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tieneUbicacion' className='text-sm font-medium'>
                   Tiene Ubicaci�n
                 </Label>
                 <Select
@@ -316,10 +297,7 @@ export function MedidorFiltersComponent({
 
               {/* Tiene Acometida */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tieneAcometida'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tieneAcometida' className='text-sm font-medium'>
                   Tiene Acometida
                 </Label>
                 <Select
@@ -350,10 +328,7 @@ export function MedidorFiltersComponent({
               </div>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
                 <div className='space-y-2'>
-                  <Label
-                    htmlFor='fechaInicioDesde'
-                    className='text-sm text-slate-600 dark:text-slate-400'
-                  >
+                  <Label htmlFor='fechaInicioDesde' className='text-sm'>
                     Desde
                   </Label>
                   <Input
@@ -367,10 +342,7 @@ export function MedidorFiltersComponent({
                   />
                 </div>
                 <div className='space-y-2'>
-                  <Label
-                    htmlFor='fechaInicioHasta'
-                    className='text-sm text-slate-600 dark:text-slate-400'
-                  >
+                  <Label htmlFor='fechaInicioHasta' className='text-sm'>
                     Hasta
                   </Label>
                   <Input
@@ -392,7 +364,7 @@ export function MedidorFiltersComponent({
                 <Separator />
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
-                    <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                    <span className='text-sm font-medium'>
                       Filtros activos:
                     </span>
                     <div className='flex flex-wrap gap-1 sm:gap-2'>
@@ -567,7 +539,7 @@ export function MedidorFiltersComponent({
                     variant='outline'
                     size='sm'
                     onClick={onClearFilters}
-                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400'
+                    className='hover:text-red-600 dark:hover:text-red-400'
                   >
                     <RotateCcw className='h-4 w-4 mr-1' />
                     Limpiar Filtros

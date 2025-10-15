@@ -1002,8 +1002,8 @@ export default function DashboardComponent({
                   asChild
                 >
                   <Link to={action.href}>
-                    <div className={`rounded-lg p-2 ${action.color}`}>
-                      <action.icon className='h-3 w-3 sm:h-4 sm:w-4 text-white' />
+                    <div className={`rounded-xl p-2 ${action.color}`}>
+                      <action.icon className='h-3 w-3 sm:h-4 sm:w-4' />
                     </div>
                     <div>
                       <div className='font-semibold text-xs sm:text-sm'>

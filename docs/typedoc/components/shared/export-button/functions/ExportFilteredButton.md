@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [components/shared/export-button](../README.md) / ExportFilteredButton
 
@@ -14,7 +14,7 @@ Defined in: [app/components/shared/export-button.tsx:142](https://github.com/lo-
 
 ### T
 
-`T` *extends* `Record`\<`string`, `any`\>
+`T` _extends_ `Record`\<`string`, `any`\>
 
 ## Parameters
 

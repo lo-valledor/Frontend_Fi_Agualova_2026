@@ -258,7 +258,7 @@ export default function EmpalmesModalForm({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading
                   ? mode === 'add'

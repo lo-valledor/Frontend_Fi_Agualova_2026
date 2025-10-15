@@ -34,6 +34,7 @@ class UserService {
 
   /**
    * Obtiene un usuario específico por ID
+   * @param userId
    */
   async getUserById(
     userId: string | number
@@ -108,6 +109,7 @@ class UserService {
 
   /**
    * Obtiene un usuario por nombre de usuario
+   * @param username
    */
   async getUserByUsername(
     username: string
@@ -198,6 +200,8 @@ class UserService {
 
   /**
    * Actualiza un usuario
+   * @param userId
+   * @param userData
    */
   async updateUser(
     userId: number,
@@ -238,6 +242,7 @@ class UserService {
 
   /**
    * Crea datos simulados de usuario basados en el token
+   * @param user
    */
   createMockUserData(user: any): Usuarios {
     const nameParts = user.fullName.split(' ');
@@ -262,6 +267,7 @@ class UserService {
 
   /**
    * Limpia el caché de un usuario específico
+   * @param userId
    */
   clearUserCache(userId: string | number): void {
     const userIdStr = userId.toString();

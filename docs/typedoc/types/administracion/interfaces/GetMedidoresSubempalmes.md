@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetMedidoresSubempalmes
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:499](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:500](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L500)
 
-***
+---
 
 ### codigo
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:500](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:501](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L501)
 
-***
+---
 
 ### ubicacion
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:501](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:502](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L502)
 
-***
+---
 
 ### contratoId
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:502](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:503](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L503)
 
-***
+---
 
 ### descripcionEmpalme
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:503](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:504](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L504)
 
-***
+---
 
 ### descripcionNicho
 

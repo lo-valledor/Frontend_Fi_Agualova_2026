@@ -4,19 +4,19 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - "app/services/**"
-      - "app/components/**"
-      - "app/hooks/**"
-      - "app/types/**"
-      - "app/lib/**"
+      - 'app/services/**'
+      - 'app/components/**'
+      - 'app/hooks/**'
+      - 'app/types/**'
+      - 'app/lib/**'
   pull_request:
     branches: [main, develop]
     paths:
-      - "app/services/**"
-      - "app/components/**"
-      - "app/hooks/**"
-      - "app/types/**"
-      - "app/lib/**"
+      - 'app/services/**'
+      - 'app/components/**'
+      - 'app/hooks/**'
+      - 'app/types/**'
+      - 'app/lib/**'
 
 jobs:
   generate-docs:
@@ -33,8 +33,8 @@ jobs:
       - name: 📦 Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "pnpm"
+          node-version: '20'
+          cache: 'pnpm'
 
       - name: 📥 Install pnpm
         uses: pnpm/action-setup@v2

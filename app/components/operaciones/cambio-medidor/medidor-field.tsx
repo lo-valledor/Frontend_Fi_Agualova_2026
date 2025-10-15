@@ -14,24 +14,20 @@ interface MedidorFieldProps {
 
 const colorVariants = {
   amber: {
-    label: 'text-amber-800 dark:text-amber-200',
-    input:
-      'bg-amber-50/50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800'
+    label: 'text-foreground',
+    input: 'bg-muted/30 border-border'
   },
   blue: {
-    label: 'text-blue-800 dark:text-blue-200',
-    input:
-      'bg-blue-50/50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800'
+    label: 'text-foreground',
+    input: 'bg-muted/30 border-border'
   },
   green: {
-    label: 'text-green-800 dark:text-green-200',
-    input:
-      'bg-green-50/50 border-green-200 dark:bg-green-900/20 dark:border-green-800'
+    label: 'text-foreground',
+    input: 'bg-muted/30 border-border'
   },
   purple: {
-    label: 'text-purple-800 dark:text-purple-200',
-    input:
-      'bg-purple-50/50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800'
+    label: 'text-foreground',
+    input: 'bg-muted/30 border-border'
   }
 };
 

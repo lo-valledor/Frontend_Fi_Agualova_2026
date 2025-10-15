@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / Acometida
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:302](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:303](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L303)
 
-***
+---
 
 ### codigo
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:303](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:304](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L304)
 
-***
+---
 
 ### ubicacion
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:304](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:305](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L305)
 
-***
+---
 
 ### contratoId
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:305](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:306](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L306)
 
-***
+---
 
 ### empalmeDescripcion
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:306](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:307](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L307)
 
-***
+---
 
 ### nichoDescripcion
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:307](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:308](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L308)
 
-***
+---
 
 ### sectorDescripcion
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:308](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:309](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L309)
 
-***
+---
 
 ### limitePotencia
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:309](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:310](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L310)
 
-***
+---
 
 ### numeroMedidor
 

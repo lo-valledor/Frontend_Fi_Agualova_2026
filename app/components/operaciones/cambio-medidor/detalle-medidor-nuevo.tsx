@@ -38,20 +38,20 @@ export default function DetalleMedidorNuevo({
   };
 
   return (
-    <Card className='w-full rounded-xl border border-emerald-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-emerald-800/40 dark:bg-gray-900/50'>
-      <CardHeader className='bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 border-b border-emerald-200/40 dark:border-emerald-800/40 p-3 sm:p-6'>
+    <Card className='w-full rounded-xl border border-border bg-card/50 backdrop-blur-sm shadow-lg'>
+      <CardHeader className='bg-muted/30 border-b border-border p-3 sm:p-6'>
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-sm flex-shrink-0'>
-            <Zap className='h-3 w-3 sm:h-4 sm:w-4' />
+          <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-500 shadow-sm flex-shrink-0'>
+            <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-white' />
           </div>
           <div className='min-w-0'>
-            <CardTitle className='text-emerald-900 dark:text-emerald-100 text-sm sm:text-lg truncate'>
+            <CardTitle className='text-foreground text-sm sm:text-lg truncate'>
               <span className='hidden sm:inline'>
                 Detalle del Nuevo Medidor
               </span>
               <span className='sm:hidden'>Nuevo Medidor</span>
             </CardTitle>
-            <CardDescription className='text-emerald-700 dark:text-emerald-300 text-xs sm:text-sm truncate'>
+            <CardDescription className='text-muted-foreground text-xs sm:text-sm truncate'>
               <span className='hidden sm:inline'>
                 Información detallada del medidor a instalar
               </span>
@@ -66,7 +66,7 @@ export default function DetalleMedidorNuevo({
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='numero_serie'
-                className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Número de Serie
               </Label>
@@ -76,13 +76,13 @@ export default function DetalleMedidorNuevo({
                 onChange={handleInputChange}
                 placeholder='Ingrese el número de serie'
                 readOnly
-                className='bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 text-sm sm:text-base h-8 sm:h-10'
+                className='bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10'
               />
             </div>
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='tipo_medidor'
-                className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Tipo de Medidor
               </Label>
@@ -92,7 +92,7 @@ export default function DetalleMedidorNuevo({
                 onChange={handleInputChange}
                 placeholder='Ingrese el tipo de medidor'
                 readOnly
-                className='bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 text-sm sm:text-base h-8 sm:h-10'
+                className='bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10'
               />
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function DetalleMedidorNuevo({
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='constante_multiplicar'
-                className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Constante
               </Label>
@@ -111,13 +111,13 @@ export default function DetalleMedidorNuevo({
                 onChange={handleInputChange}
                 placeholder='Ingrese la constante'
                 readOnly
-                className='bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 text-sm sm:text-base h-8 sm:h-10'
+                className='bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10'
               />
             </div>
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='marca'
-                className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Marca
               </Label>
@@ -127,7 +127,7 @@ export default function DetalleMedidorNuevo({
                 onChange={handleInputChange}
                 placeholder='Ingrese la marca'
                 readOnly
-                className='bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 text-sm sm:text-base h-8 sm:h-10'
+                className='bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10'
               />
             </div>
           </div>
@@ -135,7 +135,7 @@ export default function DetalleMedidorNuevo({
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='modelo'
-                className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Modelo
               </Label>
@@ -145,13 +145,13 @@ export default function DetalleMedidorNuevo({
                 onChange={handleInputChange}
                 placeholder='Ingrese el modelo'
                 readOnly
-                className='bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 text-sm sm:text-base h-8 sm:h-10'
+                className='bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10'
               />
             </div>
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='estado_medidor'
-                className='text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Estado
               </Label>
@@ -163,7 +163,7 @@ export default function DetalleMedidorNuevo({
                   onChange={handleInputChange}
                   placeholder='Ingrese el estado'
                   readOnly
-                  className='w-16 sm:w-24 bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800 text-sm sm:text-base h-8 sm:h-10'
+                  className='w-16 sm:w-24 bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10'
                 />
                 <Badge
                   variant={
@@ -173,7 +173,7 @@ export default function DetalleMedidorNuevo({
                   }
                   className={
                     detalleMedidorNuevo.estado_medidor === 1
-                      ? 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-200 dark:border-emerald-800 text-xs sm:text-sm'
+                      ? 'bg-emerald-500 text-white text-xs sm:text-sm'
                       : 'text-xs sm:text-sm'
                   }
                 >

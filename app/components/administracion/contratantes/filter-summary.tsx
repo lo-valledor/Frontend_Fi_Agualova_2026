@@ -19,7 +19,9 @@ export function FilterSummary({
   if (!isFiltered) return null;
 
   const percentageShown =
-    totalContratantes > 0 ? Math.round((filteredContratantes / totalContratantes) * 100) : 0;
+    totalContratantes > 0
+      ? Math.round((filteredContratantes / totalContratantes) * 100)
+      : 0;
   const isReduced = filteredContratantes < totalContratantes;
 
   return (
@@ -32,7 +34,8 @@ export function FilterSummary({
             </div>
             <div className='flex items-center gap-2'>
               <span className='text-sm font-medium text-orange-800 dark:text-orange-200'>
-                Mostrando {filteredContratantes} de {totalContratantes} contratantes
+                Mostrando {filteredContratantes} de {totalContratantes}{' '}
+                contratantes
               </span>
               <Badge
                 variant='outline'

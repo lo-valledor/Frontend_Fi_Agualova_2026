@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / ConsultarMantenedorRevisionCorte
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:396](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:397](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L397)
 
-***
+---
 
 ### seCodigo
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:397](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:398](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L398)
 
-***
+---
 
 ### meNSerie
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:398](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:399](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L399)
 
-***
+---
 
 ### clRut
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:399](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:400](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L400)
 
-***
+---
 
 ### clRazonSocialCompleto
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:400](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:401](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L401)
 
-***
+---
 
 ### niDescripcion
 
@@ -56,7 +56,7 @@ Defined in: [app/types/operaciones.ts:401](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:402](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L402)
 
-***
+---
 
 ### secDescripcion
 
@@ -64,7 +64,7 @@ Defined in: [app/types/operaciones.ts:402](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:403](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L403)
 
-***
+---
 
 ### reEstado
 
@@ -72,7 +72,7 @@ Defined in: [app/types/operaciones.ts:403](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:404](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L404)
 
-***
+---
 
 ### reCantDocumentos
 
@@ -80,7 +80,7 @@ Defined in: [app/types/operaciones.ts:404](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:405](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L405)
 
-***
+---
 
 ### reDeudaTotal
 

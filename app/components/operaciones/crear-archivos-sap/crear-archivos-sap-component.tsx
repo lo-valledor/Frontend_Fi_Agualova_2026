@@ -149,7 +149,7 @@ export default function CrearArchivosSapComponent() {
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -159,26 +159,26 @@ export default function CrearArchivosSapComponent() {
 
         <div className='space-y-4'>
           {/* Panel de Configuración */}
-          <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80'>
+          <Card className='border-border bg-background'>
             <Collapsible open={isConfigOpen} onOpenChange={setIsConfigOpen}>
               <CollapsibleTrigger asChild>
-                <div className='p-3 border-b border-slate-200/60 dark:border-slate-700/60 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'>
+                <div className='p-3 border-b border-border cursor-pointer hover:bg-muted  transition-colors'>
                   <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
-                      <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'>
+                      <div className='flex h-8 w-8 items-center justify-center rounded-xl bg-background'>
                         <FileArchive className='h-4 w-4' />
                       </div>
                       <div>
-                        <CardTitle className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
+                        <CardTitle className='text-lg font-semibold'>
                           Descarga de Archivos
                         </CardTitle>
-                        <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                        <CardDescription className='text-sm'>
                           Haz clic en los botones para descargar los archivos
                         </CardDescription>
                       </div>
                     </div>
                     <ChevronDown
-                      className={`h-5 w-5 text-slate-600 dark:text-slate-400 transition-transform duration-200 ${
+                      className={`h-5 w-5 transition-transform duration-200 ${
                         isConfigOpen ? 'rotate-180' : ''
                       }`}
                     />
@@ -189,12 +189,12 @@ export default function CrearArchivosSapComponent() {
               <CollapsibleContent>
                 <CardContent className='p-4 space-y-4'>
                   {/* Archivo de Encabezado */}
-                  <div className='flex items-center justify-between gap-4 p-4 rounded-lg border border-slate-200/60 bg-slate-50/50 dark:border-slate-700/60 dark:bg-slate-800/50'>
+                  <div className='flex items-center justify-between gap-4 p-4 rounded-xl border border-border bg-background'>
                     <div className='space-y-1 flex-1'>
-                      <Label className='text-sm font-medium text-slate-900 dark:text-slate-100'>
+                      <Label className='text-sm font-medium'>
                         Archivo de Encabezado Factura
                       </Label>
-                      <p className='text-sm text-slate-600 dark:text-slate-400'>
+                      <p className='text-sm'>
                         Archivo CSV con los encabezados de facturas para SAP
                       </p>
                     </div>
@@ -203,7 +203,7 @@ export default function CrearArchivosSapComponent() {
                       size='sm'
                       onClick={handleDescargarEncabezado}
                       disabled={isDownloadingEncabezado}
-                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white disabled:opacity-50'
+                      className='gap-1.5 bg-primary disabled:opacity-50'
                     >
                       {isDownloadingEncabezado ? (
                         <>
@@ -220,12 +220,12 @@ export default function CrearArchivosSapComponent() {
                   </div>
 
                   {/* Archivo Detalle */}
-                  <div className='flex items-center justify-between gap-4 p-4 rounded-lg border border-slate-200/60 bg-slate-50/50 dark:border-slate-700/60 dark:bg-slate-800/50'>
+                  <div className='flex items-center justify-between gap-4 p-4 rounded-xl border border-border bg-background'>
                     <div className='space-y-1 flex-1'>
-                      <Label className='text-sm font-medium text-slate-900 dark:text-slate-100'>
+                      <Label className='text-sm font-medium'>
                         Archivo Detalle Factura
                       </Label>
-                      <p className='text-sm text-slate-600 dark:text-slate-400'>
+                      <p className='text-sm'>
                         Archivo CSV con los detalles de facturas para SAP
                       </p>
                     </div>
@@ -234,7 +234,7 @@ export default function CrearArchivosSapComponent() {
                       size='sm'
                       onClick={handleDescargarDetalle}
                       disabled={isDownloadingDetalle}
-                      className='gap-1.5 bg-sky-600 hover:bg-sky-700 text-white disabled:opacity-50'
+                      className='gap-1.5 bg-primary disabled:opacity-50'
                     >
                       {isDownloadingDetalle ? (
                         <>

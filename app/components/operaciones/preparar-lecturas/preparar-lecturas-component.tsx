@@ -158,7 +158,7 @@ export default function PrepararLecturasComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -174,30 +174,30 @@ export default function PrepararLecturasComponent({
         />
 
         {/* Filtros de Búsqueda */}
-        <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95'>
+        <Card className='border-border bg-card'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className='flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
+              className='flex justify-between items-center p-3 cursor-pointer hover:bg-muted/50 transition-colors'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
               <div className='flex items-center gap-3'>
-                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                  <SearchIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border'>
+                  <SearchIcon className='w-4 h-4 text-primary' />
                 </div>
                 <div>
-                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                  <CardTitle className='text-base font-medium'>
                     Criterios de Búsqueda
                   </CardTitle>
-                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                  <CardDescription className='text-sm'>
                     Selecciona criterios para preparar lecturas
                   </CardDescription>
                 </div>
               </div>
               <Button variant='ghost' size='icon' className='h-8 w-8'>
                 {isFiltersOpen ? (
-                  <ChevronUp className='h-5 w-5 text-slate-500' />
+                  <ChevronUp className='h-5 w-5 text-muted-foreground' />
                 ) : (
-                  <ChevronDown className='h-5 w-5 text-slate-500' />
+                  <ChevronDown className='h-5 w-5 text-muted-foreground' />
                 )}
               </Button>
             </div>
@@ -207,35 +207,35 @@ export default function PrepararLecturasComponent({
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 w-full'>
                   {/* Periodo */}
                   <div className='space-y-2'>
-                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
-                      <CalendarIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                    <Label className='text-sm font-medium flex items-center gap-2'>
+                      <CalendarIcon className='w-4 h-4 text-primary' />
                       Periodo actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className='flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
-                        <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                          <CalendarIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
+                        <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
+                          <CalendarIcon className='w-4 h-4 text-primary' />
                         </div>
                         <div>
-                          <span className='font-medium text-slate-900 dark:text-slate-100 text-sm'>
+                          <span className='font-medium text-sm'>
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className='text-xs text-slate-600 dark:text-slate-400'>
+                          <p className='text-xs'>
                             Periodo activo para facturación
                           </p>
                         </div>
                       </div>
                     ) : (
-                      <div className='flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
-                        <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0'>
-                          <AlertCircleIcon className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                      <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
+                        <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                          <AlertCircleIcon className='w-4 h-4' />
                         </div>
                         <div>
-                          <span className='font-medium text-slate-900 dark:text-slate-100 text-sm'>
+                          <span className='font-medium text-sm'>
                             No hay periodo abierto
                           </span>
-                          <p className='text-xs text-slate-600 dark:text-slate-400 mt-0.5'>
+                          <p className='text-xs mt-0.5'>
                             Contacta al administrador
                           </p>
                         </div>
@@ -247,9 +247,9 @@ export default function PrepararLecturasComponent({
                   <div className='space-y-2'>
                     <Label
                       htmlFor='ciclo'
-                      className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'
+                      className='text-sm font-medium flex items-center gap-2'
                     >
-                      <FileTextIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <FileTextIcon className='w-4 h-4 text-primary' />
                       Ciclo de facturación
                     </Label>
                     <Select
@@ -258,7 +258,7 @@ export default function PrepararLecturasComponent({
                     >
                       <SelectTrigger
                         id='ciclo'
-                        className='h-10 bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 focus:border-sky-400 focus:ring-sky-400/20 w-full text-sm'
+                        className='h-10 bg-background border-border w-full text-sm'
                       >
                         <SelectValue placeholder='Selecciona un ciclo de facturación' />
                       </SelectTrigger>
@@ -268,7 +268,6 @@ export default function PrepararLecturasComponent({
                             <SelectItem
                               key={opcion.id}
                               value={opcion.id.toString()}
-                              className='hover:bg-slate-50 dark:hover:bg-slate-800'
                             >
                               {opcion.descripcion}
                             </SelectItem>
@@ -280,12 +279,12 @@ export default function PrepararLecturasComponent({
                 </div>
 
                 {/* Botones de acción */}
-                <div className='flex flex-col sm:flex-row justify-end gap-2 pt-3 border-t border-slate-200/60 dark:border-slate-700/60'>
+                <div className='flex flex-col sm:flex-row justify-end gap-2 pt-3 border-t border-border'>
                   <Button
                     onClick={handleClearFilters}
                     variant='outline'
                     disabled={isLoadingAsignacion}
-                    className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
+                    className='gap-2'
                   >
                     <Eraser className='h-4 w-4' />
                     Limpiar
@@ -297,7 +296,7 @@ export default function PrepararLecturasComponent({
                       !cicloSeleccionado ||
                       !periodoFormateado
                     }
-                    className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                    className='gap-2 bg-primary hover:bg-primary/90 text-primary-foreground'
                   >
                     <SearchIcon className='h-4 w-4' />
                     {isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}
@@ -309,17 +308,17 @@ export default function PrepararLecturasComponent({
         </Card>
 
         {/* Resultados de la búsqueda */}
-        <Card className='border border-slate-200/60 dark:border-slate-700/60 shadow-sm'>
-          <CardHeader className='p-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+        <Card className='border border-border shadow-sm'>
+          <CardHeader className='p-3 border-b border-border'>
             <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                <UsersIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+              <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border'>
+                <UsersIcon className='w-4 h-4 text-primary' />
               </div>
               <div>
-                <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                <CardTitle className='text-base font-medium'>
                   Asignación de Sectores
                 </CardTitle>
-                <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                <CardDescription className='text-sm'>
                   {asignacionSectores.length > 0
                     ? `${asignacionSectores.length} sectores encontrados`
                     : 'No hay sectores asignados'}
@@ -333,12 +332,12 @@ export default function PrepararLecturasComponent({
                 return (
                   <div className='flex justify-center items-center h-48'>
                     <div className='flex flex-col items-center gap-3'>
-                      <div className='w-8 h-8 animate-spin rounded-full border-2 border-slate-300 border-t-sky-600 dark:border-slate-600 dark:border-t-sky-400'></div>
+                      <div className='w-8 h-8 animate-spin rounded-full border-2 border-border border-t-primary'></div>
                       <div className='text-center'>
-                        <p className='text-slate-700 dark:text-slate-300 font-medium text-sm'>
+                        <p className='font-medium text-sm'>
                           Buscando sectores...
                         </p>
-                        <p className='text-xs text-slate-500 dark:text-slate-400'>
+                        <p className='text-xs text-muted-foreground'>
                           Por favor espere
                         </p>
                       </div>
@@ -349,23 +348,21 @@ export default function PrepararLecturasComponent({
 
               if (error) {
                 return (
-                  <div className='p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200/60 dark:border-red-700/60'>
+                  <div className='p-3 rounded-xl bg-destructive/10 border border-destructive/20'>
                     <div className='flex items-start gap-3'>
-                      <div className='w-8 h-8 bg-red-100 dark:bg-red-900/50 rounded-lg flex items-center justify-center'>
-                        <AlertCircleIcon className='w-4 h-4 text-red-600 dark:text-red-400' />
+                      <div className='w-8 h-8 bg-destructive/20 rounded-xl flex items-center justify-center'>
+                        <AlertCircleIcon className='w-4 h-4 text-destructive' />
                       </div>
                       <div className='flex-1'>
-                        <h4 className='font-medium text-red-800 dark:text-red-200 text-sm'>
+                        <h4 className='font-medium text-destructive text-sm'>
                           Error al cargar los datos
                         </h4>
-                        <p className='mt-1 text-red-700 dark:text-red-300 text-xs'>
-                          {error}
-                        </p>
+                        <p className='mt-1 text-destructive text-xs'>{error}</p>
                         <Button
                           onClick={() => setError(null)}
                           variant='outline'
                           size='sm'
-                          className='mt-2 border-red-200 hover:bg-red-50 dark:border-red-700 dark:hover:bg-red-900/20'
+                          className='mt-2'
                         >
                           Cerrar
                         </Button>
@@ -378,14 +375,14 @@ export default function PrepararLecturasComponent({
               if (asignacionSectores.length === 0) {
                 return (
                   <div className='flex flex-col items-center justify-center h-48 gap-3'>
-                    <div className='w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                      <SearchIcon className='w-6 h-6 text-slate-500 dark:text-slate-400' />
+                    <div className='w-12 h-12 bg-background rounded-xl flex items-center justify-center'>
+                      <SearchIcon className='w-6 h-6' />
                     </div>
                     <div className='text-center'>
-                      <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                      <p className='font-medium text-sm'>
                         Realizar consulta de sectores
                       </p>
-                      <p className='text-xs text-slate-500 dark:text-slate-400'>
+                      <p className='text-xs'>
                         Selecciona un ciclo y haz clic en "Buscar Sectores"
                       </p>
                     </div>
@@ -395,11 +392,11 @@ export default function PrepararLecturasComponent({
 
               return (
                 <div className='space-y-4'>
-                  <div className='flex items-center gap-2 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
-                    <div className='w-6 h-6 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                      <UsersIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                  <div className='flex items-center gap-2 pb-3 border-b border-border'>
+                    <div className='w-6 h-6 bg-background rounded-xl flex items-center justify-center'>
+                      <UsersIcon className='w-4 h-4 text-primary' />
                     </div>
-                    <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                    <span className='font-medium text-sm'>
                       {asignacionSectores.length} sectores encontrados
                     </span>
                   </div>

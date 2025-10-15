@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / LecturaFaltanteRequest
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:73](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:74](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L74)
 
-***
+---
 
 ### nichoId
 
@@ -24,7 +24,7 @@ Defined in: [app/services/aiService.ts:74](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:75](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L75)
 
-***
+---
 
 ### periodo
 

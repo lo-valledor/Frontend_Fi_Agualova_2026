@@ -24,31 +24,31 @@ export const PASSWORD_RULES: PasswordValidationRule[] = [
   {
     id: 'length',
     label: 'Al menos 8 caracteres',
-    validator: (pwd) => pwd.length >= 8,
+    validator: pwd => pwd.length >= 8,
     message: 'La contraseña debe tener al menos 8 caracteres'
   },
   {
     id: 'uppercase',
     label: 'Al menos una letra mayúscula',
-    validator: (pwd) => /[A-Z]/.test(pwd),
+    validator: pwd => /[A-Z]/.test(pwd),
     message: 'Debe incluir al menos una letra mayúscula (A-Z)'
   },
   {
     id: 'lowercase',
     label: 'Al menos una letra minúscula',
-    validator: (pwd) => /[a-z]/.test(pwd),
+    validator: pwd => /[a-z]/.test(pwd),
     message: 'Debe incluir al menos una letra minúscula (a-z)'
   },
   {
     id: 'number',
     label: 'Al menos un número',
-    validator: (pwd) => /[0-9]/.test(pwd),
+    validator: pwd => /[0-9]/.test(pwd),
     message: 'Debe incluir al menos un número (0-9)'
   },
   {
     id: 'special',
     label: 'Al menos un carácter especial',
-    validator: (pwd) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd),
+    validator: pwd => /[!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]/.test(pwd),
     message: 'Debe incluir al menos un carácter especial (!@#$%&*...)'
   }
 ];
@@ -75,6 +75,7 @@ const COMMON_PATTERNS = [
 
 /**
  * Valida si una contraseña cumple con todas las reglas de seguridad
+ * @param password
  */
 export function validatePassword(password: string): {
   isValid: boolean;
@@ -98,7 +99,11 @@ export function validatePassword(password: string): {
   }
 
   // Verificar secuencias
-  if (/(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(password)) {
+  if (
+    /(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(
+      password
+    )
+  ) {
     warnings.push('Evite usar secuencias de letras consecutivas');
   }
 
@@ -115,6 +120,7 @@ export function validatePassword(password: string): {
 
 /**
  * Calcula la fortaleza de una contraseña (0-4)
+ * @param password
  */
 export function calculatePasswordStrength(password: string): PasswordStrength {
   if (!password) {
@@ -129,7 +135,9 @@ export function calculatePasswordStrength(password: string): PasswordStrength {
   let score = 0;
 
   // Base score: cumplir con las reglas básicas
-  const passedRules = PASSWORD_RULES.filter(rule => rule.validator(password)).length;
+  const passedRules = PASSWORD_RULES.filter(rule =>
+    rule.validator(password)
+  ).length;
   score += passedRules;
 
   // Bonus por longitud
@@ -137,7 +145,9 @@ export function calculatePasswordStrength(password: string): PasswordStrength {
   if (password.length >= 16) score += 1;
 
   // Penalización por patrones comunes
-  const hasCommonPattern = COMMON_PATTERNS.some(pattern => pattern.test(password));
+  const hasCommonPattern = COMMON_PATTERNS.some(pattern =>
+    pattern.test(password)
+  );
   if (hasCommonPattern) score = Math.max(0, score - 2);
 
   // Penalización por repeticiones
@@ -146,7 +156,10 @@ export function calculatePasswordStrength(password: string): PasswordStrength {
   // Normalizar score (0-4)
   score = Math.min(4, Math.max(0, Math.floor(score / 2)));
 
-  const strengthMap: Record<number, Omit<PasswordStrength, 'score' | 'percentage'>> = {
+  const strengthMap: Record<
+    number,
+    Omit<PasswordStrength, 'score' | 'percentage'>
+  > = {
     0: { label: 'Muy débil', color: 'bg-red-500' },
     1: { label: 'Débil', color: 'bg-orange-500' },
     2: { label: 'Aceptable', color: 'bg-yellow-500' },
@@ -163,20 +176,28 @@ export function calculatePasswordStrength(password: string): PasswordStrength {
 
 /**
  * Valida que dos contraseñas coincidan
+ * @param password
+ * @param confirmPassword
  */
-export function passwordsMatch(password: string, confirmPassword: string): boolean {
+export function passwordsMatch(
+  password: string,
+  confirmPassword: string
+): boolean {
   return password === confirmPassword && password.length > 0;
 }
 
 /**
  * Genera sugerencias para mejorar una contraseña
+ * @param password
  */
 export function generatePasswordSuggestions(password: string): string[] {
   const suggestions: string[] = [];
   const validation = validatePassword(password);
 
   if (!validation.isValid) {
-    suggestions.push('Asegúrese de cumplir con todos los requisitos de seguridad:');
+    suggestions.push(
+      'Asegúrese de cumplir con todos los requisitos de seguridad:'
+    );
     validation.failedRules.forEach(rule => {
       suggestions.push(`  • ${rule.label}`);
     });
@@ -187,7 +208,9 @@ export function generatePasswordSuggestions(password: string): string[] {
   }
 
   if (password.length < 12) {
-    suggestions.push('💡 Considere usar al menos 12 caracteres para mayor seguridad');
+    suggestions.push(
+      '💡 Considere usar al menos 12 caracteres para mayor seguridad'
+    );
   }
 
   return suggestions;
@@ -195,6 +218,7 @@ export function generatePasswordSuggestions(password: string): string[] {
 
 /**
  * Verifica si una contraseña es suficientemente segura para el sistema
+ * @param password
  */
 export function isPasswordSecure(password: string): {
   isSecure: boolean;
@@ -205,7 +229,9 @@ export function isPasswordSecure(password: string): {
   if (!validation.isValid) {
     return {
       isSecure: false,
-      reason: validation.failedRules[0]?.message || 'La contraseña no cumple con los requisitos mínimos'
+      reason:
+        validation.failedRules[0]?.message ||
+        'La contraseña no cumple con los requisitos mínimos'
     };
   }
 
@@ -215,7 +241,8 @@ export function isPasswordSecure(password: string): {
   if (strength.score < 2) {
     return {
       isSecure: false,
-      reason: 'La contraseña es demasiado débil. Use una combinación más compleja de caracteres.'
+      reason:
+        'La contraseña es demasiado débil. Use una combinación más compleja de caracteres.'
     };
   }
 

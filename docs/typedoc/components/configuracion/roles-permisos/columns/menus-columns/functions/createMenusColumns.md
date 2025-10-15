@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../../modules.md) / [components/configuracion/roles-permisos/columns/menus-columns](../README.md) / createMenusColumns
 

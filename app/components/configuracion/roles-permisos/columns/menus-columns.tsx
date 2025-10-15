@@ -14,7 +14,7 @@ export const createMenusColumns = (
     cell: ({ row }: any) => (
       <Badge
         variant='secondary'
-        className='font-mono text-xs bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+        className='font-mono text-xs bg-background  dark:text-slate-300'
       >
         #{row.getValue('idMenu')}
       </Badge>
@@ -24,7 +24,7 @@ export const createMenusColumns = (
     accessorKey: 'nombreMenu',
     header: 'Nombre',
     cell: ({ row }: any) => (
-      <div className='max-w-[200px] truncate font-medium text-slate-900 dark:text-slate-100'>
+      <div className='max-w-[200px] truncate font-medium'>
         {row.getValue('nombreMenu')}
       </div>
     )
@@ -33,7 +33,7 @@ export const createMenusColumns = (
     accessorKey: 'ruta',
     header: 'Ruta',
     cell: ({ row }: any) => (
-      <div className='max-w-[250px] truncate text-slate-600 dark:text-slate-400 font-mono text-xs'>
+      <div className='max-w-[250px] truncate font-mono text-xs'>
         {row.getValue('ruta') || 'Sin ruta'}
       </div>
     )
@@ -51,7 +51,7 @@ export const createMenusColumns = (
     accessorKey: 'icono',
     header: 'Icono',
     cell: ({ row }: any) => (
-      <div className='max-w-[150px] truncate text-slate-600 dark:text-slate-400 font-mono text-xs'>
+      <div className='max-w-[150px] truncate font-mono text-xs'>
         {row.getValue('icono') || 'Sin icono'}
       </div>
     )
@@ -63,8 +63,8 @@ export const createMenusColumns = (
       <Badge
         className={
           row.getValue('esVisible')
-            ? 'bg-green-500 hover:bg-green-600 text-white dark:bg-green-600 dark:hover:bg-green-700'
-            : 'bg-gray-500 hover:bg-gray-600 text-white dark:bg-gray-600 dark:hover:bg-gray-700'
+            ? 'bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700'
+            : 'bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700'
         }
       >
         {row.getValue('esVisible') ? 'Sí' : 'No'}

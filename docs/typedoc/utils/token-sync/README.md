@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../modules.md) / utils/token-sync
 
@@ -12,7 +12,7 @@
 
 ## Variables
 
-- [TOKEN\_CHANGED\_EVENT](variables/TOKEN_CHANGED_EVENT.md)
+- [TOKEN_CHANGED_EVENT](variables/TOKEN_CHANGED_EVENT.md)
 
 ## Functions
 

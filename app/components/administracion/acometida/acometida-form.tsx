@@ -282,8 +282,8 @@ export function AcometidaForm({
         <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-4xl max-h-[95vh] min-h-[80vh] overflow-y-auto'>
           <DialogHeader className='space-y-2'>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
-                <Zap className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+              <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
+                <Zap className='h-5 w-5' />
               </div>
               <div>
                 <DialogTitle className='text-xl font-semibold'>
@@ -305,7 +305,7 @@ export function AcometidaForm({
             >
               {/* Información Básica */}
               <div className='space-y-4'>
-                <h3 className='text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600'>
+                <h3 className='text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600'>
                   📋 Información Básica
                 </h3>
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
@@ -353,7 +353,7 @@ export function AcometidaForm({
 
               {/* Contrato */}
               <div className='space-y-4'>
-                <h3 className='text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600'>
+                <h3 className='text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600'>
                   📄 Contrato Asociado
                 </h3>
 
@@ -386,7 +386,7 @@ export function AcometidaForm({
                             </Button>
                           </div>
                         </FormControl>
-                        <p className='text-xs text-slate-500 dark:text-slate-400'>
+                        <p className='text-xs'>
                           💡 Escriba el ID del contrato o use "Buscar" para
                           explorar la lista completa
                         </p>
@@ -396,7 +396,7 @@ export function AcometidaForm({
                   />
                 ) : (
                   /* Mostrar información de que el contrato no está disponible */
-                  <div className='p-4 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800'>
+                  <div className='p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-200 dark:border-amber-800'>
                     <div className='flex items-start gap-3'>
                       <div className='p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md'>
                         <svg
@@ -453,10 +453,10 @@ export function AcometidaForm({
 
                   return (
                     <div
-                      className={`p-3 rounded-lg border ${
+                      className={`p-3 rounded-xl border ${
                         contratoEncontrado.estadoActivo === false
                           ? 'bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
-                          : 'bg-emerald-50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-800'
+                          : 'bg-emerald-50 dark:bg-emerald-900/10 border-border'
                       }`}
                     >
                       {contratoEncontrado.estadoActivo === false && (
@@ -499,7 +499,7 @@ export function AcometidaForm({
                           >
                             Cliente:
                           </span>
-                          <p className='text-slate-600 dark:text-slate-400'>
+                          <p className=''>
                             {contratoEncontrado.clienteNombre ||
                               'No disponible'}{' '}
                             {contratoEncontrado.clienteApellidos || ''}
@@ -515,7 +515,7 @@ export function AcometidaForm({
                           >
                             Empresa:
                           </span>
-                          <p className='text-slate-600 dark:text-slate-400'>
+                          <p className=''>
                             {contratoEncontrado.empresa || 'No disponible'}
                           </p>
                         </div>
@@ -529,7 +529,7 @@ export function AcometidaForm({
                           >
                             Local:
                           </span>
-                          <p className='text-slate-600 dark:text-slate-400'>
+                          <p className=''>
                             {contratoEncontrado.local || 'No disponible'}
                           </p>
                         </div>
@@ -543,7 +543,7 @@ export function AcometidaForm({
                           >
                             Tarifa:
                           </span>
-                          <p className='text-slate-600 dark:text-slate-400'>
+                          <p className=''>
                             {contratoEncontrado.tarifa || 'No disponible'}
                           </p>
                         </div>
@@ -555,7 +555,7 @@ export function AcometidaForm({
 
               {/* Configuración Técnica */}
               <div className='space-y-4'>
-                <h3 className='text-lg font-semibold text-slate-700 dark:text-slate-300 pb-3 border-b border-slate-200 dark:border-slate-600'>
+                <h3 className='text-lg font-semibold pb-3 border-b border-slate-200 dark:border-slate-600'>
                   ⚡ Configuración Técnica
                 </h3>
                 <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
@@ -640,9 +640,9 @@ export function AcometidaForm({
 
                 {/* Información del empalme seleccionado */}
                 {empalmeSeleccionado && (
-                  <div className='p-3 bg-sky-50 dark:bg-sky-900/10 rounded-lg border'>
+                  <div className='p-3 bg-sky-50 dark:bg-sky-900/10 rounded-xl border'>
                     <div className='flex items-center gap-2'>
-                      <Zap className='h-4 w-4 text-sky-600 dark:text-sky-400' />
+                      <Zap className='h-4 w-4' />
                       <span className='text-sm font-medium text-sky-700 dark:text-sky-300'>
                         Empalme seleccionado:
                       </span>
@@ -672,11 +672,11 @@ export function AcometidaForm({
                 <Button
                   type='submit'
                   disabled={isLoading}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700 text-white'
+                  className='gap-2 bg-sky-600 hover:bg-sky-700'
                 >
                   {isLoading ? (
                     <>
-                      <div className='h-4 w-4 animate-spin rounded-2xl border-2 border-white border-t-transparent' />
+                      <div className='h-4 w-4 animate-spin rounded-xl border-2 border-white border-t-transparent' />
                       Guardando...
                     </>
                   ) : (
@@ -697,7 +697,7 @@ export function AcometidaForm({
         <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+              <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
                 <List className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
               </div>
               <div>
@@ -724,7 +724,7 @@ export function AcometidaForm({
             </div>
 
             {/* Tabla de contratos con scroll horizontal */}
-            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+            <div className='border rounded-xl bg-background h-[50vh] overflow-hidden'>
               <div className='h-full overflow-auto'>
                 <Table className='min-w-[800px] relative'>
                   <TableHeader className='bg-muted/50 sticky top-0 z-10'>
@@ -749,11 +749,11 @@ export function AcometidaForm({
                           className='text-center py-12 text-muted-foreground'
                         >
                           <div className='flex flex-col items-center gap-3'>
-                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                            <div className='p-3 bg-background rounded-full'>
                               <Search className='h-8 w-8 opacity-50' />
                             </div>
                             <div className='space-y-1'>
-                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                              <p className='font-medium'>
                                 No se encontraron contratos
                               </p>
                               <p className='text-sm'>
@@ -803,11 +803,11 @@ export function AcometidaForm({
                             {c.tarifa}
                           </Badge>
                         </TableCell>
-                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
+                        <TableCell className='text-center sticky right-0 bg-background z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectContrato(c.contratoId)}
-                            className='bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-3 text-xs'
+                            className='bg-emerald-600 hover:bg-emerald-700 h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -820,7 +820,7 @@ export function AcometidaForm({
 
               {/* Información de resultados */}
               {contratosFiltrados.length > 0 && (
-                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                <div className='px-4 py-2 bg-background border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
                     Mostrando {contratosFiltrados.length} de{' '}
                     {contratosDisponibles.length} contratos

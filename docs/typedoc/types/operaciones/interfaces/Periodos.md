@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / Periodos
 
@@ -10,21 +10,21 @@ Defined in: [app/types/operaciones.ts:2](https://github.com/lo-valledor/front-re
 
 ## Properties
 
-### pf\_id
+### pf_id
 
-> **pf\_id**: `string`
+> **pf_id**: `string`
 
 Defined in: [app/types/operaciones.ts:3](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L3)
 
-***
+---
 
-### pf\_descripcion
+### pf_descripcion
 
-> **pf\_descripcion**: `string`
+> **pf_descripcion**: `string`
 
 Defined in: [app/types/operaciones.ts:4](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L4)
 
-***
+---
 
 ### Column1
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:4](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/operaciones.ts:5](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L5)
 
-***
+---
 
 ### Column2
 
@@ -40,10 +40,10 @@ Defined in: [app/types/operaciones.ts:5](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/operaciones.ts:6](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L6)
 
-***
+---
 
-### epf\_descripcion
+### epf_descripcion
 
-> **epf\_descripcion**: `string`
+> **epf_descripcion**: `string`
 
 Defined in: [app/types/operaciones.ts:7](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L7)

@@ -24,12 +24,10 @@ export const columns = ({
       return (
         <div className='flex items-center space-x-3'>
           <div>
-            <div className='font-medium text-gray-900 dark:text-gray-100'>
+            <div className='font-medium '>
               {user.nombres} {user.apellidos}
             </div>
-            <div className='text-sm text-gray-500 dark:text-gray-400'>
-              @{user.nombreDeUsuario}
-            </div>
+            <div className='text-sm '>@{user.nombreDeUsuario}</div>
           </div>
         </div>
       );

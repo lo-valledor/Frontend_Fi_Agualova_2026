@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / ConsultarAsignacionSectores
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:110](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:111](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L111)
 
-***
+---
 
 ### nichoId
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:111](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:112](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L112)
 
-***
+---
 
 ### descripcionNicho
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:112](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:113](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L113)
 
-***
+---
 
 ### cantidadMedidores
 

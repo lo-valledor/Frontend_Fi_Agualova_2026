@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/rolesPermisosService](../README.md) / RolesPermisosServiceResponse
 
@@ -22,7 +22,7 @@ Defined in: [app/services/rolesPermisosService.ts:4](https://github.com/lo-valle
 
 Defined in: [app/services/rolesPermisosService.ts:5](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L5)
 
-***
+---
 
 ### error
 

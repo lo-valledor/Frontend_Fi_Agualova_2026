@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / CrearCondicionContratoProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:674](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:675](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L675)
 
-***
+---
 
 ### conceptoId
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:675](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:676](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L676)
 
-***
+---
 
 ### usaPorcentaje
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:676](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:677](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L677)
 
-***
+---
 
 ### valor
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:677](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:678](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L678)
 
-***
+---
 
 ### estado
 

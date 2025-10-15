@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / PreciosCargoEnerlova
 
@@ -10,21 +10,21 @@ Defined in: [app/types/operaciones.ts:30](https://github.com/lo-valledor/front-r
 
 ## Properties
 
-### CD\_ID
+### CD_ID
 
-> **CD\_ID**: `number`
+> **CD_ID**: `number`
 
 Defined in: [app/types/operaciones.ts:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L31)
 
-***
+---
 
-### CD\_Descripcion
+### CD_Descripcion
 
-> **CD\_Descripcion**: `string`
+> **CD_Descripcion**: `string`
 
 Defined in: [app/types/operaciones.ts:32](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L32)
 
-***
+---
 
 ### valor
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:32](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:33](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L33)
 
-***
+---
 
 ### dias
 
@@ -40,26 +40,26 @@ Defined in: [app/types/operaciones.ts:33](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:34](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L34)
 
-***
+---
 
-### pc\_confirmacion
+### pc_confirmacion
 
-> **pc\_confirmacion**: `number`
+> **pc_confirmacion**: `number`
 
 Defined in: [app/types/operaciones.ts:35](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L35)
 
-***
+---
 
-### pc\_id
+### pc_id
 
-> **pc\_id**: `number`
+> **pc_id**: `number`
 
 Defined in: [app/types/operaciones.ts:36](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L36)
 
-***
+---
 
-### cd\_codigoenerlova
+### cd_codigoenerlova
 
-> **cd\_codigoenerlova**: `string`
+> **cd_codigoenerlova**: `string`
 
 Defined in: [app/types/operaciones.ts:37](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L37)

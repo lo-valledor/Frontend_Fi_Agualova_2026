@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/aiService](../README.md) / EstadisticasConsumo
 
@@ -16,7 +16,7 @@ Defined in: [app/services/aiService.ts:52](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:53](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L53)
 
-***
+---
 
 ### mediana
 
@@ -24,7 +24,7 @@ Defined in: [app/services/aiService.ts:53](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:54](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L54)
 
-***
+---
 
 ### desviacionEstandar
 
@@ -32,7 +32,7 @@ Defined in: [app/services/aiService.ts:54](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:55](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L55)
 
-***
+---
 
 ### percentil95
 
@@ -40,7 +40,7 @@ Defined in: [app/services/aiService.ts:55](https://github.com/lo-valledor/front-
 
 Defined in: [app/services/aiService.ts:56](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/aiService.ts#L56)
 
-***
+---
 
 ### percentil5
 

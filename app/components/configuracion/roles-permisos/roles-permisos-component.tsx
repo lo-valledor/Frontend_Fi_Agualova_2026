@@ -27,7 +27,7 @@ const RolesPermisosComponent: React.FC<RolesPermisosComponentProps> = ({
 
   if (error) {
     return (
-      <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+      <div className='min-h-screen bg-background'>
         <div className='container mx-auto px-3 sm:px-4 lg:px-6 py-4'>
           <Card className='border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20'>
             <CardContent className='p-6'>
@@ -45,15 +45,15 @@ const RolesPermisosComponent: React.FC<RolesPermisosComponentProps> = ({
   }
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto px-3 sm:px-4 lg:px-6 py-4 space-y-4 sm:space-y-6'>
         {/* Header */}
-        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 sm:pb-4 border-b border-slate-200/60 dark:border-slate-700/60 space-y-2 sm:space-y-0'>
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 sm:pb-4 border-b border-border space-y-2 sm:space-y-0'>
           <div className='text-center sm:text-left'>
-            <h1 className='text-lg sm:text-xl lg:text-2xl font-semibold text-slate-900 dark:text-slate-100'>
+            <h1 className='text-lg sm:text-xl lg:text-2xl font-semibold'>
               Roles y Permisos
             </h1>
-            <p className='text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1'>
+            <p className='text-xs sm:text-sm mt-1'>
               Gestiona los roles, menús y permisos del sistema
             </p>
           </div>

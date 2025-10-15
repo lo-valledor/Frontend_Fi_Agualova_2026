@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [components/ui/form](../README.md) / Form
 
@@ -16,7 +16,7 @@ A provider component that propagates the `useForm` methods to all children compo
 
 ### TFieldValues
 
-`TFieldValues` *extends* `FieldValues`
+`TFieldValues` _extends_ `FieldValues`
 
 ### TContext
 
@@ -50,7 +50,7 @@ function App() {
   const onSubmit = data => console.log(data);
 
   return (
-    <FormProvider {...methods} >
+    <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <NestedInput />
         <input type="submit" />
@@ -59,8 +59,8 @@ function App() {
   );
 }
 
- function NestedInput() {
+function NestedInput() {
   const { register } = useFormContext(); // retrieve all hook methods
-  return <input {...register("test")} />;
+  return <input {...register('test')} />;
 }
 ```

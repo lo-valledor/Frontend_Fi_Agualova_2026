@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/rolesPermisosService](../README.md) / AsignarPermisoDirecto
 
@@ -16,7 +16,7 @@ Defined in: [app/services/rolesPermisosService.ts:50](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:51](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L51)
 
-***
+---
 
 ### idMenu
 
@@ -24,7 +24,7 @@ Defined in: [app/services/rolesPermisosService.ts:51](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:52](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L52)
 
-***
+---
 
 ### puedeVer
 
@@ -32,7 +32,7 @@ Defined in: [app/services/rolesPermisosService.ts:52](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:53](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L53)
 
-***
+---
 
 ### puedeCrear
 
@@ -40,7 +40,7 @@ Defined in: [app/services/rolesPermisosService.ts:53](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:54](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L54)
 
-***
+---
 
 ### puedeEditar
 
@@ -48,7 +48,7 @@ Defined in: [app/services/rolesPermisosService.ts:54](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:55](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L55)
 
-***
+---
 
 ### puedeEliminar
 
@@ -56,7 +56,7 @@ Defined in: [app/services/rolesPermisosService.ts:55](https://github.com/lo-vall
 
 Defined in: [app/services/rolesPermisosService.ts:56](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/rolesPermisosService.ts#L56)
 
-***
+---
 
 ### fechaAsignacion?
 

@@ -27,13 +27,13 @@ export const columns = ({
         <div className='flex items-center space-x-3 min-w-0'>
           <div className='min-w-0'>
             <div
-              className='font-medium text-xs sm:text-sm text-gray-900 dark:text-gray-100 truncate'
+              className='font-medium text-xs sm:text-sm  truncate'
               title={data.tipoContratoDescripcion}
             >
               {data.tipoContratoDescripcion}
             </div>
             <div
-              className='text-xs text-gray-500 dark:text-gray-400 truncate'
+              className='text-xs  truncate'
               title={data.cargoFacturableDescripcion}
             >
               {data.cargoFacturableDescripcion}
@@ -54,7 +54,7 @@ export const columns = ({
       const condicion = row.getValue('condicionContratoDescripcion') as string;
       return (
         <div
-          className='font-medium text-xs sm:text-sm text-slate-700 dark:text-slate-300 truncate'
+          className='font-medium text-xs sm:text-sm truncate'
           title={condicion}
         >
           {condicion}
@@ -72,10 +72,7 @@ export const columns = ({
     cell: ({ row }) => {
       const descripcion = row.getValue('descripcion') as string;
       return (
-        <div
-          className='text-xs sm:text-sm text-slate-700 dark:text-slate-300 truncate'
-          title={descripcion}
-        >
+        <div className='text-xs sm:text-sm truncate' title={descripcion}>
           {descripcion}
         </div>
       );

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/administracion/contratantes/contratante-filters](../README.md) / ContratanteFilters
 
@@ -16,7 +16,7 @@ Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:
 
 Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:28](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratantes/contratante-filters.tsx#L28)
 
-***
+---
 
 ### comuna
 
@@ -24,7 +24,7 @@ Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:
 
 Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:29](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratantes/contratante-filters.tsx#L29)
 
-***
+---
 
 ### tieneContacto
 
@@ -32,7 +32,7 @@ Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:
 
 Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:30](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratantes/contratante-filters.tsx#L30)
 
-***
+---
 
 ### tieneTelefono
 
@@ -40,7 +40,7 @@ Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:
 
 Defined in: [app/components/administracion/contratantes/contratante-filters.tsx:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratantes/contratante-filters.tsx#L31)
 
-***
+---
 
 ### tieneEmail
 

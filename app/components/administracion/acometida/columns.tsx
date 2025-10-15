@@ -38,7 +38,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
-            className='font-mono text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100 truncate max-w-[100px] lg:max-w-[140px]'
+            className='font-mono text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[140px]'
             title={codigo}
           >
             {codigo}
@@ -59,7 +59,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
-            className='text-xs sm:text-sm text-slate-700 dark:text-slate-300 truncate max-w-[120px] lg:max-w-[200px]'
+            className='text-xs sm:text-sm truncate max-w-[120px] lg:max-w-[200px]'
             title={ubicacion}
           >
             {ubicacion}
@@ -104,7 +104,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
-            className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 truncate max-w-[100px] lg:max-w-[140px]'
+            className='text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[140px]'
             title={empalme}
           >
             {empalme}
@@ -125,7 +125,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
-            className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 truncate max-w-[100px] lg:max-w-[140px]'
+            className='text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[140px]'
             title={nicho}
           >
             {nicho}
@@ -185,7 +185,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2'>
           <div className='space-y-0.5'>
-            <div className='text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100 whitespace-nowrap'>
+            <div className='text-xs sm:text-sm font-medium whitespace-nowrap'>
               {limite.toLocaleString('es-CL')} kW
             </div>
           </div>
@@ -205,7 +205,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
-            className='font-mono text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 truncate max-w-[100px] lg:max-w-[120px]'
+            className='font-mono text-xs sm:text-sm font-medium truncate max-w-[100px] lg:max-w-[120px]'
             title={numeroMedidor}
           >
             {numeroMedidor}

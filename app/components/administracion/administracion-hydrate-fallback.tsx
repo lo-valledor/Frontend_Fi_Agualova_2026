@@ -47,7 +47,7 @@ export function AdministracionHydrateFallback() {
         <CardContent className='pt-6'>
           <div className='space-y-4'>
             {/* Table Header */}
-            <div className='grid grid-cols-6 gap-4 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg'>
+            <div className='grid grid-cols-6 gap-4 p-4 bg-background rounded-xl'>
               {[...Array(6)].map((_, i) => (
                 <Skeleton key={i} className='h-4 w-20' />
               ))}
@@ -57,7 +57,7 @@ export function AdministracionHydrateFallback() {
             {[...Array(8)].map((_, rowIndex) => (
               <div
                 key={rowIndex}
-                className='grid grid-cols-6 gap-4 p-4 border-b border-slate-200 dark:border-slate-700'
+                className='grid grid-cols-6 gap-4 p-4 border-b border-border'
               >
                 {[...Array(6)].map((_, colIndex) => (
                   <Skeleton key={colIndex} className='h-4 w-full' />

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / FormDataBT43
 
@@ -16,7 +16,7 @@ Defined in: [app/types/monitor.ts:169](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:170](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L170)
 
-***
+---
 
 ### lecturaActiva
 
@@ -24,7 +24,7 @@ Defined in: [app/types/monitor.ts:170](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:171](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L171)
 
-***
+---
 
 ### claveActivaId
 
@@ -32,7 +32,7 @@ Defined in: [app/types/monitor.ts:171](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:172](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L172)
 
-***
+---
 
 ### lecturaReactiva
 
@@ -40,7 +40,7 @@ Defined in: [app/types/monitor.ts:172](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:173](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L173)
 
-***
+---
 
 ### claveReactivaId
 
@@ -48,7 +48,7 @@ Defined in: [app/types/monitor.ts:173](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:174](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L174)
 
-***
+---
 
 ### consumoActiva
 
@@ -56,7 +56,7 @@ Defined in: [app/types/monitor.ts:174](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:175](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L175)
 
-***
+---
 
 ### consumoReactiva
 
@@ -64,7 +64,7 @@ Defined in: [app/types/monitor.ts:175](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:176](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L176)
 
-***
+---
 
 ### dp
 
@@ -72,7 +72,7 @@ Defined in: [app/types/monitor.ts:176](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:177](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L177)
 
-***
+---
 
 ### dpFecha
 
@@ -80,7 +80,7 @@ Defined in: [app/types/monitor.ts:177](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:178](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L178)
 
-***
+---
 
 ### dpHora
 
@@ -88,7 +88,7 @@ Defined in: [app/types/monitor.ts:178](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:179](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L179)
 
-***
+---
 
 ### ds
 
@@ -96,7 +96,7 @@ Defined in: [app/types/monitor.ts:179](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:180](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L180)
 
-***
+---
 
 ### dsFecha
 
@@ -104,7 +104,7 @@ Defined in: [app/types/monitor.ts:180](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/monitor.ts:181](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L181)
 
-***
+---
 
 ### dsHora
 

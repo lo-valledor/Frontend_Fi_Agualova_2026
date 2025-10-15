@@ -628,11 +628,11 @@ export function ContractFormModal({
               </div>
               <div className='space-y-6'>
                 {/* Ciclo de Facturación */}
-                <div className='flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/30 rounded-lg border'>
+                <div className='flex items-center justify-between p-4 bg-background rounded-xl border'>
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
+                    <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
                       <svg
-                        className='w-4 h-4 text-blue-600 dark:text-blue-400'
+                        className='w-4 h-4 '
                         fill='none'
                         stroke='currentColor'
                         viewBox='0 0 24 24'
@@ -646,10 +646,10 @@ export function ContractFormModal({
                       </svg>
                     </div>
                     <div>
-                      <Label className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                      <Label className='text-sm font-medium'>
                         Ciclo de Facturación
                       </Label>
-                      <p className='text-xs text-slate-500 dark:text-slate-400'>
+                      <p className='text-xs'>
                         Configuración estándar del sistema
                       </p>
                     </div>
@@ -661,9 +661,9 @@ export function ContractFormModal({
 
                 {/* Configuraciones de Estado */}
                 <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
-                  <div className='flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/30 rounded-lg border'>
+                  <div className='flex items-center justify-between p-4 bg-background rounded-xl border'>
                     <div className='flex items-center gap-3'>
-                      <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+                      <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
                         <svg
                           className='w-4 h-4 text-emerald-600 dark:text-emerald-400'
                           fill='none'
@@ -679,10 +679,7 @@ export function ContractFormModal({
                         </svg>
                       </div>
                       <div>
-                        <Label
-                          htmlFor='activo'
-                          className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                        >
+                        <Label htmlFor='activo' className='text-sm font-medium'>
                           Estado del Contrato
                         </Label>
                       </div>
@@ -697,9 +694,9 @@ export function ContractFormModal({
                     />
                   </div>
 
-                  <div className='flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/30 rounded-lg border'>
+                  <div className='flex items-center justify-between p-4 bg-background rounded-xl border'>
                     <div className='flex items-center gap-3'>
-                      <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
+                      <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl'>
                         <svg
                           className='w-4 h-4 text-orange-600 dark:text-orange-400'
                           fill='none'
@@ -717,7 +714,7 @@ export function ContractFormModal({
                       <div>
                         <Label
                           htmlFor='liberadoCorte'
-                          className='text-sm font-medium text-slate-700 dark:text-slate-300'
+                          className='text-sm font-medium'
                         >
                           Liberado de Corte
                         </Label>
@@ -772,7 +769,7 @@ export function ContractFormModal({
               </Button>
               <Button
                 type='submit'
-                className='bg-sky-600 hover:bg-sky-700 text-white w-full sm:w-auto'
+                className='bg-sky-600 hover:bg-sky-700 w-full sm:w-auto'
                 disabled={isSubmitting}
               >
                 {(() => {
@@ -797,7 +794,7 @@ export function ContractFormModal({
         <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg'>
+              <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
                 <User className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
               </div>
               <div>
@@ -824,7 +821,7 @@ export function ContractFormModal({
             </div>
 
             {/* Tabla de propietarios con scroll horizontal */}
-            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+            <div className='border rounded-xl bg-background h-[50vh] overflow-hidden'>
               <div className='h-full overflow-auto'>
                 <Table className='min-w-[600px] relative'>
                   <TableHeader className='bg-muted/50 sticky top-0 z-10'>
@@ -850,11 +847,11 @@ export function ContractFormModal({
                           className='text-center py-12 text-muted-foreground'
                         >
                           <div className='flex flex-col items-center gap-3'>
-                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                            <div className='p-3 bg-background rounded-full'>
                               <Search className='h-8 w-8 opacity-50' />
                             </div>
                             <div className='space-y-1'>
-                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                              <p className='font-medium'>
                                 No se encontraron propietarios
                               </p>
                               <p className='text-sm'>
@@ -894,11 +891,11 @@ export function ContractFormModal({
                         <TableCell className='hidden lg:table-cell'>
                           <p className='truncate'>{p.telefono}</p>
                         </TableCell>
-                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
+                        <TableCell className='text-center sticky right-0 bg-background z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectPropietario(p.rut)}
-                            className='bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-3 text-xs'
+                            className='bg-emerald-600 hover:bg-emerald-700 h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -911,7 +908,7 @@ export function ContractFormModal({
 
               {/* Información de resultados */}
               {propietariosFiltrados.length > 0 && (
-                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                <div className='px-4 py-2 bg-background border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
                     Mostrando {propietariosFiltrados.length} de{' '}
                     {propietario.length} propietarios
@@ -931,8 +928,8 @@ export function ContractFormModal({
         <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-                <Building2 className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+              <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
+                <Building2 className='h-5 w-5 ' />
               </div>
               <div>
                 <DialogTitle className='text-xl font-semibold'>
@@ -958,7 +955,7 @@ export function ContractFormModal({
             </div>
 
             {/* Tabla de locales con scroll horizontal */}
-            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+            <div className='border rounded-xl bg-background h-[50vh] overflow-hidden'>
               <div className='h-full overflow-auto'>
                 <Table className='min-w-[700px] relative'>
                   <TableHeader className='bg-muted/50 sticky top-0 z-10'>
@@ -989,11 +986,11 @@ export function ContractFormModal({
                           className='text-center py-12 text-muted-foreground'
                         >
                           <div className='flex flex-col items-center gap-3'>
-                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                            <div className='p-3 bg-background rounded-full'>
                               <Search className='h-8 w-8 opacity-50' />
                             </div>
                             <div className='space-y-1'>
-                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                              <p className='font-medium'>
                                 No se encontraron locales
                               </p>
                               <p className='text-sm'>
@@ -1045,11 +1042,11 @@ export function ContractFormModal({
                             {l.estadoHabilitado}
                           </Badge>
                         </TableCell>
-                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
+                        <TableCell className='text-center sticky right-0 bg-background z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectLocal(l.numeroLocal)}
-                            className='bg-blue-600 hover:bg-blue-700 text-white h-8 px-3 text-xs'
+                            className='bg-blue-600 hover:bg-blue-700 h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -1062,7 +1059,7 @@ export function ContractFormModal({
 
               {/* Información de resultados */}
               {localesFiltrados.length > 0 && (
-                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                <div className='px-4 py-2 bg-background border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
                     Mostrando {localesFiltrados.length} de {local.length}{' '}
                     locales
@@ -1082,7 +1079,7 @@ export function ContractFormModal({
         <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
+              <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl'>
                 <Users className='h-5 w-5 text-purple-600 dark:text-purple-400' />
               </div>
               <div>
@@ -1109,7 +1106,7 @@ export function ContractFormModal({
             </div>
 
             {/* Tabla de contratos madre con scroll horizontal */}
-            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+            <div className='border rounded-xl bg-background h-[50vh] overflow-hidden'>
               <div className='h-full overflow-auto'>
                 <Table className='min-w-[800px] relative'>
                   <TableHeader className='bg-muted/50 sticky top-0 z-10'>
@@ -1140,11 +1137,11 @@ export function ContractFormModal({
                           className='text-center py-12 text-muted-foreground'
                         >
                           <div className='flex flex-col items-center gap-3'>
-                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                            <div className='p-3 bg-background rounded-full'>
                               <Search className='h-8 w-8 opacity-50' />
                             </div>
                             <div className='space-y-1'>
-                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                              <p className='font-medium'>
                                 No se encontraron contratos madre
                               </p>
                               <p className='text-sm'>
@@ -1189,11 +1186,11 @@ export function ContractFormModal({
                             {m.tipoContrato}
                           </Badge>
                         </TableCell>
-                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
+                        <TableCell className='text-center sticky right-0 bg-background z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectMadre(m.codigoContrato)}
-                            className='bg-purple-600 hover:bg-purple-700 text-white h-8 px-3 text-xs'
+                            className='bg-purple-600 hover:bg-purple-700 h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -1206,7 +1203,7 @@ export function ContractFormModal({
 
               {/* Información de resultados */}
               {madresFiltradas.length > 0 && (
-                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                <div className='px-4 py-2 bg-background border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
                     Mostrando {madresFiltradas.length} de {madres.length}{' '}
                     contratos madre
@@ -1226,7 +1223,7 @@ export function ContractFormModal({
         <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg'>
+              <div className='p-2 bg-orange-100 dark:bg-orange-900/30 rounded-xl'>
                 <MapPin className='h-5 w-5 text-orange-600 dark:text-orange-400' />
               </div>
               <div>
@@ -1253,7 +1250,7 @@ export function ContractFormModal({
             </div>
 
             {/* Tabla de comunas con scroll horizontal */}
-            <div className='border rounded-lg bg-white dark:bg-slate-900 h-[50vh] overflow-hidden'>
+            <div className='border rounded-xl bg-background h-[50vh] overflow-hidden'>
               <div className='h-full overflow-auto'>
                 <Table className='min-w-[500px] relative'>
                   <TableHeader className='bg-muted/50 sticky top-0 z-10'>
@@ -1276,11 +1273,11 @@ export function ContractFormModal({
                           className='text-center py-12 text-muted-foreground'
                         >
                           <div className='flex flex-col items-center gap-3'>
-                            <div className='p-3 bg-slate-100 dark:bg-slate-800 rounded-full'>
+                            <div className='p-3 bg-background rounded-full'>
                               <Search className='h-8 w-8 opacity-50' />
                             </div>
                             <div className='space-y-1'>
-                              <p className='font-medium text-slate-700 dark:text-slate-300'>
+                              <p className='font-medium'>
                                 No se encontraron comunas
                               </p>
                               <p className='text-sm'>
@@ -1317,11 +1314,11 @@ export function ContractFormModal({
                         <TableCell className='hidden md:table-cell'>
                           <p className='truncate'>{c.region}</p>
                         </TableCell>
-                        <TableCell className='text-center sticky right-0 bg-white dark:bg-slate-900 z-20'>
+                        <TableCell className='text-center sticky right-0 bg-background z-20'>
                           <Button
                             size='sm'
                             onClick={() => handleSelectComuna(c.codigo)}
-                            className='bg-orange-600 hover:bg-orange-700 text-white h-8 px-3 text-xs'
+                            className='bg-orange-600 hover:bg-orange-700 h-8 px-3 text-xs'
                           >
                             Seleccionar
                           </Button>
@@ -1334,7 +1331,7 @@ export function ContractFormModal({
 
               {/* Información de resultados */}
               {comunasFiltradas.length > 0 && (
-                <div className='px-4 py-2 bg-slate-50 dark:bg-slate-800 border-t text-xs text-muted-foreground flex justify-between items-center'>
+                <div className='px-4 py-2 bg-background border-t text-xs text-muted-foreground flex justify-between items-center'>
                   <span>
                     Mostrando {comunasFiltradas.length} de {comuna.length}{' '}
                     comunas

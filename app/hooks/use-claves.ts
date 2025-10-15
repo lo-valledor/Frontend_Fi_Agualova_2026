@@ -43,9 +43,11 @@ export function useClaves(): UseClaves {
   }, []);
 
   const getClaveByDescripcion = (descripcion: string): Clave | null => {
-    return claves.find(clave => 
-      clave.DescripcionClave.toLowerCase().includes(descripcion.toLowerCase())
-    ) || null;
+    return (
+      claves.find(clave =>
+        clave.DescripcionClave.toLowerCase().includes(descripcion.toLowerCase())
+      ) || null
+    );
   };
 
   const getClaveById = (id: number): Clave | null => {
@@ -53,8 +55,8 @@ export function useClaves(): UseClaves {
   };
 
   const getClavesForGroup = (groupId: string): ClaveOption[] => {
-    const clavesGrupo = claves.filter(clave => 
-      clave.IdentificadorDeAgrupacion === groupId
+    const clavesGrupo = claves.filter(
+      clave => clave.IdentificadorDeAgrupacion === groupId
     );
 
     return [
@@ -69,7 +71,7 @@ export function useClaves(): UseClaves {
 
   // Función específica para obtener el ID de "LECTURA CORRECTA"
   const getClaveCorrectaId = (): string => {
-    const claveCorrecta = claves.find(clave => 
+    const claveCorrecta = claves.find(clave =>
       clave.DescripcionClave.includes('LEOK - LECTURA CORRECTA')
     );
     return claveCorrecta ? claveCorrecta.IdClave.toString() : '22'; // fallback al ID anterior

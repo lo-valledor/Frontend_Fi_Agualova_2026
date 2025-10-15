@@ -183,21 +183,21 @@ const [progreso, setProgreso] = useState(0);
 
 ### Tabla de Decisión
 
-| Condición                  | Auto-insertable | Razón                                      |
-| -------------------------- | --------------- | ------------------------------------------ |
-| Tarifa BT1/BT2             | ✅              | Solo tarifas simples                       |
-| Tarifa BT3/BT4             | ❌              | Requiere validación de reactiva/demandas   |
-| Lectura importada válida   | ✅              | Tiene datos para guardar                   |
-| Sin lectura importada      | ❌              | No hay datos                               |
-| **Lectura actual = 0**     | ❌              | **No es un dato válido - requiere revisión** |
-| Consumo 0 kWh              | ❌              | Lectura igual a anterior                   |
-| **C8 ≠ (8 - Ant)**         | ❌              | **Inconsistencia menor - requiere revisión manual** |
-| Consumo 1-1999 kWh         | ✅              | Rango normal                               |
-| Consumo > 2000 kWh         | ❌              | Excesivo absoluto                          |
-| Patrón 9999+ kWh           | ❌              | Probable decimal truncado                  |
-| Rollover válido            | ⚠️              | Permitido con advertencia                  |
-| Rollover inválido          | ❌              | Cálculo incorrecto                         |
-| Ya guardada                | ❌              | Prevención de duplicados                   |
+| Condición                | Auto-insertable | Razón                                               |
+| ------------------------ | --------------- | --------------------------------------------------- |
+| Tarifa BT1/BT2           | ✅              | Solo tarifas simples                                |
+| Tarifa BT3/BT4           | ❌              | Requiere validación de reactiva/demandas            |
+| Lectura importada válida | ✅              | Tiene datos para guardar                            |
+| Sin lectura importada    | ❌              | No hay datos                                        |
+| **Lectura actual = 0**   | ❌              | **No es un dato válido - requiere revisión**        |
+| Consumo 0 kWh            | ❌              | Lectura igual a anterior                            |
+| **C8 ≠ (8 - Ant)**       | ❌              | **Inconsistencia menor - requiere revisión manual** |
+| Consumo 1-1999 kWh       | ✅              | Rango normal                                        |
+| Consumo > 2000 kWh       | ❌              | Excesivo absoluto                                   |
+| Patrón 9999+ kWh         | ❌              | Probable decimal truncado                           |
+| Rollover válido          | ⚠️              | Permitido con advertencia                           |
+| Rollover inválido        | ❌              | Cálculo incorrecto                                  |
+| Ya guardada              | ❌              | Prevención de duplicados                            |
 
 ## 🧪 Casos de Prueba
 

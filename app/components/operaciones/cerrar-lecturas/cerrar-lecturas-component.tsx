@@ -207,7 +207,7 @@ export default function CerrarLecturasComponent({
   };
 
   return (
-    <div className='min-h-screen bg-slate-50/30 dark:bg-slate-950/30'>
+    <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
         {/* Header */}
         <ModernHeader
@@ -216,30 +216,30 @@ export default function CerrarLecturasComponent({
         />
 
         {/* Filtros de Búsqueda */}
-        <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95'>
+        <Card className='border-border bg-card'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
-              className='flex justify-between items-center p-3 cursor-pointer hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors'
+              className='flex justify-between items-center p-3 cursor-pointer hover:bg-muted/50 transition-colors'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
               <div className='flex items-center gap-3'>
-                <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                  <SearchIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border'>
+                  <SearchIcon className='w-4 h-4 text-primary' />
                 </div>
                 <div>
-                  <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                  <CardTitle className='text-base font-medium'>
                     Criterios de Búsqueda
                   </CardTitle>
-                  <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                  <CardDescription className='text-sm'>
                     Selecciona criterios para cerrar lecturas
                   </CardDescription>
                 </div>
               </div>
               <Button variant='ghost' size='icon' className='h-8 w-8'>
                 {isFiltersOpen ? (
-                  <ChevronUp className='h-4 w-4 text-slate-500' />
+                  <ChevronUp className='h-4 w-4 text-muted-foreground' />
                 ) : (
-                  <ChevronDown className='h-4 w-4 text-slate-500' />
+                  <ChevronDown className='h-4 w-4 text-muted-foreground' />
                 )}
               </Button>
             </div>
@@ -249,35 +249,35 @@ export default function CerrarLecturasComponent({
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 w-full'>
                   {/* Periodo */}
                   <div className='space-y-2'>
-                    <Label className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'>
-                      <CalendarIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                    <Label className='text-sm font-medium flex items-center gap-2'>
+                      <CalendarIcon className='w-4 h-4 text-primary' />
                       Periodo actual
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className='flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
-                        <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0'>
-                          <CalendarIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
+                        <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                          <CalendarIcon className='w-4 h-4 text-primary' />
                         </div>
                         <div>
-                          <span className='font-medium text-slate-900 dark:text-slate-100 text-sm'>
+                          <span className='font-medium text-sm'>
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className='text-xs text-slate-600 dark:text-slate-400 mt-0.5'>
+                          <p className='text-xs mt-0.5'>
                             Periodo activo para facturación
                           </p>
                         </div>
                       </div>
                     ) : (
-                      <div className='flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
-                        <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0'>
-                          <AlertCircleIcon className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                      <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
+                        <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                          <AlertCircleIcon className='w-4 h-4' />
                         </div>
                         <div>
-                          <span className='font-medium text-slate-900 dark:text-slate-100 text-sm'>
+                          <span className='font-medium text-sm'>
                             No hay periodo abierto
                           </span>
-                          <p className='text-xs text-slate-600 dark:text-slate-400 mt-0.5'>
+                          <p className='text-xs mt-0.5'>
                             Contacta al administrador
                           </p>
                         </div>
@@ -289,9 +289,9 @@ export default function CerrarLecturasComponent({
                   <div className='space-y-2'>
                     <Label
                       htmlFor='ciclo'
-                      className='text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2'
+                      className='text-sm font-medium flex items-center gap-2'
                     >
-                      <FileTextIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <FileTextIcon className='w-4 h-4 text-primary' />
                       Ciclo de facturación
                     </Label>
                     <Select
@@ -300,7 +300,7 @@ export default function CerrarLecturasComponent({
                     >
                       <SelectTrigger
                         id='ciclo'
-                        className='h-10 bg-white dark:bg-slate-800 border-slate-200/60 dark:border-slate-700/60 focus:border-sky-400 focus:ring-sky-400/20 w-full text-sm'
+                        className='h-10 bg-background border-border w-full text-sm'
                       >
                         <SelectValue placeholder='Selecciona un ciclo de facturación' />
                       </SelectTrigger>
@@ -320,10 +320,9 @@ export default function CerrarLecturasComponent({
                               <SelectItem
                                 key={ciclo.diaFacturacion}
                                 value={valorCiclo}
-                                className='hover:bg-slate-50 dark:hover:bg-slate-800'
                               >
                                 <div className='flex items-center gap-2'>
-                                  <div className='w-2 h-2 rounded-full bg-sky-500'></div>
+                                  <div className='w-2 h-2 rounded-full bg-primary'></div>
                                   <span className='font-medium'>
                                     {ciclo.descripcion}
                                   </span>
@@ -333,23 +332,17 @@ export default function CerrarLecturasComponent({
                           })
                         ) : (
                           <>
-                            <SelectItem
-                              value='1'
-                              className='hover:bg-slate-50 dark:hover:bg-slate-800'
-                            >
+                            <SelectItem value='1'>
                               <div className='flex items-center gap-2'>
-                                <div className='w-2 h-2 rounded-full bg-sky-500'></div>
+                                <div className='w-2 h-2 rounded-full bg-primary'></div>
                                 <span className='font-medium'>
                                   Ciclo día 15
                                 </span>
                               </div>
                             </SelectItem>
-                            <SelectItem
-                              value='2'
-                              className='hover:bg-slate-50 dark:hover:bg-slate-800'
-                            >
+                            <SelectItem value='2'>
                               <div className='flex items-center gap-2'>
-                                <div className='w-2 h-2 rounded-full bg-sky-500'></div>
+                                <div className='w-2 h-2 rounded-full bg-primary'></div>
                                 <span className='font-medium'>
                                   Ciclo día 30
                                 </span>
@@ -363,12 +356,12 @@ export default function CerrarLecturasComponent({
                 </div>
 
                 {/* Botones de acción */}
-                <div className='flex flex-col sm:flex-row justify-end gap-2 pt-3 border-t border-slate-200/60 dark:border-slate-700/60'>
+                <div className='flex flex-col sm:flex-row justify-end gap-2 pt-3 border-t border-border'>
                   <Button
                     onClick={handleClearFilters}
                     variant='outline'
                     disabled={isLoading}
-                    className='gap-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
+                    className='gap-2'
                   >
                     <Eraser className='h-4 w-4' />
                     Limpiar
@@ -378,7 +371,7 @@ export default function CerrarLecturasComponent({
                     disabled={
                       isLoading || !cicloSeleccionado || !periodoFormateado
                     }
-                    className='gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white'
+                    className='gap-2 bg-primary hover:bg-primary/90 text-primary-foreground'
                   >
                     <SearchIcon className='h-4 w-4' />
                     {isLoading ? 'Buscando...' : 'Buscar Lecturas'}
@@ -390,17 +383,17 @@ export default function CerrarLecturasComponent({
         </Card>
 
         {/* Resultados de la búsqueda */}
-        <Card className='border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95'>
-          <CardHeader className='border-b border-slate-200/60 dark:border-slate-700/60 p-3'>
+        <Card className='border-border bg-card'>
+          <CardHeader className='border-b border-border p-3'>
             <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center border border-slate-200/60 dark:border-slate-700/60'>
-                <CheckCircleIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+              <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border'>
+                <CheckCircleIcon className='w-4 h-4 text-primary' />
               </div>
               <div>
-                <CardTitle className='text-base font-medium text-slate-900 dark:text-slate-100'>
+                <CardTitle className='text-base font-medium'>
                   Estado de Cierre de Lecturas
                 </CardTitle>
-                <CardDescription className='text-sm text-slate-600 dark:text-slate-400'>
+                <CardDescription className='text-sm'>
                   {estadoCierreLecturas.length > 0
                     ? `${estadoCierreLecturas.length} lecturas disponibles para cierre`
                     : 'No hay lecturas disponibles para cierre'}
@@ -415,14 +408,12 @@ export default function CerrarLecturasComponent({
                   <div className='flex justify-center items-center h-64'>
                     <div className='flex flex-col items-center gap-4'>
                       <div className='relative'>
-                        <div className='w-16 h-16 rounded-full border-4 border-slate-200 dark:border-slate-700'></div>
-                        <div className='absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-sky-600 border-t-transparent animate-spin'></div>
+                        <div className='w-16 h-16 rounded-full border-4 border-border'></div>
+                        <div className='absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin'></div>
                       </div>
                       <div className='text-center'>
-                        <p className='text-slate-700 dark:text-slate-300 font-medium'>
-                          Buscando lecturas...
-                        </p>
-                        <p className='text-sm text-slate-600 dark:text-slate-400 mt-1'>
+                        <p className='font-medium'>Buscando lecturas...</p>
+                        <p className='text-sm text-muted-foreground mt-1'>
                           Por favor espere mientras procesamos su consulta
                         </p>
                       </div>
@@ -433,23 +424,23 @@ export default function CerrarLecturasComponent({
 
               if (error) {
                 return (
-                  <div className='p-4 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/60'>
+                  <div className='p-4 rounded-xl bg-background border border-border'>
                     <div className='flex items-start gap-3'>
-                      <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                        <AlertCircleIcon className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                      <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
+                        <AlertCircleIcon className='w-4 h-4' />
                       </div>
                       <div className='flex-1'>
-                        <h4 className='font-medium text-slate-900 dark:text-slate-100'>
+                        <h4 className='font-medium'>
                           Error al cargar los datos
                         </h4>
-                        <p className='mt-1 text-slate-700 dark:text-slate-300 text-sm'>
+                        <p className='mt-1 text-sm text-muted-foreground'>
                           {error}
                         </p>
                         <Button
                           onClick={() => setError(null)}
                           variant='outline'
                           size='sm'
-                          className='mt-2 border-slate-200 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800'
+                          className='mt-2'
                         >
                           Cerrar
                         </Button>
@@ -462,14 +453,14 @@ export default function CerrarLecturasComponent({
               if (estadoCierreLecturas.length === 0) {
                 return (
                   <div className='flex flex-col items-center justify-center h-64 gap-4'>
-                    <div className='w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center'>
-                      <SearchIcon className='w-8 h-8 text-sky-600 dark:text-sky-400' />
+                    <div className='w-16 h-16 bg-background rounded-xl flex items-center justify-center'>
+                      <SearchIcon className='w-8 h-8 text-primary' />
                     </div>
                     <div className='text-center'>
-                      <p className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                      <p className='font-medium text-sm'>
                         Realizar consulta de lecturas
                       </p>
-                      <p className='text-xs text-slate-600 dark:text-slate-400 mt-1'>
+                      <p className='text-xs mt-1'>
                         Selecciona un ciclo y haz clic en "Buscar Lecturas" para
                         ver los resultados
                       </p>
@@ -480,12 +471,12 @@ export default function CerrarLecturasComponent({
 
               return (
                 <div className='space-y-4'>
-                  <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-slate-200/60 dark:border-slate-700/60'>
+                  <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border'>
                     <div className='flex items-center gap-2'>
-                      <div className='w-8 h-8 bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center flex-shrink-0'>
-                        <CheckCircleIcon className='w-4 h-4 text-sky-600 dark:text-sky-400' />
+                      <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                        <CheckCircleIcon className='w-4 h-4 text-primary' />
                       </div>
-                      <span className='font-medium text-slate-700 dark:text-slate-300 text-sm'>
+                      <span className='font-medium text-sm'>
                         {estadoCierreLecturas.length} registros encontrados
                       </span>
                     </div>
@@ -501,7 +492,7 @@ export default function CerrarLecturasComponent({
                             {selectedRows.length > 0 && (
                               <div className='flex items-center gap-2 mr-2'>
                                 {isBlocked && (
-                                  <div className='flex items-center gap-1 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md border border-red-200 dark:border-red-800'>
+                                  <div className='flex items-center gap-1 text-destructive bg-destructive/10 px-2 py-1 rounded-md border border-destructive/20'>
                                     <AlertCircleIcon className='h-3 w-3' />
                                     <span className='text-xs font-medium'>
                                       {blockers.criticalCount} Críticas
@@ -509,7 +500,7 @@ export default function CerrarLecturasComponent({
                                   </div>
                                 )}
                                 {hasWarnings && !isBlocked && (
-                                  <div className='flex items-center gap-1 text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded-md border border-orange-200 dark:border-orange-800'>
+                                  <div className='flex items-center gap-1 text-warning bg-warning/10 px-2 py-1 rounded-md border border-warning/20'>
                                     <AlertTriangle className='h-3 w-3' />
                                     <span className='text-xs font-medium'>
                                       {blockers.warningCount} Alertas
@@ -526,9 +517,9 @@ export default function CerrarLecturasComponent({
                               disabled={selectedRows.length === 0 || isBlocked}
                               className={`gap-2 ${
                                 isBlocked
-                                  ? 'opacity-50 cursor-not-allowed bg-slate-100 hover:bg-slate-100 text-slate-500 dark:bg-slate-800 dark:hover:bg-slate-800 dark:text-slate-400 border border-red-200 dark:border-red-800'
+                                  ? 'opacity-50 cursor-not-allowed bg-muted hover:bg-muted text-muted-foreground border border-destructive/20'
                                   : hasWarnings
-                                    ? 'bg-orange-600 hover:bg-orange-700 border-orange-500'
+                                    ? 'bg-warning hover:bg-warning/90 text-warning-foreground'
                                     : ''
                               }`}
                               title={
@@ -556,7 +547,7 @@ export default function CerrarLecturasComponent({
                       })()}
                     </div>
                   </div>
-                  <div className='rounded-lg border border-slate-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900'>
+                  <div className='rounded-xl border border-border overflow-hidden bg-card'>
                     <DataTable
                       columns={columns}
                       data={estadoCierreLecturas}

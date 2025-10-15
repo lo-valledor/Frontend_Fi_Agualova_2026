@@ -1,6 +1,6 @@
 **Enerlova Frontend Documentation**
 
-***
+---
 
 # ⚡ ENERLOVA - Sistema Integral de Gestión Energética
 

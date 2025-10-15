@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / CreateNichoRequest
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:67](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:68](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L68)
 
-***
+---
 
 ### nombre
 
@@ -26,7 +26,7 @@ Defined in: [app/types/mantencion.ts:68](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:69](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L69)
 
-***
+---
 
 ### ubicacion
 
@@ -34,7 +34,7 @@ Defined in: [app/types/mantencion.ts:69](https://github.com/lo-valledor/front-re
 
 Defined in: [app/types/mantencion.ts:70](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L70)
 
-***
+---
 
 ### estado
 

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/administracion/contratos/contract-filters](../README.md) / ContractFilters
 
@@ -16,7 +16,7 @@ Defined in: [app/components/administracion/contratos/contract-filters.tsx:25](ht
 
 Defined in: [app/components/administracion/contratos/contract-filters.tsx:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratos/contract-filters.tsx#L26)
 
-***
+---
 
 ### cicloFacturacion
 
@@ -24,7 +24,7 @@ Defined in: [app/components/administracion/contratos/contract-filters.tsx:26](ht
 
 Defined in: [app/components/administracion/contratos/contract-filters.tsx:27](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratos/contract-filters.tsx#L27)
 
-***
+---
 
 ### tarifa
 
@@ -32,7 +32,7 @@ Defined in: [app/components/administracion/contratos/contract-filters.tsx:27](ht
 
 Defined in: [app/components/administracion/contratos/contract-filters.tsx:28](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratos/contract-filters.tsx#L28)
 
-***
+---
 
 ### comuna
 
@@ -40,7 +40,7 @@ Defined in: [app/components/administracion/contratos/contract-filters.tsx:28](ht
 
 Defined in: [app/components/administracion/contratos/contract-filters.tsx:29](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratos/contract-filters.tsx#L29)
 
-***
+---
 
 ### liberadoCorte
 
@@ -48,7 +48,7 @@ Defined in: [app/components/administracion/contratos/contract-filters.tsx:29](ht
 
 Defined in: [app/components/administracion/contratos/contract-filters.tsx:30](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratos/contract-filters.tsx#L30)
 
-***
+---
 
 ### fechaTerminoDesde
 
@@ -56,7 +56,7 @@ Defined in: [app/components/administracion/contratos/contract-filters.tsx:30](ht
 
 Defined in: [app/components/administracion/contratos/contract-filters.tsx:31](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratos/contract-filters.tsx#L31)
 
-***
+---
 
 ### fechaTerminoHasta
 
@@ -64,7 +64,7 @@ Defined in: [app/components/administracion/contratos/contract-filters.tsx:31](ht
 
 Defined in: [app/components/administracion/contratos/contract-filters.tsx:32](https://github.com/lo-valledor/front-respaldo/blob/develop/app/components/administracion/contratos/contract-filters.tsx#L32)
 
-***
+---
 
 ### activo
 

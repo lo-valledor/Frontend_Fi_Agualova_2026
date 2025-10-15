@@ -93,8 +93,8 @@ export function CargoFiltersComponent({
           <CardHeader className='cursor-pointer hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg'>
-                  <Filter className='h-4 w-4 text-blue-600 dark:text-blue-400' />
+                <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
+                  <Filter className='h-4 w-4 ' />
                 </div>
                 <div>
                   <CardTitle className='text-lg text-blue-800 dark:text-blue-200'>
@@ -116,11 +116,7 @@ export function CargoFiltersComponent({
                     {activeFiltersCount !== 1 ? 's' : ''}
                   </Badge>
                 )}
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className='text-blue-600 dark:text-blue-400'
-                >
+                <Button variant='ghost' size='sm' className=''>
                   {isOpen ? 'Ocultar' : 'Mostrar'}
                 </Button>
               </div>
@@ -136,10 +132,7 @@ export function CargoFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
               {/* Tipo */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tipo'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tipo' className='text-sm font-medium'>
                   Tipo
                 </Label>
                 <Select
@@ -162,10 +155,7 @@ export function CargoFiltersComponent({
 
               {/* Fijo/Variable */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='fijoVariable'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='fijoVariable' className='text-sm font-medium'>
                   Modalidad
                 </Label>
                 <Select
@@ -192,7 +182,7 @@ export function CargoFiltersComponent({
               <div className='space-y-2'>
                 <Label
                   htmlFor='periodicoEventual'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
+                  className='text-sm font-medium'
                 >
                   Frecuencia
                 </Label>
@@ -221,10 +211,7 @@ export function CargoFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
               {/* Concepto */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='concepto'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='concepto' className='text-sm font-medium'>
                   Concepto
                 </Label>
                 <Select
@@ -247,10 +234,7 @@ export function CargoFiltersComponent({
 
               {/* Tarifa */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tarifa'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tarifa' className='text-sm font-medium'>
                   Tarifa
                 </Label>
                 <Select
@@ -273,10 +257,7 @@ export function CargoFiltersComponent({
 
               {/* Tipo Medidor */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tipoMedidor'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tipoMedidor' className='text-sm font-medium'>
                   Tipo Medidor
                 </Label>
                 <Select
@@ -306,7 +287,7 @@ export function CargoFiltersComponent({
                 <Separator />
                 <div className='flex items-center justify-between'>
                   <div className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
-                    <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                    <span className='text-sm font-medium'>
                       Filtros activos:
                     </span>
                     <div className='flex flex-wrap gap-1 sm:gap-2'>
@@ -447,7 +428,7 @@ export function CargoFiltersComponent({
                     variant='outline'
                     size='sm'
                     onClick={onClearFilters}
-                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 w-full sm:w-auto mt-2 sm:mt-0'
+                    className='hover:text-red-600 dark:hover:text-red-400 w-full sm:w-auto mt-2 sm:mt-0'
                   >
                     <RotateCcw className='h-3 w-3 sm:h-4 sm:w-4 mr-1' />
                     <span className='text-xs sm:text-sm'>Limpiar Filtros</span>

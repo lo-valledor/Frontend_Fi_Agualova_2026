@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ContratosDisponibles
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:150](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:151](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L151)
 
-***
+---
 
 ### local
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:151](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:152](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L152)
 
-***
+---
 
 ### tipoContrato
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:152](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:153](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L153)
 
-***
+---
 
 ### tarifa
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:153](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:154](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L154)
 
-***
+---
 
 ### propietario
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:154](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:155](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L155)
 
-***
+---
 
 ### clienteNombre
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:155](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:156](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L156)
 
-***
+---
 
 ### clienteApellidos
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:156](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:157](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L157)
 
-***
+---
 
 ### empresa
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:157](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:158](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L158)
 
-***
+---
 
 ### fechaInicio
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:158](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:159](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L159)
 
-***
+---
 
 ### fechaFin
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:159](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:160](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L160)
 
-***
+---
 
 ### direccionEnvio
 
@@ -96,7 +96,7 @@ Defined in: [app/types/administracion.ts:160](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:161](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L161)
 
-***
+---
 
 ### limiteInventario
 
@@ -104,7 +104,7 @@ Defined in: [app/types/administracion.ts:161](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:162](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L162)
 
-***
+---
 
 ### cicloFacturacion
 
@@ -112,7 +112,7 @@ Defined in: [app/types/administracion.ts:162](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:163](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L163)
 
-***
+---
 
 ### estadoActivo
 

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / ConfiguracionCargo
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:635](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:636](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L636)
 
-***
+---
 
 ### tipoContratoId
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:636](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:637](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L637)
 
-***
+---
 
 ### condicionId
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:637](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:638](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L638)
 
-***
+---
 
 ### descripcion
 

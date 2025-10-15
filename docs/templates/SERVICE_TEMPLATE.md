@@ -4,7 +4,7 @@ Esta plantilla te ayuda a documentar servicios de forma consistente usando JSDoc
 
 ## Estructura Básica de un Servicio
 
-```typescript
+````typescript
 import api from '~/lib/api';
 import type { MiTipo } from '~/types/mi-modulo';
 
@@ -245,7 +245,7 @@ class MiServicio {
  * ```
  */
 export const miServicio = new MiServicio();
-```
+````
 
 ---
 
@@ -254,18 +254,21 @@ export const miServicio = new MiServicio();
 ### ¿Qué documentar en métodos?
 
 #### SIEMPRE documenta:
+
 - ✅ Qué hace el método (descripción breve)
 - ✅ Parámetros y su tipo
 - ✅ Qué retorna
 - ✅ Ejemplo de uso (al menos para métodos públicos)
 
 #### Documenta CUANDO sea relevante:
+
 - 🔸 Errores que puede lanzar específicamente
 - 🔸 Comportamientos no obvios o edge cases
 - 🔸 Por qué se hace algo de cierta manera
 - 🔸 Limitaciones o consideraciones especiales
 
 #### NO documentes:
+
 - ❌ Lo obvio (ej: "// Llama a la API" antes de `api.get()`)
 - ❌ Implementación interna (a menos que sea compleja)
 - ❌ Tipos que ya están en TypeScript

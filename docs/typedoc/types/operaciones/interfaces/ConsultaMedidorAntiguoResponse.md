@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / ConsultaMedidorAntiguoResponse
 
@@ -10,37 +10,37 @@ Defined in: [app/types/operaciones.ts:262](https://github.com/lo-valledor/front-
 
 ## Properties
 
-### codigo\_acometida
+### codigo_acometida
 
-> **codigo\_acometida**: `string`
+> **codigo_acometida**: `string`
 
 Defined in: [app/types/operaciones.ts:263](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L263)
 
-***
+---
 
-### numero\_serie
+### numero_serie
 
-> **numero\_serie**: `string`
+> **numero_serie**: `string`
 
 Defined in: [app/types/operaciones.ts:264](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L264)
 
-***
+---
 
-### tipo\_medidor
+### tipo_medidor
 
-> **tipo\_medidor**: `string`
+> **tipo_medidor**: `string`
 
 Defined in: [app/types/operaciones.ts:265](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L265)
 
-***
+---
 
-### constante\_multiplicar
+### constante_multiplicar
 
-> **constante\_multiplicar**: `number`
+> **constante_multiplicar**: `number`
 
 Defined in: [app/types/operaciones.ts:266](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L266)
 
-***
+---
 
 ### marca
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:266](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:267](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L267)
 
-***
+---
 
 ### modelo
 
@@ -56,26 +56,26 @@ Defined in: [app/types/operaciones.ts:267](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:268](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L268)
 
-***
+---
 
-### lectura\_actual
+### lectura_actual
 
-> **lectura\_actual**: `number` \| `null`
+> **lectura_actual**: `number` \| `null`
 
 Defined in: [app/types/operaciones.ts:269](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L269)
 
-***
+---
 
-### ultima\_lectura
+### ultima_lectura
 
-> **ultima\_lectura**: `number`
+> **ultima_lectura**: `number`
 
 Defined in: [app/types/operaciones.ts:270](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L270)
 
-***
+---
 
-### medidor\_id
+### medidor_id
 
-> **medidor\_id**: `number`
+> **medidor_id**: `number`
 
 Defined in: [app/types/operaciones.ts:271](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L271)

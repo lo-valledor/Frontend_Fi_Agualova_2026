@@ -117,7 +117,7 @@ export const UserProfileExample: React.FC = () => {
       <CardContent className='space-y-6'>
         {/* Información básica */}
         <div className='flex items-center space-x-4'>
-          <div className='w-16 h-16 rounded-full bg-sky-500 flex items-center justify-center text-white font-bold text-xl'>
+          <div className='w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-xl'>
             {userData.nombres.charAt(0)}
             {userData.apellidos.charAt(0)}
           </div>

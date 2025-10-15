@@ -85,6 +85,8 @@ class ReportesService {
 
   /**
    * Obtiene la facturación por cargo para un período y empalme específicos
+   * @param periodo
+   * @param emId
    */
   async getFacturacionPorCargo(
     periodo: string,
@@ -131,6 +133,7 @@ class ReportesService {
 
   /**
    * Helper para hacer llamadas API individuales con manejo de errores
+   * @param endpoint
    */
   private async safeApiCall<T>(endpoint: string): Promise<T[]> {
     try {
@@ -144,6 +147,7 @@ class ReportesService {
 
   /**
    * Obtiene todos los detalles de un contrato específico
+   * @param contratoId
    */
   async getDetallesPorContrato(contratoId: number): Promise<
     ReportesServiceResponse<{

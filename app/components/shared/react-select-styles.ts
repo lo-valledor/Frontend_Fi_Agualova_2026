@@ -3,36 +3,66 @@ import { type StylesConfig } from 'react-select';
 type Theme = 'dark' | 'light' | 'system';
 
 /**
+ * Obtiene el valor de una variable CSS del sistema de diseño
+ * @param variable - Nombre de la variable CSS (ej: '--background')
+ * @returns El valor de la variable en formato OKLCH
+ */
+const getCSSVariable = (variable: string): string => {
+  if (typeof window === 'undefined') return '';
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(variable)
+    .trim();
+};
+
+/**
+ * Convierte una variable CSS a un color CSS válido
+ * @param variable - Nombre de la variable CSS
+ * @returns String de color con el valor completo de la variable CSS
+ */
+const getColor = (variable: string): string => {
+  if (typeof window === 'undefined') return 'transparent';
+
+  const value = getCSSVariable(variable);
+
+  // Si la variable ya contiene oklch(), devolverla tal cual
+  if (value.startsWith('oklch(')) {
+    return value;
+  }
+
+  // Si es solo los valores, envolver en oklch()
+  if (value) {
+    return `oklch(${value})`;
+  }
+
+  return 'transparent';
+};
+
+/**
  * Estilos personalizados para react-select con soporte para modo oscuro
- * Utiliza variables CSS de Tailwind para mantener consistencia con el theme
- * @param theme - El tema actual ('dark', 'light' o 'system')
+ * Utiliza variables CSS del sistema de diseño definidas en app.css
+ * @param _theme - El tema actual ('dark', 'light' o 'system') - No usado, los estilos se adaptan automáticamente
  * @returns Configuración de estilos para react-select
  */
-export const getReactSelectStyles = (theme: Theme): StylesConfig<any> => {
-  // Convertir 'system' a 'dark' por defecto para evitar errores
-  const effectiveTheme = theme === 'system' ? 'dark' : theme;
-
+export const getReactSelectStyles = (_theme: Theme): StylesConfig<any> => {
   return {
     control: styles => ({
       ...styles,
-      backgroundColor: effectiveTheme === 'dark' ? '#020617' : '#FFFFFF',
-      borderColor: effectiveTheme === 'dark' ? '#334155' : '#E2E8F0',
-      color: effectiveTheme === 'dark' ? '#FFFFFF' : '#000000',
+      backgroundColor: getColor('--background'),
+      borderColor: getColor('--border'),
+      color: getColor('--foreground'),
       minHeight: '3rem',
       fontSize: '1rem',
       '&:hover': {
-        borderColor: effectiveTheme === 'dark' ? '#475569' : '#CBD5E1'
+        borderColor: getColor('--input')
       }
     }),
     menu: styles => ({
       ...styles,
-      backgroundColor: effectiveTheme === 'dark' ? '#020617' : '#FFFFFF',
+      backgroundColor: getColor('--popover'),
       zIndex: 9999,
       maxHeight: '300px',
-      border:
-        effectiveTheme === 'dark' ? '1px solid #334155' : '1px solid #E2E8F0',
-      boxShadow:
-        '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+      border: `1px solid ${getColor('--border')}`,
+      boxShadow: getCSSVariable('--shadow-lg')
     }),
     menuList: styles => ({
       ...styles,
@@ -43,48 +73,42 @@ export const getReactSelectStyles = (theme: Theme): StylesConfig<any> => {
     option: (styles, { isFocused, isSelected }) => ({
       ...styles,
       backgroundColor: isSelected
-        ? effectiveTheme === 'dark'
-          ? '#0ea5e9'
-          : '#0ea5e9'
+        ? getColor('--primary')
         : isFocused
-          ? effectiveTheme === 'dark'
-            ? '#1e293b'
-            : '#f1f5f9'
+          ? getColor('--accent')
           : 'transparent',
       color: isSelected
-        ? '#FFFFFF'
-        : effectiveTheme === 'dark'
-          ? '#f8fafc'
-          : '#0f172a',
+        ? getColor('--primary-foreground')
+        : getColor('--popover-foreground'),
       padding: '12px 16px',
       cursor: 'pointer',
       fontSize: '0.95rem',
       ':active': {
         ...styles[':active'],
-        backgroundColor: effectiveTheme === 'dark' ? '#0ea5e9' : '#0ea5e9'
+        backgroundColor: getColor('--primary')
       }
     }),
     singleValue: styles => ({
       ...styles,
-      color: effectiveTheme === 'dark' ? '#FFFFFF' : '#000000'
+      color: getColor('--foreground')
     }),
     input: styles => ({
       ...styles,
-      color: effectiveTheme === 'dark' ? '#FFFFFF' : '#000000'
+      color: getColor('--foreground')
     }),
     placeholder: styles => ({
       ...styles,
-      color: effectiveTheme === 'dark' ? '#94a3b8' : '#6b7280'
+      color: getColor('--muted-foreground')
     }),
     noOptionsMessage: styles => ({
       ...styles,
-      color: effectiveTheme === 'dark' ? '#94a3b8' : '#6b7280',
+      color: getColor('--muted-foreground'),
       padding: '12px 16px',
       textAlign: 'center' as const
     }),
     loadingMessage: styles => ({
       ...styles,
-      color: effectiveTheme === 'dark' ? '#94a3b8' : '#6b7280',
+      color: getColor('--muted-foreground'),
       padding: '12px 16px',
       textAlign: 'center' as const
     })
@@ -92,119 +116,88 @@ export const getReactSelectStyles = (theme: Theme): StylesConfig<any> => {
 };
 
 /**
- * Estilos personalizados para react-select usando variables CSS de Tailwind
+ * Estilos personalizados para react-select usando variables CSS del sistema de diseño
  * Ideal para componentes que necesitan mayor flexibilidad en el theming
- * Detecta automáticamente el tema actual basándose en la clase 'dark' del documento
+ * Los estilos se adaptan automáticamente al tema mediante las variables CSS
  * @template T - Tipo de datos para las opciones del select
  * @returns Configuración de estilos para react-select con fondos sólidos y mejor contraste
  */
 export const getTailwindSelectStyles = <T = any>(): StylesConfig<T, false> => {
-  // Detectar si estamos en modo oscuro
-  const isDark =
-    typeof window !== 'undefined' &&
-    document.documentElement.classList.contains('dark');
-
   return {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: isDark ? 'rgb(15 23 42)' : 'rgb(255 255 255)',
-      borderColor: state.isFocused
-        ? isDark
-          ? 'rgb(100 116 139)'
-          : 'rgb(148 163 184)'
-        : isDark
-          ? 'rgb(51 65 85)'
-          : 'rgb(226 232 240)',
-      boxShadow: state.isFocused
-        ? `0 0 0 1px ${isDark ? 'rgb(100 116 139)' : 'rgb(148 163 184)'}`
-        : 'none',
+      backgroundColor: getColor('--background'),
+      borderColor: state.isFocused ? getColor('--ring') : getColor('--border'),
+      boxShadow: state.isFocused ? `0 0 0 1px ${getColor('--ring')}` : 'none',
       '&:hover': {
-        borderColor: state.isFocused
-          ? isDark
-            ? 'rgb(100 116 139)'
-            : 'rgb(148 163 184)'
-          : isDark
-            ? 'rgb(71 85 105)'
-            : 'rgb(203 213 225)'
+        borderColor: state.isFocused ? getColor('--ring') : getColor('--input')
       },
-      borderRadius: '0.5rem',
+      borderRadius: 'calc(var(--radius) - 2px)',
       minHeight: '40px',
       cursor: 'pointer',
       transition: 'all 0.15s ease'
     }),
     menu: provided => ({
       ...provided,
-      backgroundColor: isDark ? 'rgb(15 23 42)' : 'rgb(255 255 255)',
-      border: `1px solid ${isDark ? 'rgb(51 65 85)' : 'rgb(226 232 240)'}`,
-      borderRadius: '0.5rem',
-      boxShadow: isDark
-        ? '0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3)'
-        : '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      backgroundColor: getColor('--popover'),
+      border: `1px solid ${getColor('--border')}`,
+      borderRadius: 'calc(var(--radius) - 2px)',
+      boxShadow: getCSSVariable('--shadow-lg'),
       zIndex: 9999,
       overflow: 'hidden'
     }),
     menuList: provided => ({
       ...provided,
-      backgroundColor: isDark ? 'rgb(15 23 42)' : 'rgb(255 255 255)',
+      backgroundColor: getColor('--popover'),
       padding: '4px',
       maxHeight: '200px',
       '::-webkit-scrollbar': {
         width: '8px'
       },
       '::-webkit-scrollbar-track': {
-        background: isDark ? 'rgb(30 41 59)' : 'rgb(241 245 249)'
+        background: getColor('--muted')
       },
       '::-webkit-scrollbar-thumb': {
-        background: isDark ? 'rgb(71 85 105)' : 'rgb(203 213 225)',
+        background: getColor('--muted-foreground'),
         borderRadius: '4px'
       },
       '::-webkit-scrollbar-thumb:hover': {
-        background: isDark ? 'rgb(100 116 139)' : 'rgb(148 163 184)'
+        background: getColor('--foreground')
       }
     }),
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? isDark
-          ? 'rgb(14 165 233)'
-          : 'rgb(14 165 233)'
+        ? getColor('--primary')
         : state.isFocused
-          ? isDark
-            ? 'rgb(30 41 59)'
-            : 'rgb(241 245 249)'
+          ? getColor('--accent')
           : 'transparent',
       color: state.isSelected
-        ? 'rgb(255 255 255)'
-        : isDark
-          ? 'rgb(241 245 249)'
-          : 'rgb(15 23 42)',
+        ? getColor('--primary-foreground')
+        : getColor('--popover-foreground'),
       '&:hover': {
         backgroundColor: state.isSelected
-          ? isDark
-            ? 'rgb(14 165 233)'
-            : 'rgb(14 165 233)'
-          : isDark
-            ? 'rgb(30 41 59)'
-            : 'rgb(241 245 249)'
+          ? getColor('--primary')
+          : getColor('--accent')
       },
       cursor: 'pointer',
       padding: '8px 12px',
-      borderRadius: '0.375rem',
+      borderRadius: 'calc(var(--radius) - 4px)',
       margin: '1px 0',
       transition: 'all 0.1s ease'
     }),
     singleValue: provided => ({
       ...provided,
-      color: isDark ? 'rgb(241 245 249)' : 'rgb(15 23 42)'
+      color: getColor('--foreground')
     }),
     input: provided => ({
       ...provided,
-      color: isDark ? 'rgb(241 245 249)' : 'rgb(15 23 42)',
+      color: getColor('--foreground'),
       margin: '0px'
     }),
     placeholder: provided => ({
       ...provided,
-      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)'
+      color: getColor('--muted-foreground')
     }),
     indicatorSeparator: () => ({
       display: 'none'
@@ -215,28 +208,28 @@ export const getTailwindSelectStyles = <T = any>(): StylesConfig<T, false> => {
     }),
     dropdownIndicator: provided => ({
       ...provided,
-      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      color: getColor('--muted-foreground'),
       padding: '8px',
       '&:hover': {
-        color: isDark ? 'rgb(203 213 225)' : 'rgb(71 85 105)'
+        color: getColor('--foreground')
       }
     }),
     clearIndicator: provided => ({
       ...provided,
-      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      color: getColor('--muted-foreground'),
       padding: '8px',
       '&:hover': {
-        color: isDark ? 'rgb(239 68 68)' : 'rgb(220 38 38)'
+        color: getColor('--destructive')
       }
     }),
     noOptionsMessage: provided => ({
       ...provided,
-      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      color: getColor('--muted-foreground'),
       padding: '12px'
     }),
     loadingMessage: provided => ({
       ...provided,
-      color: isDark ? 'rgb(148 163 184)' : 'rgb(100 116 139)',
+      color: getColor('--muted-foreground'),
       padding: '12px'
     })
   };

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / EstadoCierreLecturas
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:163](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:164](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L164)
 
-***
+---
 
 ### nichoDescripcion
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:164](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:165](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L165)
 
-***
+---
 
 ### cantidadSinLectura
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:165](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:166](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L166)
 
-***
+---
 
 ### cantidadLecturasOK
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:166](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:167](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L167)
 
-***
+---
 
 ### cantidadClaveRoja
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:167](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:168](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L168)
 
-***
+---
 
 ### cantidadClaveNaranja
 
@@ -56,7 +56,7 @@ Defined in: [app/types/operaciones.ts:168](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:169](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L169)
 
-***
+---
 
 ### cantidadCorregidas
 
@@ -64,7 +64,7 @@ Defined in: [app/types/operaciones.ts:169](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:170](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L170)
 
-***
+---
 
 ### cantidadTotal
 
@@ -72,7 +72,7 @@ Defined in: [app/types/operaciones.ts:170](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:171](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L171)
 
-***
+---
 
 ### nichoId
 

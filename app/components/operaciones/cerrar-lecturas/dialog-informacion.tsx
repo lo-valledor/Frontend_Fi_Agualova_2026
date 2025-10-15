@@ -28,7 +28,7 @@ export default function DialogInformacion() {
           size='icon'
           className='rounded-full hover:bg-blue-100 dark:hover:bg-blue-900/40 h-8 w-8 sm:h-10 sm:w-10'
         >
-          <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400' />
+          <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5 ' />
         </Button>
       </DialogTrigger>
       <DialogContent className='max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto'>
@@ -86,7 +86,7 @@ export default function DialogInformacion() {
             </div>
           ))}
 
-          <div className='border border-border/60 rounded-lg p-2 sm:p-3 bg-muted/30 mt-2'>
+          <div className='border border-border/60 rounded-xl p-2 sm:p-3 bg-muted/30 mt-2'>
             <h4 className='text-xs sm:text-sm font-medium mb-2'>
               <span className='hidden sm:inline'>Tipos de indicadores:</span>
               <span className='sm:hidden'>Indicadores:</span>

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/mantencionService](../README.md) / MantencionServiceResponse
 
@@ -29,7 +29,7 @@ Defined in: [app/services/mantencionService.ts:27](https://github.com/lo-valledo
 
 Datos devueltos en caso de éxito, null si hay error
 
-***
+---
 
 ### error
 

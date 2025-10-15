@@ -7,12 +7,10 @@ import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 
 import { Alert, AlertDescription } from '~/components/ui/alert';
-import { Progress } from '~/components/ui/progress';
 import {
   calculatePasswordStrength,
   PASSWORD_RULES,
-  validatePassword,
-  type PasswordValidationRule
+  validatePassword
 } from '~/utils/password-validation';
 
 interface PasswordStrengthIndicatorProps {
@@ -38,12 +36,16 @@ export function PasswordStrengthIndicator({
       {/* Barra de progreso de fortaleza */}
       <div className='space-y-1.5'>
         <div className='flex items-center justify-between text-xs'>
-          <span className='text-muted-foreground'>Fortaleza de la contraseña:</span>
-          <span className={`font-semibold ${getStrengthTextColor(strength.score)}`}>
+          <span className='text-muted-foreground'>
+            Fortaleza de la contraseña:
+          </span>
+          <span
+            className={`font-semibold ${getStrengthTextColor(strength.score)}`}
+          >
             {strength.label}
           </span>
         </div>
-        <div className='relative h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden'>
+        <div className='relative h-2 bg-background rounded-full overflow-hidden'>
           <motion.div
             className={`h-full ${strength.color} rounded-full`}
             initial={{ width: 0 }}
@@ -56,7 +58,9 @@ export function PasswordStrengthIndicator({
       {/* Reglas de validación */}
       {showRules && (
         <div className='space-y-1.5'>
-          <p className='text-xs font-medium text-muted-foreground'>Requisitos:</p>
+          <p className='text-xs font-medium text-muted-foreground'>
+            Requisitos:
+          </p>
           <div className='grid gap-1'>
             {PASSWORD_RULES.map(rule => {
               const isPassed = rule.validator(password);
@@ -90,7 +94,10 @@ export function PasswordStrengthIndicator({
 
       {/* Advertencias */}
       {showWarnings && validation.warnings.length > 0 && (
-        <Alert variant='default' className='border-amber-200 bg-amber-50 dark:bg-amber-950/30'>
+        <Alert
+          variant='default'
+          className='border-amber-200 bg-amber-50 dark:bg-amber-950/30'
+        >
           <Info className='h-4 w-4 text-amber-600 dark:text-amber-500' />
           <AlertDescription className='text-xs text-amber-800 dark:text-amber-300'>
             <ul className='space-y-1 mt-1'>
@@ -107,6 +114,7 @@ export function PasswordStrengthIndicator({
 
 /**
  * Obtiene el color de texto según el score de fortaleza
+ * @param score
  */
 function getStrengthTextColor(score: number): string {
   const colorMap: Record<number, string> = {

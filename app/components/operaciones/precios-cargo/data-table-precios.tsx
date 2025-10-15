@@ -106,19 +106,19 @@ export function DataTablePrecios<TData, TValue>({
       {showSearch && (
         <div className='flex justify-end'>
           <div className='relative w-full max-w-xs sm:max-w-sm'>
-            <Search className='absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-3 w-3 sm:h-4 sm:w-4' />
+            <Search className='absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3 sm:h-4 sm:w-4' />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
               onChange={e => table.setGlobalFilter(e.target.value)}
-              className='pl-8 sm:pl-10 w-full bg-white dark:bg-slate-800 h-8 sm:h-10 text-xs sm:text-sm'
+              className='pl-8 sm:pl-10 w-full bg-background h-8 sm:h-10 text-xs sm:text-sm'
             />
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className='rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-x-auto shadow'>
+      <div className='rounded border border-border bg-card overflow-x-auto shadow'>
         <Table className='min-w-full text-xs align-middle'>
           <TableHeader className='text-xs'>
             {/* Headers agrupados */}
@@ -129,7 +129,7 @@ export function DataTablePrecios<TData, TValue>({
                     key={group.id}
                     colSpan={getColumnSpan(group.id)}
                     className={`text-center font-bold text-xs py-2 px-2 border-r last:border-r-0 ${
-                      group.className || 'bg-slate-600 text-white'
+                      group.className || 'bg-primary text-primary-foreground'
                     }`}
                   >
                     {group.title}
@@ -142,7 +142,7 @@ export function DataTablePrecios<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b bg-slate-50 dark:bg-slate-800/50 h-8'
+                className='border-b bg-muted/50 h-8'
               >
                 {headerGroup.headers.map(header => {
                   const group = getColumnGroup(header.column.id);
@@ -150,7 +150,7 @@ export function DataTablePrecios<TData, TValue>({
                     <TableHead
                       key={header.id}
                       className={`font-semibold text-xs py-2 px-2 border-r last:border-r-0 ${
-                        group ? 'bg-slate-100 dark:bg-slate-700/50' : ''
+                        group ? 'bg-muted' : ''
                       }`}
                       style={{
                         width:
@@ -177,10 +177,8 @@ export function DataTablePrecios<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b h-9 ${
-                    index % 2 === 0
-                      ? 'bg-white dark:bg-slate-900'
-                      : 'bg-slate-25 dark:bg-slate-900/50'
+                  className={`hover:bg-muted/50 transition-colors border-b h-9 ${
+                    index % 2 === 0 ? 'bg-card' : 'bg-muted/20'
                   }`}
                 >
                   {row.getVisibleCells().map(cell => {
@@ -189,7 +187,7 @@ export function DataTablePrecios<TData, TValue>({
                       <TableCell
                         key={cell.id}
                         className={`py-2 px-2 text-xs border-r last:border-r-0 ${
-                          group ? 'border-slate-200 dark:border-slate-700' : ''
+                          group ? 'border-border' : ''
                         }`}
                       >
                         {flexRender(
@@ -205,7 +203,7 @@ export function DataTablePrecios<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-12 text-center text-slate-500 dark:text-slate-400 text-xs'
+                  className='h-12 text-center text-muted-foreground text-xs'
                 >
                   No se encontraron resultados.
                 </TableCell>

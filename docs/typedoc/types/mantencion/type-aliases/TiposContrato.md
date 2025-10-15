@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/mantencion](../README.md) / TiposContrato
 
@@ -18,7 +18,7 @@ Defined in: [app/types/mantencion.ts:110](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/mantencion.ts:111](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L111)
 
-***
+---
 
 ### nombre
 
@@ -26,7 +26,7 @@ Defined in: [app/types/mantencion.ts:111](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/mantencion.ts:112](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/mantencion.ts#L112)
 
-***
+---
 
 ### estado
 

@@ -163,10 +163,8 @@ export default function DetallesMedidor({
     return (
       <div className='w-full flex justify-center items-center p-8'>
         <div className='text-center space-y-3'>
-          <div className='w-8 h-8 border-2 border-blue-200 dark:border-blue-800 border-t-blue-600 dark:border-t-blue-400 rounded-full animate-spin mx-auto'></div>
-          <p className='text-slate-600 dark:text-slate-400 text-sm font-medium'>
-            Cargando datos del medidor...
-          </p>
+          <div className='w-8 h-8 border-2 border-blue-200 dark:border-blue-800  rounded-full animate-spin mx-auto'></div>
+          <p className='text-sm font-medium'>Cargando datos del medidor...</p>
         </div>
       </div>
     );

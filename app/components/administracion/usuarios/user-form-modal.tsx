@@ -135,7 +135,10 @@ export function UserFormModal({
         // Validar que la contraseña sea segura
         const passwordCheck = isPasswordSecure(formData.contrasena);
         if (!passwordCheck.isSecure) {
-          setPasswordError(passwordCheck.reason || 'La contraseña no cumple con los requisitos de seguridad');
+          setPasswordError(
+            passwordCheck.reason ||
+              'La contraseña no cumple con los requisitos de seguridad'
+          );
           toast.error('La contraseña no es suficientemente segura');
           return;
         }
@@ -152,7 +155,9 @@ export function UserFormModal({
       } else if (mode === 'edit' && user) {
         // Modo editar: requiere contraseña actual para cualquier actualización
         if (!currentPassword.trim()) {
-          setPasswordError('Debe ingresar su contraseña actual para realizar cambios');
+          setPasswordError(
+            'Debe ingresar su contraseña actual para realizar cambios'
+          );
           toast.error('Contraseña actual requerida');
           return;
         }
@@ -169,7 +174,10 @@ export function UserFormModal({
           // Validar que la nueva contraseña sea segura
           const passwordCheck = isPasswordSecure(formData.contrasena);
           if (!passwordCheck.isSecure) {
-            setPasswordError(passwordCheck.reason || 'La contraseña no cumple con los requisitos de seguridad');
+            setPasswordError(
+              passwordCheck.reason ||
+                'La contraseña no cumple con los requisitos de seguridad'
+            );
             toast.error('La nueva contraseña no es suficientemente segura');
             return;
           }
@@ -183,7 +191,9 @@ export function UserFormModal({
 
           // Validar que la nueva contraseña sea diferente de la actual
           if (formData.contrasena === currentPassword) {
-            setPasswordError('La nueva contraseña debe ser diferente de la actual');
+            setPasswordError(
+              'La nueva contraseña debe ser diferente de la actual'
+            );
             toast.error('La nueva contraseña debe ser diferente de la actual');
             return;
           }
@@ -228,8 +238,8 @@ export function UserFormModal({
       <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader className='space-y-3'>
           <DialogTitle className='text-2xl font-bold flex items-center gap-3 text-sky-900 dark:text-sky-100'>
-            <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
-              <User className='h-6 w-6 text-sky-600 dark:text-sky-400' />
+            <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
+              <User className='h-6 w-6' />
             </div>
             {mode === 'add' ? 'Crear Nuevo Usuario' : 'Editar Usuario'}
           </DialogTitle>
@@ -283,7 +293,10 @@ export function UserFormModal({
           {/* Contraseña Actual (solo en modo edición) */}
           {mode === 'edit' && (
             <div className='space-y-2'>
-              <Label htmlFor='currentPassword' className='flex items-center gap-2'>
+              <Label
+                htmlFor='currentPassword'
+                className='flex items-center gap-2'
+              >
                 Contraseña Actual
                 <span className='text-red-500'>*</span>
               </Label>
@@ -315,7 +328,8 @@ export function UserFormModal({
                 </button>
               </div>
               <p className='text-xs text-muted-foreground'>
-                Por seguridad, debe ingresar su contraseña actual para realizar cualquier cambio
+                Por seguridad, debe ingresar su contraseña actual para realizar
+                cualquier cambio
               </p>
             </div>
           )}
@@ -381,7 +395,9 @@ export function UserFormModal({
                     setPasswordError('');
                   }}
                   placeholder='Confirma tu contraseña'
-                  required={mode === 'add' || formData.contrasena.trim().length > 0}
+                  required={
+                    mode === 'add' || formData.contrasena.trim().length > 0
+                  }
                   disabled={isLoading}
                   className='pr-10'
                 />
@@ -514,7 +530,7 @@ export function UserFormModal({
             </Button>
             <Button
               type='submit'
-              className='bg-sky-600 hover:bg-sky-700 text-white'
+              className='bg-sky-600 hover:bg-sky-700'
               disabled={isLoading}
             >
               {isLoading

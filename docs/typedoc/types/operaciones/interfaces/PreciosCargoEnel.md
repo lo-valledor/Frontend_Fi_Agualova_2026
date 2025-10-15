@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / PreciosCargoEnel
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:16](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:17](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L17)
 
-***
+---
 
 ### codigoener
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:17](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:18](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L18)
 
-***
+---
 
 ### descripcion
 
@@ -32,7 +32,7 @@ Defined in: [app/types/operaciones.ts:18](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:19](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L19)
 
-***
+---
 
 ### valor
 
@@ -40,7 +40,7 @@ Defined in: [app/types/operaciones.ts:19](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:20](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L20)
 
-***
+---
 
 ### valor2
 
@@ -48,7 +48,7 @@ Defined in: [app/types/operaciones.ts:20](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:21](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L21)
 
-***
+---
 
 ### valor3
 
@@ -56,7 +56,7 @@ Defined in: [app/types/operaciones.ts:21](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:22](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L22)
 
-***
+---
 
 ### confirmacion
 
@@ -64,7 +64,7 @@ Defined in: [app/types/operaciones.ts:22](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:23](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L23)
 
-***
+---
 
 ### indice
 
@@ -72,7 +72,7 @@ Defined in: [app/types/operaciones.ts:23](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:24](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L24)
 
-***
+---
 
 ### valoractual
 
@@ -80,7 +80,7 @@ Defined in: [app/types/operaciones.ts:24](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:25](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L25)
 
-***
+---
 
 ### valoractual2
 
@@ -88,7 +88,7 @@ Defined in: [app/types/operaciones.ts:25](https://github.com/lo-valledor/front-r
 
 Defined in: [app/types/operaciones.ts:26](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L26)
 
-***
+---
 
 ### valoractual3
 

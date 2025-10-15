@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / CalculoPrefacturaEncabezado
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:195](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:196](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L196)
 
-***
+---
 
 ### resultados
 

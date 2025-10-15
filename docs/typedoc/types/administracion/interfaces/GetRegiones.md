@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetRegiones
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:260](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:261](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L261)
 
-***
+---
 
 ### codigo
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:261](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:262](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L262)
 
-***
+---
 
 ### totalComunas
 

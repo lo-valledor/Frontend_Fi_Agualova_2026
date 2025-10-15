@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / GetMedidores
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:434](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:435](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L435)
 
-***
+---
 
 ### marca
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:435](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:436](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L436)
 
-***
+---
 
 ### tipo
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:436](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:437](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L437)
 
-***
+---
 
 ### modelo
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:437](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:438](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L438)
 
-***
+---
 
 ### serie
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:438](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:439](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L439)
 
-***
+---
 
 ### fechaInicio
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:439](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:440](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L440)
 
-***
+---
 
 ### digitos
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:440](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:441](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L441)
 
-***
+---
 
 ### multiplicar
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:441](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:442](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L442)
 
-***
+---
 
 ### ubicacion
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:442](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:443](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L443)
 
-***
+---
 
 ### estado
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:443](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:444](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L444)
 
-***
+---
 
 ### codigoAcometida
 

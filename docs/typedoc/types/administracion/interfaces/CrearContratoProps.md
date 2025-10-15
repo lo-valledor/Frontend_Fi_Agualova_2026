@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/administracion](../README.md) / CrearContratoProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/administracion.ts:196](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:197](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L197)
 
-***
+---
 
 ### tarifa
 
@@ -24,7 +24,7 @@ Defined in: [app/types/administracion.ts:197](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:198](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L198)
 
-***
+---
 
 ### propietario
 
@@ -32,7 +32,7 @@ Defined in: [app/types/administracion.ts:198](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:199](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L199)
 
-***
+---
 
 ### cliente
 
@@ -40,7 +40,7 @@ Defined in: [app/types/administracion.ts:199](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:200](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L200)
 
-***
+---
 
 ### localId
 
@@ -48,7 +48,7 @@ Defined in: [app/types/administracion.ts:200](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:201](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L201)
 
-***
+---
 
 ### fechaInicio
 
@@ -56,7 +56,7 @@ Defined in: [app/types/administracion.ts:201](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:202](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L202)
 
-***
+---
 
 ### activo
 
@@ -64,7 +64,7 @@ Defined in: [app/types/administracion.ts:202](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:203](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L203)
 
-***
+---
 
 ### direccion
 
@@ -72,7 +72,7 @@ Defined in: [app/types/administracion.ts:203](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:204](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L204)
 
-***
+---
 
 ### comuna
 
@@ -80,7 +80,7 @@ Defined in: [app/types/administracion.ts:204](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:205](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L205)
 
-***
+---
 
 ### limite
 
@@ -88,7 +88,7 @@ Defined in: [app/types/administracion.ts:205](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:206](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L206)
 
-***
+---
 
 ### ciclo
 
@@ -96,7 +96,7 @@ Defined in: [app/types/administracion.ts:206](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:207](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L207)
 
-***
+---
 
 ### potencia
 
@@ -104,7 +104,7 @@ Defined in: [app/types/administracion.ts:207](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:208](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L208)
 
-***
+---
 
 ### guardaCliente
 
@@ -112,7 +112,7 @@ Defined in: [app/types/administracion.ts:208](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:209](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L209)
 
-***
+---
 
 ### esMadre
 
@@ -120,7 +120,7 @@ Defined in: [app/types/administracion.ts:209](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:210](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L210)
 
-***
+---
 
 ### madre
 
@@ -128,7 +128,7 @@ Defined in: [app/types/administracion.ts:210](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:211](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L211)
 
-***
+---
 
 ### lugar
 
@@ -136,7 +136,7 @@ Defined in: [app/types/administracion.ts:211](https://github.com/lo-valledor/fro
 
 Defined in: [app/types/administracion.ts:212](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/administracion.ts#L212)
 
-***
+---
 
 ### sinCorte
 

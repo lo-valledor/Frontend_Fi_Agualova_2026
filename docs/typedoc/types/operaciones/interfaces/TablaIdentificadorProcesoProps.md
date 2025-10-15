@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / TablaIdentificadorProcesoProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:254](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:255](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L255)
 
-***
+---
 
 ### isLoading
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:255](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:256](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L256)
 
-***
+---
 
 ### isAuthorized
 

@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / CalculoPrefacturaDetalle
 
@@ -20,7 +20,7 @@ Defined in: [app/types/operaciones.ts:200](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:201](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L201)
 
-***
+---
 
 ### contratoId
 
@@ -28,7 +28,7 @@ Defined in: [app/types/operaciones.ts:201](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:202](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L202)
 
-***
+---
 
 ### codigoTarifa
 
@@ -36,7 +36,7 @@ Defined in: [app/types/operaciones.ts:202](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:203](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L203)
 
-***
+---
 
 ### rutCliente
 
@@ -44,7 +44,7 @@ Defined in: [app/types/operaciones.ts:203](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:204](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L204)
 
-***
+---
 
 ### nombreCliente
 
@@ -52,7 +52,7 @@ Defined in: [app/types/operaciones.ts:204](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:205](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L205)
 
-***
+---
 
 ### localId
 
@@ -60,7 +60,7 @@ Defined in: [app/types/operaciones.ts:205](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:206](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L206)
 
-***
+---
 
 ### direccion
 
@@ -68,7 +68,7 @@ Defined in: [app/types/operaciones.ts:206](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:207](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L207)
 
-***
+---
 
 ### comuna
 
@@ -76,7 +76,7 @@ Defined in: [app/types/operaciones.ts:207](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:208](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L208)
 
-***
+---
 
 ### numeroSerie
 
@@ -84,7 +84,7 @@ Defined in: [app/types/operaciones.ts:208](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:209](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L209)
 
-***
+---
 
 ### fechaLectura
 
@@ -92,7 +92,7 @@ Defined in: [app/types/operaciones.ts:209](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:210](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L210)
 
-***
+---
 
 ### consumoPeriodo
 
@@ -100,7 +100,7 @@ Defined in: [app/types/operaciones.ts:210](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:211](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L211)
 
-***
+---
 
 ### lecturaId
 

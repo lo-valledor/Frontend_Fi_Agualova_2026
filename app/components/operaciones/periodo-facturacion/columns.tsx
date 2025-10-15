@@ -57,7 +57,7 @@ export const columns: ColumnDef<Periodos>[] = [
     cell: ({ row }) => {
       const descripcion = row.getValue('pf_descripcion') as string;
       return (
-        <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-slate-900 dark:text-slate-100 text-xs sm:text-sm'>
+        <div className='max-w-[120px] sm:max-w-[200px] truncate font-medium text-xs sm:text-sm'>
           {descripcion}
         </div>
       );
@@ -75,7 +75,7 @@ export const columns: ColumnDef<Periodos>[] = [
       return (
         <div className='flex items-center gap-1'>
           <Calendar className='h-3 w-3 text-slate-400 hidden sm:block' />
-          <span className='text-xs sm:text-sm text-slate-700 dark:text-slate-300'>
+          <span className='text-xs sm:text-sm'>
             {fechaInicio
               ? fechaInicio.toLocaleDateString('es-CL', {
                   day: '2-digit',
@@ -105,7 +105,7 @@ export const columns: ColumnDef<Periodos>[] = [
       return (
         <div className='flex items-center gap-1'>
           <Clock className='h-3 w-3 text-slate-400 hidden sm:block' />
-          <span className='text-xs sm:text-sm text-slate-700 dark:text-slate-300'>
+          <span className='text-xs sm:text-sm'>
             {fechaFin
               ? fechaFin.toLocaleDateString('es-CL', {
                   day: '2-digit',

@@ -70,8 +70,8 @@ export function ContractFiltersComponent({
           <CardHeader className='cursor-pointer hover:bg-sky-50/50 dark:hover:bg-sky-900/10 transition-colors'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
-                  <Filter className='h-4 w-4 text-sky-600 dark:text-sky-400' />
+                <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
+                  <Filter className='h-4 w-4' />
                 </div>
                 <div>
                   <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
@@ -113,10 +113,7 @@ export function ContractFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
               {/* Tipo de Contrato */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tipoContrato'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tipoContrato' className='text-sm font-medium'>
                   Tipo de Contrato
                 </Label>
                 <Select
@@ -143,7 +140,7 @@ export function ContractFiltersComponent({
               <div className='space-y-2'>
                 <Label
                   htmlFor='cicloFacturacion'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
+                  className='text-sm font-medium'
                 >
                   Ciclo de Facturación
                 </Label>
@@ -169,10 +166,7 @@ export function ContractFiltersComponent({
 
               {/* Tarifa */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='tarifa'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='tarifa' className='text-sm font-medium'>
                   Tarifa
                 </Label>
                 <Select
@@ -195,10 +189,7 @@ export function ContractFiltersComponent({
 
               {/* Comuna */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='comuna'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='comuna' className='text-sm font-medium'>
                   Comuna
                 </Label>
                 <Select
@@ -224,10 +215,7 @@ export function ContractFiltersComponent({
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4'>
               {/* Estado Activo */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='activo'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='activo' className='text-sm font-medium'>
                   Estado
                 </Label>
                 <Select
@@ -247,10 +235,7 @@ export function ContractFiltersComponent({
 
               {/* Liberado de Corte */}
               <div className='space-y-2'>
-                <Label
-                  htmlFor='liberadoCorte'
-                  className='text-sm font-medium text-slate-700 dark:text-slate-300'
-                >
+                <Label htmlFor='liberadoCorte' className='text-sm font-medium'>
                   Liberado de Corte
                 </Label>
                 <Select
@@ -281,10 +266,7 @@ export function ContractFiltersComponent({
               </div>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
                 <div className='space-y-2'>
-                  <Label
-                    htmlFor='fechaTerminoDesde'
-                    className='text-sm text-slate-600 dark:text-slate-400'
-                  >
+                  <Label htmlFor='fechaTerminoDesde' className='text-sm'>
                     Desde
                   </Label>
                   <Input
@@ -298,10 +280,7 @@ export function ContractFiltersComponent({
                   />
                 </div>
                 <div className='space-y-2'>
-                  <Label
-                    htmlFor='fechaTerminoHasta'
-                    className='text-sm text-slate-600 dark:text-slate-400'
-                  >
+                  <Label htmlFor='fechaTerminoHasta' className='text-sm'>
                     Hasta
                   </Label>
                   <Input
@@ -323,7 +302,7 @@ export function ContractFiltersComponent({
                 <Separator />
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-2'>
-                    <span className='text-sm font-medium text-slate-700 dark:text-slate-300'>
+                    <span className='text-sm font-medium'>
                       Filtros activos:
                     </span>
                     <div className='flex flex-wrap gap-1 sm:gap-2'>
@@ -461,7 +440,7 @@ export function ContractFiltersComponent({
                     variant='outline'
                     size='sm'
                     onClick={onClearFilters}
-                    className='text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400'
+                    className='hover:text-red-600 dark:hover:text-red-400'
                   >
                     <RotateCcw className='h-4 w-4 mr-1' />
                     Limpiar Filtros

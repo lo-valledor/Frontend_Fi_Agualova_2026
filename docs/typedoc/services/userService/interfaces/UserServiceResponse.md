@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [services/userService](../README.md) / UserServiceResponse
 
@@ -22,7 +22,7 @@ Defined in: [app/services/userService.ts:8](https://github.com/lo-valledor/front
 
 Defined in: [app/services/userService.ts:9](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/userService.ts#L9)
 
-***
+---
 
 ### error
 
@@ -30,7 +30,7 @@ Defined in: [app/services/userService.ts:9](https://github.com/lo-valledor/front
 
 Defined in: [app/services/userService.ts:10](https://github.com/lo-valledor/front-respaldo/blob/develop/app/services/userService.ts#L10)
 
-***
+---
 
 ### fromCache
 

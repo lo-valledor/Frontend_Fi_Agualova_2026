@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../../modules.md) / [components/operaciones/revisar-calculo-factura/hierarchical-data-table](../README.md) / HierarchicalDataTable
 

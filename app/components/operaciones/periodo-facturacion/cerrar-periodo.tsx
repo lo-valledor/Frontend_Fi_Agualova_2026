@@ -114,7 +114,7 @@ export default function CerrarPeriodo({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleCerrarPeriodo}
-            className='gap-1 bg-red-600 hover:bg-red-700 text-white dark:bg-red-700 dark:hover:bg-red-800 order-1 sm:order-2'
+            className='gap-1 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 order-1 sm:order-2'
           >
             {isLoading ? (
               <>

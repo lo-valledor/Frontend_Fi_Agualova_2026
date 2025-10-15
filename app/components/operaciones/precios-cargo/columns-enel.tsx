@@ -21,7 +21,7 @@ export const columns = (
       />
     ),
     cell: ({ row }) => (
-      <div className='font-mono text-xs sm:text-sm font-medium text-slate-900 dark:text-slate-100'>
+      <div className='font-mono text-xs sm:text-sm font-medium'>
         {row.getValue('codigo')}
       </div>
     ),
@@ -53,7 +53,7 @@ export const columns = (
       />
     ),
     cell: ({ row }) => (
-      <div className='text-xs sm:text-sm text-slate-900 dark:text-slate-100 max-w-[150px] sm:max-w-xs truncate'>
+      <div className='text-xs sm:text-sm max-w-[150px] sm:max-w-xs truncate'>
         {row.getValue('descripcion')}
       </div>
     ),
@@ -227,9 +227,7 @@ export const columns = (
   {
     id: 'actions',
     header: () => (
-      <div className='text-center text-slate-700 dark:text-slate-300 font-semibold text-xs sm:text-sm'>
-        Estado
-      </div>
+      <div className='text-center font-semibold text-xs sm:text-sm'>Estado</div>
     ),
     cell: ({ row }) => {
       const { valoractual, valoractual2, valoractual3, codigo } = row.original;
@@ -253,7 +251,7 @@ export const columns = (
           ) : (
             <Badge
               variant='outline'
-              className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 text-xs px-1 py-0'
+              className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-border text-xs px-1 py-0'
             >
               ✓ <span className='hidden sm:inline'>Actualizado</span>
             </Badge>

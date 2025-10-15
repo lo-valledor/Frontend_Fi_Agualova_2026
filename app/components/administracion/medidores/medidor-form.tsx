@@ -490,8 +490,8 @@ export function MedidorFormModal({
         <DialogContent className='w-[95vw] sm:max-w-[600px] lg:max-w-[700px] xl:max-w-[800px] max-h-[90vh] overflow-y-auto'>
           <DialogHeader className='space-y-3'>
             <DialogTitle className='text-xl sm:text-2xl font-bold flex items-center gap-2 sm:gap-3'>
-              <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-lg'>
-                <Gauge className='h-5 w-5 sm:h-6 sm:w-6 text-sky-600 dark:text-sky-400' />
+              <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
+                <Gauge className='h-5 w-5 sm:h-6 sm:w-6' />
               </div>
               <span className='text-lg sm:text-xl lg:text-2xl'>
                 {mode === 'add' ? 'Crear Nuevo Medidor' : 'Editar Medidor'}
@@ -505,7 +505,7 @@ export function MedidorFormModal({
 
             {/* Notificación persistente de código generado */}
             {codigoMedidorGenerado && (
-              <div className='bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800 shadow-md'>
+              <div className='bg-green-50 dark:bg-green-900/20 p-4 rounded-xl border border-green-200 dark:border-green-800 shadow-md'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-full'>
@@ -519,7 +519,7 @@ export function MedidorFormModal({
                         <span className='text-green-700 dark:text-green-300 text-sm'>
                           Código del medidor:
                         </span>
-                        <span className='font-mono text-lg font-bold text-green-900 dark:text-green-100 bg-white dark:bg-green-900/30 px-2 py-1 rounded border'>
+                        <span className='font-mono text-lg font-bold text-green-900 dark:text-green-100bg-background px-2 py-1 rounded border'>
                           {codigoMedidorGenerado}
                         </span>
                         <Button
@@ -551,7 +551,7 @@ export function MedidorFormModal({
 
             {/* Información adicional para edición */}
             {mode === 'edit' && medidor && (
-              <div className='bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-lg border border-blue-200 dark:border-blue-800'>
+              <div className='bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-xl border border-blue-200 dark:border-blue-800'>
                 <div className='flex items-center gap-2 mb-2 sm:mb-3'>
                   <Gauge className='h-4 w-4 text-blue-600' />
                   <span className='font-medium text-blue-900 dark:text-blue-100 text-sm sm:text-base'>
@@ -617,10 +617,10 @@ export function MedidorFormModal({
 
             {/* Notificación de Código Generado */}
             {codigoMedidorGenerado && (
-              <div className='bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4'>
+              <div className='bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
-                    <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-lg'>
+                    <div className='p-2 bg-green-100 dark:bg-green-900/30 rounded-xl'>
                       <CheckCircle2 className='h-5 w-5 text-green-600 dark:text-green-400' />
                     </div>
                     <div>
@@ -646,7 +646,7 @@ export function MedidorFormModal({
                         );
                         toast.success('¡Código copiado al portapapeles!');
                       }}
-                      className='h-8 gap-1 text-xs bg-white dark:bg-gray-800 hover:bg-green-50 dark:hover:bg-green-900/30'
+                      className='h-8 gap-1 text-xs bg-background hover:bg-green-50 dark:hover:bg-green-900/30'
                     >
                       <Copy className='h-3 w-3' />
                       Copiar
@@ -1057,7 +1057,7 @@ export function MedidorFormModal({
         <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[90vh] overflow-hidden'>
           <DialogHeader className='space-y-3 pb-4'>
             <div className='flex items-center gap-3'>
-              <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg'>
+              <div className='p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl'>
                 <Gauge className='h-5 w-5 text-purple-600 dark:text-purple-400' />
               </div>
               <div className='min-w-0 flex-1'>
@@ -1084,7 +1084,7 @@ export function MedidorFormModal({
             </div>
 
             {/* Tabla de subempalmes con mejor responsividad */}
-            <div className='border rounded-lg overflow-hidden'>
+            <div className='border rounded-xl overflow-hidden'>
               <ScrollArea className='h-[50vh] sm:h-[60vh]'>
                 <Table>
                   <TableHeader className='bg-muted/50'>
@@ -1203,7 +1203,7 @@ export function MedidorFormModal({
                           <Button
                             size='sm'
                             onClick={() => handleSelectSubempalme(subempalme)}
-                            className='bg-purple-600 hover:bg-purple-700 text-white text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3'
+                            className='bg-purple-600 hover:bg-purple-700 text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3'
                           >
                             Seleccionar
                           </Button>

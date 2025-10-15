@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/reportes](../README.md) / DetalleFacturas
 
@@ -16,7 +16,7 @@ Defined in: [app/types/reportes.ts:77](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:78](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L78)
 
-***
+---
 
 ### nroFactura
 
@@ -24,7 +24,7 @@ Defined in: [app/types/reportes.ts:78](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:79](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L79)
 
-***
+---
 
 ### tarifa
 
@@ -32,7 +32,7 @@ Defined in: [app/types/reportes.ts:79](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:80](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L80)
 
-***
+---
 
 ### fechaEmision
 
@@ -40,7 +40,7 @@ Defined in: [app/types/reportes.ts:80](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:81](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L81)
 
-***
+---
 
 ### fechaVencimiento
 
@@ -48,7 +48,7 @@ Defined in: [app/types/reportes.ts:81](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:82](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L82)
 
-***
+---
 
 ### valorNeto
 
@@ -56,7 +56,7 @@ Defined in: [app/types/reportes.ts:82](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:83](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L83)
 
-***
+---
 
 ### iva
 
@@ -64,7 +64,7 @@ Defined in: [app/types/reportes.ts:83](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:84](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L84)
 
-***
+---
 
 ### valorTotal
 
@@ -72,7 +72,7 @@ Defined in: [app/types/reportes.ts:84](https://github.com/lo-valledor/front-resp
 
 Defined in: [app/types/reportes.ts:85](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/reportes.ts#L85)
 
-***
+---
 
 ### consumoPeriodo
 

@@ -5,7 +5,7 @@ import unusedImports from 'eslint-plugin-unused-imports';
 import jsdoc from 'eslint-plugin-jsdoc';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import airbnb from "eslint-config-airbnb-base";
+import airbnb from 'eslint-config-airbnb-base';
 
 export default [
   js.configs.recommended,
@@ -80,9 +80,16 @@ export default [
       'jsdoc/check-param-names': 'warn',
       'jsdoc/check-tag-names': 'warn',
       'jsdoc/check-types': 'off', // TypeScript handles this
-      'jsdoc/require-description': ['warn', {
-        contexts: ['ClassDeclaration', 'FunctionDeclaration', 'MethodDefinition']
-      }],
+      'jsdoc/require-description': [
+        'warn',
+        {
+          contexts: [
+            'ClassDeclaration',
+            'FunctionDeclaration',
+            'MethodDefinition'
+          ]
+        }
+      ],
       'jsdoc/require-param': 'warn',
       'jsdoc/require-param-description': 'warn',
       'jsdoc/require-returns': 'warn',

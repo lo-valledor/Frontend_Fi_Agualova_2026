@@ -264,7 +264,7 @@ export default function EditarMedidorComponent({
   return (
     <div className='space-y-6'>
       {/* Información adicional del medidor */}
-      <div className='bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-lg border border-blue-200 dark:border-blue-800'>
+      <div className='bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 rounded-xl border border-blue-200 dark:border-blue-800'>
         <div className='flex items-center gap-2 mb-2 sm:mb-3'>
           <Gauge className='h-4 w-4 text-blue-600' />
           <span className='font-medium text-blue-900 dark:text-blue-100 text-sm sm:text-base'>
@@ -313,7 +313,7 @@ export default function EditarMedidorComponent({
         </div>
       </div>
 
-      <div className='bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-slate-200/60 dark:border-slate-700/60'>
+      <div className='bg-background rounded-xl shadow-sm border border-border'>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleFormSubmit)}
@@ -631,7 +631,7 @@ export default function EditarMedidorComponent({
                 type='button'
                 onClick={form.handleSubmit(handleFormSubmit)}
                 disabled={isSubmitting}
-                className='gap-2 bg-sky-600 hover:bg-sky-700 text-white px-8'
+                className='gap-2 bg-sky-600 hover:bg-sky-700 px-8'
               >
                 <Save className='h-4 w-4' />
                 {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}

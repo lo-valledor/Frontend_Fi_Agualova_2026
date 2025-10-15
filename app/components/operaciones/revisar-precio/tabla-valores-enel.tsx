@@ -56,7 +56,7 @@ export default function TablaValoresEnel({
       .every(item => selectedRows.includes(item.codigo));
 
   return (
-    <div className='rounded-lg border border-border/60 overflow-hidden shadow-sm bg-background'>
+    <div className='rounded-xl border border-border/60 overflow-hidden shadow-sm bg-background'>
       <Table>
         <TableHeader>
           <TableRow className='bg-muted/40 hover:bg-muted/60'>
@@ -92,7 +92,7 @@ export default function TablaValoresEnel({
             <TableRow>
               <TableCell colSpan={7} className='text-center h-24'>
                 <div className='flex justify-center items-center'>
-                  <Loader2 className='h-6 w-6 animate-spin text-sky-600 dark:text-sky-400' />
+                  <Loader2 className='h-6 w-6 animate-spin' />
                   <span className='ml-2 text-muted-foreground'>
                     Cargando datos...
                   </span>
@@ -125,7 +125,7 @@ export default function TablaValoresEnel({
                 </TableCell>
                 <TableCell className='text-center'>
                   {item.confirmacion === 'Confirmado' ? (
-                    <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'>
+                    <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-border'>
                       Confirmado
                     </Badge>
                   ) : item.indice === '' ? (
@@ -143,7 +143,7 @@ export default function TablaValoresEnel({
                 </TableCell>
                 <TableCell className='text-center'>
                   {item.confirmacion === 'Confirmado' ? (
-                    <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800'>
+                    <Badge className='bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-border'>
                       Confirmado
                     </Badge>
                   ) : item.indice === '' ? (

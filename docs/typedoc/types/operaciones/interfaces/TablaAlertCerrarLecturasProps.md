@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/operaciones](../README.md) / TablaAlertCerrarLecturasProps
 
@@ -16,7 +16,7 @@ Defined in: [app/types/operaciones.ts:188](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:189](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L189)
 
-***
+---
 
 ### isLoading
 
@@ -24,7 +24,7 @@ Defined in: [app/types/operaciones.ts:189](https://github.com/lo-valledor/front-
 
 Defined in: [app/types/operaciones.ts:190](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/operaciones.ts#L190)
 
-***
+---
 
 ### isAuthorized
 

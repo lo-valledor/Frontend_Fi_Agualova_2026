@@ -263,7 +263,7 @@ export default function NichoFormModal({
               control={form.control}
               name='estado'
               render={({ field }) => (
-                <FormItem className='flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm'>
+                <FormItem className='flex flex-row items-center justify-between rounded-xl border p-3 shadow-sm'>
                   <div className='space-y-0.5'>
                     <FormLabel>Estado del Nicho</FormLabel>
                     <FormDescription>
@@ -292,7 +292,7 @@ export default function NichoFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingSectores}
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {(() => {
                   if (isLoading) {

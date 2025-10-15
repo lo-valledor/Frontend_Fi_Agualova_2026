@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / EtapaUno
 
@@ -10,40 +10,40 @@ Defined in: [app/types/monitor.ts:79](https://github.com/lo-valledor/front-respa
 
 ## Properties
 
-### ME\_NSerie
+### ME_NSerie
 
-> **ME\_NSerie**: `string`
+> **ME_NSerie**: `string`
 
 Defined in: [app/types/monitor.ts:80](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L80)
 
-***
+---
 
-### ME\_ConstanteMultiplicar
+### ME_ConstanteMultiplicar
 
-> **ME\_ConstanteMultiplicar**: `number`
+> **ME_ConstanteMultiplicar**: `number`
 
 Defined in: [app/types/monitor.ts:81](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L81)
 
-***
+---
 
-### TM\_Descripcion
+### TM_Descripcion
 
-> **TM\_Descripcion**: `string`
+> **TM_Descripcion**: `string`
 
 Defined in: [app/types/monitor.ts:82](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L82)
 
-***
+---
 
-### SE\_Codigo
+### SE_Codigo
 
-> **SE\_Codigo**: `string`
+> **SE_Codigo**: `string`
 
 Defined in: [app/types/monitor.ts:83](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L83)
 
-***
+---
 
-### TF\_Codigo
+### TF_Codigo
 
-> **TF\_Codigo**: `string`
+> **TF_Codigo**: `string`
 
 Defined in: [app/types/monitor.ts:84](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L84)

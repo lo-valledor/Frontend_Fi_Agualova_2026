@@ -33,11 +33,11 @@ export default function NuevoContratoForm({
         <CollapsibleTrigger asChild>
           <div className='flex justify-between items-center p-3 sm:p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60'>
             <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-              <div className='p-1.5 sm:p-2.5 bg-indigo-100/80 dark:bg-indigo-900/30 rounded-lg shadow-sm flex-shrink-0'>
-                <FileText className='h-4 w-4 sm:h-5 sm:w-5 text-indigo-600 dark:text-indigo-400' />
+              <div className='p-1.5 sm:p-2.5 bg-primary/10 rounded-xl shadow-sm flex-shrink-0'>
+                <FileText className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
               </div>
               <div className='min-w-0'>
-                <CardTitle className='text-sm sm:text-lg font-semibold text-sky-800 dark:text-sky-200 truncate'>
+                <CardTitle className='text-sm sm:text-lg font-semibold text-foreground truncate'>
                   <span className='hidden sm:inline'>Nuevo Contrato</span>
                   <span className='sm:hidden'>Contrato</span>
                 </CardTitle>
@@ -99,7 +99,7 @@ export default function NuevoContratoForm({
                 variant='default'
                 onClick={onCambioMedidor}
                 disabled={isLoading || !isFormValid}
-                className='gap-1 sm:gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 h-8 sm:h-10 text-sm sm:text-base order-1 sm:order-2 w-full sm:w-auto'
+                className='gap-1 sm:gap-2 bg-primary hover:bg-primary/90 h-8 sm:h-10 text-sm sm:text-base order-1 sm:order-2 w-full sm:w-auto'
               >
                 {isLoading ? (
                   <div className='h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />

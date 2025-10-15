@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../modules.md) / [types/monitor](../README.md) / Clave
 
@@ -16,7 +16,7 @@ Defined in: [app/types/monitor.ts:21](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:22](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L22)
 
-***
+---
 
 ### DescripcionClave
 
@@ -24,7 +24,7 @@ Defined in: [app/types/monitor.ts:22](https://github.com/lo-valledor/front-respa
 
 Defined in: [app/types/monitor.ts:23](https://github.com/lo-valledor/front-respaldo/blob/develop/app/types/monitor.ts#L23)
 
-***
+---
 
 ### IdentificadorDeAgrupacion
 

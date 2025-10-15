@@ -158,7 +158,7 @@ export function ResultadoProcesamientoModal({
 
         <div className='space-y-4 flex-1 overflow-hidden flex flex-col'>
           {/* Resumen del procesamiento */}
-          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border'>
+          <div className='grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-background rounded-xl border'>
             <div className='text-center'>
               <div className='text-2xl font-bold text-green-700 dark:text-green-300'>
                 {resultado.registrosActualizados}
@@ -168,9 +168,7 @@ export function ResultadoProcesamientoModal({
               </div>
             </div>
             <div className='text-center'>
-              <div className='text-sm font-medium text-slate-700 dark:text-slate-300'>
-                {resultado.periodo}
-              </div>
+              <div className='text-sm font-medium'>{resultado.periodo}</div>
               <div className='text-xs text-muted-foreground'>Período</div>
             </div>
             <div className='text-center'>
@@ -180,7 +178,7 @@ export function ResultadoProcesamientoModal({
               <div className='text-xs text-muted-foreground mt-1'>Estado</div>
             </div>
             <div className='text-center'>
-              <div className='text-xs text-slate-700 dark:text-slate-300'>
+              <div className='text-xs'>
                 {new Date(resultado.fechaProcesamiento).toLocaleString()}
               </div>
               <div className='text-xs text-muted-foreground'>Fecha</div>
@@ -188,7 +186,7 @@ export function ResultadoProcesamientoModal({
           </div>
 
           {/* Mensaje del resultado */}
-          <div className='p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg'>
+          <div className='p-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-xl'>
             <p className='text-sm text-green-800 dark:text-green-200'>
               {resultado.mensaje}
             </p>
@@ -208,9 +206,9 @@ export function ResultadoProcesamientoModal({
                 </Badge>
               </div>
 
-              <div className='flex-1 border rounded-lg overflow-auto'>
+              <div className='flex-1 border rounded-xl overflow-auto'>
                 <Table>
-                  <TableHeader className='sticky top-0 bg-white dark:bg-slate-900 z-10'>
+                  <TableHeader className='sticky top-0 bg-background z-10'>
                     <TableRow>
                       <TableHead className='min-w-[140px]'>
                         Número de Serie

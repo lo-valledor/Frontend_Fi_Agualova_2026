@@ -22,14 +22,14 @@ export default function AntiguoMedidorForm({
   return (
     <Collapsible
       defaultOpen
-      className='rounded-xl border border-purple-200/40 bg-white/50 backdrop-blur-sm shadow-lg dark:border-purple-800/40 dark:bg-gray-900/50'
+      className='rounded-xl border border-border bg-background backdrop-blur-sm shadow-lg '
     >
       <CollapsibleTrigger className='flex w-full items-center justify-between px-3 sm:px-6 py-3 sm:py-4'>
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-sm'>
+          <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-background shadow-sm'>
             <Gauge className='h-3 w-3 sm:h-4 sm:w-4' />
           </div>
-          <span className='font-semibold text-purple-900 dark:text-purple-100 text-sm sm:text-base truncate'>
+          <span className='font-semibold  text-sm sm:text-base truncate'>
             <span className='hidden sm:inline'>
               Búsqueda de Medidor Antiguo
             </span>
@@ -45,7 +45,7 @@ export default function AntiguoMedidorForm({
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='acometida'
-                className='text-xs sm:text-sm font-medium text-purple-800 dark:text-purple-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Acometida
               </Label>
@@ -54,7 +54,7 @@ export default function AntiguoMedidorForm({
                   id='acometida'
                   type='text'
                   placeholder='Ingrese el código de acometida'
-                  className='rounded-r-none focus-visible:ring-1 border-purple-200 focus-visible:ring-purple-500 dark:border-purple-800 text-sm sm:text-base h-9 sm:h-10'
+                  className='rounded-r-none focus-visible:ring-1 border-border focus-visible:ring-ring text-sm sm:text-base h-9 sm:h-10'
                   value={medidorAntiguo.acometida}
                   onChange={onMedidorChange}
                 />
@@ -73,7 +73,7 @@ export default function AntiguoMedidorForm({
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
                   }}
-                  className='rounded-l-none border-l-0 border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/50 h-9 sm:h-10 w-9 sm:w-10'
+                  className='rounded-l-none border-l-0 border-border hover:bg-muted h-9 sm:h-10 w-9 sm:w-10'
                 >
                   <X className='h-3 w-3 sm:h-4 sm:w-4' />
                 </Button>
@@ -83,7 +83,7 @@ export default function AntiguoMedidorForm({
             <div className='space-y-1 sm:space-y-2'>
               <Label
                 htmlFor='numeroSerie'
-                className='text-xs sm:text-sm font-medium text-purple-800 dark:text-purple-200'
+                className='text-xs sm:text-sm font-medium text-foreground'
               >
                 Número de Serie
               </Label>
@@ -92,7 +92,7 @@ export default function AntiguoMedidorForm({
                   id='numeroSerie'
                   type='text'
                   placeholder='Ingrese el número de serie'
-                  className='rounded-r-none focus-visible:ring-1 border-purple-200 focus-visible:ring-purple-500 dark:border-purple-800 text-sm sm:text-base h-9 sm:h-10'
+                  className='rounded-r-none focus-visible:ring-1 border-border focus-visible:ring-ring text-sm sm:text-base h-9 sm:h-10'
                   value={medidorAntiguo.numeroSerie}
                   onChange={onMedidorChange}
                 />
@@ -111,7 +111,7 @@ export default function AntiguoMedidorForm({
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
                   }}
-                  className='rounded-l-none border-l-0 border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/50 h-9 sm:h-10 w-9 sm:w-10'
+                  className='rounded-l-none border-l-0 border-border hover:bg-muted h-9 sm:h-10 w-9 sm:w-10'
                 >
                   <X className='h-3 w-3 sm:h-4 sm:w-4' />
                 </Button>
@@ -124,7 +124,7 @@ export default function AntiguoMedidorForm({
               type='button'
               onClick={onBuscar}
               disabled={isLoading}
-              className='h-8 sm:h-9 space-x-1 sm:space-x-1.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-sm text-sm sm:text-base flex-1 sm:flex-none'
+              className='h-8 sm:h-9 space-x-1 sm:space-x-1.5 bg-primary hover:bg-primary/90 shadow-sm text-sm sm:text-base flex-1 sm:flex-none'
             >
               <Search className='h-3 w-3 sm:h-4 sm:w-4' />
               <span>Buscar</span>
@@ -135,7 +135,7 @@ export default function AntiguoMedidorForm({
               variant='outline'
               onClick={onLimpiar}
               disabled={isLoading}
-              className='h-8 sm:h-9 space-x-1 sm:space-x-1.5 border-purple-200 hover:bg-purple-50 dark:border-purple-800 dark:hover:bg-purple-900/50 text-sm sm:text-base flex-1 sm:flex-none'
+              className='h-8 sm:h-9 space-x-1 sm:space-x-1.5 border-border hover:bg-muted text-sm sm:text-base flex-1 sm:flex-none'
             >
               <X className='h-3 w-3 sm:h-4 sm:w-4' />
               <span>Limpiar</span>

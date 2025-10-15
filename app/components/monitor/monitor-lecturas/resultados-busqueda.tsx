@@ -74,10 +74,10 @@ const getMeterStatus = (claveHtml: string) => {
       severity: 1
     },
     SINCLA: {
-      color: 'green',
-      bgColor: 'bg-green-500',
-      borderColor: 'border-green-500',
-      textColor: 'text-green-500',
+      color: 'emerald',
+      bgColor: 'bg-emerald-500',
+      borderColor: 'border-emerald-500',
+      textColor: 'text-emerald-500',
       label: 'Lectura Normal',
       icon: <Grid3X3 className='h-3.5 w-3.5' />,
       severity: 0
@@ -246,7 +246,7 @@ const MeterCard = ({
                   <DialogTitle className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
                     <div className='flex items-center gap-2 sm:gap-3'>
                       <div
-                        className={`p-1.5 sm:p-2 rounded-lg ${status.bgColor} text-white`}
+                        className={`p-1.5 sm:p-2 rounded-xl ${status.bgColor}`}
                       >
                         {status.icon}
                       </div>
@@ -331,7 +331,7 @@ const MeterRowDetailed = ({
   return (
     <div
       className={cn(
-        'group grid items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 border-l-4',
+        'group grid items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl border hover:bg-muted/50 transition-all duration-200 border-l-4',
         'grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]',
         status.borderColor
       )}
@@ -415,10 +415,7 @@ const MeterRowDetailed = ({
               <DialogTitle className='flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3'>
                 <div className='flex items-center gap-2 sm:gap-3'>
                   <div
-                    className={cn(
-                      'p-1.5 sm:p-2 rounded-lg text-white',
-                      status.bgColor
-                    )}
+                    className={cn('p-1.5 sm:p-2 rounded-xl', status.bgColor)}
                   >
                     {status.icon}
                   </div>
@@ -483,6 +480,7 @@ export default function ResultadosBusqueda({
   );
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
   const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
   const api = useApiWithLoadingBar();
 
   // Search function (same as before)
@@ -644,7 +642,7 @@ export default function ResultadosBusqueda({
       {/* Header with Controls */}
       <div className='flex flex-wrap justify-between items-center gap-3 pb-4 border-b'>
         <div className='flex items-center gap-3'>
-          <h2 className='text-2xl text-sky-800 dark:text-sky-200 font-bold tracking-tight'>
+          <h2 className='text-2xl text-foreground font-bold tracking-tight'>
             Resultados de la búsqueda
           </h2>
         </div>
@@ -704,7 +702,7 @@ export default function ResultadosBusqueda({
             size='sm'
             onClick={handleRefresh}
             disabled={isSearching}
-            className='gap-1 text-sky-800 dark:text-sky-200'
+            className='gap-1 text-foreground'
           >
             <RefreshCw
               className={`h-4 w-4 ${isSearching ? 'animate-spin' : ''}`}
@@ -747,170 +745,200 @@ export default function ResultadosBusqueda({
       {/* Results Display - Command Center Design */}
       {results.nichos.length > 0 && !isSearching && !searchError && (
         <div className='space-y-6'>
-          {/* Quick Stats Summary (if we have data) */}
+          {/* Quick Stats Summary (if we have data) - Collapsible */}
           {results.nichos.length > 0 && (
-            <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
-              {(() => {
-                const stats = calculateTotalStats(results.nichos);
-                return (
-                  <>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.2, delay: 0 }}
-                          >
-                            <Card className='cursor-help hover:shadow-md transition-shadow'>
-                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                <Grid3X3 className='h-5 w-5 text-muted-foreground mb-1' />
-                                <h3 className='text-xl font-bold'>
-                                  <NumberFlow value={stats.total} />
-                                </h3>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Total Medidores</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+            <Collapsible open={isStatsOpen} onOpenChange={setIsStatsOpen}>
+              <Card className='border-border'>
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant='ghost'
+                    className='w-full flex items-center justify-between p-4 hover:bg-accent'
+                  >
+                    <div className='flex items-center gap-2'>
+                      <BarChart3 className='h-4 w-4 text-primary' />
+                      <span className='text-sm font-medium'>
+                        Estadísticas por Estado
+                      </span>
+                      <Badge variant='secondary' className='ml-2'>
+                        {calculateTotalStats(results.nichos).total} medidores
+                      </Badge>
+                    </div>
+                    <ChevronDown
+                      className={cn(
+                        'h-4 w-4 text-muted-foreground transition-transform duration-200',
+                        isStatsOpen && 'rotate-180'
+                      )}
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className='p-4 pt-0'>
+                    <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
+                      {(() => {
+                        const stats = calculateTotalStats(results.nichos);
+                        return (
+                          <>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.2, delay: 0 }}
+                                  >
+                                    <Card className='cursor-help hover:shadow-md transition-shadow'>
+                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                        <Grid3X3 className='h-5 w-5 text-muted-foreground mb-1' />
+                                        <h3 className='text-xl font-bold'>
+                                          <NumberFlow value={stats.total} />
+                                        </h3>
+                                      </CardContent>
+                                    </Card>
+                                  </motion.div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Total Medidores</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.2, delay: 0.05 }}
-                          >
-                            <Card className='border-red-200 dark:border-red-900 cursor-help hover:shadow-md transition-shadow'>
-                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                <div className='h-5 w-5 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-1'>
-                                  <AlertCircle className='h-3 w-3 text-red-500' />
-                                </div>
-                                <h3 className='text-xl font-bold text-red-600 dark:text-red-400'>
-                                  <NumberFlow value={stats.critical} />
-                                </h3>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Críticos</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.2, delay: 0.05 }}
+                                  >
+                                    <Card className='border-red-200 dark:border-red-900 cursor-help hover:shadow-md transition-shadow'>
+                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                        <div className='h-5 w-5 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-1'>
+                                          <AlertCircle className='h-3 w-3 text-red-500' />
+                                        </div>
+                                        <h3 className='text-xl font-bold text-red-600 dark:text-red-400'>
+                                          <NumberFlow value={stats.critical} />
+                                        </h3>
+                                      </CardContent>
+                                    </Card>
+                                  </motion.div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Críticos</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.2, delay: 0.1 }}
-                          >
-                            <Card className='border-orange-200 dark:border-orange-900 cursor-help hover:shadow-md transition-shadow'>
-                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                <div className='h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-1'>
-                                  <AlertTriangle className='h-3 w-3 text-orange-500' />
-                                </div>
-                                <h3 className='text-xl font-bold text-orange-600 dark:text-orange-400'>
-                                  <NumberFlow value={stats.warning} />
-                                </h3>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Relevantes</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.2, delay: 0.1 }}
+                                  >
+                                    <Card className='border-orange-200 dark:border-orange-900 cursor-help hover:shadow-md transition-shadow'>
+                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                        <div className='h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-1'>
+                                          <AlertTriangle className='h-3 w-3 text-orange-500' />
+                                        </div>
+                                        <h3 className='text-xl font-bold text-orange-500'>
+                                          <NumberFlow value={stats.warning} />
+                                        </h3>
+                                      </CardContent>
+                                    </Card>
+                                  </motion.div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Relevantes</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.2, delay: 0.15 }}
-                          >
-                            <Card className='border-yellow-200 dark:border-yellow-900 cursor-help hover:shadow-md transition-shadow'>
-                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                <div className='h-5 w-5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-1'>
-                                  <Info className='h-3 w-3 text-yellow-500' />
-                                </div>
-                                <h3 className='text-xl font-bold text-yellow-600 dark:text-yellow-400'>
-                                  <NumberFlow value={stats.info} />
-                                </h3>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Informativos</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.2, delay: 0.15 }}
+                                  >
+                                    <Card className='border-yellow-200 dark:border-yellow-900 cursor-help hover:shadow-md transition-shadow'>
+                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                        <div className='h-5 w-5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-1'>
+                                          <Info className='h-3 w-3 text-yellow-500' />
+                                        </div>
+                                        <h3 className='text-xl font-bold text-yellow-600 dark:text-yellow-400'>
+                                          <NumberFlow value={stats.info} />
+                                        </h3>
+                                      </CardContent>
+                                    </Card>
+                                  </motion.div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Informativos</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.2, delay: 0.2 }}
-                          >
-                            <Card className='border-gray-200 dark:border-gray-900 cursor-help hover:shadow-md transition-shadow'>
-                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                <div className='h-5 w-5 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center mb-1'>
-                                  <Info className='h-3 w-3 text-gray-500' />
-                                </div>
-                                <h3 className='text-xl font-bold text-gray-600 dark:text-gray-400'>
-                                  <NumberFlow value={stats.sinlec} />
-                                </h3>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Sin Lectura</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.2, delay: 0.2 }}
+                                  >
+                                    <Card className='border-gray-200 dark:border-gray-900 cursor-help hover:shadow-md transition-shadow'>
+                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                        <div className='h-5 w-5 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center mb-1'>
+                                          <Info className='h-3 w-3 text-gray-500' />
+                                        </div>
+                                        <h3 className='text-xl font-bold text-gray-600 dark:text-gray-400'>
+                                          <NumberFlow value={stats.sinlec} />
+                                        </h3>
+                                      </CardContent>
+                                    </Card>
+                                  </motion.div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Sin Lectura</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
 
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.2, delay: 0.25 }}
-                          >
-                            <Card className='border-green-200 dark:border-green-900 cursor-help hover:shadow-md transition-shadow'>
-                              <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                <div className='h-5 w-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-1'>
-                                  <RefreshCw className='h-3 w-3 text-green-500' />
-                                </div>
-                                <h3 className='text-xl font-bold text-green-600 dark:text-green-400'>
-                                  <NumberFlow value={stats.normal} />
-                                </h3>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Correctas</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </>
-                );
-              })()}
-            </div>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.2, delay: 0.25 }}
+                                  >
+                                    <Card className='border-green-200 dark:border-green-900 cursor-help hover:shadow-md transition-shadow'>
+                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
+                                        <div className='h-5 w-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-1'>
+                                          <RefreshCw className='h-3 w-3 text-emerald-500' />
+                                        </div>
+                                        <h3 className='text-xl font-bold text-emerald-500'>
+                                          <NumberFlow value={stats.normal} />
+                                        </h3>
+                                      </CardContent>
+                                    </Card>
+                                  </motion.div>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Correctas</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
           )}
 
           {/* Nicho Tabs Navigation - Modernized Design */}
@@ -919,13 +947,16 @@ export default function ResultadosBusqueda({
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
                 <h3 className='text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2'>
-                  <MapPin className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                  <MapPin className='h-5 w-5 text-primary' />
                   Nichos
                 </h3>
                 <span className='text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full'>
                   {results.nichos.length} encontrados
                 </span>
               </div>
+              <small className='text-xs text-muted-foreground'>
+                Seleccione un nicho para ver sus filas y medidores
+              </small>
             </div>
 
             {/* Modern Horizontal Tabs */}
@@ -940,14 +971,14 @@ export default function ResultadosBusqueda({
                       <TooltipProvider key={`tab-${index}`}>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <button
+                            <Button
                               onClick={() => handleNichoChange(index)}
+                              variant='ghost'
                               className={cn(
-                                'flex flex-col items-center gap-1 px-2 py-2 md:px-3 md:py-3 rounded-lg transition-all duration-200 text-xs md:text-sm font-medium',
-                                'hover:bg-background/60 hover:shadow-sm',
+                                'flex flex-col items-center justify-center p-2 gap-2 h-16 rounded-lg border transition-all',
                                 isActive
-                                  ? 'bg-background shadow-sm border text-sky-700 dark:text-sky-300 font-semibold'
-                                  : 'text-muted-foreground hover:text-foreground'
+                                  ? 'bg-primary/10 border-primary'
+                                  : 'bg-background hover:bg-accent border-transparent'
                               )}
                             >
                               <span className='font-medium text-center leading-tight'>
@@ -955,14 +986,14 @@ export default function ResultadosBusqueda({
                               </span>
 
                               {/* Status indicators */}
-                              <div className='flex items-center justify-center gap-1 flex-wrap'>
+                              <div className='flex items-center justify-center gap-1 flex-wrap text-white mt-1'>
                                 {stats.critical > 0 && (
-                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-red-500 rounded-full'>
+                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-red-500 rounded-full'>
                                     {stats.critical}
                                   </span>
                                 )}
                                 {stats.warning > 0 && (
-                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-orange-500 rounded-full'>
+                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-orange-500 rounded-full'>
                                     {stats.warning}
                                   </span>
                                 )}
@@ -972,7 +1003,7 @@ export default function ResultadosBusqueda({
                                   </span>
                                 )}
                                 {stats.sinlec > 0 && (
-                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-gray-500 rounded-full'>
+                                  <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-gray-500 rounded-full'>
                                     {stats.sinlec}
                                   </span>
                                 )}
@@ -981,12 +1012,12 @@ export default function ResultadosBusqueda({
                                   stats.warning === 0 &&
                                   stats.info === 0 &&
                                   stats.sinlec === 0 && (
-                                    <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold text-white bg-green-500 rounded-full'>
+                                    <span className='inline-flex items-center justify-center h-4 w-4 md:h-5 md:w-5 text-xs font-bold bg-green-500 rounded-full'>
                                       {stats.normal}
                                     </span>
                                   )}
                               </div>
-                            </button>
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent
                             side='bottom'
@@ -1044,11 +1075,11 @@ export default function ResultadosBusqueda({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3 }}
-                    className='flex justify-between items-center p-3 bg-sky-50/50 dark:bg-sky-950/20 rounded-lg border'
+                    className='flex justify-between items-center p-3 bg-primary/5 rounded-xl border'
                   >
                     <div className='flex items-center gap-2'>
-                      <div className='p-1.5 bg-sky-100 dark:bg-sky-900/50 rounded-lg'>
-                        <MapPin className='h-4 w-4 text-sky-600 dark:text-sky-400' />
+                      <div className='p-1.5 bg-primary/10 rounded-xl'>
+                        <MapPin className='h-4 w-4 text-primary' />
                       </div>
                       <div>
                         <h3 className='text-lg font-semibold text-slate-800 dark:text-slate-200'>
@@ -1139,7 +1170,7 @@ export default function ResultadosBusqueda({
                       <DialogTrigger asChild>
                         <Button
                           size='sm'
-                          className='bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow-md transition-all'
+                          className='bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-md transition-all'
                           onClick={() => {
                             setIsNichoModalOpen(true);
                           }}
@@ -1151,8 +1182,8 @@ export default function ResultadosBusqueda({
                       <DialogContent className='max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto flex flex-col'>
                         <DialogHeader className='shrink-0 pb-2 sm:pb-3 lg:pb-4 border-b border-border/40 px-3 sm:px-4 lg:px-6'>
                           <DialogTitle>
-                            <div className='text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-sky-700 dark:text-sky-500'>
-                              <Gauge className='h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-sky-700 dark:text-sky-500' />
+                            <div className='text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-primary'>
+                              <Gauge className='h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary' />
                               <span className='truncate'>
                                 Monitor de Medidores
                               </span>

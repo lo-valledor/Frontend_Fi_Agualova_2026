@@ -22,7 +22,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function NotFound() {
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4'>
+    <div className='min-h-screen bg-background flex items-center justify-center p-4'>
       <Card className='w-full max-w-md text-center'>
         <CardHeader className='pb-4'>
           <div className='mx-auto mb-4 h-20 w-20 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center'>
@@ -41,9 +41,7 @@ export default function NotFound() {
               />
             </svg>
           </div>
-          <CardTitle className='text-6xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
-            404
-          </CardTitle>
+          <CardTitle className='text-6xl font-bold  mb-2'>404</CardTitle>
           <CardDescription className='text-xl text-gray-600 dark:text-gray-400'>
             Página no encontrada
           </CardDescription>

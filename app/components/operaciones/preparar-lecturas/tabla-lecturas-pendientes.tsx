@@ -79,7 +79,7 @@ export default function TablaLecturasPendientes({
         )}
       </div>
 
-      <div className='rounded-lg border border-border/60 overflow-hidden shadow-sm bg-background'>
+      <div className='rounded-xl border border-border/60 overflow-hidden shadow-sm bg-background'>
         <Table>
           <TableHeader>
             <TableRow className='bg-muted/40 hover:bg-muted/60'>

@@ -157,7 +157,7 @@ export default function TarifaFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700 text-white'
+                className='bg-sky-600 hover:bg-sky-700'
               >
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear Tarifa' : 'Actualizar Tarifa'}

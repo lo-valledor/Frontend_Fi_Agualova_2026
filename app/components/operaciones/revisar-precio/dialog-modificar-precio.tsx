@@ -201,7 +201,7 @@ export default function DialogModificarPrecio({
         <Button
           variant='ghost'
           size='sm'
-          className='h-8 px-2 sm:px-3 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-xs sm:text-sm'
+          className='h-8 px-2 sm:px-3 text-primary hover:text-primary/80 hover:bg-primary/10 transition-colors text-xs sm:text-sm'
           disabled={!isAuthorized}
         >
           <Edit3 className='h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1' />
@@ -212,15 +212,15 @@ export default function DialogModificarPrecio({
       <DialogContent className='max-w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto'>
         <DialogHeader className='space-y-2 sm:space-y-3'>
           <div className='flex items-center gap-2 sm:gap-3'>
-            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center'>
-              <PencilIcon className='h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400' />
+            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-xl flex items-center justify-center'>
+              <PencilIcon className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
             </div>
             <div>
-              <DialogTitle className='text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100'>
+              <DialogTitle className='text-lg sm:text-xl font-semibold'>
                 <span className='hidden sm:inline'>Modificar Precio</span>
                 <span className='sm:hidden'>Modificar</span>
               </DialogTitle>
-              <DialogDescription className='text-slate-600 dark:text-slate-400 text-xs sm:text-sm'>
+              <DialogDescription className='text-xs sm:text-sm'>
                 <span className='hidden sm:inline'>
                   Modifica el valor del cargo y especifica el motivo del cambio
                 </span>
@@ -233,10 +233,10 @@ export default function DialogModificarPrecio({
         <div className='space-y-4 sm:space-y-6 py-2 sm:py-4'>
           {descripcion && (
             <div className='space-y-1 sm:space-y-2'>
-              <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
+              <Label className='text-xs sm:text-sm font-medium'>
                 Descripción
               </Label>
-              <div className='bg-slate-50 dark:bg-slate-800/50 p-2 sm:p-3 rounded-lg text-xs sm:text-sm border border-slate-200 dark:border-slate-700'>
+              <div className='bg-background p-2 sm:p-3 rounded-xl text-xs sm:text-sm border-border'>
                 {descripcion}
               </div>
             </div>
@@ -244,35 +244,30 @@ export default function DialogModificarPrecio({
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
             <div className='space-y-1 sm:space-y-2'>
-              <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
-                Índice
-              </Label>
+              <Label className='text-xs sm:text-sm font-medium'>Índice</Label>
               <Input
                 type='text'
                 value={indice}
                 disabled
-                className='bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 h-8 sm:h-10 text-xs sm:text-sm'
+                className='bg-background h-8 sm:h-10 text-xs sm:text-sm'
               />
             </div>
 
             <div className='space-y-1 sm:space-y-2'>
-              <Label className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'>
+              <Label className='text-xs sm:text-sm font-medium'>
                 Valor Actual
               </Label>
               <Input
                 type='text'
                 value={valorActual}
                 disabled
-                className='bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 h-8 sm:h-10 text-xs sm:text-sm'
+                className='bg-background h-8 sm:h-10 text-xs sm:text-sm'
               />
             </div>
           </div>
 
           <div className='space-y-1 sm:space-y-2'>
-            <Label
-              htmlFor='valor'
-              className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'
-            >
+            <Label htmlFor='valor' className='text-xs sm:text-sm font-medium'>
               Nuevo Valor
             </Label>
             <Input
@@ -283,15 +278,12 @@ export default function DialogModificarPrecio({
               onChange={e => setValor(e.target.value)}
               min='0'
               step='0.01'
-              className='bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 h-8 sm:h-10 text-xs sm:text-sm'
+              className='bg-background border-border h-8 sm:h-10 text-xs sm:text-sm'
             />
           </div>
 
           <div className='space-y-1 sm:space-y-2'>
-            <Label
-              htmlFor='motivo'
-              className='text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300'
-            >
+            <Label htmlFor='motivo' className='text-xs sm:text-sm font-medium'>
               <span className='hidden sm:inline'>
                 Motivo de la Modificación
               </span>
@@ -302,15 +294,12 @@ export default function DialogModificarPrecio({
               placeholder='Motivo de la modificación'
               value={motivo}
               onChange={e => setMotivo(e.target.value)}
-              className='min-h-[60px] sm:min-h-[80px] bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-xs sm:text-sm'
+              className='min-h-[60px] sm:min-h-[80px] bg-background border-border text-xs sm:text-sm'
             />
           </div>
 
           {error && (
-            <Alert
-              variant='destructive'
-              className='border-red-200 dark:border-red-800'
-            >
+            <Alert variant='destructive'>
               <AlertCircle className='h-4 w-4' />
               <AlertDescription className='text-sm'>{error}</AlertDescription>
             </Alert>
@@ -331,7 +320,7 @@ export default function DialogModificarPrecio({
             onClick={handleConfirmar}
             disabled={isLoading}
             size='sm'
-            className='bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white flex-1 order-1 sm:order-2 text-xs sm:text-sm'
+            className='bg-primary hover:bg-primary/90 text-primary-foreground flex-1 order-1 sm:order-2 text-xs sm:text-sm'
           >
             {isLoading ? (
               <>

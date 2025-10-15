@@ -1,6 +1,6 @@
 [**Enerlova Frontend Documentation**](../../../../README.md)
 
-***
+---
 
 [Enerlova Frontend Documentation](../../../../modules.md) / [hooks/administracion/use-client-filters](../README.md) / ClientFilters
 
@@ -16,7 +16,7 @@ Defined in: [app/hooks/administracion/use-client-filters.ts:5](https://github.co
 
 Defined in: [app/hooks/administracion/use-client-filters.ts:6](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/administracion/use-client-filters.ts#L6)
 
-***
+---
 
 ### comuna
 
@@ -24,7 +24,7 @@ Defined in: [app/hooks/administracion/use-client-filters.ts:6](https://github.co
 
 Defined in: [app/hooks/administracion/use-client-filters.ts:7](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/administracion/use-client-filters.ts#L7)
 
-***
+---
 
 ### codigoComuna
 
@@ -32,7 +32,7 @@ Defined in: [app/hooks/administracion/use-client-filters.ts:7](https://github.co
 
 Defined in: [app/hooks/administracion/use-client-filters.ts:8](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/administracion/use-client-filters.ts#L8)
 
-***
+---
 
 ### tieneContacto
 
@@ -40,7 +40,7 @@ Defined in: [app/hooks/administracion/use-client-filters.ts:8](https://github.co
 
 Defined in: [app/hooks/administracion/use-client-filters.ts:9](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/administracion/use-client-filters.ts#L9)
 
-***
+---
 
 ### tieneTelefono
 
@@ -48,7 +48,7 @@ Defined in: [app/hooks/administracion/use-client-filters.ts:9](https://github.co
 
 Defined in: [app/hooks/administracion/use-client-filters.ts:10](https://github.com/lo-valledor/front-respaldo/blob/develop/app/hooks/administracion/use-client-filters.ts#L10)
 
-***
+---
 
 ### tieneEmail
 

@@ -283,7 +283,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
 
   if (detalleLecturas.length === 0) {
     return (
-      <Card className='border bg-white dark:bg-slate-900'>
+      <Card className='border bg-background'>
         <CardContent className='pt-6 text-center'>
           <div className='text-slate-500'>
             No hay datos de lecturas disponibles
@@ -297,7 +297,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
     <TooltipProvider>
       <div className='space-y-6'>
         {/* Filtros de tiempo */}
-        <Card className='border bg-white dark:bg-slate-900'>
+        <Card className='border bg-background'>
           <CardContent className='pt-4'>
             <div className='flex flex-wrap gap-2'>
               <Button
@@ -341,7 +341,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
 
         {/* KPIs minimalistas */}
         <div className='grid gap-4 md:grid-cols-4'>
-          <Card className='border bg-white dark:bg-slate-900'>
+          <Card className='border bg-background'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div>
@@ -356,7 +356,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-white dark:bg-slate-900'>
+          <Card className='border bg-background'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div>
@@ -371,7 +371,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-white dark:bg-slate-900'>
+          <Card className='border bg-background'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div>
@@ -386,7 +386,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-white dark:bg-slate-900'>
+          <Card className='border bg-background'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div>
@@ -407,11 +407,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
                         badgeVariant = 'secondary';
                         badgeText = 'Estable';
                     }
-                    return (
-                      <Badge variant={badgeVariant}>
-                        {badgeText}
-                      </Badge>
-                    );
+                    return <Badge variant={badgeVariant}>{badgeText}</Badge>;
                   })()}
                 </div>
                 <BarChart3 className='h-4 w-4 text-muted-foreground' />
@@ -423,7 +419,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
         {/* Gráfico de evolución */}
         <div className='grid gap-6 lg:grid-cols-1'>
           {/* Evolución del Consumo */}
-          <Card className='border bg-white dark:bg-slate-900'>
+          <Card className='border bg-background'>
             <CardHeader>
               <CardTitle className='text-base'>Evolución del Consumo</CardTitle>
             </CardHeader>
@@ -466,7 +462,7 @@ const LecturasAnalyticsSimple = memo(function LecturasAnalyticsSimple({
         <Separator />
 
         {/* Tabla de datos colapsable */}
-        <Card className='border bg-white dark:bg-slate-900'>
+        <Card className='border bg-background'>
           <CardHeader
             className='flex flex-row items-center justify-between space-y-0 pb-4 cursor-pointer'
             onClick={() => setShowDataTable(!showDataTable)}
