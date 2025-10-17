@@ -38,9 +38,9 @@ http://localhost:3000
 ```
 
 **Deberías ver**:
-- ✅ Banner naranja: "ENTORNO DE DESARROLLO"
-- ✅ UI en tonos naranjas
-- ✅ Punto pulsante animado
+- ✅ Badge "DEV" en esquina inferior derecha
+- ✅ UI con colores primarios en tonos naranjas/cálidos
+- ✅ Sidebar con acento naranja
 
 ### Production
 
@@ -56,9 +56,9 @@ http://localhost:8080
 ```
 
 **Deberías ver**:
-- ✅ Sin banner
-- ✅ UI en tonos azules
-- ✅ Interfaz limpia
+- ✅ Sin badge DEV
+- ✅ UI con colores primarios en tonos azules (por defecto)
+- ✅ Interfaz limpia sin indicadores de desarrollo
 
 ---
 
@@ -70,20 +70,20 @@ http://localhost:8080
 
 ```
 ┌──────────────────────────────────────────┐
-│ 🟠 ● ENTORNO DE DESARROLLO  DEVELOPMENT  │
-├──────────────────────────────────────────┤
-│         [Interfaz naranja]               │
+│         [Interfaz naranja]          DEV  │
+│                                           │
 └──────────────────────────────────────────┘
 ```
 
 | Característica | Valor |
 |---------------|-------|
 | Puerto | 3000 |
-| Servidor | nginx:80 |
-| Tema | 🟠 Naranja |
-| Banner | ✅ Sí |
+| Servidor | Vite Dev Server |
+| Colores Primarios | 🟠 Naranja/Cálidos |
+| Badge DEV | ✅ Sí (esquina inferior derecha) |
 | Backend | :8082 |
-| Hot Reload | ❌ No |
+| Hot Reload | ✅ Sí |
+| CSS | app.dev.css |
 
 **Archivo**: `docker-compose.dev.yml`
 
@@ -101,10 +101,11 @@ http://localhost:8080
 |---------------|-------|
 | Puerto | 8080 |
 | Servidor | nginx:80 |
-| Tema | 🔵 Azul |
-| Banner | ❌ No |
-| Backend | :8081 |
+| Colores Primarios | 🔵 Azul/Fríos |
+| Badge DEV | ❌ No |
+| Backend | Producción (configurable) |
 | Hot Reload | ❌ No |
+| CSS | app.css |
 
 **Archivo**: `docker-compose.prod.yml`
 
@@ -116,8 +117,8 @@ http://localhost:8080
 |---------------|-------|
 | Puerto | 5173 |
 | Servidor | Vite Dev |
-| Tema | Cualquiera |
-| Banner | Según VITE_APP_ENV |
+| Colores | Según VITE_ENV_MODE |
+| Badge DEV | Según VITE_ENV_MODE |
 | Hot Reload | ✅ Sí |
 
 **Comando**: `pnpm dev`
@@ -196,21 +197,29 @@ docker system prune -a --volumes
 
 Crea un archivo `.env` en la raíz del proyecto:
 
-### Para UAT
+### Para UAT/Development
 ```bash
 VITE_API_URL=http://192.168.1.139:8082/Enerlova
-VITE_APP_ENV=development
+VITE_API_ENERLINK_URL=http://192.168.1.139:8082/api
+VITE_AI_API_URL=http://localhost:8001
+VITE_ENV_MODE=development
 NODE_ENV=development
 DEV_PORT=3000
 ```
 
 ### Para Producción
 ```bash
-VITE_API_URL=http://192.168.1.139:8081/Enerlova
-VITE_APP_ENV=production
+VITE_API_URL=https://api.enerlova.com/Enerlova
+VITE_API_ENERLINK_URL=https://api.enerlova.com/api
+VITE_AI_API_URL=https://ai-api.enerlova.com
+VITE_ENV_MODE=production
 NODE_ENV=production
 FRONTEND_PORT=8080
 ```
+
+**IMPORTANTE**: La variable `VITE_ENV_MODE` controla qué CSS se carga:
+- `development` → Carga `app.dev.css` (colores naranjas + badge DEV)
+- `production` → Carga `app.css` (colores azules sin badge)
 
 ---
 
@@ -244,16 +253,20 @@ lsof -i :3000
 DEV_PORT=3001
 ```
 
-### Problema: El tema no es el correcto
+### Problema: El tema/colores no son los correctos
 
 ```bash
 # Verificar variables de entorno
-docker exec -it enerlova-frontend-dev env | grep VITE_APP_ENV
+docker exec -it enerlova-frontend-dev env | grep VITE_ENV_MODE
 
 # Debe mostrar "development" para UAT o "production" para Prod
 
-# Si está mal, rebuild:
+# Si está mal, rebuild con --no-cache:
 docker-compose -f docker-compose.dev.yml build --no-cache
+docker-compose -f docker-compose.dev.yml up -d
+
+# Verificar que el CSS correcto esté cargado en el navegador (F12 > Network > CSS)
+# Desarrollo: app.dev.css | Producción: app.css
 ```
 
 ### Problema: Errores de permisos nginx
@@ -308,29 +321,31 @@ docker-compose -f docker-compose.dev.yml build 2>&1 | tee build.log
 
 - [ ] Código testeado localmente con `pnpm dev`
 - [ ] Build local exitoso: `pnpm build`
-- [ ] Variables de entorno configuradas en `.env`
-- [ ] `VITE_APP_ENV=development`
+- [ ] Variables de entorno configuradas (ver arriba)
+- [ ] `VITE_ENV_MODE=development`
 - [ ] Backend UAT disponible en :8082
 - [ ] Puerto 3000 libre
 - [ ] Build Docker: `docker-compose -f docker-compose.dev.yml build`
 - [ ] Start: `docker-compose -f docker-compose.dev.yml up -d`
-- [ ] Healthcheck: `docker ps` muestra "healthy"
-- [ ] Banner naranja visible en navegador
-- [ ] UI en tonos naranjas
+- [ ] Healthcheck: `docker ps` muestra contenedor corriendo
+- [ ] Badge "DEV" visible en esquina inferior derecha
+- [ ] UI con colores primarios naranjas/cálidos
+- [ ] Verificar en DevTools que `app.dev.css` se cargó
 
 ### Production
 
 - [ ] Código aprobado en UAT
 - [ ] Tests pasando
-- [ ] Variables de entorno configuradas
-- [ ] `VITE_APP_ENV=production`
-- [ ] Backend Prod disponible en :8081
+- [ ] Variables de entorno configuradas para producción
+- [ ] `VITE_ENV_MODE=production`
+- [ ] URLs de API de producción configuradas
 - [ ] Puerto 8080 libre
 - [ ] Build Docker: `docker-compose -f docker-compose.prod.yml build`
 - [ ] Start: `docker-compose -f docker-compose.prod.yml up -d`
-- [ ] Healthcheck: `docker ps` muestra "healthy"
-- [ ] Sin banner en navegador
-- [ ] UI en tonos azules
+- [ ] Healthcheck: `docker ps` muestra contenedor corriendo
+- [ ] Sin badge "DEV" en navegador
+- [ ] UI con colores primarios azules (por defecto)
+- [ ] Verificar en DevTools que `app.css` se cargó (NO app.dev.css)
 
 ---
 
@@ -450,3 +465,32 @@ Tu entorno Docker está completamente configurado. Ahora puedes:
 - ✅ Diferenciar visualmente los entornos
 
 **¡Feliz coding!** 🚀
+
+---
+
+## 📝 Notas sobre el Sistema de Entornos
+
+### Cómo Funciona
+
+El sistema utiliza la variable `VITE_ENV_MODE` para determinar qué CSS cargar:
+
+1. **En Build Time**: Un plugin de Vite intercepta la importación de `app.css`
+2. **Si `VITE_ENV_MODE=development`**: Carga `app.dev.css` (colores naranjas)
+3. **Si `VITE_ENV_MODE=production`**: Carga `app.css` (colores azules)
+4. **Badge DEV**: El componente `EnvironmentBadge` verifica la variable y solo se muestra en desarrollo
+
+### Personalizar Colores
+
+Para cambiar los colores de cada entorno, edita:
+- **Desarrollo**: `app/app.dev.css` - Modifica las variables CSS en `:root` y `.dark`
+- **Producción**: `app/app.css` - Modifica las variables CSS en `:root` y `.dark`
+
+Ver [ENVIRONMENT-SETUP.md](ENVIRONMENT-SETUP.md) para guía completa de personalización.
+
+### Archivos Importantes
+
+- `vite.config.ts` - Plugin que cambia CSS según entorno
+- `app/root.tsx` - Importa CSS y renderiza badge
+- `app/components/ui/environment-badge.tsx` - Badge "DEV"
+- `.env.development` / `.env.production` - Variables por entorno
+- `docker-compose.dev.yml` / `docker-compose.prod.yml` - Configuración Docker
