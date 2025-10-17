@@ -1,3 +1,65 @@
+/**
+ * Componente principal para Gestión de Medidores
+ *
+ * Funcionalidades principales:
+ * - Visualización de medidores con tabla paginada y filtrable
+ * - Creación de nuevos medidores (navegación a /crear)
+ * - Edición de medidores existentes (navegación a /:id)
+ * - Eliminación de medidores con confirmación
+ * - Asociación de medidor a subempalme
+ * - Filtros avanzados por marca, tipo, modelo, estado, dígitos, multiplicador
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de medidores
+ * 2. Puede aplicar filtros por múltiples criterios
+ * 3. Acciones disponibles por medidor:
+ *    - Editar (navegación a formulario)
+ *    - Eliminar (con confirmación)
+ *    - Asociar a subempalme (modal específico)
+ * 4. Recarga automática después de cada operación
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas y acciones
+ * - Hook useMedidorFilters para filtrado
+ * - Navegación a rutas para crear/editar
+ * - Modal AsociarSubempalmeModal para asociación
+ * - DeleteConfirmationDialog para eliminación segura
+ * - FilterSummary para estadísticas
+ * - API endpoints:
+ *   * POST /crear-medidor
+ *   * PUT /actualizar-medidor/:id
+ *   * DELETE /eliminar-medidor/:id
+ *   * GET /medidores (revalidación)
+ *
+ * Filtros disponibles:
+ * - Marca (select)
+ * - Tipo (select: Monofásico/Trifásico)
+ * - Modelo (select)
+ * - Estado (select)
+ * - Número de dígitos (rango min-max)
+ * - Constante multiplicar (rango min-max)
+ * - Fecha inicio (rango desde-hasta)
+ * - Tiene ubicación (sí/no/todos)
+ * - Tiene acometida (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetMedidores[]} props.medidores - Lista de medidores
+ * @param {Marca[]} props.marcas - Marcas disponibles para filtros y formularios
+ *
+ * @example
+ * ```tsx
+ * export default function MedidoresRoute({ loaderData }) {
+ *   return (
+ *     <MedidoresComponent
+ *       medidores={loaderData.medidores}
+ *       marcas={loaderData.marcas}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 

@@ -1,3 +1,35 @@
+/**
+ * Componente para Anulación de Facturas Impresas
+ * 
+ * Funcionalidades principales:
+ * - Anulación de facturas impresas por número de folio
+ * - Opción de anulación con o sin nueva toma de lectura
+ * - Validación de datos antes de procesar
+ * - Confirmación mediante diálogo antes de ejecutar
+ * - Retroalimentación visual del resultado de la operación
+ * 
+ * Flujo de trabajo:
+ * 1. Usuario ingresa número de factura
+ * 2. Usuario selecciona si requiere nueva toma de lectura (toggle)
+ * 3. Sistema valida que hay número de factura
+ * 4. Usuario confirma la anulación en diálogo modal
+ * 5. Sistema procesa la anulación vía API
+ * 6. Sistema muestra resultado (éxito o error)
+ * 
+ * Arquitectura:
+ * - Usa Shadcn/ui components (Card, Dialog, Alert, Input, Switch)
+ * - Estados locales para manejo del formulario
+ * - API call con axios via lib/api
+ * - Feedback con sonner toast y alertas visuales
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/anular-factura.tsx
+ * export default function AnularFacturaRoute() {
+ *   return <AnularFacturaImpresaComponent />;
+ * }
+ * ```
+ */
 import {
   AlertCircle,
   CheckCircle2,

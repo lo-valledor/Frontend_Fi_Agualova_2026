@@ -5,7 +5,9 @@ import type { PreciosCargoEnerlova } from '~/types/operaciones';
 
 import DetallePreciosEnerlova from './detalle-precios-enerlova';
 
-export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
+export const columns = (
+  onDataUpdate?: () => void
+): ColumnDef<PreciosCargoEnerlova>[] => [
   {
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -113,7 +115,10 @@ export const columns: ColumnDef<PreciosCargoEnerlova>[] = [
       const data = row.original;
       return (
         <div className='flex justify-center'>
-          <DetallePreciosEnerlova codigo={data.CD_ID} />
+          <DetallePreciosEnerlova
+            codigo={data.CD_ID}
+            onDataUpdate={onDataUpdate}
+          />
         </div>
       );
     },

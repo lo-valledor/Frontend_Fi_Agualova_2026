@@ -1,3 +1,66 @@
+/**
+ * Componente principal para Gestión de Usuarios
+ *
+ * Funcionalidades principales:
+ * - Visualización de usuarios del sistema en tabla
+ * - Creación de nuevos usuarios con validación de contraseña
+ * - Edición de usuarios existentes
+ * - Eliminación de usuarios con confirmación
+ * - Asignación de perfiles y departamentos
+ * - Gestión de estado activo/inactivo
+ * - Validación de contraseñas seguras (ver password-validation.ts)
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de usuarios del sistema
+ * 2. Acciones disponibles:
+ *    - Crear nuevo usuario (modal con validación de contraseña)
+ *    - Editar usuario existente (modal)
+ *    - Eliminar usuario (con confirmación)
+ * 3. Sistema valida:
+ *    - Contraseña segura (8+ caracteres, mayúsculas, minúsculas, números, especiales)
+ *    - Coincidencia de contraseñas
+ *    - Datos requeridos
+ * 4. Recarga automática de lista después de operaciones
+ *
+ * Arquitectura:
+ * - DataTable con columnas: nombre, usuario, perfil, departamento, estado, acciones
+ * - Modal UserFormModal con dos modos (add/edit)
+ * - Hook useAdministracion para operaciones CRUD
+ * - DeleteConfirmationDialog para eliminación segura
+ * - Validación de contraseñas con password-validation utils
+ * - API endpoints:
+ *   * POST /crear (creación de usuario)
+ *   * PUT /actualizar/:id (actualización)
+ *   * DELETE /eliminar/:id (eliminación)
+ *   * GET /listar (revalidación)
+ *
+ * Perfiles disponibles:
+ * - Administrador
+ * - Lectura
+ * - Supervisor Operativo
+ * - Administrativo Facturación
+ * - Supervisor Facturación
+ * - Usuario Consulta
+ * - Autorizador Límite Invierno
+ *
+ * Departamentos:
+ * - Gerencia
+ * - Tecnología
+ * - Recaudación
+ * - Seguridad
+ * - RR.HH
+ * - Enerlova
+ *
+ * @param {Object} props - Props del componente
+ * @param {Usuarios[]} props.usuarios - Lista de usuarios del sistema
+ *
+ * @example
+ * ```tsx
+ * export default function UsuariosRoute({ loaderData }) {
+ *   return <UsuariosComponent usuarios={loaderData.usuarios} />;
+ * }
+ * ```
+ */
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 

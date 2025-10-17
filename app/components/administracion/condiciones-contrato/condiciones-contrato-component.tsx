@@ -1,3 +1,50 @@
+/**
+ * Componente principal para Gestión de Condiciones de Contrato
+ *
+ * Funcionalidades principales:
+ * - Visualización de condiciones de contrato en tabla
+ * - Creación de nuevas condiciones con selección de concepto
+ * - Edición de condiciones existentes
+ * - Visualización de detalles completos en modal
+ * - Asociación de conceptos a condiciones
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de condiciones de contrato
+ * 2. Acciones disponibles:
+ *    - Crear nueva condición (modal)
+ *    - Editar condición existente (modal)
+ *    - Ver detalles completos (modal)
+ * 3. Sistema valida datos antes de guardar
+ * 4. Recarga automática después de operaciones
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Modal CondicionesContratoModalForm para CRUD
+ * - Modal DetallesCondicionesContrato para visualización
+ * - Dialog para detalles con ScrollArea
+ * - Recarga con useRevalidator
+ *
+ * Conceptos asociables:
+ * - Lista completa de conceptos disponibles
+ * - Selección mediante react-select
+ * - Asociación múltiple por condición
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetCondicionesContrato[]} props.condicionesContrato - Lista de condiciones
+ * @param {Conceptos[]} props.conceptos - Conceptos disponibles para asociar
+ *
+ * @example
+ * ```tsx
+ * export default function CondicionesContratoRoute({ loaderData }) {
+ *   return (
+ *     <CondicionesContratoComponent
+ *       condicionesContrato={loaderData.condiciones}
+ *       conceptos={loaderData.conceptos}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 

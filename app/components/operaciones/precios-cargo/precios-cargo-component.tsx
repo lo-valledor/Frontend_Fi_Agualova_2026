@@ -1,3 +1,50 @@
+/**
+ * Componente principal para Gestión de Precios de Cargo
+ *
+ * Funcionalidades principales:
+ * - Visualización de precios de cargo ENEL y Enerlova
+ * - Filtros por mes y año para consultas históricas
+ * - Tabs para alternar entre precios ENEL y Enerlova
+ * - Exportación de datos a Excel
+ * - Actualización de valores de precios
+ * - Visualización de detalles expandidos
+ *
+ * Arquitectura:
+ * - Tabs component con 2 pestañas (ENEL / Enerlova)
+ * - DataTablePrecios con columnas especializadas para cada tipo
+ * - Filtros de período (mes/año)
+ * - Estados locales para filtros y datos cargados
+ * - API endpoints:
+ *   * POST /consulta-precios-enel
+ *   * POST /consulta-precios-enerlova
+ *
+ * Pestañas disponibles:
+ * 1. **ENEL**: Precios de cargo de la distribuidora ENEL
+ * 2. **Enerlova**: Precios propios de Enerlova
+ *
+ * @param {Object} props - Props del componente
+ * @param {PreciosCargoEnel[]} props.tablaEnel - Datos iniciales de precios ENEL
+ * @param {PreciosCargoEnerlova[]} props.tablaEnerlova - Datos iniciales de precios Enerlova
+ * @param {string} props.initialMes - Mes inicial del filtro
+ * @param {string} props.initialAnio - Año inicial del filtro
+ * @param {string | null} props.error - Error de carga inicial
+ *
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/precios-cargo.tsx
+ * export default function PreciosCargoRoute({ loaderData }) {
+ *   return (
+ *     <PreciosCargoComponent
+ *       tablaEnel={loaderData.tablaEnel}
+ *       tablaEnerlova={loaderData.tablaEnerlova}
+ *       initialMes={loaderData.mes}
+ *       initialAnio={loaderData.anio}
+ *       error={loaderData.error}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import {
   BarChart,
   Building2,
@@ -71,7 +118,7 @@ const years = [
 
 export default function PreciosCargoComponent({
   tablaEnel: initialTablaEnel,
-  tablaEnerlova,
+  tablaEnerlova: initialTablaEnerlova,
   initialMes,
   initialAnio,
   error
@@ -80,6 +127,7 @@ export default function PreciosCargoComponent({
   const [mes, setMes] = useState(initialMes);
   const [anio, setAnio] = useState(initialAnio);
   const [tablaEnel, setTablaEnel] = useState(initialTablaEnel);
+  const [tablaEnerlova, setTablaEnerlova] = useState(initialTablaEnerlova);
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
@@ -112,9 +160,24 @@ export default function PreciosCargoComponent({
     toast.success('Filtros reiniciados');
   };
 
-  // Actualizar datos después de modificaciones
+  // Actualizar datos después de modificaciones (ENEL)
   const handleDataUpdate = async () => {
     await handleSearch();
+  };
+
+  // Actualizar datos de Enerlova
+  const handleEnerlovaDataUpdate = async () => {
+    try {
+      setIsLoading(true);
+      const response = await api.get('/consulta-precio-pago-tabla');
+      setTablaEnerlova(response.data as PreciosCargoEnerlova[]);
+      toast.success('Datos actualizados correctamente');
+    } catch (error) {
+      console.error('Error al actualizar datos de Enerlova:', error);
+      toast.error('Error al actualizar los datos');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Mostrar error si existe
@@ -366,7 +429,7 @@ export default function PreciosCargoComponent({
                 </div>
                 <div className='rounded-xl border border-border overflow-hidden'>
                   <DataTablePrecios
-                    columns={columns}
+                    columns={columns(handleEnerlovaDataUpdate)}
                     data={tablaEnerlova}
                     searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}

@@ -1,3 +1,56 @@
+/**
+ * Componente principal para Gestión de Acometidas
+ *
+ * Funcionalidades principales:
+ * - Visualización de acometidas con tabla paginada y filtrable
+ * - Creación de nuevas acometidas
+ * - Edición de acometidas existentes
+ * - Filtros avanzados por empalme, nicho, sector, potencia, ubicación y medidor
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ * - Validación de datos antes de guardar
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Sistema de filtros con hook useAcometidaFilters
+ * - Modal form para CRUD (AcometidaForm)
+ * - FilterSummary para mostrar estadísticas
+ * - Componentes de filtros colapsables
+ * - API endpoints:
+ *   * POST /crear-acometida
+ *   * PUT /actualizar-acometida
+ *
+ * Filtros disponibles:
+ * - Empalme (select)
+ * - Nicho (select)
+ * - Sector (select)
+ * - Límite de potencia (rango min-max)
+ * - Tiene ubicación (sí/no/todos)
+ * - Tiene medidor (sí/no/todos)
+ * - Tiene límite potencia (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {Acometida[]} props.acometidas - Lista de acometidas
+ * @param {ComboEmpalmes[]} props.comboEmpalmes - Empalmes disponibles para filtros
+ * @param {ComboNichos[]} props.comboNichos - Nichos disponibles para filtros
+ * @param {ComboSectores[]} props.comboSectores - Sectores disponibles para filtros
+ * @param {ContratosDisponibles[]} props.contratosDisponibles - Contratos disponibles
+ *
+ * @example
+ * ```tsx
+ * export default function AcometidaRoute({ loaderData }) {
+ *   return (
+ *     <AcometidaComponent
+ *       acometidas={loaderData.acometidas}
+ *       comboEmpalmes={loaderData.empalmes}
+ *       comboNichos={loaderData.nichos}
+ *       comboSectores={loaderData.sectores}
+ *       contratosDisponibles={loaderData.contratos}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 

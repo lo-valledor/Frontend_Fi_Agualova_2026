@@ -1,3 +1,59 @@
+/**
+ * Componente principal para Gestión de Propietarios
+ *
+ * Funcionalidades principales:
+ * - Visualización de propietarios en tabla
+ * - Sincronización de datos con servicio externo
+ * - Visualización de detalles completos en modal
+ * - Filtros avanzados por comuna, teléfono, celular y email
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de propietarios
+ * 2. Puede aplicar filtros para buscar propietarios específicos
+ * 3. Acciones disponibles:
+ *    - Ver detalles completos (modal)
+ *    - Sincronizar datos (botón de recarga)
+ * 4. Sistema muestra estadísticas de filtrado
+ *
+ * Sincronización:
+ * - Botón de sincronización manual con icono RefreshCw
+ * - Llama a administracionService.sincronizarPropietarios()
+ * - Feedback visual con estado de carga
+ * - Toast notifications de éxito/error
+ * - Recarga automática después de sincronizar
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Filtros dinámicos con opciones extraídas de datos
+ * - Modal PropietarioDetailsModal para visualización
+ * - FilterSummary para estadísticas
+ * - ExportButton para exportación
+ * - Hook useMemo para optimización de filtros
+ *
+ * Filtros disponibles:
+ * - Comuna (select dinámico)
+ * - Tiene teléfono (sí/no/todos)
+ * - Tiene celular (sí/no/todos)
+ * - Tiene email (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetPropietario[]} props.propietarios - Lista de propietarios
+ * @param {GetContratante[]} props.contratantes - Contratantes relacionados
+ *
+ * @example
+ * ```tsx
+ * export default function PropietariosRoute({ loaderData }) {
+ *   return (
+ *     <PropietariosComponent
+ *       propietarios={loaderData.propietarios}
+ *       contratantes={loaderData.contratantes}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 

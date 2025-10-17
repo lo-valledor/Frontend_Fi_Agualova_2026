@@ -1,3 +1,45 @@
+/**
+ * Componente principal para Gestión de Cargos por Tipo de Contrato
+ *
+ * Funcionalidades principales:
+ * - Visualización de relación entre cargos y tipos de contrato
+ * - Edición de cargos asociados a tipos de contrato (navegación a /edit/:id)
+ * - Eliminación de asociaciones con confirmación
+ * - Recarga automática de datos después de operaciones
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de cargos por tipo de contrato
+ * 2. Acciones disponibles:
+ *    - Editar (navegación a formulario de edición)
+ *    - Eliminar (con confirmación)
+ * 3. Sistema recarga datos automáticamente
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Navegación a ruta para edición
+ * - DeleteDialog para eliminación segura
+ * - API endpoints:
+ *   * GET /cargoTipoContrato-buscar (consulta)
+ *   * DELETE /cargoTipoContrato-eliminar/:id (eliminación)
+ *
+ * Nota:
+ * - Funcionalidad de agregar deshabilitada temporalmente
+ * - Se recomienda implementar a futuro
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetCargoTipoContrato[]} props.cargoTipoContrato - Lista de asociaciones
+ *
+ * @example
+ * ```tsx
+ * export default function CargoTipoContratoRoute({ loaderData }) {
+ *   return (
+ *     <CargoTipoContratoComponent
+ *       cargoTipoContrato={loaderData.cargoTipoContrato}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 /* eslint-disable unused-imports/no-unused-vars */
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';

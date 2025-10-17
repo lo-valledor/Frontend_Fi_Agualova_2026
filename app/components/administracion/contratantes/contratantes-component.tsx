@@ -1,3 +1,57 @@
+/**
+ * Componente principal para Gestión de Contratantes
+ *
+ * Funcionalidades principales:
+ * - Visualización de contratantes (personas y empresas) en tabla
+ * - Creación de nuevos contratantes (navegación a /crear)
+ * - Edición de contratantes existentes (navegación a /:rut)
+ * - Visualización de detalles completos en modal
+ * - Filtros avanzados por tipo, comuna, contacto, teléfono y email
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de contratantes
+ * 2. Puede aplicar filtros para buscar contratantes específicos
+ * 3. Acciones disponibles:
+ *    - Ver detalles completos (modal)
+ *    - Editar (navegación a formulario)
+ *    - Crear nuevo (navegación a formulario)
+ * 4. Sistema muestra estadísticas de filtrado
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Filtros dinámicos con opciones extraídas de datos
+ * - Modal ContratanteDetailsModal para visualización
+ * - Navegación a rutas para crear/editar
+ * - FilterSummary para estadísticas
+ * - ExportButton para exportación
+ *
+ * Filtros disponibles:
+ * - Es empresa (sí/no/todos)
+ * - Comuna (select dinámico)
+ * - Tiene contacto (sí/no/todos)
+ * - Tiene teléfono (sí/no/todos)
+ * - Tiene email (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetContratante[]} props.contratantes - Lista de contratantes
+ * @param {GetComunas[]} props.comunas - Comunas disponibles
+ * @param {GetGiros[]} props.giros - Giros comerciales disponibles
+ *
+ * @example
+ * ```tsx
+ * export default function ContratantesRoute({ loaderData }) {
+ *   return (
+ *     <ContratantesComponent
+ *       contratantes={loaderData.contratantes}
+ *       comunas={loaderData.comunas}
+ *       giros={loaderData.giros}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import { Plus } from 'lucide-react';
 
 import { useMemo, useState } from 'react';

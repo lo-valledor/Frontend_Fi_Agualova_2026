@@ -1,3 +1,48 @@
+/**
+ * Componente para Creación y Descarga de Archivos SAP
+ * 
+ * Funcionalidades principales:
+ * - Generación de archivo de encabezado de factura (FAC)
+ * - Generación de archivo de detalle de factura (DET)
+ * - Descarga directa de archivos CSV con formato SAP
+ * - Nombres de archivo con timestamp automático
+ * - Manejo de errores de generación y descarga
+ * 
+ * Archivos generados:
+ * 1. **Encabezado Factura (FAC)**:
+ *    - Formato: FAC-DDMMYYYY-HHMM.csv
+ *    - Contenido: Headers de facturas para integración SAP
+ *    - Endpoint: GET /exportar-encabezado
+ * 
+ * 2. **Detalle Factura (DET)**:
+ *    - Formato: DET-DDMMYYYY-HHMM.csv
+ *    - Contenido: Líneas de detalle de facturas
+ *    - Endpoint: GET /exportar-detalle
+ * 
+ * Características técnicas:
+ * - Descarga como blob con tipo text/csv;charset=utf-8
+ * - Extracción de filename desde Content-Disposition header
+ * - Fallback a filename con timestamp si no viene en header
+ * - Limpieza de URLs y elementos DOM después de descarga
+ * - Estados de carga independientes para cada archivo
+ * 
+ * Arquitectura:
+ * - Componente sin estado de datos (solo UI)
+ * - Botones independientes para cada archivo
+ * - Helper functions:
+ *   * extractFilenameFromHeaders: Extrae nombre del header
+ *   * generateFallbackFilename: Genera nombre con timestamp
+ * - Feedback visual con toast notifications
+ * - Estados de loading por botón
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/crear-archivos-sap.tsx
+ * export default function CrearArchivosSapRoute() {
+ *   return <CrearArchivosSapComponent />;
+ * }
+ * ```
+ */
 import { ChevronDown, Download, FileArchive, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

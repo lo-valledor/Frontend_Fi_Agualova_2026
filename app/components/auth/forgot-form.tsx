@@ -1,13 +1,14 @@
 import { ArrowLeft, Mail, Moon, Send, Sun } from 'lucide-react';
 
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Link } from 'react-router';
 
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
 import { cn } from '~/lib/utils';
 
 export function ForgotForm({
@@ -19,12 +20,6 @@ export function ForgotForm({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Animación de entrada
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Función para alternar entre temas claro y oscuro
   const toggleTheme = () => {
@@ -79,26 +74,18 @@ export function ForgotForm({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-xl transition-all duration-500 ease-in-out',
-        'bg-card/90 backdrop-blur-sm',
-        'shadow-xl border border-border',
-        'transform opacity-0 translate-y-4',
-        mounted && 'opacity-100 translate-y-0',
+        'relative overflow-hidden rounded-3xl transition-all duration-500',
+        'bg-background backdrop-blur-xl',
+        'shadow-2xl border border-border',
         className
       )}
       {...props}
     >
-      {/* Decorative elements */}
-      <div className='absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full opacity-20 blur-2xl animate-pulse'></div>
-      <div
-        className='absolute -bottom-24 -left-24 w-48 h-48 bg-accent/20 rounded-full opacity-20 blur-2xl animate-pulse'
-        style={{ animationDuration: '8s' }}
-      ></div>
-
       {/* Theme toggle */}
-      <button
+      <Button
         onClick={toggleTheme}
-        className='absolute top-4 right-4 p-2 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200'
+        variant='ghost'
+        className='absolute top-5 right-5 z-20 p-2.5 rounded-xl bg-background transition-all duration-200'
         aria-label='Toggle theme'
       >
         {theme === 'light' ? (
@@ -106,45 +93,71 @@ export function ForgotForm({
         ) : (
           <Sun className='h-4 w-4' />
         )}
-      </button>
+      </Button>
 
-      {/* Logo and header */}
-      <div className='pt-8 pb-4 px-8'>
-        <h1 className='text-2xl font-bold text-center text-primary'>
+      {/* Header */}
+      <div className='pt-10 pb-6 px-8 text-center border-b border-slate-200/50 dark:border-slate-700/50'>
+        <h1 className='text-3xl font-bold text-slate-900 dark:text-white mb-2'>
           Recuperar Contraseña
         </h1>
-        <p className='text-center text-muted-foreground mt-2 text-sm'>
+        <p className='text-sm text-slate-600 dark:text-slate-400'>
           Ingrese su correo electrónico para recibir instrucciones de
           recuperación
         </p>
       </div>
 
       {/* Form */}
-      <div className='p-8 pt-2'>
-        <form onSubmit={handleSubmitEvent} className='space-y-6'>
+      <div className='p-8'>
+        <form onSubmit={handleSubmitEvent} className='space-y-5'>
           {errorMessage && (
-            <div className='p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm animate-fadeIn'>
-              {errorMessage}
+            <div className='p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 text-sm flex items-start gap-2'>
+              <svg
+                className='h-5 w-5 mt-0.5 flex-shrink-0'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                />
+              </svg>
+              <span>{errorMessage}</span>
             </div>
           )}
 
           {successMessage && (
-            <div className='p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-border text-emerald-600 dark:text-emerald-400 text-sm animate-fadeIn'>
-              {successMessage}
+            <div className='p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-400 text-sm flex items-start gap-2'>
+              <svg
+                className='h-5 w-5 mt-0.5 flex-shrink-0'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+                />
+              </svg>
+              <span>{successMessage}</span>
             </div>
           )}
 
           <div className='space-y-4'>
             <div className='space-y-2'>
-              <label
+              <Label
                 htmlFor='email'
-                className='block text-sm font-medium text-foreground'
+                className='block text-sm font-semibold text-slate-700 dark:text-slate-300'
               >
                 Correo Electrónico
-              </label>
+              </Label>
               <div className='relative group'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <Mail className='h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors duration-200' />
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
+                  <Mail className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
                 </div>
                 <Input
                   id='email'
@@ -155,7 +168,7 @@ export function ForgotForm({
                   onChange={e => setEmail(e.target.value)}
                   required
                   disabled={loading}
-                  className='pl-10 bg-muted/50 border-border focus:border-primary focus:ring-primary rounded-xl transition-all duration-200 focus:shadow-md'
+                  className='pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl transition-all'
                 />
               </div>
             </div>
@@ -164,46 +177,44 @@ export function ForgotForm({
           <Button
             type='submit'
             disabled={loading}
-            className='w-full py-6 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300'
+            className='w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
           >
-            <span className='font-medium flex items-center justify-center gap-2'>
-              {loading ? (
-                <>
-                  <svg
-                    className='animate-spin h-5 w-5 text-primary-foreground'
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                  >
-                    <circle
-                      className='opacity-25'
-                      cx='12'
-                      cy='12'
-                      r='10'
-                      stroke='currentColor'
-                      strokeWidth='4'
-                    ></circle>
-                    <path
-                      className='opacity-75'
-                      fill='currentColor'
-                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                    ></path>
-                  </svg>
-                  Enviando...
-                </>
-              ) : (
-                <>
-                  <Send className='h-5 w-5' />
-                  Enviar enlace de recuperación
-                </>
-              )}
-            </span>
+            {loading ? (
+              <div className='flex items-center justify-center gap-2'>
+                <svg
+                  className='animate-spin h-5 w-5'
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                >
+                  <circle
+                    className='opacity-25'
+                    cx='12'
+                    cy='12'
+                    r='10'
+                    stroke='currentColor'
+                    strokeWidth='4'
+                  ></circle>
+                  <path
+                    className='opacity-75'
+                    fill='currentColor'
+                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                  ></path>
+                </svg>
+                <span>Enviando...</span>
+              </div>
+            ) : (
+              <div className='flex items-center justify-center gap-2'>
+                <Send className='h-5 w-5' />
+                <span>Enviar enlace de recuperación</span>
+              </div>
+            )}
           </Button>
 
-          <div className='text-center'>
+          <div className='text-center mt-4'>
             <Link
               to='/auth/login'
-              className='inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors duration-200'
+              className='inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200'
             >
               <ArrowLeft className='h-4 w-4' />
               Volver al inicio de sesión

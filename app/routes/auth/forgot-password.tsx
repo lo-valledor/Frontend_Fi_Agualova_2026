@@ -31,52 +31,74 @@ const ForgotPassword = () => {
 
   return (
     <ThemeProvider>
-      <div className="relative bg-[url('/fondo.jpg')] dark:bg-[url('/fondo-dark.jpg')] bg-cover bg-center flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-        {/* Overlay with gradient */}
-        <div className='absolute inset-0 bg-background/40 backdrop-blur-sm'></div>
+      <div className='relative flex min-h-svh w-full overflow-hidden'>
+        {/* Left Panel - Company Information */}
+        <div className="hidden lg:flex lg:w-1/2 xl:w-3/5 relative bg-[url('/fondo-dark.jpg')] bg-cover bg-center">
+          {/* Overlay with gradient */}
+          <div className='absolute inset-0'></div>
 
-        {/* Animated energy particles */}
-        <div className='absolute inset-0 overflow-hidden'>
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className='absolute w-2 h-2 rounded-full bg-primary/70 animate-floatingParticle'
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDuration: `${5 + Math.random() * 10}s`,
-                animationDelay: `${Math.random() * 5}s`
-              }}
-            ></div>
-          ))}
-        </div>
-
-        {/* Company logo for larger screens */}
-        <div
-          className={`hidden lg:block absolute top-8 left-8 transform transition-all duration-1000 ease-out ${
-            mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-          }`}
-        >
-          <div className='flex items-center gap-2'>
-            <div className='bg-card/90 p-2 rounded-full'>
-              <img src='/logo-enerlova.png' alt='Enerlova' className='h-10' />
+          {/* Content */}
+          <div
+            className={`relative z-10 flex flex-col justify-between p-12  transform transition-all duration-1000 ease-out ${
+              mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+            }`}
+          >
+            {/* Logo and Company Name */}
+            <div className='flex items-center gap-3'>
+              <div className='bg-white/10 backdrop-blur-sm p-3 rounded-2xl'>
+                <img
+                  src='/logo-enerlova.png'
+                  alt='Enerlova'
+                  className='h-12 w-12'
+                />
+              </div>
+              <div>
+                <h1 className='text-2xl font-bold'>Enerlova</h1>
+              </div>
             </div>
-            <span className='text-white text-xl font-bold'>Enerlova</span>
+
+            {/* Footer */}
+            <div className='text-sm text-white/70'>
+              © {new Date().getFullYear()} Enerlova. Todos los derechos
+              reservados.
+            </div>
           </div>
         </div>
 
-        {/* Main content */}
-        <div className='relative w-full max-w-md mx-auto'>
-          <ForgotForm />
-
-          {/* Footer */}
+        {/* Right Panel - Forgot Password Form */}
+        <div className='flex-1 flex items-center justify-center p-6 md:p-10 bg-background'>
+          {/* Mobile Logo */}
           <div
-            className={`mt-6 text-center text-muted-foreground text-xs transform transition-all duration-1000 ease-out ${
-              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+            className={`lg:hidden absolute top-6 left-6 transform transition-all duration-1000 ease-out ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
             }`}
           >
-            © {new Date().getFullYear()} Enerlova. Todos los derechos
-            reservados.
+            <div className='flex items-center gap-2'>
+              <div className='bg-card p-2 rounded-full shadow-lg'>
+                <img src='/logo-enerlova.png' alt='Enerlova' className='h-8' />
+              </div>
+              <div>
+                <span className='text-foreground text-lg font-bold'>
+                  Enerlova
+                </span>
+                <p className='text-xs text-muted-foreground'>Enerlova</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Container */}
+          <div
+            className={`w-full max-w-md mx-auto transform transition-all duration-1000 ease-out ${
+              mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <ForgotForm />
+
+            {/* Mobile Footer */}
+            <div className='lg:hidden mt-6 text-center text-muted-foreground text-xs'>
+              © {new Date().getFullYear()} Enerlova. Todos los derechos
+              reservados.
+            </div>
           </div>
         </div>
       </div>

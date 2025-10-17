@@ -1,3 +1,60 @@
+/**
+ * Componente principal para Gestión de Cargos Facturables
+ *
+ * Funcionalidades principales:
+ * - Visualización de cargos facturables en tabla
+ * - Creación de nuevos cargos con selección de concepto, tarifa y tipo medidor
+ * - Edición de cargos existentes
+ * - Filtros avanzados por tipo, fijo/variable, periódico/eventual, concepto, tarifa y tipo medidor
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de cargos facturables
+ * 2. Puede aplicar filtros combinados para buscar cargos específicos
+ * 3. Acciones disponibles:
+ *    - Crear nuevo cargo (modal)
+ *    - Editar cargo existente (modal)
+ * 4. Sistema valida datos antes de guardar
+ * 5. Recarga automática después de operaciones
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Hook useCargoFilters para filtrado
+ * - Modal CargoFacturableModalForm para CRUD
+ * - FilterSummary para estadísticas
+ * - API endpoints:
+ *   * POST /crear-cargo-facturable
+ *   * PUT /actualizar-cargo-facturable/:id
+ *
+ * Filtros disponibles:
+ * - Tipo (todos/1/2/3)
+ * - Fijo/Variable (todos/F/V)
+ * - Periódico/Eventual (todos/P/E)
+ * - Concepto (select de conceptos disponibles)
+ * - Tarifa (select de tarifas)
+ * - Tipo de medidor (select de tipos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {BuscarCargoFacturable[]} props.cargos - Lista de cargos facturables
+ * @param {GeCombosConceptos[]} props.conceptos - Conceptos disponibles
+ * @param {GetCombosTarifas[]} props.tarifas - Tarifas disponibles
+ * @param {GetCombosTiposMedidor[]} props.tiposMedidor - Tipos de medidor disponibles
+ *
+ * @example
+ * ```tsx
+ * export default function CargoFacturableRoute({ loaderData }) {
+ *   return (
+ *     <CargoFacturableComponent
+ *       cargos={loaderData.cargos}
+ *       conceptos={loaderData.conceptos}
+ *       tarifas={loaderData.tarifas}
+ *       tiposMedidor={loaderData.tiposMedidor}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 

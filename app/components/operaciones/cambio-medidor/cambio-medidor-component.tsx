@@ -1,3 +1,38 @@
+/**
+ * Componente principal para Cambio de Medidor
+ * 
+ * Funcionalidades principales:
+ * - Búsqueda y visualización de medidor antiguo a reemplazar
+ * - Configuración del medidor antiguo (lecturas actuales y finales)
+ * - Búsqueda y configuración de medidor nuevo
+ * - Registro del cambio de medidor en el sistema
+ * - Flujo paso a paso (wizard) con 4 etapas
+ * 
+ * Flujo de trabajo (4 pasos):
+ * 1. **Medidor Antiguo**: Búsqueda por acometida o número de serie
+ * 2. **Detalles Antiguo**: Revisión y ajuste de lecturas del medidor a reemplazar
+ * 3. **Medidor Nuevo**: Búsqueda y configuración del medidor de reemplazo
+ * 4. **Confirmar Cambio**: Revisión final y registro del cambio
+ * 
+ * Arquitectura:
+ * - Wizard con stepper visual (Progress + indicadores de paso)
+ * - Componentes especializados para cada paso:
+ *   * AntiguoMedidorForm: Formulario de búsqueda medidor antiguo
+ *   * DetalleMedidorAntiguoComponent: Detalles y lecturas del medidor antiguo
+ *   * NuevoMedidorForm: Formulario de búsqueda medidor nuevo
+ *   * DetalleMedidorNuevoComponent: Detalles del medidor nuevo
+ * - Estados locales para cada tipo de medidor
+ * - Validaciones en cada paso antes de avanzar
+ * - API calls para consultas y registro final
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/cambio-medidor.tsx
+ * export default function CambioMedidorRoute() {
+ *   return <CambioMedidorComponent />;
+ * }
+ * ```
+ */
 import {
   ArrowLeft,
   ArrowRight,

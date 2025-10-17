@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-15 17:07:43*
+*Generado automáticamente el 2025-10-17 09:04:35*
 
 ## Índice de Componentes
 
@@ -85,8 +85,62 @@
 
 ### acometida-component
 **Archivo**: `app/components/administracion/acometida/acometida-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Acometidas
+ *
+ * Funcionalidades principales:
+ * - Visualización de acometidas con tabla paginada y filtrable
+ * - Creación de nuevas acometidas
+ * - Edición de acometidas existentes
+ * - Filtros avanzados por empalme, nicho, sector, potencia, ubicación y medidor
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ * - Validación de datos antes de guardar
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Sistema de filtros con hook useAcometidaFilters
+ * - Modal form para CRUD (AcometidaForm)
+ * - FilterSummary para mostrar estadísticas
+ * - Componentes de filtros colapsables
+ * - API endpoints:
+ *   * POST /crear-acometida
+ *   * PUT /actualizar-acometida
+ *
+ * Filtros disponibles:
+ * - Empalme (select)
+ * - Nicho (select)
+ * - Sector (select)
+ * - Límite de potencia (rango min-max)
+ * - Tiene ubicación (sí/no/todos)
+ * - Tiene medidor (sí/no/todos)
+ * - Tiene límite potencia (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {Acometida[]} props.acometidas - Lista de acometidas
+ * @param {ComboEmpalmes[]} props.comboEmpalmes - Empalmes disponibles para filtros
+ * @param {ComboNichos[]} props.comboNichos - Nichos disponibles para filtros
+ * @param {ComboSectores[]} props.comboSectores - Sectores disponibles para filtros
+ * @param {ContratosDisponibles[]} props.contratosDisponibles - Contratos disponibles
+ *
+ * @example
+ * ```tsx
+ * export default function AcometidaRoute({ loaderData }) {
+ *   return (
+ *     <AcometidaComponent
+ *       acometidas={loaderData.acometidas}
+ *       comboEmpalmes={loaderData.empalmes}
+ *       comboNichos={loaderData.nichos}
+ *       comboSectores={loaderData.sectores}
+ *       contratosDisponibles={loaderData.contratos}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### acometida-filters
 **Archivo**: `app/components/administracion/acometida/acometida-filters.tsx`
@@ -115,8 +169,66 @@
 
 ### cargo-facturable-component
 **Archivo**: `app/components/administracion/cargo-facturable/cargo-facturable-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Cargos Facturables
+ *
+ * Funcionalidades principales:
+ * - Visualización de cargos facturables en tabla
+ * - Creación de nuevos cargos con selección de concepto, tarifa y tipo medidor
+ * - Edición de cargos existentes
+ * - Filtros avanzados por tipo, fijo/variable, periódico/eventual, concepto, tarifa y tipo medidor
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de cargos facturables
+ * 2. Puede aplicar filtros combinados para buscar cargos específicos
+ * 3. Acciones disponibles:
+ *    - Crear nuevo cargo (modal)
+ *    - Editar cargo existente (modal)
+ * 4. Sistema valida datos antes de guardar
+ * 5. Recarga automática después de operaciones
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Hook useCargoFilters para filtrado
+ * - Modal CargoFacturableModalForm para CRUD
+ * - FilterSummary para estadísticas
+ * - API endpoints:
+ *   * POST /crear-cargo-facturable
+ *   * PUT /actualizar-cargo-facturable/:id
+ *
+ * Filtros disponibles:
+ * - Tipo (todos/1/2/3)
+ * - Fijo/Variable (todos/F/V)
+ * - Periódico/Eventual (todos/P/E)
+ * - Concepto (select de conceptos disponibles)
+ * - Tarifa (select de tarifas)
+ * - Tipo de medidor (select de tipos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {BuscarCargoFacturable[]} props.cargos - Lista de cargos facturables
+ * @param {GeCombosConceptos[]} props.conceptos - Conceptos disponibles
+ * @param {GetCombosTarifas[]} props.tarifas - Tarifas disponibles
+ * @param {GetCombosTiposMedidor[]} props.tiposMedidor - Tipos de medidor disponibles
+ *
+ * @example
+ * ```tsx
+ * export default function CargoFacturableRoute({ loaderData }) {
+ *   return (
+ *     <CargoFacturableComponent
+ *       cargos={loaderData.cargos}
+ *       conceptos={loaderData.conceptos}
+ *       tarifas={loaderData.tarifas}
+ *       tiposMedidor={loaderData.tiposMedidor}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### cargo-facturable-modal-form
 **Archivo**: `app/components/administracion/cargo-facturable/cargo-facturable-modal-form.tsx`
@@ -140,8 +252,51 @@
 
 ### cargo-tipo-contrato-component
 **Archivo**: `app/components/administracion/cargo-tipo-contrato/cargo-tipo-contrato-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Cargos por Tipo de Contrato
+ *
+ * Funcionalidades principales:
+ * - Visualización de relación entre cargos y tipos de contrato
+ * - Edición de cargos asociados a tipos de contrato (navegación a /edit/:id)
+ * - Eliminación de asociaciones con confirmación
+ * - Recarga automática de datos después de operaciones
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de cargos por tipo de contrato
+ * 2. Acciones disponibles:
+ *    - Editar (navegación a formulario de edición)
+ *    - Eliminar (con confirmación)
+ * 3. Sistema recarga datos automáticamente
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Navegación a ruta para edición
+ * - DeleteDialog para eliminación segura
+ * - API endpoints:
+ *   * GET /cargoTipoContrato-buscar (consulta)
+ *   * DELETE /cargoTipoContrato-eliminar/:id (eliminación)
+ *
+ * Nota:
+ * - Funcionalidad de agregar deshabilitada temporalmente
+ * - Se recomienda implementar a futuro
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetCargoTipoContrato[]} props.cargoTipoContrato - Lista de asociaciones
+ *
+ * @example
+ * ```tsx
+ * export default function CargoTipoContratoRoute({ loaderData }) {
+ *   return (
+ *     <CargoTipoContratoComponent
+ *       cargoTipoContrato={loaderData.cargoTipoContrato}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### columns
 **Archivo**: `app/components/administracion/cargo-tipo-contrato/columns.tsx`
@@ -170,8 +325,64 @@
 
 ### clientes-component
 **Archivo**: `app/components/administracion/clientes/clientes-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Clientes
+ *
+ * Funcionalidades principales:
+ * - Visualización de clientes (personas y empresas) en tabla
+ * - Creación de nuevos clientes (navegación a ruta /crear)
+ * - Edición de clientes existentes (navegación a ruta /:rut)
+ * - Visualización de detalles completos en modal
+ * - Filtros avanzados por tipo, comuna, contacto, teléfono y email
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de clientes
+ * 2. Puede aplicar filtros para buscar clientes específicos
+ * 3. Acciones disponibles por cliente:
+ *    - Ver detalles completos (modal)
+ *    - Editar (navegación a formulario de edición)
+ *    - Crear nuevo (navegación a formulario de creación)
+ * 4. Sistema muestra estadísticas de filtrado
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Hook useClientFilters para filtrado
+ * - Modal ClienteDetailsModal para visualización
+ * - Navegación a rutas para crear/editar
+ * - FilterSummary para estadísticas
+ * - API endpoint: getClienteByRut para detalles
+ *
+ * Filtros disponibles:
+ * - Es empresa (sí/no/todos)
+ * - Comuna (select)
+ * - Código comuna (select)
+ * - Tiene contacto (sí/no/todos)
+ * - Tiene teléfono (sí/no/todos)
+ * - Tiene email (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetClientes[]} props.clientes - Lista de clientes
+ * @param {GetGiros[]} props.giros - Giros comerciales disponibles
+ * @param {GetComunas[]} props.comunas - Comunas disponibles
+ *
+ * @example
+ * ```tsx
+ * export default function ClientesRoute({ loaderData }) {
+ *   return (
+ *     <ClientesComponent
+ *       clientes={loaderData.clientes}
+ *       giros={loaderData.giros}
+ *       comunas={loaderData.comunas}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### columns
 **Archivo**: `app/components/administracion/clientes/columns.tsx`
@@ -205,8 +416,56 @@
 
 ### condiciones-contrato-component
 **Archivo**: `app/components/administracion/condiciones-contrato/condiciones-contrato-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Condiciones de Contrato
+ *
+ * Funcionalidades principales:
+ * - Visualización de condiciones de contrato en tabla
+ * - Creación de nuevas condiciones con selección de concepto
+ * - Edición de condiciones existentes
+ * - Visualización de detalles completos en modal
+ * - Asociación de conceptos a condiciones
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de condiciones de contrato
+ * 2. Acciones disponibles:
+ *    - Crear nueva condición (modal)
+ *    - Editar condición existente (modal)
+ *    - Ver detalles completos (modal)
+ * 3. Sistema valida datos antes de guardar
+ * 4. Recarga automática después de operaciones
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Modal CondicionesContratoModalForm para CRUD
+ * - Modal DetallesCondicionesContrato para visualización
+ * - Dialog para detalles con ScrollArea
+ * - Recarga con useRevalidator
+ *
+ * Conceptos asociables:
+ * - Lista completa de conceptos disponibles
+ * - Selección mediante react-select
+ * - Asociación múltiple por condición
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetCondicionesContrato[]} props.condicionesContrato - Lista de condiciones
+ * @param {Conceptos[]} props.conceptos - Conceptos disponibles para asociar
+ *
+ * @example
+ * ```tsx
+ * export default function CondicionesContratoRoute({ loaderData }) {
+ *   return (
+ *     <CondicionesContratoComponent
+ *       condicionesContrato={loaderData.condiciones}
+ *       conceptos={loaderData.conceptos}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### condiciones-contrato-modal-form
 **Archivo**: `app/components/administracion/condiciones-contrato/condiciones-contrato-modal-form.tsx`
@@ -230,8 +489,63 @@
 
 ### contratantes-component
 **Archivo**: `app/components/administracion/contratantes/contratantes-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Contratantes
+ *
+ * Funcionalidades principales:
+ * - Visualización de contratantes (personas y empresas) en tabla
+ * - Creación de nuevos contratantes (navegación a /crear)
+ * - Edición de contratantes existentes (navegación a /:rut)
+ * - Visualización de detalles completos en modal
+ * - Filtros avanzados por tipo, comuna, contacto, teléfono y email
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de contratantes
+ * 2. Puede aplicar filtros para buscar contratantes específicos
+ * 3. Acciones disponibles:
+ *    - Ver detalles completos (modal)
+ *    - Editar (navegación a formulario)
+ *    - Crear nuevo (navegación a formulario)
+ * 4. Sistema muestra estadísticas de filtrado
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Filtros dinámicos con opciones extraídas de datos
+ * - Modal ContratanteDetailsModal para visualización
+ * - Navegación a rutas para crear/editar
+ * - FilterSummary para estadísticas
+ * - ExportButton para exportación
+ *
+ * Filtros disponibles:
+ * - Es empresa (sí/no/todos)
+ * - Comuna (select dinámico)
+ * - Tiene contacto (sí/no/todos)
+ * - Tiene teléfono (sí/no/todos)
+ * - Tiene email (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetContratante[]} props.contratantes - Lista de contratantes
+ * @param {GetComunas[]} props.comunas - Comunas disponibles
+ * @param {GetGiros[]} props.giros - Giros comerciales disponibles
+ *
+ * @example
+ * ```tsx
+ * export default function ContratantesRoute({ loaderData }) {
+ *   return (
+ *     <ContratantesComponent
+ *       contratantes={loaderData.contratantes}
+ *       comunas={loaderData.comunas}
+ *       giros={loaderData.giros}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### detalles-contratante
 **Archivo**: `app/components/administracion/contratantes/detalles-contratante.tsx`
@@ -302,8 +616,59 @@
 
 ### contratos-component
 **Archivo**: `app/components/administracion/contratos/contratos-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Contratos
+ *
+ * Funcionalidades principales:
+ * - Visualización de contratos en tabla con columnas personalizadas
+ * - Creación de nuevos contratos (navegación a /crear)
+ * - Edición de contratos existentes (navegación a /:codigoContrato)
+ * - Eliminación de contratos con confirmación
+ * - Visualización de detalles completos en modal
+ * - Filtros avanzados por tipo, ciclo, tarifa, comuna, estado
+ * - Exportación a Excel (2 formatos: simple y completo)
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de contratos
+ * 2. Puede aplicar múltiples filtros combinados
+ * 3. Acciones disponibles por contrato:
+ *    - Ver detalles (modal con información completa)
+ *    - Editar (navegación a formulario)
+ *    - Eliminar (con diálogo de confirmación)
+ * 4. Exportación en formato simple o completo
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Hook useContractFilters para filtrado avanzado
+ * - Modal ContractDetailsModal para visualización
+ * - Navegación a rutas para crear/editar
+ * - DeleteConfirmationDialog para eliminación segura
+ * - ExportButtons con opciones múltiples
+ * - FilterSummary con estadísticas en tiempo real
+ *
+ * Filtros disponibles:
+ * - Tipo de contrato (select)
+ * - Ciclo de facturación (select)
+ * - Tarifa (select)
+ * - Comuna (select)
+ * - Liberado de corte (sí/no/todos)
+ * - Fecha término (rango desde-hasta)
+ * - Activo (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetContratos[]} props.contratos - Lista de contratos
+ *
+ * @example
+ * ```tsx
+ * export default function ContratosRoute({ loaderData }) {
+ *   return <ContratosComponent contratos={loaderData.contratos} />;
+ * }
+ * ```
+ */
+```
 
 ### delete-confirmation-dialog
 **Archivo**: `app/components/administracion/contratos/delete-confirmation-dialog.tsx`
@@ -362,8 +727,71 @@
 
 ### medidores-component
 **Archivo**: `app/components/administracion/medidores/medidores-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Medidores
+ *
+ * Funcionalidades principales:
+ * - Visualización de medidores con tabla paginada y filtrable
+ * - Creación de nuevos medidores (navegación a /crear)
+ * - Edición de medidores existentes (navegación a /:id)
+ * - Eliminación de medidores con confirmación
+ * - Asociación de medidor a subempalme
+ * - Filtros avanzados por marca, tipo, modelo, estado, dígitos, multiplicador
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de medidores
+ * 2. Puede aplicar filtros por múltiples criterios
+ * 3. Acciones disponibles por medidor:
+ *    - Editar (navegación a formulario)
+ *    - Eliminar (con confirmación)
+ *    - Asociar a subempalme (modal específico)
+ * 4. Recarga automática después de cada operación
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas y acciones
+ * - Hook useMedidorFilters para filtrado
+ * - Navegación a rutas para crear/editar
+ * - Modal AsociarSubempalmeModal para asociación
+ * - DeleteConfirmationDialog para eliminación segura
+ * - FilterSummary para estadísticas
+ * - API endpoints:
+ *   * POST /crear-medidor
+ *   * PUT /actualizar-medidor/:id
+ *   * DELETE /eliminar-medidor/:id
+ *   * GET /medidores (revalidación)
+ *
+ * Filtros disponibles:
+ * - Marca (select)
+ * - Tipo (select: Monofásico/Trifásico)
+ * - Modelo (select)
+ * - Estado (select)
+ * - Número de dígitos (rango min-max)
+ * - Constante multiplicar (rango min-max)
+ * - Fecha inicio (rango desde-hasta)
+ * - Tiene ubicación (sí/no/todos)
+ * - Tiene acometida (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetMedidores[]} props.medidores - Lista de medidores
+ * @param {Marca[]} props.marcas - Marcas disponibles para filtros y formularios
+ *
+ * @example
+ * ```tsx
+ * export default function MedidoresRoute({ loaderData }) {
+ *   return (
+ *     <MedidoresComponent
+ *       medidores={loaderData.medidores}
+ *       marcas={loaderData.marcas}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### crear-medidor-component
 **Archivo**: `app/components/administracion/medidores/form/crear-medidor-component.tsx`
@@ -397,8 +825,65 @@
 
 ### propietarios-component
 **Archivo**: `app/components/administracion/propietarios/propietarios-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Propietarios
+ *
+ * Funcionalidades principales:
+ * - Visualización de propietarios en tabla
+ * - Sincronización de datos con servicio externo
+ * - Visualización de detalles completos en modal
+ * - Filtros avanzados por comuna, teléfono, celular y email
+ * - Exportación de datos a Excel
+ * - Resumen de estadísticas de filtrado
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de propietarios
+ * 2. Puede aplicar filtros para buscar propietarios específicos
+ * 3. Acciones disponibles:
+ *    - Ver detalles completos (modal)
+ *    - Sincronizar datos (botón de recarga)
+ * 4. Sistema muestra estadísticas de filtrado
+ *
+ * Sincronización:
+ * - Botón de sincronización manual con icono RefreshCw
+ * - Llama a administracionService.sincronizarPropietarios()
+ * - Feedback visual con estado de carga
+ * - Toast notifications de éxito/error
+ * - Recarga automática después de sincronizar
+ *
+ * Arquitectura:
+ * - DataTable con columnas personalizadas
+ * - Filtros dinámicos con opciones extraídas de datos
+ * - Modal PropietarioDetailsModal para visualización
+ * - FilterSummary para estadísticas
+ * - ExportButton para exportación
+ * - Hook useMemo para optimización de filtros
+ *
+ * Filtros disponibles:
+ * - Comuna (select dinámico)
+ * - Tiene teléfono (sí/no/todos)
+ * - Tiene celular (sí/no/todos)
+ * - Tiene email (sí/no/todos)
+ *
+ * @param {Object} props - Props del componente
+ * @param {GetPropietario[]} props.propietarios - Lista de propietarios
+ * @param {GetContratante[]} props.contratantes - Contratantes relacionados
+ *
+ * @example
+ * ```tsx
+ * export default function PropietariosRoute({ loaderData }) {
+ *   return (
+ *     <PropietariosComponent
+ *       propietarios={loaderData.propietarios}
+ *       contratantes={loaderData.contratantes}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### columns
 **Archivo**: `app/components/administracion/usuarios/columns.tsx`
@@ -417,8 +902,72 @@
 
 ### usuarios-component
 **Archivo**: `app/components/administracion/usuarios/usuarios-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Usuarios
+ *
+ * Funcionalidades principales:
+ * - Visualización de usuarios del sistema en tabla
+ * - Creación de nuevos usuarios con validación de contraseña
+ * - Edición de usuarios existentes
+ * - Eliminación de usuarios con confirmación
+ * - Asignación de perfiles y departamentos
+ * - Gestión de estado activo/inactivo
+ * - Validación de contraseñas seguras (ver password-validation.ts)
+ *
+ * Flujo de trabajo:
+ * 1. Usuario visualiza tabla de usuarios del sistema
+ * 2. Acciones disponibles:
+ *    - Crear nuevo usuario (modal con validación de contraseña)
+ *    - Editar usuario existente (modal)
+ *    - Eliminar usuario (con confirmación)
+ * 3. Sistema valida:
+ *    - Contraseña segura (8+ caracteres, mayúsculas, minúsculas, números, especiales)
+ *    - Coincidencia de contraseñas
+ *    - Datos requeridos
+ * 4. Recarga automática de lista después de operaciones
+ *
+ * Arquitectura:
+ * - DataTable con columnas: nombre, usuario, perfil, departamento, estado, acciones
+ * - Modal UserFormModal con dos modos (add/edit)
+ * - Hook useAdministracion para operaciones CRUD
+ * - DeleteConfirmationDialog para eliminación segura
+ * - Validación de contraseñas con password-validation utils
+ * - API endpoints:
+ *   * POST /crear (creación de usuario)
+ *   * PUT /actualizar/:id (actualización)
+ *   * DELETE /eliminar/:id (eliminación)
+ *   * GET /listar (revalidación)
+ *
+ * Perfiles disponibles:
+ * - Administrador
+ * - Lectura
+ * - Supervisor Operativo
+ * - Administrativo Facturación
+ * - Supervisor Facturación
+ * - Usuario Consulta
+ * - Autorizador Límite Invierno
+ *
+ * Departamentos:
+ * - Gerencia
+ * - Tecnología
+ * - Recaudación
+ * - Seguridad
+ * - RR.HH
+ * - Enerlova
+ *
+ * @param {Object} props - Props del componente
+ * @param {Usuarios[]} props.usuarios - Lista de usuarios del sistema
+ *
+ * @example
+ * ```tsx
+ * export default function UsuariosRoute({ loaderData }) {
+ *   return <UsuariosComponent usuarios={loaderData.usuarios} />;
+ * }
+ * ```
+ */
+```
 
 ### auto-redirect
 **Archivo**: `app/components/auth/auto-redirect.tsx`
@@ -806,8 +1355,41 @@
 
 ### anular-factura-impresa-component
 **Archivo**: `app/components/operaciones/anular-factura-impresa/anular-factura-impresa-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente para Anulación de Facturas Impresas
+ * 
+ * Funcionalidades principales:
+ * - Anulación de facturas impresas por número de folio
+ * - Opción de anulación con o sin nueva toma de lectura
+ * - Validación de datos antes de procesar
+ * - Confirmación mediante diálogo antes de ejecutar
+ * - Retroalimentación visual del resultado de la operación
+ * 
+ * Flujo de trabajo:
+ * 1. Usuario ingresa número de factura
+ * 2. Usuario selecciona si requiere nueva toma de lectura (toggle)
+ * 3. Sistema valida que hay número de factura
+ * 4. Usuario confirma la anulación en diálogo modal
+ * 5. Sistema procesa la anulación vía API
+ * 6. Sistema muestra resultado (éxito o error)
+ * 
+ * Arquitectura:
+ * - Usa Shadcn/ui components (Card, Dialog, Alert, Input, Switch)
+ * - Estados locales para manejo del formulario
+ * - API call con axios via lib/api
+ * - Feedback con sonner toast y alertas visuales
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/anular-factura.tsx
+ * export default function AnularFacturaRoute() {
+ *   return <AnularFacturaImpresaComponent />;
+ * }
+ * ```
+ */
+```
 
 ### antiguo-medidor-form
 **Archivo**: `app/components/operaciones/cambio-medidor/antiguo-medidor-form.tsx`
@@ -816,8 +1398,44 @@
 
 ### cambio-medidor-component
 **Archivo**: `app/components/operaciones/cambio-medidor/cambio-medidor-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Cambio de Medidor
+ * 
+ * Funcionalidades principales:
+ * - Búsqueda y visualización de medidor antiguo a reemplazar
+ * - Configuración del medidor antiguo (lecturas actuales y finales)
+ * - Búsqueda y configuración de medidor nuevo
+ * - Registro del cambio de medidor en el sistema
+ * - Flujo paso a paso (wizard) con 4 etapas
+ * 
+ * Flujo de trabajo (4 pasos):
+ * 1. **Medidor Antiguo**: Búsqueda por acometida o número de serie
+ * 2. **Detalles Antiguo**: Revisión y ajuste de lecturas del medidor a reemplazar
+ * 3. **Medidor Nuevo**: Búsqueda y configuración del medidor de reemplazo
+ * 4. **Confirmar Cambio**: Revisión final y registro del cambio
+ * 
+ * Arquitectura:
+ * - Wizard con stepper visual (Progress + indicadores de paso)
+ * - Componentes especializados para cada paso:
+ *   * AntiguoMedidorForm: Formulario de búsqueda medidor antiguo
+ *   * DetalleMedidorAntiguoComponent: Detalles y lecturas del medidor antiguo
+ *   * NuevoMedidorForm: Formulario de búsqueda medidor nuevo
+ *   * DetalleMedidorNuevoComponent: Detalles del medidor nuevo
+ * - Estados locales para cada tipo de medidor
+ * - Validaciones en cada paso antes de avanzar
+ * - API calls para consultas y registro final
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/cambio-medidor.tsx
+ * export default function CambioMedidorRoute() {
+ *   return <CambioMedidorComponent />;
+ * }
+ * ```
+ */
+```
 
 ### collapsible-header
 **Archivo**: `app/components/operaciones/cambio-medidor/collapsible-header.tsx`
@@ -861,8 +1479,63 @@
 
 ### cerrar-lecturas-component
 **Archivo**: `app/components/operaciones/cerrar-lecturas/cerrar-lecturas-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Cierre de Lecturas
+ * 
+ * Funcionalidades principales:
+ * - Consulta de estado de cierre de lecturas por ciclo de facturación
+ * - Visualización de lecturas OK, con claves (rojas/naranjas) y corregidas
+ * - Selección múltiple de nichos para cerrar lecturas
+ * - Validación de claves críticas que bloquean el cierre
+ * - Advertencias de claves de alerta antes de proceder
+ * - Cierre masivo de lecturas seleccionadas
+ * 
+ * Flujo de trabajo:
+ * 1. Usuario selecciona ciclo de facturación (15 o 30)
+ * 2. Sistema carga lecturas pendientes de cierre para ese ciclo
+ * 3. Sistema muestra tabla con estado por nicho:
+ *    - Lecturas OK (sin problemas)
+ *    - Claves Rojas (críticas - bloquean cierre)
+ *    - Claves Naranjas (alertas - permiten cierre con advertencia)
+ *    - Lecturas Corregidas
+ * 4. Usuario selecciona nichos a cerrar (checkboxes en tabla)
+ * 5. Sistema valida que no haya claves críticas
+ * 6. Usuario confirma cierre en diálogo
+ * 7. Sistema procesa cierre y actualiza estado
+ * 
+ * Validaciones de seguridad:
+ * - **Claves Rojas (Críticas)**: Bloquean completamente el cierre
+ * - **Claves Naranjas (Alertas)**: Permiten cierre pero muestran advertencia
+ * - Sistema muestra contador de lecturas críticas y de alerta
+ * - Botón de cierre se deshabilita si hay claves críticas
+ * 
+ * Arquitectura:
+ * - Usa DataTable con selección múltiple (checkboxes)
+ * - Componente AlertCerrarLecturas para confirmación
+ * - Validación checkCriticalBlockers antes de permitir cierre
+ * - Estados para periodo, ciclo, lecturas y selección
+ * - API endpoints: /estado-cierre-lecturas
+ * 
+ * @param {Object} props - Props del componente
+ * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo de facturación
+ * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles (15/30)
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/cerrar-lecturas.tsx
+ * export default function CerrarLecturasRoute({ loaderData }) {
+ *   return (
+ *     <CerrarLecturasComponent
+ *       periodoAbierto={loaderData.periodoAbierto}
+ *       ciclosFacturacion={loaderData.ciclosFacturacion}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### columns
 **Archivo**: `app/components/operaciones/cerrar-lecturas/columns.tsx`
@@ -886,8 +1559,69 @@
 
 ### corte-reposicion-component
 **Archivo**: `app/components/operaciones/corte-reposicion/corte-reposicion-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Corte y Reposición de Servicios
+ * 
+ * Funcionalidades principales:
+ * - Visualización de estados de corte y reposición por cliente
+ * - Gestión del ciclo completo: Pendiente → Liberado → Cortado → Reposición
+ * - Exportación de datos a Excel (2 formatos)
+ * - Control del proceso de revisión (Activar, Iniciar, Finalizar)
+ * - Estadísticas rápidas de estados
+ * - Tour interactivo para nuevos usuarios (driver.js)
+ * 
+ * Flujo del proceso de corte:
+ * 1. **Activar Actualización**: Prepara el sistema para revisar
+ * 2. **Iniciar**: Comienza proceso de revisión de cortes
+ * 3. **Buscar**: Carga datos del mantenedor de revisión
+ * 4. **Gestión por estado**:
+ *    - NULL/Pendiente: Cliente pendiente de revisión
+ *    - 1/Liberado: Cliente liberado de corte
+ *    - 2/Cortado: Cliente con servicio cortado
+ *    - 3/Reposición Solicitada: Solicitud de reconexión
+ * 5. **Finalizar**: Cierra el proceso de revisión
+ * 
+ * Características especiales:
+ * - **Tour Interactivo**: Guía paso a paso con driver.js (7 pasos)
+ * - **Estadísticas en tiempo real**: Cards con totales por estado
+ * - **Exportación dual**: Mantenedor completo y Revisión de corte
+ * - **Tabla con acciones**: Marcar/Liberar, Registrar corte, Solicitar reposición
+ * - **Modales especializados**: Confirmación de cada acción
+ * 
+ * Arquitectura:
+ * - Usa DataTable con columnas personalizadas
+ * - Componentes modales:
+ *   * CorteRegistradoDialog: Registrar corte ejecutado
+ *   * MarcarLiberarDialog: Liberar cliente de corte
+ *   * ReposicionSolicitadaDialog: Solicitar reconexión
+ * - Estados para datos, búsqueda y selección
+ * - API endpoints:
+ *   * GET /consulta-mantenedor-revision-corte
+ *   * POST /modificar-revision
+ *   * POST /ingresar-revision
+ *   * POST /finalizar-revision
+ *   * GET /exportar-* (para Excel)
+ * 
+ * @param {Object} props - Props del componente
+ * @param {TotalesCorteReposicion[]} props.totalesData - Totales por estado
+ * @param {ConsultarMantenedorRevisionCorte[]} props.mantenedorCorteData - Datos de revisión
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/corte-reposicion.tsx
+ * export default function CorteReposicionRoute({ loaderData }) {
+ *   return (
+ *     <CorteReposicionComponent
+ *       totalesData={loaderData.totales}
+ *       mantenedorCorteData={loaderData.mantenedor}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### marcar-liberar-dialog
 **Archivo**: `app/components/operaciones/corte-reposicion/marcar-liberar-dialog.tsx`
@@ -901,8 +1635,54 @@
 
 ### crear-archivos-sap-component
 **Archivo**: `app/components/operaciones/crear-archivos-sap/crear-archivos-sap-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente para Creación y Descarga de Archivos SAP
+ * 
+ * Funcionalidades principales:
+ * - Generación de archivo de encabezado de factura (FAC)
+ * - Generación de archivo de detalle de factura (DET)
+ * - Descarga directa de archivos CSV con formato SAP
+ * - Nombres de archivo con timestamp automático
+ * - Manejo de errores de generación y descarga
+ * 
+ * Archivos generados:
+ * 1. **Encabezado Factura (FAC)**:
+ *    - Formato: FAC-DDMMYYYY-HHMM.csv
+ *    - Contenido: Headers de facturas para integración SAP
+ *    - Endpoint: GET /exportar-encabezado
+ * 
+ * 2. **Detalle Factura (DET)**:
+ *    - Formato: DET-DDMMYYYY-HHMM.csv
+ *    - Contenido: Líneas de detalle de facturas
+ *    - Endpoint: GET /exportar-detalle
+ * 
+ * Características técnicas:
+ * - Descarga como blob con tipo text/csv;charset=utf-8
+ * - Extracción de filename desde Content-Disposition header
+ * - Fallback a filename con timestamp si no viene en header
+ * - Limpieza de URLs y elementos DOM después de descarga
+ * - Estados de carga independientes para cada archivo
+ * 
+ * Arquitectura:
+ * - Componente sin estado de datos (solo UI)
+ * - Botones independientes para cada archivo
+ * - Helper functions:
+ *   * extractFilenameFromHeaders: Extrae nombre del header
+ *   * generateFallbackFilename: Genera nombre con timestamp
+ * - Feedback visual con toast notifications
+ * - Estados de loading por botón
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/crear-archivos-sap.tsx
+ * export default function CrearArchivosSapRoute() {
+ *   return <CrearArchivosSapComponent />;
+ * }
+ * ```
+ */
+```
 
 ### cerrar-periodo
 **Archivo**: `app/components/operaciones/periodo-facturacion/cerrar-periodo.tsx`
@@ -968,8 +1748,56 @@
 
 ### precios-cargo-component
 **Archivo**: `app/components/operaciones/precios-cargo/precios-cargo-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Gestión de Precios de Cargo
+ *
+ * Funcionalidades principales:
+ * - Visualización de precios de cargo ENEL y Enerlova
+ * - Filtros por mes y año para consultas históricas
+ * - Tabs para alternar entre precios ENEL y Enerlova
+ * - Exportación de datos a Excel
+ * - Actualización de valores de precios
+ * - Visualización de detalles expandidos
+ *
+ * Arquitectura:
+ * - Tabs component con 2 pestañas (ENEL / Enerlova)
+ * - DataTablePrecios con columnas especializadas para cada tipo
+ * - Filtros de período (mes/año)
+ * - Estados locales para filtros y datos cargados
+ * - API endpoints:
+ *   * POST /consulta-precios-enel
+ *   * POST /consulta-precios-enerlova
+ *
+ * Pestañas disponibles:
+ * 1. **ENEL**: Precios de cargo de la distribuidora ENEL
+ * 2. **Enerlova**: Precios propios de Enerlova
+ *
+ * @param {Object} props - Props del componente
+ * @param {PreciosCargoEnel[]} props.tablaEnel - Datos iniciales de precios ENEL
+ * @param {PreciosCargoEnerlova[]} props.tablaEnerlova - Datos iniciales de precios Enerlova
+ * @param {string} props.initialMes - Mes inicial del filtro
+ * @param {string} props.initialAnio - Año inicial del filtro
+ * @param {string | null} props.error - Error de carga inicial
+ *
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/precios-cargo.tsx
+ * export default function PreciosCargoRoute({ loaderData }) {
+ *   return (
+ *     <PreciosCargoComponent
+ *       tablaEnel={loaderData.tablaEnel}
+ *       tablaEnerlova={loaderData.tablaEnerlova}
+ *       initialMes={loaderData.mes}
+ *       initialAnio={loaderData.anio}
+ *       error={loaderData.error}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### dialog-lecturas-pendientes
 **Archivo**: `app/components/operaciones/preparar-lecturas/dialog-lecturas-pendientes.tsx`
@@ -1023,8 +1851,72 @@
 
 ### revisar-calculo-factura-component
 **Archivo**: `app/components/operaciones/revisar-calculo-factura/revisar-calculo-factura-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Revisión de Cálculo de Facturas
+ *
+ * Funcionalidades principales:
+ * - Consulta de pré-cálculo de facturas por nicho y ciclo
+ * - Visualización jerárquica de datos (nicho > contratos > detalles)
+ * - Ejecución de cálculo de facturación masivo
+ * - Monitoreo de estado del proceso de cálculo
+ * - Exportación de resultados a Excel
+ * - Tour interactivo para nuevos usuarios
+ *
+ * Flujo de trabajo:
+ * 1. Usuario selecciona ciclo de facturación y opcionalmente nicho
+ * 2. Sistema carga pré-cálculo de facturas
+ * 3. Usuario revisa datos jerárquicos con detalles expandibles
+ * 4. Usuario ejecuta cálculo de facturas (botón "Calcular Facturas")
+ * 5. Sistema procesa cálculo en background
+ * 6. Usuario monitorea estado del proceso
+ * 7. Sistema muestra resultado final (facturas generadas/error)
+ *
+ * Componentes y hooks especializados:
+ * - **useCalculoFactura**: Hook para manejo de pré-cálculo
+ * - **useCalculoProceso**: Hook para monitoreo de proceso de cálculo
+ * - **HierarchicalDataTable**: Tabla con expansión jerárquica
+ * - **ExportButton**: Botón de exportación con opciones
+ *
+ * Estados del proceso:
+ * - **Idle**: Sin proceso en ejecución
+ * - **Processing**: Cálculo en progreso
+ * - **Completed**: Cálculo completado exitosamente
+ * - **Error**: Error en el proceso
+ *
+ * Arquitectura:
+ * - Tabla jerárquica con 3 niveles:
+ *   1. Nicho (nivel superior)
+ *   2. Contratos (nivel medio)
+ *   3. Detalles de facturación (nivel inferior)
+ * - Filtros: Ciclo, Nicho (opcional)
+ * - Validaciones de periodo abierto
+ * - API endpoints:
+ *   * POST /consulta-precalculo-factura
+ *   * POST /ejecutar-calculo-factura
+ *   * GET /estado-proceso-calculo
+ *
+ * @param {Object} props - Props del componente
+ * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo de facturación
+ * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles
+ * @param {EstadoCierreLecturas[]} props.nichos - Nichos disponibles para filtro
+ *
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/revisar-calculo-factura.tsx
+ * export default function RevisarCalculoFacturaRoute({ loaderData }) {
+ *   return (
+ *     <RevisarCalculoFacturaComponent
+ *       periodoAbierto={loaderData.periodoAbierto}
+ *       ciclosFacturacion={loaderData.ciclos}
+ *       nichos={loaderData.nichos}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### columns-enel
 **Archivo**: `app/components/operaciones/revisar-precio/columns-enel.tsx`
@@ -1048,8 +1940,71 @@
 
 ### revisar-precio-component
 **Archivo**: `app/components/operaciones/revisar-precio/revisar-precio-component.tsx`
-⚠️ *Sin documentación JSDoc*
-
+**Documentación**:
+```typescript
+/**
+ * Componente principal para Revisión de Precios de Facturación
+ *
+ * Funcionalidades principales:
+ * - Visualización de precios aplicados ENEL vs Enerlova
+ * - Validación de permisos de usuario para modificación
+ * - Modificación de precios individuales por contrato
+ * - Filtros por ciclo de facturación y periodo
+ * - Tabs para alternar entre ENEL y Enerlova
+ * - Sistema de autorización con clave maestra
+ *
+ * Flujo de trabajo:
+ * 1. Usuario accede al componente
+ * 2. Sistema valida permisos del usuario
+ * 3. Usuario selecciona ciclo de facturación
+ * 4. Sistema carga precios aplicados para el periodo
+ * 5. Usuario puede:
+ *    - Ver detalles de precios ENEL/Enerlova en tabs
+ *    - Modificar precio individual (si tiene permisos)
+ *    - Ingresar clave maestra para modificaciones sensibles
+ * 6. Sistema actualiza precios vía API
+ *
+ * Sistema de autorización:
+ * - Validación inicial de usuario (/validar-usuario-precio)
+ * - Clave maestra requerida para modificar
+ * - Diálogo modal para ingreso de clave
+ * - Validación de clave antes de permitir edición
+ *
+ * Arquitectura:
+ * - Tabs component con 2 pestañas (ENEL / Enerlova)
+ * - DataTables con columnas especializadas:
+ *   * TablaValoresEnel: Precios ENEL por contrato
+ *   * TablaValoresEnerlova: Precios Enerlova por contrato
+ * - Modal DialogModificarPrecio para ediciones
+ * - Estados para validación, filtros y datos
+ * - API endpoints:
+ *   * GET /validar-usuario-precio
+ *   * POST /consulta-precio-uno (ENEL)
+ *   * POST /consulta-precio-dos (Enerlova)
+ *   * PUT /modificar-precio
+ *
+ * @param {Object} props - Props del componente
+ * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo
+ * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles
+ * @param {RevisarPrecioUno[]} props.precioUnoData - Datos iniciales ENEL
+ * @param {RevisarPrecioDos[]} props.precioDosData - Datos iniciales Enerlova
+ *
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/revisar-precio.tsx
+ * export default function RevisarPrecioRoute({ loaderData }) {
+ *   return (
+ *     <RevisarPrecioComponent
+ *       periodoAbierto={loaderData.periodoAbierto}
+ *       ciclosFacturacion={loaderData.ciclos}
+ *       precioUnoData={loaderData.precioUno}
+ *       precioDosData={loaderData.precioDos}
+ *     />
+ *   );
+ * }
+ * ```
+ */
+```
 
 ### tabla-valores-enel
 **Archivo**: `app/components/operaciones/revisar-precio/tabla-valores-enel.tsx`

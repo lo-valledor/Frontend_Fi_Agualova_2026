@@ -1,7 +1,7 @@
 import { Eye, EyeOff, Lock, Moon, Sun, User } from 'lucide-react';
 
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Link, useLocation } from 'react-router';
 
@@ -10,6 +10,7 @@ import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { useAuth } from '~/context/AuthContext';
 import { cn } from '~/lib/utils';
+import { Label } from '../ui/label';
 
 export function LoginForm({
   className,
@@ -24,12 +25,6 @@ export function LoginForm({
   const { login, loading } = useAuth();
   const location = useLocation();
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Animación de entrada
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Función para alternar entre temas claro y oscuro
   const toggleTheme = () => {
@@ -74,26 +69,18 @@ export function LoginForm({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-xl transition-all duration-500 ease-in-out',
-        'bg-card/90 backdrop-blur-sm',
-        'shadow-xl border border-border',
-        'transform opacity-0 translate-y-4',
-        mounted && 'opacity-100 translate-y-0',
+        'relative overflow-hidden rounded-3xl transition-all duration-500',
+        'bg-background backdrop-blur-xl',
+        'shadow-2xl border border-border',
         className
       )}
       {...props}
     >
-      {/* Decorative elements */}
-      <div className='absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full opacity-20 blur-2xl animate-pulse'></div>
-      <div
-        className='absolute -bottom-24 -left-24 w-48 h-48 bg-accent/20 rounded-full opacity-20 blur-2xl animate-pulse'
-        style={{ animationDuration: '8s' }}
-      ></div>
-
       {/* Theme toggle */}
-      <button
+      <Button
         onClick={toggleTheme}
-        className='absolute top-4 right-4 p-2 rounded-full bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors duration-200'
+        variant='ghost'
+        className='absolute top-5 right-5 z-20 p-2.5 rounded-xl bg-background transition-all duration-200'
         aria-label='Toggle theme'
       >
         {theme === 'light' ? (
@@ -101,85 +88,98 @@ export function LoginForm({
         ) : (
           <Sun className='h-4 w-4' />
         )}
-      </button>
+      </Button>
 
-      {/* Logo and header */}
-      <div className='pt-8 pb-4 px-8'>
-        <h1 className='text-2xl font-bold text-center text-primary'>
-          Iniciar Sesión
+      {/* Header */}
+      <div className='pt-10 pb-6 px-8 text-center border-b border-slate-200/50 dark:border-slate-700/50'>
+        <h1 className='text-3xl font-bold text-slate-900 dark:text-white mb-2'>
+          Bienvenido
         </h1>
-        <p className='text-center text-muted-foreground mt-2 text-sm'>
-          Ingrese sus credenciales para acceder al sistema
+        <p className='text-sm text-slate-600 dark:text-slate-400'>
+          Inicia sesión para acceder al sistema
         </p>
       </div>
 
       {/* Form */}
-      <div className='p-8 pt-2'>
-        <form onSubmit={handleSubmitEvent} className='space-y-6'>
+      <div className='p-8'>
+        <form onSubmit={handleSubmitEvent} className='space-y-5'>
           {errorMessage && (
-            <div className='p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm animate-fadeIn'>
-              {errorMessage}
+            <div className='p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 text-sm flex items-start gap-2'>
+              <svg
+                className='h-5 w-5 mt-0.5 flex-shrink-0'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                />
+              </svg>
+              <span>{errorMessage}</span>
             </div>
           )}
 
           <div className='space-y-4'>
             <div className='space-y-2'>
-              <label
+              <Label
                 htmlFor='usuario'
-                className='block text-sm font-medium text-foreground'
+                className='block text-sm font-semibold text-slate-700 dark:text-slate-300'
               >
                 Usuario
-              </label>
+              </Label>
               <div className='relative group'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <User className='h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors duration-200' />
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
+                  <User className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
                 </div>
                 <Input
                   id='usuario'
                   name='usuario'
                   type='text'
-                  placeholder='Nombre de Usuario'
+                  placeholder='Ingresa tu usuario'
                   value={input.usuario}
                   onChange={handleInput}
                   required
-                  className='pl-10 bg-muted/50 border-border focus:border-primary focus:ring-primary rounded-xl transition-all duration-200 focus:shadow-md'
+                  className='pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all'
                 />
               </div>
             </div>
 
             <div className='space-y-2'>
               <div className='flex items-center justify-between'>
-                <label
+                <Label
                   htmlFor='contrasena'
-                  className='block text-sm font-medium text-foreground'
+                  className='block text-sm font-semibold text-slate-700 dark:text-slate-300'
                 >
                   Contraseña
-                </label>
+                </Label>
                 <Link
                   to='/auth/forgot-password'
-                  className='text-xs text-primary hover:text-primary/80 transition-colors duration-200'
+                  className='text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors'
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
               <div className='relative group'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <Lock className='h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors duration-200' />
+                <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
+                  <Lock className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
                 </div>
                 <Input
                   id='contrasena'
                   name='contrasena'
                   type={showPassword ? 'text' : 'password'}
-                  placeholder='********'
+                  placeholder='Ingresa tu contraseña'
                   value={input.contrasena}
                   onChange={handleInput}
                   required
-                  className='pl-10 pr-10 bg-muted/50 border-border focus:border-primary focus:ring-primary rounded-xl transition-all duration-200 focus:shadow-md'
+                  className='pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all'
                 />
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground transition-colors'
+                  className='absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors'
                 >
                   {showPassword ? (
                     <EyeOff className='h-5 w-5' />
@@ -194,37 +194,35 @@ export function LoginForm({
           <Button
             type='submit'
             disabled={loading}
-            className='w-full py-6 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300'
+            className='w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
           >
-            <span className='font-medium'>
-              {loading ? (
-                <div className='flex items-center justify-center'>
-                  <svg
-                    className='animate-spin -ml-1 mr-3 h-5 w-5 text-primary-foreground'
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='none'
-                    viewBox='0 0 24 24'
-                  >
-                    <circle
-                      className='opacity-25'
-                      cx='12'
-                      cy='12'
-                      r='10'
-                      stroke='currentColor'
-                      strokeWidth='4'
-                    ></circle>
-                    <path
-                      className='opacity-75'
-                      fill='currentColor'
-                      d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                    ></path>
-                  </svg>
-                  Iniciando sesión...
-                </div>
-              ) : (
-                'Iniciar sesión'
-              )}
-            </span>
+            {loading ? (
+              <div className='flex items-center justify-center gap-2'>
+                <svg
+                  className='animate-spin h-5 w-5'
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                >
+                  <circle
+                    className='opacity-25'
+                    cx='12'
+                    cy='12'
+                    r='10'
+                    stroke='currentColor'
+                    strokeWidth='4'
+                  ></circle>
+                  <path
+                    className='opacity-75'
+                    fill='currentColor'
+                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                  ></path>
+                </svg>
+                <span>Iniciando sesión...</span>
+              </div>
+            ) : (
+              'Iniciar sesión'
+            )}
           </Button>
         </form>
       </div>

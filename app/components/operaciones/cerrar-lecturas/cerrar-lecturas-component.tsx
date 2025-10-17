@@ -1,3 +1,57 @@
+/**
+ * Componente principal para Cierre de Lecturas
+ * 
+ * Funcionalidades principales:
+ * - Consulta de estado de cierre de lecturas por ciclo de facturación
+ * - Visualización de lecturas OK, con claves (rojas/naranjas) y corregidas
+ * - Selección múltiple de nichos para cerrar lecturas
+ * - Validación de claves críticas que bloquean el cierre
+ * - Advertencias de claves de alerta antes de proceder
+ * - Cierre masivo de lecturas seleccionadas
+ * 
+ * Flujo de trabajo:
+ * 1. Usuario selecciona ciclo de facturación (15 o 30)
+ * 2. Sistema carga lecturas pendientes de cierre para ese ciclo
+ * 3. Sistema muestra tabla con estado por nicho:
+ *    - Lecturas OK (sin problemas)
+ *    - Claves Rojas (críticas - bloquean cierre)
+ *    - Claves Naranjas (alertas - permiten cierre con advertencia)
+ *    - Lecturas Corregidas
+ * 4. Usuario selecciona nichos a cerrar (checkboxes en tabla)
+ * 5. Sistema valida que no haya claves críticas
+ * 6. Usuario confirma cierre en diálogo
+ * 7. Sistema procesa cierre y actualiza estado
+ * 
+ * Validaciones de seguridad:
+ * - **Claves Rojas (Críticas)**: Bloquean completamente el cierre
+ * - **Claves Naranjas (Alertas)**: Permiten cierre pero muestran advertencia
+ * - Sistema muestra contador de lecturas críticas y de alerta
+ * - Botón de cierre se deshabilita si hay claves críticas
+ * 
+ * Arquitectura:
+ * - Usa DataTable con selección múltiple (checkboxes)
+ * - Componente AlertCerrarLecturas para confirmación
+ * - Validación checkCriticalBlockers antes de permitir cierre
+ * - Estados para periodo, ciclo, lecturas y selección
+ * - API endpoints: /estado-cierre-lecturas
+ * 
+ * @param {Object} props - Props del componente
+ * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo de facturación
+ * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles (15/30)
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/cerrar-lecturas.tsx
+ * export default function CerrarLecturasRoute({ loaderData }) {
+ *   return (
+ *     <CerrarLecturasComponent
+ *       periodoAbierto={loaderData.periodoAbierto}
+ *       ciclosFacturacion={loaderData.ciclosFacturacion}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import {
   AlertCircleIcon,
   AlertTriangle,

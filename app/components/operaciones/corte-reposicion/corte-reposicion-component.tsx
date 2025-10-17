@@ -1,3 +1,63 @@
+/**
+ * Componente principal para Corte y Reposición de Servicios
+ * 
+ * Funcionalidades principales:
+ * - Visualización de estados de corte y reposición por cliente
+ * - Gestión del ciclo completo: Pendiente → Liberado → Cortado → Reposición
+ * - Exportación de datos a Excel (2 formatos)
+ * - Control del proceso de revisión (Activar, Iniciar, Finalizar)
+ * - Estadísticas rápidas de estados
+ * - Tour interactivo para nuevos usuarios (driver.js)
+ * 
+ * Flujo del proceso de corte:
+ * 1. **Activar Actualización**: Prepara el sistema para revisar
+ * 2. **Iniciar**: Comienza proceso de revisión de cortes
+ * 3. **Buscar**: Carga datos del mantenedor de revisión
+ * 4. **Gestión por estado**:
+ *    - NULL/Pendiente: Cliente pendiente de revisión
+ *    - 1/Liberado: Cliente liberado de corte
+ *    - 2/Cortado: Cliente con servicio cortado
+ *    - 3/Reposición Solicitada: Solicitud de reconexión
+ * 5. **Finalizar**: Cierra el proceso de revisión
+ * 
+ * Características especiales:
+ * - **Tour Interactivo**: Guía paso a paso con driver.js (7 pasos)
+ * - **Estadísticas en tiempo real**: Cards con totales por estado
+ * - **Exportación dual**: Mantenedor completo y Revisión de corte
+ * - **Tabla con acciones**: Marcar/Liberar, Registrar corte, Solicitar reposición
+ * - **Modales especializados**: Confirmación de cada acción
+ * 
+ * Arquitectura:
+ * - Usa DataTable con columnas personalizadas
+ * - Componentes modales:
+ *   * CorteRegistradoDialog: Registrar corte ejecutado
+ *   * MarcarLiberarDialog: Liberar cliente de corte
+ *   * ReposicionSolicitadaDialog: Solicitar reconexión
+ * - Estados para datos, búsqueda y selección
+ * - API endpoints:
+ *   * GET /consulta-mantenedor-revision-corte
+ *   * POST /modificar-revision
+ *   * POST /ingresar-revision
+ *   * POST /finalizar-revision
+ *   * GET /exportar-* (para Excel)
+ * 
+ * @param {Object} props - Props del componente
+ * @param {TotalesCorteReposicion[]} props.totalesData - Totales por estado
+ * @param {ConsultarMantenedorRevisionCorte[]} props.mantenedorCorteData - Datos de revisión
+ * 
+ * @example
+ * ```tsx
+ * // Usado en app/routes/operaciones/corte-reposicion.tsx
+ * export default function CorteReposicionRoute({ loaderData }) {
+ *   return (
+ *     <CorteReposicionComponent
+ *       totalesData={loaderData.totales}
+ *       mantenedorCorteData={loaderData.mantenedor}
+ *     />
+ *   );
+ * }
+ * ```
+ */
 import {
   ArrowUpToLine,
   BarChart3,

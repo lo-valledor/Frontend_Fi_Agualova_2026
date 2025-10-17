@@ -18,14 +18,15 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '~/components/ui/chart';
-import { ScrollArea } from '~/components/ui/scroll-area';
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger
-} from '~/components/ui/sheet';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '~/components/ui/dialog';
+import { ScrollArea } from '~/components/ui/scroll-area';
+import { Separator } from '~/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import api from '~/lib/api';
 import type { DetallepreciosCargoEnerlova } from '~/types/operaciones';
@@ -71,7 +72,13 @@ const formatearValor = (valor: number | string): string => {
 // Tipos para los filtros de tiempo
 type PeriodoTiempo = 'todo' | '1año' | '6meses' | '3meses';
 
-export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
+export default function DetallePreciosEnerlova({
+  codigo,
+  onDataUpdate
+}: {
+  codigo: number;
+  onDataUpdate?: () => void;
+}) {
   const [data, setData] = useState<DetallepreciosCargoEnerlova[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -235,8 +242,8 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
   }, [datosFiltrados]);
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
         <Button
           variant='outline'
           size='sm'
@@ -246,129 +253,118 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
           <span className='hidden sm:inline'>Ver Detalle</span>
           <span className='sm:hidden'>Ver</span>
         </Button>
-      </SheetTrigger>
-      <SheetContent className='w-[95vw] sm:max-w-[800px] p-0 max-h-[95vh] overflow-hidden'>
-        <SheetHeader className='px-3 sm:px-6 py-3 sm:py-4 border-b border-border/60 bg-muted/40'>
-          <SheetTitle className='text-base sm:text-lg font-semibold text-sky-800 dark:text-sky-200 flex items-center gap-2'>
-            <InfoIcon className='h-4 w-4 sm:h-5 sm:w-5' />
-            <span className='hidden sm:inline'>
-              Detalle de Precios de Cargo
-            </span>
-            <span className='sm:hidden'>Detalle Precios</span>
-          </SheetTitle>
-        </SheetHeader>
+      </DialogTrigger>
+      <DialogContent className='max-w-[95vw] sm:max-w-[900px] lg:max-w-[1100px] h-[90vh] p-0 overflow-hidden flex flex-col'>
+        <DialogHeader className='px-4 sm:px-6 py-4 border-b border-border/60 bg-muted/30'>
+          <DialogTitle className='text-lg sm:text-xl font-semibold flex items-center gap-2'>
+            <InfoIcon className='h-5 w-5' />
+            Detalle de Precios de Cargo
+          </DialogTitle>
+        </DialogHeader>
 
-        <div className='px-3 sm:px-6 py-3 sm:py-4'>
-          <ScrollArea className='h-[calc(95vh-180px)] sm:h-[calc(100vh-200px)] pr-2 sm:pr-4 -mr-2 sm:-mr-4'>
+        <ScrollArea className='flex-1 overflow-auto'>
+          <div className='px-4 sm:px-6 py-4 sm:py-6'>
             {isLoading ? (
-              <div className='flex justify-center items-center h-40 sm:h-60'>
-                <Loader2 className='h-6 w-6 sm:h-8 sm:w-8 animate-spin' />
+              <div className='flex justify-center items-center h-60 sm:h-96'>
+                <Loader2 className='h-8 w-8 animate-spin text-sky-600' />
               </div>
             ) : data && data.length > 0 ? (
-              <div className='space-y-4 sm:space-y-6'>
-                <Card>
-                  <CardHeader className='pb-2 px-3 sm:px-6 pt-3 sm:pt-6'>
-                    <div className='flex flex-col gap-3 sm:gap-2'>
+              <div className='space-y-6'>
+                {/* Información del cargo actual */}
+                <div className='bg-muted/30 rounded-xl p-4 sm:p-5 border border-border/40'>
+                  <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+                    <div>
+                      <p className='text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1'>
+                        Cargo
+                      </p>
+                      <p className='font-semibold text-sm sm:text-base truncate'>
+                        {ultimoValor?.descripcion}
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1'>
+                        Valor Actual
+                      </p>
+                      <p className='font-bold text-lg text-sky-700 dark:text-sky-300'>
+                        ${formatearValor(ultimoValor?.valor || 0)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1'>
+                        Vigencia Desde
+                      </p>
+                      <p className='font-mono text-sm'>
+                        {ultimoValor?.fecha_inicio}
+                      </p>
+                    </div>
+                    <div>
+                      <p className='text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1'>
+                        Vigencia Hasta
+                      </p>
+                      <p className='font-mono text-sm'>
+                        {ultimoValor?.fecha_fin}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Gráfico de evolución */}
+                <Card className='border-2'>
+                  <CardHeader className='pb-3'>
+                    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                       <div>
-                        <CardTitle className='text-base sm:text-lg text-sky-800 dark:text-sky-200'>
+                        <CardTitle className='text-lg text-sky-800 dark:text-sky-200'>
                           Histórico de Precios
                         </CardTitle>
-                        <CardDescription className='text-xs sm:text-sm'>
+                        <CardDescription className='text-sm'>
                           Evolución de precios del cargo a lo largo del tiempo
                         </CardDescription>
                       </div>
-                      <div className='w-full'>
-                        <Tabs
-                          defaultValue='todo'
-                          value={periodoSeleccionado}
-                          onValueChange={value =>
-                            setPeriodoSeleccionado(value as PeriodoTiempo)
-                          }
-                          className='w-full'
-                        >
-                          <TabsList className='grid grid-cols-4 w-full h-8 sm:h-10'>
-                            <TabsTrigger
-                              value='todo'
-                              className='text-xs sm:text-sm px-1 sm:px-3'
-                            >
-                              Todo
-                            </TabsTrigger>
-                            <TabsTrigger
-                              value='1año'
-                              className='text-xs sm:text-sm px-1 sm:px-3'
-                            >
-                              1 Año
-                            </TabsTrigger>
-                            <TabsTrigger
-                              value='6meses'
-                              className='text-xs sm:text-sm px-1 sm:px-3'
-                            >
-                              6M
-                            </TabsTrigger>
-                            <TabsTrigger
-                              value='3meses'
-                              className='text-xs sm:text-sm px-1 sm:px-3'
-                            >
-                              3M
-                            </TabsTrigger>
-                          </TabsList>
-                        </Tabs>
-                      </div>
+                      <Tabs
+                        defaultValue='todo'
+                        value={periodoSeleccionado}
+                        onValueChange={value =>
+                          setPeriodoSeleccionado(value as PeriodoTiempo)
+                        }
+                        className='w-full sm:w-auto'
+                      >
+                        <TabsList className='grid grid-cols-4 w-full sm:w-auto h-9'>
+                          <TabsTrigger value='todo' className='text-xs px-3'>
+                            Todo
+                          </TabsTrigger>
+                          <TabsTrigger value='1año' className='text-xs px-3'>
+                            1 Año
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value='6meses'
+                            className='text-xs px-2.5'
+                          >
+                            6M
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value='3meses'
+                            className='text-xs px-2.5'
+                          >
+                            3M
+                          </TabsTrigger>
+                        </TabsList>
+                      </Tabs>
                     </div>
                   </CardHeader>
-                  <CardContent className='h-auto px-3 sm:px-6 pb-3 sm:pb-6'>
-                    {/* Información del último valor */}
-                    <div className='mb-3 sm:mb-4 p-2 sm:p-3 bg-muted/30 rounded-md border border-border/40'>
-                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4'>
-                        <div>
-                          <p className='text-xs text-muted-foreground'>
-                            Cargo actual
-                          </p>
-                          <p className='font-medium text-sm sm:text-base truncate'>
-                            {ultimoValor?.descripcion}
-                          </p>
-                        </div>
-                        <div>
-                          <p className='text-xs text-muted-foreground'>
-                            Último valor
-                          </p>
-                          <p className='font-semibold text-base sm:text-lg text-sky-700 dark:text-sky-300'>
-                            {formatearValor(ultimoValor?.valor || 0)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mt-2'>
-                        <div>
-                          <p className='text-xs text-muted-foreground'>
-                            Vigencia desde
-                          </p>
-                          <p className='font-mono text-xs sm:text-sm'>
-                            {ultimoValor?.fecha_inicio}
-                          </p>
-                        </div>
-                        <div>
-                          <p className='text-xs text-muted-foreground'>
-                            Vigencia hasta
-                          </p>
-                          <p className='font-mono text-xs sm:text-sm'>
-                            {ultimoValor?.fecha_fin}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Gráfico */}
-                    <div className='h-[250px] sm:h-[400px]'>
+                  <CardContent className='px-3 sm:px-6 pb-4'>
+                    <div className='h-[300px] sm:h-[450px]'>
                       {datosGrafico.length > 0 ? (
                         <ChartContainer config={chartConfig}>
                           <LineChart
                             accessibilityLayer
                             data={datosGrafico}
                             margin={{
-                              top: 5,
-                              right: 5,
-                              left: 5,
-                              bottom: 15
+                              top: 10,
+                              right: 10,
+                              left: 0,
+                              bottom: 20
                             }}
                           >
                             <CartesianGrid
@@ -380,8 +376,8 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                               dataKey='fecha_inicio'
                               tickLine={false}
                               axisLine={false}
-                              tickMargin={4}
-                              tick={{ fontSize: 10 }}
+                              tickMargin={8}
+                              tick={{ fontSize: 11 }}
                               tickFormatter={value => {
                                 // Simplificar la fecha para el eje X (solo mostrar mes-año)
                                 const partes = value.split('-');
@@ -396,8 +392,8 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                             <YAxis
                               tickLine={false}
                               axisLine={false}
-                              tickMargin={4}
-                              tick={{ fontSize: 10 }}
+                              tickMargin={8}
+                              tick={{ fontSize: 11 }}
                               tickFormatter={value =>
                                 value.toLocaleString('es-CL')
                               }
@@ -418,25 +414,25 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                             />
                             <Line
                               dataKey='valor'
-                              type='monotone' // Cambiado a monotone para una curva más suave
-                              stroke='var(--color-desktop)' // Usa el color de la configuración
-                              strokeWidth={2.5}
+                              type='monotone'
+                              stroke='var(--color-desktop)'
+                              strokeWidth={3}
                               dot={{
                                 fill: 'var(--color-desktop)',
-                                r: 4,
+                                r: 5,
                                 strokeWidth: 0
                               }}
                               activeDot={{
-                                r: 6,
+                                r: 7,
                                 fill: 'var(--color-desktop)',
                                 stroke: 'var(--background)',
-                                strokeWidth: 2
+                                strokeWidth: 3
                               }}
                             />
                           </LineChart>
                         </ChartContainer>
                       ) : (
-                        <div className='flex items-center justify-center h-full text-muted-foreground text-xs sm:text-sm text-center px-2'>
+                        <div className='flex items-center justify-center h-full text-muted-foreground text-sm text-center px-4'>
                           No hay datos disponibles para el período seleccionado
                         </div>
                       )}
@@ -445,39 +441,40 @@ export default function DetallePreciosEnerlova({ codigo }: { codigo: number }) {
                 </Card>
               </div>
             ) : (
-              <div className='text-center py-8 sm:py-12 text-muted-foreground text-xs sm:text-sm'>
+              <div className='text-center py-16 text-muted-foreground'>
                 No hay datos disponibles para este cargo
               </div>
             )}
-          </ScrollArea>
-        </div>
-
-        <div className='flex flex-col sm:flex-row gap-2 justify-end px-3 sm:px-6 py-3 sm:py-4 border-t border-border/60 bg-muted/20'>
-          <div className='order-2 sm:order-1'>
-            {nuevaFechaInicio && ultimoValor && (
-              <DialogNuevoValorEnerlova
-                codigo={codigo.toString()}
-                descripcion={data[0]?.descripcion || ''}
-                fecha_inicio={nuevaFechaInicio}
-                fecha_fin={''}
-                valor={normalizarValor(ultimoValor.valor)}
-                onSuccess={() => {
-                  fetchData();
-                }}
-                id={ultimoValor.id.toString() || ''}
-              />
-            )}
           </div>
+        </ScrollArea>
+
+        <div className='flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 justify-between px-4 sm:px-6 py-4 border-t border-border/60 bg-muted/20'>
           <Button
-            variant='ghost'
+            variant='outline'
             onClick={() => setIsOpen(false)}
-            size='sm'
-            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted order-1 sm:order-2 w-full sm:w-auto text-xs sm:text-sm'
+            size='default'
+            className='w-full sm:w-auto'
           >
             Cerrar
           </Button>
+          {nuevaFechaInicio && ultimoValor && (
+            <DialogNuevoValorEnerlova
+              codigo={codigo.toString()}
+              descripcion={data[0]?.descripcion || ''}
+              fecha_inicio={nuevaFechaInicio}
+              fecha_fin={''}
+              valor={normalizarValor(ultimoValor.valor)}
+              onSuccess={() => {
+                fetchData();
+                if (onDataUpdate) {
+                  onDataUpdate();
+                }
+              }}
+              id={ultimoValor.id.toString() || ''}
+            />
+          )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
