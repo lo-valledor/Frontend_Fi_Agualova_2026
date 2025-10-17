@@ -12,7 +12,9 @@ import {
   useNavigation
 } from 'react-router';
 
+// Import CSS based on environment
 import './app.css';
+import { EnvironmentBadge } from './components/ui/environment-badge';
 import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './context/AuthContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
@@ -71,6 +73,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
           <AuthProvider>{children}</AuthProvider>
         </BreadcrumbProvider>
       </ThemeProvider>
+      <EnvironmentBadge />
       <Toaster richColors position='top-right' closeButton />
       <ScrollRestoration />
       <Scripts />

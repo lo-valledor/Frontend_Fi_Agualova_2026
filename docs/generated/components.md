@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-17 10:34:22*
+*Generado automáticamente el 2025-10-17 15:16:30*
 
 ## Índice de Componentes
 
@@ -2178,6 +2178,18 @@
 **Archivo**: `app/components/ui/empty.tsx`
 ⚠️ *Sin documentación JSDoc*
 
+
+### environment-badge
+**Archivo**: `app/components/ui/environment-badge.tsx`
+**Documentación**:
+```typescript
+/**
+ * EnvironmentBadge Component
+ *
+ * Displays a fixed badge indicating the current environment (DEV/PROD)
+ * Only visible in development environment
+ */
+```
 
 ### field
 **Archivo**: `app/components/ui/field.tsx`
