@@ -62,11 +62,7 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
           description='Gestiona las zonas del sistema'
           actions={
             <div className='flex gap-2'>
-              <Button
-                onClick={handleAddZona}
-                className='bg-sky-600 hover:bg-sky-700'
-                size='sm'
-              >
+              <Button onClick={handleAddZona} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Zona
               </Button>

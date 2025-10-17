@@ -183,7 +183,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
             </CardTitle>
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
-                <Button className='w-full sm:w-auto bg-sky-600 hover:bg-sky-700'>
+                <Button className='w-full sm:w-auto' variant='default'>
                   <Plus className='h-4 w-4 mr-2' />
                   Crear Nuevo Menú
                 </Button>

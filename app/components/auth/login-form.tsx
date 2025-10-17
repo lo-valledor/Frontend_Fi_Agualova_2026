@@ -157,7 +157,7 @@ export function LoginForm({
                 </Label>
                 <Link
                   to='/auth/forgot-password'
-                  className='text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors'
+                  className='text-xs text-primary font-medium transition-colors'
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
@@ -193,8 +193,9 @@ export function LoginForm({
 
           <Button
             type='submit'
+            variant='default'
             disabled={loading}
-            className='w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
+            className='w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
           >
             {loading ? (
               <div className='flex items-center justify-center gap-2'>

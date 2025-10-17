@@ -267,7 +267,7 @@ export default function EditarContratanteComponent() {
                 </Button>
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
-                  className='gap-2 bg-orange-600 hover:bg-orange-700'
+                  className='gap-2'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />

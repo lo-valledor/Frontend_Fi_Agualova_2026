@@ -240,13 +240,12 @@ export default function ContratantesComponent({
                 data={filteredContratantes}
                 columns={contratanteColumns}
                 filename='contratantes'
-                variant='outline'
                 size='sm'
                 className=''
               />
               <Button
                 onClick={handleAddContratante}
-                className='bg-orange-600 hover:bg-orange-700'
+                variant='default'
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />

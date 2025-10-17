@@ -159,11 +159,7 @@ export default function UsuariosComponent({
           description='Gestiona los usuarios del sistema'
           actions={
             <div>
-              <Button
-                onClick={handleAddUser}
-                className='bg-sky-600 hover:bg-sky-700'
-                size='sm'
-              >
+              <Button onClick={handleAddUser} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Usuario
               </Button>

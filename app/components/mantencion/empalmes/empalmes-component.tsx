@@ -64,11 +64,7 @@ export default function EmpalmesComponent({
           description='Gestiona los empalmes del sistema'
           actions={
             <div className='flex gap-2'>
-              <Button
-                onClick={handleAddEmpalme}
-                className='bg-sky-600 hover:bg-sky-700'
-                size='sm'
-              >
+              <Button onClick={handleAddEmpalme} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Empalme
               </Button>

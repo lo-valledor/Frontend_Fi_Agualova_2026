@@ -282,11 +282,7 @@ export default function ConceptoFormModal({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
-              >
+              <Button type='submit' disabled={isLoading} variant='default'>
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear Concepto' : 'Actualizar Concepto'}
               </Button>

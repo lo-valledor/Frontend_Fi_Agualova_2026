@@ -528,11 +528,7 @@ export function UserFormModal({
             >
               Cancelar
             </Button>
-            <Button
-              type='submit'
-              className='bg-sky-600 hover:bg-sky-700'
-              disabled={isLoading}
-            >
+            <Button type='submit' variant='default' disabled={isLoading}>
               {isLoading
                 ? mode === 'add'
                   ? 'Creando...'

@@ -243,7 +243,6 @@ export default function PropietariosComponent({
                 data={filteredPropietarios}
                 columns={propietarioColumns}
                 filename='propietarios'
-                variant='outline'
                 size='sm'
                 className=''
               />

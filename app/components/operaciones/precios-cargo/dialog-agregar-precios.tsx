@@ -136,7 +136,8 @@ export default function DialogAgregarPrecios({
             onClick={handleSubmit}
             disabled={isLoading}
             size='sm'
-            className='gap-1 sm:gap-2 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 w-full sm:w-auto text-xs sm:text-sm order-1 sm:order-2'
+            variant='default'
+            className='gap-1 sm:gap-2 w-full sm:w-auto text-xs sm:text-sm order-1 sm:order-2'
           >
             {isLoading ? (
               <>
