@@ -51,6 +51,10 @@
 
   --radius: 0.5rem;
 
+  /* Variables para el indicador de entorno */
+  --env-indicator-bg: oklch(0.62 0.14 39.15); /* Naranja */
+  --env-indicator-text: oklch(1 0 0); /* Blanco */
+
   --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-sm:
@@ -97,6 +101,10 @@
   --sidebar-accent-foreground: oklch(0.81 0.01 93.53);
   --sidebar-border: oklch(0.94 0 0);
   --sidebar-ring: oklch(0.77 0 0);
+
+  /* Variables para el indicador de entorno en modo oscuro */
+  --env-indicator-bg: oklch(0.67 0.13 38.92); /* Naranja oscuro */
+  --env-indicator-text: oklch(1 0 0); /* Blanco */
 
   --shadow-2xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);
   --shadow-xs: 0 1px 3px 0px oklch(0 0 0 / 0.05);

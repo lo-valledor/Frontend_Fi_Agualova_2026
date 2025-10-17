@@ -1,49 +1,70 @@
-# docker-compose.dev.yml - Entorno de Desarrollo
+# ============================================
+# Docker Compose - Entorno UAT/Desarrollo
+# ============================================
+#
+# Este entorno es para UAT (User Acceptance Testing)
+# NO es para desarrollo activo con hot reload
+#
+# Uso:
+#   docker-compose -f docker-compose.dev.yml up -d --build
+#
+# Variables de entorno opcionales (archivo .env):
+#   VITE_API_URL - URL del backend UAT (default: http://192.168.1.139:8082/Enerlova)
+#   DEV_PORT - Puerto para UAT (default: 3000)
+#
 version: "3.8"
 
 services:
+  # Frontend UAT/Development (con nginx, como producción)
   frontend-dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
-      target: development-server # Usar el target de servidor de desarrollo
+      target: development-nginx
       args:
-        VITE_API_URL: http://192.168.1.139:8081/Enerlova
+        VITE_API_URL: ${VITE_API_URL:-http://192.168.1.139:8082/Enerlova}
         NODE_ENV: development
         VITE_APP_ENV: development
+
+    image: enerlova-frontend:dev-uat
+
+    container_name: enerlova-frontend-dev
+
     ports:
-      - "3000:5173" # Puerto de desarrollo
-    volumes:
-      - .:/app
-      - /app/node_modules # Preservar node_modules del contenedor
+      - "${DEV_PORT:-3000}:80"
+
     environment:
       - NODE_ENV=development
-      - VITE_API_URL=http://192.168.1.139:8081/Enerlova
       - VITE_APP_ENV=development
+
     networks:
       - enerlova-dev-network
+
     restart: unless-stopped
 
-  # Alternativa: Frontend con nginx para desarrollo (sin hot reload)
-  frontend-dev-nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-      target: development-nginx # Usar el target de nginx para desarrollo
-      args:
-        VITE_API_URL: http://192.168.1.139:8081/Enerlova
-        NODE_ENV: development
-        VITE_APP_ENV: development
-    ports:
-      - "3001:3000" # Puerto alternativo para nginx de desarrollo
-    environment:
-      - NODE_ENV=development
-      - VITE_APP_ENV=development
-    networks:
-      - enerlova-dev-network
-    restart: unless-stopped
-    profiles:
-      - nginx-dev # Perfil opcional para usar nginx en desarrollo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+    # Limitar recursos (similar a producción pero más permisivo)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+    # Logging para UAT
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   enerlova-dev-network:
