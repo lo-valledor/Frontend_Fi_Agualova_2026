@@ -1,6 +1,6 @@
 /**
  * Componente principal para Cierre de Lecturas
- * 
+ *
  * Funcionalidades principales:
  * - Consulta de estado de cierre de lecturas por ciclo de facturación
  * - Visualización de lecturas OK, con claves (rojas/naranjas) y corregidas
@@ -8,7 +8,7 @@
  * - Validación de claves críticas que bloquean el cierre
  * - Advertencias de claves de alerta antes de proceder
  * - Cierre masivo de lecturas seleccionadas
- * 
+ *
  * Flujo de trabajo:
  * 1. Usuario selecciona ciclo de facturación (15 o 30)
  * 2. Sistema carga lecturas pendientes de cierre para ese ciclo
@@ -21,24 +21,24 @@
  * 5. Sistema valida que no haya claves críticas
  * 6. Usuario confirma cierre en diálogo
  * 7. Sistema procesa cierre y actualiza estado
- * 
+ *
  * Validaciones de seguridad:
  * - **Claves Rojas (Críticas)**: Bloquean completamente el cierre
  * - **Claves Naranjas (Alertas)**: Permiten cierre pero muestran advertencia
  * - Sistema muestra contador de lecturas críticas y de alerta
  * - Botón de cierre se deshabilita si hay claves críticas
- * 
+ *
  * Arquitectura:
  * - Usa DataTable con selección múltiple (checkboxes)
  * - Componente AlertCerrarLecturas para confirmación
  * - Validación checkCriticalBlockers antes de permitir cierre
  * - Estados para periodo, ciclo, lecturas y selección
  * - API endpoints: /estado-cierre-lecturas
- * 
+ *
  * @param {Object} props - Props del componente
  * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo de facturación
  * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles (15/30)
- * 
+ *
  * @example
  * ```tsx
  * // Usado en app/routes/operaciones/cerrar-lecturas.tsx
@@ -305,7 +305,7 @@ export default function CerrarLecturasComponent({
                   <div className='space-y-2'>
                     <Label className='text-sm font-medium flex items-center gap-2'>
                       <CalendarIcon className='w-4 h-4 text-primary' />
-                      Periodo actual
+                      Periodo
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
                       <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
@@ -317,9 +317,6 @@ export default function CerrarLecturasComponent({
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className='text-xs mt-0.5'>
-                            Periodo activo para facturación
-                          </p>
                         </div>
                       </div>
                     ) : (

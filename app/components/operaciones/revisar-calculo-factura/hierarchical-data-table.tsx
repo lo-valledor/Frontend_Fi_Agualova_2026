@@ -86,19 +86,19 @@ export function HierarchicalDataTable({
       </TableCell>
 
       {/* Cantidad - alineada con consumo */}
-      <TableCell className='text-[10px] text-right py-0 px-0.5'>
+      <TableCell className='text-[12px] text-right py-0 px-0.5'>
         <span className='text-slate-700 dark:text-slate-300'>
           {cargo.cantidad?.toLocaleString('es-CL')}
         </span>
       </TableCell>
 
       {/* Precio Unitario - alineada con Total Facturado */}
-      <TableCell className='text-[10px] text-right font-medium text-emerald-700 dark:text-emerald-300 py-0 px-0.5'>
+      <TableCell className='text-[12px] text-right font-medium text-emerald-700 dark:text-emerald-300 py-0 px-0.5'>
         ${(cargo.precioUnitario || 0).toLocaleString('es-CL')}
       </TableCell>
 
       {/* Subtotal - alineada con Total a Pagar */}
-      <TableCell className='text-[10px] text-right font-semibold text-sky-700 dark:text-sky-300 py-0 px-0.5'>
+      <TableCell className='text-[12px] text-right font-semibold text-sky-700 dark:text-sky-300 py-0 px-0.5'>
         ${(cargo.subtotal || 0).toLocaleString('es-CL')}
       </TableCell>
 
@@ -109,8 +109,8 @@ export function HierarchicalDataTable({
 
   return (
     <div className='w-full overflow-x-auto'>
-      <div className='rounded-xl border border-border/60 shadow-sm'>
-        <Table className='w-full table-fixed text-[10px]'>
+      <div className='rounded-xl border border-border/60 shadow-sm min-w-[1600px]'>
+        <Table className='w-full text-[12px]'>
           <TableHeader className='bg-background/50 sticky top-0 z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
@@ -121,7 +121,7 @@ export function HierarchicalDataTable({
                   return (
                     <TableHead
                       key={header.id}
-                      className='font-semibold py-0.5 px-1 whitespace-nowrap text-[10px] h-6 overflow-hidden'
+                      className='font-semibold py-0.5 px-1 whitespace-nowrap text-[12px] h-6 overflow-hidden'
                       style={{
                         width: header.getSize(),
                         minWidth:
@@ -153,7 +153,7 @@ export function HierarchicalDataTable({
                     {row.getVisibleCells().map(cell => (
                       <TableCell
                         key={cell.id}
-                        className='py-0 px-1 text-[10px] h-6 overflow-hidden'
+                        className='py-0 px-1 text-[12px] h-6 overflow-hidden'
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -171,28 +171,28 @@ export function HierarchicalDataTable({
                           colSpan={9}
                           className='py-0 px-0.5'
                         ></TableCell>
-                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'>
+                        <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'>
                           Código
                         </TableCell>
 
                         {/* Descripción Cargo */}
                         <TableCell
                           colSpan={2}
-                          className='text-center font-semibold text-[10px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'
+                          className='text-center font-semibold text-[12px] text-sky-700 dark:text-sky-300 uppercase tracking-wide py-0 px-0.5'
                         >
                           Descripción Cargo
                         </TableCell>
 
                         {/* Cantidad */}
-                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
+                        <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
                           Cantidad
                         </TableCell>
                         {/* Precio Unit. */}
-                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
+                        <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
                           Precio Unit.
                         </TableCell>
                         {/* Subtotal */}
-                        <TableCell className='font-semibold text-[10px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
+                        <TableCell className='font-semibold text-[12px] text-sky-700 dark:text-sky-300 text-right uppercase tracking-wide py-0 px-0.5'>
                           Subtotal
                         </TableCell>
                         {/* Facturar - vacío */}

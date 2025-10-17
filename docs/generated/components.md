@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-17 09:04:35*
+*Generado automáticamente el 2025-10-17 10:34:22*
 
 ## Índice de Componentes
 
@@ -1483,7 +1483,7 @@
 ```typescript
 /**
  * Componente principal para Cierre de Lecturas
- * 
+ *
  * Funcionalidades principales:
  * - Consulta de estado de cierre de lecturas por ciclo de facturación
  * - Visualización de lecturas OK, con claves (rojas/naranjas) y corregidas
@@ -1491,7 +1491,7 @@
  * - Validación de claves críticas que bloquean el cierre
  * - Advertencias de claves de alerta antes de proceder
  * - Cierre masivo de lecturas seleccionadas
- * 
+ *
  * Flujo de trabajo:
  * 1. Usuario selecciona ciclo de facturación (15 o 30)
  * 2. Sistema carga lecturas pendientes de cierre para ese ciclo
@@ -1504,24 +1504,24 @@
  * 5. Sistema valida que no haya claves críticas
  * 6. Usuario confirma cierre en diálogo
  * 7. Sistema procesa cierre y actualiza estado
- * 
+ *
  * Validaciones de seguridad:
  * - **Claves Rojas (Críticas)**: Bloquean completamente el cierre
  * - **Claves Naranjas (Alertas)**: Permiten cierre pero muestran advertencia
  * - Sistema muestra contador de lecturas críticas y de alerta
  * - Botón de cierre se deshabilita si hay claves críticas
- * 
+ *
  * Arquitectura:
  * - Usa DataTable con selección múltiple (checkboxes)
  * - Componente AlertCerrarLecturas para confirmación
  * - Validación checkCriticalBlockers antes de permitir cierre
  * - Estados para periodo, ciclo, lecturas y selección
  * - API endpoints: /estado-cierre-lecturas
- * 
+ *
  * @param {Object} props - Props del componente
  * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo de facturación
  * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles (15/30)
- * 
+ *
  * @example
  * ```tsx
  * // Usado en app/routes/operaciones/cerrar-lecturas.tsx
@@ -1819,11 +1819,6 @@
 ⚠️ *Sin documentación JSDoc*
 
 
-### columnsPrecalculo-optimized
-**Archivo**: `app/components/operaciones/revisar-calculo-factura/columnsPrecalculo-optimized.tsx`
-⚠️ *Sin documentación JSDoc*
-
-
 ### columnsPrecalculo
 **Archivo**: `app/components/operaciones/revisar-calculo-factura/columnsPrecalculo.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1839,11 +1834,6 @@
 ⚠️ *Sin documentación JSDoc*
 
 
-### hierarchical-data-table-fixed
-**Archivo**: `app/components/operaciones/revisar-calculo-factura/hierarchical-data-table-fixed.tsx`
-⚠️ *Sin documentación JSDoc*
-
-
 ### hierarchical-data-table
 **Archivo**: `app/components/operaciones/revisar-calculo-factura/hierarchical-data-table.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1854,67 +1844,14 @@
 **Documentación**:
 ```typescript
 /**
- * Componente principal para Revisión de Cálculo de Facturas
+ * Componente principal para Revisión de Cálculo de Facturas (OPTIMIZADO)
  *
- * Funcionalidades principales:
- * - Consulta de pré-cálculo de facturas por nicho y ciclo
- * - Visualización jerárquica de datos (nicho > contratos > detalles)
- * - Ejecución de cálculo de facturación masivo
- * - Monitoreo de estado del proceso de cálculo
- * - Exportación de resultados a Excel
- * - Tour interactivo para nuevos usuarios
- *
- * Flujo de trabajo:
- * 1. Usuario selecciona ciclo de facturación y opcionalmente nicho
- * 2. Sistema carga pré-cálculo de facturas
- * 3. Usuario revisa datos jerárquicos con detalles expandibles
- * 4. Usuario ejecuta cálculo de facturas (botón "Calcular Facturas")
- * 5. Sistema procesa cálculo en background
- * 6. Usuario monitorea estado del proceso
- * 7. Sistema muestra resultado final (facturas generadas/error)
- *
- * Componentes y hooks especializados:
- * - **useCalculoFactura**: Hook para manejo de pré-cálculo
- * - **useCalculoProceso**: Hook para monitoreo de proceso de cálculo
- * - **HierarchicalDataTable**: Tabla con expansión jerárquica
- * - **ExportButton**: Botón de exportación con opciones
- *
- * Estados del proceso:
- * - **Idle**: Sin proceso en ejecución
- * - **Processing**: Cálculo en progreso
- * - **Completed**: Cálculo completado exitosamente
- * - **Error**: Error en el proceso
- *
- * Arquitectura:
- * - Tabla jerárquica con 3 niveles:
- *   1. Nicho (nivel superior)
- *   2. Contratos (nivel medio)
- *   3. Detalles de facturación (nivel inferior)
- * - Filtros: Ciclo, Nicho (opcional)
- * - Validaciones de periodo abierto
- * - API endpoints:
- *   * POST /consulta-precalculo-factura
- *   * POST /ejecutar-calculo-factura
- *   * GET /estado-proceso-calculo
- *
- * @param {Object} props - Props del componente
- * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo de facturación
- * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles
- * @param {EstadoCierreLecturas[]} props.nichos - Nichos disponibles para filtro
- *
- * @example
- * ```tsx
- * // Usado en app/routes/operaciones/revisar-calculo-factura.tsx
- * export default function RevisarCalculoFacturaRoute({ loaderData }) {
- *   return (
- *     <RevisarCalculoFacturaComponent
- *       periodoAbierto={loaderData.periodoAbierto}
- *       ciclosFacturacion={loaderData.ciclos}
- *       nichos={loaderData.nichos}
- *     />
- *   );
- * }
- * ```
+ * Optimizaciones implementadas:
+ * - useCallback para funciones que se pasan como props
+ * - useMemo para cálculos pesados
+ * - Lazy loading de componentes pesados
+ * - Virtualización de lista (preparado para React Window)
+ * - Reducción de re-renders innecesarios
  */
 ```
 

@@ -480,7 +480,6 @@ export default function ResultadosBusqueda({
   );
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
   const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
-  const [isStatsOpen, setIsStatsOpen] = useState(false);
   const api = useApiWithLoadingBar();
 
   // Search function (same as before)
@@ -648,54 +647,6 @@ export default function ResultadosBusqueda({
         </div>
 
         <div className='flex items-center gap-2'>
-          {/* View Mode Selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='outline' size='sm' className='gap-1'>
-                {viewMode === 'detailed' ? (
-                  <BarChart3 className='h-4 w-4' />
-                ) : viewMode === 'compact' ? (
-                  <AlertCircle className='h-4 w-4' />
-                ) : (
-                  <Grid3X3 className='h-4 w-4' />
-                )}
-                <span className='hidden sm:inline'>
-                  {(() => {
-                    if (viewMode === 'detailed') return 'Lista';
-                    if (viewMode === 'compact') return 'Problemas';
-                    return 'Tarjetas';
-                  })()}
-                </span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuItem
-                className={cn(viewMode === 'default' && 'bg-accent')}
-                onClick={() => {
-                  setViewMode('default');
-                }}
-              >
-                <Grid3X3 className='mr-2 h-4 w-4' /> Tarjetas
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(viewMode === 'detailed' && 'bg-accent')}
-                onClick={() => {
-                  setViewMode('detailed');
-                }}
-              >
-                <BarChart3 className='mr-2 h-4 w-4' /> Lista Compacta
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(viewMode === 'compact' && 'bg-accent')}
-                onClick={() => {
-                  setViewMode('compact');
-                }}
-              >
-                <AlertCircle className='mr-2 h-4 w-4' /> Solo Problemas
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           {/* Refresh Button */}
           <Button
             variant='outline'
@@ -723,14 +674,26 @@ export default function ResultadosBusqueda({
             {[...Array(6)].map((_, i) => (
               <Card key={i}>
                 <CardContent className='p-3'>
-                  <Skeleton height={60} />
+                  <Skeleton
+                    height={60}
+                    baseColor='var(--skeleton-base)'
+                    highlightColor='var(--skeleton-highlight)'
+                  />
                 </CardContent>
               </Card>
             ))}
           </div>
           <div className='space-y-2'>
-            <Skeleton height={40} />
-            <Skeleton height={200} />
+            <Skeleton
+              height={40}
+              baseColor='var(--skeleton-base)'
+              highlightColor='var(--skeleton-highlight)'
+            />
+            <Skeleton
+              height={200}
+              baseColor='var(--skeleton-base)'
+              highlightColor='var(--skeleton-highlight)'
+            />
           </div>
         </motion.div>
       )}
@@ -745,205 +708,9 @@ export default function ResultadosBusqueda({
       {/* Results Display - Command Center Design */}
       {results.nichos.length > 0 && !isSearching && !searchError && (
         <div className='space-y-6'>
-          {/* Quick Stats Summary (if we have data) - Collapsible */}
-          {results.nichos.length > 0 && (
-            <Collapsible open={isStatsOpen} onOpenChange={setIsStatsOpen}>
-              <Card className='border-border'>
-                <CollapsibleTrigger asChild>
-                  <Button
-                    variant='ghost'
-                    className='w-full flex items-center justify-between p-4 hover:bg-accent'
-                  >
-                    <div className='flex items-center gap-2'>
-                      <BarChart3 className='h-4 w-4 text-primary' />
-                      <span className='text-sm font-medium'>
-                        Estadísticas por Estado
-                      </span>
-                      <Badge variant='secondary' className='ml-2'>
-                        {calculateTotalStats(results.nichos).total} medidores
-                      </Badge>
-                    </div>
-                    <ChevronDown
-                      className={cn(
-                        'h-4 w-4 text-muted-foreground transition-transform duration-200',
-                        isStatsOpen && 'rotate-180'
-                      )}
-                    />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className='p-4 pt-0'>
-                    <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
-                      {(() => {
-                        const stats = calculateTotalStats(results.nichos);
-                        return (
-                          <>
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.2, delay: 0 }}
-                                  >
-                                    <Card className='cursor-help hover:shadow-md transition-shadow'>
-                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                        <Grid3X3 className='h-5 w-5 text-muted-foreground mb-1' />
-                                        <h3 className='text-xl font-bold'>
-                                          <NumberFlow value={stats.total} />
-                                        </h3>
-                                      </CardContent>
-                                    </Card>
-                                  </motion.div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Total Medidores</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.2, delay: 0.05 }}
-                                  >
-                                    <Card className='border-red-200 dark:border-red-900 cursor-help hover:shadow-md transition-shadow'>
-                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                        <div className='h-5 w-5 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-1'>
-                                          <AlertCircle className='h-3 w-3 text-red-500' />
-                                        </div>
-                                        <h3 className='text-xl font-bold text-red-600 dark:text-red-400'>
-                                          <NumberFlow value={stats.critical} />
-                                        </h3>
-                                      </CardContent>
-                                    </Card>
-                                  </motion.div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Críticos</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.2, delay: 0.1 }}
-                                  >
-                                    <Card className='border-orange-200 dark:border-orange-900 cursor-help hover:shadow-md transition-shadow'>
-                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                        <div className='h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-1'>
-                                          <AlertTriangle className='h-3 w-3 text-orange-500' />
-                                        </div>
-                                        <h3 className='text-xl font-bold text-orange-500'>
-                                          <NumberFlow value={stats.warning} />
-                                        </h3>
-                                      </CardContent>
-                                    </Card>
-                                  </motion.div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Relevantes</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.2, delay: 0.15 }}
-                                  >
-                                    <Card className='border-yellow-200 dark:border-yellow-900 cursor-help hover:shadow-md transition-shadow'>
-                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                        <div className='h-5 w-5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-1'>
-                                          <Info className='h-3 w-3 text-yellow-500' />
-                                        </div>
-                                        <h3 className='text-xl font-bold text-yellow-600 dark:text-yellow-400'>
-                                          <NumberFlow value={stats.info} />
-                                        </h3>
-                                      </CardContent>
-                                    </Card>
-                                  </motion.div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Informativos</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.2, delay: 0.2 }}
-                                  >
-                                    <Card className='border-gray-200 dark:border-gray-900 cursor-help hover:shadow-md transition-shadow'>
-                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                        <div className='h-5 w-5 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center mb-1'>
-                                          <Info className='h-3 w-3 text-gray-500' />
-                                        </div>
-                                        <h3 className='text-xl font-bold text-gray-600 dark:text-gray-400'>
-                                          <NumberFlow value={stats.sinlec} />
-                                        </h3>
-                                      </CardContent>
-                                    </Card>
-                                  </motion.div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Sin Lectura</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-
-                            <TooltipProvider>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <motion.div
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.2, delay: 0.25 }}
-                                  >
-                                    <Card className='border-green-200 dark:border-green-900 cursor-help hover:shadow-md transition-shadow'>
-                                      <CardContent className='flex flex-col items-center justify-center p-2 text-center'>
-                                        <div className='h-5 w-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-1'>
-                                          <RefreshCw className='h-3 w-3 text-emerald-500' />
-                                        </div>
-                                        <h3 className='text-xl font-bold text-emerald-500'>
-                                          <NumberFlow value={stats.normal} />
-                                        </h3>
-                                      </CardContent>
-                                    </Card>
-                                  </motion.div>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>Correctas</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                </CollapsibleContent>
-              </Card>
-            </Collapsible>
-          )}
-
           {/* Nicho Tabs Navigation - Modernized Design */}
           <div className='w-full space-y-6'>
-            {/* Modern Tab Header */}
+            {/* Modern Tab Header with Stats Dialog */}
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
                 <h3 className='text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2'>
@@ -953,6 +720,294 @@ export default function ResultadosBusqueda({
                 <span className='text-sm text-muted-foreground bg-muted px-2 py-1 rounded-full'>
                   {results.nichos.length} encontrados
                 </span>
+
+                {/* Statistics Dialog */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant='outline' size='sm' className='gap-2'>
+                      <BarChart3 className='h-4 w-4' />
+                      <span className='hidden sm:inline'>Estadísticas</span>
+                      <Badge
+                        variant='secondary'
+                        className='hidden md:inline-flex'
+                      >
+                        {calculateTotalStats(results.nichos).total}
+                      </Badge>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className='max-w-[95vw] sm:max-w-[90vw] md:max-w-3xl lg:max-w-4xl xl:max-w-5xl max-h-[90vh] overflow-y-auto'>
+                    <DialogTitle className='flex items-center gap-2 text-lg sm:text-xl md:text-2xl'>
+                      <BarChart3 className='h-5 w-5 sm:h-6 sm:w-6 text-primary' />
+                      Estadísticas del Sector
+                    </DialogTitle>
+
+                    {(() => {
+                      const stats = calculateTotalStats(results.nichos);
+                      const percentage = (value: number) =>
+                        stats.total > 0
+                          ? ((value / stats.total) * 100).toFixed(1)
+                          : '0.0';
+
+                      return (
+                        <div className='space-y-4 sm:space-y-6 py-2 sm:py-4'>
+                          {/* Total General - Destacado */}
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className='bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border-2 border-primary/20'
+                          >
+                            <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4'>
+                              <div className='flex items-center gap-2 sm:gap-3 md:gap-4'>
+                                <div className='p-2 sm:p-2.5 md:p-3 bg-primary/10 rounded-lg sm:rounded-xl'>
+                                  <Grid3X3 className='h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-primary' />
+                                </div>
+                                <div>
+                                  <p className='text-xs sm:text-sm text-muted-foreground font-medium'>
+                                    Total de Medidores
+                                  </p>
+                                  <h2 className='text-2xl sm:text-3xl md:text-4xl font-bold text-primary mt-0.5 sm:mt-1'>
+                                    <NumberFlow value={stats.total} />
+                                  </h2>
+                                </div>
+                              </div>
+                              <div className='text-left sm:text-right w-full sm:w-auto'>
+                                <p className='text-xs sm:text-sm text-muted-foreground'>
+                                  Distribuidos en
+                                </p>
+                                <p className='text-xl sm:text-2xl font-semibold'>
+                                  {results.nichos.length} nicho
+                                  {results.nichos.length !== 1 ? 's' : ''}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+
+                          {/* Estados - Grid Mejorado */}
+                          <div className='space-y-2 sm:space-y-3'>
+                            <h3 className='text-base sm:text-lg font-semibold text-foreground flex items-center gap-2'>
+                              <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground' />
+                              Desglose por Estado
+                            </h3>
+
+                            <div className='grid gap-2 sm:gap-3'>
+                              {/* Críticos */}
+                              <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3, delay: 0.1 }}
+                                className='group bg-gradient-to-r from-red-50 to-transparent dark:from-red-950/20 dark:to-transparent border-l-4 border-red-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                              >
+                                <div className='flex items-center justify-between gap-2'>
+                                  <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
+                                    <div className='p-1.5 sm:p-2 bg-red-100 dark:bg-red-900/30 rounded-lg flex-shrink-0'>
+                                      <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-red-500' />
+                                    </div>
+                                    <div className='min-w-0'>
+                                      <p className='font-semibold text-sm sm:text-base text-red-700 dark:text-red-400 truncate'>
+                                        Claves Críticas
+                                      </p>
+                                      <p className='text-[10px] sm:text-xs text-red-600/70 dark:text-red-400/70 line-clamp-1'>
+                                        Requieren atención inmediata
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className='text-right flex-shrink-0'>
+                                    <p className='text-xl sm:text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400'>
+                                      <NumberFlow value={stats.critical} />
+                                    </p>
+                                    <p className='text-xs sm:text-sm text-red-600/70 dark:text-red-400/70'>
+                                      {percentage(stats.critical)}%
+                                    </p>
+                                  </div>
+                                </div>
+                                {/* Barra de progreso */}
+                                <div className='mt-2 sm:mt-3 h-1.5 sm:h-2 bg-red-100 dark:bg-red-900/20 rounded-full overflow-hidden'>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{
+                                      width: `${percentage(stats.critical)}%`
+                                    }}
+                                    transition={{ duration: 0.5, delay: 0.2 }}
+                                    className='h-full bg-red-500 rounded-full'
+                                  />
+                                </div>
+                              </motion.div>
+
+                              {/* Relevantes */}
+                              <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3, delay: 0.15 }}
+                                className='group bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20 dark:to-transparent border-l-4 border-orange-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                              >
+                                <div className='flex items-center justify-between gap-2'>
+                                  <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
+                                    <div className='p-1.5 sm:p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex-shrink-0'>
+                                      <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
+                                    </div>
+                                    <div className='min-w-0'>
+                                      <p className='font-semibold text-sm sm:text-base text-orange-700 dark:text-orange-400 truncate'>
+                                        Claves Relevantes
+                                      </p>
+                                      <p className='text-[10px] sm:text-xs text-orange-600/70 dark:text-orange-400/70 line-clamp-1'>
+                                        Para conocimiento y seguimiento
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className='text-right flex-shrink-0'>
+                                    <p className='text-xl sm:text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400'>
+                                      <NumberFlow value={stats.warning} />
+                                    </p>
+                                    <p className='text-xs sm:text-sm text-orange-600/70 dark:text-orange-400/70'>
+                                      {percentage(stats.warning)}%
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className='mt-2 sm:mt-3 h-1.5 sm:h-2 bg-orange-100 dark:bg-orange-900/20 rounded-full overflow-hidden'>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{
+                                      width: `${percentage(stats.warning)}%`
+                                    }}
+                                    transition={{ duration: 0.5, delay: 0.25 }}
+                                    className='h-full bg-orange-500 rounded-full'
+                                  />
+                                </div>
+                              </motion.div>
+
+                              {/* Informativos */}
+                              <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3, delay: 0.2 }}
+                                className='group bg-gradient-to-r from-yellow-50 to-transparent dark:from-yellow-950/20 dark:to-transparent border-l-4 border-yellow-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                              >
+                                <div className='flex items-center justify-between gap-2'>
+                                  <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
+                                    <div className='p-1.5 sm:p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex-shrink-0'>
+                                      <Info className='h-4 w-4 sm:h-5 sm:w-5 text-yellow-500' />
+                                    </div>
+                                    <div className='min-w-0'>
+                                      <p className='font-semibold text-sm sm:text-base text-yellow-700 dark:text-yellow-400 truncate'>
+                                        Claves Informativas
+                                      </p>
+                                      <p className='text-[10px] sm:text-xs text-yellow-600/70 dark:text-yellow-400/70 line-clamp-1'>
+                                        Para conocimiento general
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className='text-right flex-shrink-0'>
+                                    <p className='text-xl sm:text-2xl md:text-3xl font-bold text-yellow-600 dark:text-yellow-400'>
+                                      <NumberFlow value={stats.info} />
+                                    </p>
+                                    <p className='text-xs sm:text-sm text-yellow-600/70 dark:text-yellow-400/70'>
+                                      {percentage(stats.info)}%
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className='mt-2 sm:mt-3 h-1.5 sm:h-2 bg-yellow-100 dark:bg-yellow-900/20 rounded-full overflow-hidden'>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{
+                                      width: `${percentage(stats.info)}%`
+                                    }}
+                                    transition={{ duration: 0.5, delay: 0.3 }}
+                                    className='h-full bg-yellow-500 rounded-full'
+                                  />
+                                </div>
+                              </motion.div>
+
+                              {/* Sin Lectura */}
+                              <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3, delay: 0.25 }}
+                                className='group bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-950/20 dark:to-transparent border-l-4 border-gray-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                              >
+                                <div className='flex items-center justify-between gap-2'>
+                                  <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
+                                    <div className='p-1.5 sm:p-2 bg-gray-100 dark:bg-gray-900/30 rounded-lg flex-shrink-0'>
+                                      <History className='h-4 w-4 sm:h-5 sm:w-5 text-gray-500' />
+                                    </div>
+                                    <div className='min-w-0'>
+                                      <p className='font-semibold text-sm sm:text-base text-gray-700 dark:text-gray-400 truncate'>
+                                        Sin Lectura
+                                      </p>
+                                      <p className='text-[10px] sm:text-xs text-gray-600/70 dark:text-gray-400/70 line-clamp-1'>
+                                        Pendientes de lectura
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className='text-right flex-shrink-0'>
+                                    <p className='text-xl sm:text-2xl md:text-3xl font-bold text-gray-600 dark:text-gray-400'>
+                                      <NumberFlow value={stats.sinlec} />
+                                    </p>
+                                    <p className='text-xs sm:text-sm text-gray-600/70 dark:text-gray-400/70'>
+                                      {percentage(stats.sinlec)}%
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className='mt-2 sm:mt-3 h-1.5 sm:h-2 bg-gray-100 dark:bg-gray-900/20 rounded-full overflow-hidden'>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{
+                                      width: `${percentage(stats.sinlec)}%`
+                                    }}
+                                    transition={{ duration: 0.5, delay: 0.35 }}
+                                    className='h-full bg-gray-500 rounded-full'
+                                  />
+                                </div>
+                              </motion.div>
+
+                              {/* Correctas */}
+                              <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3, delay: 0.3 }}
+                                className='group bg-gradient-to-r from-emerald-50 to-transparent dark:from-emerald-950/20 dark:to-transparent border-l-4 border-emerald-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                              >
+                                <div className='flex items-center justify-between gap-2'>
+                                  <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
+                                    <div className='p-1.5 sm:p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex-shrink-0'>
+                                      <RefreshCw className='h-4 w-4 sm:h-5 sm:w-5 text-emerald-500' />
+                                    </div>
+                                    <div className='min-w-0'>
+                                      <p className='font-semibold text-sm sm:text-base text-emerald-700 dark:text-emerald-400 truncate'>
+                                        Lecturas Correctas
+                                      </p>
+                                      <p className='text-[10px] sm:text-xs text-emerald-600/70 dark:text-emerald-400/70 line-clamp-1'>
+                                        Sin problemas detectados
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className='text-right flex-shrink-0'>
+                                    <p className='text-xl sm:text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400'>
+                                      <NumberFlow value={stats.normal} />
+                                    </p>
+                                    <p className='text-xs sm:text-sm text-emerald-600/70 dark:text-emerald-400/70'>
+                                      {percentage(stats.normal)}%
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className='mt-2 sm:mt-3 h-1.5 sm:h-2 bg-emerald-100 dark:bg-emerald-900/20 rounded-full overflow-hidden'>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{
+                                      width: `${percentage(stats.normal)}%`
+                                    }}
+                                    transition={{ duration: 0.5, delay: 0.4 }}
+                                    className='h-full bg-emerald-500 rounded-full'
+                                  />
+                                </div>
+                              </motion.div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </DialogContent>
+                </Dialog>
               </div>
               <small className='text-xs text-muted-foreground'>
                 Seleccione un nicho para ver sus filas y medidores
@@ -1163,50 +1218,110 @@ export default function ResultadosBusqueda({
                       </Dialog>
                     </div>
 
-                    <Dialog
-                      open={isNichoModalOpen}
-                      onOpenChange={setIsNichoModalOpen}
-                    >
-                      <DialogTrigger asChild>
-                        <Button
-                          size='sm'
-                          className='bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-md transition-all'
-                          onClick={() => {
-                            setIsNichoModalOpen(true);
-                          }}
-                        >
-                          <Pencil className='h-4 w-4 mr-2' />
-                          Ingresar Lecturas
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className='max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto flex flex-col'>
-                        <DialogHeader className='shrink-0 pb-2 sm:pb-3 lg:pb-4 border-b border-border/40 px-3 sm:px-4 lg:px-6'>
-                          <DialogTitle>
-                            <div className='text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-primary'>
-                              <Gauge className='h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary' />
-                              <span className='truncate'>
-                                Monitor de Medidores
-                              </span>
-                              {/* Indicador de responsive */}
-                              <div className='hidden sm:flex items-center gap-1 ml-auto'>
-                                <div className='text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full'>
-                                  {results.nichos[selectedNichoIndex]?.nombre}
+                    <div className='flex flext-center gap-2'>
+                      {/* View Mode Selector */}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant='outline' size='sm' className='gap-1'>
+                            {viewMode === 'detailed' ? (
+                              <BarChart3 className='h-4 w-4' />
+                            ) : viewMode === 'compact' ? (
+                              <AlertCircle className='h-4 w-4' />
+                            ) : (
+                              <Grid3X3 className='h-4 w-4' />
+                            )}
+                            <span className='hidden sm:inline'>
+                              {(() => {
+                                if (viewMode === 'detailed') return 'Lista';
+                                if (viewMode === 'compact') return 'Problemas';
+                                return 'Tarjetas';
+                              })()}
+                            </span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align='end'>
+                          <DropdownMenuItem
+                            className={cn(
+                              viewMode === 'default' && 'bg-accent'
+                            )}
+                            onClick={() => {
+                              setViewMode('default');
+                            }}
+                          >
+                            <Grid3X3 className='mr-2 h-4 w-4' /> Tarjetas
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className={cn(
+                              viewMode === 'detailed' && 'bg-accent'
+                            )}
+                            onClick={() => {
+                              setViewMode('detailed');
+                            }}
+                          >
+                            <BarChart3 className='mr-2 h-4 w-4' /> Lista
+                            Compacta
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className={cn(
+                              viewMode === 'compact' && 'bg-accent'
+                            )}
+                            onClick={() => {
+                              setViewMode('compact');
+                            }}
+                          >
+                            <AlertCircle className='mr-2 h-4 w-4' /> Solo
+                            Problemas
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+
+                      <Dialog
+                        open={isNichoModalOpen}
+                        onOpenChange={setIsNichoModalOpen}
+                      >
+                        <DialogTrigger asChild>
+                          <Button
+                            size='sm'
+                            className='bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-md transition-all'
+                            onClick={() => {
+                              setIsNichoModalOpen(true);
+                            }}
+                          >
+                            <Pencil className='h-4 w-4 mr-2' />
+                            Ingresar Lecturas
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className='max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto flex flex-col'>
+                          <DialogHeader className='shrink-0 pb-2 sm:pb-3 lg:pb-4 border-b border-border/40 px-3 sm:px-4 lg:px-6'>
+                            <DialogTitle>
+                              <div className='text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-primary'>
+                                <Gauge className='h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary' />
+                                <span className='truncate'>
+                                  Monitor de Medidores
+                                </span>
+                                {/* Indicador de responsive */}
+                                <div className='hidden sm:flex items-center gap-1 ml-auto'>
+                                  <div className='text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full'>
+                                    {results.nichos[selectedNichoIndex]?.nombre}
+                                  </div>
                                 </div>
                               </div>
+                            </DialogTitle>
+                          </DialogHeader>
+                          <div className='flex-1 overflow-auto min-h-0'>
+                            <div className='h-full p-2 sm:p-3 lg:p-4 xl:p-6'>
+                              <MonitorNichos
+                                periodo={periodo}
+                                nicho={
+                                  results.nichos[selectedNichoIndex].nombre
+                                }
+                                onSuccess={handleNichoModalSuccess}
+                              />
                             </div>
-                          </DialogTitle>
-                        </DialogHeader>
-                        <div className='flex-1 overflow-auto min-h-0'>
-                          <div className='h-full p-2 sm:p-3 lg:p-4 xl:p-6'>
-                            <MonitorNichos
-                              periodo={periodo}
-                              nicho={results.nichos[selectedNichoIndex].nombre}
-                              onSuccess={handleNichoModalSuccess}
-                            />
                           </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </motion.div>
 
                   {/* Filas Container */}

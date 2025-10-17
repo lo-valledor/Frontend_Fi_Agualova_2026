@@ -209,7 +209,7 @@ export default function PrepararLecturasComponent({
                   <div className='space-y-2'>
                     <Label className='text-sm font-medium flex items-center gap-2'>
                       <CalendarIcon className='w-4 h-4 text-primary' />
-                      Periodo actual
+                      Periodo
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
                       <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
@@ -221,9 +221,6 @@ export default function PrepararLecturasComponent({
                             {periodoAbierto[0].mes.toString().padStart(2, '0')}/
                             {periodoAbierto[0].anio}
                           </span>
-                          <p className='text-xs'>
-                            Periodo activo para facturación
-                          </p>
                         </div>
                       </div>
                     ) : (

@@ -51,6 +51,37 @@ export function ResultadoProcesamientoModal({
 }: ResultadoProcesamientoModalProps) {
   if (!resultado) return null;
 
+  // Función para convertir fecha UTC a zona horaria local
+  const formatearFechaLocal = (fechaString: string): string => {
+    try {
+      // Si la fecha no tiene 'Z' al final, asumimos que es UTC y la agregamos
+      const fechaUTC = fechaString.endsWith('Z')
+        ? fechaString
+        : `${fechaString}Z`;
+
+      const fecha = new Date(fechaUTC);
+
+      // Verificar si la fecha es válida
+      if (isNaN(fecha.getTime())) {
+        return fechaString; // Si no se puede parsear, retornar el original
+      }
+
+      // Formatear a zona horaria local con formato legible
+      return fecha.toLocaleString('es-CL', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+    } catch (error) {
+      console.error('Error al formatear fecha:', error);
+      return fechaString;
+    }
+  };
+
   const exportarAExcel = () => {
     try {
       // Preparar datos del resumen
@@ -61,10 +92,7 @@ export function ResultadoProcesamientoModal({
         ['Mensaje:', resultado.mensaje],
         ['Registros Actualizados:', resultado.registrosActualizados],
         ['Período:', resultado.periodo],
-        [
-          'Fecha de Procesamiento:',
-          new Date(resultado.fechaProcesamiento).toLocaleString()
-        ],
+        ['Fecha de Procesamiento:', formatearFechaLocal(resultado.fechaProcesamiento)],
         [''],
         ['DETALLES DEL PROCESAMIENTO']
       ];
@@ -178,8 +206,8 @@ export function ResultadoProcesamientoModal({
               <div className='text-xs text-muted-foreground mt-1'>Estado</div>
             </div>
             <div className='text-center'>
-              <div className='text-xs'>
-                {new Date(resultado.fechaProcesamiento).toLocaleString()}
+              <div className='text-xs font-mono'>
+                {formatearFechaLocal(resultado.fechaProcesamiento)}
               </div>
               <div className='text-xs text-muted-foreground'>Fecha</div>
             </div>

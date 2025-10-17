@@ -232,14 +232,14 @@ export default function MonitorNichos({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
-                    variant='outline'
+                    variant='default'
                     size='sm'
-                    className='h-9 gap-2 bg-secondary hover:bg-secondary/80 border-border text-secondary-foreground transition-all duration-200 px-4 text-sm font-medium tap-highlight-transparent touch-manipulation shadow-sm hover:shadow-md inline-flex items-center'
+                    className='bg-yellow-500 text-black hover:bg-yellow-600 border-yellow-600 font-semibold text-sm px-4 shadow-sm inline-flex items-center h-9 gap-2'
                     onClick={() => setIsInsercionAutomaticaOpen(true)}
                     disabled={isRefreshing || results.length === 0}
                   >
                     <Zap className='h-4 w-4' />
-                    <span className='hidden sm:inline'>Autovalidar</span>
+                    <span className=''>Autovalidar</span>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>

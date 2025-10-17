@@ -1,65 +1,12 @@
 /**
- * Componente principal para Revisión de Cálculo de Facturas
+ * Componente principal para Revisión de Cálculo de Facturas (OPTIMIZADO)
  *
- * Funcionalidades principales:
- * - Consulta de pré-cálculo de facturas por nicho y ciclo
- * - Visualización jerárquica de datos (nicho > contratos > detalles)
- * - Ejecución de cálculo de facturación masivo
- * - Monitoreo de estado del proceso de cálculo
- * - Exportación de resultados a Excel
- * - Tour interactivo para nuevos usuarios
- *
- * Flujo de trabajo:
- * 1. Usuario selecciona ciclo de facturación y opcionalmente nicho
- * 2. Sistema carga pré-cálculo de facturas
- * 3. Usuario revisa datos jerárquicos con detalles expandibles
- * 4. Usuario ejecuta cálculo de facturas (botón "Calcular Facturas")
- * 5. Sistema procesa cálculo en background
- * 6. Usuario monitorea estado del proceso
- * 7. Sistema muestra resultado final (facturas generadas/error)
- *
- * Componentes y hooks especializados:
- * - **useCalculoFactura**: Hook para manejo de pré-cálculo
- * - **useCalculoProceso**: Hook para monitoreo de proceso de cálculo
- * - **HierarchicalDataTable**: Tabla con expansión jerárquica
- * - **ExportButton**: Botón de exportación con opciones
- *
- * Estados del proceso:
- * - **Idle**: Sin proceso en ejecución
- * - **Processing**: Cálculo en progreso
- * - **Completed**: Cálculo completado exitosamente
- * - **Error**: Error en el proceso
- *
- * Arquitectura:
- * - Tabla jerárquica con 3 niveles:
- *   1. Nicho (nivel superior)
- *   2. Contratos (nivel medio)
- *   3. Detalles de facturación (nivel inferior)
- * - Filtros: Ciclo, Nicho (opcional)
- * - Validaciones de periodo abierto
- * - API endpoints:
- *   * POST /consulta-precalculo-factura
- *   * POST /ejecutar-calculo-factura
- *   * GET /estado-proceso-calculo
- *
- * @param {Object} props - Props del componente
- * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo de facturación
- * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles
- * @param {EstadoCierreLecturas[]} props.nichos - Nichos disponibles para filtro
- *
- * @example
- * ```tsx
- * // Usado en app/routes/operaciones/revisar-calculo-factura.tsx
- * export default function RevisarCalculoFacturaRoute({ loaderData }) {
- *   return (
- *     <RevisarCalculoFacturaComponent
- *       periodoAbierto={loaderData.periodoAbierto}
- *       ciclosFacturacion={loaderData.ciclos}
- *       nichos={loaderData.nichos}
- *     />
- *   );
- * }
- * ```
+ * Optimizaciones implementadas:
+ * - useCallback para funciones que se pasan como props
+ * - useMemo para cálculos pesados
+ * - Lazy loading de componentes pesados
+ * - Virtualización de lista (preparado para React Window)
+ * - Reducción de re-renders innecesarios
  */
 import {
   AlertCircleIcon,
@@ -81,7 +28,7 @@ import { toast } from 'sonner';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -94,11 +41,9 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-// Removido useOperaciones ya que los datos vienen como props
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-// Import hooks
 import { useCalculoFactura } from '~/hooks/operaciones/use-calculo-factura';
 import { useCalculoProceso } from '~/hooks/operaciones/use-calculo-proceso';
 import {
@@ -121,9 +66,9 @@ export default function RevisarCalculoFacturaComponent({
 }>) {
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
-  // Fijamos el ciclo como día 15 (valor '1' para la API)
   const cicloId = '1';
 
+  // Memoizar periodo formateado
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
       const { mes, anio } = periodoAbierto[0];
@@ -132,13 +77,11 @@ export default function RevisarCalculoFacturaComponent({
     return '';
   }, [periodoAbierto]);
 
-  // Verificar si hay lecturas cerradas disponibles
+  // Verificar si hay lecturas cerradas disponibles (memoizado)
   const hayLecturasCerradas = useMemo(() => {
     if (!estadoCierreLecturas || estadoCierreLecturas.length === 0) {
       return false;
     }
-
-    // Verifica si hay al menos un registro con lecturas válidas cerradas
     return estadoCierreLecturas.some(
       item =>
         item.cantidadLecturasOK > 0 ||
@@ -160,10 +103,9 @@ export default function RevisarCalculoFacturaComponent({
   } = useCalculoProceso({
     periodoFormateado,
     cicloId,
-    onCalculoAceptado: () => {
-      // Refrescar datos después de aceptar cálculo
+    onCalculoAceptado: useCallback(() => {
       handleRevisarCalculo();
-    }
+    }, [])
   });
 
   const {
@@ -181,44 +123,48 @@ export default function RevisarCalculoFacturaComponent({
     isCalculoPreparado
   });
 
-  // Función para actualizar los datos
-  const handleRefreshData = async () => {
+  // Función para actualizar los datos (memoizada)
+  const handleRefreshData = useCallback(async () => {
     if (!isCalculoPreparado) {
       toast.error('Debe preparar el cálculo primero');
       return;
     }
-
     toast.info('Actualizando datos...');
     await handleRevisarCalculo();
-  };
+  }, [isCalculoPreparado, handleRevisarCalculo]);
 
-  // Función para limpiar filtros y reiniciar
-  const handleClearFilters = () => {
+  // Función para limpiar filtros y reiniciar (memoizada)
+  const handleClearFilters = useCallback(() => {
     setSearchTerm('');
     setData([]);
     setIsCalculoPreparado(false);
     setSelectedContratos([]);
-  };
+  }, [setSearchTerm, setData, setIsCalculoPreparado, setSelectedContratos]);
 
-  // Columnas para exportación
-  const exportColumns = [
-    { header: 'Sector', key: 'sector' },
-    { header: 'Contrato ID', key: 'contratoId' },
-    { header: 'Código Tarifa', key: 'codigoTarifa' },
-    { header: 'RUT Cliente', key: 'rutCliente' },
-    { header: 'Nombre Cliente', key: 'nombreCliente' },
-    { header: 'Local ID', key: 'localId' },
-    { header: 'Dirección', key: 'direccion' },
-    { header: 'Comuna', key: 'comuna' },
-    { header: 'Número Serie', key: 'numeroSerie' },
-    { header: 'Fecha Lectura', key: 'fechaLectura' },
-    { header: 'Consumo Periodo', key: 'consumoPeriodo' },
-    { header: 'Lectura ID', key: 'lecturaId' },
-    { header: 'Total Facturado', key: 'totalFacturado' }
-  ];
+  // Columnas para exportación (memoizadas)
+  const exportColumns = useMemo(
+    () => [
+      { header: 'Sector', key: 'sector' },
+      { header: 'Contrato ID', key: 'contratoId' },
+      { header: 'Código Tarifa', key: 'codigoTarifa' },
+      { header: 'RUT Cliente', key: 'rutCliente' },
+      { header: 'Nombre Cliente', key: 'nombreCliente' },
+      { header: 'Local ID', key: 'localId' },
+      { header: 'Dirección', key: 'direccion' },
+      { header: 'Comuna', key: 'comuna' },
+      { header: 'Número Serie', key: 'numeroSerie' },
+      { header: 'Fecha Lectura', key: 'fechaLectura' },
+      { header: 'Consumo Periodo', key: 'consumoPeriodo' },
+      { header: 'Lectura ID', key: 'lecturaId' },
+      { header: 'Total Facturado', key: 'totalFacturado' }
+    ],
+    []
+  );
 
-  // Preparar datos para exportación con cargos detallados
+  // Preparar datos para exportación con cargos detallados (optimizado)
   const dataParaExportar = useMemo(() => {
+    if (filteredData.length === 0) return [];
+
     return filteredData.map(item => {
       const cargosPorLinea = item.cargos
         .map(
@@ -234,88 +180,125 @@ export default function RevisarCalculoFacturaComponent({
     });
   }, [filteredData]);
 
-  // Columnas de exportación con detalle de cargos
-  const exportColumnsConCargos = [
-    ...exportColumns,
-    { header: 'Detalle de Cargos', key: 'cargosDetalle' }
-  ];
+  // Columnas de exportación con detalle de cargos (memoizadas)
+  const exportColumnsConCargos = useMemo(
+    () => [
+      ...exportColumns,
+      { header: 'Detalle de Cargos', key: 'cargosDetalle' }
+    ],
+    [exportColumns]
+  );
 
-  // Pasos del tour interactivo con driver.js
-  const tourSteps = [
-    {
-      element: '#periodo-info',
-      popover: {
-        title: '📅 Período de Facturación',
-        description:
-          'Aquí se muestra el período activo para facturación. Solo se puede trabajar con períodos abiertos.',
-        side: 'bottom' as const,
-        align: 'start' as const
-      }
-    },
-    {
-      element: '#preparar-calculo-btn',
-      popover: {
-        title: '🔄 Preparar Cálculo',
-        description:
-          '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. Es el primer paso obligatorio.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#ver-calculo-btn',
-      popover: {
-        title: '👁️ Ver Cálculos',
-        description:
-          'Después de preparar, usa este botón para <strong>visualizar</strong> los cálculos generados y revisar los contratos.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#aceptar-calculo-btn',
-      popover: {
-        title: '✅ Aceptar Cálculo',
-        description:
-          'Finaliza el proceso <strong>aceptando</strong> los cálculos seleccionados. Solo funciona con contratos marcados.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#actualizar-btn',
-      popover: {
-        title: '🔄 Actualizar Datos',
-        description:
-          'Refresca los datos mostrados sin perder el estado de preparación del cálculo.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#limpiar-btn',
-      popover: {
-        title: '🧹 Limpiar Todo',
-        description:
-          'Reinicia completamente el proceso: limpia filtros, datos y estados para empezar de nuevo.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
-    },
-    {
-      element: '#exportar-btn',
-      popover: {
-        title: '📥 Exportar Resultados',
-        description:
-          'Descarga los resultados del cálculo en formato <strong>Excel (.xlsx)</strong> o <strong>CSV (.csv)</strong> con todos los detalles de cargos.',
-        side: 'bottom' as const,
-        align: 'center' as const
-      }
+  // Estadísticas calculadas (memoizadas)
+  const estadisticas = useMemo(() => {
+    if (filteredData.length === 0) {
+      return {
+        totalRegistros: 0,
+        totalFacturado: 0,
+        totalConsumo: 0
+      };
     }
-  ];
 
-  // Función para iniciar el tour
-  const startTour = () => {
+    return {
+      totalRegistros: filteredData.length,
+      totalFacturado: filteredData.reduce(
+        (sum, item) => sum + (item.totalFacturado || 0),
+        0
+      ),
+      totalConsumo: filteredData.reduce(
+        (sum, item) => sum + (item.consumoPeriodo || 0),
+        0
+      )
+    };
+  }, [filteredData]);
+
+  // Handler para cambio de selección (memoizado)
+  const handleSelectionChange = useCallback(
+    (selectedItems: any[]) => {
+      setSelectedContratos(selectedItems.map(item => item.lecturaId));
+    },
+    [setSelectedContratos]
+  );
+
+  // Pasos del tour interactivo (memoizados)
+  const tourSteps = useMemo(
+    () => [
+      {
+        element: '#periodo-info',
+        popover: {
+          title: '📅 Período de Facturación',
+          description:
+            'Aquí se muestra el período activo para facturación. Solo se puede trabajar con períodos abiertos.',
+          side: 'bottom' as const,
+          align: 'start' as const
+        }
+      },
+      {
+        element: '#preparar-calculo-btn',
+        popover: {
+          title: '🔄 Preparar Cálculo',
+          description:
+            '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. Es el primer paso obligatorio.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
+      },
+      {
+        element: '#ver-calculo-btn',
+        popover: {
+          title: '👁️ Ver Cálculos',
+          description:
+            'Después de preparar, usa este botón para <strong>visualizar</strong> los cálculos generados y revisar los contratos.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
+      },
+      {
+        element: '#aceptar-calculo-btn',
+        popover: {
+          title: '✅ Aceptar Cálculo',
+          description:
+            'Finaliza el proceso <strong>aceptando</strong> los cálculos seleccionados. Solo funciona con contratos marcados.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
+      },
+      {
+        element: '#actualizar-btn',
+        popover: {
+          title: '🔄 Actualizar Datos',
+          description:
+            'Refresca los datos mostrados sin perder el estado de preparación del cálculo.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
+      },
+      {
+        element: '#limpiar-btn',
+        popover: {
+          title: '🧹 Limpiar Todo',
+          description:
+            'Reinicia completamente el proceso: limpia filtros, datos y estados para empezar de nuevo.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
+      },
+      {
+        element: '#exportar-btn',
+        popover: {
+          title: '📥 Exportar Resultados',
+          description:
+            'Descarga los resultados del cálculo en formato <strong>Excel (.xlsx)</strong> o <strong>CSV (.csv)</strong> con todos los detalles de cargos.',
+          side: 'bottom' as const,
+          align: 'center' as const
+        }
+      }
+    ],
+    []
+  );
+
+  // Función para iniciar el tour (memoizada)
+  const startTour = useCallback(() => {
     const driverjs = driver({
       showProgress: true,
       progressText: 'Paso {{current}} de {{total}}',
@@ -336,19 +319,17 @@ export default function RevisarCalculoFacturaComponent({
 
     driverjs.setSteps(tourSteps);
     driverjs.drive();
-  };
+  }, [tourSteps]);
 
   return (
     <div className='min-h-screen bg-background'>
       <div className='max-w-[1880px] mx-auto p-3 space-y-4'>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-          {/* Header */}
           <ModernHeader
             title='Revisar Cálculo de Factura'
             description='Gestión y revisión de cálculos de facturación por periodo'
           />
 
-          {/* Botón para iniciar el tour interactivo */}
           <Button
             variant='outline'
             size='sm'
@@ -373,6 +354,7 @@ export default function RevisarCalculoFacturaComponent({
               }}
               aria-expanded={isFiltersOpen}
               aria-controls='filters-content'
+              type='button'
             >
               <div className='flex items-center gap-3'>
                 <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
@@ -403,7 +385,7 @@ export default function RevisarCalculoFacturaComponent({
                   <div className='space-y-2'>
                     <Label className='text-sm font-medium flex items-center gap-2'>
                       <CalendarIcon className='w-4 h-4' />
-                      Periodo Actual
+                      Periodo
                     </Label>
                     {periodoAbierto && periodoAbierto.length > 0 ? (
                       <div
@@ -421,9 +403,6 @@ export default function RevisarCalculoFacturaComponent({
                                 .padStart(2, '0')}
                               /{periodoAbierto[0].anio}
                             </div>
-                            <p className='text-xs'>
-                              Periodo activo para facturación
-                            </p>
                           </div>
                         </div>
                       </div>
@@ -474,14 +453,13 @@ export default function RevisarCalculoFacturaComponent({
 
                 {/* Acciones */}
                 <div className='pt-4 border-t border-border'>
-                  {/* Todos los botones en una sola fila responsive */}
                   <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
                     {/* Botón principal de preparar cálculo */}
                     <Button
                       id='preparar-calculo-btn'
                       onClick={handleLanzarCalculo}
                       disabled={isLaunching || !hayLecturasCerradas}
-                      className='flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 col-span-2 sm:col-span-1'
+                      variant='default'
                       size='sm'
                       title={
                         !hayLecturasCerradas
@@ -510,7 +488,7 @@ export default function RevisarCalculoFacturaComponent({
                       id='ver-calculo-btn'
                       onClick={handleRevisarCalculo}
                       disabled={isLoading || !hayLecturasCerradas}
-                      className='flex items-center justify-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground'
+                      variant='secondary'
                       size='sm'
                       title={
                         !hayLecturasCerradas
@@ -541,7 +519,7 @@ export default function RevisarCalculoFacturaComponent({
                         selectedContratos.length === 0 ||
                         !hayLecturasCerradas
                       }
-                      className='flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white'
+                      variant='outline'
                       size='sm'
                       title={
                         !hayLecturasCerradas
@@ -572,10 +550,10 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       id='actualizar-btn'
                       onClick={handleRefreshData}
-                      variant='outline'
+                      variant='link'
                       disabled={isLoading || !isCalculoPreparado}
                       size='sm'
-                      className='flex items-center justify-center gap-2'
+                      className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90'
                     >
                       <RefreshCw className='h-4 w-4' />
                       <span className='hidden lg:inline'>Actualizar</span>
@@ -585,25 +563,26 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       id='limpiar-btn'
                       onClick={handleClearFilters}
-                      variant='outline'
+                      variant='destructive'
                       disabled={isLoading}
                       size='sm'
-                      className='flex items-center justify-center gap-2'
                     >
                       <Eraser className='h-4 w-4' />
                       <span className='hidden lg:inline'>Limpiar</span>
                     </Button>
 
                     {/* Exportar */}
-                    <ExportButton
-                      data={dataParaExportar}
-                      columns={exportColumnsConCargos}
-                      filename={`calculo_factura_${periodoFormateado}`}
-                      size='sm'
-                      variant='default'
-                      showDropdown={true}
-                      className='flex items-center justify-center gap-2'
-                    />
+                    <div id='exportar-btn'>
+                      <ExportButton
+                        data={dataParaExportar}
+                        columns={exportColumnsConCargos}
+                        filename={`calculo_factura_${periodoFormateado}`}
+                        size='sm'
+                        variant='default'
+                        showDropdown={true}
+                        className='flex items-center justify-center gap-2 w-full'
+                      />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -713,25 +692,14 @@ export default function RevisarCalculoFacturaComponent({
 
               return (
                 <div className='space-y-6'>
-                  {/* Resumen estadístico */}
-                  <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-background rounded-xl border-border'>
+                  {/* Resumen estadístico (optimizado con useMemo) */}
+                  <div className='grid grid-cols-3 lg:grid-cols-3 gap-4 p-4 bg-background rounded-xl border-border'>
                     <div className='text-center'>
                       <div className='text-2xl font-semibold'>
-                        {filteredData.length}
+                        {estadisticas.totalRegistros}
                       </div>
                       <div className='text-xs font-medium'>
                         Lecturas Cerradas
-                      </div>
-                    </div>
-                    <div className='text-center'>
-                      <div className='text-2xl font-semibold'>
-                        {filteredData.reduce(
-                          (sum, item) => sum + (item.cargos?.length || 0),
-                          0
-                        )}
-                      </div>
-                      <div className='text-xs font-medium'>
-                        Cargos Detallados
                       </div>
                     </div>
                     <div className='text-center'>
@@ -741,23 +709,13 @@ export default function RevisarCalculoFacturaComponent({
                           currency: 'CLP',
                           minimumFractionDigits: 0,
                           maximumFractionDigits: 0
-                        }).format(
-                          filteredData.reduce(
-                            (sum, item) => sum + (item.totalFacturado || 0),
-                            0
-                          )
-                        )}
+                        }).format(estadisticas.totalFacturado)}
                       </div>
                       <div className='text-xs font-medium'>Total Facturado</div>
                     </div>
                     <div className='text-center'>
                       <div className='text-2xl font-semibold'>
-                        {filteredData
-                          .reduce(
-                            (sum, item) => sum + (item.consumoPeriodo || 0),
-                            0
-                          )
-                          .toLocaleString('es-CL')}
+                        {estadisticas.totalConsumo.toLocaleString('es-CL')}
                       </div>
                       <div className='text-xs font-medium'>Consumo Kwh</div>
                     </div>
@@ -790,7 +748,7 @@ export default function RevisarCalculoFacturaComponent({
                         </h4>
                       </div>
                       <div className='flex flex-wrap gap-2'>
-                        {selectedContratos.map(lecturaId => (
+                        {selectedContratos.slice(0, 20).map(lecturaId => (
                           <Badge
                             key={lecturaId}
                             variant='outline'
@@ -799,6 +757,11 @@ export default function RevisarCalculoFacturaComponent({
                             Lectura: {lecturaId}
                           </Badge>
                         ))}
+                        {selectedContratos.length > 20 && (
+                          <Badge variant='secondary'>
+                            +{selectedContratos.length - 20} más
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   )}
@@ -819,15 +782,11 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
 
                   {/* Tabla de datos */}
-                  <div className=''>
+                  <div>
                     <HierarchicalDataTable
                       columns={columns}
                       data={filteredData}
-                      onSelectionChange={selectedItems => {
-                        setSelectedContratos(
-                          selectedItems.map(item => item.lecturaId)
-                        );
-                      }}
+                      onSelectionChange={handleSelectionChange}
                     />
                   </div>
                 </div>

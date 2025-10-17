@@ -570,8 +570,11 @@ export default function ImportarLecturasComponent() {
 
               <Button
                 onClick={procesarBT1BT2}
-                disabled={processingBT}
-                variant='secondary'
+                disabled={
+                  processingBT ||
+                  (estadoProcesamiento?.registrosPendientes === 0)
+                }
+                variant='destructive'
                 className='w-full gap-2'
               >
                 {processingBT ? (
@@ -581,6 +584,11 @@ export default function ImportarLecturasComponent() {
                 )}
                 <span>Procesar BT1-BT2</span>
               </Button>
+              {estadoProcesamiento?.registrosPendientes === 0 && (
+                <p className='text-xs text-center text-muted-foreground'>
+                  No hay lecturas pendientes
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -598,50 +606,73 @@ export default function ImportarLecturasComponent() {
 
           {/* Resultado del procesamiento */}
           {procesamientoResult && (
-            <Alert className='bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800'>
-              <CheckCircle2 className='h-4 w-4 text-emerald-500' />
-              <AlertTitle className='text-emerald-900 dark:text-emerald-100'>
-                Procesamiento Completado
-              </AlertTitle>
-              <AlertDescription className='space-y-3'>
-                <p className='text-emerald-700 dark:text-emerald-300'>
-                  {procesamientoResult.mensaje}
-                </p>
-                <div className='flex items-center gap-4 text-xs text-emerald-600 dark:text-emerald-400'>
-                  <Badge
-                    variant='secondary'
-                    className='bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300'
-                  >
-                    {procesamientoResult.registrosActualizados} registros
-                  </Badge>
-                  <span>Período {procesamientoResult.periodo}</span>
-                  {procesamientoResult.detalles &&
-                    procesamientoResult.detalles.length > 0 && (
-                      <span>
-                        {procesamientoResult.detalles.length} detalles
-                      </span>
-                    )}
-                </div>
-                <div className='flex gap-2 mt-3'>
-                  <Button
-                    onClick={() => setShowResultModal(true)}
-                    variant='outline'
-                    size='sm'
-                    className='gap-2'
-                  >
-                    <Eye className='h-4 w-4' />
-                    Ver Detalles
-                  </Button>
+            <Card className='border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/20'>
+              <CardHeader className='pb-3'>
+                <div className='flex items-start justify-between'>
+                  <div className='flex items-center gap-3'>
+                    <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full'>
+                      <CheckCircle2 className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                    </div>
+                    <div>
+                      <CardTitle className='text-emerald-900 dark:text-emerald-100'>
+                        Procesamiento Completado
+                      </CardTitle>
+                      <CardDescription className='text-emerald-700 dark:text-emerald-300'>
+                        {procesamientoResult.mensaje}
+                      </CardDescription>
+                    </div>
+                  </div>
                   <Button
                     onClick={() => setProcesamientoResult(null)}
                     variant='ghost'
                     size='icon'
+                    className='text-emerald-600 hover:text-emerald-700 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
                   >
                     <X className='h-4 w-4' />
                   </Button>
                 </div>
-              </AlertDescription>
-            </Alert>
+              </CardHeader>
+              <CardContent className='space-y-4'>
+                {/* Resumen en grid */}
+                <div className='grid grid-cols-3 gap-3'>
+                  <div className='p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800'>
+                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-400'>
+                      {procesamientoResult.registrosActualizados}
+                    </div>
+                    <div className='text-xs text-emerald-600 dark:text-emerald-500 mt-0.5'>
+                      Registros Actualizados
+                    </div>
+                  </div>
+                  <div className='p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800'>
+                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-400'>
+                      {procesamientoResult.periodo}
+                    </div>
+                    <div className='text-xs text-emerald-600 dark:text-emerald-500 mt-0.5'>
+                      Período
+                    </div>
+                  </div>
+                  <div className='p-3 bg-white dark:bg-background rounded-lg border border-emerald-200 dark:border-emerald-800'>
+                    <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-400'>
+                      {procesamientoResult.detalles?.length || 0}
+                    </div>
+                    <div className='text-xs text-emerald-600 dark:text-emerald-500 mt-0.5'>
+                      Detalles Procesados
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botón de ver detalles */}
+                <Button
+                  onClick={() => setShowResultModal(true)}
+                  variant='outline'
+                  size='sm'
+                  className='w-full gap-2 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/30'
+                >
+                  <Eye className='h-4 w-4' />
+                  Ver Detalles Completos
+                </Button>
+              </CardContent>
+            </Card>
           )}
 
           {/* Error de validación */}
