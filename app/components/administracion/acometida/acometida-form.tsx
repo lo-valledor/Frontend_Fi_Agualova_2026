@@ -669,11 +669,7 @@ export function AcometidaForm({
                   <X className='h-4 w-4' />
                   Cancelar
                 </Button>
-                <Button
-                  type='submit'
-                  disabled={isLoading}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700'
-                >
+                <Button type='submit' disabled={isLoading} className='gap-2'>
                   {isLoading ? (
                     <>
                       <div className='h-4 w-4 animate-spin rounded-xl border-2 border-white border-t-transparent' />

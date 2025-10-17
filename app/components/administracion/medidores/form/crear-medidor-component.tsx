@@ -317,7 +317,8 @@ export default function CrearMedidorComponent({
                 </Button>
                 <Button
                   onClick={handleSubmit}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700'
+                  className='gap-2'
+                  variant='default'
                   disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />

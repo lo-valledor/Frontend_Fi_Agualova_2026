@@ -281,11 +281,7 @@ export default function CiclosFacturacionModalForm({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
-              >
+              <Button type='submit' disabled={isLoading} variant='default'>
                 {(() => {
                   if (isLoading) {
                     return mode === 'add' ? 'Creando...' : 'Actualizando...';

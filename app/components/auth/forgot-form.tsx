@@ -116,7 +116,7 @@ export function ForgotForm({
               </Label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <Mail className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
+                  <Mail className='h-5 w-5 text-primary transition-colors' />
                 </div>
                 <Input
                   id='email'
@@ -135,8 +135,9 @@ export function ForgotForm({
 
           <Button
             type='submit'
+            variant='default'
             disabled={loading}
-            className='w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
+            className='w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
           >
             {loading ? (
               <div className='flex items-center justify-center gap-2'>
@@ -173,7 +174,7 @@ export function ForgotForm({
           <div className='text-center mt-4'>
             <Link
               to='/auth/login'
-              className='inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200'
+              className='inline-flex items-center gap-2 text-sm transition-colors duration-200 text-primary'
             >
               <ArrowLeft className='h-4 w-4' />
               Volver al inicio de sesión

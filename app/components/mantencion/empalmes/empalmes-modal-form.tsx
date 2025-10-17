@@ -255,11 +255,7 @@ export default function EmpalmesModalForm({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
-              >
+              <Button type='submit' disabled={isLoading} variant='default'>
                 {isLoading
                   ? mode === 'add'
                     ? 'Creando...'

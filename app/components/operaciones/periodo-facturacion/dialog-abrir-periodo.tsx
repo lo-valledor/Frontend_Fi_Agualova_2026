@@ -160,11 +160,11 @@ export default function DialogAbrirPeriodo({
             Cancelar
           </Button>
           <Button
-            variant='default'
             onClick={handleAbrirPeriodo}
             disabled={isLoading || !selectedMonth || !selectedYear}
             size='sm'
-            className='gap-1 bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 order-1 sm:order-2'
+            variant='default'
+            className='gap-1order-1 sm:order-2'
           >
             {isLoading ? (
               <>

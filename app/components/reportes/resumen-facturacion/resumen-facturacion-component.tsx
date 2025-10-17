@@ -348,7 +348,8 @@ export default function ResumenFacturacionComponent({
                   <Button
                     onClick={handleConsultar}
                     disabled={isLoading || !selectedPeriodo || !selectedEmpalme}
-                    className='gap-2 bg-sky-600 hover:bg-sky-700'
+                    className='gap-2'
+                    variant='default'
                     size='sm'
                   >
                     <SearchIcon className='h-4 w-4' />

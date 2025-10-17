@@ -24,7 +24,7 @@ export function LoadingBarProvider({
 
   return (
     <LoadingBarContext.Provider value={loadingBarRef}>
-      <LoadingBar color='#2563eb' ref={loadingBarRef as any} />
+      <LoadingBar className='primary' ref={loadingBarRef as any} />
       {children}
     </LoadingBarContext.Provider>
   );

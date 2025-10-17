@@ -427,7 +427,8 @@ export default function EditarTipoContrato({
                 </Button>
                 <Button
                   onClick={handleGuardar}
-                  className='gap-2 bg-sky-600 hover:bg-sky-700'
+                  className='gap-2'
+                  variant='default'
                 >
                   <Save className='h-4 w-4' />
                   Guardar
@@ -536,7 +537,8 @@ export default function EditarTipoContrato({
             </div>
 
             <Button
-              className='gap-2 bg-sky-600 hover:bg-sky-700'
+              className='gap-2'
+              variant='default'
               disabled={
                 !selectedConcepto ||
                 !selectedCargo ||
@@ -646,7 +648,8 @@ export default function EditarTipoContrato({
                   </div>
                   <Button
                     size='sm'
-                    className='w-full bg-sky-600 hover:bg-sky-700'
+                    variant='default'
+                    className='w-full'
                     disabled={!selectedCargoMonofasico}
                     onClick={handleAgregarCargoMonofasico}
                   >
@@ -708,7 +711,8 @@ export default function EditarTipoContrato({
                   </div>
                   <Button
                     size='sm'
-                    className='w-full bg-sky-600 hover:bg-sky-700'
+                    variant='default'
+                    className='w-full'
                     disabled={!selectedCargoTrifasico}
                     onClick={handleAgregarCargoTrifasico}
                   >
@@ -770,7 +774,8 @@ export default function EditarTipoContrato({
                   </div>
                   <Button
                     size='sm'
-                    className='w-full bg-sky-600 hover:bg-sky-700'
+                    variant='default'
+                    className='w-full'
                     disabled={!selectedCargoAmbos}
                     onClick={handleAgregarCargoAmbos}
                   >

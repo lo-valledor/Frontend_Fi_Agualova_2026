@@ -631,7 +631,8 @@ export default function EditarMedidorComponent({
                 type='button'
                 onClick={form.handleSubmit(handleFormSubmit)}
                 disabled={isSubmitting}
-                className='gap-2 bg-sky-600 hover:bg-sky-700 px-8'
+                className='gap-2 px-8'
+                variant='default'
               >
                 <Save className='h-4 w-4' />
                 {isSubmitting ? 'Guardando...' : 'Guardar Cambios'}

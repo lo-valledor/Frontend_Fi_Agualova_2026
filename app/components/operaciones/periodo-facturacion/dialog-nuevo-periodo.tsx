@@ -163,7 +163,7 @@ export default function DialogNuevoPeriodo({
               size='sm'
               onClick={handleOpenPeriodo}
               disabled={!selectedMonth || !selectedYear}
-              className='gap-1 w-full sm:w-auto bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 order-1 sm:order-3'
+              className='gap-1 w-full sm:w-autoorder-1 sm:order-3'
             >
               <PlusCircleIcon className='h-3 w-3' />
               <span className='text-xs sm:text-sm'>Continuar</span>

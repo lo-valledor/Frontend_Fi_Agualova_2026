@@ -275,15 +275,10 @@ export default function MedidoresComponent({
                 data={filteredMedidores}
                 columns={medidorColumns}
                 filename='clientes'
-                variant='outline'
                 size='sm'
                 className=''
               />
-              <Button
-                onClick={handleAdd}
-                className='bg-sky-600 hover:bg-sky-700'
-                size='sm'
-              >
+              <Button onClick={handleAdd} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Medidor
               </Button>

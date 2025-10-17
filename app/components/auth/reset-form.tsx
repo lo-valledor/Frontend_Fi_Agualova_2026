@@ -117,11 +117,9 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
       </Button>
 
       {/* Header */}
-      <div className='pt-10 pb-6 px-8 text-center border-b border-slate-200/50 dark:border-slate-700/50'>
-        <h1 className='text-3xl font-bold text-slate-900 dark:text-white mb-2'>
-          Restablecer Contraseña
-        </h1>
-        <p className='text-sm text-slate-600 dark:text-slate-400'>
+      <div className='pt-10 pb-6 px-8 text-center border-b border-border'>
+        <h1 className='text-3xl font-bold mb-2'>Restablecer Contraseña</h1>
+        <p className='text-sm text-muted-foreground '>
           Ingrese su nueva contraseña segura para restablecer el acceso
         </p>
       </div>
@@ -140,7 +138,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
               </Label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <Lock className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
+                  <Lock className='h-5 w-5 text-primary/30 group-focus-within:text-primary/70 transition-colors' />
                 </div>
                 <Input
                   id='password'
@@ -156,7 +154,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors'
+                  className='absolute inset-y-0 right-0 flex items-center pr-4 text-primary/40 hover:text-primary/70 dark:hover:text-primary/70 transition-colors'
                 >
                   {showPassword ? (
                     <EyeOff className='h-5 w-5' />
@@ -186,7 +184,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
               </Label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <Lock className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
+                  <Lock className='h-5 w-5 text-primary/30 group-focus-within:text-primary/70 transition-colors' />
                 </div>
                 <Input
                   id='confirmPassword'
@@ -202,7 +200,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
                 <button
                   type='button'
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors'
+                  className='absolute inset-y-0 right-0 flex items-center pr-4 text-primary/40 hover:text-primary/70 dark:hover:text-primary/70 transition-colors'
                 >
                   {showConfirmPassword ? (
                     <EyeOff className='h-5 w-5' />
@@ -237,8 +235,9 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
 
           <Button
             type='submit'
+            variant='default'
             disabled={loading}
-            className='w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
+            className='w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
           >
             {loading ? (
               <div className='flex items-center justify-center gap-2'>
@@ -275,7 +274,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
           <div className='text-center mt-4'>
             <Link
               to='/auth/login'
-              className='inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200'
+              className='inline-flex items-center gap-2 text-sm text-primary hover:text-primary/70 dark:hover:text-primary/70 transition-colors duration-200'
             >
               <ArrowLeft className='h-4 w-4' />
               Volver al inicio de sesión
