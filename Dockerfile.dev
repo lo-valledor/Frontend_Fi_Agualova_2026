@@ -58,11 +58,15 @@ COPY --from=development-build-env /app/build/client /usr/share/nginx/html
 # Copiar configuración de nginx para desarrollo
 COPY nginx.dev.conf /etc/nginx/nginx.conf
 
-# Configuración de permisos
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
+# Crear directorios necesarios y configurar permisos
+RUN mkdir -p /var/cache/nginx /var/log/nginx /var/run && \
+    chown -R nginx:nginx /usr/share/nginx/html && \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \
-    chmod -R 755 /usr/share/nginx/html
+    chown -R nginx:nginx /var/run && \
+    chmod -R 755 /usr/share/nginx/html && \
+    touch /var/run/nginx.pid && \
+    chown nginx:nginx /var/run/nginx.pid
 
 # Exponer puerto 80 (igual que producción)
 EXPOSE 80

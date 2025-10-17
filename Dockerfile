@@ -25,7 +25,25 @@ ENV VITE_APP_ENV=$VITE_APP_ENV
 RUN pnpm run build
 
 FROM nginx:alpine
+
+# Instalar curl para healthchecks (opcional)
+RUN apk add --no-cache curl
+
 COPY --from=build-env /app/build/client /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
+
+# Crear directorios y dar permisos para usuario nginx
+RUN mkdir -p /var/cache/nginx /var/log/nginx /var/run && \
+    chown -R nginx:nginx /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    chown -R nginx:nginx /var/run && \
+    touch /var/run/nginx.pid && \
+    chown nginx:nginx /var/run/nginx.pid
+
 EXPOSE 80
+
+# Usuario no-root
+USER nginx
+
 CMD ["nginx", "-g", "daemon off;"]
