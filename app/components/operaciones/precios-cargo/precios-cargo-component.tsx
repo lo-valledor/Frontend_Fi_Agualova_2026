@@ -58,6 +58,7 @@ import {
 import { toast } from 'sonner';
 
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
@@ -130,6 +131,31 @@ export default function PreciosCargoComponent({
   const [tablaEnerlova, setTablaEnerlova] = useState(initialTablaEnerlova);
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [periodoAbierto, setPeriodoAbierto] = useState<{
+    descripcion: string;
+    mes: number;
+    anio: number;
+  } | null>(null);
+
+  // Consultar periodo abierto al montar el componente
+  useEffect(() => {
+    async function fetchPeriodoAbierto() {
+      try {
+        const response = await api.get(
+          'http://192.168.1.139:8081/Enerlova/ConsultarPeriodoAbierto'
+        );
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setPeriodoAbierto(response.data[0]);
+          // Opcional: actualizar filtros al periodo abierto si no han sido modificados
+          setMes(response.data[0].mes.toString().padStart(2, '0'));
+          setAnio(response.data[0].anio.toString());
+        }
+      } catch (error) {
+        console.error('Error consultando periodo abierto:', error);
+      }
+    }
+    fetchPeriodoAbierto();
+  }, []);
 
   // Manejo de búsqueda
   const handleSearch = async () => {
@@ -241,10 +267,12 @@ export default function PreciosCargoComponent({
               <div className='flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border'>
                 <div className='flex items-center gap-2'>
                   <Calendar className='w-4 h-4 text-primary' />
-                  <span className='text-sm font-medium'>Período:</span>
+                  <span className='text-sm font-medium'>Periodo abierto:</span>
                 </div>
                 <Badge variant='outline' className='text-sm'>
-                  {months.find(m => m.value === mes)?.label} {anio}
+                  {periodoAbierto
+                    ? periodoAbierto.descripcion
+                    : `${months.find(m => m.value === mes)?.label} ${anio}`}
                 </Badge>
               </div>
             </div>
@@ -419,7 +447,7 @@ export default function PreciosCargoComponent({
                       <Info className='w-4 h-4 text-success' />
                       <span>
                         Precios fijados directamente por Enerlova para el
-                        período consultado
+                        mes actual
                       </span>
                     </p>
                   </div>

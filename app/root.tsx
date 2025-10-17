@@ -13,6 +13,13 @@ import {
 } from 'react-router';
 
 import './app.css';
+// Importar estilos de desarrollo si estamos en ese entorno
+const isDevelopment =
+  import.meta.env.VITE_APP_ENV === 'development' || import.meta.env.DEV;
+if (isDevelopment) {
+  import('./app.dev.css');
+}
+
 import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './context/AuthContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
@@ -31,7 +38,28 @@ export const links = () => [
   }
 ];
 
+// Componente indicador de entorno
+function EnvironmentIndicator() {
+  const env =
+    import.meta.env.VITE_APP_ENV || import.meta.env.MODE || 'production';
+
+  if (env === 'production') {
+    return null;
+  }
+
+  return (
+    <div className='env-indicator'>
+      <span className='env-badge-pulse'></span>
+      <span>ENTORNO DE DESARROLLO</span>
+      <span className='env-indicator-badge'>{env.toUpperCase()}</span>
+    </div>
+  );
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const isDev =
+    import.meta.env.VITE_APP_ENV === 'development' || import.meta.env.DEV;
+
   return (
     <html lang='en'>
       <head>
@@ -40,7 +68,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className={isDev ? 'dev-environment' : ''}>
+        <EnvironmentIndicator />
         <LoadingBarProvider>
           <AppLayout>{children}</AppLayout>
         </LoadingBarProvider>

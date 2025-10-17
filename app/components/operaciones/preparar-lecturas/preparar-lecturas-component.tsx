@@ -203,101 +203,106 @@ export default function PrepararLecturasComponent({
             </div>
 
             <CollapsibleContent>
-              <CardContent className='p-3 space-y-4'>
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 w-full'>
-                  {/* Periodo */}
-                  <div className='space-y-2'>
-                    <Label className='text-sm font-medium flex items-center gap-2'>
-                      <CalendarIcon className='w-4 h-4 text-primary' />
-                      Periodo
-                    </Label>
-                    {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
-                        <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
-                          <CalendarIcon className='w-4 h-4 text-primary' />
+              <CardContent className='p-3'>
+                <div className='flex flex-col gap-4 w-full'>
+                  {/* Campos de filtro */}
+                  <div className='flex flex-col sm:flex-row gap-4 w-full'>
+                    {/* Periodo */}
+                    <div className='flex-1 min-w-0'>
+                      <Label className='text-sm font-medium flex items-center gap-2 mb-1'>
+                        <CalendarIcon className='w-4 h-4 text-primary' />
+                        Periodo
+                      </Label>
+                      {periodoAbierto && periodoAbierto.length > 0 ? (
+                        <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
+                          <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                            <CalendarIcon className='w-4 h-4 text-primary' />
+                          </div>
+                          <div>
+                            <span className='font-medium text-sm'>
+                              {periodoAbierto[0].mes
+                                .toString()
+                                .padStart(2, '0')}
+                              /{periodoAbierto[0].anio}
+                            </span>
+                          </div>
                         </div>
-                        <div>
-                          <span className='font-medium text-sm'>
-                            {periodoAbierto[0].mes.toString().padStart(2, '0')}/
-                            {periodoAbierto[0].anio}
-                          </span>
+                      ) : (
+                        <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
+                          <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                            <AlertCircleIcon className='w-4 h-4' />
+                          </div>
+                          <div>
+                            <span className='font-medium text-sm'>
+                              No hay periodo abierto
+                            </span>
+                            <p className='text-xs mt-0.5'>
+                              Contacta al administrador
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
-                        <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
-                          <AlertCircleIcon className='w-4 h-4' />
-                        </div>
-                        <div>
-                          <span className='font-medium text-sm'>
-                            No hay periodo abierto
-                          </span>
-                          <p className='text-xs mt-0.5'>
-                            Contacta al administrador
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
 
-                  {/* Ciclo de facturación */}
-                  <div className='space-y-2'>
-                    <Label
-                      htmlFor='ciclo'
-                      className='text-sm font-medium flex items-center gap-2'
-                    >
-                      <FileTextIcon className='w-4 h-4 text-primary' />
-                      Ciclo de facturación
-                    </Label>
-                    <Select
-                      value={cicloSeleccionado}
-                      onValueChange={setCicloSeleccionado}
-                    >
-                      <SelectTrigger
-                        id='ciclo'
-                        className='h-10 bg-background border-border w-full text-sm'
+                    {/* Ciclo de facturación */}
+                    <div className='flex-1 min-w-0'>
+                      <Label
+                        htmlFor='ciclo'
+                        className='text-sm font-medium flex items-center gap-2 mb-1'
                       >
-                        <SelectValue placeholder='Selecciona un ciclo de facturación' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {opcionesPreparar?.map(
-                          (opcion: OpcionesPrepararLecturas) => (
-                            <SelectItem
-                              key={opcion.id}
-                              value={opcion.id.toString()}
-                            >
-                              {opcion.descripcion}
-                            </SelectItem>
-                          )
-                        )}
-                      </SelectContent>
-                    </Select>
+                        <FileTextIcon className='w-4 h-4 text-primary' />
+                        Ciclo de facturación
+                      </Label>
+                      <Select
+                        value={cicloSeleccionado}
+                        onValueChange={setCicloSeleccionado}
+                      >
+                        <SelectTrigger
+                          id='ciclo'
+                          className='h-[50px] bg-background border-border w-full text-sm'
+                        >
+                          <SelectValue placeholder='Selecciona un ciclo de facturación' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {opcionesPreparar?.map(
+                            (opcion: OpcionesPrepararLecturas) => (
+                              <SelectItem
+                                key={opcion.id}
+                                value={opcion.id.toString()}
+                              >
+                                {opcion.descripcion}
+                              </SelectItem>
+                            )
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                </div>
 
-                {/* Botones de acción */}
-                <div className='flex flex-col sm:flex-row justify-end gap-2 pt-3 border-t border-border'>
-                  <Button
-                    onClick={handleClearFilters}
-                    variant='outline'
-                    disabled={isLoadingAsignacion}
-                    className='gap-2'
-                  >
-                    <Eraser className='h-4 w-4' />
-                    Limpiar
-                  </Button>
-                  <Button
-                    onClick={handleSearch}
-                    disabled={
-                      isLoadingAsignacion ||
-                      !cicloSeleccionado ||
-                      !periodoFormateado
-                    }
-                    className='gap-2 bg-primary hover:bg-primary/90 text-primary-foreground'
-                  >
-                    <SearchIcon className='h-4 w-4' />
-                    {isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}
-                  </Button>
+                  {/* Botones de acción */}
+                  <div className='flex flex-col sm:flex-row gap-2 w-full sm:justify-end'>
+                    <Button
+                      onClick={handleClearFilters}
+                      variant='outline'
+                      disabled={isLoadingAsignacion}
+                      className='gap-2 w-full sm:w-auto'
+                    >
+                      <Eraser className='h-4 w-4' />
+                      Limpiar
+                    </Button>
+                    <Button
+                      onClick={handleSearch}
+                      disabled={
+                        isLoadingAsignacion ||
+                        !cicloSeleccionado ||
+                        !periodoFormateado
+                      }
+                      className='gap-2 bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto'
+                    >
+                      <SearchIcon className='h-4 w-4' />
+                      {isLoadingAsignacion ? 'Buscando...' : 'Buscar Sectores'}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </CollapsibleContent>

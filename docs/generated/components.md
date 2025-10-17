@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-17 10:34:22*
+*Generado automáticamente el 2025-10-17 13:07:14*
 
 ## Índice de Componentes
 
@@ -1563,7 +1563,7 @@
 ```typescript
 /**
  * Componente principal para Corte y Reposición de Servicios
- * 
+ *
  * Funcionalidades principales:
  * - Visualización de estados de corte y reposición por cliente
  * - Gestión del ciclo completo: Pendiente → Liberado → Cortado → Reposición
@@ -1571,7 +1571,7 @@
  * - Control del proceso de revisión (Activar, Iniciar, Finalizar)
  * - Estadísticas rápidas de estados
  * - Tour interactivo para nuevos usuarios (driver.js)
- * 
+ *
  * Flujo del proceso de corte:
  * 1. **Activar Actualización**: Prepara el sistema para revisar
  * 2. **Iniciar**: Comienza proceso de revisión de cortes
@@ -1582,14 +1582,14 @@
  *    - 2/Cortado: Cliente con servicio cortado
  *    - 3/Reposición Solicitada: Solicitud de reconexión
  * 5. **Finalizar**: Cierra el proceso de revisión
- * 
+ *
  * Características especiales:
  * - **Tour Interactivo**: Guía paso a paso con driver.js (7 pasos)
  * - **Estadísticas en tiempo real**: Cards con totales por estado
  * - **Exportación dual**: Mantenedor completo y Revisión de corte
  * - **Tabla con acciones**: Marcar/Liberar, Registrar corte, Solicitar reposición
  * - **Modales especializados**: Confirmación de cada acción
- * 
+ *
  * Arquitectura:
  * - Usa DataTable con columnas personalizadas
  * - Componentes modales:
@@ -1603,11 +1603,11 @@
  *   * POST /ingresar-revision
  *   * POST /finalizar-revision
  *   * GET /exportar-* (para Excel)
- * 
+ *
  * @param {Object} props - Props del componente
  * @param {TotalesCorteReposicion[]} props.totalesData - Totales por estado
  * @param {ConsultarMantenedorRevisionCorte[]} props.mantenedorCorteData - Datos de revisión
- * 
+ *
  * @example
  * ```tsx
  * // Usado en app/routes/operaciones/corte-reposicion.tsx

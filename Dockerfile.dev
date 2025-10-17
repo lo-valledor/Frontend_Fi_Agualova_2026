@@ -13,8 +13,10 @@ WORKDIR /app
 # Variables de entorno para desarrollo
 ARG VITE_API_URL
 ARG NODE_ENV=development
+ARG VITE_APP_ENV=development
 ENV VITE_API_URL=$VITE_API_URL
 ENV NODE_ENV=$NODE_ENV
+ENV VITE_APP_ENV=$VITE_APP_ENV
 
 # Build optimizado para desarrollo
 RUN pnpm run build
@@ -37,8 +39,10 @@ WORKDIR /app
 # Variables de entorno para desarrollo
 ARG VITE_API_URL
 ARG NODE_ENV=development
+ARG VITE_APP_ENV=development
 ENV VITE_API_URL=$VITE_API_URL
 ENV NODE_ENV=$NODE_ENV
+ENV VITE_APP_ENV=$VITE_APP_ENV
 
 # Exponer puerto de desarrollo
 EXPOSE 5173

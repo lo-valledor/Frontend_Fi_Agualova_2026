@@ -60,5 +60,40 @@ export const authService = {
     } catch (_error) {
       throw new Error('Error al refrescar el token');
     }
+  },
+
+  forgotPassword: async (email: string): Promise<string> => {
+    try {
+      const response = await axiosInstance.post<{ message: string }>(
+        '/forgot-password',
+        { email }
+      );
+      return response.data.message;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        throw new Error(
+          error.response?.data?.message ||
+            'Error al solicitar recuperación de contraseña'
+        );
+      }
+      throw new Error('Error al solicitar recuperación de contraseña');
+    }
+  },
+
+  resetPassword: async (token: string, password: string): Promise<string> => {
+    try {
+      const response = await axiosInstance.post<{ message: string }>(
+        '/reset-password',
+        { token, password }
+      );
+      return response.data.message;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        throw new Error(
+          error.response?.data?.message || 'Error al restablecer la contraseña'
+        );
+      }
+      throw new Error('Error al restablecer la contraseña');
+    }
   }
 };

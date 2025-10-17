@@ -1,6 +1,6 @@
 /**
  * Componente principal para Corte y Reposición de Servicios
- * 
+ *
  * Funcionalidades principales:
  * - Visualización de estados de corte y reposición por cliente
  * - Gestión del ciclo completo: Pendiente → Liberado → Cortado → Reposición
@@ -8,7 +8,7 @@
  * - Control del proceso de revisión (Activar, Iniciar, Finalizar)
  * - Estadísticas rápidas de estados
  * - Tour interactivo para nuevos usuarios (driver.js)
- * 
+ *
  * Flujo del proceso de corte:
  * 1. **Activar Actualización**: Prepara el sistema para revisar
  * 2. **Iniciar**: Comienza proceso de revisión de cortes
@@ -19,14 +19,14 @@
  *    - 2/Cortado: Cliente con servicio cortado
  *    - 3/Reposición Solicitada: Solicitud de reconexión
  * 5. **Finalizar**: Cierra el proceso de revisión
- * 
+ *
  * Características especiales:
  * - **Tour Interactivo**: Guía paso a paso con driver.js (7 pasos)
  * - **Estadísticas en tiempo real**: Cards con totales por estado
  * - **Exportación dual**: Mantenedor completo y Revisión de corte
  * - **Tabla con acciones**: Marcar/Liberar, Registrar corte, Solicitar reposición
  * - **Modales especializados**: Confirmación de cada acción
- * 
+ *
  * Arquitectura:
  * - Usa DataTable con columnas personalizadas
  * - Componentes modales:
@@ -40,11 +40,11 @@
  *   * POST /ingresar-revision
  *   * POST /finalizar-revision
  *   * GET /exportar-* (para Excel)
- * 
+ *
  * @param {Object} props - Props del componente
  * @param {TotalesCorteReposicion[]} props.totalesData - Totales por estado
  * @param {ConsultarMantenedorRevisionCorte[]} props.mantenedorCorteData - Datos de revisión
- * 
+ *
  * @example
  * ```tsx
  * // Usado en app/routes/operaciones/corte-reposicion.tsx
@@ -80,12 +80,7 @@ import { useState } from 'react';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle
-} from '~/components/ui/card';
+import { Card, CardContent, CardTitle } from '~/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
@@ -367,9 +362,6 @@ export default function CorteReposicionComponent({
                         <CardTitle className='text-lg font-semibold'>
                           Panel de Revisión
                         </CardTitle>
-                        <CardDescription className='text-sm'>
-                          Herramientas de gestión y control
-                        </CardDescription>
                       </div>
                     </div>
                     <ChevronDown
@@ -383,14 +375,14 @@ export default function CorteReposicionComponent({
               <CollapsibleContent>
                 <CardContent className='p-4 space-y-6'>
                   {/* Botones de Acción modernizados */}
-                  <div className='flex flex-wrap gap-3 justify-center'>
+                  <div className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-7 gap-3'>
                     <Button
                       id='buscar-btn'
                       variant='outline'
                       size='sm'
                       onClick={handleBuscar}
                       disabled={isSearching}
-                      className='gap-1.5'
+                      className='gap-1.5 w-full'
                     >
                       {isSearching ? (
                         <Loader2 className='h-4 w-4 animate-spin' />
@@ -405,7 +397,7 @@ export default function CorteReposicionComponent({
                           id='ver-totales-btn'
                           variant='outline'
                           size='sm'
-                          className='gap-1.5'
+                          className='gap-1.5 w-full'
                         >
                           <BarChart3 className='h-4 w-4' />
                           Ver Totales
@@ -490,35 +482,35 @@ export default function CorteReposicionComponent({
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcel}
-                      className='gap-1.5 bg-emerald-500 hover:bg-emerald-600'
+                      className='gap-1.5 bg-emerald-500 hover:bg-emerald-600 w-full'
                     >
                       <Download className='h-4 w-4' />
-                      Exportar Excel
+                      Exportar
                     </Button>
                     <Button
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcelCorte}
-                      className='gap-1.5 bg-emerald-500 hover:bg-emerald-600'
+                      className='gap-1.5 bg-emerald-500 hover:bg-emerald-600 w-full'
                     >
                       <Download className='h-4 w-4' />
-                      Exportar Excel Corte
+                      Exportar Corte
                     </Button>
                     <Button
                       id='proceso-buttons'
-                      variant='default'
+                      variant='link'
                       size='sm'
                       onClick={handleActivarActualizacion}
-                      className='gap-1.5'
+                      className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90 w-full'
                     >
                       <ArrowUpToLine className='h-4 w-4' />
-                      Activar Actualización
+                      Actualizar
                     </Button>
                     <Button
                       variant='destructive'
                       size='sm'
                       onClick={handleIniciar}
-                      className='gap-1.5'
+                      className='gap-1.5 w-full'
                     >
                       <Play className='h-4 w-4' />
                       Iniciar
@@ -527,7 +519,7 @@ export default function CorteReposicionComponent({
                       variant='secondary'
                       size='sm'
                       onClick={handleFinalizar}
-                      className='gap-1.5'
+                      className='gap-1.5 w-full'
                     >
                       <CheckCircle2 className='h-4 w-4' />
                       Finalizar

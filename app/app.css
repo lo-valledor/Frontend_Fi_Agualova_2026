@@ -17,14 +17,6 @@
   font-weight: 400;
   font-style: normal;
   font-variation-settings: 'wdth' 100;
-  --sidebar: hsl(0 0% 98%);
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 :root {
@@ -186,6 +178,7 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 }
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -201,3 +194,9 @@
     cursor: pointer;
   }
 }
+
+/* 
+
+  --skeleton-base: #2a2a2a;
+  --skeleton-highlight: #3a3a3a;
+ */

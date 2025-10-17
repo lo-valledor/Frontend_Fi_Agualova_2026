@@ -379,209 +379,220 @@ export default function RevisarCalculoFacturaComponent({
             </button>
 
             <CollapsibleContent>
-              <CardContent className='px-4 pb-4 space-y-4'>
-                <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-                  {/* Periodo */}
-                  <div className='space-y-2'>
-                    <Label className='text-sm font-medium flex items-center gap-2'>
-                      <CalendarIcon className='w-4 h-4' />
-                      Periodo
-                    </Label>
-                    {periodoAbierto && periodoAbierto.length > 0 ? (
-                      <div
-                        id='periodo-info'
-                        className='p-3 rounded-xl bg-background border-border'
-                      >
-                        <div className='flex items-center gap-3'>
-                          <div className='w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center'>
-                            <CalendarIcon className='w-4 h-4 text-primary' />
-                          </div>
-                          <div>
-                            <div className='font-semibold'>
-                              {periodoAbierto[0].mes
-                                .toString()
-                                .padStart(2, '0')}
-                              /{periodoAbierto[0].anio}
+              <CardContent className='px-4 pb-4'>
+                <div className='flex flex-col gap-4 w-full'>
+                  {/* Campos de filtro */}
+                  <div className='flex flex-col sm:flex-row gap-4 w-full'>
+                    {/* Periodo */}
+                    <div className='flex-1 min-w-0'>
+                      <Label className='text-sm font-medium flex items-center gap-2 mb-1'>
+                        <CalendarIcon className='w-4 h-4' />
+                        Periodo
+                      </Label>
+                      {periodoAbierto && periodoAbierto.length > 0 ? (
+                        <div
+                          id='periodo-info'
+                          className='p-3 rounded-xl bg-background border border-border'
+                        >
+                          <div className='flex items-center gap-3'>
+                            <div className='w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0'>
+                              <CalendarIcon className='w-4 h-4 text-primary' />
+                            </div>
+                            <div>
+                              <div className='font-semibold text-sm'>
+                                {periodoAbierto[0].mes
+                                  .toString()
+                                  .padStart(2, '0')}
+                                /{periodoAbierto[0].anio}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ) : (
-                      <div className='p-3 rounded-xl bg-muted/50 border border-border'>
-                        <div className='flex items-center gap-3'>
-                          <div className='w-8 h-8 bg-muted rounded-xl flex items-center justify-center'>
-                            <AlertCircleIcon className='w-4 h-4 text-muted-foreground' />
-                          </div>
-                          <div>
-                            <div className='font-medium text-foreground'>
-                              No hay periodo abierto
+                      ) : (
+                        <div className='p-3 rounded-xl bg-muted/50 border border-border'>
+                          <div className='flex items-center gap-3'>
+                            <div className='w-8 h-8 bg-muted rounded-xl flex items-center justify-center flex-shrink-0'>
+                              <AlertCircleIcon className='w-4 h-4 text-muted-foreground' />
                             </div>
-                            <p className='text-xs text-muted-foreground'>
-                              Contacte al administrador del sistema
+                            <div>
+                              <div className='font-medium text-sm'>
+                                No hay periodo abierto
+                              </div>
+                              <p className='text-xs text-muted-foreground'>
+                                Contacte al administrador del sistema
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Ciclo de facturación */}
+                    <div className='flex-1 min-w-0'>
+                      <Label className='text-sm font-medium flex items-center gap-2 mb-1'>
+                        <FileTextIcon className='w-4 h-4' />
+                        Ciclo de Facturación
+                      </Label>
+                      <div className='p-3 rounded-xl bg-background border border-border'>
+                        <div className='flex items-center gap-3'>
+                          <div className='w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center flex-shrink-0'>
+                            <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
+                          </div>
+                          <div className='flex-1 min-w-0'>
+                            <Input
+                              value='Ciclo día 15 (Único ciclo normado)'
+                              disabled
+                              className='bg-transparent border-0 font-medium p-0 h-auto cursor-default text-sm'
+                            />
+                            <p className='text-xs'>
+                              ✓ Ciclo autorizado por normativa vigente
                             </p>
                           </div>
                         </div>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Ciclo de facturación */}
-                  <div className='space-y-2'>
-                    <Label className='text-sm font-medium flex items-center gap-2'>
-                      <FileTextIcon className='w-4 h-4' />
-                      Ciclo de Facturación
-                    </Label>
-                    <div className='p-3 rounded-xl bg-background border-border'>
-                      <div className='flex items-center gap-3'>
-                        <div className='w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center'>
-                          <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
-                        </div>
-                        <div className='flex-1'>
-                          <Input
-                            value='Ciclo día 15 (Único ciclo normado)'
-                            disabled
-                            className='bg-transparent border-0 font-medium p-0 h-auto cursor-default'
-                          />
-                          <p className='text-xs'>
-                            ✓ Ciclo autorizado por normativa vigente
-                          </p>
-                        </div>
-                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Acciones */}
-                <div className='pt-4 border-t border-border'>
-                  <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
-                    {/* Botón principal de preparar cálculo */}
-                    <Button
-                      id='preparar-calculo-btn'
-                      onClick={handleLanzarCalculo}
-                      disabled={isLaunching || !hayLecturasCerradas}
-                      variant='default'
-                      size='sm'
-                      title={
-                        !hayLecturasCerradas
-                          ? 'Debe cerrar lecturas antes de preparar el cálculo'
-                          : 'Preparar cálculo de facturación'
-                      }
-                    >
-                      {isLaunching ? (
-                        <>
-                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          <span className='hidden sm:inline'>
-                            Preparando...
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <SearchIcon className='h-4 w-4' />
-                          <span className='hidden sm:inline'>Preparar</span>
-                          <span className='sm:hidden'>Preparar Cálculo</span>
-                        </>
-                      )}
-                    </Button>
-
-                    {/* Ver cálculos */}
-                    <Button
-                      id='ver-calculo-btn'
-                      onClick={handleRevisarCalculo}
-                      disabled={isLoading || !hayLecturasCerradas}
-                      variant='secondary'
-                      size='sm'
-                      title={
-                        !hayLecturasCerradas
-                          ? 'Debe cerrar lecturas antes de ver los cálculos'
-                          : 'Ver cálculos de facturación'
-                      }
-                    >
-                      {isLoading ? (
-                        <>
-                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          <span className='hidden sm:inline'>Cargando...</span>
-                        </>
-                      ) : (
-                        <>
-                          <FileTextIcon className='h-4 w-4' />
-                          <span className='hidden sm:inline'>Ver</span>
-                          <span className='sm:hidden'>Ver Cálculos</span>
-                        </>
-                      )}
-                    </Button>
-
-                    {/* Aceptar cálculo */}
-                    <Button
-                      id='aceptar-calculo-btn'
-                      onClick={handleAceptarCalculo}
-                      disabled={
-                        isAccepting ||
-                        selectedContratos.length === 0 ||
-                        !hayLecturasCerradas
-                      }
-                      variant='outline'
-                      size='sm'
-                      title={
-                        !hayLecturasCerradas
-                          ? 'Debe cerrar lecturas antes de aceptar cálculos'
-                          : selectedContratos.length === 0
-                            ? 'Seleccione al menos un contrato'
-                            : 'Aceptar cálculos seleccionados'
-                      }
-                    >
-                      {isAccepting ? (
-                        <>
-                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          <span className='hidden sm:inline'>Aceptando...</span>
-                        </>
-                      ) : (
-                        <>
-                          <SettingsIcon className='h-4 w-4' />
-                          <span className='hidden sm:inline'>Aceptar</span>
-                          <span className='sm:hidden'>Aceptar</span>
-                          <span className='ml-1'>
-                            ({selectedContratos.length})
-                          </span>
-                        </>
-                      )}
-                    </Button>
-
-                    {/* Actualizar */}
-                    <Button
-                      id='actualizar-btn'
-                      onClick={handleRefreshData}
-                      variant='link'
-                      disabled={isLoading || !isCalculoPreparado}
-                      size='sm'
-                      className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90'
-                    >
-                      <RefreshCw className='h-4 w-4' />
-                      <span className='hidden lg:inline'>Actualizar</span>
-                    </Button>
-
-                    {/* Limpiar */}
-                    <Button
-                      id='limpiar-btn'
-                      onClick={handleClearFilters}
-                      variant='destructive'
-                      disabled={isLoading}
-                      size='sm'
-                    >
-                      <Eraser className='h-4 w-4' />
-                      <span className='hidden lg:inline'>Limpiar</span>
-                    </Button>
-
-                    {/* Exportar */}
-                    <div id='exportar-btn'>
-                      <ExportButton
-                        data={dataParaExportar}
-                        columns={exportColumnsConCargos}
-                        filename={`calculo_factura_${periodoFormateado}`}
-                        size='sm'
+                  {/* Acciones */}
+                  <div className='pt-4 mt-4 border-t border-border'>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2'>
+                      {/* Botón principal de preparar cálculo */}
+                      <Button
+                        id='preparar-calculo-btn'
+                        onClick={handleLanzarCalculo}
+                        disabled={isLaunching || !hayLecturasCerradas}
                         variant='default'
-                        showDropdown={true}
-                        className='flex items-center justify-center gap-2 w-full'
-                      />
+                        size='sm'
+                        className='w-full'
+                        title={
+                          !hayLecturasCerradas
+                            ? 'Debe cerrar lecturas antes de preparar el cálculo'
+                            : 'Preparar cálculo de facturación'
+                        }
+                      >
+                        {isLaunching ? (
+                          <>
+                            <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                            <span className='hidden sm:inline'>
+                              Preparando...
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <SearchIcon className='h-4 w-4' />
+                            <span className='hidden sm:inline'>Preparar</span>
+                            <span className='sm:hidden'>Preparar Cálculo</span>
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Ver cálculos */}
+                      <Button
+                        id='ver-calculo-btn'
+                        onClick={handleRevisarCalculo}
+                        disabled={isLoading || !hayLecturasCerradas}
+                        variant='secondary'
+                        size='sm'
+                        className='w-full'
+                        title={
+                          !hayLecturasCerradas
+                            ? 'Debe cerrar lecturas antes de ver los cálculos'
+                            : 'Ver cálculos de facturación'
+                        }
+                      >
+                        {isLoading ? (
+                          <>
+                            <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                            <span className='hidden sm:inline'>
+                              Cargando...
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <FileTextIcon className='h-4 w-4' />
+                            <span className='hidden sm:inline'>Ver</span>
+                            <span className='sm:hidden'>Ver Cálculos</span>
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Aceptar cálculo */}
+                      <Button
+                        id='aceptar-calculo-btn'
+                        onClick={handleAceptarCalculo}
+                        disabled={
+                          isAccepting ||
+                          selectedContratos.length === 0 ||
+                          !hayLecturasCerradas
+                        }
+                        variant='outline'
+                        size='sm'
+                        className='w-full'
+                        title={
+                          !hayLecturasCerradas
+                            ? 'Debe cerrar lecturas antes de aceptar cálculos'
+                            : selectedContratos.length === 0
+                              ? 'Seleccione al menos un contrato'
+                              : 'Aceptar cálculos seleccionados'
+                        }
+                      >
+                        {isAccepting ? (
+                          <>
+                            <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                            <span className='hidden sm:inline'>
+                              Aceptando...
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <SettingsIcon className='h-4 w-4' />
+                            <span className='hidden sm:inline'>Aceptar</span>
+                            <span className='sm:hidden'>Aceptar</span>
+                            <span className='ml-1'>
+                              ({selectedContratos.length})
+                            </span>
+                          </>
+                        )}
+                      </Button>
+
+                      {/* Actualizar */}
+                      <Button
+                        id='actualizar-btn'
+                        onClick={handleRefreshData}
+                        variant='link'
+                        disabled={isLoading || !isCalculoPreparado}
+                        size='sm'
+                        className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90 w-full'
+                      >
+                        <RefreshCw className='h-4 w-4' />
+                        <span className='sm:inline'>Actualizar</span>
+                      </Button>
+
+                      {/* Limpiar */}
+                      <Button
+                        id='limpiar-btn'
+                        onClick={handleClearFilters}
+                        variant='destructive'
+                        disabled={isLoading}
+                        size='sm'
+                        className='w-full'
+                      >
+                        <Eraser className='h-4 w-4' />
+                        <span className='sm:inline'>Limpiar</span>
+                      </Button>
+
+                      {/* Exportar */}
+                      <div id='exportar-btn' className='w-full'>
+                        <ExportButton
+                          data={dataParaExportar}
+                          columns={exportColumnsConCargos}
+                          filename={`calculo_factura_${periodoFormateado}`}
+                          size='sm'
+                          variant='default'
+                          showDropdown={true}
+                          className='flex items-center justify-center gap-2 w-full'
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -45,17 +45,34 @@ const chartConfig = {
 // Función auxiliar para normalizar valores numéricos
 const normalizarValor = (valor: string | number | undefined): number => {
   if (valor === undefined || valor === null) return 0;
-
   if (typeof valor === 'number') return valor;
-
-  // Si es string, intentamos convertirlo a número
   if (typeof valor === 'string') {
-    // Reemplazamos coma por punto para manejar formatos como "1,234.56" o "1.234,56"
-    const valorNormalizado = valor.replace(',', '.');
-    const numero = parseFloat(valorNormalizado);
+    // Detectar formato europeo (1.234,56) o americano (1,234.56)
+    // Si contiene punto y coma, es europeo: 1.234,56 => 1234.56
+    if (valor.includes('.') && valor.includes(',')) {
+      // Europeo: quitar puntos (miles), cambiar coma por punto (decimal)
+      const limpio = valor.replace(/\./g, '').replace(',', '.');
+      const numero = parseFloat(limpio);
+      return isNaN(numero) ? 0 : numero;
+    }
+    // Si solo tiene coma, es decimal latino: 11,32 => 11.32
+    if (valor.includes(',') && !valor.includes('.')) {
+      const numero = parseFloat(valor.replace(',', '.'));
+      return isNaN(numero) ? 0 : numero;
+    }
+    // Si solo tiene punto, puede ser decimal o miles
+    // Si hay más de 3 dígitos antes del punto, probablemente es miles
+    const puntoIndex = valor.indexOf('.');
+    if (puntoIndex > 0 && valor.length - puntoIndex - 1 === 3) {
+      // Ejemplo: 1.132 => 1132
+      const limpio = valor.replace(/\./g, '');
+      const numero = parseFloat(limpio);
+      return isNaN(numero) ? 0 : numero;
+    }
+    // Si solo tiene punto y menos de 3 dígitos después, tratar como decimal
+    const numero = parseFloat(valor);
     return isNaN(numero) ? 0 : numero;
   }
-
   return 0;
 };
 

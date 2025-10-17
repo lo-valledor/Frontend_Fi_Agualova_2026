@@ -128,7 +128,7 @@ export function LoginForm({
                 htmlFor='usuario'
                 className='block text-sm font-semibold text-slate-700 dark:text-slate-300'
               >
-                Usuario
+                Email
               </Label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
@@ -137,8 +137,8 @@ export function LoginForm({
                 <Input
                   id='usuario'
                   name='usuario'
-                  type='text'
-                  placeholder='Ingresa tu usuario'
+                  type='email'
+                  placeholder='email@ejemplo.com'
                   value={input.usuario}
                   onChange={handleInput}
                   required

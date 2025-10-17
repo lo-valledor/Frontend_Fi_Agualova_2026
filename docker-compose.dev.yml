@@ -1,5 +1,5 @@
 # docker-compose.dev.yml - Entorno de Desarrollo
-version: '3.8'
+version: "3.8"
 
 services:
   frontend-dev:
@@ -10,14 +10,16 @@ services:
       args:
         VITE_API_URL: http://192.168.1.139:8081/Enerlova
         NODE_ENV: development
+        VITE_APP_ENV: development
     ports:
-      - '3000:5173' # Puerto de desarrollo
+      - "3000:5173" # Puerto de desarrollo
     volumes:
       - .:/app
       - /app/node_modules # Preservar node_modules del contenedor
     environment:
       - NODE_ENV=development
       - VITE_API_URL=http://192.168.1.139:8081/Enerlova
+      - VITE_APP_ENV=development
     networks:
       - enerlova-dev-network
     restart: unless-stopped
@@ -31,10 +33,12 @@ services:
       args:
         VITE_API_URL: http://192.168.1.139:8081/Enerlova
         NODE_ENV: development
+        VITE_APP_ENV: development
     ports:
-      - '3001:3000' # Puerto alternativo para nginx de desarrollo
+      - "3001:3000" # Puerto alternativo para nginx de desarrollo
     environment:
       - NODE_ENV=development
+      - VITE_APP_ENV=development
     networks:
       - enerlova-dev-network
     restart: unless-stopped

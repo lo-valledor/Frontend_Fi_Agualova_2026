@@ -18,7 +18,9 @@ WORKDIR /app
 
 # Agregar las variables de entorno para el build
 ARG VITE_API_URL
+ARG VITE_APP_ENV=production
 ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_APP_ENV=$VITE_APP_ENV
 
 RUN pnpm run build
 
