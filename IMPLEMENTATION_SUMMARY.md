@@ -21,6 +21,7 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 ### ✨ Visual
 
 #### 🟠 Entorno de Desarrollo
+
 - **Color Principal**: Naranja (`#E67E22`)
 - **Paleta**: Tonos cálidos (naranja/amarillo)
 - **Banner Superior**: "ENTORNO DE DESARROLLO" con punto pulsante
@@ -28,6 +29,7 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 - **Identificación**: Inmediata y clara
 
 #### 🔵 Entorno de Producción
+
 - **Color Principal**: Azul (`#5B7FED`)
 - **Paleta**: Tonos fríos (azul/morado)
 - **Banner Superior**: Ninguno
@@ -48,12 +50,14 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 ## 📁 Archivos Creados (10 archivos)
 
 ### Estilos y Configuración
+
 1. **`app/app.dev.css`** - Estilos específicos para desarrollo con paleta naranja
 2. **`.env.development`** - Variables de entorno para desarrollo
 3. **`.env.production`** - Variables de entorno para producción
 4. **`.env.example`** - Ejemplo de configuración
 
 ### Documentación (5 archivos)
+
 5. **`docs/ENVIRONMENT_THEMING.md`** - Documentación técnica completa (2.5kb)
 6. **`docs/ENVIRONMENT_QUICK_START.md`** - Guía rápida de inicio (1.8kb)
 7. **`ENVIRONMENT_VISUAL_GUIDE.md`** - Guía visual comparativa (1.5kb)
@@ -61,6 +65,7 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 9. **`README_UPDATE.md`** - Instrucciones para actualizar README
 
 ### Scripts (3 archivos)
+
 10. **`scripts/switch-environment.ps1`** - Script PowerShell para Windows (2.9kb)
 11. **`scripts/switch-environment.sh`** - Script Bash para Linux/Mac (3.1kb)
 12. **`scripts/README.md`** - Documentación de scripts (1.4kb)
@@ -72,7 +77,9 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 ## 🔧 Archivos Modificados (6 archivos)
 
 ### Frontend Core
-1. **`app/root.tsx`** 
+
+1. **`app/root.tsx`**
+
    - Importación condicional de `app.dev.css`
    - Componente `EnvironmentIndicator`
    - Clase condicional en body
@@ -81,13 +88,15 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
    - Define `VITE_APP_ENV` para el cliente
 
 ### Docker
+
 3. **`Dockerfile`**
    - ARG `VITE_APP_ENV=production`
-   
 4. **`Dockerfile.dev`**
+
    - ARG `VITE_APP_ENV=development` en ambos targets
 
 5. **`docker-compose.prod.yml`**
+
    - Variable `VITE_APP_ENV=production`
 
 6. **`docker-compose.dev.yml`**
@@ -100,6 +109,7 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 ### Opción 1: Scripts Automatizados ⭐ (Recomendado)
 
 #### Windows PowerShell
+
 ```powershell
 # Desarrollo local
 .\scripts\switch-environment.ps1 -Environment dev
@@ -121,6 +131,7 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 ```
 
 #### Linux/Mac Bash
+
 ```bash
 # Desarrollo local
 ./scripts/switch-environment.sh dev
@@ -144,12 +155,14 @@ Se creó un **sistema completo de tematización visual por entorno** que permite
 ### Opción 2: Comandos Directos
 
 #### Desarrollo Local
+
 ```bash
 pnpm run dev
 # → http://localhost:5173 (Naranja)
 ```
 
 #### Producción Local
+
 ```bash
 VITE_APP_ENV=production pnpm run build
 pnpm run start
@@ -157,12 +170,14 @@ pnpm run start
 ```
 
 #### Docker Desarrollo
+
 ```bash
 docker-compose -f docker-compose.dev.yml up --build
 # → http://localhost:3000 (Naranja)
 ```
 
 #### Docker Producción
+
 ```bash
 docker-compose -f docker-compose.prod.yml up --build
 # → http://localhost:8080 (Azul)
@@ -188,6 +203,7 @@ docker-compose -f docker-compose.prod.yml up --build
 ## 📊 Comparativa Visual
 
 ### Producción
+
 ```
 ┌─────────────────────────────────────┐
 │  🏢 Sistema Enerlova           👤  │  ← Azul
@@ -202,6 +218,7 @@ docker-compose -f docker-compose.prod.yml up --build
 ```
 
 ### Desarrollo
+
 ```
 ╔═════════════════════════════════════╗
 ║ 🟠 ● ENTORNO DE DESARROLLO [DEV]   ║  ← Banner Naranja
@@ -223,6 +240,7 @@ docker-compose -f docker-compose.prod.yml up --build
 ## 🧪 Cómo Verificar
 
 ### Quick Test
+
 ```bash
 # 1. Iniciar desarrollo
 pnpm run dev
@@ -238,6 +256,7 @@ console.log(import.meta.env.VITE_APP_ENV)
 ```
 
 ### Verificación Completa
+
 Ver: `VERIFICATION_CHECKLIST.md`
 
 ---
@@ -245,14 +264,17 @@ Ver: `VERIFICATION_CHECKLIST.md`
 ## 📚 Documentación Disponible
 
 ### Guías de Usuario
+
 - **`ENVIRONMENT_VISUAL_GUIDE.md`** - Comparativa visual y overview
 - **`docs/ENVIRONMENT_QUICK_START.md`** - Guía rápida para empezar
 
 ### Documentación Técnica
+
 - **`docs/ENVIRONMENT_THEMING.md`** - Detalles técnicos completos
 - **`scripts/README.md`** - Uso de scripts de gestión
 
 ### Herramientas
+
 - **`VERIFICATION_CHECKLIST.md`** - Lista de verificación
 - **`README_UPDATE.md`** - Cómo actualizar el README principal
 - **`.env.example`** - Ejemplo de configuración
@@ -262,21 +284,25 @@ Ver: `VERIFICATION_CHECKLIST.md`
 ## 🔄 Próximos Pasos Sugeridos
 
 1. ✅ **Verificar Implementación**
+
    - Ejecutar checklist de verificación
    - Probar todos los entornos
    - Validar en diferentes dispositivos
 
 2. 📝 **Actualizar Documentación**
+
    - Actualizar README.md principal (usar README_UPDATE.md)
    - Agregar screenshots si están disponibles
    - Documentar en wiki del proyecto
 
 3. 👥 **Informar al Equipo**
+
    - Presentar el nuevo sistema
    - Entrenar en uso de scripts
    - Compartir guías rápidas
 
 4. 🔄 **Integración CI/CD**
+
    - Configurar pipelines con VITE_APP_ENV
    - Automatizar builds por entorno
    - Agregar validaciones
@@ -294,11 +320,13 @@ Ver: `VERIFICATION_CHECKLIST.md`
 
 1. Crear `app/app.staging.css` con nueva paleta
 2. Agregar caso en `root.tsx`:
+
 ```tsx
 if (env === 'staging') {
   import('./app.staging.css');
 }
 ```
+
 3. Crear `.env.staging`
 4. Actualizar scripts
 5. Documentar
@@ -306,6 +334,7 @@ if (env === 'staging') {
 ### Cambiar Colores
 
 Editar variables CSS en:
+
 - `app/app.css` (producción)
 - `app/app.dev.css` (desarrollo)
 
@@ -354,15 +383,18 @@ Un sistema **robusto, fácil de usar y bien documentado** que elimina la confusi
 ## 🤝 Soporte
 
 ### Documentación
+
 - Ver archivos en `docs/` y root del proyecto
 - Todos los archivos tienen ejemplos y explicaciones
 
 ### Troubleshooting
+
 - Ver sección en cada guía
 - Usar scripts con `--clean` si hay problemas
 - Verificar variables de entorno
 
 ### Contacto
+
 - Issues del proyecto
 - Documentación del equipo
 

@@ -7,6 +7,7 @@
 ## 📋 Comandos Básicos
 
 ### Desarrollo Local
+
 ```bash
 # Inicio rápido
 pnpm run dev
@@ -22,6 +23,7 @@ VITE_APP_ENV=development pnpm run dev
 ```
 
 ### Producción Local
+
 ```bash
 # Build y start
 VITE_APP_ENV=production pnpm run build
@@ -39,6 +41,7 @@ pnpm run start
 ## 🐳 Docker
 
 ### Desarrollo
+
 ```bash
 # Iniciar contenedor de desarrollo
 docker-compose -f docker-compose.dev.yml up --build
@@ -57,6 +60,7 @@ docker-compose -f docker-compose.dev.yml down -v
 ```
 
 ### Producción
+
 ```bash
 # Iniciar contenedor de producción
 docker-compose -f docker-compose.prod.yml up --build
@@ -75,6 +79,7 @@ docker-compose -f docker-compose.prod.yml down -v
 ```
 
 ### Rebuild Sin Cache
+
 ```bash
 # Desarrollo
 docker-compose -f docker-compose.dev.yml build --no-cache
@@ -90,6 +95,7 @@ docker-compose -f docker-compose.prod.yml up
 ## 🔍 Verificación
 
 ### Ver Variables de Entorno
+
 ```bash
 # En el navegador (DevTools Console)
 console.log(import.meta.env.VITE_APP_ENV)
@@ -108,9 +114,10 @@ docker exec -it enerlova-frontend-prod printenv | grep VITE
 ```
 
 ### Inspeccionar CSS
+
 ```javascript
 // En DevTools Console
-getComputedStyle(document.documentElement).getPropertyValue('--primary')
+getComputedStyle(document.documentElement).getPropertyValue('--primary');
 // → Dev: "oklch(0.65 0.18 35)" (Naranja)
 // → Prod: "oklch(0.71 0.15 239.15)" (Azul)
 ```
@@ -120,6 +127,7 @@ getComputedStyle(document.documentElement).getPropertyValue('--primary')
 ## 🧹 Limpieza
 
 ### Limpiar Cache Local
+
 ```bash
 # Eliminar build y cache
 rm -rf build/
@@ -133,6 +141,7 @@ pnpm install
 ```
 
 ### Limpiar Docker
+
 ```bash
 # Detener y eliminar contenedores
 docker-compose -f docker-compose.dev.yml down
@@ -151,6 +160,7 @@ docker system prune -a --volumes
 ## 📊 Comparación de Entornos
 
 ### Levantar Ambos
+
 ```bash
 # Método 1: Script automatizado
 ./scripts/switch-environment.sh compare
@@ -164,6 +174,7 @@ docker-compose -f docker-compose.prod.yml up --build
 ```
 
 ### Acceder
+
 ```bash
 # Desarrollo
 open http://localhost:3000  # Mac
@@ -181,6 +192,7 @@ start http://localhost:8080  # Windows
 ## 🔧 Troubleshooting
 
 ### Puerto en Uso
+
 ```bash
 # Ver qué proceso usa el puerto
 lsof -i :3000  # Mac/Linux
@@ -198,6 +210,7 @@ ports:
 ```
 
 ### Cambios No Se Reflejan
+
 ```bash
 # 1. Limpiar cache
 rm -rf build/ node_modules/.vite/
@@ -215,6 +228,7 @@ docker-compose up --build --force-recreate
 ```
 
 ### Variables No Cargadas
+
 ```bash
 # Verificar archivo .env existe
 ls -la .env.development .env.production
@@ -232,6 +246,7 @@ pnpm run dev
 ## 🎨 Personalización
 
 ### Cambiar Color de Desarrollo
+
 ```bash
 # 1. Editar archivo CSS
 code app/app.dev.css
@@ -244,6 +259,7 @@ pnpm run dev
 ```
 
 ### Cambiar Mensaje del Banner
+
 ```bash
 # 1. Editar root.tsx
 code app/root.tsx
@@ -260,6 +276,7 @@ code app/root.tsx
 ## 📦 Build y Deploy
 
 ### Build para Producción
+
 ```bash
 # Build con variable explícita
 VITE_APP_ENV=production pnpm run build
@@ -272,6 +289,7 @@ pnpm run start
 ```
 
 ### Deploy Docker
+
 ```bash
 # 1. Build imagen
 docker-compose -f docker-compose.prod.yml build
@@ -291,6 +309,7 @@ ssh user@server 'docker pull registry.example.com/enerlova:latest && docker-comp
 ## 🔄 Workflows Comunes
 
 ### Desarrollo Diario
+
 ```bash
 # 1. Pull último código
 git pull
@@ -310,6 +329,7 @@ git push
 ```
 
 ### Testing de Producción
+
 ```bash
 # 1. Build producción
 VITE_APP_ENV=production pnpm run build
@@ -325,6 +345,7 @@ docker-compose -f docker-compose.prod.yml up --build
 ```
 
 ### Debugging
+
 ```bash
 # 1. Iniciar con logs verbose
 DEBUG=* pnpm run dev
@@ -376,6 +397,7 @@ Agregar a `package.json`:
 ```
 
 Uso:
+
 ```bash
 pnpm run env:dev
 pnpm run env:prod
