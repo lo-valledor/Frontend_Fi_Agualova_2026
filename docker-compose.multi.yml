@@ -1,6 +1,6 @@
 # docker-compose.multi.yml - Ambos entornos simultáneos
 # Uso: docker-compose -f docker-compose.multi.yml up -d --build
-version: '3.8'
+version: "3.8"
 
 services:
   # PRODUCCIÓN - Puerto 8080 (Colores azules, sin badge)
@@ -14,7 +14,7 @@ services:
         VITE_AI_API_URL: http://192.168.1.139:8001
         VITE_ENV_MODE: production
     ports:
-      - '8080:80'
+      - "8080:80"
     container_name: enerlova-frontend-prod
     restart: unless-stopped
     environment:
@@ -36,7 +36,7 @@ services:
         VITE_ENV_MODE: development
         NODE_ENV: development
     ports:
-      - '3000:3000'
+      - "3000:80"
     container_name: enerlova-frontend-dev
     restart: unless-stopped
     environment:

@@ -1,6 +1,8 @@
 {
   "permissions": {
-    "allow": ["Bash(pnpm typecheck)"],
+    "allow": [
+      "Bash(pnpm typecheck)"
+    ],
     "deny": [],
     "ask": [],
     "additionalDirectories": [
@@ -18,5 +20,10 @@
       "type": "command",
       "command": "if [[ \"$CLAUDE_FILE_PATHS\" =~ \\.(ts|tsx)$ ]]; then npx tsc --noEmit --skipLibCheck \"$CLAUDE_FILE_PATHS\" || echo '⚠️ TypeScript errors detected - please review'; fi"
     }
-  ]
+  ],
+  "enabledMcpjsonServers": [
+    "shadcn"
+  ],
+  "enableAllProjectMcpServers": true,
+  "outputStyle": "default"
 }

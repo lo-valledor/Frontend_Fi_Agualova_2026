@@ -1,4 +1,4 @@
-import { ArrowLeft, Mail, Moon, Send, Sun } from 'lucide-react';
+import { ArrowLeft, Loader2, Mail, Moon, Send, Sun } from 'lucide-react';
 
 import type React from 'react';
 import { useState } from 'react';
@@ -96,11 +96,11 @@ export function ForgotForm({
       </Button>
 
       {/* Header */}
-      <div className='pt-10 pb-6 px-8 text-center border-b border-slate-200/50 dark:border-slate-700/50'>
-        <h1 className='text-3xl font-bold text-slate-900 dark:text-white mb-2'>
+      <div className='pt-10 pb-6 px-8 text-center border-b border-border'>
+        <h1 className='text-3xl font-bold'>
           Recuperar Contraseña
         </h1>
-        <p className='text-sm text-slate-600 dark:text-slate-400'>
+        <p className='text-sm text-muted-foreground mt-2'>
           Ingrese su correo electrónico para recibir instrucciones de
           recuperación
         </p>
@@ -157,7 +157,7 @@ export function ForgotForm({
               </Label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <Mail className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
+                  <Mail className='h-5 w-5  group-focus-within:text-ring transition-colors' />
                 </div>
                 <Input
                   id='email'
@@ -176,31 +176,13 @@ export function ForgotForm({
 
           <Button
             type='submit'
+            variant="default"
             disabled={loading}
-            className='w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
+            className='w-full h-12 rounded-xl font-semibold shadow-lg  transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
           >
             {loading ? (
               <div className='flex items-center justify-center gap-2'>
-                <svg
-                  className='animate-spin h-5 w-5'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                >
-                  <circle
-                    className='opacity-25'
-                    cx='12'
-                    cy='12'
-                    r='10'
-                    stroke='currentColor'
-                    strokeWidth='4'
-                  ></circle>
-                  <path
-                    className='opacity-75'
-                    fill='currentColor'
-                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                  ></path>
-                </svg>
+                <Loader2 className='h-5 w-5 animate-spin' />
                 <span>Enviando...</span>
               </div>
             ) : (
@@ -214,7 +196,7 @@ export function ForgotForm({
           <div className='text-center mt-4'>
             <Link
               to='/auth/login'
-              className='inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors duration-200'
+              className='inline-flex items-center gap-2 text-sm text-primary hover:underline transition-colors duration-200'
             >
               <ArrowLeft className='h-4 w-4' />
               Volver al inicio de sesión
