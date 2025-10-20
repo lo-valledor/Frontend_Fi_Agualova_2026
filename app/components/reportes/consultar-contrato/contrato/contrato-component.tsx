@@ -3,7 +3,8 @@ import {
   FileText,
   Settings,
   TrendingUp,
-  User
+  User,
+  Zap
   //Zap
 } from 'lucide-react';
 
@@ -31,6 +32,7 @@ import type {
 import FacturasAnalyticsSimple from './facturas-analytics-simple';
 import InformacionContrato from './informacion-contrato';
 import LecturasAnalyticsSimple from './lecturas-analytics-simple';
+import ProyeccionesAvanzadas from './proyecciones-avanzadas';
 //import ProyeccionesAvanzadas from './proyecciones-avanzadas';
 
 interface ContratoComponentProps {
@@ -188,7 +190,7 @@ const ContratoComponent = memo(function ContratoComponent({
           onValueChange={setActiveTab}
           className='space-y-4'
         >
-          <TabsList className='grid w-full grid-cols-2 sm:grid-cols-4 h-auto sm:h-11 gap-1 p-1'>
+          <TabsList className='grid w-full grid-cols-2 sm:grid-cols-5 h-auto sm:h-11 gap-1 p-1'>
             <TabsTrigger value='resumen' className='gap-2 h-10 sm:h-9'>
               <User className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Información</span>
@@ -204,17 +206,16 @@ const ContratoComponent = memo(function ContratoComponent({
               <span className='hidden sm:inline'>Facturas</span>
               <span className='sm:hidden text-xs'>Fact.</span>
             </TabsTrigger>
-
+            <TabsTrigger value='proyecciones' className='gap-2 h-10 sm:h-9 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 data-[state=active]:from-blue-100 data-[state=active]:to-purple-100'>
+              <Zap className='h-4 w-4 flex-shrink-0 text-blue-600 dark:text-blue-400' />
+              <span className='hidden sm:inline text-blue-900 dark:text-blue-100'>Proyecciones IA</span>
+              <span className='sm:hidden text-xs text-blue-900 dark:text-blue-100'>IA</span>
+            </TabsTrigger>
             <TabsTrigger value='tecnico' className='gap-2 h-10 sm:h-9'>
               <Settings className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Técnico</span>
               <span className='sm:hidden text-xs'>Téc.</span>
             </TabsTrigger>
-            {/* <TabsTrigger value='proyecciones' className='gap-2 h-10 sm:h-9'>
-              <Zap className='h-4 w-4 flex-shrink-0' />
-              <span className='hidden sm:inline'>Proyecciones</span>
-              <span className='sm:hidden text-xs'>Proy.</span>
-            </TabsTrigger> */}
           </TabsList>
 
           {/* Tab: Resumen General - Simple */}
@@ -246,13 +247,13 @@ const ContratoComponent = memo(function ContratoComponent({
           </TabsContent>
 
           {/* Tab: Proyecciones Avanzadas */}
-          {/* <TabsContent value='proyecciones' className='space-y-4'>
+          <TabsContent value='proyecciones' className='space-y-4'>
             <ProyeccionesAvanzadas
               detalleLecturas={detalleLecturas}
               detalleFacturas={detalleFacturas}
               contratoId={contratoInfo?.contratoId}
             />
-          </TabsContent> */}
+          </TabsContent>
 
           {/* Tab: Información Técnica - Simple */}
           <TabsContent value='tecnico' className='space-y-4'>

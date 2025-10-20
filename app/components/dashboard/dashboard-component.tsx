@@ -55,7 +55,7 @@ const quickActions = [
     description: 'Registrar un nuevo contrato de servicio',
     icon: FileText,
     color: 'bg-green-500',
-    href: '/dashboard/administracion/contratos'
+    href: '/dashboard/administracion/contratos/crear'
   },
   {
     title: 'Periodo Facturación',
@@ -69,14 +69,14 @@ const quickActions = [
     description: 'Registrar un nuevo cliente en el sistema',
     icon: Users,
     color: 'bg-orange-500',
-    href: '/dashboard/administracion/clientes'
+    href: '/dashboard/administracion/clientes/crear'
   },
   {
     title: 'Registrar Medidor',
     description: 'Añadir nuevo medidor al inventario',
     icon: Package,
     color: 'bg-teal-500',
-    href: '/dashboard/administracion/medidores'
+    href: '/dashboard/administracion/medidores/crear'
   },
   {
     title: 'Preparar Lecturas',

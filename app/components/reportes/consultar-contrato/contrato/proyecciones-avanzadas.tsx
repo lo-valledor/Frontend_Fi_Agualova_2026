@@ -50,6 +50,8 @@ interface MetadataIA {
   periodoHistorico: string | { from: string; to: string };
   totalConsumoProyectado: number;
   promedioMensualConsumo: number;
+  from_cache?: boolean;
+  tiempoTotal?: number;
 }
 
 interface RespuestaIA {
@@ -103,6 +105,15 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [modeloEntrenado, setModeloEntrenado] = useState(false);
+  const [serviceHealth, setServiceHealth] = useState<{
+    status: string;
+    database?: string;
+  } | null>(null);
+  const [cacheInfo, setCacheInfo] = useState<{
+    fromCache: boolean;
+    responseTime: number;
+  }>({ fromCache: false, responseTime: 0 });
+  const [canClearCache, setCanClearCache] = useState(false);
 
   // Servicio de IA URL - desde variables de entorno
   const AI_SERVICE_URL =
@@ -116,6 +127,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
 
     setIsLoading(true);
     setError(null);
+    const startTime = performance.now();
 
     try {
       // Usar el endpoint de prueba sin autenticación
@@ -137,8 +149,16 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
       }
 
       const data: RespuestaIA = await response.json();
+      const endTime = performance.now();
+      const responseTime = Math.round(endTime - startTime);
+
       setProyeccionesData(data);
       setModeloEntrenado(true);
+      setCacheInfo({
+        fromCache: data.metadata?.from_cache || false,
+        responseTime
+      });
+      setCanClearCache(data.metadata?.from_cache || false);
     } catch (err) {
       console.error('Error al generar proyecciones:', err);
       setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -194,10 +214,44 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
     }
   };
 
+  const verificarHealthServicio = async () => {
+    try {
+      const response = await fetch(`${AI_SERVICE_URL}/health`);
+      if (response.ok) {
+        const data = await response.json();
+        setServiceHealth(data);
+      }
+    } catch (err) {
+      console.warn('No se pudo verificar el health del servicio:', err);
+      setServiceHealth(null);
+    }
+  };
+
+  const limpiarCache = async () => {
+    if (!contratoId) return;
+
+    try {
+      const response = await fetch(
+        `${AI_SERVICE_URL}/api/ai/cache/invalidar/${contratoId}`,
+        { method: 'DELETE' }
+      );
+
+      if (response.ok) {
+        setCanClearCache(false);
+        setCacheInfo({ fromCache: false, responseTime: 0 });
+        // Regenerar proyecciones desde fuente
+        await generarProyecciones();
+      }
+    } catch (err) {
+      console.error('Error limpiando cache:', err);
+    }
+  };
+
   // Verificar estado al montar el componente
   React.useEffect(() => {
     if (contratoId) {
       verificarEstadoModelo();
+      verificarHealthServicio();
     }
   }, [contratoId]);
 
@@ -334,7 +388,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
     return (
       <Card className='border bg-background'>
         <CardContent className='pt-6 text-center'>
-          <div className='text-slate-500'>
+          <div className='text-muted-foreground text-sm'>
             No hay datos suficientes para generar proyecciones
           </div>
         </CardContent>
@@ -344,76 +398,64 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
 
   return (
     <TooltipProvider>
-      <div className='space-y-6'>
+      <div className='space-y-3 sm:space-y-4'>
         {/* Header y controles */}
-        <Card className='border bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-blue-200 dark:border-blue-800'>
-          <CardHeader>
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-              <div>
-                <div className='flex items-center gap-2'>
-                  <CardTitle className='text-lg flex items-center gap-2 text-blue-900 dark:text-blue-100'>
+        <Card className='border bg-background'>
+          <CardHeader className='pb-3 sm:pb-6'>
+            <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4'>
+              <div className='flex-1'>
+                <div className='flex items-center gap-2 mb-1'>
+                  <Brain className='h-4 w-4 sm:h-5 sm:w-5 text-blue-600' />
+                                    <CardTitle className='text-lg flex items-center gap-2 text-blue-900 dark:text-blue-100'>
                     🤖 Proyecciones con IA
                     <Badge variant='default' className='bg-blue-600'>
                       Prophet AI
                     </Badge>
+                    {proyeccionesData && cacheInfo.fromCache && (
+                      <Badge variant='secondary' className='bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'>
+                        ⚡ Desde Cache
+                      </Badge>
+                    )}
+                    {proyeccionesData && cacheInfo.responseTime > 0 && (
+                      <Badge variant='outline' className='text-xs'>
+                        {cacheInfo.responseTime}ms
+                      </Badge>
+                    )}
                   </CardTitle>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info className='h-4 w-4  cursor-help' />
+                      <Info className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground cursor-help' />
                     </TooltipTrigger>
-                    <TooltipContent className='max-w-md p-4 bg-backgroundborder-border'>
-                      <div className='space-y-3 text-sm'>
-                        <p className='font-semibold text-blue-700 dark:text-blue-300'>
-                          🤖 Proyecciones con Inteligencia Artificial
+                    <TooltipContent className='max-w-md p-4'>
+                      <div className='space-y-2 text-xs sm:text-sm'>
+                        <p className='font-semibold'>
+                          Proyecciones con Inteligencia Artificial
                         </p>
-                        <div className='space-y-2'>
+                        <div className='space-y-1'>
                           <p>
-                            <strong className='text-slate-900 dark:text-slate-100'>
-                              • Modelo Prophet:
-                            </strong>{' '}
-                            Algoritmo de Facebook para series temporales
+                            <strong>• Modelo Prophet:</strong> Algoritmo de Facebook para series temporales
                           </p>
                           <p>
-                            <strong className='text-slate-900 dark:text-slate-100'>
-                              • Auto-entrenamiento:
-                            </strong>{' '}
-                            Aprende de tus datos históricos reales
+                            <strong>• Auto-entrenamiento:</strong> Aprende de tus datos históricos reales
                           </p>
                           <p>
-                            <strong className='text-slate-900 dark:text-slate-100'>
-                              • Intervalos de confianza:
-                            </strong>{' '}
-                            Rango superior e inferior automático
+                            <strong>• Intervalos de confianza:</strong> Rango superior e inferior automático
                           </p>
                           <p>
-                            <strong className='text-slate-900 dark:text-slate-100'>
-                              • Estacionalidad:
-                            </strong>{' '}
-                            Detecta patrones automáticamente
-                          </p>
-                        </div>
-                        <div className='bg-blue-50 dark:bg-blue-950/50 p-3 rounded border border-blue-200 dark:border-blue-800'>
-                          <p className='font-medium mb-1 text-blue-700 dark:text-blue-300'>
-                            🎯 Ventajas del AI
-                          </p>
-                          <p className='text-xs text-blue-700 dark:text-blue-300'>
-                            El modelo se entrena específicamente con TUS datos,
-                            capturando patrones únicos de tu consumo que
-                            algoritmos genéricos no pueden detectar.
+                            <strong>• Estacionalidad:</strong> Detecta patrones automáticamente
                           </p>
                         </div>
                       </div>
                     </TooltipContent>
                   </Tooltip>
                 </div>
-                <p className='text-sm text-blue-700 dark:text-blue-300 mt-1'>
-                  Modelo Prophet entrenado con datos históricos reales del
-                  contrato
+                <p className='text-xs sm:text-sm text-muted-foreground'>
+                  Modelo entrenado con datos históricos reales del contrato
                 </p>
               </div>
-              <div className='flex flex-col sm:flex-row gap-3'>
+              <div className='flex flex-col sm:flex-row gap-2 sm:gap-3'>
                 <div className='flex items-center gap-2'>
-                  <span className='text-sm '>Período:</span>
+                  <span className='text-xs sm:text-sm text-muted-foreground'>Período:</span>
                   <div className='flex gap-1'>
                     {([6, 12, 24] as const).map(periodo => (
                       <Button
@@ -423,7 +465,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                         }
                         size='sm'
                         onClick={() => setPeriodoProyeccion(periodo)}
-                        className='text-xs'
+                        className='text-xs h-8'
                         disabled={isLoading}
                       >
                         {periodo}m
@@ -436,18 +478,18 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                     <Button
                       onClick={generarProyecciones}
                       disabled={isLoading || !contratoId}
-                      className='gap-2'
+                      className='gap-2 h-8'
                       size='sm'
                     >
                       {isLoading ? (
                         <>
-                          <Loader2 className='h-4 w-4 animate-spin' />
-                          Generando...
+                          <Loader2 className='h-3 w-3 sm:h-4 sm:w-4 animate-spin' />
+                          <span className='text-xs'>Generando...</span>
                         </>
                       ) : (
                         <>
-                          <Sparkles className='h-4 w-4' />
-                          Generar IA
+                          <Sparkles className='h-3 w-3 sm:h-4 sm:w-4' />
+                          <span className='text-xs'>Generar IA</span>
                         </>
                       )}
                     </Button>
@@ -459,17 +501,17 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                         variant='outline'
                         size='sm'
                         disabled={isLoading}
-                        className='gap-2'
+                        className='gap-2 h-8'
                       >
                         {isLoading ? (
                           <>
-                            <Loader2 className='h-4 w-4 animate-spin' />
-                            Reentrenando...
+                            <Loader2 className='h-3 w-3 sm:h-4 sm:w-4 animate-spin' />
+                            <span className='text-xs hidden sm:inline'>Reentrenando...</span>
                           </>
                         ) : (
                           <>
-                            <RefreshCw className='h-4 w-4' />
-                            Reentrenar
+                            <RefreshCw className='h-3 w-3 sm:h-4 sm:w-4' />
+                            <span className='text-xs hidden sm:inline'>Reentrenar</span>
                           </>
                         )}
                       </Button>
@@ -477,11 +519,22 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                         onClick={exportarAExcel}
                         variant='outline'
                         size='sm'
-                        className='gap-2 text-green-700 dark:text-green-300 border-green-200 hover:bg-green-500/10 hover:border-green-300 focus:ring-green-300'
+                        className='gap-2 h-8 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-950/20'
                       >
-                        <Download className='h-4 w-4' />
-                        Excel
+                        <Download className='h-3 w-3 sm:h-4 sm:w-4' />
+                        <span className='text-xs'>Excel</span>
                       </Button>
+                      {canClearCache && (
+                        <Button
+                          onClick={limpiarCache}
+                          variant='outline'
+                          size='sm'
+                          className='gap-2 h-8 text-amber-600 border-amber-200 hover:bg-amber-50 dark:text-amber-400 dark:border-amber-800 dark:hover:bg-amber-950/20'
+                        >
+                          <RefreshCw className='h-3 w-3 sm:h-4 sm:w-4' />
+                          <span className='text-xs hidden sm:inline'>Limpiar Cache</span>
+                        </Button>
+                      )}
                     </>
                   )}
                 </div>
@@ -490,35 +543,64 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
           </CardHeader>
         </Card>
 
-        {/* Estado del modelo */}
+        {/* Estado del modelo y servicio */}
         {contratoId && (
-          <Card className='border-l-4 border-l-blue-500 bg-blue-50/50 dark:bg-blue-950/20'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-3'>
-                  <div
-                    className={`h-3 w-3 rounded-full ${modeloEntrenado ? 'bg-green-500' : 'bg-yellow-500'}`}
-                  />
-                  <div>
-                    <p className='font-medium text-sm'>
-                      Modelo {modeloEntrenado ? 'Entrenado' : 'Pendiente'} -
-                      Contrato {contratoId}
-                    </p>
-                    <p className='text-xs text-muted-foreground'>
-                      {modeloEntrenado
-                        ? 'El modelo de IA está listo para generar proyecciones precisas'
-                        : 'El modelo necesita ser entrenado con los datos históricos disponibles'}
-                    </p>
+          <div className='grid gap-3 sm:gap-4 md:grid-cols-2'>
+            <Card>
+              <CardContent className='pt-4 sm:pt-6'>
+                <div className='flex items-start justify-between gap-3'>
+                  <div className='flex items-start gap-3'>
+                    <div
+                      className={`h-2 w-2 sm:h-3 sm:w-3 rounded-full mt-1 flex-shrink-0 ${modeloEntrenado ? 'bg-green-500' : 'bg-yellow-500'}`}
+                    />
+                    <div className='min-w-0'>
+                      <p className='font-medium text-xs sm:text-sm'>
+                        Modelo {modeloEntrenado ? 'Entrenado' : 'Pendiente'} - Contrato {contratoId}
+                      </p>
+                      <p className='text-xs text-muted-foreground mt-1'>
+                        {modeloEntrenado
+                          ? 'El modelo de IA está listo para generar proyecciones precisas'
+                          : 'El modelo necesita ser entrenado con los datos históricos disponibles'}
+                      </p>
+                    </div>
+                  </div>
+                  {proyeccionesData?.metadata && (
+                    <Badge variant='outline' className='text-xs flex-shrink-0'>
+                      {proyeccionesData.metadata.muestrasEntrenamiento} muestras
+                    </Badge>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className='pt-4 sm:pt-6'>
+                <div className='space-y-3'>
+                  <div className='flex items-start gap-3'>
+                    <div
+                      className={`h-2 w-2 sm:h-3 sm:w-3 rounded-full mt-1 flex-shrink-0 ${
+                        serviceHealth?.status === 'healthy'
+                          ? 'bg-green-500'
+                          : serviceHealth?.status === 'degraded'
+                            ? 'bg-yellow-500'
+                            : 'bg-red-500'
+                      }`}
+                    />
+                    <div className='min-w-0'>
+                      <p className='font-medium text-xs sm:text-sm'>
+                        Servicio de IA: {serviceHealth?.status || 'Unknown'}
+                      </p>
+                      <p className='text-xs text-muted-foreground mt-1'>
+                        {serviceHealth?.database
+                          ? `Conectado a la base de datos`
+                          : 'Verificando conexión...'}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                {proyeccionesData?.metadata && (
-                  <Badge variant='outline' className='text-xs'>
-                    {proyeccionesData.metadata.muestrasEntrenamiento} muestras
-                  </Badge>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Error */}
@@ -542,31 +624,79 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
         {proyeccionesData && (
           <>
             {/* Metadata del modelo */}
-            <Card className='bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 border-green-200 dark:border-green-800'>
-              <CardHeader>
-                <CardTitle className='text-base text-green-800 dark:text-green-200'>
-                  📊 Información del Modelo de IA
+            <Card>
+              <CardHeader className='pb-3 sm:pb-6'>
+                <CardTitle className='text-base sm:text-lg flex items-center gap-2'>
+                  <TrendingUp className='h-4 w-4 sm:h-5 sm:w-5 text-blue-600' />
+                  Información del Modelo de IA
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+                <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4'>
                   <div className='space-y-1'>
-                    <p className='text-sm font-medium'>Algoritmo</p>
-                    <p className='text-sm text-muted-foreground'>
+                    <div className='flex items-center gap-1'>
+                      <p className='text-xs sm:text-sm font-medium'>Algoritmo</p>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                        </TooltipTrigger>
+                        <TooltipContent className='max-w-xs'>
+                          <p className='text-xs'>
+                            <strong>Prophet</strong> es un algoritmo desarrollado por Facebook/Meta
+                            especializado en predicción de series temporales. Detecta automáticamente
+                            patrones estacionales y tendencias en los datos históricos.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <p className='text-xs sm:text-sm text-muted-foreground'>
                       {proyeccionesData.metadata.modeloUsado}
                     </p>
                   </div>
                   <div className='space-y-1'>
-                    <p className='text-sm font-medium'>
-                      Muestras Entrenamiento
-                    </p>
-                    <p className='text-sm text-muted-foreground'>
+                    <div className='flex items-center gap-1'>
+                      <p className='text-xs sm:text-sm font-medium'>
+                        Muestras Entrenamiento
+                      </p>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                        </TooltipTrigger>
+                        <TooltipContent className='max-w-xs'>
+                          <p className='text-xs'>
+                            Cantidad de registros históricos utilizados para entrenar el modelo.
+                            <strong> Más muestras = Mayor precisión.</strong> Se recomienda tener
+                            al menos 12 meses de datos para proyecciones confiables.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <p className='text-xs sm:text-sm text-muted-foreground'>
                       {proyeccionesData.metadata.muestrasEntrenamiento}{' '}
                       registros
                     </p>
                   </div>
                   <div className='space-y-1'>
-                    <p className='text-sm font-medium'>Confianza General</p>
+                    <div className='flex items-center gap-1'>
+                      <p className='text-xs sm:text-sm font-medium'>Confianza General</p>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                        </TooltipTrigger>
+                        <TooltipContent className='max-w-xs'>
+                          <p className='text-xs'>
+                            Nivel de confiabilidad de las proyecciones basado en la cantidad y
+                            calidad de datos históricos:
+                          </p>
+                          <ul className='text-xs mt-1 space-y-0.5'>
+                            <li><strong>• Excelente:</strong> 24+ meses de datos</li>
+                            <li><strong>• Buena:</strong> 12-23 meses de datos</li>
+                            <li><strong>• Regular:</strong> 6-11 meses de datos</li>
+                            <li><strong>• Baja:</strong> Menos de 6 meses</li>
+                          </ul>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
                     <Badge
                       variant={
                         proyeccionesData.metadata.confianzaGeneral ===
@@ -577,13 +707,28 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                             ? 'secondary'
                             : 'destructive'
                       }
+                      className='text-xs'
                     >
                       {proyeccionesData.metadata.confianzaGeneral}
                     </Badge>
                   </div>
                   <div className='space-y-1'>
-                    <p className='text-sm font-medium'>Período Histórico</p>
-                    <p className='text-sm text-muted-foreground'>
+                    <div className='flex items-center gap-1'>
+                      <p className='text-xs sm:text-sm font-medium'>Período Histórico</p>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                        </TooltipTrigger>
+                        <TooltipContent className='max-w-xs'>
+                          <p className='text-xs'>
+                            Rango de fechas de los datos históricos que el modelo utilizó para
+                            aprender los patrones de consumo. El modelo analiza este período
+                            completo para detectar tendencias y estacionalidad.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <p className='text-xs sm:text-sm text-muted-foreground'>
                       {formatPeriodoHistorico(
                         proyeccionesData.metadata.periodoHistorico
                       )}
@@ -594,51 +739,94 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
             </Card>
 
             {/* Resumen ejecutivo */}
-            <div className='grid gap-4 md:grid-cols-3'>
+            <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
               <Card>
-                <CardContent className='pt-4'>
+                <CardContent className='pt-4 sm:pt-6'>
                   <div className='flex items-center justify-between'>
-                    <div>
-                      <p className='text-sm font-medium'>Total Proyectado</p>
-                      <p className='text-2xl font-bold text-blue-600'>
+                    <div className='flex-1'>
+                      <div className='flex items-center gap-1'>
+                        <p className='text-xs sm:text-sm font-medium text-muted-foreground'>Total Proyectado</p>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                          </TooltipTrigger>
+                          <TooltipContent className='max-w-xs'>
+                            <p className='text-xs'>
+                              Suma total del consumo energético estimado por el modelo de IA
+                              para los próximos <strong>{periodoProyeccion} meses</strong>.
+                              Este valor te ayuda a planificar el presupuesto energético del período.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <p className='text-xl sm:text-2xl font-bold text-blue-600 mt-1'>
                         {proyeccionesData.metadata.totalConsumoProyectado.toLocaleString(
                           'es-CL'
                         )}
                       </p>
-                      <p className='text-xs text-muted-foreground'>
+                      <p className='text-xs text-muted-foreground mt-1'>
                         kWh en {periodoProyeccion} meses
                       </p>
                     </div>
-                    <Zap className='h-5 w-5 text-blue-500' />
+                    <Zap className='h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0' />
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
-                <CardContent className='pt-4'>
+                <CardContent className='pt-4 sm:pt-6'>
                   <div className='flex items-center justify-between'>
-                    <div>
-                      <p className='text-sm font-medium'>Promedio Mensual</p>
-                      <p className='text-2xl font-bold text-green-600'>
+                    <div className='flex-1'>
+                      <div className='flex items-center gap-1'>
+                        <p className='text-xs sm:text-sm font-medium text-muted-foreground'>Promedio Mensual</p>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                          </TooltipTrigger>
+                          <TooltipContent className='max-w-xs'>
+                            <p className='text-xs'>
+                              Consumo promedio esperado por mes según las proyecciones del modelo.
+                              Es útil para comparar con consumos históricos y detectar cambios
+                              en los patrones de uso energético.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <p className='text-xl sm:text-2xl font-bold text-green-600 mt-1'>
                         {proyeccionesData.metadata.promedioMensualConsumo.toLocaleString(
                           'es-CL'
                         )}
                       </p>
-                      <p className='text-xs text-muted-foreground'>
+                      <p className='text-xs text-muted-foreground mt-1'>
                         kWh por mes
                       </p>
                     </div>
-                    <TrendingUp className='h-5 w-5 text-green-500' />
+                    <TrendingUp className='h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0' />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card>
-                <CardContent className='pt-4'>
+              <Card className='sm:col-span-2 lg:col-span-1'>
+                <CardContent className='pt-4 sm:pt-6'>
                   <div className='flex items-center justify-between'>
-                    <div>
-                      <p className='text-sm font-medium'>Precisión IA</p>
-                      <p className='text-2xl font-bold text-purple-600'>
+                    <div className='flex-1'>
+                      <div className='flex items-center gap-1'>
+                        <p className='text-xs sm:text-sm font-medium text-muted-foreground'>Precisión IA</p>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                          </TooltipTrigger>
+                          <TooltipContent className='max-w-xs'>
+                            <p className='text-xs'>
+                              Indicador estimado de la precisión del modelo basado en la cantidad
+                              de datos históricos disponibles. Más datos = mayor precisión.
+                              <strong> Se recomienda al menos 12 meses</strong> de historial
+                              para obtener proyecciones confiables.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <p className='text-xl sm:text-2xl font-bold text-purple-600 mt-1'>
                         {Math.round(
                           (proyeccionesData.metadata.muestrasEntrenamiento /
                             Math.max(
@@ -649,24 +837,41 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                         )}
                         %
                       </p>
-                      <p className='text-xs text-muted-foreground'>
+                      <p className='text-xs text-muted-foreground mt-1'>
                         basado en datos históricos
                       </p>
                     </div>
-                    <Brain className='h-5 w-5 text-purple-500' />
+                    <Brain className='h-4 w-4 sm:h-5 sm:w-5 text-purple-500 flex-shrink-0' />
                   </div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Gráficos */}
-            <div className='grid gap-6 lg:grid-cols-2'>
+            <div className='grid gap-3 sm:gap-4 lg:gap-6 lg:grid-cols-2'>
               {/* Consumo proyectado con intervalos */}
               <Card>
-                <CardHeader>
-                  <CardTitle className='text-base'>
-                    Proyección de Consumo con Intervalos de Confianza
-                  </CardTitle>
+                <CardHeader className='pb-3 sm:pb-6'>
+                  <div className='flex items-center gap-2'>
+                    <CardTitle className='text-sm sm:text-base'>
+                      Proyección de Consumo con Intervalos de Confianza
+                    </CardTitle>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground cursor-help' />
+                      </TooltipTrigger>
+                      <TooltipContent className='max-w-xs'>
+                        <p className='text-xs'>
+                          <strong>Línea azul:</strong> Consumo proyectado más probable según el modelo.
+                        </p>
+                        <p className='text-xs mt-1'>
+                          <strong>Área sombreada:</strong> Rango de incertidumbre. El consumo real
+                          probablemente estará dentro de esta zona. Mientras más ancha la banda,
+                          mayor incertidumbre en la proyección.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={chartConfig} className='aspect-[4/3]'>
@@ -676,7 +881,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
-                        fontSize={12}
+                        fontSize={10}
                         angle={-45}
                         textAnchor='end'
                         height={60}
@@ -688,10 +893,10 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                           const item = payload?.[0]?.payload;
                           return item ? `${item.mes} (${item.fecha})` : label;
                         }}
-                        formatter={(value, name, props) => {
+                        formatter={(value, _name, props) => {
                           const formatValue = `${Number(value).toLocaleString('es-CL')} kWh`;
                           const confianza = props.payload?.confianza;
-                          return [formatValue, `${name} (${confianza})`];
+                          return [formatValue, `${_name} (${confianza})`];
                         }}
                       />
                       <Area
@@ -720,10 +925,28 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
 
               {/* Barras por confianza */}
               <Card>
-                <CardHeader>
-                  <CardTitle className='text-base'>
-                    Proyección por Nivel de Confianza
-                  </CardTitle>
+                <CardHeader className='pb-3 sm:pb-6'>
+                  <div className='flex items-center gap-2'>
+                    <CardTitle className='text-sm sm:text-base'>
+                      Proyección por Nivel de Confianza
+                    </CardTitle>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground cursor-help' />
+                      </TooltipTrigger>
+                      <TooltipContent className='max-w-xs'>
+                        <p className='text-xs'>
+                          Las barras muestran el consumo proyectado coloreadas según el nivel
+                          de confianza del modelo:
+                        </p>
+                        <ul className='text-xs mt-1 space-y-0.5'>
+                          <li><strong>• Verde:</strong> Alta confianza (datos históricos robustos)</li>
+                          <li><strong>• Amarillo:</strong> Media confianza (datos moderados)</li>
+                          <li><strong>• Rojo:</strong> Baja confianza (datos limitados o atípicos)</li>
+                        </ul>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <ChartContainer config={chartConfig} className='aspect-[4/3]'>
@@ -733,7 +956,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                         tickLine={false}
                         axisLine={false}
                         tickMargin={8}
-                        fontSize={12}
+                        fontSize={10}
                         angle={-45}
                         textAnchor='end'
                         height={60}
@@ -745,7 +968,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                           const item = payload?.[0]?.payload;
                           return item ? `${item.mes} (${item.fecha})` : label;
                         }}
-                        formatter={(value, name, props) => {
+                        formatter={(value, _name, props) => {
                           const formatValue = `${Number(value).toLocaleString('es-CL')} kWh`;
                           const confianza = props.payload?.confianza;
                           return [formatValue, `Confianza: ${confianza}`];
@@ -767,21 +990,80 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
 
             {/* Tabla detallada */}
             <Card>
-              <CardHeader>
-                <CardTitle className='text-base'>
+              <CardHeader className='pb-3 sm:pb-6'>
+                <CardTitle className='text-sm sm:text-base'>
                   Detalle de Proyecciones Mensuales
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className='overflow-x-auto'>
-                  <table className='w-full text-sm'>
+                  <table className='w-full text-xs sm:text-sm'>
                     <thead>
                       <tr className='border-b'>
                         <th className='text-left p-2'>Período</th>
-                        <th className='text-right p-2'>Proyección (kWh)</th>
-                        <th className='text-right p-2'>Intervalo Inferior</th>
-                        <th className='text-right p-2'>Intervalo Superior</th>
-                        <th className='text-center p-2'>Confianza</th>
+                        <th className='text-right p-2'>
+                          <div className='flex items-center justify-end gap-1'>
+                            <span>Proyección (kWh)</span>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                              </TooltipTrigger>
+                              <TooltipContent className='max-w-xs'>
+                                <p className='text-xs'>
+                                  Valor más probable de consumo según el modelo de IA para ese mes.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </th>
+                        <th className='text-right p-2 hidden sm:table-cell'>
+                          <div className='flex items-center justify-end gap-1'>
+                            <span>Intervalo Inferior</span>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                              </TooltipTrigger>
+                              <TooltipContent className='max-w-xs'>
+                                <p className='text-xs'>
+                                  Límite mínimo estimado del consumo. Hay aproximadamente 80% de
+                                  probabilidad de que el consumo real sea mayor a este valor.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </th>
+                        <th className='text-right p-2 hidden sm:table-cell'>
+                          <div className='flex items-center justify-end gap-1'>
+                            <span>Intervalo Superior</span>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                              </TooltipTrigger>
+                              <TooltipContent className='max-w-xs'>
+                                <p className='text-xs'>
+                                  Límite máximo estimado del consumo. Hay aproximadamente 80% de
+                                  probabilidad de que el consumo real sea menor a este valor.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </th>
+                        <th className='text-center p-2'>
+                          <div className='flex items-center justify-center gap-1'>
+                            <span>Confianza</span>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Info className='h-3 w-3 text-muted-foreground cursor-help' />
+                              </TooltipTrigger>
+                              <TooltipContent className='max-w-xs'>
+                                <p className='text-xs'>
+                                  Nivel de confiabilidad de la proyección para ese mes específico,
+                                  basado en la calidad y cantidad de datos históricos similares.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -799,12 +1081,12 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                                 'es-CL'
                               )}
                             </td>
-                            <td className='p-2 text-right font-mono text-muted-foreground'>
+                            <td className='p-2 text-right font-mono text-muted-foreground hidden sm:table-cell'>
                               {proyeccion.intervaloInferior.toLocaleString(
                                 'es-CL'
                               )}
                             </td>
-                            <td className='p-2 text-right font-mono text-muted-foreground'>
+                            <td className='p-2 text-right font-mono text-muted-foreground hidden sm:table-cell'>
                               {proyeccion.intervaloSuperior.toLocaleString(
                                 'es-CL'
                               )}
@@ -835,17 +1117,18 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
         )}
 
         {/* Información sobre el modelo Prophet */}
-        <Card className='border-l-4 border-l-purple-500 bg-purple-50/50 dark:bg-purple-950/20'>
-          <CardHeader>
-            <CardTitle className='text-base text-purple-800 dark:text-purple-200'>
-              🧠 Sobre el Modelo Prophet
+        <Card>
+          <CardHeader className='pb-3 sm:pb-6'>
+            <CardTitle className='text-sm sm:text-base flex items-center gap-2'>
+              <Brain className='h-4 w-4 sm:h-5 sm:w-5 text-purple-600' />
+              Sobre el Modelo Prophet
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className='grid gap-4 md:grid-cols-2'>
-              <div className='space-y-3'>
+            <div className='grid gap-3 sm:gap-4 md:grid-cols-2'>
+              <div className='space-y-2 sm:space-y-3'>
                 <div>
-                  <h4 className='font-medium text-sm'>¿Qué es Prophet?</h4>
+                  <h4 className='font-medium text-xs sm:text-sm'>¿Qué es Prophet?</h4>
                   <p className='text-xs text-muted-foreground mt-1'>
                     Prophet es un algoritmo de Machine Learning desarrollado por
                     Facebook, especializado en series temporales como el consumo
@@ -853,7 +1136,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                   </p>
                 </div>
                 <div>
-                  <h4 className='font-medium text-sm'>Ventajas principales</h4>
+                  <h4 className='font-medium text-xs sm:text-sm'>Ventajas principales</h4>
                   <ul className='text-xs text-muted-foreground mt-1 space-y-1'>
                     <li>• Detecta automáticamente patrones estacionales</li>
                     <li>• Robusto ante datos faltantes u outliers</li>
@@ -862,9 +1145,9 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                   </ul>
                 </div>
               </div>
-              <div className='space-y-3'>
+              <div className='space-y-2 sm:space-y-3'>
                 <div>
-                  <h4 className='font-medium text-sm'>¿Cómo funciona?</h4>
+                  <h4 className='font-medium text-xs sm:text-sm'>¿Cómo funciona?</h4>
                   <p className='text-xs text-muted-foreground mt-1'>
                     El modelo analiza tus datos históricos para encontrar
                     patrones (tendencias, estacionalidad) y proyecta estos
@@ -872,7 +1155,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
                   </p>
                 </div>
                 <div>
-                  <h4 className='font-medium text-sm'>Interpretación</h4>
+                  <h4 className='font-medium text-xs sm:text-sm'>Interpretación</h4>
                   <ul className='text-xs text-muted-foreground mt-1 space-y-1'>
                     <li>
                       • <strong>Proyección:</strong> Valor más probable
@@ -895,7 +1178,7 @@ const ProyeccionesAvanzadas = memo(function ProyeccionesAvanzadas({
         {/* Disclaimer */}
         <Alert className='border-amber-200 bg-amber-50 dark:bg-amber-950/10'>
           <AlertTriangle className='h-4 w-4 text-amber-600' />
-          <AlertDescription className='text-amber-800 dark:text-amber-200'>
+          <AlertDescription className='text-amber-800 dark:text-amber-200 text-xs sm:text-sm'>
             <strong>Importante:</strong> Las proyecciones de IA son estimaciones
             estadísticas basadas en patrones históricos. Los valores reales
             pueden diferir debido a cambios en hábitos, equipamiento,
