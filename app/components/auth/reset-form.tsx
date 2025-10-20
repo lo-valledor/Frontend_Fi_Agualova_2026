@@ -5,11 +5,6 @@ import { useState } from 'react';
 
 import { Link, useNavigate } from 'react-router';
 import { toast } from 'sonner';
-
-import { authService } from '~/services/authService';
-import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
-
-import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
 import { useTheme } from '~/components/theme-provider';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
@@ -37,6 +32,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -47,22 +43,23 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
 
   const handleSubmitEvent = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage('');
 
     // Validar campos vacíos
-    if (!input.password || !input.confirmPassword) {
+    if (!password || !confirmPassword) {
       setErrorMessage('Ambos campos son obligatorios.');
       return;
     }
 
     // Validar seguridad de la contraseña usando utilidades
-    const securityCheck = isPasswordSecure(input.password);
+    const securityCheck = isPasswordSecure(password);
     if (!securityCheck.isSecure) {
       setErrorMessage(securityCheck.reason || 'La contraseña no es suficientemente segura.');
       return;
     }
 
     // Validar que las contraseñas coincidan
-    if (!passwordsMatch(input.password, input.confirmPassword)) {
+    if (!passwordsMatch(password, confirmPassword)) {
       setErrorMessage('Las contraseñas no coinciden.');
       return;
     }
@@ -77,7 +74,7 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
 
     try {
       // Llamar al servicio de API para restablecer contraseña
-      await authService.resetPassword(token, input.password);
+      await authService.resetPassword(token, password);
 
       // Redirigir al login después de un breve delay para que el usuario vea el toast
       setTimeout(() => {
@@ -138,11 +135,12 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
                 name='password'
                 type={showPassword ? 'text' : 'password'}
                 placeholder='Cree una contraseña segura'
-                value={input.password}
-                onChange={handleInput}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
                 className='pl-10 pr-10'
+                autoComplete='new-password'
               />
               <Button
                 type='button'
@@ -160,9 +158,9 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
             </div>
 
             {/* Indicador de fuerza de contraseña */}
-            {input.password && (
+            {password && (
               <PasswordStrengthIndicator
-                password={input.password}
+                password={password}
                 showRules={true}
                 showWarnings={true}
               />
@@ -178,11 +176,12 @@ export function ResetForm({ className, token, ...props }: ResetFormProps) {
                 name='confirmPassword'
                 type={showConfirmPassword ? 'text' : 'password'}
                 placeholder='Confirme su contraseña'
-                value={input.confirmPassword}
-                onChange={handleInput}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
                 className='pl-10 pr-10'
+                autoComplete='new-password'
               />
               <Button
                 type='button'

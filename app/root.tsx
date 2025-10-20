@@ -38,24 +38,6 @@ export const links = () => [
   }
 ];
 
-// Componente indicador de entorno
-function EnvironmentIndicator() {
-  const env =
-    import.meta.env.VITE_APP_ENV || import.meta.env.MODE || 'production';
-
-  if (env === 'production') {
-    return null;
-  }
-
-  return (
-    <div className='env-indicator'>
-      <span className='env-badge-pulse'></span>
-      <span>ENTORNO DE DESARROLLO</span>
-      <span className='env-indicator-badge'>{env.toUpperCase()}</span>
-    </div>
-  );
-}
-
 export function Layout({ children }: { children: React.ReactNode }) {
   const isDev =
     import.meta.env.VITE_APP_ENV === 'development' || import.meta.env.DEV;
@@ -69,7 +51,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className={isDev ? 'dev-environment' : ''}>
-        <EnvironmentIndicator />
         <LoadingBarProvider>
           <AppLayout>{children}</AppLayout>
         </LoadingBarProvider>

@@ -6,8 +6,6 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { toast } from 'sonner';
 
-import { authService } from '~/services/authService';
-
 import { useTheme } from '~/components/theme-provider';
 import { Alert, AlertDescription } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
@@ -29,6 +27,8 @@ export function ForgotForm({
 }: React.ComponentPropsWithoutRef<'div'>) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const { theme, setTheme } = useTheme();
 
   // Función para alternar entre temas claro y oscuro

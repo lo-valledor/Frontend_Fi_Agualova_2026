@@ -16,9 +16,16 @@ export default function ClavesLectura({
   error,
   onAceptarLectura
 }: Readonly<ClavesLecturaProps>) {
-  // El botón se habilita solo si hay claves críticas (diferente de LEOK)
-  // LEOK significa que la lectura ya está OK, otras claves indican problemas críticos
-  const hasClaveCritica = data.length > 0 && data[0].CLA_Codigo !== 'LEOK';
+  // El botón se habilita solo si hay claves críticas
+  // CLA_Tipo: 0 = OK/Normal (LEOK), 1-3 = Críticas/Alertas
+  // Verificamos todo el array, no solo el primer elemento
+  const hasClaveCritica =
+    data.length > 0 &&
+    data.some(
+      item =>
+        item.CLA_Tipo === 3 && // Tipo 3 indica clave crítica/alerta
+        item.CLA_Codigo !== 'LEOK' // Excluir explícitamente LEOK por seguridad
+    );
 
   return (
     <Card className='w-full'>

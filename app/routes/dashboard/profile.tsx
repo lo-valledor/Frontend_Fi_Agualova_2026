@@ -12,6 +12,7 @@ import {
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
+import { PasswordStrengthIndicator } from '~/components/ui/password-strength-indicator';
 
 import { type MetaFunction, useRouteError } from 'react-router';
 
@@ -85,6 +86,22 @@ export default function ProfilePage() {
         'Debes ingresar tu contraseña actual para cambiar la contraseña'
       );
       return;
+    }
+
+    // Validar fortaleza de contraseña según OWASP
+    if (formData.nuevaContrasena?.trim()) {
+      const password = formData.nuevaContrasena;
+      const hasMinLength = password.length >= 8;
+      const hasUpperLower = /[a-z]/.test(password) && /[A-Z]/.test(password);
+      const hasNumber = /\d/.test(password);
+      const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+      
+      if (!hasMinLength || !hasUpperLower || !hasNumber || !hasSpecial) {
+        toast.error(
+          'La contraseña debe tener mínimo 8 caracteres, mayúsculas, minúsculas, números y caracteres especiales'
+        );
+        return;
+      }
     }
 
     try {
@@ -333,6 +350,7 @@ export default function ProfilePage() {
                           handleInputChange('contrasena', e.target.value)
                         }
                         placeholder='Solo requerida para cambiar contraseña'
+                        autoComplete='current-password'
                       />
                       <Button
                         type='button'
@@ -364,29 +382,39 @@ export default function ProfilePage() {
                   >
                     Nueva Contraseña (opcional)
                   </Label>
-                  <div className='relative'>
-                    <Input
-                      id='nuevaContrasena'
-                      type={showNewPassword ? 'text' : 'password'}
-                      value={formData.nuevaContrasena || ''}
-                      onChange={e =>
-                        handleInputChange('nuevaContrasena', e.target.value)
-                      }
-                      placeholder='Deja vacío para mantener la actual'
-                    />
-                    <Button
-                      type='button'
-                      variant='ghost'
-                      size='sm'
-                      className='absolute right-0 top-0 h-full px-3 hover:bg-transparent'
-                      onClick={() => setShowNewPassword(!showNewPassword)}
-                    >
-                      {showNewPassword ? (
-                        <EyeOff className='h-4 w-4' />
-                      ) : (
-                        <Eye className='h-4 w-4' />
-                      )}
-                    </Button>
+                  <div className='space-y-2'>
+                    <div className='relative'>
+                      <Input
+                        id='nuevaContrasena'
+                        type={showNewPassword ? 'text' : 'password'}
+                        value={formData.nuevaContrasena || ''}
+                        onChange={e =>
+                          handleInputChange('nuevaContrasena', e.target.value)
+                        }
+                        placeholder='Mínimo 8 caracteres'
+                        autoComplete='new-password'
+                      />
+                      <Button
+                        type='button'
+                        variant='ghost'
+                        size='sm'
+                        className='absolute right-0 top-0 h-full px-3 hover:bg-transparent'
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                      >
+                        {showNewPassword ? (
+                          <EyeOff className='h-4 w-4' />
+                        ) : (
+                          <Eye className='h-4 w-4' />
+                        )}
+                      </Button>
+                    </div>
+                    {formData.nuevaContrasena && (
+                      <PasswordStrengthIndicator
+                        password={formData.nuevaContrasena}
+                        showRules={true}
+                        showWarnings={true}
+                      />
+                    )}
                   </div>
                 </div>
               )}
@@ -407,21 +435,6 @@ export default function ProfilePage() {
               </div>
             </CardHeader>
             <CardContent className='pt-6 space-y-4'>
-              <div className='space-y-2'>
-                <Label className='text-sm font-medium'>ID de Usuario</Label>
-                <p className='font-mono text-sm font-medium'>
-                  {userData.idUsuario}
-                </p>
-              </div>
-              <div className='space-y-2'>
-                <Label className='text-sm font-medium'>Perfil</Label>
-                <Badge
-                  variant='outline'
-                  className='bg-violet-100 text-violet-700 border-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:border-violet-800'
-                >
-                  ID: {userData.perfilId}
-                </Badge>
-              </div>
               <div className='space-y-2'>
                 <Label className='text-sm font-medium'>Departamento</Label>
                 <Badge

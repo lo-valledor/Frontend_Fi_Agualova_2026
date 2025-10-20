@@ -36,7 +36,7 @@ export default function InformacionMedidor({
 }: InformacionMedidorProps) {
 
   const colorClasses = {
-      sky: 'bg-chart-2/50 dark:bg-chart-2/20 border-chart-2/50 dark:border-chart-2/20',
+      sky: 'bg-background dark:bg-background border-sky-500 focus-within:bg-ring',
   };
   
   return (
