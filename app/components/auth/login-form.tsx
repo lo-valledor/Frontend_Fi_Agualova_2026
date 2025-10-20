@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Lock, Moon, Sun, User } from 'lucide-react';
+import { AlertCircleIcon, Eye, EyeOff, Loader2, Lock, Moon, Sun, User } from 'lucide-react';
 
 import type React from 'react';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import { Input } from '~/components/ui/input';
 import { useAuth } from '~/context/AuthContext';
 import { cn } from '~/lib/utils';
 import { Label } from '../ui/label';
+import { Alert, AlertDescription } from '../ui/alert';
 
 export function LoginForm({
   className,
@@ -91,11 +92,11 @@ export function LoginForm({
       </Button>
 
       {/* Header */}
-      <div className='pt-10 pb-6 px-8 text-center border-b border-slate-200/50 dark:border-slate-700/50'>
-        <h1 className='text-3xl font-bold text-slate-900 dark:text-white mb-2'>
+      <div className='pt-10 pb-6 px-8 text-center border-b border-border'>
+        <h1 className='text-3xl font-bold mb-2'>
           Bienvenido
         </h1>
-        <p className='text-sm text-slate-600 dark:text-slate-400'>
+        <p className='text-sm text-muted-foreground'>
           Inicia sesión para acceder al sistema
         </p>
       </div>
@@ -104,41 +105,31 @@ export function LoginForm({
       <div className='p-8'>
         <form onSubmit={handleSubmitEvent} className='space-y-5'>
           {errorMessage && (
-            <div className='p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-400 text-sm flex items-start gap-2'>
-              <svg
-                className='h-5 w-5 mt-0.5 flex-shrink-0'
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-                />
-              </svg>
-              <span>{errorMessage}</span>
-            </div>
+            <Alert variant='destructive' className='rounded-xl bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50'>
+              <AlertCircleIcon className='text-red-600 dark:text-red-400' />
+              <AlertDescription className='text-red-700 dark:text-red-400 font-medium'>
+                {errorMessage}
+              </AlertDescription>
+            </Alert>
           )}
 
           <div className='space-y-4'>
             <div className='space-y-2'>
               <Label
                 htmlFor='usuario'
-                className='block text-sm font-semibold text-slate-700 dark:text-slate-300'
+                className='block text-sm font-semibold'
               >
-                Usuario
+                Correo Electrónico
               </Label>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <User className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
+                  <User className='h-5 w-5 text-muted-foreground group-focus-within:text-ring transition-colors' />
                 </div>
                 <Input
                   id='usuario'
                   name='usuario'
-                  type='text'
-                  placeholder='Ingresa tu usuario'
+                  type='email'
+                  placeholder='ejemplo@ejemplo.com'
                   value={input.usuario}
                   onChange={handleInput}
                   required
@@ -151,20 +142,20 @@ export function LoginForm({
               <div className='flex items-center justify-between'>
                 <Label
                   htmlFor='contrasena'
-                  className='block text-sm font-semibold text-slate-700 dark:text-slate-300'
+                  className='block text-sm font-semibold'
                 >
                   Contraseña
                 </Label>
                 <Link
                   to='/auth/forgot-password'
-                  className='text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors'
+                  className='text-xs font-medium transition-colors text-primary hover:underline'
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
               <div className='relative group'>
                 <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none'>
-                  <Lock className='h-5 w-5 text-slate-400 dark:text-slate-500 group-focus-within:text-blue-500 dark:group-focus-within:text-blue-400 transition-colors' />
+                  <Lock className='h-5 w-5 text-muted-foreground group-focus-within:text-ring  transition-colors' />
                 </div>
                 <Input
                   id='contrasena'
@@ -193,33 +184,15 @@ export function LoginForm({
 
           <Button
             type='submit'
+            variant="default"
             disabled={loading}
-            className='w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-6'
+            className='w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-6'
           >
             {loading ? (
-              <div className='flex items-center justify-center gap-2'>
-                <svg
-                  className='animate-spin h-5 w-5'
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                >
-                  <circle
-                    className='opacity-25'
-                    cx='12'
-                    cy='12'
-                    r='10'
-                    stroke='currentColor'
-                    strokeWidth='4'
-                  ></circle>
-                  <path
-                    className='opacity-75'
-                    fill='currentColor'
-                    d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                  ></path>
-                </svg>
-                <span>Iniciando sesión...</span>
-              </div>
+              <>
+                <Loader2 className='mr-2 h-5 w-5 animate-spin' />
+                Iniciando sesión...
+              </>
             ) : (
               'Iniciar sesión'
             )}
