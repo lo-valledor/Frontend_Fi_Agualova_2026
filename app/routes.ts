@@ -124,6 +124,10 @@ export default [
           ...prefix('cargo-tipo-contrato', [
             index('routes/dashboard/administracion/cargo-tipo-contrato.tsx'),
             route(
+              'crear',
+              'routes/dashboard/administracion/cargo-tipo-contrato/crear-ctp.tsx'
+            ),
+            route(
               'edit/:cargoTipoContratoId',
               'routes/dashboard/administracion/cargo-tipo-contrato/edit.tsx'
             )

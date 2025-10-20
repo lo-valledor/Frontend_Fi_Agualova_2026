@@ -660,6 +660,60 @@ class AdministracionService {
   }
 
   /**
+   * Obtiene los datos necesarios para crear un nuevo cargo tipo contrato
+   *
+   * Incluye todos los combos necesarios sin datos de un registro específico
+   *
+   * @returns Promise con todos los combos necesarios o error
+   */
+  async getCargoTipoContratoCrear(): Promise<
+    AdministracionServiceResponse<{
+      conceptos: GeCombosConceptos[];
+      tarifas: GetCombosTarifas[];
+      tiposMedidor: GetCombosTiposMedidor[];
+      condicionesContrato: GetCondicionesContrato[];
+      cargos: BuscarCargoFacturable[];
+    }>
+  > {
+    try {
+      const [
+        responseConceptos,
+        responseTarifas,
+        responseTiposMedidor,
+        responseCondicionesContrato,
+        responseCargos
+      ] = await Promise.all([
+        api.get('combos/conceptos'),
+        api.get('combos/tarifas'),
+        api.get('combos/tipos-medidor'),
+        api.get('condicion-contrato/condicionContrato-Buscar'),
+        api.get('buscarCargoFacturable')
+      ]);
+
+      return {
+        data: {
+          conceptos:
+            this.processApiResponse<GeCombosConceptos>(responseConceptos),
+          tarifas: this.processApiResponse<GetCombosTarifas>(responseTarifas),
+          tiposMedidor:
+            this.processApiResponse<GetCombosTiposMedidor>(
+              responseTiposMedidor
+            ),
+          condicionesContrato:
+            responseCondicionesContrato.data as GetCondicionesContrato[],
+          cargos: responseCargos.data as BuscarCargoFacturable[]
+        },
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
    * Obtiene condiciones de contrato con sus conceptos asociados
    *
    * @returns Promise con condiciones y conceptos o error

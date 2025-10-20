@@ -110,7 +110,7 @@ export type Tarifas = {
 export type TiposContrato = {
   id: number;
   nombre: string;
-  estado: boolean;
+  estado: boolean | string; // Puede ser boolean o string "Activo"/"Inactivo"
 };
 
 /* Zonas */

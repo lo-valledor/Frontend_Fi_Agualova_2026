@@ -91,7 +91,7 @@ export default function CargoTipoContratoComponent({
   };
 
   const handleAdd = () => {
-    toast.info('Funcionalidad deshabilitada temporalmente');
+    router('/dashboard/administracion/cargo-tipo-contrato/crear');
   };
 
   const handleEdit = async (item: GetCargoTipoContrato) => {
