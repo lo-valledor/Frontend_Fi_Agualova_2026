@@ -55,7 +55,9 @@ const ResetPassword = () => {
                 />
               </div>
               <div>
-                <h1 className='text-2xl font-bold'>Enerlova</h1>
+                <h1 className='text-2xl font-bold text-white shadow-lg'>
+                  Enerlova
+                </h1>
               </div>
             </div>
 
@@ -67,7 +69,7 @@ const ResetPassword = () => {
           </div>
         </div>
 
-        {/* Right Panel - Reset Password Form */}
+        {/* Right Panel - Reset Form */}
         <div className='flex-1 flex items-center justify-center p-6 md:p-10 bg-background'>
           {/* Mobile Logo */}
           <div

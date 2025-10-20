@@ -314,7 +314,8 @@ export default function AnalisisConsumo({
     unit,
     period,
     trend,
-    color = 'blue'
+    color = 'blue',
+    trendMessage
   }: {
     icon: React.ReactNode;
     label: string;
@@ -323,6 +324,7 @@ export default function AnalisisConsumo({
     period?: string;
     trend?: 'up' | 'down' | 'neutral';
     color?: 'blue' | 'green' | 'amber' | 'purple' | 'red';
+    trendMessage?: string;
   }) => {
     const colorClasses = {
       blue: 'bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 ',
@@ -357,6 +359,11 @@ export default function AnalisisConsumo({
             {unit && <span className='text-sm font-normal ml-1'>{unit}</span>}
           </p>
           {period && <p className='text-xs opacity-70'>{period}</p>}
+          {trendMessage && (
+            <p className='text-xs opacity-80 pt-1 border-t border-current/10 mt-2'>
+              {trendMessage}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -502,6 +509,13 @@ export default function AnalisisConsumo({
                             ? 'red'
                             : 'green'
                           : 'purple'
+                      }
+                      trendMessage={
+                        variacionMesAnterior
+                          ? variacionMesAnterior > 0
+                            ? `Consumo ${Math.abs(variacionMesAnterior).toFixed(1)}% mayor que el mes anterior`
+                            : `Consumo ${Math.abs(variacionMesAnterior).toFixed(1)}% menor que el mes anterior`
+                          : undefined
                       }
                     />
                   </div>

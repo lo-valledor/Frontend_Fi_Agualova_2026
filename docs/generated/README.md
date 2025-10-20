@@ -1,5 +1,5 @@
 # Documentación Generada Automáticamente
-*Última actualización: 2025-10-17 13:46:26*
+*Última actualización: 2025-10-20 12:33:49*
 
 ## 📚 Documentación Disponible
 

@@ -244,7 +244,6 @@ export default function PropietariosComponent({
                 columns={propietarioColumns}
                 filename='propietarios'
                 size='sm'
-                className=''
               />
               <Button
                 onClick={handleSyncPropietarios}

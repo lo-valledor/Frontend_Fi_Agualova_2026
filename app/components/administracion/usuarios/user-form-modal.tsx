@@ -528,7 +528,11 @@ export function UserFormModal({
             >
               Cancelar
             </Button>
-            <Button type='submit' variant='default' disabled={isLoading}>
+            <Button
+              type='submit'
+              variant="default"
+              disabled={isLoading}
+            >
               {isLoading
                 ? mode === 'add'
                   ? 'Creando...'

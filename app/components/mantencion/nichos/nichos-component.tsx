@@ -63,7 +63,11 @@ export default function NichosComponent({
           description='Gestiona los nichos del sistema'
           actions={
             <div className='flex gap-2'>
-              <Button onClick={handleAddNicho} variant='default' size='sm'>
+              <Button
+                onClick={handleAddNicho}
+                variant="default"
+                size='sm'
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Nicho
               </Button>

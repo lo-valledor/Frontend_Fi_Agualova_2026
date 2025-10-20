@@ -292,7 +292,7 @@ export default function NichoFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingSectores}
-                variant='default'
+                variant="default"
               >
                 {(() => {
                   if (isLoading) {

@@ -62,37 +62,39 @@ export const authService = {
     }
   },
 
-  forgotPassword: async (email: string): Promise<string> => {
+  forgotPassword: async (email: string): Promise<void> => {
     try {
-      const response = await axiosInstance.post<{ message: string }>(
-        '/forgot-password',
-        { email }
-      );
-      return response.data.message;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        throw new Error(
-          error.response?.data?.message ||
-            'Error al solicitar recuperación de contraseña'
-        );
-      }
-      throw new Error('Error al solicitar recuperación de contraseña');
+      await axiosInstance.post('/forgot-password', { email });
+    } catch (_error) {
+      throw new Error('Error al solicitar la recuperación de contraseña');
     }
   },
 
-  resetPassword: async (token: string, password: string): Promise<string> => {
+  resetPassword: async (token: string, newPassword: string): Promise<void> => {
     try {
-      const response = await axiosInstance.post<{ message: string }>(
-        '/reset-password',
-        { token, password }
-      );
-      return response.data.message;
+      await axiosInstance.post('/reset-password', {
+        token,
+        newPassword
+      });
+      toast.success('Contraseña restablecida exitosamente');
     } catch (error) {
       if (error instanceof AxiosError) {
-        throw new Error(
-          error.response?.data?.message || 'Error al restablecer la contraseña'
-        );
+        if (error.response?.status === 400) {
+          toast.error('Token inválido o expirado');
+          throw new Error('Token inválido o expirado');
+        }
+        if (error.response?.status === 404) {
+          toast.error('Token no encontrado');
+          throw new Error('Token no encontrado');
+        }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data ||
+          'Error al restablecer la contraseña';
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
       }
+      toast.error('Error al restablecer la contraseña');
       throw new Error('Error al restablecer la contraseña');
     }
   }

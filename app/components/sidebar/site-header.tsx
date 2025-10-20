@@ -17,11 +17,19 @@ import { useBreadcrumbs } from '~/context/BreadcrumbContext';
 import { ModeToggle } from '../mode-toggle';
 // Importa el hook del contexto
 import { NavUser } from './nav-user';
+import { Label } from '../ui/label';
+import { Badge } from '../ui/badge';
 
 export function SiteHeader() {
   // Obtén los breadcrumbs desde el contexto
   const { breadcrumbItems } = useBreadcrumbs();
   const { user } = useAuth();
+
+  // Detectar si es entorno UAT (puerto 3000) o Core
+  const isUAT =
+    typeof window !== 'undefined' &&
+    (window.location.port !== '8080');
+  const environment = isUAT ? 'Sistema UAT' : 'Sistema Core';
 
   return (
     <header className='sticky top-0 z-10 bg-background group-has-data-[collapsible=icon]/sidebar-wrapper:h-10 sm:group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 flex h-10 sm:h-12 shrink-0 items-center gap-1 sm:gap-2 border-b transition-[width,height] ease-linear'>
@@ -75,19 +83,26 @@ export function SiteHeader() {
             </Breadcrumb>
           </h1>
           <div className='flex items-center gap-1 sm:gap-2 ml-auto'>
+            <div>
+              <Badge variant='outline' className='px-2 py-1'> 
+                <Label className='text-xs text-primary'>{environment}</Label>
+              </Badge>
+            </div>
             <div className='hidden sm:block'>
               <ModeToggle />
             </div>
-            {user && (
-              <NavUser
-                user={{
-                  name: user.fullName || user.username || 'Usuario',
-                  username: user.username,
-                  avatar: '', // Si tienes avatar, pon user.avatar aquí
-                  role: user.role || 'Usuario'
-                }}
-              />
-            )}
+            <div>
+              {user && (
+                <NavUser
+                  user={{
+                    name: user.fullName || user.username || 'Usuario',
+                    username: user.username,
+                    avatar: '', // Si tienes avatar, pon user.avatar aquí
+                    role: user.role || 'Usuario'
+                  }}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

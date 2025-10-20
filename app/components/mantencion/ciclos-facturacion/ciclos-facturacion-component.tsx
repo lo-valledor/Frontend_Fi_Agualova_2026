@@ -66,7 +66,11 @@ export default function CiclosFacturacionComponent({
           description='Gestiona los ciclos de facturación del sistema'
           actions={
             <div className='flex gap-2'>
-              <Button onClick={handleAddCiclo} variant='default' size='sm'>
+              <Button
+                onClick={handleAddCiclo}
+                variant="default"
+                size='sm'
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Ciclo
               </Button>

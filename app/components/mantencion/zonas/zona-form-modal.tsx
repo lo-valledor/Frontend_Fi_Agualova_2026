@@ -190,7 +190,11 @@ export default function ZonaFormModal({
               >
                 Cancelar
               </Button>
-              <Button type='submit' disabled={isLoading} variant='default'>
+              <Button
+                type='submit'
+                disabled={isLoading}
+                variant="default"
+              >
                 {(() => {
                   if (isLoading) {
                     return mode === 'add' ? 'Creando...' : 'Actualizando...';

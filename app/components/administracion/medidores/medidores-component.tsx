@@ -276,9 +276,12 @@ export default function MedidoresComponent({
                 columns={medidorColumns}
                 filename='clientes'
                 size='sm'
-                className=''
               />
-              <Button onClick={handleAdd} variant='default' size='sm'>
+              <Button
+                onClick={handleAdd}
+                variant="default"
+                size='sm'
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Medidor
               </Button>

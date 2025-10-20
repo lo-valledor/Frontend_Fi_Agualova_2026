@@ -175,9 +175,12 @@ export default function ClientesComponent({
                 columns={clientColumns}
                 filename='clientes'
                 size='sm'
-                className=''
               />
-              <Button onClick={handleAddCliente} variant='default' size='sm'>
+              <Button
+                onClick={handleAddCliente}
+                variant="default"
+                size='sm'
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Cliente
               </Button>

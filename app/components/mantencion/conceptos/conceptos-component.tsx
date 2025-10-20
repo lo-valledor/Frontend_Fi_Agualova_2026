@@ -85,7 +85,11 @@ export default function ConceptosComponent({
           description='Gestiona los conceptos del sistema'
           actions={
             <div className='flex gap-2'>
-              <Button onClick={handleAdd} variant='default' size='sm'>
+              <Button
+                onClick={handleAdd}
+                variant="default"
+                size='sm'
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Concepto
               </Button>

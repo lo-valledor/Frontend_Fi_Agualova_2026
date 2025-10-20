@@ -255,7 +255,11 @@ export default function EmpalmesModalForm({
               >
                 Cancelar
               </Button>
-              <Button type='submit' disabled={isLoading} variant='default'>
+              <Button
+                type='submit'
+                disabled={isLoading}
+                variant="default"
+              >
                 {isLoading
                   ? mode === 'add'
                     ? 'Creando...'

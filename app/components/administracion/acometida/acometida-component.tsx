@@ -198,9 +198,12 @@ export default function AcometidaComponent({
                 columns={acometidaColumns}
                 filename='acometidas'
                 size='sm'
-                className=''
               />
-              <Button onClick={handleAddAcometida} variant='default' size='sm'>
+              <Button
+                onClick={handleAddAcometida}
+                variant="default"
+                size='sm'
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Acometida
               </Button>

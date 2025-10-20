@@ -253,7 +253,7 @@ export default function SectorFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingZonas}
-                variant='default'
+                variant="default"
               >
                 {(() => {
                   if (isLoading) {

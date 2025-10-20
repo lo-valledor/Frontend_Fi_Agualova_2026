@@ -241,11 +241,10 @@ export default function ContratantesComponent({
                 columns={contratanteColumns}
                 filename='contratantes'
                 size='sm'
-                className=''
               />
               <Button
                 onClick={handleAddContratante}
-                variant='default'
+                variant="default"
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />
