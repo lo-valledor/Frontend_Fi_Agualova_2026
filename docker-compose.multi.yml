@@ -1,43 +1,50 @@
-# docker-compose.yml - Configuración para múltiples entornos
+# docker-compose.multi.yml - Ambos entornos simultáneos
+# Uso: docker-compose -f docker-compose.multi.yml up -d --build
 version: '3.8'
 
 services:
-  # Entorno de producción (rama main)
+  # PRODUCCIÓN - Puerto 8080 (Colores azules, sin badge)
   frontend-prod:
     build:
       context: .
+      dockerfile: Dockerfile
       args:
         VITE_API_URL: http://192.168.1.139:8081/Enerlova
+        VITE_API_ENERLINK_URL: http://192.168.1.139:8081/api
+        VITE_AI_API_URL: http://192.168.1.139:8001
+        VITE_ENV_MODE: production
     ports:
       - '8080:80'
     container_name: enerlova-frontend-prod
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      - VITE_ENV_MODE=production
+    networks:
+      - enerlova-network
 
-  # Entorno de desarrollo (rama develop)
+  # DESARROLLO/PRUEBAS - Puerto 3000 (Colores naranjas, badge DEV)
   frontend-dev:
     build:
       context: .
+      dockerfile: Dockerfile.dev
+      target: development-nginx
       args:
         VITE_API_URL: http://192.168.1.139:8082/Enerlova
+        VITE_API_ENERLINK_URL: http://192.168.1.139:8082/api
+        VITE_AI_API_URL: http://localhost:8001
+        VITE_ENV_MODE: development
+        NODE_ENV: development
     ports:
-      - '3000:80'
+      - '3000:3000'
     container_name: enerlova-frontend-dev
     restart: unless-stopped
     environment:
       - NODE_ENV=development
+      - VITE_ENV_MODE=development
+    networks:
+      - enerlova-network
 
-  # Nginx proxy para enrutamiento (opcional)
-  nginx-proxy:
-    image: nginx:alpine
-    ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - ./nginx-proxy.conf:/etc/nginx/nginx.conf
-    depends_on:
-      - frontend-prod
-      - frontend-dev
-    container_name: enerlova-proxy
-    restart: unless-stopped
+networks:
+  enerlova-network:
+    driver: bridge
