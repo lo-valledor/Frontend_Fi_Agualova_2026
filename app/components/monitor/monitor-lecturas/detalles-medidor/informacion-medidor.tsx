@@ -1,10 +1,10 @@
 import {
   AlertCircle,
+  ChevronRight,
   Gauge,
   IdCard,
   Key,
   PlugIcon,
-  TrendingUp,
   Zap
 } from 'lucide-react';
 
@@ -34,6 +34,11 @@ export default function InformacionMedidor({
   error,
   lecturaId
 }: InformacionMedidorProps) {
+
+  const colorClasses = {
+      sky: 'bg-chart-2/50 dark:bg-chart-2/20 border-chart-2/50 dark:border-chart-2/20',
+  };
+  
   return (
     <Card className='border-0 shadow-none bg-transparent'>
       <CardHeader className='px-0 pb-2'>
@@ -53,7 +58,7 @@ export default function InformacionMedidor({
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
             {/* Medidor */}
-            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
               <div className='flex items-center gap-2 mb-1.5'>
                 <IdCard className='h-3 w-3 ' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -66,7 +71,7 @@ export default function InformacionMedidor({
             </div>
 
             {/* Tipo */}
-            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
               <div className='flex items-center gap-2 mb-1.5'>
                 <Zap className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -79,24 +84,27 @@ export default function InformacionMedidor({
             </div>
 
             {/* Tarifa */}
-            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
-              <div className='flex items-center justify-between mb-1.5'>
-                <div className='flex items-center gap-2 min-w-0'>
-                  <Key className='h-3 w-3 text-amber-600 dark:text-amber-400' />
-                  <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                    Tarifa
-                  </span>
-                </div>
+            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
+              <div className='flex items-center gap-2 mb-1.5'>
+                <Key className='h-3 w-3 text-amber-600 dark:text-amber-400' />
+                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
+                  Tarifa
+                </span>
+              </div>
+              <div className='flex items-center justify-between gap-2'>
+                <p className='text-sm font-semibold text-foreground truncate'>
+                  {data[0]?.TF_Codigo || '-'}
+                </p>
                 {data?.[0]?.TF_Codigo === 'BT-4.3' && (
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
-                        variant='outline'
+                        variant='ghost'
                         size='sm'
-                        className='h-6 px-2 text-xs flex-shrink-0'
+                        className='h-7 px-2 text-xs flex-shrink-0 hover:bg-primary/10'
                       >
-                        <TrendingUp className='h-3 w-3 mr-1' />
-                        <span className='hidden sm:inline'>Detalle</span>
+                        <span>Ver detalle</span>
+                        <ChevronRight className='h-3.5 w-3.5 ml-1' />
                       </Button>
                     </DialogTrigger>
                     <DialogContent className='max-w-[98vw] sm:max-w-[95vw] md:max-w-4xl lg:max-w-5xl xl:max-w-6xl max-h-[98vh] sm:max-h-[95vh] overflow-hidden'>
@@ -125,13 +133,10 @@ export default function InformacionMedidor({
                   </Dialog>
                 )}
               </div>
-              <p className='text-sm font-semibold text-foreground truncate'>
-                {data[0]?.TF_Codigo || '-'}
-              </p>
             </div>
 
             {/* Constante */}
-            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
               <div className='flex items-center gap-2 mb-1.5'>
                 <Gauge className='h-3 w-3 text-purple-600 dark:text-purple-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -144,7 +149,7 @@ export default function InformacionMedidor({
             </div>
 
             {/* Subempalme */}
-            <div className='p-3 bg-muted/30 rounded-xl border border-border/20 hover:bg-muted/50 transition-colors'>
+            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
               <div className='flex items-center gap-2 mb-1.5'>
                 <PlugIcon className='h-3 w-3 text-orange-600 dark:text-orange-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
