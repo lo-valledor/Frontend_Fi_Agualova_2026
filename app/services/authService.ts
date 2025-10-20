@@ -60,5 +60,42 @@ export const authService = {
     } catch (_error) {
       throw new Error('Error al refrescar el token');
     }
+  },
+
+  forgotPassword: async (email: string): Promise<void> => {
+    try {
+      await axiosInstance.post('/forgot-password', { email });
+    } catch (_error) {
+      throw new Error('Error al solicitar la recuperación de contraseña');
+    }
+  },
+
+  resetPassword: async (token: string, newPassword: string): Promise<void> => {
+    try {
+      await axiosInstance.post('/reset-password', {
+        token,
+        newPassword
+      });
+      toast.success('Contraseña restablecida exitosamente');
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 400) {
+          toast.error('Token inválido o expirado');
+          throw new Error('Token inválido o expirado');
+        }
+        if (error.response?.status === 404) {
+          toast.error('Token no encontrado');
+          throw new Error('Token no encontrado');
+        }
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data ||
+          'Error al restablecer la contraseña';
+        toast.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+      toast.error('Error al restablecer la contraseña');
+      throw new Error('Error al restablecer la contraseña');
+    }
   }
 };
