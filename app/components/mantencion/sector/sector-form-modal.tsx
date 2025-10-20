@@ -253,7 +253,7 @@ export default function SectorFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingZonas}
-                className='bg-sky-600 hover:bg-sky-700'
+                variant="default"
               >
                 {(() => {
                   if (isLoading) {

@@ -193,7 +193,7 @@ export default function ZonaFormModal({
               <Button
                 type='submit'
                 disabled={isLoading}
-                className='bg-sky-600 hover:bg-sky-700'
+                variant="default"
               >
                 {(() => {
                   if (isLoading) {

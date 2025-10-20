@@ -85,7 +85,7 @@ export default function ParametrosComponent({
             <div className='flex gap-2'>
               <Button
                 onClick={handleAdd}
-                className='bg-sky-600 hover:bg-sky-700'
+                variant="default"
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />

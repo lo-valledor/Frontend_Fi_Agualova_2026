@@ -578,9 +578,7 @@ export default function RevisarCalculoFacturaComponent({
                         columns={exportColumnsConCargos}
                         filename={`calculo_factura_${periodoFormateado}`}
                         size='sm'
-                        variant='default'
                         showDropdown={true}
-                        className='flex items-center justify-center gap-2 w-full'
                       />
                     </div>
                   </div>

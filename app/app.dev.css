@@ -3,13 +3,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@font-face {
-  font-family: 'Roboto';
-  src:
-    local('Roboto'),
-    url('./assets/fonts/Roboto-Regular.ttf') format('truetype');
-  font-weight: bold;
-}
 
 :root {
   --background: oklch(0.98 0.01 93.48);

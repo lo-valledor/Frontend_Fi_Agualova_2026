@@ -292,7 +292,7 @@ export default function NichoFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingSectores}
-                className='bg-sky-600 hover:bg-sky-700'
+                variant="default"
               >
                 {(() => {
                   if (isLoading) {

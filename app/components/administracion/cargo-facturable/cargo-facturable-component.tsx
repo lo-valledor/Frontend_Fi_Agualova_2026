@@ -196,13 +196,11 @@ export default function CargoFacturableComponent({
                 data={filteredCargos}
                 columns={cargoColumns}
                 filename='cargos'
-                variant='outline'
                 size='sm'
-                className=''
               />
               <Button
                 onClick={handleAddCargo}
-                className='bg-sky-600 hover:bg-sky-700'
+                variant="default"
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />

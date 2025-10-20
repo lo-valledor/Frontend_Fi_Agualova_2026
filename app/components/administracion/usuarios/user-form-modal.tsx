@@ -530,7 +530,7 @@ export function UserFormModal({
             </Button>
             <Button
               type='submit'
-              className='bg-sky-600 hover:bg-sky-700'
+              variant="default"
               disabled={isLoading}
             >
               {isLoading
