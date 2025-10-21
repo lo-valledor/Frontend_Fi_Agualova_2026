@@ -1,6 +1,20 @@
-# 🎨 Scripts de Gestión de Entornos
+# 🎨 Scripts del Proyecto Enerlova
 
-Este directorio contiene scripts para facilitar el cambio entre entornos de desarrollo y producción.
+Este directorio contiene scripts útiles para el desarrollo, testing, documentación y gestión de entornos del proyecto.
+
+## 📋 Categorías de Scripts
+
+### 🔧 Scripts de Desarrollo
+
+Scripts para facilitar el desarrollo local y cambio entre entornos.
+
+### 📚 Scripts de Documentación
+
+Scripts para generar documentación automática del proyecto (PowerShell).
+
+### 🐳 Scripts de Deployment
+
+Scripts para despliegue automatizado con Docker.
 
 ## 📜 Scripts Disponibles
 
@@ -223,7 +237,107 @@ dev      # Inicia desarrollo
 prod     # Inicia producción
 ```
 
+## 📚 Scripts de Documentación
+
+### `generate-docs.ps1` (PowerShell)
+
+Genera documentación automática de componentes y servicios.
+
+**Uso**:
+
+```powershell
+# Generar toda la documentación
+.\scripts\generate-docs.ps1
+
+# Generar solo componentes
+.\scripts\generate-docs.ps1 -Target components
+
+# Generar solo servicios
+.\scripts\generate-docs.ps1 -Target services
+
+# Generar documentación específica
+.\scripts\generate-docs.ps1 -Target all
+```
+
+**Características**:
+
+- Analiza código TypeScript/TSX
+- Genera documentación Markdown
+- Extrae JSDoc comments
+- Crea índices automáticos
+
+**Output**:
+
+- `docs/generated/components.md`
+- `docs/generated/services.md`
+- `docs/generated/api.md`
+
+## 🚀 Scripts de Deployment
+
+### `deploy.sh` / `deploy.ps1`
+
+Scripts para despliegue automatizado con Docker (si existen).
+
+**Nota**: El deployment principal se maneja mediante GitHub Actions. Ver [Workflows CI/CD](../.github/workflows/README.md).
+
+## 🔄 Integración con GitHub Actions
+
+Estos scripts son utilizados por los workflows de GitHub Actions:
+
+- **documentation.yml**: Usa `generate-docs.ps1` para documentación automática
+- **ci-cd.yml**: Pipeline principal de CI/CD
+- **development.yml**: Build y deploy de desarrollo
+
+Ver documentación completa de workflows en [.github/workflows/README.md](../.github/workflows/README.md).
+
+## 💻 Comandos desde package.json
+
+Los scripts también están disponibles como comandos de npm/pnpm:
+
+```bash
+# Documentación
+pnpm run docs:generate       # Generar docs personalizadas
+pnpm run docs:typedoc        # Generar TypeDoc
+pnpm run docs:all            # Generar toda la documentación
+pnpm run docs:components     # Solo componentes
+pnpm run docs:services       # Solo servicios
+```
+
+## 🐛 Troubleshooting de Scripts
+
+### PowerShell no ejecuta scripts
+
+```powershell
+# Cambiar política de ejecución
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### Bash no ejecuta scripts
+
+```bash
+# Hacer ejecutable
+chmod +x scripts/*.sh
+```
+
+### Errores de permisos
+
+```bash
+# Linux/Mac: Ejecutar con sudo si es necesario
+sudo ./scripts/script.sh
+
+# Windows: Ejecutar PowerShell como Administrador
+```
+
 ---
 
-**🎨 Scripts v1.0.0**  
-Parte del Sistema de Tematización por Entorno
+## 📚 Más Información
+
+- **[Documentación de Deployment](../docs/deployment/DEPLOY-README.md)** - Guía de despliegue
+- **[Workflows CI/CD](../.github/workflows/README.md)** - Automatización con GitHub Actions
+- **[Guía de Desarrollador](../docs/DEVELOPER_GUIDE.md)** - Onboarding rápido
+
+---
+
+**🎨 Scripts - Proyecto Enerlova**
+
+**Última actualización**: 2025-01-21

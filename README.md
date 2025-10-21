@@ -31,6 +31,12 @@
 
 ---
 
+> ¿Eres nuevo en el proyecto? Consulta la guía de desarrollador y normas de contribución:
+
+- `CONTRIBUTING.md` — reglas de contribución y checklist de PR.
+- `docs/DEVELOPER_GUIDE.md` — onboarding rápido y scripts.
+
+
 ## 🚀 Inicio Rápido
 
 ### 📋 Prerrequisitos

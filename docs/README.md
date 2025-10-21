@@ -101,4 +101,27 @@ Si necesitas ayuda adicional:
 
 ---
 
+### 🔧 [CI/CD y Workflows](../.github/workflows/)
+Workflows de GitHub Actions para automatización.
+
+- **[README de Workflows](../.github/workflows/README.md)** - Documentación completa de CI/CD
+  - Pipeline principal de CI/CD
+  - SonarQube analysis
+  - Documentación automática
+  - Claude Code Review
+  - Self-hosted runners
+
+---
+
+## 🔄 Actualizaciones Recientes
+
+### 2025-01-21
+
+- ✅ Agregada documentación completa de workflows CI/CD
+- ✅ Actualizado índice de documentación
+- ✅ Mejorada guía de despliegue con información de GitHub Actions
+- ✅ Documentados todos los workflows automáticos
+
+---
+
 **Última actualización:** 2025-01-21

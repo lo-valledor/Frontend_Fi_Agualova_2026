@@ -1,290 +1,302 @@
-# 🎨 Información para Actualizar README.md
+# 📝 Guía de Actualización de README
 
-## Sección a Agregar al README Principal
+Este documento proporciona información sobre cómo mantener actualizada la documentación del proyecto Enerlova.
 
-Agregar esta sección después de "Características Principales":
+## 📚 Archivos README del Proyecto
 
----
+### 📄 READMEs Principales
 
-### 🎨 Diferenciación Visual de Entornos
+1. **[README.md](../../README.md)** - README principal del proyecto
+   - Descripción general del sistema
+   - Stack tecnológico
+   - Guías de inicio rápido
+   - Comandos de desarrollo
+   - Enlaces a documentación detallada
 
-**Enerlova** implementa un sistema de tematización visual que permite identificar instantáneamente el entorno en el que estás trabajando:
+2. **[docs/README.md](../README.md)** - Índice de documentación
+   - Estructura de documentación organizada
+   - Enlaces a todas las guías
+   - Recursos de ayuda rápida
 
-- **🔵 Producción**: Tema azul profesional sin indicadores
-- **🟠 Desarrollo**: Tema naranja cálido con banner superior
+3. **[.github/workflows/README.md](../../.github/workflows/README.md)** - Workflows de CI/CD
+   - Documentación completa de GitHub Actions
+   - Configuración de runners
+   - Troubleshooting de CI/CD
 
-#### Beneficios
+### 📂 READMEs por Categoría
 
-✅ **Previene errores** al trabajar en el entorno equivocado  
-✅ **Identificación inmediata** del entorno  
-✅ **No intrusivo** pero altamente visible  
-✅ **Compatible con modo oscuro**  
-✅ **Zero configuration** en Docker
+#### Deployment
 
-#### Vista Rápida
+- **[docs/deployment/DEPLOY-README.md](../deployment/DEPLOY-README.md)**
+  - Guía de despliegue
+  - Entornos disponibles
+  - CI/CD con GitHub Actions
+  - Flujos de trabajo recomendados
 
-```
-Producción             Desarrollo
-┌─────────────┐       ╔═══ 🟠 DEV ══╗
-│ 🔵 Dashboard│       ║ 🟠 Dashboard ║
-└─────────────┘       ╚═════════════╝
-Sin banner             Con banner
-```
+- **[docs/deployment/README-DOCKER.md](../deployment/README-DOCKER.md)**
+  - Configuración completa de Docker
+  - Docker Compose
+  - Multi-entorno
 
-📚 **Documentación**: Ver [ENVIRONMENT_VISUAL_GUIDE.md](ENVIRONMENT_VISUAL_GUIDE.md)
+#### Scripts
 
----
+- **[scripts/README.md](../../scripts/README.md)**
+  - Scripts de gestión de entornos
+  - Comandos disponibles
+  - Uso de scripts PowerShell y Bash
 
-## Sección para "Inicio Rápido"
+## 🔄 Cuándo Actualizar los READMEs
 
-Agregar después de la instalación:
+### README.md Principal
 
-### 🎯 Elección del Entorno
+Actualizar cuando:
 
-#### Opción 1: Scripts Automatizados (Recomendado)
+- ✅ Se agreguen nuevas características principales
+- ✅ Cambien versiones del stack tecnológico
+- ✅ Se modifique la estructura del proyecto
+- ✅ Se agreguen nuevos módulos del sistema
+- ✅ Cambien comandos de desarrollo importantes
 
-```bash
-# Windows PowerShell
-.\scripts\switch-environment.ps1 -Environment dev
+### docs/README.md
 
-# Linux/Mac
-./scripts/switch-environment.sh dev
-```
+Actualizar cuando:
 
-#### Opción 2: Manual
+- ✅ Se agregue nueva documentación
+- ✅ Se reorganice la estructura de docs/
+- ✅ Se creen nuevas categorías de documentación
 
-**Desarrollo:**
+### .github/workflows/README.md
 
-```bash
-pnpm run dev
-# → http://localhost:5173 (Tema Naranja)
-```
+Actualizar cuando:
 
-**Producción:**
+- ✅ Se agreguen nuevos workflows
+- ✅ Se modifiquen workflows existentes
+- ✅ Cambien los requisitos de secrets
+- ✅ Se actualice la configuración del runner
 
-```bash
-VITE_APP_ENV=production pnpm run build
-pnpm run start
-# → http://localhost:3000 (Tema Azul)
-```
+### docs/deployment/DEPLOY-README.md
 
-#### Opción 3: Docker
+Actualizar cuando:
 
-**Desarrollo:**
+- ✅ Cambien los entornos disponibles
+- ✅ Se modifiquen puertos o URLs
+- ✅ Se actualicen workflows de CI/CD
+- ✅ Cambien métodos de despliegue
 
-```bash
-docker-compose -f docker-compose.dev.yml up --build
-# → http://localhost:3000 (Tema Naranja)
-```
+## ✍️ Guía de Estilo para READMEs
 
-**Producción:**
-
-```bash
-docker-compose -f docker-compose.prod.yml up --build
-# → http://localhost:8080 (Tema Azul)
-```
-
----
-
-## Sección para "Scripts Disponibles"
-
-Agregar estos comandos:
-
-```json
-{
-  "scripts": {
-    "dev": "react-router dev",
-    "build": "react-router build",
-    "start": "react-router-serve ./build/server/index.js",
-
-    // Gestión de entornos (PowerShell)
-    "env:dev": "scripts/switch-environment.ps1 -Environment dev",
-    "env:prod": "scripts/switch-environment.ps1 -Environment prod",
-    "env:docker-dev": "scripts/switch-environment.ps1 -Environment docker-dev",
-    "env:docker-prod": "scripts/switch-environment.ps1 -Environment docker-prod",
-    "env:compare": "scripts/switch-environment.ps1 -Environment compare"
-  }
-}
-```
-
-**Uso:**
-
-```bash
-pnpm run env:dev        # Desarrollo local
-pnpm run env:prod       # Producción local
-pnpm run env:docker-dev # Docker desarrollo
-```
-
----
-
-## Sección Nueva: "Entornos"
-
-### 🌍 Entornos
-
-#### Características por Entorno
-
-| Característica      | Desarrollo              | Producción            |
-| ------------------- | ----------------------- | --------------------- |
-| **Tema de Color**   | 🟠 Naranja (Cálido)     | 🔵 Azul (Profesional) |
-| **Banner Superior** | ✅ Visible              | ❌ Oculto             |
-| **Indicador**       | "ENTORNO DE DESARROLLO" | Ninguno               |
-| **Puerto (Local)**  | 5173                    | 3000                  |
-| **Puerto (Docker)** | 3000                    | 8080                  |
-| **Hot Reload**      | ✅ Sí                   | ❌ No                 |
-| **Source Maps**     | ✅ Completos            | ⚠️ Limitados          |
-| **Optimización**    | ⚡ Rápido               | 🚀 Máxima             |
-
-#### Variables de Entorno
-
-```bash
-# .env.development
-VITE_APP_ENV=development
-VITE_API_URL=http://192.168.1.139:8081/Enerlova
-
-# .env.production
-VITE_APP_ENV=production
-VITE_API_URL=http://192.168.1.139:8081/Enerlova
-```
-
-#### Archivos de Configuración
-
-- `app/app.css` - Estilos base (producción)
-- `app/app.dev.css` - Override para desarrollo
-- `.env.development` - Variables de desarrollo
-- `.env.production` - Variables de producción
-- `docker-compose.dev.yml` - Docker desarrollo
-- `docker-compose.prod.yml` - Docker producción
-
-#### Cambio Rápido de Entorno
-
-```bash
-# Opción 1: Scripts (Recomendado)
-./scripts/switch-environment.sh dev
-./scripts/switch-environment.sh prod
-
-# Opción 2: Variable de entorno
-VITE_APP_ENV=development pnpm run dev
-VITE_APP_ENV=production pnpm run build
-
-# Opción 3: Docker Compose
-docker-compose -f docker-compose.dev.yml up
-docker-compose -f docker-compose.prod.yml up
-```
-
-#### Comparar Entornos
-
-Para verificar las diferencias visuales:
-
-```bash
-# Levantar ambos entornos simultáneamente
-./scripts/switch-environment.sh compare
-
-# Acceder a:
-# Desarrollo → http://localhost:3000 (Naranja)
-# Producción → http://localhost:8080 (Azul)
-```
-
----
-
-## Sección para "Documentación"
-
-Agregar estos links:
-
-### 📚 Guías de Entornos
-
-- [🎨 Guía Visual de Entornos](ENVIRONMENT_VISUAL_GUIDE.md) - Comparativa visual completa
-- [⚙️ Documentación Técnica de Tematización](docs/ENVIRONMENT_THEMING.md) - Detalles técnicos
-- [🚀 Guía Rápida de Entornos](docs/ENVIRONMENT_QUICK_START.md) - Inicio rápido
-- [📜 Scripts de Gestión](scripts/README.md) - Uso de scripts
-- [✅ Checklist de Verificación](VERIFICATION_CHECKLIST.md) - Validación del sistema
-
----
-
-## Badge para el Top del README
-
-Agregar junto a los otros badges:
+### Formato General
 
 ```markdown
-[![Environments](https://img.shields.io/badge/Environments-Dev%20%7C%20Prod-orange?style=for-the-badge)](ENVIRONMENT_VISUAL_GUIDE.md)
+# 🚀 Título Principal
+
+Descripción breve y clara del contenido.
+
+## 📋 Sección Principal
+
+Contenido organizado con subsecciones claras.
+
+### Subsección
+
+Detalles específicos.
+
+#### Sub-subsección
+
+Información más detallada cuando sea necesario.
 ```
 
----
+### Uso de Emojis
 
-## Tips para el README
+Usar emojis de forma consistente:
 
-### Sección "Tips y Trucos"
+- 🚀 Deploy/Lanzamiento
+- 📋 Listados/Índices
+- 🔧 Configuración
+- 📊 Monitoreo/Métricas
+- 🐛 Debugging/Problemas
+- ✅ Éxito/Completado
+- ❌ Error/Fallo
+- ⚠️ Advertencia
+- 📚 Documentación
+- 🔐 Seguridad/Secrets
+- 🎯 Objetivos/Metas
+- 💡 Tips/Consejos
+
+### Bloques de Código
+
+Siempre especificar el lenguaje:
 
 ````markdown
-### 💡 Tips y Trucos
-
-#### Identificar el Entorno Rápidamente
-
-- **Desarrollo**: Busca el banner naranja superior
-- **Producción**: Interfaz azul sin banner
-
-#### Atajos de Teclado (Opcional)
-
-Puedes crear alias en tu shell:
-
 ```bash
-# ~/.bashrc o ~/.zshrc
-alias enerlova-dev='cd /path/to/enerlova && ./scripts/switch-environment.sh dev'
-alias enerlova-prod='cd /path/to/enerlova && ./scripts/switch-environment.sh prod'
-```
-````
-
-#### Limpiar Cache
-
-Si los cambios no se reflejan:
-
-```bash
-# Opción 1: Con script
-./scripts/switch-environment.sh dev --clean
-
-# Opción 2: Manual
-rm -rf build/ node_modules/.vite/
 pnpm install
 ```
 
+```typescript
+const example: string = "hello";
+```
+
+```yaml
+name: CI Pipeline
+```
 ````
 
----
+### Enlaces
 
-## Screenshot Sugeridos
-
-Si tienes screenshots, puedes agregarlos así:
+Usar rutas relativas cuando sea posible:
 
 ```markdown
-### 📸 Screenshots
+# ✅ Correcto
+[Guía de Deploy](docs/deployment/DEPLOY-README.md)
 
-#### Entorno de Producción
-![Producción](docs/screenshots/production.png)
-*Tema azul profesional sin indicadores*
+# ❌ Evitar
+[Guía de Deploy](/full/absolute/path/docs/deployment/DEPLOY-README.md)
+```
 
-#### Entorno de Desarrollo
-![Desarrollo](docs/screenshots/development.png)
-*Tema naranja con banner de identificación*
+### Tablas
 
-#### Comparación Side-by-Side
-![Comparación](docs/screenshots/comparison.png)
-*Diferencias visuales entre entornos*
-````
+Mantener tablas bien formateadas:
+
+```markdown
+| Columna 1 | Columna 2 | Columna 3 |
+| --------- | --------- | --------- |
+| Valor 1   | Valor 2   | Valor 3   |
+```
+
+## 🔍 Checklist de Actualización
+
+Antes de hacer commit de cambios en READMEs:
+
+### Contenido
+
+- [ ] La información está actualizada y es precisa
+- [ ] Los enlaces funcionan correctamente
+- [ ] Los comandos han sido probados
+- [ ] Las versiones de tecnologías son correctas
+- [ ] Los ejemplos son relevantes y funcionales
+
+### Formato
+
+- [ ] Markdown está bien formateado
+- [ ] Los bloques de código tienen lenguaje especificado
+- [ ] Los emojis son consistentes con el resto del proyecto
+- [ ] Las tablas están alineadas
+- [ ] Los títulos siguen la jerarquía correcta
+
+### Enlaces
+
+- [ ] Todos los enlaces internos funcionan
+- [ ] Las rutas son relativas cuando es posible
+- [ ] No hay enlaces rotos
+- [ ] Los enlaces a documentación externa son válidos
+
+### Ejemplos y Comandos
+
+- [ ] Los comandos son correctos
+- [ ] Los ejemplos usan el package manager correcto (pnpm)
+- [ ] Las variables de entorno son las correctas
+- [ ] Los puertos y URLs coinciden con la configuración
+
+## 📊 Estructura Recomendada para Nuevos READMEs
+
+```markdown
+# 🎯 Título del Documento
+
+Breve descripción de qué trata este documento.
+
+## 📋 Tabla de Contenidos (opcional para docs largos)
+
+- [Sección 1](#sección-1)
+- [Sección 2](#sección-2)
+
+## 🚀 Sección Principal 1
+
+Contenido principal con subsecciones según necesidad.
+
+### Subsección 1.1
+
+Detalles específicos.
+
+## 🔧 Sección Principal 2
+
+Más contenido organizado.
+
+## 🐛 Troubleshooting (si aplica)
+
+Problemas comunes y soluciones.
+
+## 📚 Referencias
+
+- Enlaces a documentación relacionada
+- Recursos externos
 
 ---
 
-## Usar esta Información
+**Última actualización**: YYYY-MM-DD
+```
 
-1. **Copia** las secciones relevantes al README.md principal
-2. **Adapta** el formato según el estilo actual del README
-3. **Agrega** screenshots si están disponibles
-4. **Actualiza** los links para que apunten correctamente
-5. **Verifica** que los badges funcionen
+## 🔄 Proceso de Actualización
 
-**Ubicación sugerida de secciones:**
+### 1. Identificar qué actualizar
 
-1. Badge de entornos → Top, junto a otros badges
-2. Diferenciación visual → Después de "Características Principales"
-3. Elección de entorno → En "Inicio Rápido"
-4. Scripts → En "Scripts Disponibles"
-5. Entornos completo → Nueva sección después de "Instalación"
-6. Links de documentación → En sección "Documentación"
+Revisar los cambios realizados y determinar qué READMEs necesitan actualizarse.
+
+### 2. Hacer las actualizaciones
+
+Editar los archivos correspondientes siguiendo la guía de estilo.
+
+### 3. Verificar
+
+Usar el checklist anterior para verificar que todo esté correcto.
+
+### 4. Commit
+
+Hacer commit con un mensaje descriptivo:
+
+```bash
+git add README.md docs/**/*.md
+git commit -m "docs: actualizar READMEs con nueva información de CI/CD"
+```
+
+### 5. PR (si aplica)
+
+Si es un cambio significativo, crear un PR para revisión.
+
+## 🎯 Mejores Prácticas
+
+### ✅ Hacer
+
+- Mantener la información actualizada
+- Usar ejemplos concretos y funcionales
+- Incluir troubleshooting para problemas comunes
+- Referenciar documentación más detallada
+- Mantener consistencia de formato
+- Usar comandos que funcionen (probados)
+
+### ❌ Evitar
+
+- Información desactualizada o incorrecta
+- Comandos que no funcionan
+- Enlaces rotos
+- Formato inconsistente
+- Ejemplos genéricos sin contexto
+- Duplicación de información sin valor agregado
+
+## 📚 Referencias
+
+- [Markdown Guide](https://www.markdownguide.org/)
+- [GitHub Flavored Markdown](https://github.github.com/gfm/)
+- [Emoji Cheat Sheet](https://github.com/ikatyang/emoji-cheat-sheet)
+
+## 🆘 Ayuda
+
+Si tienes dudas sobre cómo actualizar la documentación:
+
+1. Revisa READMEs existentes como referencia
+2. Consulta esta guía
+3. Pregunta al equipo de desarrollo
+
+---
+
+**Última actualización**: 2025-01-21
+
+**Mantenedores**: Equipo de desarrollo Enerlova
