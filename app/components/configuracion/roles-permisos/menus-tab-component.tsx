@@ -95,25 +95,38 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
 
     setIsLoading(true);
     try {
-      const result = await rolesPermisosService.crearMenu({
+      const menuPayload = {
         idMenu: 0,
         nombreMenu: formData.nombre.trim(),
         ruta: formData.ruta.trim(),
         orden: formData.orden,
         icono: formData.icono.trim() ? formData.icono.trim() : null,
         esVisible: formData.visible
-      });
+      };
+
+      console.log('📤 Creando menú con payload:', menuPayload);
+
+      const result = await rolesPermisosService.crearMenu(menuPayload);
+
+      console.log('📥 Respuesta del servicio:', result);
 
       if (result.error) {
-        toast.error(`Error al crear menú: ${result.error}`);
+        console.error('❌ Error al crear menú:', result.error);
+        toast.error(result.error, {
+          duration: 5000,
+          description: 'Revisa la consola para más detalles'
+        });
       } else {
         toast.success('Menú creado exitosamente');
         setShowCreateDialog(false);
         resetForm();
         onDataChange?.();
       }
-    } catch (_error) {
-      toast.error('Error inesperado al crear el menú');
+    } catch (error) {
+      console.error('❌ Error inesperado:', error);
+      toast.error('Error inesperado al crear el menú', {
+        description: error instanceof Error ? error.message : 'Error desconocido'
+      });
     } finally {
       setIsLoading(false);
     }

@@ -68,15 +68,13 @@ export interface AsignarRolesUsuarioData {
 
 // Interfaces adicionales para permisos y relaciones
 export interface PermisosUsuario {
-  codigoUsuario: string;
   idMenu: number;
   nombreMenu: string;
-  permisos: {
-    lectura: boolean;
-    escritura: boolean;
-    edicion: boolean;
-    eliminacion: boolean;
-  };
+  ruta: string;
+  puedeVer: boolean;
+  puedeCrear: boolean;
+  puedeEditar: boolean;
+  puedeEliminar: boolean;
 }
 
 export interface RolMenu {
@@ -360,28 +358,75 @@ class RolesPermisosService {
   async crearMenu(
     menuData: CrearMenuData
   ): Promise<RolesPermisosServiceResponse<Menus>> {
+    const endpoint = 'CrearMenu';
+
     try {
-      const response = await api.post('CrearMenu', menuData);
+      debugApi({
+        endpoint,
+        method: 'POST',
+        payload: menuData,
+        expectedTemplate: API_TEMPLATES.menu
+      });
+
+      const response = await api.post(endpoint, menuData);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
+        debugApi({
+          endpoint,
+          method: 'POST',
+          response: { status: 204, message: 'Success - No Content' }
+        });
+
         return {
           data: menuData as Menus,
           error: null
         };
       }
 
+      const data = this.processSingleApiResponse<Menus>(response);
+
+      debugApi({
+        endpoint,
+        method: 'POST',
+        response: data
+      });
+
       return {
-        data: this.processSingleApiResponse<Menus>(response),
+        data,
         error: null
       };
     } catch (error: any) {
+      logApiError(endpoint, error, { menuData });
+
+      // Intentar extraer el mensaje de error más descriptivo
+      let errorMessage = 'Error al crear el menú';
+
+      if (error.response?.data) {
+        // Si el error tiene un título (común en ASP.NET)
+        if (error.response.data.title) {
+          errorMessage = error.response.data.title;
+        }
+        // Si tiene errores de validación
+        else if (error.response.data.errors) {
+          const validationErrors = Object.values(error.response.data.errors).flat();
+          errorMessage = validationErrors.join(', ');
+        }
+        // Si tiene un mensaje directo
+        else if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+        // Si el data es un string
+        else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       return {
         data: null,
-        error:
-          error.response?.data?.message ||
-          error.message ||
-          'Error al crear el menú'
+        error: errorMessage
       };
     }
   }
@@ -393,31 +438,68 @@ class RolesPermisosService {
   async actualizarMenu(
     menuData: ActualizarMenuData
   ): Promise<RolesPermisosServiceResponse<Menus>> {
+    const endpoint = `ActualizarMenu/${menuData.idMenu}`;
+
     try {
-      const response = await api.put(
-        `ActualizarMenu/${menuData.idMenu}`,
-        menuData
-      );
+      debugApi({
+        endpoint,
+        method: 'PUT',
+        payload: menuData,
+        expectedTemplate: API_TEMPLATES.menu
+      });
+
+      const response = await api.put(endpoint, menuData);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
+        debugApi({
+          endpoint,
+          method: 'PUT',
+          response: { status: 204, message: 'Success - No Content' }
+        });
+
         return {
           data: menuData as Menus,
           error: null
         };
       }
 
+      const data = this.processSingleApiResponse<Menus>(response);
+
+      debugApi({
+        endpoint,
+        method: 'PUT',
+        response: data
+      });
+
       return {
-        data: this.processSingleApiResponse<Menus>(response),
+        data,
         error: null
       };
     } catch (error: any) {
+      logApiError(endpoint, error, { menuData });
+
+      // Intentar extraer el mensaje de error más descriptivo
+      let errorMessage = 'Error al actualizar el menú';
+
+      if (error.response?.data) {
+        if (error.response.data.title) {
+          errorMessage = error.response.data.title;
+        } else if (error.response.data.errors) {
+          const validationErrors = Object.values(error.response.data.errors).flat();
+          errorMessage = validationErrors.join(', ');
+        } else if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        } else if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       return {
         data: null,
-        error:
-          error.response?.data?.message ||
-          error.message ||
-          'Error al actualizar el menú'
+        error: errorMessage
       };
     }
   }

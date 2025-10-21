@@ -123,3 +123,24 @@ For new forms:
 2. Use React Hook Form with resolver
 3. Implement in modal component if needed
 4. Follow existing error handling patterns
+
+## 📚 Documentation
+
+Complete documentation is available in the [docs/](./docs/) folder:
+
+### Quick References
+- **[Permissions System](./docs/development/PERMISOS.md)** - Role-based access control
+- **[Quick Start](./docs/development/QUICK-START.md)** - Getting started guide
+- **[Commands Cheatsheet](./docs/development/COMMANDS_CHEATSHEET.md)** - Useful commands
+- **[API Debug Guide](./docs/development/API_DEBUG_GUIDE.md)** - API debugging
+
+### Architecture & Deployment
+- **[Architecture](./docs/architecture/ARCHITECTURE.md)** - System architecture
+- **[Docker Guide](./docs/deployment/README-DOCKER.md)** - Docker setup
+- **[Deployment](./docs/deployment/DEPLOY-README.md)** - Deployment guide
+
+### Performance & Testing
+- **[Performance](./docs/performance/PERFORMANCE.md)** - Performance optimization
+- **[Testing](./docs/testing/TESTING.md)** - Testing guidelines
+
+For the complete documentation index, see [docs/README.md](./docs/README.md)

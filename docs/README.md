@@ -1,321 +1,104 @@
-# Documentación del Proyecto Enerlova Frontend
+# 📚 Documentación Enerlova Frontend
 
-Índice central de toda la documentación del proyecto.
+Bienvenido a la documentación del frontend de Enerlova. Esta documentación está organizada por categorías para facilitar la navegación.
 
-## 📖 Documentación Principal
+## 📂 Estructura de Documentación
 
-### General
+### 🏗️ [Arquitectura](./architecture/)
+Documentación sobre la arquitectura del sistema y patrones de diseño.
 
-- **[README.md](../README.md)** - Introducción y setup inicial del proyecto
-- **[ARCHITECTURE.md](../ARCHITECTURE.md)** - Arquitectura completa del sistema
-  - Stack tecnológico
-  - Estructura de proyecto
-  - Módulos de negocio (Administración, Mantención, Monitor, etc.)
-  - Patrones y convenciones
+- [**ARCHITECTURE.md**](./architecture/ARCHITECTURE.md) - Arquitectura completa del sistema
 
-### Desarrollo
+### 🚀 [Deployment](./deployment/)
+Guías para despliegue y configuración de entornos.
 
-- **[CLAUDE.md](../CLAUDE.md)** - Guía para trabajar con Claude Code
+- [**DEPLOY-README.md**](./deployment/DEPLOY-README.md) - Guía de despliegue
+- [**DOCKER-ENVIRONMENTS.md**](./deployment/DOCKER-ENVIRONMENTS.md) - Configuración de entornos Docker
+- [**DOCKER-QUICK-REFERENCE.md**](./deployment/DOCKER-QUICK-REFERENCE.md) - Referencia rápida Docker
+- [**README-DOCKER.md**](./deployment/README-DOCKER.md) - Guía completa Docker
+- [**docker-debug.md**](./deployment/docker-debug.md) - Debugging con Docker
+- [**ENVIRONMENT-SETUP.md**](./deployment/ENVIRONMENT-SETUP.md) - Configuración de entornos
+- [**ENVIRONMENT_VISUAL_GUIDE.md**](./deployment/ENVIRONMENT_VISUAL_GUIDE.md) - Guía visual de entornos
 
-  - Comandos de desarrollo
-  - Estructura del proyecto
-  - Patrones arquitectónicos clave
+### 💻 [Desarrollo](./development/)
+Guías y referencias para desarrolladores.
 
-- **[DOCUMENTATION_GUIDE.md](./DOCUMENTATION_GUIDE.md)** - Guía completa de documentación
-  - Cómo documentar código
-  - Herramientas y plugins
-  - Plantillas y ejemplos
-  - Workflow de documentación
+- [**API_DEBUG_GUIDE.md**](./development/API_DEBUG_GUIDE.md) - Guía de debugging de API
+- [**COMMANDS_CHEATSHEET.md**](./development/COMMANDS_CHEATSHEET.md) - Comandos útiles
+- [**QUICK-START.md**](./development/QUICK-START.md) - Inicio rápido
+- [**PERMISOS.md**](./development/PERMISOS.md) - Sistema de permisos y roles
 
-### Deployment
+### ⚡ [Performance](./performance/)
+Documentación sobre optimización y rendimiento.
 
-- **[DEPLOY-README.md](../DEPLOY-README.md)** - Guía de deployment y producción
+- [**PERFORMANCE.md**](./performance/PERFORMANCE.md) - Guía general de performance
+- [**OPTIMIZATION_GUIDE.md**](./performance/OPTIMIZATION_GUIDE.md) - Guía de optimización
 
----
+### 🧪 [Testing](./testing/)
+Guías de testing y verificación.
 
-## 📝 Plantillas de Documentación
+- [**TESTING.md**](./testing/TESTING.md) - Guía de testing
+- [**UAT-GUIDE.md**](./testing/UAT-GUIDE.md) - Guía UAT
+- [**VERIFICATION_CHECKLIST.md**](./testing/VERIFICATION_CHECKLIST.md) - Checklist de verificación
 
-Usa estas plantillas para mantener consistencia en la documentación:
+### 📖 [Guías](./guides/)
+Guías generales y documentación adicional.
 
-### [SERVICE_TEMPLATE.md](./templates/SERVICE_TEMPLATE.md)
+- [**DOCUMENTATION_INDEX.md**](./guides/DOCUMENTATION_INDEX.md) - Índice de documentación
+- [**IMPLEMENTATION_SUMMARY.md**](./guides/IMPLEMENTATION_SUMMARY.md) - Resumen de implementación
+- [**SEARCH_FUNCTIONALITY.md**](./guides/SEARCH_FUNCTIONALITY.md) - Funcionalidad de búsqueda
 
-Plantilla para documentar servicios API
+## 🚦 Inicio Rápido
 
-- Estructura básica
-- JSDoc tags recomendados
-- Ejemplos de CRUD
-- Métodos con Promise.all
-- Checklist de documentación
+### Para nuevos desarrolladores:
+1. 📖 Lee [QUICK-START.md](./development/QUICK-START.md)
+2. 🏗️ Revisa [ARCHITECTURE.md](./architecture/ARCHITECTURE.md)
+3. 💻 Familiarízate con [COMMANDS_CHEATSHEET.md](./development/COMMANDS_CHEATSHEET.md)
 
-### [COMPONENT_TEMPLATE.md](./templates/COMPONENT_TEMPLATE.md)
+### Para deployment:
+1. 🐳 Lee [README-DOCKER.md](./deployment/README-DOCKER.md)
+2. ⚙️ Configura con [ENVIRONMENT-SETUP.md](./deployment/ENVIRONMENT-SETUP.md)
+3. 🚀 Despliega siguiendo [DEPLOY-README.md](./deployment/DEPLOY-README.md)
 
-Plantilla para documentar componentes React
+### Para trabajar con permisos:
+1. 🔐 Lee [PERMISOS.md](./development/PERMISOS.md)
+2. 🔧 Implementa usando los componentes de guards
+3. 🧪 Prueba con el componente de debug
 
-- Componentes simples
-- Componentes de módulo/vista
-- Hooks personalizados
-- Props complejos
-- Ejemplos de uso
+### Para optimización:
+1. ⚡ Revisa [PERFORMANCE.md](./performance/PERFORMANCE.md)
+2. 📊 Consulta [OPTIMIZATION_GUIDE.md](./performance/OPTIMIZATION_GUIDE.md)
+3. ✅ Verifica con [VERIFICATION_CHECKLIST.md](./testing/VERIFICATION_CHECKLIST.md)
 
----
+## 🔍 Búsqueda de Información
 
-## 🗂️ Documentación por Módulo
+### Problemas comunes:
 
-### Administración
+| Problema | Documento |
+|----------|-----------|
+| Error al hacer deploy | [DEPLOY-README.md](./deployment/DEPLOY-README.md) |
+| Problemas de Docker | [docker-debug.md](./deployment/docker-debug.md) |
+| API no responde | [API_DEBUG_GUIDE.md](./development/API_DEBUG_GUIDE.md) |
+| Performance lento | [PERFORMANCE.md](./performance/PERFORMANCE.md) |
+| Tests fallando | [TESTING.md](./testing/TESTING.md) |
+| Permisos no funcionan | [PERMISOS.md](./development/PERMISOS.md) |
 
-**Ubicación**: `app/components/administracion/`, `app/routes/dashboard/administracion/`
+## 📝 Contribuir a la Documentación
 
-Gestión de entidades del negocio:
+Si encuentras información faltante o desactualizada:
 
-- Clientes, Propietarios, Contratantes
-- Contratos y Medidores
-- Acometidas y Condiciones de Contrato
-- Cargos Facturables
-- Usuarios del sistema
+1. Actualiza el documento correspondiente
+2. Asegúrate de seguir el formato Markdown
+3. Incluye ejemplos cuando sea posible
+4. Actualiza este índice si es necesario
 
-**Servicio**: `app/services/administracionService.ts`
+## 🆘 Soporte
 
-### Mantención
-
-**Ubicación**: `app/components/mantencion/`, `app/routes/dashboard/mantencion/`
-
-Mantenimiento de catálogos del sistema:
-
-- Ciclos de Facturación
-- Claves, Conceptos, Empalmes
-- Marcas, Nichos, Parámetros
-- Sectores, Tarifas, Tipos de Contrato, Zonas
-
-**Servicio**: `app/services/mantencionService.ts`
-**Ejemplo documentado**: ✅ Ver para referencia
-
-### Monitor
-
-**Ubicación**: `app/components/monitor/`, `app/routes/dashboard/monitor/`
-
-Monitoreo y visualización de lecturas:
-
-- Monitor de Lecturas por medidor
-- Exportación de datos
-
-**Servicio**: `app/services/monitorService.ts`
-
-### Operaciones
-
-**Ubicación**: `app/components/operaciones/`, `app/routes/dashboard/operaciones/`
-
-Procesos operacionales de facturación:
-
-- Preparar y Cerrar Lecturas
-- Períodos de Facturación
-- Precios por Cargo
-- Revisión de Cálculos y Precios
-- Corte y Reposición
-
-**Servicio**: `app/services/operacionesService.ts`
-
-### Reportes
-
-**Ubicación**: `app/components/reportes/`, `app/routes/dashboard/reportes/`
-
-Generación de reportes:
-
-- Consultar Contrato
-- Resumen de Facturación
-
-**Servicio**: `app/services/reportesService.ts`
-
-### Configuración
-
-**Ubicación**: `app/components/configuracion/`, `app/routes/dashboard/configuracion/`
-
-Configuración del sistema:
-
-- Roles y Permisos
-- Menús
-
-**Servicio**: `app/services/rolesPermisosService.ts`
+Si necesitas ayuda adicional:
+- Revisa la documentación relevante en esta carpeta
+- Consulta el [README.md](../README.md) principal del proyecto
+- Contacta al equipo de desarrollo
 
 ---
 
-## 🛠️ Componentes Base
-
-### UI Components (`app/components/ui/`)
-
-Componentes reutilizables basados en Radix UI + Tailwind (estilo shadcn/ui):
-
-- Botones, Inputs, Selects
-- Dialogs, Modals, Popovers
-- Tables, Cards, Badges
-- Tabs, Accordions, etc.
-
-**Documentación**: Mínima (solo si tienen comportamiento especial)
-
-### Data Table (`app/components/data-table/`)
-
-Componentes para tablas con TanStack Table:
-
-- `data-table.tsx` - Componente base
-- `data-table-pagination.tsx` - Paginación
-- `data-table-column-header.tsx` - Headers con sorting
-- `table-helpers.tsx` - Utilidades
-
-### Layout Components
-
-- `app/components/sidebar/` - Sidebar y navegación
-- `app/components/dashboard/` - Dashboard y métricas
-- `app/components/breadcrumb-setter.tsx` - Breadcrumbs
-
----
-
-## 🔧 Servicios y Utilidades
-
-### Servicios (`app/services/`)
-
-Capa de comunicación con API:
-
-| Servicio                   | Módulo         | Estado Docs        |
-| -------------------------- | -------------- | ------------------ |
-| `administracionService.ts` | Administración | ⚠️ Parcial         |
-| `mantencionService.ts`     | Mantención     | ✅ Completo        |
-| `monitorService.ts`        | Monitor        | ⚠️ Parcial         |
-| `operacionesService.ts`    | Operaciones    | ⚠️ Parcial         |
-| `reportesService.ts`       | Reportes       | ⚠️ Parcial         |
-| `rolesPermisosService.ts`  | Configuración  | ⚠️ Parcial         |
-| `authService.ts`           | Autenticación  | ⚠️ Parcial         |
-| `userService.ts`           | Usuario        | ⚠️ Parcial         |
-| `axiosConfig.ts`           | HTTP Config    | ✅ Con comentarios |
-
-**Ver ejemplo completo**: `app/services/mantencionService.ts`
-
-### Utilidades (`app/utils/`)
-
-- `auth-utils.ts` - Helpers de autenticación
-- `export-utils.ts` - Exportación de datos (Excel, CSV)
-- `format-utils.ts` - Formateo de datos
-
-### Context Providers (`app/context/`)
-
-- `AuthContext.tsx` - Contexto de autenticación
-- `BreadcrumbContext.tsx` - Contexto de breadcrumbs
-- `LoadingBarContext.tsx` - Barra de carga global
-
-### Hooks Personalizados (`app/hooks/`)
-
-- `useAuth.ts` - Hook de autenticación
-- `useBreadcrumb.ts` - Hook de breadcrumbs
-- `useLoadingBar.ts` - Hook de loading bar
-
-**Estado**: ❌ Sin documentar (TODO)
-
----
-
-## 🧪 Testing
-
-⚠️ **PENDIENTE**: El proyecto actualmente no tiene tests configurados.
-
-**Recomendaciones futuras**:
-
-- **Vitest** para unit tests
-- **Testing Library** para component tests
-- **Playwright** o **Cypress** para E2E
-
----
-
-## 📊 Estado de la Documentación
-
-### Completitud por Categoría
-
-| Categoría             | Estado          | Prioridad |
-| --------------------- | --------------- | --------- |
-| Arquitectura General  | ✅ Completo     | Alta      |
-| Servicios API         | 🟡 20%          | Alta      |
-| Componentes de Módulo | 🔴 10%          | Media     |
-| Hooks Personalizados  | 🔴 0%           | Media     |
-| Utilidades            | 🟡 30%          | Baja      |
-| Componentes UI        | ✅ No necesario | -         |
-
-### Próximos Pasos
-
-1. **Fase 1 (Corto Plazo)**
-
-   - [ ] Completar JSDoc en todos los servicios
-   - [ ] Documentar hooks personalizados
-   - [ ] Agregar ejemplos en utilidades clave
-
-2. **Fase 2 (Mediano Plazo)**
-
-   - [ ] Documentar componentes de módulo principales
-   - [ ] Crear guías de formularios y validación
-   - [ ] Documentar patrones de data fetching
-
-3. **Fase 3 (Largo Plazo)**
-   - [ ] Considerar Storybook para componentes UI
-   - [ ] Configurar TypeDoc para docs HTML
-   - [ ] Agregar diagramas de arquitectura
-
----
-
-## 🔍 Búsqueda Rápida
-
-### ¿Cómo implemento...?
-
-- **Un nuevo servicio**: Ver [mantencionService.ts](../app/services/mantencionService.ts) + [SERVICE_TEMPLATE.md](./templates/SERVICE_TEMPLATE.md)
-- **Una nueva ruta**: Ver [ARCHITECTURE.md](../ARCHITECTURE.md#gestión-de-rutas)
-- **Un formulario con validación**: Ver [ARCHITECTURE.md](../ARCHITECTURE.md#formularios-y-validación)
-- **Una tabla con filtros**: Ver componentes en `app/components/{modulo}/`
-- **Autenticación**: Ver [ARCHITECTURE.md](../ARCHITECTURE.md#sistema-de-autenticación)
-
-### ¿Dónde está...?
-
-- **Configuración de axios**: `app/services/axiosConfig.ts`
-- **Configuración de ESLint**: `eslint.config.js`
-- **Configuración de TypeScript**: `tsconfig.json`
-- **Configuración de Tailwind**: `tailwind.config.ts`
-- **Scripts de build**: `package.json`
-
----
-
-## 📞 Soporte
-
-### Recursos Externos
-
-- [React Router 7 Docs](https://reactrouter.com)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Radix UI](https://radix-ui.com)
-- [Shadcn/ui](https://ui.shadcn.com)
-- [React Hook Form](https://react-hook-form.com)
-- [Zod](https://zod.dev)
-- [TanStack Table](https://tanstack.com/table)
-
-### Contribuir a la Documentación
-
-Si encuentras documentación faltante, incorrecta o confusa:
-
-1. **Crea un issue** describiendo el problema
-2. **Propón una mejora** en un PR
-3. **Sigue las plantillas** en `docs/templates/`
-4. **Mantén consistencia** con docs existentes
-
----
-
-## 📝 Changelog de Documentación
-
-### 2025-01-13
-
-- ✅ Creada arquitectura completa del sistema (ARCHITECTURE.md)
-- ✅ Documentado completamente mantencionService.ts
-- ✅ Creadas plantillas de servicios y componentes
-- ✅ Configurado eslint-plugin-jsdoc
-- ✅ Creada guía de documentación completa
-
-### Próximas Actualizaciones
-
-- [ ] Completar documentación de servicios restantes
-- [ ] Documentar hooks personalizados
-- [ ] Agregar diagramas de flujo
-- [ ] Crear guías específicas por módulo
-
----
-
-**Última actualización**: 2025-01-13
+**Última actualización:** 2025-01-21

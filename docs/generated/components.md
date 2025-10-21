@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-21 14:57:13*
+*Generado automáticamente el 2025-10-21 16:47:38*
 
 ## Índice de Componentes
 
@@ -1103,6 +1103,48 @@
  *   searchPlaceholder="Buscar..."
  * />
  * ```
+ */
+```
+
+### PermissionsDebug
+**Archivo**: `app/components/debug/PermissionsDebug.tsx`
+**Documentación**:
+```typescript
+/**
+ * Componente de debugging para visualizar permisos del usuario
+ * Solo para desarrollo - remover en producción
+ */
+```
+
+### PermissionButton
+**Archivo**: `app/components/guards/PermissionButton.tsx`
+**Documentación**:
+```typescript
+/**
+ * Componente Button que se deshabilita automáticamente según permisos
+ *
+ * @param requiredPermission - Tipo de permiso requerido
+ * @param hideIfNoPermission - Si es true, oculta el botón en lugar de deshabilitarlo
+ * @param children - Contenido del botón
+ */
+/**
+ * Componente que muestra/oculta contenido basado en permisos
+ */
+```
+
+### PermissionGuard
+**Archivo**: `app/components/guards/PermissionGuard.tsx`
+**Documentación**:
+```typescript
+/**
+ * Componente que protege rutas basándose en permisos del usuario
+ *
+ * @param children - Contenido a renderizar si el usuario tiene permisos
+ * @param requiredPermission - Tipo de permiso requerido (por defecto 'view')
+ * @param fallbackPath - Ruta a la que redirigir si no tiene permisos (por defecto '/dashboard')
+ */
+/**
+ * Hook para verificar permisos en componentes
  */
 ```
 
