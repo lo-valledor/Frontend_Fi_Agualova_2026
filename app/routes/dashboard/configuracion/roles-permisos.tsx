@@ -1,9 +1,16 @@
 /* eslint-disable no-empty-pattern */
-import RolesPermisosComponent from '~/components/configuracion/roles-permisos/roles-permisos-component';
-import { ReporteHydrateFallback } from '~/components/reportes/reporte-hydrate-fallback';
+import { lazy, Suspense } from 'react';
+import { useRevalidator } from 'react-router';
+
+import { DataTableSkeleton } from '~/components/skeletons';
 import { rolesPermisosService } from '~/services/rolesPermisosService';
 
 import type { Route } from './+types/roles-permisos';
+
+// Lazy load del componente pesado (35 KB)
+const RolesPermisosComponent = lazy(() =>
+  import('~/components/configuracion/roles-permisos/roles-permisos-component')
+);
 
 export function meta(_args: Route.MetaArgs) {
   return [
@@ -67,16 +74,25 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
 }
 
 export default function RolesPermisos({ loaderData }: Route.ComponentProps) {
+  const revalidator = useRevalidator();
+
+  const handleDataChange = () => {
+    revalidator.revalidate();
+  };
+
   return (
-    <RolesPermisosComponent
-      roles={loaderData?.roles || []}
-      menus={loaderData?.menus || []}
-      permisos={loaderData?.permisos || []}
-      error={loaderData?.error || null}
-    />
+    <Suspense fallback={<DataTableSkeleton columns={4} rows={8} />}>
+      <RolesPermisosComponent
+        roles={loaderData?.roles || []}
+        menus={loaderData?.menus || []}
+        permisos={loaderData?.permisos || []}
+        error={loaderData?.error || null}
+        onDataChange={handleDataChange}
+      />
+    </Suspense>
   );
 }
 
 export function hydrateFallback() {
-  return <ReporteHydrateFallback />;
+  return <DataTableSkeleton columns={4} rows={8} />;
 }

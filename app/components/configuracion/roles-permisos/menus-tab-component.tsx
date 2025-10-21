@@ -96,10 +96,12 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
     setIsLoading(true);
     try {
       const result = await rolesPermisosService.crearMenu({
-        nombre: formData.nombre.trim(),
-        url: formData.ruta.trim() || undefined,
+        idMenu: 0,
+        nombreMenu: formData.nombre.trim(),
+        ruta: formData.ruta.trim(),
         orden: formData.orden,
-        icono: formData.icono.trim() || undefined
+        icono: formData.icono.trim() ? formData.icono.trim() : null,
+        esVisible: formData.visible
       });
 
       if (result.error) {
@@ -127,10 +129,11 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
     try {
       const result = await rolesPermisosService.actualizarMenu({
         idMenu: editingMenu.idMenu,
-        nombre: formData.nombre.trim(),
-        url: formData.ruta.trim() || undefined,
+        nombreMenu: formData.nombre.trim(),
+        ruta: formData.ruta.trim(),
         orden: formData.orden,
-        icono: formData.icono.trim() || undefined
+        icono: formData.icono.trim() ? formData.icono.trim() : null,
+        esVisible: formData.visible
       });
 
       if (result.error) {

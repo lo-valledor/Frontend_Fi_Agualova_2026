@@ -54,7 +54,7 @@ const RolesPermisosComponent: React.FC<RolesPermisosComponentProps> = ({
               Roles y Permisos
             </h1>
             <p className='text-xs sm:text-sm mt-1'>
-              Gestiona los roles, menús y permisos del sistema
+              Gestión de roles, menús y permisos del sistema
             </p>
           </div>
         </div>

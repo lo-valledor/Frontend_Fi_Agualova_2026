@@ -8,31 +8,35 @@ export interface RolesPermisosServiceResponse<T> {
 
 // Interfaces para los tipos de datos específicos
 export interface CrearRolData {
-  nombre: string;
-  descripcion?: string;
+  idRol: number;
+  nombreRol: string;
+  descripcion: string;
+  estadoRol: boolean;
 }
 
 export interface ActualizarRolData {
-  id: number;
-  nombre: string;
-  descripcion?: string;
+  idRol: number;
+  nombreRol: string;
+  descripcion: string;
+  estadoRol: boolean;
 }
 
 export interface CrearMenuData {
-  nombre: string;
-  url?: string;
-  icono?: string;
-  orden?: number;
-  menuPadreId?: number;
+  idMenu: number;
+  nombreMenu: string;
+  ruta: string;
+  orden: number;
+  icono: string | null;
+  esVisible: boolean;
 }
 
 export interface ActualizarMenuData {
   idMenu: number;
-  nombre: string;
-  url?: string;
-  icono?: string;
-  orden?: number;
-  menuPadreId?: number;
+  nombreMenu: string;
+  ruta: string;
+  orden: number;
+  icono: string | null;
+  esVisible: boolean;
 }
 
 export interface AsignarPermisosData {
@@ -199,12 +203,7 @@ class RolesPermisosService {
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         return {
-          data: {
-            idRol: 0, // Se establecerá por el backend
-            nombreRol: rolData.nombre,
-            descripcion: rolData.descripcion || '',
-            estadoRol: true
-          } as Roles,
+          data: rolData as Roles,
           error: null
         };
       }
@@ -237,12 +236,7 @@ class RolesPermisosService {
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         return {
-          data: {
-            idRol: rolData.id,
-            nombreRol: rolData.nombre,
-            descripcion: rolData.descripcion || '',
-            estadoRol: true // Asumimos que está activo si se actualizó
-          } as Roles,
+          data: rolData as Roles,
           error: null
         };
       }
@@ -342,14 +336,7 @@ class RolesPermisosService {
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         return {
-          data: {
-            idMenu: 0, // El backend no devuelve el ID en 204
-            nombreMenu: menuData.nombre,
-            ruta: menuData.url || '',
-            orden: menuData.orden || 0,
-            icono: menuData.icono || '',
-            esVisible: true
-          } as Menus,
+          data: menuData as Menus,
           error: null
         };
       }
@@ -385,14 +372,7 @@ class RolesPermisosService {
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         return {
-          data: {
-            idMenu: menuData.idMenu,
-            nombreMenu: menuData.nombre,
-            ruta: menuData.url || '',
-            orden: menuData.orden || 1,
-            icono: menuData.icono || '',
-            esVisible: true // Asumimos que está visible si se actualizó
-          } as Menus,
+          data: menuData as Menus,
           error: null
         };
       }
@@ -420,7 +400,7 @@ class RolesPermisosService {
     idMenu: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
     try {
-      await api.delete(`BorrarMenu${idMenu}`);
+      await api.delete(`BorrarMenu/${idMenu}`);
       return {
         data: true,
         error: null

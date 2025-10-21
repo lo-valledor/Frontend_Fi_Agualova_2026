@@ -1,10 +1,16 @@
 /* eslint-disable no-empty-pattern */
-import AcometidaComponent from '~/components/administracion/acometida/acometida-component';
-import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
+import { lazy, Suspense } from 'react';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { DataTableSkeleton } from '~/components/skeletons';
 import { administracionService } from '~/services/administracionService';
 
 import type { Route } from './+types/acometida';
+
+// Lazy load del componente pesado (36 KB)
+const AcometidaComponent = lazy(() =>
+  import('~/components/administracion/acometida/acometida-component')
+);
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -44,17 +50,19 @@ export default function Acometida({ loaderData }: Route.ComponentProps) {
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <AcometidaComponent
-        acometidas={acometidas}
-        comboEmpalmes={comboEmpalmes}
-        comboNichos={comboNichos}
-        comboSectores={comboSectores}
-        contratosDisponibles={contratosDisponibles}
-      />
+      <Suspense fallback={<DataTableSkeleton columns={7} />}>
+        <AcometidaComponent
+          acometidas={acometidas}
+          comboEmpalmes={comboEmpalmes}
+          comboNichos={comboNichos}
+          comboSectores={comboSectores}
+          contratosDisponibles={contratosDisponibles}
+        />
+      </Suspense>
     </div>
   );
 }
 
 export function hydrateFallback() {
-  return <AdministracionHydrateFallback />;
+  return <DataTableSkeleton columns={7} />;
 }

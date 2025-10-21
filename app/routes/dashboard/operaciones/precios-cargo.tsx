@@ -1,11 +1,16 @@
 /* eslint-disable no-empty-pattern */
-import React from 'react';
+import { lazy, Suspense } from 'react';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import PreciosCargoComponent from '~/components/operaciones/precios-cargo/precios-cargo-component';
+import { DataTableSkeleton } from '~/components/skeletons';
 import { operacionesService } from '~/services/operacionesService';
 
 import type { Route } from './+types/precios-cargo';
+
+// Lazy load del componente pesado (42 KB)
+const PreciosCargoComponent = lazy(() =>
+  import('~/components/operaciones/precios-cargo/precios-cargo-component')
+);
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -53,7 +58,13 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
   return (
     <div className='min-h-screen'>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <PreciosCargoComponent {...loaderData} />
+      <Suspense fallback={<DataTableSkeleton columns={8} rows={12} />}>
+        <PreciosCargoComponent {...loaderData} />
+      </Suspense>
     </div>
   );
+}
+
+export function hydrateFallback() {
+  return <DataTableSkeleton columns={8} rows={12} />;
 }

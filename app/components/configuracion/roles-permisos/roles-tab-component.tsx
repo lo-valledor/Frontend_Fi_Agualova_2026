@@ -94,8 +94,10 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
     setIsLoading(true);
     try {
       const result = await rolesPermisosService.crearRol({
-        nombre: formData.nombre.trim(),
-        descripcion: formData.descripcion.trim() || undefined
+        idRol: 0,
+        nombreRol: formData.nombre.trim(),
+        descripcion: formData.descripcion.trim(),
+        estadoRol: formData.estado
       });
 
       if (result.error) {
@@ -122,9 +124,10 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
     setIsLoading(true);
     try {
       const result = await rolesPermisosService.actualizarRol({
-        id: editingRol.idRol,
-        nombre: formData.nombre.trim(),
-        descripcion: formData.descripcion.trim() || undefined
+        idRol: editingRol.idRol,
+        nombreRol: formData.nombre.trim(),
+        descripcion: formData.descripcion.trim(),
+        estadoRol: formData.estado
       });
 
       if (result.error) {
