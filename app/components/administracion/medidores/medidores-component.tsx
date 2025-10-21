@@ -63,7 +63,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
@@ -142,11 +142,11 @@ export default function MedidoresComponent({
     setMedidores(initialMedidores);
   }, [initialMedidores]);
 
-  const handleFiltersChange = (newFilters: MedidorFilters) => {
+  const handleFiltersChange = useCallback((newFilters: MedidorFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setFilters({
       marca: '',
       tipo: '',
@@ -161,9 +161,9 @@ export default function MedidoresComponent({
       tieneUbicacion: '',
       tieneAcometida: ''
     });
-  };
+  }, []);
 
-  const refetchMedidores = async () => {
+  const refetchMedidores = useCallback(async () => {
     setIsFetching(true);
     try {
       const response = await api.get('buscarMedidor');
@@ -174,20 +174,23 @@ export default function MedidoresComponent({
     } finally {
       setIsFetching(false);
     }
-  };
+  }, []);
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     navigate('/dashboard/administracion/medidores/crear');
-  };
+  }, [navigate]);
 
-  const handleEdit = (medidor: GetMedidores) => {
-    navigate(`/dashboard/administracion/medidores/${medidor.codigo}`);
-  };
+  const handleEdit = useCallback(
+    (medidor: GetMedidores) => {
+      navigate(`/dashboard/administracion/medidores/${medidor.codigo}`);
+    },
+    [navigate]
+  );
 
-  const handleAsociarSubempalme = (medidor: GetMedidores) => {
+  const handleAsociarSubempalme = useCallback((medidor: GetMedidores) => {
     setSelectedMedidor(medidor);
     setIsAsociarModalOpen(true);
-  };
+  }, []);
 
   const handleSubmit = async (
     data: CrearMedidorProps | ActualizarMedidorProps,

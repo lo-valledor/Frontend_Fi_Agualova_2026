@@ -541,7 +541,12 @@ class RolesPermisosService {
   ): Promise<RolesPermisosServiceResponse<any>> {
     try {
       const dataToSend = {
-        ...permisoData,
+        idRol: permisoData.idRol,
+        idMenu: permisoData.idMenu,
+        puedeVer: permisoData.puedeVer,
+        puedeCrear: permisoData.puedeCrear,
+        puedeEditar: permisoData.puedeEditar,
+        puedeEliminar: permisoData.puedeEliminar,
         fechaAsignacion: permisoData.fechaAsignacion || new Date().toISOString()
       };
 
@@ -550,7 +555,7 @@ class RolesPermisosService {
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
         return {
-          data: dataToSend, // Devolvemos los datos que enviamos como confirmación
+          data: dataToSend,
           error: null
         };
       }
@@ -563,6 +568,7 @@ class RolesPermisosService {
       return {
         data: null,
         error:
+          error.response?.data?.title ||
           error.response?.data?.message ||
           error.message ||
           'Error al asignar permisos'

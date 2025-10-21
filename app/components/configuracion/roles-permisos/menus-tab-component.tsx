@@ -1,7 +1,7 @@
 import { Plus, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import {
@@ -62,7 +62,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
     visible: true
   });
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       nombre: '',
       ruta: '',
@@ -70,9 +70,9 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
       icono: '',
       visible: true
     });
-  };
+  }, []);
 
-  const handleEdit = (menu: Menus) => {
+  const handleEdit = useCallback((menu: Menus) => {
     setEditingMenu(menu);
     setFormData({
       nombre: menu.nombreMenu,
@@ -81,11 +81,11 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
       icono: menu.icono || '',
       visible: menu.esVisible
     });
-  };
+  }, []);
 
-  const handleDelete = (menu: Menus) => {
+  const handleDelete = useCallback((menu: Menus) => {
     setDeletingMenu(menu);
-  };
+  }, []);
 
   const handleCreateMenu = async () => {
     if (!formData.nombre.trim()) {
@@ -174,7 +174,10 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
     }
   };
 
-  const menusColumns = createMenusColumns(handleEdit, handleDelete);
+  const menusColumns = useMemo(
+    () => createMenusColumns(handleEdit, handleDelete),
+    [handleEdit, handleDelete]
+  );
 
   return (
     <>

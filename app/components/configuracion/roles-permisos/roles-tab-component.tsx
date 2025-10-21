@@ -1,7 +1,7 @@
 import { Plus, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import {
@@ -59,31 +59,31 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
     estado: true
   });
 
-  const resetForm = () => {
+  const resetForm = useCallback(() => {
     setFormData({
       nombre: '',
       descripcion: '',
       estado: true
     });
-  };
+  }, []);
 
-  const handleEdit = (rol: Roles) => {
+  const handleEdit = useCallback((rol: Roles) => {
     setEditingRol(rol);
     setFormData({
       nombre: rol.nombreRol,
       descripcion: rol.descripcion || '',
       estado: rol.estadoRol
     });
-  };
+  }, []);
 
-  const handleDelete = (rol: Roles) => {
+  const handleDelete = useCallback((rol: Roles) => {
     setDeletingRol(rol);
-  };
+  }, []);
 
-  const handleViewPermissions = (rol: Roles) => {
+  const handleViewPermissions = useCallback((rol: Roles) => {
     toast.info(`Ver permisos para: ${rol.nombreRol}`);
     // Implementar navegación al tab de permisos filtrado por rol
-  };
+  }, []);
 
   const handleCreateRol = async () => {
     if (!formData.nombre.trim()) {
@@ -166,10 +166,9 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
     }
   };
 
-  const rolesColumns = createRolesColumns(
-    handleEdit,
-    handleDelete,
-    handleViewPermissions
+  const rolesColumns = useMemo(
+    () => createRolesColumns(handleEdit, handleDelete, handleViewPermissions),
+    [handleEdit, handleDelete, handleViewPermissions]
   );
 
   return (

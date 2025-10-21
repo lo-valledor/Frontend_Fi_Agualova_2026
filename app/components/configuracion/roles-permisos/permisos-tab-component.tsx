@@ -1,7 +1,7 @@
 import { Eye, Search, Smartphone, Table } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -36,56 +36,70 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   const [compactView, setCompactView] = useState(false);
 
   // Función para obtener permisos de un rol y menú específico
-  const getPermiso = (idRol: number, idMenu: number) => {
-    return permisos.find(p => p.idRol === idRol && p.idMenu === idMenu);
-  };
+  const getPermiso = useCallback(
+    (idRol: number, idMenu: number) => {
+      return permisos.find(p => p.idRol === idRol && p.idMenu === idMenu);
+    },
+    [permisos]
+  );
 
   // Filtrar menús por búsqueda
-  const filteredMenus = menus.filter(
-    menu =>
-      menu.nombreMenu.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      menu.ruta?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMenus = useMemo(
+    () =>
+      menus.filter(
+        menu =>
+          menu.nombreMenu.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          menu.ruta?.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [menus, searchTerm]
   );
 
   // Filtrar roles seleccionados
-  const visibleRoles =
-    selectedRoles.length > 0
-      ? roles.filter(role => selectedRoles.includes(role.idRol))
-      : roles;
+  const visibleRoles = useMemo(
+    () =>
+      selectedRoles.length > 0
+        ? roles.filter(role => selectedRoles.includes(role.idRol))
+        : roles,
+    [roles, selectedRoles]
+  );
 
   // Función para actualizar permisos
-  const handleUpdatePermiso = async (
-    idRol: number,
-    idMenu: number,
-    tipoPermiso: string,
-    valor: boolean
-  ) => {
-    try {
-      const permisoActual = getPermiso(idRol, idMenu);
-      const nuevoPermiso = {
-        idRol,
-        idMenu,
-        puedeVer: permisoActual?.puedeVer || false,
-        puedeCrear: permisoActual?.puedeCrear || false,
-        puedeEditar: permisoActual?.puedeEditar || false,
-        puedeEliminar: permisoActual?.puedeEliminar || false,
-        [tipoPermiso]: valor,
-        fechaAsignacion: new Date().toISOString()
-      };
+  const handleUpdatePermiso = useCallback(
+    async (
+      idRol: number,
+      idMenu: number,
+      tipoPermiso: string,
+      valor: boolean
+    ) => {
+      try {
+        const permisoActual = getPermiso(idRol, idMenu);
 
-      const result =
-        await rolesPermisosService.asignarPermisoDirecto(nuevoPermiso);
+        const nuevoPermiso = {
+          idRol,
+          idMenu,
+          puedeVer: permisoActual?.puedeVer || false,
+          puedeCrear: permisoActual?.puedeCrear || false,
+          puedeEditar: permisoActual?.puedeEditar || false,
+          puedeEliminar: permisoActual?.puedeEliminar || false,
+          [tipoPermiso]: valor,
+          fechaAsignacion: new Date().toISOString()
+        };
 
-      if (result.error) {
-        toast.error(`Error al actualizar permiso: ${result.error}`);
-      } else {
-        toast.success('Permiso actualizado exitosamente');
-        onDataChange?.();
+        const result =
+          await rolesPermisosService.asignarPermisoDirecto(nuevoPermiso);
+
+        if (result.error) {
+          toast.error(`Error al actualizar permiso: ${result.error}`);
+        } else {
+          toast.success('Permiso actualizado exitosamente');
+          onDataChange?.();
+        }
+      } catch (_error) {
+        toast.error('Error inesperado al actualizar el permiso');
       }
-    } catch (_error) {
-      toast.error('Error inesperado al actualizar el permiso');
-    }
-  };
+    },
+    [getPermiso, onDataChange]
+  );
 
   // Componente para vista móvil
   const MobileView = () => (

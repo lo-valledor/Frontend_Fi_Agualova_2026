@@ -56,7 +56,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
@@ -116,41 +116,47 @@ export default function ClientesComponent({
   );
   const { clientColumns } = useExportClientes();
 
-  const handleAddCliente = () => {
+  const handleAddCliente = useCallback(() => {
     router('/dashboard/administracion/clientes/crear');
-  };
+  }, [router]);
 
-  const handleEditCliente = (cliente: GetClientes) => {
-    router(`/dashboard/administracion/clientes/${cliente.rut}`);
-  };
+  const handleEditCliente = useCallback(
+    (cliente: GetClientes) => {
+      router(`/dashboard/administracion/clientes/${cliente.rut}`);
+    },
+    [router]
+  );
 
-  const handleDetailsCliente = (cliente: GetClientes) => {
-    (async () => {
-      try {
-        setDetailingClienteRut(cliente.rut);
-        const clienteDetallado = await getClienteByRut(cliente.rut);
-        // Convertir GetClienteById a GetClientesByRut mapeando email a correo
-        const clienteConvertido: GetClientesByRut = {
-          ...(clienteDetallado as unknown as GetClientesByRut),
-          correo: clienteDetallado.email
-        };
-        setDetailedCliente(clienteConvertido);
-        setIsDetailsOpen(true);
-      } catch (error) {
-        console.error('Error al cargar detalles del cliente:', error);
-        toast.error('Error al cargar los detalles del cliente');
-        setIsDetailsOpen(false);
-      } finally {
-        setDetailingClienteRut(null);
-      }
-    })();
-  };
+  const handleDetailsCliente = useCallback(
+    (cliente: GetClientes) => {
+      (async () => {
+        try {
+          setDetailingClienteRut(cliente.rut);
+          const clienteDetallado = await getClienteByRut(cliente.rut);
+          // Convertir GetClienteById a GetClientesByRut mapeando email a correo
+          const clienteConvertido: GetClientesByRut = {
+            ...(clienteDetallado as unknown as GetClientesByRut),
+            correo: clienteDetallado.email
+          };
+          setDetailedCliente(clienteConvertido);
+          setIsDetailsOpen(true);
+        } catch (error) {
+          console.error('Error al cargar detalles del cliente:', error);
+          toast.error('Error al cargar los detalles del cliente');
+          setIsDetailsOpen(false);
+        } finally {
+          setDetailingClienteRut(null);
+        }
+      })();
+    },
+    [getClienteByRut]
+  );
 
-  const handleFiltersChange = (newFilters: ClientFilters) => {
+  const handleFiltersChange = useCallback((newFilters: ClientFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setFilters({
       esEmpresa: 'all',
       comuna: 'all',
@@ -159,7 +165,7 @@ export default function ClientesComponent({
       tieneTelefono: 'all',
       tieneEmail: 'all'
     });
-  };
+  }, []);
 
   return (
     <div className='min-h-screen bg-background'>

@@ -1,4 +1,4 @@
-import { Edit, Eye, Trash2 } from 'lucide-react';
+import { Edit, Trash2 } from 'lucide-react';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -68,14 +68,6 @@ export const createRolesColumns = (
             className='h-8 w-8 p-0 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-slate-600 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400'
           >
             <Edit className='h-3 w-3' />
-          </Button>
-          <Button
-            size='sm'
-            variant='ghost'
-            onClick={() => onViewPermissions(rol)}
-            className='h-8 w-8 p-0 hover:bg-green-100 dark:hover:bg-green-900/50 text-slate-600 hover:text-green-600 dark:text-slate-400 dark:hover:text-green-400'
-          >
-            <Eye className='h-3 w-3' />
           </Button>
           <Button
             size='sm'

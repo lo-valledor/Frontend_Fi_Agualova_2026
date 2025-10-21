@@ -50,7 +50,7 @@
  */
 import { FileText, Plus } from 'lucide-react';
 
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
@@ -98,11 +98,11 @@ export default function ContratosComponent({
     filters
   );
 
-  const handleFiltersChange = (newFilters: ContractFilters) => {
+  const handleFiltersChange = useCallback((newFilters: ContractFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setFilters({
       tipoContrato: 'all',
       cicloFacturacion: 'all',
@@ -113,25 +113,28 @@ export default function ContratosComponent({
       fechaTerminoHasta: '',
       activo: 'all'
     });
-  };
+  }, []);
 
   const router = useNavigate();
 
-  const handleEditContract = (contract: GetContratos) => {
-    router(`/dashboard/administracion/contratos/${contract.codigoContrato}`);
-  };
+  const handleEditContract = useCallback(
+    (contract: GetContratos) => {
+      router(`/dashboard/administracion/contratos/${contract.codigoContrato}`);
+    },
+    [router]
+  );
 
-  const handleDeleteContract = (contract: GetContratos) => {
+  const handleDeleteContract = useCallback((contract: GetContratos) => {
     setSelectedContract(contract);
     setIsDeleteDialogOpen(true);
-  };
+  }, []);
 
-  const handleViewDetails = (contract: GetContratos) => {
+  const handleViewDetails = useCallback((contract: GetContratos) => {
     setSelectedContract(contract);
     setIsDetailsModalOpen(true);
-  };
+  }, []);
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = useCallback(() => {
     if (selectedContract) {
       setContracts(prev =>
         prev.filter(
@@ -142,13 +145,17 @@ export default function ContratosComponent({
       setSelectedContract(null);
     }
     setIsDeleteDialogOpen(false);
-  };
+  }, [selectedContract]);
 
-  const columnsData = columns({
-    onEdit: handleEditContract,
-    onDelete: handleDeleteContract,
-    onViewDetails: handleViewDetails
-  });
+  const columnsData = useMemo(
+    () =>
+      columns({
+        onEdit: handleEditContract,
+        onDelete: handleDeleteContract,
+        onViewDetails: handleViewDetails
+      }),
+    [handleEditContract, handleDeleteContract, handleViewDetails]
+  );
 
   return (
     <div className='min-h-screen bg-background'>
