@@ -77,6 +77,9 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
       try {
         const permisoActual = getPermiso(idRol, idMenu);
 
+        // Formato de fecha sin milisegundos: YYYY-MM-DDTHH:mm:ss
+        const fechaActual = new Date().toISOString().split('.')[0];
+
         const nuevoPermiso = {
           idRol,
           idMenu,
@@ -85,7 +88,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
           puedeEditar: permisoActual?.puedeEditar || false,
           puedeEliminar: permisoActual?.puedeEliminar || false,
           [tipoPermiso]: valor,
-          fechaAsignacion: new Date().toISOString()
+          fechaAsignacion: fechaActual
         };
 
         const result =

@@ -589,8 +589,11 @@ class RolesPermisosService {
     permisoData: AsignarPermisoDirecto
   ): Promise<RolesPermisosServiceResponse<any>> {
     const endpoint = 'AsignarPermisos';
-    
+
     try {
+      // Formato de fecha sin milisegundos: YYYY-MM-DDTHH:mm:ss
+      const fechaActual = permisoData.fechaAsignacion || new Date().toISOString().split('.')[0];
+
       const dataToSend = {
         idRol: permisoData.idRol,
         idMenu: permisoData.idMenu,
@@ -598,7 +601,7 @@ class RolesPermisosService {
         puedeCrear: permisoData.puedeCrear,
         puedeEditar: permisoData.puedeEditar,
         puedeEliminar: permisoData.puedeEliminar,
-        fechaAsignacion: permisoData.fechaAsignacion || new Date().toISOString()
+        fechaAsignacion: fechaActual
       };
 
       debugApi({
@@ -617,7 +620,7 @@ class RolesPermisosService {
           method: 'POST',
           response: { status: 204, message: 'Success - No Content' }
         });
-        
+
         return {
           data: dataToSend,
           error: null

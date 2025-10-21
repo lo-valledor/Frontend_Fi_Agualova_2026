@@ -5,8 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import type { Menus, PermisoRolMenu, Roles } from '~/types/roles-permisos';
 
 import MenusTabComponent from './menus-tab-component';
-import PermisosTabComponent from './permisos-tab-component';
 import RolesTabComponent from './roles-tab-component';
+import PermisosTabComponent from './permisos-tab-component';
 
 interface RolesPermisosComponentProps {
   roles: Roles[];
