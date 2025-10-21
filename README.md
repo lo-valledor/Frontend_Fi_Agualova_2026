@@ -401,13 +401,24 @@ npm run test:e2e
 
 ## 📚 Documentación Adicional
 
-- 📖 **[Documentación Completa](docs/PROJECT-DOCUMENTATION.md)** - Guía detallada del proyecto
-- 🏗️ **[Arquitectura](docs/ARCHITECTURE.md)** - Patrones y diseño del sistema
-- 🚀 **[Guía de Inicio Rápido](docs/QUICK-START.md)** - Configuración en 5 minutos
-- 🔗 **[API Services](docs/API-SERVICES-STRUCTURE.md)** - Estructura de servicios
-- 🐳 **[Despliegue](DEPLOY-README.md)** - Guía de deployment
-- 📊 **[Tracking de Actividad](docs/ACTIVITY-TRACKING.md)** - Sistema de monitoreo
-- 👤 **[User Profile Hook](docs/USER-PROFILE-HOOK.md)** - Gestión de perfiles
+### Documentación Principal
+
+- 📋 **[Índice de Documentación](docs/README.md)** - Índice completo de toda la documentación
+
+### Desarrollo
+
+- 🚀 **[Guía de Inicio Rápido](docs/development/QUICK-START.md)** - Configuración en 5 minutos
+- 🔐 **[Sistema de Permisos](docs/development/PERMISOS.md)** - Control de acceso basado en roles
+- 📝 **[Cheatsheet de Comandos](docs/development/COMMANDS_CHEATSHEET.md)** - Comandos útiles
+- 🐛 **[Guía de Debug API](docs/development/API_DEBUG_GUIDE.md)** - Debugging de API
+
+### Arquitectura & Deployment
+
+- 🏗️ **[Arquitectura](docs/architecture/ARCHITECTURE.md)** - Patrones y diseño del sistema
+- 🐳 **[Despliegue Docker](docs/deployment/DEPLOY-README.md)** - Guía de deployment
+- 📦 **[Docker Completo](docs/deployment/README-DOCKER.md)** - Configuración Docker detallada
+
+Para la documentación completa, consulta la carpeta [docs/](./docs/)
 
 ---
 
