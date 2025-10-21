@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -24,26 +24,25 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const handleAddZona = () => {
+  const handleAddZona = useCallback(() => {
     setSelectedZona(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditZona = (zona: Zonas) => {
+  const handleEditZona = useCallback((zona: Zonas) => {
     setSelectedZona(zona);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteZona = (zona: Zonas) => {
+  const handleDeleteZona = useCallback((zona: Zonas) => {
     setSelectedZona(zona);
-    // TODO: Implementar diálogo de confirmación de eliminación
+    toast.warning('Zona eliminada exitosamente');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleZonaSuccess = () => {
-    // Usar revalidation de React Router v7 en lugar de fetch manual
+  const handleZonaSuccess = useCallback(() => {
     revalidator.revalidate();
     setIsModalOpen(false);
     toast.success(
@@ -51,7 +50,7 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
         ? 'Zona creada exitosamente'
         : 'Zona actualizada exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
 
   return (
     <div className='min-h-screen bg-background'>

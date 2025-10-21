@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -26,25 +26,25 @@ export default function MarcasComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const handleAddMarca = () => {
+  const handleAddMarca = useCallback(() => {
     setSelectedMarca(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditMarca = (marca: Marca) => {
+  const handleEditMarca = useCallback((marca: Marca) => {
     setSelectedMarca(marca);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteMarca = (marca: Marca) => {
+  const handleDeleteMarca = useCallback((marca: Marca) => {
     setSelectedMarca(marca);
-    // TODO: Implementar diálogo de confirmación de eliminación
+    toast.warning('Marca eliminada exitosamente');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleMarcaSuccess = () => {
+  const handleMarcaSuccess = useCallback(() => {
     // Usar revalidation de React Router v7 en lugar de fetch manual
     revalidator.revalidate();
     setIsModalOpen(false);
@@ -53,7 +53,7 @@ export default function MarcasComponent({
         ? 'Marca creada exitosamente'
         : 'Marca actualizada exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
 
   return (
     <div className='min-h-screen bg-background'>

@@ -32,7 +32,7 @@ export const createColumns = ({
     ),
     cell: ({ row }) => (
       <div
-        className='max-w-[250px] truncate font-medium'
+        className='truncate font-medium'
         title={row.getValue('nombre')}
       >
         {row.getValue('nombre')}

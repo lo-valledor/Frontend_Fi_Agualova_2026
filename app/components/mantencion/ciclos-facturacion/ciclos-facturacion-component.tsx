@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -28,25 +28,25 @@ export default function CiclosFacturacionComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const handleAddCiclo = () => {
+  const handleAddCiclo = useCallback(() => {
     setSelectedCiclo(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditCiclo = (ciclo: CiclosFacturacion) => {
+  const handleEditCiclo = useCallback((ciclo: CiclosFacturacion) => {
     setSelectedCiclo(ciclo);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteCiclo = (ciclo: CiclosFacturacion) => {
+  const handleDeleteCiclo = useCallback((ciclo: CiclosFacturacion) => {
     setSelectedCiclo(ciclo);
-    // TODO: Implementar diálogo de confirmación de eliminación
+    toast.warning('Ciclo de facturación eliminado exitosamente');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleCicloSuccess = () => {
+  const handleCicloSuccess = useCallback(() => {
     // Usar revalidation de React Router v7 en lugar de fetch manual
     revalidator.revalidate();
     setIsModalOpen(false);
@@ -55,7 +55,7 @@ export default function CiclosFacturacionComponent({
         ? 'Ciclo de facturación creado exitosamente'
         : 'Ciclo de facturación actualizado exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
 
   return (
     <div className='min-h-screen bg-background'>

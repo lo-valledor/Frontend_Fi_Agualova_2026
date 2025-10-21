@@ -64,7 +64,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
@@ -77,6 +77,7 @@ import type { Usuarios } from '~/types/administracion';
 import { columns } from './columns';
 import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { UserFormModal } from './user-form-modal';
+import { useRevalidator } from 'react-router';
 
 export default function UsuariosComponent({
   usuarios: initialUsuarios
@@ -88,43 +89,44 @@ export default function UsuariosComponent({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Usuarios | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+    const revalidator = useRevalidator();
+  
 
   const { fetchUsuarios, deleteUsuario, loadingState } = useAdministracion();
 
-  const handleAddUser = () => {
+  const handleAddUser = useCallback(() => {
     setSelectedUser(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditUser = (user: Usuarios) => {
+  const handleEditUser = useCallback((user: Usuarios) => {
     setSelectedUser(user);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteUser = (user: Usuarios) => {
+  const handleDeleteUser = useCallback((user: Usuarios) => {
     setSelectedUser(user);
     setIsDeleteDialogOpen(true);
-  };
+  }, []);
 
-  const handleUserSuccess = async () => {
-    try {
-      const updatedUsuarios = await fetchUsuarios();
-      setUsuarios(updatedUsuarios as Usuarios[]);
-    } catch (error) {
-      console.error('Error al recargar usuarios:', error);
-      toast.error('Error al recargar la lista de usuarios');
-    }
-  };
+  const handleUserSuccess = useCallback(() => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
+    toast.success(
+      modalMode === 'add'
+        ? 'Usuario creado exitosamente'
+        : 'Usuario actualizado exitosamente'
+    );
+  }, [modalMode, revalidator]);
 
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = useCallback(async () => {
     if (selectedUser) {
       try {
         await deleteUsuario(selectedUser.idUsuario);
         toast.success('Usuario eliminado exitosamente');
-        const updatedUsuarios = await fetchUsuarios();
-        setUsuarios(updatedUsuarios as Usuarios[]);
+        revalidator.revalidate();
         setSelectedUser(null);
       } catch (error: any) {
         console.error('Error al eliminar usuario:', error);
@@ -136,7 +138,7 @@ export default function UsuariosComponent({
       }
     }
     setIsDeleteDialogOpen(false);
-  };
+  }, []);
 
   if (loadingState.fetchUsuarios.isLoading) {
     return (

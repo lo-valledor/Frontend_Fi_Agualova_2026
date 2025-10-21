@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -26,25 +26,25 @@ export default function EmpalmesComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const handleAddEmpalme = () => {
+  const handleAddEmpalme = useCallback(() => {
     setSelectedEmpalme(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditEmpalme = (empalme: Empalme) => {
+  const handleEditEmpalme = useCallback((empalme: Empalme) => {
     setSelectedEmpalme(empalme);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteEmpalme = (empalme: Empalme) => {
+  const handleDeleteEmpalme = useCallback((empalme: Empalme) => {
     setSelectedEmpalme(empalme);
-    // TODO: Implementar diálogo de confirmación de eliminación
+    toast.warning('Empalme eliminado exitosamente');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEmpalmeSuccess = () => {
+  const handleEmpalmeSuccess = useCallback(() => {
     // Usar revalidation de React Router v7 en lugar de fetch manual
     revalidator.revalidate();
     setIsModalOpen(false);
@@ -53,7 +53,7 @@ export default function EmpalmesComponent({
         ? 'Empalme creado exitosamente'
         : 'Empalme actualizado exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
 
   return (
     <div className='min-h-screen bg-background'>

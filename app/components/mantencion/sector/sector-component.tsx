@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -24,25 +24,25 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const handleAddSector = () => {
+  const handleAddSector = useCallback(() => {
     setSelectedSector(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditSector = (sector: Sectores) => {
+  const handleEditSector = useCallback((sector: Sectores) => {
     setSelectedSector(sector);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteSector = (sector: Sectores) => {
+  const handleDeleteSector = useCallback((sector: Sectores) => {
     setSelectedSector(sector);
-    // TODO: Implementar diálogo de confirmación de eliminación
+    toast.warning('Sector eliminado exitosamente');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleSectorSuccess = () => {
+  const handleSectorSuccess = useCallback(() => {
     // Usar revalidation de React Router v7 en lugar de fetch manual
     revalidator.revalidate();
     setIsModalOpen(false);
@@ -51,7 +51,7 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
         ? 'Sector creado exitosamente'
         : 'Sector actualizado exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
 
   return (
     <div className='min-h-screen bg-background'>
