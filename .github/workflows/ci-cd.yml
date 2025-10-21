@@ -76,6 +76,10 @@ jobs:
             npx eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0 || echo "⚠️ ESLint not configured or failed"
           fi
 
+      # Tests unitarios
+      - name: 🧪 Run tests
+        run: pnpm run test:run
+
       # Build del proyecto
       - name: 🏗️ Build project
         run: pnpm run build

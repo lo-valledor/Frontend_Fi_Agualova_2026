@@ -1,4 +1,3 @@
-'use client';
 
 import { Activity, Eye, MousePointer, Users } from 'lucide-react';
 

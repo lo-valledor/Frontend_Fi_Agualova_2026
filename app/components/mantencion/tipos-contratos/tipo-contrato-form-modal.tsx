@@ -57,7 +57,7 @@ export default function TipoContratoFormModal({
     resolver: zodResolver(tipoContratoSchema),
     defaultValues: {
       nombre: tipoContrato?.nombre || '',
-      estado: tipoContrato?.estado ?? true
+      estado: tipoContrato?.estado === false ? false : true
     }
   });
 
@@ -67,7 +67,7 @@ export default function TipoContratoFormModal({
     if (isOpen) {
       form.reset({
         nombre: tipoContrato?.nombre || '',
-        estado: tipoContrato?.estado ?? true
+        estado: tipoContrato?.estado === false ? false : true
       });
     }
   }, [isOpen, tipoContrato, form]);
