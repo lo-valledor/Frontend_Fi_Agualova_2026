@@ -1,5 +1,5 @@
 # Documentación de API
-*Generado automáticamente el 2025-10-21 09:42:01*
+*Generado automáticamente el 2025-10-21 10:14:14*
 
 ## Endpoints Detectados
 
