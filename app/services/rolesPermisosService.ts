@@ -591,6 +591,18 @@ class RolesPermisosService {
     const endpoint = 'AsignarPermisos';
     
     try {
+      const formatFecha = (value?: string) => {
+        const d = value ? new Date(value) : new Date();
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        const yyyy = d.getFullYear();
+        const mm = pad(d.getMonth() + 1);
+        const dd = pad(d.getDate());
+        const hh = pad(d.getHours());
+        const min = pad(d.getMinutes());
+        const ss = pad(d.getSeconds());
+        return `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}`;
+      };
+
       const dataToSend = {
         idRol: permisoData.idRol,
         idMenu: permisoData.idMenu,
@@ -598,7 +610,7 @@ class RolesPermisosService {
         puedeCrear: permisoData.puedeCrear,
         puedeEditar: permisoData.puedeEditar,
         puedeEliminar: permisoData.puedeEliminar,
-        fechaAsignacion: permisoData.fechaAsignacion || new Date().toISOString()
+        fechaAsignacion: formatFecha(permisoData.fechaAsignacion)
       };
 
       debugApi({
