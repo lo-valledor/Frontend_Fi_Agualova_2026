@@ -64,10 +64,9 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { DataTable } from '~/components/data-table/data-table';
-import { LoadingSpinner } from '~/components/loading-spinner';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -89,10 +88,14 @@ export default function UsuariosComponent({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Usuarios | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
-    const revalidator = useRevalidator();
-  
+  const revalidator = useRevalidator();
 
   const { fetchUsuarios, deleteUsuario, loadingState } = useAdministracion();
+
+  // Sincronizar estado local cuando los datos del loader cambian (después de revalidate)
+  useEffect(() => {
+    setUsuarios(initialUsuarios);
+  }, [initialUsuarios]);
 
   const handleAddUser = useCallback(() => {
     setSelectedUser(null);
@@ -138,19 +141,7 @@ export default function UsuariosComponent({
       }
     }
     setIsDeleteDialogOpen(false);
-  }, []);
-
-  if (loadingState.fetchUsuarios.isLoading) {
-    return (
-      <div className='min-h-screen bg-background'>
-        <div className='container mx-auto p-3'>
-          <div className='flex items-center justify-center py-20'>
-            <LoadingSpinner />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  }, [selectedUser, deleteUsuario, revalidator]);
 
   return (
     <div className='min-h-screen bg-background'>
@@ -160,12 +151,8 @@ export default function UsuariosComponent({
           title='Usuarios'
           description='Gestiona los usuarios del sistema'
           actions={
-            <div>
-              <Button
-                onClick={handleAddUser}
-                variant='default'
-                size='sm'
-              >
+            <div className='flex gap-2'>
+              <Button onClick={handleAddUser} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Usuario
               </Button>

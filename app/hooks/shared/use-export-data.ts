@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import * as XLSX from 'xlsx';
+// Lazy load xlsx - solo se carga cuando se exporta a Excel
+// import * as XLSX from 'xlsx';
 
 export type ExportFormat = 'csv' | 'xlsx';
 
@@ -81,13 +82,16 @@ export function useExportData<T extends Record<string, any>>() {
     }
   };
 
-  // Función para descargar archivo Excel usando la librería xlsx
-  const downloadExcel = (
+  // Función para descargar archivo Excel usando la librería xlsx (lazy loaded)
+  const downloadExcel = async (
     data: T[],
     columns: ExportColumn[],
     filename: string = 'export',
     includeHeaders: boolean = true
   ) => {
+    // Lazy load xlsx solo cuando se necesita
+    const XLSX = await import('xlsx');
+
     // Preparar los datos para Excel
     const excelData = data.map(item => {
       const row: Record<string, any> = {};
@@ -175,7 +179,7 @@ export function useExportData<T extends Record<string, any>>() {
           downloadCSV(data, columns, baseFilename, includeHeaders);
           break;
         case 'xlsx':
-          downloadExcel(data, columns, baseFilename, includeHeaders);
+          await downloadExcel(data, columns, baseFilename, includeHeaders);
           break;
         default:
           downloadCSV(data, columns, baseFilename, includeHeaders);
