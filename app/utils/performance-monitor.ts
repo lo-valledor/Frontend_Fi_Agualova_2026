@@ -22,6 +22,8 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 
 /**
  * Determina el rating de una métrica basado en umbrales
+ * @param name
+ * @param value
  */
 function getRating(name: string, value: number): 'good' | 'needs-improvement' | 'poor' {
   const thresholds = {
@@ -42,6 +44,7 @@ function getRating(name: string, value: number): 'good' | 'needs-improvement' | 
 
 /**
  * Envía métrica a analytics (puedes integrar con Google Analytics, etc.)
+ * @param metric
  */
 function sendToAnalytics(metric: PerformanceMetric) {
   if (isDevelopment) {
@@ -186,6 +189,7 @@ export function initPerformanceMonitoring() {
 
 /**
  * Hook para monitorear performance de componentes específicos
+ * @param componentName
  */
 export function measureComponentPerformance(componentName: string) {
   if (typeof window === 'undefined') return { start: () => {}, end: () => {} };

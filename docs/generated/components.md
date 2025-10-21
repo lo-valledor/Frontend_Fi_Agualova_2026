@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-21 13:20:07*
+*Generado automáticamente el 2025-10-21 13:24:27*
 
 ## Índice de Componentes
 
@@ -2125,6 +2125,11 @@
 /**
  * Skeleton loader genérico para tablas de datos
  * Usado en páginas de administración, mantención, etc.
+ * @param root0
+ * @param root0.columns
+ * @param root0.rows
+ * @param root0.showHeader
+ * @param root0.showPagination
  */
 ```
 
@@ -2147,6 +2152,10 @@
 /**
  * Skeleton loader genérico para formularios
  * Usado en páginas de creación/edición
+ * @param root0
+ * @param root0.fields
+ * @param root0.showHeader
+ * @param root0.showActions
  */
 ```
 

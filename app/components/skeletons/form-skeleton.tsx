@@ -22,6 +22,10 @@ interface FormSkeletonProps {
 /**
  * Skeleton loader genérico para formularios
  * Usado en páginas de creación/edición
+ * @param root0
+ * @param root0.fields
+ * @param root0.showHeader
+ * @param root0.showActions
  */
 export function FormSkeleton({
   fields = 6,
