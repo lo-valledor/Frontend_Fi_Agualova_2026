@@ -1,13 +1,18 @@
 /* eslint-disable no-empty-pattern */
+import { lazy, Suspense } from 'react';
 import { useRouteError } from 'react-router';
 
-import ContractHydrateFallback from '~/components/administracion/contratos/contract-hydrate-fallback';
-import ContratosComponent from '~/components/administracion/contratos/contratos-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
+import { DataTableSkeleton } from '~/components/skeletons';
 import { administracionService } from '~/services/administracionService';
 
 import type { Route } from './+types/contratos';
+
+// Lazy load del componente pesado (38 KB)
+const ContratosComponent = lazy(() =>
+  import('~/components/administracion/contratos/contratos-component')
+);
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -36,13 +41,15 @@ export default function Contratos({
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <ContratosComponent contratos={contratos} />
+      <Suspense fallback={<DataTableSkeleton columns={7} />}>
+        <ContratosComponent contratos={contratos} />
+      </Suspense>
     </div>
   );
 }
 
 export function hydrateFallback() {
-  return <ContractHydrateFallback />;
+  return <DataTableSkeleton columns={7} />;
 }
 
 export function ErrorBoundary() {

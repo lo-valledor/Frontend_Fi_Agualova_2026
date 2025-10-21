@@ -1,12 +1,18 @@
 /* eslint-disable no-empty-pattern */
-import { MonitorHydrateFallback } from '~/components/monitor/monitor-hydrate-fallback';
-import MonitorLecturasComponent from '~/components/monitor/monitor-lecturas-component';
+import { lazy, Suspense } from 'react';
+
+import { MonitorLecturasSkeleton } from '~/components/skeletons';
 import { monitorService } from '~/services/monitorService';
 
 import type { Route } from './+types/monitor-lecturas';
 
+// Lazy load del componente pesado (183 KB)
+const MonitorLecturasComponent = lazy(() => 
+  import('~/components/monitor/monitor-lecturas-component')
+);
+
 export function hydrateFallback() {
-  return <MonitorHydrateFallback />;
+  return <MonitorLecturasSkeleton />;
 }
 
 export function meta({}: Route.MetaArgs) {
@@ -42,8 +48,8 @@ export default function MonitorLecturasPage({
   loaderData
 }: Route.ComponentProps) {
   return (
-    <div>
+    <Suspense fallback={<MonitorLecturasSkeleton />}>
       <MonitorLecturasComponent {...loaderData} />
-    </div>
+    </Suspense>
   );
 }

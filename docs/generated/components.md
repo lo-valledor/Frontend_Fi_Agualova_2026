@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-21 10:20:40*
+*Generado automáticamente el 2025-10-21 10:56:27*
 
 ## Índice de Componentes
 
@@ -2073,6 +2073,64 @@
 **Archivo**: `app/components/sidebar/site-header.tsx`
 ⚠️ *Sin documentación JSDoc*
 
+
+### data-table-skeleton
+**Archivo**: `app/components/skeletons/data-table-skeleton.tsx`
+**Documentación**:
+```typescript
+/**
+   * Número de columnas a mostrar
+   * @default 5
+   */
+/**
+   * Número de filas a mostrar
+   * @default 10
+   */
+/**
+   * Mostrar header con título y botones
+   * @default true
+   */
+/**
+   * Mostrar paginación
+   * @default true
+   */
+/**
+ * Skeleton loader genérico para tablas de datos
+ * Usado en páginas de administración, mantención, etc.
+ */
+```
+
+### form-skeleton
+**Archivo**: `app/components/skeletons/form-skeleton.tsx`
+**Documentación**:
+```typescript
+/**
+   * Número de campos a mostrar
+   * @default 6
+   */
+/**
+   * Mostrar header con título
+   * @default true
+   */
+/**
+   * Mostrar botones de acción
+   * @default true
+   */
+/**
+ * Skeleton loader genérico para formularios
+ * Usado en páginas de creación/edición
+ */
+```
+
+### monitor-lecturas-skeleton
+**Archivo**: `app/components/skeletons/monitor-lecturas-skeleton.tsx`
+**Documentación**:
+```typescript
+/**
+ * Skeleton loader para la página de Monitor de Lecturas
+ * Muestra un placeholder mientras se carga el componente principal
+ */
+```
 
 ### accordion
 **Archivo**: `app/components/ui/accordion.tsx`

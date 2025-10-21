@@ -1,12 +1,16 @@
 /* eslint-disable no-empty-pattern */
-import React from 'react';
+import { lazy, Suspense } from 'react';
 
-import { AdministracionHydrateFallback } from '~/components/administracion/administracion-hydrate-fallback';
-import MedidoresComponent from '~/components/administracion/medidores/medidores-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
+import { DataTableSkeleton } from '~/components/skeletons';
 import { administracionService } from '~/services/administracionService';
 
 import type { Route } from './+types/medidores';
+
+// Lazy load del componente pesado (54 KB)
+const MedidoresComponent = lazy(() =>
+  import('~/components/administracion/medidores/medidores-component')
+);
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -34,11 +38,13 @@ export default function Medidores({ loaderData }: Route.ComponentProps) {
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <MedidoresComponent medidores={medidores} marcas={marcas} />
+      <Suspense fallback={<DataTableSkeleton columns={6} />}>
+        <MedidoresComponent medidores={medidores} marcas={marcas} />
+      </Suspense>
     </div>
   );
 }
 
 export function hydrateFallback() {
-  return <AdministracionHydrateFallback />;
+  return <DataTableSkeleton columns={6} />;
 }
