@@ -10,8 +10,9 @@ import {
 import { AnimatePresence, motion } from 'motion/react';
 
 import * as React from 'react';
-
 import { Link, useLocation } from 'react-router';
+
+import { useDebounce } from '~/hooks/shared/use-debounce';
 
 import {
   Collapsible,
@@ -272,14 +273,15 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = React.useState('');
+  const debouncedSearch = useDebounce(searchTerm, 300);
 
   // Función para filtrar elementos basada en la búsqueda
   const filteredNavMain = React.useMemo(() => {
-    if (!searchTerm.trim()) {
+    if (!debouncedSearch.trim()) {
       return data.navMain;
     }
 
-    const searchLower = searchTerm.toLowerCase();
+    const searchLower = debouncedSearch.toLowerCase();
     return data.navMain
       .map(section => {
         const filteredItems = section.items.filter(
@@ -297,8 +299,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           items: filteredItems
         };
       })
-      .filter((item): item is NonNullable<typeof item> => item !== null);
-  }, [searchTerm]);
+      .filter(section => section !== null) as typeof data.navMain;
+  }, [debouncedSearch]);
 
   // Función para verificar si una ruta está activa
   const isActiveRoute = (url: string) => {

@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -29,19 +29,19 @@ export default function ClavesComponent({
 
   const revalidator = useRevalidator();
 
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     setSelectedClave(undefined);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEdit = (clave: Claves) => {
+  const handleEdit = useCallback((clave: Claves) => {
     setSelectedClave(clave);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDelete = async (clave: Claves) => {
+  const handleDelete = useCallback(async (clave: Claves) => {
     if (
       window.confirm(
         `¿Está seguro de que desea eliminar la clave "${clave.codigo}"?`
@@ -58,21 +58,26 @@ export default function ClavesComponent({
         toast.error('Error al eliminar la clave');
       }
     }
-  };
+  }, [revalidator]);
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
+    revalidator.revalidate();
+    setIsModalOpen(false);
     toast.success(
       modalMode === 'add'
         ? 'Clave creada exitosamente'
         : 'Clave actualizada exitosamente'
     );
-    revalidator.revalidate();
-  };
+  }, [modalMode, revalidator]);
 
-  const columns = createColumns({
-    onEdit: handleEdit,
-    onDelete: handleDelete
-  });
+  const columns = useMemo(
+    () =>
+      createColumns({
+        onEdit: handleEdit,
+        onDelete: handleDelete
+      }),
+    [handleEdit, handleDelete]
+  );
 
   return (
     <div className='min-h-screen bg-background'>

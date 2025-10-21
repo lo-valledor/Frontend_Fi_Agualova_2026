@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -26,24 +26,24 @@ export default function NichosComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const handleAddNicho = () => {
+  const handleAddNicho = useCallback(() => {
     setSelectedNicho(null);
     setModalMode('add');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleEditNicho = (nicho: Nicho) => {
+  const handleEditNicho = useCallback((nicho: Nicho) => {
     setSelectedNicho(nicho);
     setModalMode('edit');
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDeleteNicho = (nicho: Nicho) => {
+  const handleDeleteNicho = useCallback((nicho: Nicho) => {
     setSelectedNicho(nicho);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleNichoSuccess = () => {
+  const handleNichoSuccess = useCallback(() => {
     // Usar revalidation de React Router v7 en lugar de fetch manual
     revalidator.revalidate();
     setIsModalOpen(false);
@@ -52,7 +52,15 @@ export default function NichosComponent({
         ? 'Nicho creado exitosamente'
         : 'Nicho actualizado exitosamente'
     );
-  };
+  }, [modalMode, revalidator]);
+
+  const memoizedColumns = useMemo(
+    () => columns({
+      onEdit: handleEditNicho,
+      onDelete: handleDeleteNicho
+    }),
+    [handleEditNicho, handleDeleteNicho]
+  );
 
   return (
     <div className='min-h-screen bg-background'>
@@ -79,10 +87,7 @@ export default function NichosComponent({
         <Card className='border border-border shadow-sm'>
           <CardContent className='relative'>
             <DataTable
-              columns={columns({
-                onEdit: handleEditNicho,
-                onDelete: handleDeleteNicho
-              })}
+              columns={memoizedColumns}
               data={nichos}
             />
           </CardContent>

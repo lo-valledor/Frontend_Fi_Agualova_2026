@@ -3,6 +3,8 @@ import { Loader2, RotateCcw, Search, Settings, X, Zap } from 'lucide-react';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { useDebounce } from '~/hooks/shared/use-debounce';
+
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { EmptyState, LoadingState } from '~/components/loading-state';
 import { Badge } from '~/components/ui/badge';
@@ -54,16 +56,17 @@ export default function MonitorNichos({
     pageSize: 15
   });
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearch = useDebounce(searchTerm, 300);
   const [isInsercionAutomaticaOpen, setIsInsercionAutomaticaOpen] =
     useState(false);
 
   // Filtrar resultados basado en el término de búsqueda
   const filteredResults = useMemo(() => {
-    if (!searchTerm.trim()) {
+    if (!debouncedSearch.trim()) {
       return results;
     }
 
-    const searchLower = searchTerm.toLowerCase().trim();
+    const searchLower = debouncedSearch.toLowerCase().trim();
     return results.filter(item => {
       return (
         item.ME_NSerie?.toLowerCase().includes(searchLower) ||
@@ -73,7 +76,7 @@ export default function MonitorNichos({
         item.Nro?.toString().includes(searchLower)
       );
     });
-  }, [results, searchTerm]);
+  }, [results, debouncedSearch]);
 
   const searchResults = useCallback(async () => {
     const params = new URLSearchParams({

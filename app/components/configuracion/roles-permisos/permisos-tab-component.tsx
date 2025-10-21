@@ -3,6 +3,8 @@ import { toast } from 'sonner';
 
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { useDebounce } from '~/hooks/shared/use-debounce';
+
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -31,6 +33,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   onDataChange
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearch = useDebounce(searchTerm, 300);
   const [selectedRoles, setSelectedRoles] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<'table' | 'mobile'>('table');
   const [compactView, setCompactView] = useState(false);
@@ -48,10 +51,10 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
     () =>
       menus.filter(
         menu =>
-          menu.nombreMenu.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          menu.ruta?.toLowerCase().includes(searchTerm.toLowerCase())
+          menu.nombreMenu.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+          menu.ruta?.toLowerCase().includes(debouncedSearch.toLowerCase())
       ),
-    [menus, searchTerm]
+    [menus, debouncedSearch]
   );
 
   // Filtrar roles seleccionados

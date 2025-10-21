@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
@@ -69,10 +69,14 @@ export default function TiposContratosComponent({
     revalidator.revalidate();
   };
 
-  const columns = createColumns({
-    onEdit: handleEdit,
-    onDelete: handleDelete
-  });
+  const columns = useMemo(
+    () =>
+      createColumns({
+        onEdit: handleEdit,
+        onDelete: handleDelete
+      }),
+    [handleEdit, handleDelete]
+  );
 
   return (
     <div className='min-h-screen bg-background'>

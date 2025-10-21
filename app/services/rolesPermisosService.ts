@@ -1,5 +1,6 @@
 import api from '~/lib/api';
 import type { Menus, Roles } from '~/types/roles-permisos';
+import { API_TEMPLATES, debugApi, logApiError } from '~/utils/api-debug';
 
 export interface RolesPermisosServiceResponse<T> {
   data: T | null;
@@ -159,8 +160,19 @@ class RolesPermisosService {
   async getRoles(): Promise<RolesPermisosServiceResponse<Roles[]>> {
     try {
       const response = await api.get('listarRoles');
+      const roles = this.processApiResponse<any>(response);
+      
+      // Mapear los datos del backend al formato esperado
+      // El backend devuelve idUsuario pero debería ser idRol
+      const mappedRoles = roles.map((rol: any) => ({
+        idRol: rol.idRol || rol.idUsuario, // Usar idRol si existe, sino idUsuario
+        nombreRol: rol.nombreRol,
+        descripcion: rol.descripcion,
+        estadoRol: rol.estadoRol
+      }));
+      
       return {
-        data: this.processApiResponse<Roles>(response),
+        data: mappedRoles,
         error: null
       };
     } catch (error) {
@@ -288,13 +300,31 @@ class RolesPermisosService {
    * Lista todos los menús disponibles en el sistema
    */
   async getMenus(): Promise<RolesPermisosServiceResponse<Menus[]>> {
+    const endpoint = 'ListarMenus';
+    
     try {
-      const response = await api.get('ListarMenus');
+      debugApi({
+        endpoint,
+        method: 'GET',
+        expectedTemplate: [API_TEMPLATES.menu]
+      });
+      
+      const response = await api.get(endpoint);
+      const data = this.processApiResponse<Menus>(response);
+      
+      debugApi({
+        endpoint,
+        method: 'GET',
+        response: data,
+        expectedTemplate: [API_TEMPLATES.menu]
+      });
+      
       return {
-        data: this.processApiResponse<Menus>(response),
+        data,
         error: null
       };
     } catch (error) {
+      logApiError(endpoint, error);
       return {
         data: null,
         error: error instanceof Error ? error.message : 'Error desconocido'
@@ -452,13 +482,32 @@ class RolesPermisosService {
   async getMenusPorRol(
     idRol: number
   ): Promise<RolesPermisosServiceResponse<RolMenu[]>> {
+    const endpoint = `ListarMenu/${idRol}`;
+    
     try {
-      const response = await api.get(`ListarMenu/${idRol}`);
+      debugApi({
+        endpoint,
+        method: 'GET',
+        payload: { idRol },
+        expectedTemplate: [API_TEMPLATES.permisoRolMenu]
+      });
+      
+      const response = await api.get(endpoint);
+      const data = this.processApiResponse<RolMenu>(response);
+      
+      debugApi({
+        endpoint,
+        method: 'GET',
+        response: data,
+        expectedTemplate: [API_TEMPLATES.permisoRolMenu]
+      });
+      
       return {
-        data: this.processApiResponse<RolMenu>(response),
+        data,
         error: null
       };
     } catch (error) {
+      logApiError(endpoint, error, { idRol });
       return {
         data: null,
         error: error instanceof Error ? error.message : 'Error desconocido'
@@ -539,6 +588,8 @@ class RolesPermisosService {
   async asignarPermisoDirecto(
     permisoData: AsignarPermisoDirecto
   ): Promise<RolesPermisosServiceResponse<any>> {
+    const endpoint = 'AsignarPermisos';
+    
     try {
       const dataToSend = {
         idRol: permisoData.idRol,
@@ -550,28 +601,51 @@ class RolesPermisosService {
         fechaAsignacion: permisoData.fechaAsignacion || new Date().toISOString()
       };
 
-      const response = await api.post('AsignarPermisos', dataToSend);
+      debugApi({
+        endpoint,
+        method: 'POST',
+        payload: dataToSend,
+        expectedTemplate: API_TEMPLATES.permisoRolMenu
+      });
+
+      const response = await api.post(endpoint, dataToSend);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
+        debugApi({
+          endpoint,
+          method: 'POST',
+          response: { status: 204, message: 'Success - No Content' }
+        });
+        
         return {
           data: dataToSend,
           error: null
         };
       }
 
+      const responseData = this.processSingleApiResponse<any>(response);
+      
+      debugApi({
+        endpoint,
+        method: 'POST',
+        response: responseData
+      });
+
       return {
-        data: this.processSingleApiResponse<any>(response),
+        data: responseData,
         error: null
       };
     } catch (error: any) {
+      logApiError(endpoint, error, { permisoData });
+      
       return {
         data: null,
         error:
           error.response?.data?.title ||
           error.response?.data?.message ||
           error.message ||
-          'Error al asignar permisos'
+          'Error al asignar permiso'
       };
     }
   }
