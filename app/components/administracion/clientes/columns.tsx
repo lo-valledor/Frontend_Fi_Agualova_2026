@@ -26,23 +26,23 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
+        <div className='flex items-center gap-2 sm:gap-3'>
+          <div className='flex-1'>
             <div
-              className='font-medium truncate text-xs sm:text-sm '
+              className='font-medium text-xs sm:text-sm'
               title={row.original.nombreCompleto}
             >
               {row.original.nombreCompleto}
             </div>
-            <div className='text-xs font-mono truncate'>
+            <div className='text-xs font-mono'>
               {format(row.getValue('rut'))}
             </div>
           </div>
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 220
+    minSize: 200,
+    maxSize: 999
   },
   {
     accessorKey: 'esEmpresa',

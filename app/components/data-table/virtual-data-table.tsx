@@ -129,46 +129,55 @@ export function VirtualDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {virtualItems.length > 0 ? (
-              <tr>
-                <td colSpan={columns.length} style={{ height: totalSize }} />
-              </tr>
-            ) : null}
-            {virtualItems.map(virtualRow => {
-              const row = rows[virtualRow.index];
-              return (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`
-                  }}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              );
-            })}
             {rows.length === 0 && (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-24 text-center'
-                >
+                <TableCell colSpan={columns.length} className='h-24 text-center'>
                   No se encontraron resultados.
                 </TableCell>
               </TableRow>
+            )}
+            {rows.length > 0 && (
+              <>
+                {/* Spacer superior */}
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    style={{ height: virtualItems[0]?.start ?? 0 }}
+                  />
+                </TableRow>
+
+                {/* Filas visibles */}
+                {virtualItems.map(virtualRow => {
+                  const row = rows[virtualRow.index];
+                  return (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                      style={{ height: `${virtualRow.size}px` }}
+                    >
+                      {row.getVisibleCells().map(cell => (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })}
+
+                {/* Spacer inferior */}
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    style={{
+                      height:
+                        totalSize - (virtualItems[virtualItems.length - 1]?.end ?? 0)
+                    }}
+                  />
+                </TableRow>
+              </>
             )}
           </TableBody>
         </Table>

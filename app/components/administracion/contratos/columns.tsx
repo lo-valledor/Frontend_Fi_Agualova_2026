@@ -92,10 +92,10 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Cliente / Propietario' />
     ),
     cell: ({ row }) => (
-      <div className='space-y-1 min-w-0 max-w-[200px] lg:max-w-none'>
+      <div className='space-y-1 min-w-0'>
         <div className='flex items-center gap-1 sm:gap-2'>
           <span
-            className='text-xs sm:text-sm font-medium truncate'
+            className='text-xs sm:text-sm font-medium'
             title={row.original.nombreCliente}
           >
             {row.original.nombreCliente}
@@ -103,7 +103,7 @@ export const columns = ({
         </div>
         <div className='flex items-center gap-1 sm:gap-2'>
           <span
-            className='text-xs sm:text-sm text-muted-foreground truncate'
+            className='text-xs sm:text-sm text-muted-foreground'
             title={row.original.nombrePropietario}
           >
             {row.original.nombrePropietario}
@@ -111,8 +111,8 @@ export const columns = ({
         </div>
       </div>
     ),
-    minSize: 180,
-    maxSize: 250
+    minSize: 240,
+    maxSize: 999
   },
   {
     accessorKey: 'tipoContrato',
