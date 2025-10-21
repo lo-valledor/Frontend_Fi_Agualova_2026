@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-21 10:14:13*
+*Generado automáticamente el 2025-10-21 10:20:40*
 
 ## Índice de Componentes
 

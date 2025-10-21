@@ -1,5 +1,5 @@
 # Documentación de Servicios
-*Generado automáticamente el 2025-10-21 10:14:14*
+*Generado automáticamente el 2025-10-21 10:20:41*
 
 ## Índice de Servicios
 
@@ -14,12 +14,6 @@
 
 **Exports**:
 - `aiService`
-
-### authService.test
-**Archivo**: `app/services/authService.test.ts`
-
-**Exports**:
-
 
 ### authService
 **Archivo**: `app/services/authService.ts`
@@ -75,12 +69,6 @@
 
 **Exports**:
 - `rolesPermisosService`
-
-### userService.test
-**Archivo**: `app/services/userService.test.ts`
-
-**Exports**:
-
 
 ### userService
 **Archivo**: `app/services/userService.ts`
