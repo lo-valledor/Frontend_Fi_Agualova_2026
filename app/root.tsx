@@ -24,6 +24,7 @@ import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './context/AuthContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import { LoadingBarProvider, useLoadingBar } from './context/LoadingBarContext';
+import { initPerformanceMonitoring } from './utils/performance-monitor';
 
 export const links = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -89,6 +90,11 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  // Inicializar monitoreo de performance
+  useEffect(() => {
+    initPerformanceMonitoring();
+  }, []);
+
   return <Outlet />;
 }
 

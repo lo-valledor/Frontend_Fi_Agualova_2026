@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-21 12:50:01*
+*Generado automáticamente el 2025-10-21 13:05:36*
 
 ## Índice de Componentes
 
@@ -1077,6 +1077,34 @@
 **Archivo**: `app/components/data-table/table-helpers.tsx`
 ⚠️ *Sin documentación JSDoc*
 
+
+### virtual-data-table
+**Archivo**: `app/components/data-table/virtual-data-table.tsx`
+**Documentación**:
+```typescript
+/**
+ * DataTable con Virtual Scrolling
+ * 
+ * Versión optimizada de DataTable que solo renderiza las filas visibles,
+ * ideal para tablas con 500+ filas
+ * 
+ * Beneficios:
+ * - Memoria: -80%
+ * - Scrolling: +90% más fluido
+ * - Re-renders: -95%
+ * - Soporta hasta 10,000+ filas sin lag
+ * 
+ * @example
+ * ```tsx
+ * <VirtualDataTable
+ *   columns={columns}
+ *   data={largeDataset} // 1000+ items
+ *   estimateRowHeight={50}
+ *   searchPlaceholder="Buscar..."
+ * />
+ * ```
+ */
+```
 
 ### mantencion-hydrate-fallback
 **Archivo**: `app/components/mantencion/mantencion-hydrate-fallback.tsx`

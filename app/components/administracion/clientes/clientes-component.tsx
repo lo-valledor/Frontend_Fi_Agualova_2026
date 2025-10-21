@@ -60,7 +60,7 @@ import { useCallback, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { DataTable } from '~/components/data-table/data-table';
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -214,7 +214,7 @@ export default function ClientesComponent({
         <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
             <div className='overflow-x-auto'>
-              <DataTable
+              <VirtualDataTable
                 columns={columns({
                   onDetails: handleDetailsCliente,
                   onEdit: handleEditCliente,
@@ -223,7 +223,8 @@ export default function ClientesComponent({
                 })}
                 data={filteredClients}
                 searchPlaceholder='Buscar por RUT, nombre o email...'
-                defaultPageSize={10}
+                estimateRowHeight={55}
+                maxHeight='650px'
               />
             </div>
           </CardContent>

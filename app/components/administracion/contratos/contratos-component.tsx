@@ -54,7 +54,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { DataTable } from '~/components/data-table/data-table';
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -225,11 +225,12 @@ export default function ContratosComponent({
                 {/* Tabla moderna con scroll horizontal para móvil */}
                 <div className='rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-background backdrop-blur-sm shadow-lg overflow-hidden'>
                   <div className='overflow-x-auto'>
-                    <DataTable
+                    <VirtualDataTable
                       columns={columnsData}
                       data={filteredContracts}
                       searchPlaceholder='Buscar por código, propietario o local...'
-                      defaultPageSize={10}
+                      estimateRowHeight={60}
+                      maxHeight='700px'
                     />
                   </div>
                 </div>

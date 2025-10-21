@@ -65,7 +65,7 @@ import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { DataTable } from '~/components/data-table/data-table';
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ExportButton } from '~/components/shared/export-button';
 import { Button } from '~/components/ui/button';
@@ -317,14 +317,15 @@ export default function MedidoresComponent({
               </div>
             )}
             <div className='overflow-x-auto'>
-              <DataTable
+              <VirtualDataTable
                 columns={columns({
                   onEdit: handleEdit,
                   onAsociarSubempalme: handleAsociarSubempalme
                 })}
                 data={filteredMedidores}
-                searchPlaceholder='Buscar por serie, marca o código...'
-                defaultPageSize={10}
+                searchPlaceholder='Buscar por número de serie, local o acometida...'
+                estimateRowHeight={55}
+                maxHeight='650px'
               />
             </div>
           </CardContent>

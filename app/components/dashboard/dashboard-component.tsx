@@ -18,6 +18,8 @@ import React, { useEffect, useState } from 'react';
 
 import { Link } from 'react-router';
 
+import { usePrefetchMultiple } from '~/hooks/shared/use-prefetch';
+
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
@@ -699,6 +701,15 @@ export default function DashboardComponent({
   corte: TotalesCorteReposicion;
   limiteInvierno: GetLimiteInvierno;
 }) {
+  // Prefetch de rutas más frecuentes para navegación instantánea
+  usePrefetchMultiple([
+    '/dashboard/administracion/contratos',
+    '/dashboard/administracion/clientes',
+    '/dashboard/administracion/medidores',
+    '/dashboard/monitor/lecturas',
+    '/dashboard/operaciones/periodo-facturacion'
+  ], 2000, 1000);
+
   const [dashboardData, setDashboardData] = useState({
     periodoActual: { mes: 0, anio: 0, estado: 'Sin período' },
     lecturasPendientes: 0,
