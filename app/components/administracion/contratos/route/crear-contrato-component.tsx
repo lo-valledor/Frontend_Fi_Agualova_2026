@@ -12,9 +12,11 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 
 import { useNavigate } from 'react-router';
+
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
@@ -92,6 +94,13 @@ export default function CrearContratoComponent({
   const [busquedaLocal, setBusquedaLocal] = useState('');
   const [busquedaMadres, setBusquedaMadres] = useState('');
   const [busquedaComuna, setBusquedaComuna] = useState('');
+
+  // Refs para virtualización de modales
+  const propietariosTableRef = useRef<HTMLDivElement>(null);
+  const clientesTableRef = useRef<HTMLDivElement>(null);
+  const localesTableRef = useRef<HTMLDivElement>(null);
+  const madresTableRef = useRef<HTMLDivElement>(null);
+  const comunasTableRef = useRef<HTMLDivElement>(null);
 
   // Estados para datos adicionales
   const [tipoContrato, setTipoContrato] = useState<TiposContrato[]>([]);
@@ -217,6 +226,94 @@ export default function CrearContratoComponent({
         c.codigo?.toLowerCase().includes(busquedaComuna.toLowerCase())
     );
   }, [comunas, busquedaComuna]);
+
+  // Virtualizadores para cada modal
+  const propietariosVirtualizer = useVirtualizer({
+    count: propietariosFiltrados.length,
+    getScrollElement: () => propietariosTableRef.current,
+    estimateSize: () => 50,
+    overscan: 10
+  });
+
+  const clientesVirtualizer = useVirtualizer({
+    count: clientesFiltrados.length,
+    getScrollElement: () => clientesTableRef.current,
+    estimateSize: () => 60,
+    overscan: 10
+  });
+
+  const localesVirtualizer = useVirtualizer({
+    count: localesFiltrados.length,
+    getScrollElement: () => localesTableRef.current,
+    estimateSize: () => 50,
+    overscan: 10
+  });
+
+  const madresVirtualizer = useVirtualizer({
+    count: madresFiltradas.length,
+    getScrollElement: () => madresTableRef.current,
+    estimateSize: () => 50,
+    overscan: 10
+  });
+
+  const comunasVirtualizer = useVirtualizer({
+    count: comunasFiltradas.length,
+    getScrollElement: () => comunasTableRef.current,
+    estimateSize: () => 50,
+    overscan: 10
+  });
+
+  // Forzar medición del virtualizador cuando se abren los modales
+  useEffect(() => {
+    if (modalPropietario) {
+      // Doble requestAnimationFrame para asegurar que el modal esté completamente renderizado
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          propietariosVirtualizer.measure();
+        });
+      });
+    }
+  }, [modalPropietario, propietariosVirtualizer]);
+
+  useEffect(() => {
+    if (modalCliente) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          clientesVirtualizer.measure();
+        });
+      });
+    }
+  }, [modalCliente, clientesVirtualizer]);
+
+  useEffect(() => {
+    if (modalLocal) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          localesVirtualizer.measure();
+        });
+      });
+    }
+  }, [modalLocal, localesVirtualizer]);
+
+  useEffect(() => {
+    if (modalMadres) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          madresVirtualizer.measure();
+        });
+      });
+    }
+  }, [modalMadres, madresVirtualizer]);
+
+  useEffect(() => {
+    if (modalComuna) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          comunasVirtualizer.measure();
+        });
+      });
+    }
+  }, [modalComuna, comunasVirtualizer]);
 
   // Funciones de selección
   const handleSelectPropietario = (propietarioRut: string) => {
@@ -974,23 +1071,40 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div
+                ref={propietariosTableRef}
+                className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
+              >
                 <div className='min-w-[500px]'>
-                  <Table>
+                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
-                        <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: '140px', minWidth: '140px' }}
+                        >
                           RUT
                         </TableHead>
-                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: 'auto', minWidth: '200px' }}
+                        >
                           Nombre
                         </TableHead>
-                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-center text-xs sm:text-sm'
+                          style={{ width: '120px', minWidth: '120px' }}
+                        >
                           Acción
                         </TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                      style={{
+                        height: `${propietariosVirtualizer.getTotalSize()}px`,
+                        position: 'relative'
+                      }}
+                    >
                       {propietariosFiltrados.length === 0 ? (
                         <TableRow>
                           <TableCell
@@ -1011,35 +1125,61 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        propietariosFiltrados.map(prop => (
-                          <TableRow
-                            key={prop.rut}
-                            className='hover:bg-muted/50 transition-colors'
-                          >
-                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
-                              {prop.rut}
-                            </TableCell>
-                            <TableCell className='text-xs sm:text-sm'>
-                              <div
-                                className='truncate max-w-[200px]'
-                                title={prop.nombre}
+                        propietariosVirtualizer
+                          .getVirtualItems()
+                          .map(virtualRow => {
+                            const prop =
+                              propietariosFiltrados[virtualRow.index];
+                            return (
+                              <TableRow
+                                key={prop.rut}
+                                data-index={virtualRow.index}
+                                style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  width: '100%',
+                                  height: '50px',
+                                  transform: `translateY(${virtualRow.start}px)`,
+                                  display: 'table',
+                                  tableLayout: 'fixed'
+                                }}
+                                className='hover:bg-muted/50 transition-colors'
                               >
-                                {prop.nombre}
-                              </div>
-                            </TableCell>
-                            <TableCell className='text-center'>
-                              <Button
-                                size='sm'
-                                onClick={() =>
-                                  handleSelectPropietario(prop.rut)
-                                }
-                                className='h-7 px-3 text-xs bg-emerald-600 hover:bg-emerald-700'
-                              >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))
+                                <TableCell
+                                  className='font-mono text-xs sm:text-sm font-medium h-[50px]'
+                                  style={{ width: '140px', minWidth: '140px' }}
+                                >
+                                  {prop.rut}
+                                </TableCell>
+                                <TableCell
+                                  className='text-xs sm:text-sm h-[50px]'
+                                  style={{ width: 'auto', minWidth: '200px' }}
+                                >
+                                  <div
+                                    className='truncate max-w-[200px]'
+                                    title={prop.nombre}
+                                  >
+                                    {prop.nombre}
+                                  </div>
+                                </TableCell>
+                                <TableCell
+                                  className='text-center h-[50px]'
+                                  style={{ width: '120px', minWidth: '120px' }}
+                                >
+                                  <Button
+                                    size='sm'
+                                    variant='default'
+                                    onClick={() =>
+                                      handleSelectPropietario(prop.rut)
+                                    }
+                                  >
+                                    Seleccionar
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
                       )}
                     </TableBody>
                   </Table>
@@ -1077,23 +1217,40 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div
+                ref={localesTableRef}
+                className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
+              >
                 <div className='min-w-[450px]'>
-                  <Table>
+                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
-                        <TableHead className='w-[100px] sm:w-[120px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: '120px', minWidth: '120px' }}
+                        >
                           Número
                         </TableHead>
-                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: 'auto', minWidth: '200px' }}
+                        >
                           Empresa
                         </TableHead>
-                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-center text-xs sm:text-sm'
+                          style={{ width: '120px', minWidth: '120px' }}
+                        >
                           Acción
                         </TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                      style={{
+                        height: `${localesVirtualizer.getTotalSize()}px`,
+                        position: 'relative'
+                      }}
+                    >
                       {localesFiltrados.length === 0 ? (
                         <TableRow>
                           <TableCell
@@ -1114,35 +1271,58 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        localesFiltrados.map(loc => (
-                          <TableRow
-                            key={loc.numeroLocal}
-                            className='hover:bg-muted/50 transition-colors'
-                          >
-                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
-                              {loc.numeroLocal}
-                            </TableCell>
-                            <TableCell className='text-xs sm:text-sm'>
-                              <div
-                                className='truncate max-w-[200px]'
-                                title={loc.empresa}
+                        localesVirtualizer.getVirtualItems().map(virtualRow => {
+                          const loc = localesFiltrados[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={loc.numeroLocal}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '50px',
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: 'table',
+                                tableLayout: 'fixed'
+                              }}
+                              className='hover:bg-muted/50 transition-colors'
+                            >
+                              <TableCell
+                                className='font-mono text-xs sm:text-sm font-medium h-[50px]'
+                                style={{ width: '120px', minWidth: '120px' }}
                               >
-                                {loc.empresa}
-                              </div>
-                            </TableCell>
-                            <TableCell className='text-center'>
-                              <Button
-                                size='sm'
-                                onClick={() =>
-                                  handleSelectLocal(loc.numeroLocal)
-                                }
-                                className='h-7 px-3 text-xs bg-violet-600 hover:bg-violet-700'
+                                {loc.numeroLocal}
+                              </TableCell>
+                              <TableCell
+                                className='text-xs sm:text-sm h-[50px]'
+                                style={{ width: 'auto', minWidth: '200px' }}
                               >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))
+                                <div
+                                  className='truncate max-w-[200px]'
+                                  title={loc.empresa}
+                                >
+                                  {loc.empresa}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className='text-center h-[50px]'
+                                style={{ width: '120px', minWidth: '120px' }}
+                              >
+                                <Button
+                                  size='sm'
+                                  variant='default'
+                                  onClick={() =>
+                                    handleSelectLocal(loc.numeroLocal)
+                                  }
+                                >
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>
@@ -1180,23 +1360,40 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div
+                ref={madresTableRef}
+                className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
+              >
                 <div className='min-w-[450px]'>
-                  <Table>
+                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
-                        <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: '140px', minWidth: '140px' }}
+                        >
                           Código
                         </TableHead>
-                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: 'auto', minWidth: '200px' }}
+                        >
                           Propietario
                         </TableHead>
-                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-center text-xs sm:text-sm'
+                          style={{ width: '120px', minWidth: '120px' }}
+                        >
                           Acción
                         </TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                      style={{
+                        height: `${madresVirtualizer.getTotalSize()}px`,
+                        position: 'relative'
+                      }}
+                    >
                       {madresFiltradas.length === 0 ? (
                         <TableRow>
                           <TableCell
@@ -1217,35 +1414,58 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        madresFiltradas.map(mad => (
-                          <TableRow
-                            key={mad.codigoContrato}
-                            className='hover:bg-muted/50 transition-colors'
-                          >
-                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
-                              {mad.codigoContrato}
-                            </TableCell>
-                            <TableCell className='text-xs sm:text-sm'>
-                              <div
-                                className='truncate max-w-[200px]'
-                                title={mad.nombrePropietario}
+                        madresVirtualizer.getVirtualItems().map(virtualRow => {
+                          const mad = madresFiltradas[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={mad.codigoContrato}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '50px',
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: 'table',
+                                tableLayout: 'fixed'
+                              }}
+                              className='hover:bg-muted/50 transition-colors'
+                            >
+                              <TableCell
+                                className='font-mono text-xs sm:text-sm font-medium h-[50px]'
+                                style={{ width: '140px', minWidth: '140px' }}
                               >
-                                {mad.nombrePropietario}
-                              </div>
-                            </TableCell>
-                            <TableCell className='text-center'>
-                              <Button
-                                size='sm'
-                                onClick={() =>
-                                  handleSelectMadre(mad.codigoContrato)
-                                }
-                                className='h-7 px-3 text-xs bg-amber-600 hover:bg-amber-700'
+                                {mad.codigoContrato}
+                              </TableCell>
+                              <TableCell
+                                className='text-xs sm:text-sm h-[50px]'
+                                style={{ width: 'auto', minWidth: '200px' }}
                               >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))
+                                <div
+                                  className='truncate max-w-[200px]'
+                                  title={mad.nombrePropietario}
+                                >
+                                  {mad.nombrePropietario}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className='text-center h-[50px]'
+                                style={{ width: '120px', minWidth: '120px' }}
+                              >
+                                <Button
+                                  size='sm'
+                                  variant='default'
+                                  onClick={() =>
+                                    handleSelectMadre(mad.codigoContrato)
+                                  }
+                                >
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>
@@ -1284,26 +1504,46 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div
+                ref={clientesTableRef}
+                className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
+              >
                 <div className='min-w-[600px]'>
-                  <Table>
+                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
-                        <TableHead className='w-[120px] sm:w-[140px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: '140px', minWidth: '140px' }}
+                        >
                           RUT
                         </TableHead>
-                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: 'auto', minWidth: '200px' }}
+                        >
                           Nombre
                         </TableHead>
-                        <TableHead className='w-[100px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: '100px', minWidth: '100px' }}
+                        >
                           Tipo
                         </TableHead>
-                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-center text-xs sm:text-sm'
+                          style={{ width: '120px', minWidth: '120px' }}
+                        >
                           Acción
                         </TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                      style={{
+                        height: `${clientesVirtualizer.getTotalSize()}px`,
+                        position: 'relative'
+                      }}
+                    >
                       {clientesFiltrados.length === 0 ? (
                         <TableRow>
                           <TableCell
@@ -1324,48 +1564,74 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        clientesFiltrados.map(cliente => {
-                          return (
-                            <TableRow
-                              key={cliente.rut}
-                              className='hover:bg-muted/50 transition-colors'
-                            >
-                              <TableCell className='font-mono text-xs sm:text-sm font-medium'>
-                                {cliente.rut}
-                              </TableCell>
-                              <TableCell className='text-xs sm:text-sm'>
-                                <div
-                                  className='truncate max-w-[200px]'
-                                  title={getClienteDisplayName(cliente)}
+                        clientesVirtualizer
+                          .getVirtualItems()
+                          .map(virtualRow => {
+                            const cliente = clientesFiltrados[virtualRow.index];
+                            return (
+                              <TableRow
+                                key={cliente.rut}
+                                data-index={virtualRow.index}
+                                style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  width: '100%',
+                                  height: '60px',
+                                  transform: `translateY(${virtualRow.start}px)`,
+                                  display: 'table',
+                                  tableLayout: 'fixed'
+                                }}
+                                className='hover:bg-muted/50 transition-colors'
+                              >
+                                <TableCell
+                                  className='font-mono text-xs sm:text-sm font-medium h-[60px]'
+                                  style={{ width: '140px', minWidth: '140px' }}
                                 >
-                                  {cliente.nombreCompleto}
-                                </div>
-                              </TableCell>
-                              <TableCell className='text-xs sm:text-sm'>
-                                <span
-                                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                    cliente.esEmpresa
-                                      ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                      : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                  }`}
+                                  {cliente.rut}
+                                </TableCell>
+                                <TableCell
+                                  className='text-xs sm:text-sm h-[60px]'
+                                  style={{ width: 'auto', minWidth: '200px' }}
                                 >
-                                  {cliente.esEmpresa ? 'Empresa' : 'Persona'}
-                                </span>
-                              </TableCell>
-                              <TableCell className='text-center'>
-                                <Button
-                                  size='sm'
-                                  onClick={() =>
-                                    handleSelectCliente(cliente.rut)
-                                  }
-                                  className='h-7 px-3 text-xs bg-blue-600 hover:bg-blue-700'
+                                  <div
+                                    className='truncate max-w-[200px]'
+                                    title={getClienteDisplayName(cliente)}
+                                  >
+                                    {cliente.nombreCompleto}
+                                  </div>
+                                </TableCell>
+                                <TableCell
+                                  className='text-xs sm:text-sm h-[60px]'
+                                  style={{ width: '100px', minWidth: '100px' }}
                                 >
-                                  Seleccionar
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
+                                  <span
+                                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                      cliente.esEmpresa
+                                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                                        : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                    }`}
+                                  >
+                                    {cliente.esEmpresa ? 'Empresa' : 'Persona'}
+                                  </span>
+                                </TableCell>
+                                <TableCell
+                                  className='text-center h-[60px]'
+                                  style={{ width: '120px', minWidth: '120px' }}
+                                >
+                                  <Button
+                                    size='sm'
+                                    variant='default'
+                                    onClick={() =>
+                                      handleSelectCliente(cliente.rut)
+                                    }
+                                  >
+                                    Seleccionar
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
                       )}
                     </TableBody>
                   </Table>
@@ -1403,23 +1669,40 @@ export default function CrearContratoComponent({
                 />
               </div>
 
-              <div className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'>
+              <div
+                ref={comunasTableRef}
+                className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
+              >
                 <div className='min-w-[400px]'>
-                  <Table>
+                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
-                        <TableHead className='w-[80px] sm:w-[100px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: '100px', minWidth: '100px' }}
+                        >
                           Código
                         </TableHead>
-                        <TableHead className='min-w-[200px] text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-xs sm:text-sm'
+                          style={{ width: 'auto', minWidth: '200px' }}
+                        >
                           Nombre
                         </TableHead>
-                        <TableHead className='w-[100px] text-center text-xs sm:text-sm'>
+                        <TableHead
+                          className='text-center text-xs sm:text-sm'
+                          style={{ width: '120px', minWidth: '120px' }}
+                        >
                           Acción
                         </TableHead>
                       </TableRow>
                     </TableHeader>
-                    <TableBody>
+                    <TableBody
+                      style={{
+                        height: `${comunasVirtualizer.getTotalSize()}px`,
+                        position: 'relative'
+                      }}
+                    >
                       {comunasFiltradas.length === 0 ? (
                         <TableRow>
                           <TableCell
@@ -1440,34 +1723,56 @@ export default function CrearContratoComponent({
                           </TableCell>
                         </TableRow>
                       ) : (
-                        comunasFiltradas.map(com => (
-                          <TableRow
-                            key={com.codigo}
-                            className='hover:bg-muted/50 transition-colors'
-                          >
-                            <TableCell className='font-mono text-xs sm:text-sm font-medium'>
-                              {com.codigo}
-                            </TableCell>
-                            <TableCell className='text-xs sm:text-sm'>
-                              <div
-                                className='truncate max-w-[200px]'
-                                title={com.nombre}
+                        comunasVirtualizer.getVirtualItems().map(virtualRow => {
+                          const com = comunasFiltradas[virtualRow.index];
+                          return (
+                            <TableRow
+                              key={com.codigo}
+                              data-index={virtualRow.index}
+                              style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '50px',
+                                transform: `translateY(${virtualRow.start}px)`,
+                                display: 'table',
+                                tableLayout: 'fixed'
+                              }}
+                              className='hover:bg-muted/50 transition-colors'
+                            >
+                              <TableCell
+                                className='font-mono text-xs sm:text-sm font-medium h-[50px]'
+                                style={{ width: '100px', minWidth: '100px' }}
                               >
-                                {com.nombre}
-                              </div>
-                            </TableCell>
-                            <TableCell className='text-center'>
-                              <Button
-                                size='sm'
-                                onClick={() => handleSelectComuna(com.codigo)}
-                                className='h-7 px-3 text-xs'
-                                variant='default'
+                                {com.codigo}
+                              </TableCell>
+                              <TableCell
+                                className='text-xs sm:text-sm h-[50px]'
+                                style={{ width: 'auto', minWidth: '200px' }}
                               >
-                                Seleccionar
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))
+                                <div
+                                  className='truncate max-w-[200px]'
+                                  title={com.nombre}
+                                >
+                                  {com.nombre}
+                                </div>
+                              </TableCell>
+                              <TableCell
+                                className='text-center h-[50px]'
+                                style={{ width: '120px', minWidth: '120px' }}
+                              >
+                                <Button
+                                  size='sm'
+                                  onClick={() => handleSelectComuna(com.codigo)}
+                                  variant='default'
+                                >
+                                  Seleccionar
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
                       )}
                     </TableBody>
                   </Table>

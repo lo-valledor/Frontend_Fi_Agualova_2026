@@ -27,6 +27,7 @@ import { Label } from '~/components/ui/label';
 import { useAuth } from '~/context/AuthContext';
 import { useUserProfileSimple } from '~/hooks/use-user-profile-simple';
 import type { ActualizarUsuarioProps } from '~/types/administracion';
+import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 
 export const meta: MetaFunction = () => {
   return [
@@ -51,6 +52,8 @@ export default function ProfilePage() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const pageBreadcrumbs = [{ label: 'Perfil de Usuario' }];
 
   // Actualizar formulario cuando se cargan los datos del usuario
   useEffect(() => {
@@ -95,7 +98,7 @@ export default function ProfilePage() {
       const hasUpperLower = /[a-z]/.test(password) && /[A-Z]/.test(password);
       const hasNumber = /\d/.test(password);
       const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-      
+
       if (!hasMinLength || !hasUpperLower || !hasNumber || !hasSpecial) {
         toast.error(
           'La contraseña debe tener mínimo 8 caracteres, mayúsculas, minúsculas, números y caracteres especiales'
@@ -174,6 +177,7 @@ export default function ProfilePage() {
   if (error || !userData) {
     return (
       <div className='container mx-auto p-6'>
+        <BreadcrumbSetter items={pageBreadcrumbs} />
         <div className='flex items-center justify-center min-h-[400px]'>
           <div className='text-center max-w-md'>
             <div className='p-4 bg-rose-100 dark:bg-rose-900/30 rounded-full mx-auto mb-4 w-fit'>
