@@ -103,7 +103,9 @@ export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
 
       // Formatear número con separador de miles
       const formatValue = (val: string) => {
-        const number = parseFloat(val.replace('.', ''));
+        // Remover separadores de miles (puntos) y reemplazar coma decimal por punto
+        const cleanValue = val.replace(/\./g, '').replace(',', '.');
+        const number = parseFloat(cleanValue);
         return isNaN(number)
           ? val
           : number.toLocaleString('es-CL', {
