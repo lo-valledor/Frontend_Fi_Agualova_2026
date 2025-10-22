@@ -23,28 +23,6 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='RUT' />
     ),
     cell: ({ row }) => {
-      return (
-        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='min-w-0 flex-1'>
-            <div
-              className='font-medium truncate text-xs sm:text-sm'
-              title={row.original.rut}
-            >
-              {format(row.getValue('rut'))}
-            </div>
-          </div>
-        </div>
-      );
-    },
-    minSize: 150,
-    maxSize: 220
-  },
-  {
-    accessorKey: 'nombre',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
-    ),
-    cell: ({ row }) => {
       const nombreCompleto = row.original.esEmpresa
         ? row.original.nombre
         : `${row.original.nombre} ${row.original.apellido || ''}`.trim();
@@ -53,18 +31,13 @@ export const columns = ({
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
           <div className='min-w-0 flex-1'>
             <div
-              className='font-medium truncate text-xs sm:text-sm'
+              className='font-medium truncate text-xs sm:text-sm '
               title={nombreCompleto}
             >
               {nombreCompleto}
             </div>
-            <div className='flex items-center gap-1 mt-1'>
-              <Badge
-                variant={row.original.esEmpresa ? 'default' : 'secondary'}
-                className='text-xs'
-              >
-                {row.original.esEmpresa ? 'Empresa' : 'Persona'}
-              </Badge>
+            <div className='text-xs font-mono truncate'>
+              {format(row.getValue('rut'))}
             </div>
           </div>
         </div>
@@ -72,6 +45,28 @@ export const columns = ({
     },
     minSize: 200,
     maxSize: 280
+  },
+  {
+    accessorKey: 'nombre',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Tipo' />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
+          <div className='min-w-0 flex-1'>
+            <Badge
+              variant={row.original.esEmpresa ? 'default' : 'secondary'}
+              className='text-xs'
+            >
+              {row.original.esEmpresa ? 'Empresa' : 'Persona'}
+            </Badge>
+          </div>
+        </div>
+      );
+    },
+    minSize: 100,
+    maxSize: 120
   },
   {
     accessorKey: 'direccion',

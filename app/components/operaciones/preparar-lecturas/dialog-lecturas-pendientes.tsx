@@ -67,7 +67,7 @@ export default function DialogLecturasPendientes({
           className='gap-1 sm:gap-2  border-border text-xs sm:text-sm px-2 sm:px-3'
         >
           <ClockIcon className='h-3 w-3 sm:h-4 sm:w-4' />
-          <span className='hidden sm:inline'>Lecturas pendientes</span>
+          <span className='hidden sm:inline'>Sectores pendientes</span>
           <span className='sm:hidden'>Pendientes</span>
           {data && !data.sinPendientes && (
             <Badge
@@ -87,14 +87,12 @@ export default function DialogLecturasPendientes({
             </div>
             <div>
               <DialogTitle className='text-lg sm:text-xl font-semibold text-foreground'>
-                <span className='hidden sm:inline'>
-                  Sectores con Lecturas Pendientes
-                </span>
-                <span className='sm:hidden'>Lecturas Pendientes</span>
+                <span className='hidden sm:inline'>Sectores Pendientes</span>
+                <span className='sm:hidden'>Sectores Pendientes</span>
               </DialogTitle>
               <DialogDescription className='text-xs sm:text-sm'>
                 <span className='hidden sm:inline'>
-                  Sectores con lecturas pendientes para el periodo en consulta
+                  Sectores pendientes para el periodo en consulta
                 </span>
                 <span className='sm:hidden'>
                   Sectores pendientes del periodo

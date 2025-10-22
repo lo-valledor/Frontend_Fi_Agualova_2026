@@ -6,11 +6,19 @@ import {
   TrendingUp
 } from 'lucide-react';
 
-import { memo, useMemo, useState } from 'react';
+import { memo, useMemo, useState, useRef } from 'react';
 
 import { Bar, BarChart, XAxis, YAxis } from 'recharts';
 
-import { DataTable } from '~/components/data-table/data-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type SortingState
+} from '@tanstack/react-table';
+
 import { ExportButton } from '~/components/shared/export-button';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -22,6 +30,14 @@ import {
   ChartTooltipContent
 } from '~/components/ui/chart';
 import { Separator } from '~/components/ui/separator';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table';
 import type { ExportColumn } from '~/hooks/shared/use-export-data';
 import type { DetalleFacturas } from '~/types/reportes';
 
@@ -40,6 +56,8 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
     '6m' | '1a' | '2a' | '5a' | 'todo'
   >('todo');
   const [showDataTable, setShowDataTable] = useState(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
   // Columnas para exportación
   const facturasColumns = useMemo(
     (): ExportColumn[] => [
@@ -355,6 +373,27 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
     }
   };
 
+  // Table setup with react-table
+  const table = useReactTable({
+    data: detalleFacturas,
+    columns: facturasTableColumns,
+    state: {
+      sorting
+    },
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel()
+  });
+
+  // Virtualization setup
+  const { rows } = table.getRowModel();
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 50,
+    overscan: 10
+  });
+
   if (detalleFacturas.length === 0) {
     return (
       <Card className='border bg-background'>
@@ -568,13 +607,97 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           </CardHeader>
           {showDataTable && (
             <CardContent>
-              <div className='overflow-x-auto'>
-                <DataTable
-                  columns={facturasTableColumns}
-                  data={detalleFacturas}
-                  showSearch={false}
-                  defaultPageSize={10}
-                />
+              <div
+                ref={tableContainerRef}
+                className='rounded-md border overflow-auto'
+                style={{ height: '500px' }}
+              >
+                <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                  <TableHeader className='sticky top-0 z-10 bg-background'>
+                    {table.getHeaderGroups().map(headerGroup => (
+                      <TableRow
+                        key={headerGroup.id}
+                        className='hover:bg-transparent'
+                      >
+                        {headerGroup.headers.map(header => {
+                          const columnDef = header.column.columnDef;
+                          const width = columnDef.minSize || 120;
+                          return (
+                            <TableHead
+                              key={header.id}
+                              className='h-10 px-3 text-xs font-medium'
+                              style={{
+                                width: `${width}px`,
+                                minWidth: `${width}px`,
+                                maxWidth: `${columnDef.maxSize || width}px`
+                              }}
+                            >
+                              {header.isPlaceholder
+                                ? null
+                                : flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
+                                  )}
+                            </TableHead>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody
+                    style={{
+                      height: `${rowVirtualizer.getTotalSize()}px`,
+                      position: 'relative'
+                    }}
+                  >
+                    {rowVirtualizer.getVirtualItems().map(virtualRow => {
+                      const row = rows[virtualRow.index];
+                      return (
+                        <TableRow
+                          key={row.id}
+                          data-index={virtualRow.index}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '50px',
+                            transform: `translateY(${virtualRow.start}px)`,
+                            display: 'table',
+                            tableLayout: 'fixed'
+                          }}
+                          className='border-b hover:bg-muted'
+                        >
+                          {row.getVisibleCells().map(cell => {
+                            const columnDef = cell.column.columnDef;
+                            const width = columnDef.minSize || 120;
+                            return (
+                              <TableCell
+                                key={cell.id}
+                                className='h-[50px] px-3 py-1 text-sm'
+                                style={{
+                                  width: `${width}px`,
+                                  minWidth: `${width}px`,
+                                  maxWidth: `${columnDef.maxSize || width}px`
+                                }}
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+                {rows.length === 0 && (
+                  <div className='h-20 flex items-center justify-center text-sm text-muted-foreground'>
+                    No se encontraron facturas.
+                  </div>
+                )}
               </div>
             </CardContent>
           )}

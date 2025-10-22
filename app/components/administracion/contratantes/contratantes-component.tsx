@@ -52,17 +52,35 @@
  * }
  * ```
  */
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { DataTable } from '~/components/data-table/data-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type SortingState
+} from '@tanstack/react-table';
+
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
+import { Input } from '~/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table';
 import type {
   GetContratante,
   GetComunas,
@@ -89,16 +107,13 @@ interface FilterOptions {
 
 export default function ContratantesComponent({
   contratantes,
-  comunas,
-  giros
+  comunas
 }: Readonly<ContratantesComponentProps>) {
   const [contratantesList] = useState<GetContratante[]>(contratantes);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [detailedContratante, setDetailedContratante] =
     useState<GetContratante | null>(null);
-  const [detailingContratanteRut, setDetailingContratanteRut] = useState<
-    string | null
-  >(null);
+  const [detailingContratanteRut] = useState<string | null>(null);
   const [filters, setFilters] = useState<ContratanteFilters>({
     esEmpresa: 'all',
     comuna: 'all',
@@ -106,6 +121,9 @@ export default function ContratantesComponent({
     tieneTelefono: 'all',
     tieneEmail: 'all'
   });
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const router = useNavigate();
 
@@ -227,6 +245,34 @@ export default function ContratantesComponent({
     });
   };
 
+  // Table setup with react-table
+  const table = useReactTable({
+    data: filteredContratantes,
+    columns: columns({
+      onDetails: handleDetailsContratante,
+      detailingContratanteRut,
+      comunas
+    }),
+    state: {
+      sorting,
+      globalFilter
+    },
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel()
+  });
+
+  // Virtualization setup
+  const { rows } = table.getRowModel();
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 60, // Row height
+    overscan: 10
+  });
+
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
@@ -244,7 +290,7 @@ export default function ContratantesComponent({
               />
               <Button
                 onClick={handleAddContratante}
-                variant="default"
+                variant='default'
                 size='sm'
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -273,17 +319,114 @@ export default function ContratantesComponent({
         {/* Table */}
         <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
-            <div className='overflow-x-auto'>
-              <DataTable
-                columns={columns({
-                  onDetails: handleDetailsContratante,
-                  detailingContratanteRut,
-                  comunas
-                })}
-                data={filteredContratantes}
-                searchPlaceholder='Buscar por RUT, nombre o email...'
-                defaultPageSize={10}
-              />
+            {/* Search */}
+            <div className='flex justify-between items-center mb-3'>
+              <div className='text-sm text-muted-foreground'>
+                {rows.length} registros
+              </div>
+              <div className='relative w-64'>
+                <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+                <Input
+                  placeholder='Buscar por RUT, nombre o email...'
+                  value={globalFilter ?? ''}
+                  onChange={event => setGlobalFilter(event.target.value)}
+                  className='pl-8 h-8 text-sm'
+                />
+              </div>
+            </div>
+
+            {/* Virtualized Table */}
+            <div
+              ref={tableContainerRef}
+              className='rounded-md border overflow-auto'
+              style={{ height: '600px' }}
+            >
+              <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                <TableHeader className='sticky top-0 z-10 bg-background'>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <TableRow
+                      key={headerGroup.id}
+                      className='hover:bg-transparent'
+                    >
+                      {headerGroup.headers.map(header => {
+                        const columnDef = header.column.columnDef;
+                        const width = columnDef.minSize || 150;
+                        return (
+                          <TableHead
+                            key={header.id}
+                            className='h-10 px-3 text-xs font-medium'
+                            style={{
+                              width: `${width}px`,
+                              minWidth: `${width}px`,
+                              maxWidth: `${columnDef.maxSize || width}px`
+                            }}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </TableHead>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize()}px`,
+                    position: 'relative'
+                  }}
+                >
+                  {rowVirtualizer.getVirtualItems().map(virtualRow => {
+                    const row = rows[virtualRow.index];
+                    return (
+                      <TableRow
+                        key={row.id}
+                        data-index={virtualRow.index}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '60px',
+                          transform: `translateY(${virtualRow.start}px)`,
+                          display: 'table',
+                          tableLayout: 'fixed'
+                        }}
+                        className='border-b hover:bg-muted'
+                      >
+                        {row.getVisibleCells().map(cell => {
+                          const columnDef = cell.column.columnDef;
+                          const width = columnDef.minSize || 150;
+                          return (
+                            <TableCell
+                              key={cell.id}
+                              className='h-[60px] px-3 py-1 text-sm'
+                              style={{
+                                width: `${width}px`,
+                                minWidth: `${width}px`,
+                                maxWidth: `${columnDef.maxSize || width}px`
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+              {rows.length === 0 && (
+                <div className='h-20 flex items-center justify-center text-sm text-muted-foreground'>
+                  No se encontraron resultados.
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

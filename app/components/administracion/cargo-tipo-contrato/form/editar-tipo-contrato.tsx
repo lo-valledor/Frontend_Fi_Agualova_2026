@@ -20,6 +20,7 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { Spinner } from '~/components/ui/spinner';
 import {
   Table,
   TableBody,
@@ -99,6 +100,7 @@ export default function EditarTipoContrato({
   const [selectedCargo, setSelectedCargo] =
     useState<CargoPorConceptoOption | null>(null);
   const [descripcion, setDescripcion] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   // Estado para las condiciones agregadas
   const [condicionesAgregadas, setCondicionesAgregadas] =
@@ -361,6 +363,8 @@ export default function EditarTipoContrato({
 
   const handleGuardar = async () => {
     try {
+      setIsSaving(true);
+
       const payload = {
         tipoContratoId: tipoContratoId,
         configuraciones: condicionesAgregadas.map(item => ({
@@ -385,6 +389,8 @@ export default function EditarTipoContrato({
     } catch (error) {
       console.error('Error al guardar:', error);
       toast.error('Error al guardar la configuración');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -422,16 +428,25 @@ export default function EditarTipoContrato({
                   <ArrowLeft className='h-4 w-4' />
                   Volver
                 </Button>
-                <Button variant='outline' onClick={handleCancelar}>
+                <Button
+                  variant='outline'
+                  onClick={handleCancelar}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleGuardar}
                   className='gap-2'
                   variant='default'
+                  disabled={isSaving}
                 >
-                  <Save className='h-4 w-4' />
-                  Guardar
+                  {isSaving ? (
+                    <Spinner className='h-4 w-4' />
+                  ) : (
+                    <Save className='h-4 w-4' />
+                  )}
+                  {isSaving ? 'Guardando...' : 'Guardar'}
                 </Button>
               </>
             }

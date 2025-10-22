@@ -1,15 +1,15 @@
 /**
  * DataTable con Virtual Scrolling
- * 
+ *
  * Versión optimizada de DataTable que solo renderiza las filas visibles,
  * ideal para tablas con 500+ filas
- * 
+ *
  * Beneficios:
  * - Memoria: -80%
  * - Scrolling: +90% más fluido
  * - Re-renders: -95%
  * - Soporta hasta 10,000+ filas sin lag
- * 
+ *
  * @example
  * ```tsx
  * <VirtualDataTable
@@ -26,7 +26,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
@@ -69,7 +68,6 @@ export function VirtualDataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     state: {
       globalFilter
     },
@@ -77,7 +75,7 @@ export function VirtualDataTable<TData, TValue>({
   });
 
   const rows = table.getRowModel().rows;
-  
+
   const { virtualizer, parentRef } = useVirtualScroll(
     rows,
     estimateRowHeight,
@@ -131,7 +129,10 @@ export function VirtualDataTable<TData, TValue>({
           <TableBody>
             {rows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center'
+                >
                   No se encontraron resultados.
                 </TableCell>
               </TableRow>
@@ -173,7 +174,8 @@ export function VirtualDataTable<TData, TValue>({
                     colSpan={columns.length}
                     style={{
                       height:
-                        totalSize - (virtualItems[virtualItems.length - 1]?.end ?? 0)
+                        totalSize -
+                        (virtualItems[virtualItems.length - 1]?.end ?? 0)
                     }}
                   />
                 </TableRow>
@@ -189,7 +191,8 @@ export function VirtualDataTable<TData, TValue>({
           Mostrando {virtualItems.length} de {rows.length} filas
         </div>
         <div>
-          {rows.length} total{rows.length !== data.length && ` (${data.length} sin filtrar)`}
+          {rows.length} total
+          {rows.length !== data.length && ` (${data.length} sin filtrar)`}
         </div>
       </div>
     </div>

@@ -151,6 +151,7 @@ export default function CerrarLecturasComponent({
       if (response.status === 200) {
         const data = response.data as EstadoCierreLecturas[];
         setEstadoCierreLecturas(data);
+        console.log(data);
         if (data.length === 0) {
           toast.info(
             'No se encontraron resultados para los criterios seleccionados'

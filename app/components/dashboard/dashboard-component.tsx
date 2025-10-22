@@ -702,13 +702,17 @@ export default function DashboardComponent({
   limiteInvierno: GetLimiteInvierno;
 }) {
   // Prefetch de rutas más frecuentes para navegación instantánea
-  usePrefetchMultiple([
-    '/dashboard/administracion/contratos',
-    '/dashboard/administracion/clientes',
-    '/dashboard/administracion/medidores',
-    '/dashboard/monitor/lecturas',
-    '/dashboard/operaciones/periodo-facturacion'
-  ], 2000, 1000);
+  usePrefetchMultiple(
+    [
+      '/dashboard/administracion/contratos',
+      '/dashboard/administracion/clientes',
+      '/dashboard/administracion/medidores',
+      '/dashboard/monitor/lecturas',
+      '/dashboard/operaciones/periodo-facturacion'
+    ],
+    2000,
+    1000
+  );
 
   const [dashboardData, setDashboardData] = useState({
     periodoActual: { mes: 0, anio: 0, estado: 'Sin período' },
@@ -874,7 +878,7 @@ export default function DashboardComponent({
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
               <CardTitle className='text-xs sm:text-sm font-medium'>
-                Lecturas Pendientes
+                Sectores Pendientes
               </CardTitle>
               <Activity className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
             </CardHeader>

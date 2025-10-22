@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -39,7 +39,6 @@ import {
 } from '~/types/operaciones';
 
 import DialogLecturasPendientes from './dialog-lecturas-pendientes';
-// Removido useOperaciones ya que los datos vienen como props
 import TablaAsignacionSectores from './tabla-asignacion-sectores';
 
 export default function PrepararLecturasComponent({
@@ -69,8 +68,24 @@ export default function PrepararLecturasComponent({
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
+  const prevLoadingRef = useRef(isLoadingAsignacion);
 
-  // Los datos vienen como props, no necesitamos el hook
+  // Efecto para mostrar toast cuando termine la carga
+  useEffect(() => {
+    // Solo mostrar toast si pasó de loading=true a loading=false (búsqueda completada)
+    if (prevLoadingRef.current && !isLoadingAsignacion) {
+      if (asignacionSectores.length === 0) {
+        toast.info(
+          'No se encontraron sectores para los criterios seleccionados'
+        );
+      } else {
+        toast.success(
+          `✅ Se encontraron ${asignacionSectores.length} sectores`
+        );
+      }
+    }
+    prevLoadingRef.current = isLoadingAsignacion;
+  }, [isLoadingAsignacion, asignacionSectores.length]);
 
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
@@ -124,15 +139,12 @@ export default function PrepararLecturasComponent({
     try {
       setError(null);
       const cicloParaAPI = obtenerCicloParaAPI(cicloSeleccionado);
+
+      // Ejecutar la recarga - el toast de éxito se mostrará cuando se actualice el estado
       await onRecargarAsignacionSectores(cicloParaAPI, periodoFormateado);
 
-      if (asignacionSectores.length === 0) {
-        toast.info(
-          'No se encontraron resultados para los criterios seleccionados'
-        );
-      } else {
-        toast.success(`Se encontraron ${asignacionSectores.length} sectores`);
-      }
+      // No verificar asignacionSectores aquí porque todavía tiene el valor antiguo
+      // El feedback se dará en el useEffect que vigila los cambios
     } catch (error: any) {
       setError(`Error: ${error.message || 'Error desconocido'}`);
 

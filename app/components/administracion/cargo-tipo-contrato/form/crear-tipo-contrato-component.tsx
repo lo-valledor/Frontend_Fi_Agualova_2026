@@ -20,6 +20,7 @@ import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
+import { Spinner } from '~/components/ui/spinner';
 import {
   Table,
   TableBody,
@@ -85,7 +86,9 @@ export default function CrearTipoContratoComponent({
   tiposContratos?: TiposContrato[];
 }>) {
   // Estado para el tipo de contrato seleccionado
-  const [selectedTipoContrato, setSelectedTipoContrato] = useState<number | null>(null);
+  const [selectedTipoContrato, setSelectedTipoContrato] = useState<
+    number | null
+  >(null);
 
   const [selectedConcepto, setSelectedConcepto] =
     useState<ConceptoOption | null>(null);
@@ -94,6 +97,7 @@ export default function CrearTipoContratoComponent({
   const [selectedCargo, setSelectedCargo] =
     useState<CargoPorConceptoOption | null>(null);
   const [descripcion, setDescripcion] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   // Estado para las condiciones agregadas
   const [condicionesAgregadas, setCondicionesAgregadas] = useState<
@@ -303,9 +307,13 @@ export default function CrearTipoContratoComponent({
         cargosTrifasicoAgregados.length === 0 &&
         cargosAmbosAgregados.length === 0
       ) {
-        toast.error('Debe agregar al menos una condición o un cargo facturable');
+        toast.error(
+          'Debe agregar al menos una condición o un cargo facturable'
+        );
         return;
       }
+
+      setIsSaving(true);
 
       const payload = {
         tipoContratoId: selectedTipoContrato,
@@ -330,12 +338,15 @@ export default function CrearTipoContratoComponent({
       }, 1500);
     } catch (error: any) {
       // Mostrar mensaje de error más específico si está disponible
-      const errorMessage = error?.response?.data?.message
-        || error?.response?.data?.error
-        || error?.message
-        || 'Error al crear el cargo tipo contrato';
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        'Error al crear el cargo tipo contrato';
 
       toast.error(errorMessage);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -379,16 +390,25 @@ export default function CrearTipoContratoComponent({
                   <ArrowLeft className='h-4 w-4' />
                   Volver
                 </Button>
-                <Button variant='outline' onClick={handleCancelar}>
+                <Button
+                  variant='outline'
+                  onClick={handleCancelar}
+                  disabled={isSaving}
+                >
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleGuardar}
                   className='gap-2'
                   variant='default'
+                  disabled={isSaving}
                 >
-                  <Save className='h-4 w-4' />
-                  Guardar
+                  {isSaving ? (
+                    <Spinner className='h-4 w-4' />
+                  ) : (
+                    <Save className='h-4 w-4' />
+                  )}
+                  {isSaving ? 'Guardando...' : 'Guardar'}
                 </Button>
               </>
             }
@@ -416,12 +436,16 @@ export default function CrearTipoContratoComponent({
               <select
                 id='tipoContrato'
                 value={selectedTipoContrato || ''}
-                onChange={(e) => setSelectedTipoContrato(Number(e.target.value) || null)}
+                onChange={e =>
+                  setSelectedTipoContrato(Number(e.target.value) || null)
+                }
                 className='mt-2 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
               >
                 <option value=''>Seleccione un tipo de contrato...</option>
                 {(tiposContratos || [])
-                  .filter(tipo => tipo.estado === 'Activo' || tipo.estado === true)
+                  .filter(
+                    tipo => tipo.estado === 'Activo' || tipo.estado === true
+                  )
                   .map(tipo => (
                     <option key={tipo.id} value={tipo.id}>
                       {tipo.nombre}

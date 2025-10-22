@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-22 10:04:00*
+*Generado automáticamente el 2025-10-22 11:26:46*
 
 ## Índice de Componentes
 
@@ -105,9 +105,7 @@
  * - Modal form para CRUD (AcometidaForm)
  * - FilterSummary para mostrar estadísticas
  * - Componentes de filtros colapsables
- * - API endpoints:
- *   * POST /crear-acometida
- *   * PUT /actualizar-acometida
+ * - API: POST /crear-acometida, PUT /actualizar-acometida
  *
  * Filtros disponibles:
  * - Empalme (select)
@@ -1084,16 +1082,16 @@
 ```typescript
 /**
  * DataTable con Virtual Scrolling
- * 
+ *
  * Versión optimizada de DataTable que solo renderiza las filas visibles,
  * ideal para tablas con 500+ filas
- * 
+ *
  * Beneficios:
  * - Memoria: -80%
  * - Scrolling: +90% más fluido
  * - Re-renders: -95%
  * - Soporta hasta 10,000+ filas sin lag
- * 
+ *
  * @example
  * ```tsx
  * <VirtualDataTable
