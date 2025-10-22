@@ -106,7 +106,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
 
       // Formatear número con separador de miles
       const formatValue = (val: string) => {
-        const number = parseFloat(val.replace(',', '.'));
+        const number = parseFloat(val.replace('.', ''));
         return isNaN(number)
           ? val
           : number.toLocaleString('es-CL', {

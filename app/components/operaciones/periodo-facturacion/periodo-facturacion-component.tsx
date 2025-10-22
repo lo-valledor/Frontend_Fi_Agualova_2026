@@ -43,22 +43,22 @@ export default function AbrirPeriodoFacturacion({
   error: string | null;
 }>) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [, setPeriodosData] = useState(periodos);
+  const [periodosData, setPeriodosData] = useState(periodos);
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
     { label: 'Período Facturación' }
   ];
 
-  //Se ejecuta cuando se crea un nuevo periodo
+  //Se ejecuta cuando se crea o cierra un periodo
   const fetchPeriodos = async () => {
     const res = await api.get('/consulta-periodo');
     setPeriodosData(res.data as Periodos[]);
   };
 
   const periodoAbierto = useMemo(() => {
-    return periodos.find(periodo => periodo.epf_descripcion === 'Abierto');
-  }, [periodos]);
+    return periodosData.find(periodo => periodo.epf_descripcion === 'Abierto');
+  }, [periodosData]);
 
   if (error) {
     return (
@@ -153,6 +153,7 @@ export default function AbrirPeriodoFacturacion({
                 </div>
                 <CerrarPeriodo
                   periodoId={periodoAbierto.pf_id}
+                  onSuccess={fetchPeriodos}
                   className='w-full lg:w-auto min-w-32'
                 />
               </div>
@@ -180,7 +181,7 @@ export default function AbrirPeriodoFacturacion({
                 <Button
                   onClick={() => setIsOpenDialog(true)}
                   size='sm'
-                  className='gap-2 w-full sm:w-auto bg-success hover:bg-success/90 text-success-foreground'
+                  variant='default'
                 >
                   <PlusCircleIcon className='h-4 w-4' />
                   <span className='text-sm'>Crear Período</span>
@@ -208,7 +209,7 @@ export default function AbrirPeriodoFacturacion({
             </div>
           </CardHeader>
           <CardContent className='p-4'>
-            {periodos.length === 0 ? (
+            {periodosData.length === 0 ? (
               <div className='flex flex-col items-center justify-center py-8'>
                 <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-muted mb-3'>
                   <History className='h-6 w-6 text-muted-foreground' />
@@ -230,7 +231,7 @@ export default function AbrirPeriodoFacturacion({
                       <div>
                         <div className='text-xl font-semibold text-foreground'>
                           {
-                            periodos.filter(
+                            periodosData.filter(
                               p => p.epf_descripcion === 'Abierto'
                             ).length
                           }
@@ -247,7 +248,7 @@ export default function AbrirPeriodoFacturacion({
                       <div>
                         <div className='text-xl font-semibold text-foreground'>
                           {
-                            periodos.filter(
+                            periodosData.filter(
                               p => p.epf_descripcion === 'Cerrado'
                             ).length
                           }
@@ -263,7 +264,7 @@ export default function AbrirPeriodoFacturacion({
                       <History className='w-4 h-4 text-foreground' />
                       <div>
                         <div className='text-xl font-semibold text-foreground'>
-                          {periodos.length}
+                          {periodosData.length}
                         </div>
                         <div className='text-xs text-muted-foreground'>
                           Total Períodos
@@ -277,7 +278,7 @@ export default function AbrirPeriodoFacturacion({
                 <div className='rounded-xl border border-border overflow-hidden'>
                   <DataTable
                     columns={columns}
-                    data={periodos}
+                    data={periodosData}
                     initialSorting={[{ id: 'Column1', desc: true }]}
                     searchPlaceholder='Buscar por descripción o ID...'
                     defaultPageSize={10}
