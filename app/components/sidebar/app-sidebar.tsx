@@ -12,7 +12,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import { Link, useLocation } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { useDebounce } from '~/hooks/shared/use-debounce';
 
 import {
@@ -273,40 +272,19 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
-  const { permissions, permissionsLoading } = useAuth();
   const [searchTerm, setSearchTerm] = React.useState('');
   const debouncedSearch = useDebounce(searchTerm, 300);
 
-  // Función para filtrar elementos basada en permisos y búsqueda
+  // Función para filtrar elementos basada en búsqueda
   const filteredNavMain = React.useMemo(() => {
-    // Primero filtrar por permisos
-    const permissionFiltered = data.navMain.map(section => {
-      const allowedItems = section.items.filter(item => {
-        // Buscar el permiso para esta ruta
-        const permission = permissions.find(p => p.ruta === item.url);
-        // Solo mostrar si tiene permiso de ver o si no hay permisos cargados aún
-        return permission ? permission.puedeVer : false;
-      });
-
-      // Si no hay items permitidos, no mostrar la sección
-      if (allowedItems.length === 0) {
-        return null;
-      }
-
-      return {
-        ...section,
-        items: allowedItems
-      };
-    }).filter(section => section !== null) as typeof data.navMain;
-
-    // Si no hay búsqueda, devolver solo lo filtrado por permisos
+    // Si no hay búsqueda, devolver todo
     if (!debouncedSearch.trim()) {
-      return permissionFiltered;
+      return data.navMain;
     }
 
-    // Luego aplicar filtro de búsqueda
+    // Aplicar filtro de búsqueda
     const searchLower = debouncedSearch.toLowerCase();
-    return permissionFiltered
+    return data.navMain
       .map(section => {
         const filteredItems = section.items.filter(
           item =>
@@ -324,7 +302,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         };
       })
       .filter(section => section !== null) as typeof data.navMain;
-  }, [debouncedSearch, permissions]);
+  }, [debouncedSearch]);
 
   // Función para verificar si una ruta está activa
   const isActiveRoute = (url: string) => {
@@ -345,19 +323,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent className='gap-1 px-2 sm:px-3 py-2 sm:py-3'>
-        {permissionsLoading ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className='flex items-center justify-center py-8'
-          >
-            <div className='text-muted-foreground text-sm'>
-              Cargando permisos...
-            </div>
-          </motion.div>
-        ) : (
-          <AnimatePresence>
-            {filteredNavMain.length > 0 ? (
+        <AnimatePresence>
+          {filteredNavMain.length > 0 ? (
             <motion.div
               variants={containerVariants}
               initial='hidden'
@@ -516,7 +483,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </motion.div>
           )}
         </AnimatePresence>
-        )}
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
