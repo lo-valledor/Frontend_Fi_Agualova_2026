@@ -8,11 +8,13 @@ import type { Tarifas } from '~/types/mantencion';
 interface TarifasColumnsProps {
   onEdit: (tarifa: Tarifas) => void;
   onDelete: (tarifa: Tarifas) => void;
+  canEdit?: boolean;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TarifasColumnsProps): ColumnDef<Tarifas>[] => [
   {
     accessorKey: 'codigo',
@@ -31,10 +33,7 @@ export const createColumns = ({
       <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => (
-      <div
-        className='truncate font-medium'
-        title={row.getValue('nombre')}
-      >
+      <div className='truncate font-medium' title={row.getValue('nombre')}>
         {row.getValue('nombre')}
       </div>
     )
@@ -48,6 +47,7 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

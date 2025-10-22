@@ -46,7 +46,11 @@ export default function DialogModificarPrecio({
   const [motivo, setMotivo] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { user } = useAuth();
+  const { user, canEdit } = useAuth();
+
+  // Verificar permisos de edición para esta ruta
+  const hasEditPermission = canEdit('/dashboard/operaciones/revisar-precio');
+  const canModify = isAuthorized && hasEditPermission;
 
   const resetForm = () => {
     setValor(valorActual);
@@ -202,7 +206,14 @@ export default function DialogModificarPrecio({
           variant='ghost'
           size='sm'
           className='h-8 px-2 sm:px-3 text-primary hover:text-primary/80 hover:bg-primary/10 transition-colors text-xs sm:text-sm'
-          disabled={!isAuthorized}
+          disabled={!canModify}
+          title={
+            !hasEditPermission
+              ? 'No tiene permisos para editar precios'
+              : !isAuthorized
+                ? 'No está autorizado para esta operación'
+                : ''
+          }
         >
           <Edit3 className='h-3 w-3 sm:h-4 sm:w-4 mr-0.5 sm:mr-1' />
           <span className='hidden sm:inline'>Modificar</span>

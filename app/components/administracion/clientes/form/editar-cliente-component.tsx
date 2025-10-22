@@ -20,6 +20,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { useNavigate, useParams } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
@@ -78,6 +79,11 @@ export default function EditarClienteComponent() {
   const { id: rut } = useParams<{ id: string }>();
   const { theme } = useTheme();
 
+  // Permisos
+  const { canEdit } = useAuth();
+  const route = '/dashboard/administracion/clientes';
+  const hasEditPermission = canEdit(route);
+
   const [cliente, setCliente] = useState<GetClientesByRut | null>(null);
   const [giros, setGiros] = useState<GetGiros[]>([]);
   const [comunas, setComunas] = useState<GetComunas[]>([]);
@@ -87,6 +93,14 @@ export default function EditarClienteComponent() {
   const [rutValidationStatus, setRutValidationStatus] = useState<
     'idle' | 'checking' | 'valid' | 'invalid'
   >('idle');
+
+  // Redirigir si no tiene permisos
+  useEffect(() => {
+    if (!hasEditPermission) {
+      toast.error('No tiene permisos para editar clientes');
+      navigate('/dashboard/administracion/clientes');
+    }
+  }, [hasEditPermission, navigate]);
 
   const clienteSchema = createClienteSchema(existingClients, cliente?.rut);
 
@@ -277,7 +291,12 @@ export default function EditarClienteComponent() {
                   onClick={form.handleSubmit(onSubmit)}
                   className='gap-2'
                   variant='default'
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !hasEditPermission}
+                  title={
+                    !hasEditPermission
+                      ? 'No tiene permisos para editar clientes'
+                      : ''
+                  }
                 >
                   <Save className='h-4 w-4' />
                   {isSubmitting ? 'Actualizando...' : 'Actualizar Cliente'}

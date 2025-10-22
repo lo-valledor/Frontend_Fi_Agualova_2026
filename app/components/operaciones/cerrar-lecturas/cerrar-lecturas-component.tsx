@@ -13,10 +13,10 @@
  * 1. Usuario selecciona ciclo de facturación (15 o 30)
  * 2. Sistema carga lecturas pendientes de cierre para ese ciclo
  * 3. Sistema muestra tabla con estado por nicho:
- *    - Lecturas OK (sin problemas)
- *    - Claves Rojas (críticas - bloquean cierre)
- *    - Claves Naranjas (alertas - permiten cierre con advertencia)
- *    - Lecturas Corregidas
+ * - Lecturas OK (sin problemas)
+ * - Claves Rojas (críticas - bloquean cierre)
+ * - Claves Naranjas (alertas - permiten cierre con advertencia)
+ * - Lecturas Corregidas
  * 4. Usuario selecciona nichos a cerrar (checkboxes en tabla)
  * 5. Sistema valida que no haya claves críticas
  * 6. Usuario confirma cierre en diálogo
@@ -69,6 +69,7 @@ import { toast } from 'sonner';
 
 import { useMemo, useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
@@ -115,6 +116,11 @@ export default function CerrarLecturasComponent({
   const [selectedRows, setSelectedRows] = useState<EstadoCierreLecturas[]>([]);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [totalLecturasCerrar, setTotalLecturasCerrar] = useState(0);
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/operaciones/cerrar-lecturas';
+  const hasPermission = canCreate(route) || canEdit(route);
 
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
@@ -606,6 +612,7 @@ export default function CerrarLecturasComponent({
             periodo={periodoFormateado}
             onSuccess={handleLecturaCerrada}
             totalLecturas={totalLecturasCerrar}
+            disabled={!hasPermission}
           />
         )}
       </div>

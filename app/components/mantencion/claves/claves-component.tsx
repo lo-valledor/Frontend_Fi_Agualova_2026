@@ -5,6 +5,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -29,36 +30,52 @@ export default function ClavesComponent({
 
   const revalidator = useRevalidator();
 
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/mantencion/claves';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const handleAdd = useCallback(() => {
     setSelectedClave(undefined);
     setModalMode('add');
     setIsModalOpen(true);
   }, []);
 
-  const handleEdit = useCallback((clave: Claves) => {
-    setSelectedClave(clave);
-    setModalMode('edit');
-    setIsModalOpen(true);
-  }, []);
-
-  const handleDelete = useCallback(async (clave: Claves) => {
-    if (
-      window.confirm(
-        `¿Está seguro de que desea eliminar la clave "${clave.codigo}"?`
-      )
-    ) {
-      try {
-        const { default: api } = await import('~/lib/api');
-        await api.delete(`/eliminarClaves/${clave.id}`);
-
-        toast.success('Clave eliminada exitosamente');
-        revalidator.revalidate();
-      } catch (error) {
-        console.error('Error al eliminar clave:', error);
-        toast.error('Error al eliminar la clave');
+  const handleEdit = useCallback(
+    (clave: Claves) => {
+      if (!hasEditPermission) {
+        toast.error('No tiene permisos para editar claves');
+        return;
       }
-    }
-  }, [revalidator]);
+      setSelectedClave(clave);
+      setModalMode('edit');
+      setIsModalOpen(true);
+    },
+    [hasEditPermission]
+  );
+
+  const handleDelete = useCallback(
+    async (clave: Claves) => {
+      if (
+        window.confirm(
+          `¿Está seguro de que desea eliminar la clave "${clave.codigo}"?`
+        )
+      ) {
+        try {
+          const { default: api } = await import('~/lib/api');
+          await api.delete(`/eliminarClaves/${clave.id}`);
+
+          toast.success('Clave eliminada exitosamente');
+          revalidator.revalidate();
+        } catch (error) {
+          console.error('Error al eliminar clave:', error);
+          toast.error('Error al eliminar la clave');
+        }
+      }
+    },
+    [revalidator]
+  );
 
   const handleSuccess = useCallback(() => {
     revalidator.revalidate();
@@ -74,9 +91,10 @@ export default function ClavesComponent({
     () =>
       createColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete
+        onDelete: handleDelete,
+        canEdit: hasEditPermission
       }),
-    [handleEdit, handleDelete]
+    [handleEdit, handleDelete, hasEditPermission]
   );
 
   return (
@@ -90,8 +108,14 @@ export default function ClavesComponent({
             <div className='flex gap-2'>
               <Button
                 onClick={handleAdd}
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear claves'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Clave

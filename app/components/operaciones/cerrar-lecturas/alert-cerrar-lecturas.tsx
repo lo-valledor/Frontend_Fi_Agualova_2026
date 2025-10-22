@@ -26,6 +26,7 @@ interface AlertCerrarLecturasProps {
   onOpenChange: (isOpen: boolean) => void;
   isOpen: boolean;
   totalLecturas: number;
+  disabled?: boolean;
 }
 
 export default function AlertCerrarLecturas({
@@ -35,7 +36,8 @@ export default function AlertCerrarLecturas({
   onSuccess,
   onOpenChange,
   isOpen,
-  totalLecturas
+  totalLecturas,
+  disabled = false
 }: AlertCerrarLecturasProps) {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -117,6 +119,8 @@ export default function AlertCerrarLecturas({
         <Button
           variant='outline'
           className='border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400'
+          disabled={disabled}
+          title={disabled ? 'No tiene permisos para cerrar lecturas' : ''}
         >
           <CircleX className='h-4 w-4 mr-1' /> Cerrar
         </Button>

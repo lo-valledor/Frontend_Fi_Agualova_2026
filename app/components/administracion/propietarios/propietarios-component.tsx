@@ -59,6 +59,7 @@ import { toast } from 'sonner';
 
 import React, { useMemo, useState, useRef } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   flexRender,
@@ -120,6 +121,11 @@ export default function PropietariosComponent({
   const [globalFilter, setGlobalFilter] = useState('');
   const [sorting, setSorting] = useState<SortingState>([]);
   const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  // Permisos
+  const { canEdit } = useAuth();
+  const route = '/dashboard/administracion/propietarios';
+  const hasEditPermission = canEdit(route);
 
   // Filter options from data
   const filterOptions = useMemo((): FilterOptions => {
@@ -293,7 +299,10 @@ export default function PropietariosComponent({
                 onClick={handleSyncPropietarios}
                 className='bg-emerald-600 hover:bg-emerald-700'
                 size='sm'
-                disabled={isSyncing}
+                disabled={isSyncing || !hasEditPermission}
+                title={
+                  !hasEditPermission ? 'No tiene permisos para sincronizar' : ''
+                }
               >
                 <RefreshCw
                   className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}

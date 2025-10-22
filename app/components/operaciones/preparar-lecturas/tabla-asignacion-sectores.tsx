@@ -2,7 +2,6 @@ import {
   AlertCircle,
   CheckCircle2,
   FileTextIcon,
-  HashIcon,
   Info,
   Loader2,
   PlayIcon,
@@ -12,6 +11,8 @@ import {
 import { toast } from 'sonner';
 
 import React, { useMemo, useState } from 'react';
+
+import { useAuth } from '~/context/AuthContext';
 
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -74,6 +75,11 @@ export default function TablaAsignacionSectores({
   const [selectedNichos, setSelectedNichos] = useState<NichoSeleccionado[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/operaciones/preparar-lecturas';
+  const hasPermission = canCreate(route) || canEdit(route);
   const [submitResults, setSubmitResults] = useState<{
     success: number;
     errors: number;
@@ -281,7 +287,11 @@ export default function TablaAsignacionSectores({
               isSubmitting ||
               selectedNichos.length === 0 ||
               !periodo ||
-              !cicloFacturable
+              !cicloFacturable ||
+              !hasPermission
+            }
+            title={
+              !hasPermission ? 'No tiene permisos para preparar lecturas' : ''
             }
             className='gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 w-full sm:w-auto'
             size='sm'
@@ -378,6 +388,10 @@ export default function TablaAsignacionSectores({
                     checked={selectAll}
                     onCheckedChange={handleSelectAll}
                     aria-label='Seleccionar todos'
+                    disabled={!hasPermission}
+                    title={
+                      !hasPermission ? 'No tiene permisos para seleccionar' : ''
+                    }
                   />
                 </TableHead>
                 <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4'>
@@ -385,13 +399,6 @@ export default function TablaAsignacionSectores({
                     <ServerIcon className='w-3 h-3 sm:w-4 sm:h-4 text-slate-500' />
                     <span className='hidden sm:inline'>Sector</span>
                     <span className='sm:hidden'>Sect</span>
-                  </div>
-                </TableHead>
-                <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4'>
-                  <div className='flex items-center justify-center gap-1 sm:gap-2'>
-                    <HashIcon className='w-3 h-3 sm:w-4 sm:h-4 text-emerald-500' />
-                    <span className='hidden sm:inline'>Nicho</span>
-                    <span className='sm:hidden'>Nich</span>
                   </div>
                 </TableHead>
                 <TableHead className='font-semibold text-xs sm:text-sm px-2 sm:px-4 hidden sm:table-cell'>
@@ -442,27 +449,18 @@ export default function TablaAsignacionSectores({
                         checked={isNichoSelected(item.nichoId)}
                         onCheckedChange={() => handleSelectNicho(item)}
                         aria-label={`Seleccionar nicho ${item.nichoId}`}
+                        disabled={!hasPermission}
+                        title={
+                          !hasPermission
+                            ? 'No tiene permisos para seleccionar'
+                            : ''
+                        }
                       />
                     </TableCell>
                     <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className='font-mono text-xs sm:text-sm font-medium bg-background px-1 sm:px-2 py-1 rounded-md inline-block'>
-                              {item.sectorId}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{getSectorDescripcion(item.sectorId)}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      {item.descripcionSector}
                     </TableCell>
-                    <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
-                      <div className='font-mono text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/30 px-1 sm:px-2 py-1 rounded-md inline-block'>
-                        {item.nichoId}
-                      </div>
-                    </TableCell>
+
                     <TableCell className='px-2 sm:px-4 py-2 sm:py-3 hidden sm:table-cell'>
                       <TooltipProvider>
                         <Tooltip>

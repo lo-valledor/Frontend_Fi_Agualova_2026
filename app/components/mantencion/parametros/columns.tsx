@@ -8,11 +8,13 @@ import type { Parametro } from '~/types/mantencion';
 interface ParametrosColumnsProps {
   onEdit: (parametro: Parametro) => void;
   onDelete: (parametro: Parametro) => void;
+  canEdit?: boolean;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: ParametrosColumnsProps): ColumnDef<Parametro>[] => [
   {
     accessorKey: 'descripcion',
@@ -80,6 +82,7 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

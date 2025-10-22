@@ -10,10 +10,13 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+import { useNavigate } from 'react-router';
 
 import Select from 'react-select';
 
+import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { getTailwindSelectStyles } from '~/components/shared/react-select-styles';
 import { Button } from '~/components/ui/button';
@@ -92,6 +95,21 @@ export default function EditarTipoContrato({
   cargos: BuscarCargoFacturable[];
   tipoContratoId: number;
 }>) {
+  const navigate = useNavigate();
+
+  // Permisos
+  const { canEdit } = useAuth();
+  const route = '/dashboard/administracion/cargo-tipo-contrato';
+  const hasEditPermission = canEdit(route);
+
+  // Redirigir si no tiene permisos
+  useEffect(() => {
+    if (!hasEditPermission) {
+      toast.error('No tiene permisos para editar cargo tipo contrato');
+      navigate('/dashboard/administracion/cargo-tipo-contrato');
+    }
+  }, [hasEditPermission, navigate]);
+
   const [tipoContrato] = useState(`Tipo de Contrato ID: ${tipoContratoId}`);
   const [selectedConcepto, setSelectedConcepto] =
     useState<ConceptoOption | null>(null);
@@ -439,7 +457,12 @@ export default function EditarTipoContrato({
                   onClick={handleGuardar}
                   className='gap-2'
                   variant='default'
-                  disabled={isSaving}
+                  disabled={isSaving || !hasEditPermission}
+                  title={
+                    !hasEditPermission
+                      ? 'No tiene permisos para editar cargo tipo contrato'
+                      : ''
+                  }
                 >
                   {isSaving ? (
                     <Spinner className='h-4 w-4' />

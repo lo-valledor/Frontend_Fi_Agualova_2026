@@ -65,6 +65,7 @@ import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ExportButton } from '~/components/shared/export-button';
@@ -88,7 +89,6 @@ import {
   type MedidorFilters,
   MedidorFiltersComponent
 } from './medidor-filters';
-import { MedidorFormModal } from './medidor-form';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { useNavigate } from 'react-router';
 
@@ -137,6 +137,12 @@ export default function MedidoresComponent({
     { id: 2, nombre: 'Trifásico' }
   ]);
   const navigate = useNavigate();
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/medidores';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
 
   useEffect(() => {
     setMedidores(initialMedidores);
@@ -282,8 +288,14 @@ export default function MedidoresComponent({
               />
               <Button
                 onClick={handleAdd}
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear medidores'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Medidor
@@ -320,7 +332,8 @@ export default function MedidoresComponent({
               <VirtualDataTable
                 columns={columns({
                   onEdit: handleEdit,
-                  onAsociarSubempalme: handleAsociarSubempalme
+                  onAsociarSubempalme: handleAsociarSubempalme,
+                  canEdit: hasEditPermission
                 })}
                 data={filteredMedidores}
                 searchPlaceholder='Buscar por número de serie, local o acometida...'
@@ -330,20 +343,6 @@ export default function MedidoresComponent({
             </div>
           </CardContent>
         </Card>
-
-        {/* Modales */}
-        {isModalOpen && (
-          <MedidorFormModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onSubmit={handleSubmit}
-            medidor={selectedMedidor}
-            mode={modalMode}
-            isLoading={isLoading}
-            marcas={marcas}
-            tipos={tipos}
-          />
-        )}
 
         {isDeleteDialogOpen && (
           <DeleteConfirmationDialog

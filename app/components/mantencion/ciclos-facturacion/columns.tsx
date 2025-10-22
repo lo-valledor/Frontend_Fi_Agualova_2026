@@ -8,11 +8,13 @@ import type { CiclosFacturacion } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (ciclo: CiclosFacturacion) => void;
   onDelete: (ciclo: CiclosFacturacion) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<CiclosFacturacion>[] => [
   {
     accessorKey: 'descripcion',
@@ -114,6 +116,7 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

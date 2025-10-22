@@ -26,11 +26,13 @@ import api from '~/lib/api';
 interface ReposicionSolicitadaDialogProps {
   acometida: string;
   onSuccess: () => void;
+  disabled?: boolean;
 }
 
 export function ReposicionSolicitadaDialog({
   acometida,
-  onSuccess
+  onSuccess,
+  disabled = false
 }: Readonly<ReposicionSolicitadaDialogProps>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -60,13 +62,18 @@ export function ReposicionSolicitadaDialog({
                 variant='outline'
                 size='icon'
                 className='h-8 w-8 border-sky-500 text-sky-500 hover:bg-sky-50 hover:border-sky-600 dark:border-sky-700 dark:text-sky-400 dark:hover:bg-sky-900/30 dark:hover:border-sky-600 transition-colors'
+                disabled={disabled}
               >
                 <Undo2 className='h-4 w-4' />
               </Button>
             </AlertDialogTrigger>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Solicitar Reposición</p>
+            <p>
+              {disabled
+                ? 'No tiene permisos para solicitar reposición'
+                : 'Solicitar Reposición'}
+            </p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

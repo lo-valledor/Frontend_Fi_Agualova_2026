@@ -48,6 +48,7 @@ import { useEffect, useState, useRef } from 'react';
 
 import { useNavigate } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   flexRender,
@@ -94,6 +95,12 @@ export default function CargoTipoContratoComponent({
   const [sorting, setSorting] = useState<SortingState>([]);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const router = useNavigate();
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/cargo-tipo-contrato';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
 
   useEffect(() => {
     setData(initialData);
@@ -154,7 +161,8 @@ export default function CargoTipoContratoComponent({
     data,
     columns: columns({
       onEdit: handleEdit,
-      onDelete: handleDelete
+      onDelete: handleDelete,
+      canEdit: hasEditPermission
     }),
     state: {
       sorting,
@@ -184,7 +192,17 @@ export default function CargoTipoContratoComponent({
           description='Gestiona las relaciones entre cargos y tipos de contrato'
           actions={
             <div className='flex gap-2'>
-              <Button onClick={handleAdd} variant='default' size='sm'>
+              <Button
+                onClick={handleAdd}
+                variant='default'
+                size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear cargos tipo contrato'
+                    : ''
+                }
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Cargo Tipo Contrato
               </Button>

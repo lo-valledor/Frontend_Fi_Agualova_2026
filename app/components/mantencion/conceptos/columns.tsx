@@ -8,11 +8,13 @@ import type { Conceptos } from '~/types/mantencion';
 interface ConceptosColumnsProps {
   onEdit: (concepto: Conceptos) => void;
   onDelete: (concepto: Conceptos) => void;
+  canEdit?: boolean;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: ConceptosColumnsProps): ColumnDef<Conceptos>[] => [
   {
     accessorKey: 'denominacion',
@@ -98,6 +100,7 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

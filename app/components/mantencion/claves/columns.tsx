@@ -8,11 +8,13 @@ import type { Claves } from '~/types/mantencion';
 interface ClavesColumnsProps {
   onEdit: (clave: Claves) => void;
   onDelete: (clave: Claves) => void;
+  canEdit?: boolean;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: ClavesColumnsProps): ColumnDef<Claves>[] => [
   {
     accessorKey: 'codigo',
@@ -80,6 +82,7 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

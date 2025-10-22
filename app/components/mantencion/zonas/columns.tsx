@@ -8,11 +8,13 @@ import type { Zonas } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (zona: Zonas) => void;
   onDelete: (zona: Zonas) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<Zonas>[] => [
   {
     accessorKey: 'nombre',
@@ -81,6 +83,7 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

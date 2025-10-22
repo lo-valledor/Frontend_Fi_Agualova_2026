@@ -5,6 +5,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -26,17 +27,30 @@ export default function NichosComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/mantencion/nichos';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const handleAddNicho = useCallback(() => {
     setSelectedNicho(null);
     setModalMode('add');
     setIsModalOpen(true);
   }, []);
 
-  const handleEditNicho = useCallback((nicho: Nicho) => {
-    setSelectedNicho(nicho);
-    setModalMode('edit');
-    setIsModalOpen(true);
-  }, []);
+  const handleEditNicho = useCallback(
+    (nicho: Nicho) => {
+      if (!hasEditPermission) {
+        toast.error('No tiene permisos para editar nichos');
+        return;
+      }
+      setSelectedNicho(nicho);
+      setModalMode('edit');
+      setIsModalOpen(true);
+    },
+    [hasEditPermission]
+  );
 
   const handleDeleteNicho = useCallback((nicho: Nicho) => {
     setSelectedNicho(nicho);
@@ -55,11 +69,13 @@ export default function NichosComponent({
   }, [modalMode, revalidator]);
 
   const memoizedColumns = useMemo(
-    () => columns({
-      onEdit: handleEditNicho,
-      onDelete: handleDeleteNicho
-    }),
-    [handleEditNicho, handleDeleteNicho]
+    () =>
+      columns({
+        onEdit: handleEditNicho,
+        onDelete: handleDeleteNicho,
+        canEdit: hasEditPermission
+      }),
+    [handleEditNicho, handleDeleteNicho, hasEditPermission]
   );
 
   return (
@@ -73,8 +89,14 @@ export default function NichosComponent({
             <div className='flex gap-2'>
               <Button
                 onClick={handleAddNicho}
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear nichos'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Nicho
@@ -86,10 +108,7 @@ export default function NichosComponent({
         {/* Table */}
         <Card className='border border-border shadow-sm'>
           <CardContent className='relative'>
-            <DataTable
-              columns={memoizedColumns}
-              data={nichos}
-            />
+            <DataTable columns={memoizedColumns} data={nichos} />
           </CardContent>
         </Card>
 

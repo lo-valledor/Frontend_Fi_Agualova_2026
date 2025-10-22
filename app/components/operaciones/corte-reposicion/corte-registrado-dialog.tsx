@@ -26,11 +26,13 @@ import api from '~/lib/api';
 interface CorteRegistradoDialogProps {
   acometida: string;
   onSuccess: () => void;
+  disabled?: boolean;
 }
 
 export function CorteRegistradoDialog({
   acometida,
-  onSuccess
+  onSuccess,
+  disabled = false
 }: Readonly<CorteRegistradoDialogProps>) {
   const [open, setOpen] = useState(false);
   const [fecha, setFecha] = useState('');
@@ -73,13 +75,18 @@ export function CorteRegistradoDialog({
                 variant='outline'
                 size='icon'
                 className='h-8 w-8 border-rose-500 text-rose-500 hover:bg-rose-50 hover:border-rose-600 dark:border-rose-700 dark:text-rose-400 dark:hover:bg-rose-900/30 dark:hover:border-rose-600 transition-colors'
+                disabled={disabled}
               >
                 <Scissors className='h-4 w-4' />
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Registrar Corte</p>
+            <p>
+              {disabled
+                ? 'No tiene permisos para registrar cortes'
+                : 'Registrar Corte'}
+            </p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

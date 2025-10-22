@@ -60,6 +60,8 @@ import { useCallback, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
+
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -110,6 +112,13 @@ export default function ClientesComponent({
 
   const router = useNavigate();
   const { getClienteByRut } = useClientes();
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/clientes';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const { filteredClients, filterStats, filterOptions } = useClientFilters(
     clients,
     filters
@@ -184,8 +193,14 @@ export default function ClientesComponent({
               />
               <Button
                 onClick={handleAddCliente}
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear clientes'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Cliente
@@ -219,7 +234,8 @@ export default function ClientesComponent({
                   onDetails: handleDetailsCliente,
                   onEdit: handleEditCliente,
                   editingClienteRut,
-                  detailingClienteRut
+                  detailingClienteRut,
+                  canEdit: hasEditPermission
                 })}
                 data={filteredClients}
                 searchPlaceholder='Buscar por RUT, nombre o email...'

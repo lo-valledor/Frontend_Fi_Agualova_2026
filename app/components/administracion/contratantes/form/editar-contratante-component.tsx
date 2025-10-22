@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
@@ -58,6 +59,19 @@ export default function EditarContratanteComponent() {
   const navigate = useNavigate();
   const { id: rut } = useParams<{ id: string }>();
   const { theme } = useTheme();
+
+  // Permisos
+  const { canEdit } = useAuth();
+  const route = '/dashboard/administracion/contratantes';
+  const hasEditPermission = canEdit(route);
+
+  // Redirigir si no tiene permisos
+  useEffect(() => {
+    if (!hasEditPermission) {
+      toast.error('No tiene permisos para editar contratantes');
+      navigate('/dashboard/administracion/contratantes');
+    }
+  }, [hasEditPermission, navigate]);
 
   const [contratante, setContratante] = useState<GetContratante | null>(null);
   const [giros, setGiros] = useState<GetGiros[]>([]);
@@ -268,7 +282,12 @@ export default function EditarContratanteComponent() {
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
                   className='gap-2'
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !hasEditPermission}
+                  title={
+                    !hasEditPermission
+                      ? 'No tiene permisos para editar contratantes'
+                      : ''
+                  }
                 >
                   <Save className='h-4 w-4' />
                   {isSubmitting ? 'Actualizando...' : 'Actualizar Contratante'}

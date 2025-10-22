@@ -59,6 +59,8 @@ import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
+
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -135,6 +137,12 @@ export default function PreciosCargoComponent({
     mes: number;
     anio: number;
   } | null>(null);
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/operaciones/precios-cargo';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
 
   // Consultar periodo abierto al montar el componente
   useEffect(() => {
@@ -396,7 +404,12 @@ export default function PreciosCargoComponent({
                 </div>
                 <div className='rounded-xl border border-border overflow-hidden'>
                   <DataTablePrecios
-                    columns={columnsEnel(mes, anio, handleDataUpdate)}
+                    columns={columnsEnel(
+                      mes,
+                      anio,
+                      handleDataUpdate,
+                      hasCreatePermission
+                    )}
                     data={tablaEnel}
                     searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}
@@ -445,8 +458,8 @@ export default function PreciosCargoComponent({
                     <p className='text-xs text-muted-foreground flex items-center gap-2 mt-1'>
                       <Info className='w-4 h-4 text-success' />
                       <span>
-                        Precios fijados directamente por Enerlova para el
-                        mes actual
+                        Precios fijados directamente por Enerlova para el mes
+                        actual
                       </span>
                     </p>
                   </div>
@@ -456,7 +469,10 @@ export default function PreciosCargoComponent({
                 </div>
                 <div className='rounded-xl border border-border overflow-hidden'>
                   <DataTablePrecios
-                    columns={columns(handleEnerlovaDataUpdate)}
+                    columns={columns(
+                      handleEnerlovaDataUpdate,
+                      hasEditPermission
+                    )}
                     data={tablaEnerlova}
                     searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}

@@ -58,6 +58,7 @@ import { useMemo, useState, useRef } from 'react';
 
 import { useNavigate } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   flexRender,
@@ -126,6 +127,12 @@ export default function ContratantesComponent({
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const router = useNavigate();
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/contratantes';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
 
   // Filter options from data
   const filterOptions = useMemo((): FilterOptions => {
@@ -226,6 +233,10 @@ export default function ContratantesComponent({
     router('/dashboard/administracion/contratantes/crear');
   };
 
+  const handleEditContratante = (contratante: GetContratante) => {
+    router(`/dashboard/administracion/contratantes/editar/${contratante.rut}`);
+  };
+
   const handleDetailsContratante = (contratante: GetContratante) => {
     setDetailedContratante(contratante);
     setIsDetailsOpen(true);
@@ -251,7 +262,8 @@ export default function ContratantesComponent({
     columns: columns({
       onDetails: handleDetailsContratante,
       detailingContratanteRut,
-      comunas
+      comunas,
+      canEdit: hasEditPermission
     }),
     state: {
       sorting,
@@ -292,6 +304,12 @@ export default function ContratantesComponent({
                 onClick={handleAddContratante}
                 variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear contratantes'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Contratante

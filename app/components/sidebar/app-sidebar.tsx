@@ -12,6 +12,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import { Link, useLocation } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { useDebounce } from '~/hooks/shared/use-debounce';
 
 import {
@@ -274,24 +275,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = React.useState('');
   const debouncedSearch = useDebounce(searchTerm, 300);
+  const { canView } = useAuth();
 
-  // Función para filtrar elementos basada en búsqueda
+  // Función para filtrar elementos basada en búsqueda y permisos
   const filteredNavMain = React.useMemo(() => {
-    // Si no hay búsqueda, devolver todo
-    if (!debouncedSearch.trim()) {
-      return data.navMain;
-    }
-
-    // Aplicar filtro de búsqueda
     const searchLower = debouncedSearch.toLowerCase();
+
     return data.navMain
       .map(section => {
-        const filteredItems = section.items.filter(
-          item =>
-            item.title.toLowerCase().includes(searchLower) ||
-            section.title.toLowerCase().includes(searchLower)
-        );
+        const filteredItems = section.items.filter(item => {
+          // Verificar permisos primero - si no tiene permiso de ver, no mostrar
+          if (!canView(item.url)) {
+            return false;
+          }
 
+          // Si hay búsqueda, aplicar filtro de búsqueda
+          if (debouncedSearch.trim()) {
+            return (
+              item.title.toLowerCase().includes(searchLower) ||
+              section.title.toLowerCase().includes(searchLower)
+            );
+          }
+
+          // Si no hay búsqueda, mostrar todo lo que tenga permisos
+          return true;
+        });
+
+        // Si no hay items con permisos, no mostrar la sección
         if (filteredItems.length === 0) {
           return null;
         }
@@ -302,7 +312,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         };
       })
       .filter(section => section !== null) as typeof data.navMain;
-  }, [debouncedSearch]);
+  }, [debouncedSearch, canView]);
 
   // Función para verificar si una ruta está activa
   const isActiveRoute = (url: string) => {

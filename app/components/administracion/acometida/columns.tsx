@@ -7,10 +7,12 @@ import type { Acometida } from '~/types/administracion';
 
 interface TableColumnsProps {
   onEdit: (acometida: Acometida) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
-  onEdit
+  onEdit,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<Acometida>[] => [
   {
     accessorKey: 'acometidaId',
@@ -229,6 +231,7 @@ export const columns = ({
             item={row.original}
             showView={false}
             showDelete={false}
+            disableEdit={!canEdit}
           />
         </div>
       );

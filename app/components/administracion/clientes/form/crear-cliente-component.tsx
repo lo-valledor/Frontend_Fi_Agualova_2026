@@ -20,6 +20,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { useNavigate } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
@@ -76,6 +77,11 @@ export default function CrearClienteComponent() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
+  // Permisos
+  const { canCreate } = useAuth();
+  const route = '/dashboard/administracion/clientes';
+  const hasCreatePermission = canCreate(route);
+
   const [giros, setGiros] = useState<GetGiros[]>([]);
   const [comunas, setComunas] = useState<GetComunas[]>([]);
   const [existingClients, setExistingClients] = useState<string[]>([]);
@@ -83,6 +89,14 @@ export default function CrearClienteComponent() {
   const [rutValidationStatus, setRutValidationStatus] = useState<
     'idle' | 'checking' | 'valid' | 'invalid'
   >('idle');
+
+  // Redirigir si no tiene permisos
+  useEffect(() => {
+    if (!hasCreatePermission) {
+      toast.error('No tiene permisos para crear clientes');
+      navigate('/dashboard/administracion/clientes');
+    }
+  }, [hasCreatePermission, navigate]);
 
   const clienteSchema = createClienteSchema(existingClients);
 
@@ -203,7 +217,12 @@ export default function CrearClienteComponent() {
                   onClick={form.handleSubmit(onSubmit)}
                   className='gap-2'
                   variant='default'
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !hasCreatePermission}
+                  title={
+                    !hasCreatePermission
+                      ? 'No tiene permisos para crear clientes'
+                      : ''
+                  }
                 >
                   <Save className='h-4 w-4' />
                   {isSubmitting ? 'Creando...' : 'Crear Cliente'}

@@ -8,11 +8,13 @@ import type { BuscarCargoFacturable } from '~/types/administracion';
 interface TableColumnsProps {
   onEdit: (cargo: BuscarCargoFacturable) => void;
   editingCargoId: number | null;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  editingCargoId
+  editingCargoId,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<BuscarCargoFacturable>[] => [
   {
     accessorKey: 'cuenta',
@@ -219,6 +221,7 @@ export const columns = ({
             showView={false}
             showDelete={false}
             loadingEdit={isEditing}
+            disableEdit={!canEdit}
           />
         </div>
       );

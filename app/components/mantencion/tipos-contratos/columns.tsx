@@ -8,11 +8,13 @@ import type { TiposContrato } from '~/types/mantencion';
 interface TiposContratoColumnsProps {
   onEdit: (tipoContrato: TiposContrato) => void;
   onDelete: (tipoContrato: TiposContrato) => void;
+  canEdit?: boolean;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TiposContratoColumnsProps): ColumnDef<TiposContrato>[] => [
   {
     accessorKey: 'nombre',
@@ -58,6 +60,7 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

@@ -66,6 +66,7 @@ import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -91,6 +92,12 @@ export default function UsuariosComponent({
   const revalidator = useRevalidator();
 
   const { fetchUsuarios, deleteUsuario, loadingState } = useAdministracion();
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/usuarios';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
 
   // Sincronizar estado local cuando los datos del loader cambian (después de revalidate)
   useEffect(() => {
@@ -152,7 +159,17 @@ export default function UsuariosComponent({
           description='Gestiona los usuarios del sistema'
           actions={
             <div className='flex gap-2'>
-              <Button onClick={handleAddUser} variant='default' size='sm'>
+              <Button
+                onClick={handleAddUser}
+                variant='default'
+                size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear usuarios'
+                    : ''
+                }
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Usuario
               </Button>
@@ -166,7 +183,8 @@ export default function UsuariosComponent({
             <DataTable
               columns={columns({
                 onEdit: handleEditUser,
-                onDelete: handleDeleteUser
+                onDelete: handleDeleteUser,
+                canEdit: hasEditPermission
               })}
               data={usuarios}
             />

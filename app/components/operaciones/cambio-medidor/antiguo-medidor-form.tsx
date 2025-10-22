@@ -17,8 +17,9 @@ export default function AntiguoMedidorForm({
   isLoading,
   onMedidorChange,
   onBuscar,
-  onLimpiar
-}: AntiguoMedidorFormProps) {
+  onLimpiar,
+  disabled = false
+}: AntiguoMedidorFormProps & { disabled?: boolean }) {
   return (
     <Collapsible
       defaultOpen
@@ -57,6 +58,10 @@ export default function AntiguoMedidorForm({
                   className='rounded-r-none focus-visible:ring-1 border-border focus-visible:ring-ring text-sm sm:text-base h-9 sm:h-10'
                   value={medidorAntiguo.acometida}
                   onChange={onMedidorChange}
+                  disabled={disabled}
+                  title={
+                    disabled ? 'No tiene permisos para buscar medidores' : ''
+                  }
                 />
                 <Button
                   type='button'
@@ -95,6 +100,10 @@ export default function AntiguoMedidorForm({
                   className='rounded-r-none focus-visible:ring-1 border-border focus-visible:ring-ring text-sm sm:text-base h-9 sm:h-10'
                   value={medidorAntiguo.numeroSerie}
                   onChange={onMedidorChange}
+                  disabled={disabled}
+                  title={
+                    disabled ? 'No tiene permisos para buscar medidores' : ''
+                  }
                 />
                 <Button
                   type='button'
@@ -123,8 +132,9 @@ export default function AntiguoMedidorForm({
             <Button
               type='button'
               onClick={onBuscar}
-              disabled={isLoading}
+              disabled={isLoading || disabled}
               className='h-8 sm:h-9 space-x-1 sm:space-x-1.5 bg-primary hover:bg-primary/90 shadow-sm text-sm sm:text-base flex-1 sm:flex-none'
+              title={disabled ? 'No tiene permisos para buscar medidores' : ''}
             >
               <Search className='h-3 w-3 sm:h-4 sm:w-4' />
               <span>Buscar</span>
@@ -134,7 +144,7 @@ export default function AntiguoMedidorForm({
               type='button'
               variant='outline'
               onClick={onLimpiar}
-              disabled={isLoading}
+              disabled={isLoading || disabled}
               className='h-8 sm:h-9 space-x-1 sm:space-x-1.5 border-border hover:bg-muted text-sm sm:text-base flex-1 sm:flex-none'
             >
               <X className='h-3 w-3 sm:h-4 sm:w-4' />

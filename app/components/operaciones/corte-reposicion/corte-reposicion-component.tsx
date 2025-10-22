@@ -77,6 +77,7 @@ import 'driver.js/dist/driver.css';
 
 import { useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -117,6 +118,13 @@ export default function CorteReposicionComponent({
     ConsultarMantenedorRevisionCorte[]
   >(initialMantenedorCorteData);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Permisos
+  const { canCreate, canEdit, canDelete } = useAuth();
+  const route = '/dashboard/operaciones/corte-reposicion';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+  const hasDeletePermission = canDelete(route);
 
   // Obtener cantidad por código
   const getCantidadPorCodigo = (codigo: string): number => {
@@ -501,6 +509,12 @@ export default function CorteReposicionComponent({
                       variant='link'
                       size='sm'
                       onClick={handleActivarActualizacion}
+                      disabled={!hasEditPermission}
+                      title={
+                        !hasEditPermission
+                          ? 'No tiene permisos para actualizar'
+                          : ''
+                      }
                       className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90 w-full'
                     >
                       <ArrowUpToLine className='h-4 w-4' />
@@ -510,6 +524,12 @@ export default function CorteReposicionComponent({
                       variant='destructive'
                       size='sm'
                       onClick={handleIniciar}
+                      disabled={!hasCreatePermission}
+                      title={
+                        !hasCreatePermission
+                          ? 'No tiene permisos para iniciar'
+                          : ''
+                      }
                       className='gap-1.5 w-full'
                     >
                       <Play className='h-4 w-4' />
@@ -519,6 +539,12 @@ export default function CorteReposicionComponent({
                       variant='secondary'
                       size='sm'
                       onClick={handleFinalizar}
+                      disabled={!hasDeletePermission}
+                      title={
+                        !hasDeletePermission
+                          ? 'No tiene permisos para finalizar'
+                          : ''
+                      }
                       className='gap-1.5 w-full'
                     >
                       <CheckCircle2 className='h-4 w-4' />
@@ -608,7 +634,7 @@ export default function CorteReposicionComponent({
                     className='border-border bg-card overflow-hidden'
                   >
                     <DataTable
-                      columns={columns}
+                      columns={columns(hasEditPermission)}
                       data={mantenedorCorteData}
                       meta={{ handleBuscar }}
                       searchPlaceholder='Buscar por código, RUT o razón social...'

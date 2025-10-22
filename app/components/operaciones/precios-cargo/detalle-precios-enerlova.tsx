@@ -91,10 +91,12 @@ type PeriodoTiempo = 'todo' | '1año' | '6meses' | '3meses';
 
 export default function DetallePreciosEnerlova({
   codigo,
-  onDataUpdate
+  onDataUpdate,
+  canEdit = true
 }: {
   codigo: number;
   onDataUpdate?: () => void;
+  canEdit?: boolean;
 }) {
   const [data, setData] = useState<DetallepreciosCargoEnerlova[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -488,6 +490,7 @@ export default function DetallePreciosEnerlova({
                 }
               }}
               id={ultimoValor.id.toString() || ''}
+              disabled={!canEdit}
             />
           )}
         </div>

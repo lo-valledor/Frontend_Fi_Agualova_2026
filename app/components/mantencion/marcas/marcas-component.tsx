@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -26,17 +27,30 @@ export default function MarcasComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/mantencion/marcas';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const handleAddMarca = useCallback(() => {
     setSelectedMarca(null);
     setModalMode('add');
     setIsModalOpen(true);
   }, []);
 
-  const handleEditMarca = useCallback((marca: Marca) => {
-    setSelectedMarca(marca);
-    setModalMode('edit');
-    setIsModalOpen(true);
-  }, []);
+  const handleEditMarca = useCallback(
+    (marca: Marca) => {
+      if (!hasEditPermission) {
+        toast.error('No tiene permisos para editar marcas');
+        return;
+      }
+      setSelectedMarca(marca);
+      setModalMode('edit');
+      setIsModalOpen(true);
+    },
+    [hasEditPermission]
+  );
 
   const handleDeleteMarca = useCallback((marca: Marca) => {
     setSelectedMarca(marca);
@@ -66,8 +80,14 @@ export default function MarcasComponent({
             <div className='flex gap-2'>
               <Button
                 onClick={handleAddMarca}
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear marcas'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Marca
@@ -82,7 +102,8 @@ export default function MarcasComponent({
             <DataTable
               columns={columns({
                 onEdit: handleEditMarca,
-                onDelete: handleDeleteMarca
+                onDelete: handleDeleteMarca,
+                canEdit: hasEditPermission
               })}
               data={marcas}
             />

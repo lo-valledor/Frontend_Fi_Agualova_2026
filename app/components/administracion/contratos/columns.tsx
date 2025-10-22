@@ -12,6 +12,7 @@ interface TableColumnsProps {
   onEdit: (contract: GetContratos) => void;
   onDelete: (contract: GetContratos) => void;
   onViewDetails: (contract: GetContratos) => void;
+  canEdit?: boolean;
 }
 
 // Función robusta para formatear fechas en formato español
@@ -67,7 +68,8 @@ const formatDateToSpanish = (
 export const columns = ({
   onEdit,
   onDelete,
-  onViewDetails
+  onViewDetails,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<GetContratos>[] => [
   {
     accessorKey: 'codigoContrato',
@@ -304,6 +306,7 @@ export const columns = ({
             onView={() => onViewDetails(row.original)}
             item={row.original}
             showView={true}
+            disableEdit={!canEdit}
           />
         </div>
       );

@@ -8,11 +8,13 @@ import type { Nicho } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (nicho: Nicho) => void;
   onDelete: (nicho: Nicho) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<Nicho>[] => [
   {
     accessorKey: 'id',
@@ -113,6 +115,7 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

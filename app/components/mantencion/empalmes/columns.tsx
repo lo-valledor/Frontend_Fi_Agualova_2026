@@ -8,11 +8,13 @@ import type { Empalme } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (empalme: Empalme) => void;
   onDelete: (empalme: Empalme) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<Empalme>[] => [
   {
     accessorKey: 'codigo',
@@ -94,6 +96,7 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

@@ -26,11 +26,13 @@ import api from '~/lib/api';
 interface MarcarLiberarDialogProps {
   acometida: string;
   onSuccess: () => void;
+  disabled?: boolean;
 }
 
 export function MarcarLiberarDialog({
   acometida,
-  onSuccess
+  onSuccess,
+  disabled = false
 }: Readonly<MarcarLiberarDialogProps>) {
   const [open, setOpen] = useState(false);
   const [comentario, setComentario] = useState('');
@@ -70,13 +72,18 @@ export function MarcarLiberarDialog({
                 variant='outline'
                 size='icon'
                 className='h-8 w-8 border-emerald-500 text-emerald-500 hover:bg-emerald-50 hover:border-emerald-600 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:hover:border-emerald-600 transition-colors'
+                disabled={disabled}
               >
                 <Unlock className='h-4 w-4' />
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Marcar como Liberado</p>
+            <p>
+              {disabled
+                ? 'No tiene permisos para liberar'
+                : 'Marcar como Liberado'}
+            </p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

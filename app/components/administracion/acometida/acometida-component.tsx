@@ -56,6 +56,7 @@ import { useState, useRef } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   flexRender,
@@ -138,6 +139,13 @@ export default function AcometidaComponent({
   });
 
   const revalidator = useRevalidator();
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/acometida';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const { acometidaColumns } = useExportAcometidas();
   const { filteredAcometidas, filterStats, filterOptions } =
     useAcometidaFilters(acometidas, filters);
@@ -166,6 +174,10 @@ export default function AcometidaComponent({
   };
 
   const handleEditAcometida = async (acometida: Acometida) => {
+    if (!hasEditPermission) {
+      toast.error('No tiene permisos para editar acometidas');
+      return;
+    }
     setEditingAcometidaId(acometida.acometidaId);
     setSelectedAcometida(acometida);
     setModalMode('edit');
@@ -207,7 +219,8 @@ export default function AcometidaComponent({
   const table = useReactTable({
     data: filteredAcometidas,
     columns: columns({
-      onEdit: handleEditAcometida
+      onEdit: handleEditAcometida,
+      canEdit: hasEditPermission
     }),
     state: {
       sorting,
@@ -244,7 +257,17 @@ export default function AcometidaComponent({
                 filename='acometidas'
                 size='sm'
               />
-              <Button onClick={handleAddAcometida} variant='default' size='sm'>
+              <Button
+                onClick={handleAddAcometida}
+                variant='default'
+                size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear acometidas'
+                    : ''
+                }
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Acometida
               </Button>

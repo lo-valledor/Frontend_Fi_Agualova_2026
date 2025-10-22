@@ -11,12 +11,14 @@ interface TableColumnsProps {
   onEdit: (condicionContrato: GetCondicionesContrato) => void;
   onView: (condicionContrato: GetCondicionesContrato) => void;
   editingCondicionContrato: number | null;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
   onView,
-  editingCondicionContrato
+  editingCondicionContrato,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<GetCondicionesContrato>[] => [
   {
     id: 'id',
@@ -97,6 +99,7 @@ export const columns = ({
         onView={() => onView(row.original)}
         showView={true}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

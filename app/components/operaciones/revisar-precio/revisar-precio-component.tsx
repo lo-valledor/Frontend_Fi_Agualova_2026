@@ -77,6 +77,8 @@ import { toast } from 'sonner';
 
 import React, { useMemo, useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
+
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -148,6 +150,11 @@ export default function RevisarPrecioComponent({
 
   // Estados para los paneles colapsables
   const [isValidacionOpen, setIsValidacionOpen] = useState(true);
+
+  // Permisos
+  const { canCreate } = useAuth();
+  const route = '/dashboard/operaciones/revisar-precio';
+  const hasCreatePermission = canCreate(route);
 
   // Estados para las filas seleccionadas
   const [selectedEnelRows, setSelectedEnelRows] = useState<string[]>([]);
@@ -594,12 +601,20 @@ export default function RevisarPrecioComponent({
                       onKeyDown={handleKeyDown}
                       className='bg-background border-border h-10'
                       placeholder='Ingresa tu contraseña'
+                      disabled={!hasCreatePermission}
                     />
                   </div>
                   <div className='flex gap-3 w-full'>
                     <Button
                       onClick={validarUsuario}
-                      disabled={isLoading || !contrasena}
+                      disabled={
+                        isLoading || !contrasena || !hasCreatePermission
+                      }
+                      title={
+                        !hasCreatePermission
+                          ? 'No tiene permisos para autorizar modificaciones'
+                          : ''
+                      }
                       className='bg-primary hover:bg-primary/90 text-primary-foreground flex-1 h-10'
                       size='sm'
                     >

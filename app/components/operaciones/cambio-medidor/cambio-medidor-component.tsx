@@ -1,19 +1,19 @@
 /**
  * Componente principal para Cambio de Medidor
- * 
+ *
  * Funcionalidades principales:
  * - Búsqueda y visualización de medidor antiguo a reemplazar
  * - Configuración del medidor antiguo (lecturas actuales y finales)
  * - Búsqueda y configuración de medidor nuevo
  * - Registro del cambio de medidor en el sistema
  * - Flujo paso a paso (wizard) con 4 etapas
- * 
+ *
  * Flujo de trabajo (4 pasos):
  * 1. **Medidor Antiguo**: Búsqueda por acometida o número de serie
  * 2. **Detalles Antiguo**: Revisión y ajuste de lecturas del medidor a reemplazar
  * 3. **Medidor Nuevo**: Búsqueda y configuración del medidor de reemplazo
  * 4. **Confirmar Cambio**: Revisión final y registro del cambio
- * 
+ *
  * Arquitectura:
  * - Wizard con stepper visual (Progress + indicadores de paso)
  * - Componentes especializados para cada paso:
@@ -24,7 +24,7 @@
  * - Estados locales para cada tipo de medidor
  * - Validaciones en cada paso antes de avanzar
  * - API calls para consultas y registro final
- * 
+ *
  * @example
  * ```tsx
  * // Usado en app/routes/operaciones/cambio-medidor.tsx
@@ -75,7 +75,11 @@ import DetalleMedidorNuevoComponent from './detalle-medidor-nuevo';
 import NuevoMedidorForm from './nuevo-medidor-form';
 
 export default function CambioMedidorComponent() {
-  const { user } = useAuth();
+  const { user, canEdit } = useAuth();
+
+  // Permisos
+  const route = '/dashboard/operaciones/cambio-medidor';
+  const hasEditPermission = canEdit(route);
 
   // Estados para medidor antiguo
   const [medidorAntiguo, setMedidorAntiguo] = useState<MedidorAntiguo>({
@@ -238,7 +242,8 @@ export default function CambioMedidorComponent() {
           setCurrentStep(2);
         }
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('Error al obtener información del medidor:', error);
       toast.error('No se pudo obtener la información del medidor');
     } finally {
       setIsLoading(false);
@@ -289,7 +294,8 @@ export default function CambioMedidorComponent() {
         // Avanzar al siguiente paso si se encontró el medidor
         setCurrentStep(3);
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('Error al obtener información del nuevo medidor:', error);
       toast.error('No se pudo obtener la información del nuevo medidor');
     } finally {
       setIsLoading(false);
@@ -451,6 +457,7 @@ export default function CambioMedidorComponent() {
                   onMedidorChange={handleMedidorAntiguoChange}
                   onBuscar={handleBuscarAntiguo}
                   onLimpiar={handleLimpiarMedidorAntiguo}
+                  disabled={!hasEditPermission}
                 />
               </CardContent>
               <CardFooter className='flex justify-end border-t border-border p-3'>
@@ -740,8 +747,13 @@ export default function CambioMedidorComponent() {
                 </Button>
                 <Button
                   onClick={handleCambioMedidor}
-                  disabled={!isFormValid || isLoading}
+                  disabled={!isFormValid || isLoading || !hasEditPermission}
                   className='bg-primary hover:bg-primary/90'
+                  title={
+                    !hasEditPermission
+                      ? 'No tiene permisos para ejecutar cambios de medidor'
+                      : ''
+                  }
                 >
                   {isLoading ? (
                     <RefreshCw className='mr-2 h-4 w-4 animate-spin' />

@@ -22,6 +22,8 @@ import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
+
 import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
 import MonitorNichos from '~/components/monitor/monitor-lecturas/monitor-nichos';
 import { Alert, AlertDescription } from '~/components/ui/alert';
@@ -481,6 +483,7 @@ export default function ResultadosBusqueda({
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
   const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
   const api = useApiWithLoadingBar();
+  const { canCreate } = useAuth();
 
   // Search function (same as before)
   const searchResults = async () => {
@@ -1283,6 +1286,14 @@ export default function ResultadosBusqueda({
                           <Button
                             size='sm'
                             className='bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-md transition-all'
+                            disabled={
+                              !canCreate('/dashboard/monitor/monitor-lecturas')
+                            }
+                            title={
+                              !canCreate('/dashboard/monitor/monitor-lecturas')
+                                ? 'No tiene permisos para ingresar lecturas'
+                                : ''
+                            }
                             onClick={() => {
                               setIsNichoModalOpen(true);
                             }}

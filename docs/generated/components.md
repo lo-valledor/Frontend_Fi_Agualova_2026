@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-22 13:12:45*
+*Generado automáticamente el 2025-10-22 15:51:36*
 
 ## Índice de Componentes
 
@@ -607,11 +607,6 @@
 ⚠️ *Sin documentación JSDoc*
 
 
-### contract-form-modal
-**Archivo**: `app/components/administracion/contratos/contract-form-modal.tsx`
-⚠️ *Sin documentación JSDoc*
-
-
 ### contract-hydrate-fallback
 **Archivo**: `app/components/administracion/contratos/contract-hydrate-fallback.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -720,11 +715,6 @@
 
 ### medidor-filters
 **Archivo**: `app/components/administracion/medidores/medidor-filters.tsx`
-⚠️ *Sin documentación JSDoc*
-
-
-### medidor-form
-**Archivo**: `app/components/administracion/medidores/medidor-form.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 
@@ -1432,14 +1422,14 @@
 ```typescript
 /**
  * Componente para Anulación de Facturas Impresas
- * 
+ *
  * Funcionalidades principales:
  * - Anulación de facturas impresas por número de folio
  * - Opción de anulación con o sin nueva toma de lectura
  * - Validación de datos antes de procesar
  * - Confirmación mediante diálogo antes de ejecutar
  * - Retroalimentación visual del resultado de la operación
- * 
+ *
  * Flujo de trabajo:
  * 1. Usuario ingresa número de factura
  * 2. Usuario selecciona si requiere nueva toma de lectura (toggle)
@@ -1447,13 +1437,13 @@
  * 4. Usuario confirma la anulación en diálogo modal
  * 5. Sistema procesa la anulación vía API
  * 6. Sistema muestra resultado (éxito o error)
- * 
+ *
  * Arquitectura:
  * - Usa Shadcn/ui components (Card, Dialog, Alert, Input, Switch)
  * - Estados locales para manejo del formulario
  * - API call con axios via lib/api
  * - Feedback con sonner toast y alertas visuales
- * 
+ *
  * @example
  * ```tsx
  * // Usado en app/routes/operaciones/anular-factura.tsx
@@ -1475,20 +1465,20 @@
 ```typescript
 /**
  * Componente principal para Cambio de Medidor
- * 
+ *
  * Funcionalidades principales:
  * - Búsqueda y visualización de medidor antiguo a reemplazar
  * - Configuración del medidor antiguo (lecturas actuales y finales)
  * - Búsqueda y configuración de medidor nuevo
  * - Registro del cambio de medidor en el sistema
  * - Flujo paso a paso (wizard) con 4 etapas
- * 
+ *
  * Flujo de trabajo (4 pasos):
  * 1. **Medidor Antiguo**: Búsqueda por acometida o número de serie
  * 2. **Detalles Antiguo**: Revisión y ajuste de lecturas del medidor a reemplazar
  * 3. **Medidor Nuevo**: Búsqueda y configuración del medidor de reemplazo
  * 4. **Confirmar Cambio**: Revisión final y registro del cambio
- * 
+ *
  * Arquitectura:
  * - Wizard con stepper visual (Progress + indicadores de paso)
  * - Componentes especializados para cada paso:
@@ -1499,7 +1489,7 @@
  * - Estados locales para cada tipo de medidor
  * - Validaciones en cada paso antes de avanzar
  * - API calls para consultas y registro final
- * 
+ *
  * @example
  * ```tsx
  * // Usado en app/routes/operaciones/cambio-medidor.tsx
@@ -1569,10 +1559,10 @@
  * 1. Usuario selecciona ciclo de facturación (15 o 30)
  * 2. Sistema carga lecturas pendientes de cierre para ese ciclo
  * 3. Sistema muestra tabla con estado por nicho:
- *    - Lecturas OK (sin problemas)
- *    - Claves Rojas (críticas - bloquean cierre)
- *    - Claves Naranjas (alertas - permiten cierre con advertencia)
- *    - Lecturas Corregidas
+ * - Lecturas OK (sin problemas)
+ * - Claves Rojas (críticas - bloquean cierre)
+ * - Claves Naranjas (alertas - permiten cierre con advertencia)
+ * - Lecturas Corregidas
  * 4. Usuario selecciona nichos a cerrar (checkboxes en tabla)
  * 5. Sistema valida que no haya claves críticas
  * 6. Usuario confirma cierre en diálogo
@@ -2116,6 +2106,51 @@
 **Archivo**: `app/components/shared/modern-header.tsx`
 ⚠️ *Sin documentación JSDoc*
 
+
+### permission-button
+**Archivo**: `app/components/shared/permission-button.tsx`
+**Documentación**:
+```typescript
+/**
+   * La ruta para la cual verificar permisos
+   */
+/**
+   * El tipo de permiso requerido
+   */
+/**
+   * Si es true, oculta el botón cuando no tiene permisos
+   * Si es false, muestra el botón deshabilitado con tooltip
+   * @default false
+   */
+/**
+   * Mensaje personalizado cuando no tiene permisos
+   */
+/**
+ * Botón que verifica permisos antes de habilitarse o mostrarse
+ *
+ * @example
+ * ```tsx
+ * // Botón que se deshabilita si no tiene permiso de crear
+ * <PermissionButton
+ *   route="/dashboard/monitor/monitor-lecturas"
+ *   requiredPermission="create"
+ *   onClick={handleCreate}
+ * >
+ *   Crear Nuevo
+ * </PermissionButton>
+ *
+ * // Botón que se oculta si no tiene permiso de editar
+ * <PermissionButton
+ *   route="/dashboard/administracion/usuarios"
+ *   requiredPermission="edit"
+ *   hideWhenDisabled
+ *   onClick={handleEdit}
+ * >
+ *   Editar Usuario
+ * </PermissionButton>
+ * ```
+ */
+```
 
 ### app-sidebar
 **Archivo**: `app/components/sidebar/app-sidebar.tsx`

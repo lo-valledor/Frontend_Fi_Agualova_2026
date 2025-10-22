@@ -62,6 +62,7 @@ import { useState, useRef } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   flexRender,
@@ -133,6 +134,13 @@ export default function CargoFacturableComponent({
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const revalidator = useRevalidator();
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/cargo-facturable';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const { filteredCargos, filterStats } = useCargoFilters(cargos, filters);
 
   const handleAddCargo = () => {
@@ -142,6 +150,10 @@ export default function CargoFacturableComponent({
   };
 
   const handleEditCargo = async (cargo: BuscarCargoFacturable) => {
+    if (!hasEditPermission) {
+      toast.error('No tiene permisos para editar cargos facturables');
+      return;
+    }
     setEditingCargoId(cargo.id);
     setSelectedCargo(cargo);
     setModalMode('edit');
@@ -209,7 +221,8 @@ export default function CargoFacturableComponent({
     data: filteredCargos,
     columns: columns({
       onEdit: handleEditCargo,
-      editingCargoId
+      editingCargoId,
+      canEdit: hasEditPermission
     }),
     state: {
       sorting,
@@ -246,7 +259,17 @@ export default function CargoFacturableComponent({
                 filename='cargos'
                 size='sm'
               />
-              <Button onClick={handleAddCargo} variant='default' size='sm'>
+              <Button
+                onClick={handleAddCargo}
+                variant='default'
+                size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear cargos facturables'
+                    : ''
+                }
+              >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Cargo Facturable
               </Button>

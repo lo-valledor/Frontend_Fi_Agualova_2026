@@ -52,6 +52,7 @@ import React, { useState, useRef } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   flexRender,
@@ -114,6 +115,12 @@ export default function CondicionesContratoComponent({
 
   const revalidator = useRevalidator();
 
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/condiciones-contrato';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const handleAddCondicionContrato = () => {
     setSelectedCondicionContrato(undefined);
     setModalMode('add');
@@ -153,7 +160,8 @@ export default function CondicionesContratoComponent({
     columns: columns({
       onEdit: handleEditCondicionContrato,
       onView: handleViewCondicionContrato,
-      editingCondicionContrato: null
+      editingCondicionContrato: null,
+      canEdit: hasEditPermission
     }),
     state: {
       sorting,
@@ -188,6 +196,12 @@ export default function CondicionesContratoComponent({
                 onClick={handleAddCondicionContrato}
                 variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear condiciones de contrato'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Condición Contrato

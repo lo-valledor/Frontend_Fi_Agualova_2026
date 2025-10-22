@@ -12,6 +12,7 @@ import type { GetMedidores } from '~/types/administracion';
 interface MedidoresColumnsProps {
   onEdit: (medidor: GetMedidores) => void;
   onAsociarSubempalme: (medidor: GetMedidores) => void;
+  canEdit?: boolean;
 }
 
 const getTipoBadgeProps = (tipo: string) => {
@@ -55,7 +56,8 @@ const getTipoBadgeProps = (tipo: string) => {
 
 export const columns = ({
   onEdit,
-  onAsociarSubempalme
+  onAsociarSubempalme,
+  canEdit = true
 }: MedidoresColumnsProps): ColumnDef<GetMedidores>[] => [
   {
     accessorKey: 'serie',
@@ -270,6 +272,7 @@ export const columns = ({
             item={medidor}
             showView={false}
             showDelete={false}
+            disableEdit={!canEdit}
           />
           <Button
             size='sm'

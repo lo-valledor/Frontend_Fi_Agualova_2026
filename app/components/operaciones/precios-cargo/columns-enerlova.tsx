@@ -6,7 +6,8 @@ import type { PreciosCargoEnerlova } from '~/types/operaciones';
 import DetallePreciosEnerlova from './detalle-precios-enerlova';
 
 export const columns = (
-  onDataUpdate?: () => void
+  onDataUpdate?: () => void,
+  canEdit: boolean = true
 ): ColumnDef<PreciosCargoEnerlova>[] => [
   {
     header: ({ column }) => (
@@ -118,6 +119,7 @@ export const columns = (
           <DetallePreciosEnerlova
             codigo={data.CD_ID}
             onDataUpdate={onDataUpdate}
+            canEdit={canEdit}
           />
         </div>
       );

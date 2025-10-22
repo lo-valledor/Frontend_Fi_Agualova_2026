@@ -5,6 +5,8 @@ import React, { useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
+
 import {
   AlertDialogAction,
   AlertDialogCancel,
@@ -26,16 +28,25 @@ interface CerrarPeriodoProps {
   periodoId: string;
   onSuccess?: () => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function CerrarPeriodo({
   periodoId,
   onSuccess,
-  className
+  className,
+  disabled = false
 }: CerrarPeriodoProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { canDelete } = useAuth();
+
+  // Verificar permisos de eliminar para cerrar periodo
+  const hasDeletePermission = canDelete(
+    '/dashboard/operaciones/periodo-facturacion'
+  );
+  const isButtonDisabled = disabled || !hasDeletePermission;
 
   const handleCerrarPeriodo = async () => {
     setIsLoading(true);
@@ -64,7 +75,8 @@ export default function CerrarPeriodo({
       } else {
         toast.error('Error al cerrar el periodo');
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error('Error al cerrar periodo:', error);
       toast.error('Error al cerrar el periodo');
     } finally {
       setIsLoading(false);
@@ -77,6 +89,10 @@ export default function CerrarPeriodo({
         <Button
           variant='outline'
           size='sm'
+          disabled={isButtonDisabled}
+          title={
+            !hasDeletePermission ? 'No tiene permisos para cerrar períodos' : ''
+          }
           className={cn(
             'bg-red-50 text-red-600 border-red-200 hover:bg-red-100 hover:text-red-700 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/30 gap-1 w-full',
             className

@@ -17,7 +17,9 @@ export function TableActions({
   showDelete = true,
   loadingEdit = false,
   loadingView = false,
-  loadingDelete = false
+  loadingDelete = false,
+  canEdit = true,
+  disableEdit = false
 }: {
   onView?: (item: any) => void;
   onEdit?: (item: any) => void;
@@ -29,6 +31,8 @@ export function TableActions({
   loadingEdit?: boolean;
   loadingView?: boolean;
   loadingDelete?: boolean;
+  canEdit?: boolean;
+  disableEdit?: boolean;
 }) {
   return (
     <div className='flex gap-1'>

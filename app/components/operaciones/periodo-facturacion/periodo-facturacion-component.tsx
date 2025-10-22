@@ -8,6 +8,8 @@ import {
 
 import { useMemo, useState } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
+
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -44,6 +46,7 @@ export default function AbrirPeriodoFacturacion({
 }>) {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [periodosData, setPeriodosData] = useState(periodos);
+  const { canCreate, canDelete } = useAuth();
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
@@ -114,7 +117,12 @@ export default function AbrirPeriodoFacturacion({
                       <div className='inline-block w-full sm:w-auto'>
                         <Button
                           onClick={() => setIsOpenDialog(true)}
-                          disabled={!!periodoAbierto}
+                          disabled={
+                            !!periodoAbierto ||
+                            !canCreate(
+                              '/dashboard/operaciones/periodo-facturacion'
+                            )
+                          }
                           variant='outline'
                           size='sm'
                           className='gap-2 w-full sm:w-auto'
@@ -124,12 +132,21 @@ export default function AbrirPeriodoFacturacion({
                         </Button>
                       </div>
                     </TooltipTrigger>
-                    {periodoAbierto && (
+                    {(periodoAbierto ||
+                      !canCreate(
+                        '/dashboard/operaciones/periodo-facturacion'
+                      )) && (
                       <TooltipContent>
-                        <p>
-                          Debe cerrar el período vigente para poder crear uno
-                          nuevo.
-                        </p>
+                        {!canCreate(
+                          '/dashboard/operaciones/periodo-facturacion'
+                        ) ? (
+                          <p>No tiene permisos para crear períodos</p>
+                        ) : (
+                          <p>
+                            Debe cerrar el período vigente para poder crear uno
+                            nuevo.
+                          </p>
+                        )}
                       </TooltipContent>
                     )}
                   </Tooltip>
@@ -155,6 +172,9 @@ export default function AbrirPeriodoFacturacion({
                   periodoId={periodoAbierto.pf_id}
                   onSuccess={fetchPeriodos}
                   className='w-full lg:w-auto min-w-32'
+                  disabled={
+                    !canDelete('/dashboard/operaciones/periodo-facturacion')
+                  }
                 />
               </div>
             </CardContent>

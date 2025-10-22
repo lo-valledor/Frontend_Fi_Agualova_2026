@@ -46,6 +46,7 @@ interface DialogNuevoValorEnerlovaProps {
   valor: number;
   onSuccess: () => void;
   id: string;
+  disabled?: boolean;
 }
 
 export default function DialogNuevoValorEnerlova({
@@ -54,7 +55,8 @@ export default function DialogNuevoValorEnerlova({
   fecha_inicio,
   valor,
   onSuccess,
-  id
+  id,
+  disabled = false
 }: DialogNuevoValorEnerlovaProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -221,7 +223,9 @@ export default function DialogNuevoValorEnerlova({
         const fechaFin = new Date(formValues.fecha_fin);
 
         if (fechaFin <= fechaInicio) {
-          errors.push('La fecha de fin debe ser posterior a la fecha de inicio');
+          errors.push(
+            'La fecha de fin debe ser posterior a la fecha de inicio'
+          );
         }
       }
     }
@@ -329,6 +333,8 @@ export default function DialogNuevoValorEnerlova({
           variant='default'
           size='sm'
           className='gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white'
+          disabled={disabled}
+          title={disabled ? 'No tiene permisos para agregar valores' : ''}
         >
           <Plus className='h-3.5 w-3.5 sm:h-4 sm:w-4' />
           <span className='hidden sm:inline'>Nuevo Valor</span>
@@ -613,7 +619,9 @@ export default function DialogNuevoValorEnerlova({
                         : 'text-red-600 dark:text-red-400'
                     }`}
                   >
-                    {diferenciaPorcentual && diferenciaPorcentual > 0 ? '+' : ''}
+                    {diferenciaPorcentual && diferenciaPorcentual > 0
+                      ? '+'
+                      : ''}
                     {diferenciaPorcentual?.toFixed(2)}%
                   </span>
                 </div>

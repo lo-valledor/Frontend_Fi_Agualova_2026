@@ -8,11 +8,13 @@ import type { Marca } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (marca: Marca) => void;
   onDelete: (marca: Marca) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<Marca>[] => [
   {
     accessorKey: 'codigo',
@@ -52,6 +54,7 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
+        disableEdit={!canEdit}
       />
     )
   }

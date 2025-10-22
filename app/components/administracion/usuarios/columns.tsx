@@ -10,11 +10,13 @@ import type { Usuarios } from '~/types/administracion';
 interface TableColumnsProps {
   onEdit: (user: Usuarios) => void;
   onDelete: (user: Usuarios) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<Usuarios>[] => [
   {
     accessorKey: 'nombres',
@@ -117,6 +119,7 @@ export const columns = ({
           onDelete={onDelete}
           item={row.original}
           showView={false}
+          disableEdit={!canEdit}
         />
       );
     }

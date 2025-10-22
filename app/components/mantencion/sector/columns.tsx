@@ -8,11 +8,13 @@ import type { Sectores } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (sector: Sectores) => void;
   onDelete: (sector: Sectores) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: TableColumnsProps): ColumnDef<Sectores>[] => [
   {
     accessorKey: 'nombre',

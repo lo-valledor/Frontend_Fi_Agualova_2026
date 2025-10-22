@@ -10,11 +10,13 @@ import type { GetCargoTipoContrato } from '~/types/administracion';
 interface ColumnsProps {
   onEdit: (data: GetCargoTipoContrato) => void;
   onDelete: (data: GetCargoTipoContrato) => void;
+  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete
+  onDelete,
+  canEdit = true
 }: ColumnsProps): ColumnDef<GetCargoTipoContrato>[] => [
   {
     accessorKey: 'tipoContratoDescripcion',
@@ -101,6 +103,7 @@ export const columns = ({
           onDelete={() => onDelete(row.original)}
           showView={false}
           item={row.original}
+          disableEdit={!canEdit}
         />
       </div>
     ),

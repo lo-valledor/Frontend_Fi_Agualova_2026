@@ -30,6 +30,7 @@ import 'driver.js/dist/driver.css';
 
 import { useMemo, useState, useCallback } from 'react';
 
+import { useAuth } from '~/context/AuthContext';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
@@ -67,6 +68,11 @@ export default function RevisarCalculoFacturaComponent({
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const cicloId = '1';
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/operaciones/revisar-calculo-factura';
+  const hasPermission = canCreate(route) || canEdit(route);
 
   // Memoizar periodo formateado
   const periodoFormateado = useMemo(() => {
@@ -520,16 +526,19 @@ export default function RevisarCalculoFacturaComponent({
                       disabled={
                         isAccepting ||
                         selectedContratos.length === 0 ||
-                        !hayLecturasCerradas
+                        !hayLecturasCerradas ||
+                        !hasPermission
                       }
                       variant='outline'
                       size='sm'
                       title={
-                        !hayLecturasCerradas
-                          ? 'Debe cerrar lecturas antes de aceptar cálculos'
-                          : selectedContratos.length === 0
-                            ? 'Seleccione al menos un contrato'
-                            : 'Aceptar cálculos seleccionados'
+                        !hasPermission
+                          ? 'No tiene permisos para aceptar cálculos'
+                          : !hayLecturasCerradas
+                            ? 'Debe cerrar lecturas antes de aceptar cálculos'
+                            : selectedContratos.length === 0
+                              ? 'Seleccione al menos un contrato'
+                              : 'Aceptar cálculos seleccionados'
                       }
                     >
                       {isAccepting ? (

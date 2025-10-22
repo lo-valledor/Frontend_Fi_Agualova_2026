@@ -54,6 +54,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -92,6 +93,12 @@ export default function ContratosComponent({
     fechaTerminoHasta: '',
     activo: 'all'
   });
+
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/administracion/contratos';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
 
   const { filteredContracts, filterStats, filterOptions } = useContractFilters(
     contracts,
@@ -152,9 +159,15 @@ export default function ContratosComponent({
       columns({
         onEdit: handleEditContract,
         onDelete: handleDeleteContract,
-        onViewDetails: handleViewDetails
+        onViewDetails: handleViewDetails,
+        canEdit: hasEditPermission
       }),
-    [handleEditContract, handleDeleteContract, handleViewDetails]
+    [
+      handleEditContract,
+      handleDeleteContract,
+      handleViewDetails,
+      hasEditPermission
+    ]
   );
 
   return (
@@ -175,8 +188,14 @@ export default function ContratosComponent({
                 onClick={() =>
                   router('/dashboard/administracion/contratos/crear')
                 }
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear contratos'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Contrato

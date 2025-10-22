@@ -9,7 +9,9 @@ import { CorteRegistradoDialog } from './corte-registrado-dialog';
 import { MarcarLiberarDialog } from './marcar-liberar-dialog';
 import { ReposicionSolicitadaDialog } from './reposicion-solicitada-dialog';
 
-export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
+export const columns = (
+  canEdit: boolean = true
+): ColumnDef<ConsultarMantenedorRevisionCorte>[] => [
   {
     accessorKey: 'ctId',
     header: ({ column }) => (
@@ -242,14 +244,17 @@ export const columns: ColumnDef<ConsultarMantenedorRevisionCorte>[] = [
           <ReposicionSolicitadaDialog
             acometida={acometida}
             onSuccess={handleSuccess}
+            disabled={!canEdit}
           />
           <CorteRegistradoDialog
             acometida={acometida}
             onSuccess={handleSuccess}
+            disabled={!canEdit}
           />
           <MarcarLiberarDialog
             acometida={acometida}
             onSuccess={handleSuccess}
+            disabled={!canEdit}
           />
         </div>
       );

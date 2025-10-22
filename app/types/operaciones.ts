@@ -109,6 +109,7 @@ export interface TablaValoresEnerlovaProps {
 //Preparar Lecturas
 export interface ConsultarAsignacionSectores {
   sectorId: number;
+  descripcionSector: string;
   nichoId: number;
   descripcionNicho: string;
   cantidadMedidores: number;

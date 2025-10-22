@@ -5,6 +5,7 @@ import React, { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -24,17 +25,30 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/mantencion/zonas';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const handleAddZona = useCallback(() => {
     setSelectedZona(null);
     setModalMode('add');
     setIsModalOpen(true);
   }, []);
 
-  const handleEditZona = useCallback((zona: Zonas) => {
-    setSelectedZona(zona);
-    setModalMode('edit');
-    setIsModalOpen(true);
-  }, []);
+  const handleEditZona = useCallback(
+    (zona: Zonas) => {
+      if (!hasEditPermission) {
+        toast.error('No tiene permisos para editar zonas');
+        return;
+      }
+      setSelectedZona(zona);
+      setModalMode('edit');
+      setIsModalOpen(true);
+    },
+    [hasEditPermission]
+  );
 
   const handleDeleteZona = useCallback((zona: Zonas) => {
     setSelectedZona(zona);
@@ -63,8 +77,14 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
             <div className='flex gap-2'>
               <Button
                 onClick={handleAddZona}
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear zonas'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Zona
@@ -79,7 +99,8 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
             <DataTable
               columns={columns({
                 onEdit: handleEditZona,
-                onDelete: handleDeleteZona
+                onDelete: handleDeleteZona,
+                canEdit: hasEditPermission
               })}
               data={zonas}
             />

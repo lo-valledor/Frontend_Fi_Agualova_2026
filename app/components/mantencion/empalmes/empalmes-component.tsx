@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
+import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -26,17 +27,30 @@ export default function EmpalmesComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
+  // Permisos
+  const { canCreate, canEdit } = useAuth();
+  const route = '/dashboard/mantencion/empalmes';
+  const hasCreatePermission = canCreate(route);
+  const hasEditPermission = canEdit(route);
+
   const handleAddEmpalme = useCallback(() => {
     setSelectedEmpalme(null);
     setModalMode('add');
     setIsModalOpen(true);
   }, []);
 
-  const handleEditEmpalme = useCallback((empalme: Empalme) => {
-    setSelectedEmpalme(empalme);
-    setModalMode('edit');
-    setIsModalOpen(true);
-  }, []);
+  const handleEditEmpalme = useCallback(
+    (empalme: Empalme) => {
+      if (!hasEditPermission) {
+        toast.error('No tiene permisos para editar empalmes');
+        return;
+      }
+      setSelectedEmpalme(empalme);
+      setModalMode('edit');
+      setIsModalOpen(true);
+    },
+    [hasEditPermission]
+  );
 
   const handleDeleteEmpalme = useCallback((empalme: Empalme) => {
     setSelectedEmpalme(empalme);
@@ -66,8 +80,14 @@ export default function EmpalmesComponent({
             <div className='flex gap-2'>
               <Button
                 onClick={handleAddEmpalme}
-                variant="default"
+                variant='default'
                 size='sm'
+                disabled={!hasCreatePermission}
+                title={
+                  !hasCreatePermission
+                    ? 'No tiene permisos para crear empalmes'
+                    : ''
+                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Empalme
@@ -82,7 +102,8 @@ export default function EmpalmesComponent({
             <DataTable
               columns={columns({
                 onEdit: handleEditEmpalme,
-                onDelete: handleDeleteEmpalme
+                onDelete: handleDeleteEmpalme,
+                canEdit: hasEditPermission
               })}
               data={empalmes}
             />

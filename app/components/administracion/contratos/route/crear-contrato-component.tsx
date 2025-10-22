@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router';
 
 import { useVirtualizer } from '@tanstack/react-virtual';
 
+import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
@@ -72,6 +73,19 @@ export default function CrearContratoComponent({
   readonly clientes: GetClientes[];
 }) {
   const navigate = useNavigate();
+
+  // Permisos
+  const { canCreate } = useAuth();
+  const route = '/dashboard/administracion/contratos';
+  const hasCreatePermission = canCreate(route);
+
+  // Redirigir si no tiene permisos
+  useEffect(() => {
+    if (!hasCreatePermission) {
+      toast.error('No tiene permisos para crear contratos');
+      navigate('/dashboard/administracion/contratos');
+    }
+  }, [hasCreatePermission, navigate]);
 
   // Estados para los modales de selección
   const [modalPropietario, setModalPropietario] = useState(false);
@@ -693,7 +707,12 @@ export default function CrearContratoComponent({
                   onClick={handleSubmit}
                   className='gap-2'
                   variant='default'
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !hasCreatePermission}
+                  title={
+                    !hasCreatePermission
+                      ? 'No tiene permisos para crear contratos'
+                      : ''
+                  }
                 >
                   <Save className='h-4 w-4' />
                   {isSubmitting ? 'Creando...' : 'Crear Contrato'}
