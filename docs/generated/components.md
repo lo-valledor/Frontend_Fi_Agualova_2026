@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-23 10:52:03*
+*Generado automáticamente el 2025-10-23 13:20:15*
 
 ## Índice de Componentes
 
@@ -70,11 +70,6 @@
 
 ### user-profile-example
 **Archivo**: `app/components/user-profile-example.tsx`
-⚠️ *Sin documentación JSDoc*
-
-
-### user-profile-test
-**Archivo**: `app/components/user-profile-test.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 
@@ -1807,6 +1802,11 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### data-table-precios-virtualized
+**Archivo**: `app/components/operaciones/precios-cargo/data-table-precios-virtualized.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### data-table-precios
 **Archivo**: `app/components/operaciones/precios-cargo/data-table-precios.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1922,6 +1922,11 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### hierarchical-data-table-virtualized
+**Archivo**: `app/components/operaciones/revisar-calculo-factura/hierarchical-data-table-virtualized.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### hierarchical-data-table
 **Archivo**: `app/components/operaciones/revisar-calculo-factura/hierarchical-data-table.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1950,6 +1955,11 @@
 
 ### columns-enerlova
 **Archivo**: `app/components/operaciones/revisar-precio/columns-enerlova.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### data-table-virtualized
+**Archivo**: `app/components/operaciones/revisar-precio/data-table-virtualized.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 

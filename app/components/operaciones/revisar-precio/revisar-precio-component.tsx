@@ -115,7 +115,7 @@ import type {
 
 import { columnsEnel } from './columns-enel';
 import { columnsEnerlova } from './columns-enerlova';
-import { DataTable } from './data-table';
+import { DataTableVirtualized } from './data-table-virtualized';
 import DialogModificarPrecio from './dialog-modificar-precio';
 
 interface RevisarPrecioComponentProps {
@@ -923,7 +923,7 @@ export default function RevisarPrecioComponent({
                   id='tabla-valores-enel'
                   className='rounded-xl border border-border overflow-hidden bg-card'
                 >
-                  <DataTable
+                  <DataTableVirtualized
                     columns={configuredColumnsEnel}
                     data={dataConsultarPreciosUno}
                     enableSelection={isAuthorized}
@@ -1014,7 +1014,7 @@ export default function RevisarPrecioComponent({
                   id='tabla-precios-enerlova'
                   className='rounded-xl border border-border overflow-hidden bg-card'
                 >
-                  <DataTable
+                  <DataTableVirtualized
                     columns={configuredColumnsEnerlova}
                     data={dataConsultarPreciosDos}
                     enableSelection={isAuthorized}

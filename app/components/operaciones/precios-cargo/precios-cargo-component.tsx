@@ -86,7 +86,7 @@ import type {
 
 import { columns as columnsEnel } from './columns-enel';
 import { columns } from './columns-enerlova';
-import { DataTablePrecios } from './data-table-precios';
+import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
 
 interface PreciosCargoComponentProps {
   tablaEnel: PreciosCargoEnel[];
@@ -521,7 +521,7 @@ export default function PreciosCargoComponent({
                   id='tabla-enel'
                   className='rounded-xl border border-border overflow-hidden'
                 >
-                  <DataTablePrecios
+                  <DataTablePreciosVirtualized
                     columns={columnsEnel(
                       mes,
                       anio,
@@ -531,8 +531,6 @@ export default function PreciosCargoComponent({
                     data={tablaEnel}
                     searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}
-                    defaultPageSize={10}
-                    pageSizeOptions={[5, 10, 20, 50]}
                     columnGroups={[
                       {
                         id: 'identificacion',
@@ -589,7 +587,7 @@ export default function PreciosCargoComponent({
                   id='tabla-enerlova'
                   className='rounded-xl border border-border overflow-hidden'
                 >
-                  <DataTablePrecios
+                  <DataTablePreciosVirtualized
                     columns={columns(
                       handleEnerlovaDataUpdate,
                       hasEditPermission
@@ -597,8 +595,6 @@ export default function PreciosCargoComponent({
                     data={tablaEnerlova}
                     searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}
-                    defaultPageSize={10}
-                    pageSizeOptions={[5, 10, 20, 50]}
                     columnGroups={[
                       {
                         id: 'informacion',

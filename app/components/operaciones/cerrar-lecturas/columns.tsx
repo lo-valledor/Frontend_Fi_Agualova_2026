@@ -5,8 +5,6 @@ import {
   Ban,
   CheckCircle,
   ClipboardList,
-  Hash,
-  MapPin,
   Shield,
   TrendingUp,
   Zap
@@ -54,55 +52,6 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
     enableSorting: false,
     enableHiding: false,
     size: 50
-  },
-  {
-    id: 'sectorId',
-    header: () => (
-      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
-        <MapPin className='w-3 h-3 sm:w-4 sm:h-4 text-blue-500' />
-        <span className='hidden sm:inline'>Sector</span>
-        <span className='sm:hidden'>Sect</span>
-      </div>
-    ),
-    accessorKey: 'sectorId',
-    cell: ({ row }) => {
-      const sectorId = row.original.sectorId;
-      return (
-        <div className='text-center'>
-          <Badge
-            variant='outline'
-            className='bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800 font-mono'
-          >
-            {sectorId}
-          </Badge>
-        </div>
-      );
-    },
-    size: 80
-  },
-  {
-    id: 'nichoId',
-    header: () => (
-      <div className='flex items-center justify-center gap-1 sm:gap-2 font-semibold text-xs sm:text-sm'>
-        <Hash className='w-3 h-3 sm:w-4 sm:h-4 text-slate-500' />
-        <span>ID</span>
-      </div>
-    ),
-    accessorKey: 'nichoId',
-    cell: ({ row }) => {
-      const nichoId = row.original.nichoId;
-      return (
-        <div className='text-center'>
-          <Badge
-            variant='outline'
-            className='bg-background border-border font-mono text-xs'
-          >
-            {nichoId}
-          </Badge>
-        </div>
-      );
-    },
-    size: 80
   },
   {
     id: 'nichoDescripcion',

@@ -55,6 +55,12 @@ export function ExportButton<T extends Record<string, any>>({
     }
   };
 
+  // Clases por defecto si no se proporciona className personalizado
+  const defaultClasses = className
+    ? ''
+    : 'bg-emerald-600 hover:bg-emerald-700 text-white';
+  const buttonClasses = `gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${defaultClasses} ${className}`;
+
   // Si no se muestra dropdown, usar botón simple
   if (!showDropdown) {
     return (
@@ -63,7 +69,7 @@ export function ExportButton<T extends Record<string, any>>({
         onClick={() => handleExport(defaultFormat)}
         disabled={isExporting || data.length === 0}
         size={size}
-        className={`gap-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        className={buttonClasses}
       >
         <Download
           className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${
@@ -87,7 +93,7 @@ export function ExportButton<T extends Record<string, any>>({
           variant={variant}
           disabled={isExporting || data.length === 0}
           size={size}
-          className={`gap-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+          className={buttonClasses}
         >
           <Download
             className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${

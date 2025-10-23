@@ -103,6 +103,10 @@ export default function RevisarCalculoFacturaComponent({
     selectedContratos,
     setSelectedContratos,
     isCalculoPreparado,
+    isProcesando,
+    tiempoTranscurrido,
+    intentosPolling,
+    isCheckingInitialData,
     handleLanzarCalculo,
     handleAceptarCalculo,
     setIsCalculoPreparado
@@ -244,7 +248,7 @@ export default function RevisarCalculoFacturaComponent({
         popover: {
           title: '🔄 Preparar Cálculo',
           description:
-            '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. <br/><br/><strong>Requisito:</strong> Primero debes confirmar todos los precios en "Revisar Precios".',
+            '¡Empezar aquí! Este botón <strong>inicia el procesamiento</strong> de facturación.<br/><br/><strong>Requisito:</strong> Confirmar todos los precios en "Revisar Precios".<br/><br/><strong>⏱️ Proceso automático:</strong> El sistema verificará cada 4 segundos si los datos están listos y te notificará cuando puedas ver los resultados.',
           side: 'bottom' as const,
           align: 'center' as const
         }
@@ -254,7 +258,7 @@ export default function RevisarCalculoFacturaComponent({
         popover: {
           title: '👁️ Ver Cálculos',
           description:
-            'Después de preparar, usa este botón para <strong>visualizar</strong> los cálculos generados y revisar los contratos.',
+            'Este botón se <strong>habilitará automáticamente</strong> cuando el sistema termine de procesar los cálculos.<br/><br/>📊 Recibirás una notificación indicando el tiempo de procesamiento y la cantidad de registros listos.',
           side: 'bottom' as const,
           align: 'center' as const
         }
@@ -485,17 +489,117 @@ export default function RevisarCalculoFacturaComponent({
                 )}
 
                 {/* Mensaje de precios confirmados */}
-                {!isLoadingValidacion && preciosConfirmados && (
-                  <div className='p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800'>
-                    <div className='flex items-start gap-2'>
-                      <CheckCircle className='h-4 w-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0' />
-                      <div className='flex-1'>
-                        <p className='text-sm font-medium text-emerald-900 dark:text-emerald-100'>
-                          ✓ Todos los precios confirmados
+                {!isLoadingValidacion &&
+                  preciosConfirmados &&
+                  !isProcesando &&
+                  !isCalculoPreparado && (
+                    <div className='p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-2 border-emerald-300 dark:border-emerald-700 shadow-sm'>
+                      <div className='flex items-start gap-3'>
+                        <div className='flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center'>
+                          <CheckCircle className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                        </div>
+                        <div className='flex-1'>
+                          <p className='text-sm font-semibold text-emerald-900 dark:text-emerald-100 flex items-center gap-2'>
+                            ✓ Sistema listo para procesar
+                          </p>
+                          <p className='text-xs text-emerald-700 dark:text-emerald-300 mt-1.5'>
+                            {totalPrecios} precios confirmados. Haz clic en{' '}
+                            <span className='font-semibold'>
+                              "Preparar Cálculo"
+                            </span>{' '}
+                            para iniciar el procesamiento de facturación.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Indicador de procesamiento */}
+                {isProcesando && (
+                  <div className='p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 animate-pulse'>
+                    <div className='flex items-start gap-3'>
+                      <div className='relative flex-shrink-0'>
+                        <div className='h-8 w-8 rounded-full border-4 border-blue-200 dark:border-blue-800'></div>
+                        <div className='absolute top-0 left-0 h-8 w-8 rounded-full border-4 border-blue-600 dark:border-blue-400 border-t-transparent animate-spin'></div>
+                      </div>
+                      <div className='flex-1 min-w-0'>
+                        <p className='text-sm font-semibold text-blue-900 dark:text-blue-100'>
+                          🔄 Procesando cálculos de facturación
                         </p>
-                        <p className='text-xs text-emerald-700 dark:text-emerald-300 mt-1'>
-                          {totalPrecios} precios confirmados. Puedes proceder
-                          con el cálculo de facturación.
+                        <p className='text-xs text-blue-700 dark:text-blue-300 mt-1'>
+                          El sistema está generando las prefacturas. Este
+                          proceso puede tomar varios minutos dependiendo de la
+                          cantidad de lecturas cerradas.
+                        </p>
+                        <div className='mt-2 flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-blue-600 dark:text-blue-400'>
+                          <div className='flex items-center gap-1'>
+                            <div className='h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse'></div>
+                            <span>
+                              Tiempo: {Math.floor(tiempoTranscurrido / 60)}:
+                              {(tiempoTranscurrido % 60)
+                                .toString()
+                                .padStart(2, '0')}{' '}
+                              min
+                            </span>
+                          </div>
+                          <div className='hidden sm:block'>•</div>
+                          <div>Verificaciones: {intentosPolling}/150</div>
+                        </div>
+                        <div className='mt-2'>
+                          <div className='w-full bg-blue-200 dark:bg-blue-800 rounded-full h-1.5'>
+                            <div
+                              className='bg-blue-600 dark:bg-blue-400 h-1.5 rounded-full transition-all duration-300'
+                              style={{
+                                width: `${Math.min((intentosPolling / 150) * 100, 100)}%`
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Indicador de cálculo listo */}
+                {isCalculoPreparado &&
+                  !isProcesando &&
+                  !isCheckingInitialData && (
+                    <div className='p-4 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50 to-indigo-50 dark:from-sky-900/20 dark:via-blue-900/20 dark:to-indigo-900/20 border-2 border-sky-400 dark:border-sky-600 shadow-md animate-pulse'>
+                      <div className='flex items-start gap-3'>
+                        <div className='flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 dark:bg-sky-800 flex items-center justify-center ring-2 ring-sky-400 dark:ring-sky-600 ring-offset-2'>
+                          <CheckCircle className='h-5 w-5 text-sky-600 dark:text-sky-400' />
+                        </div>
+                        <div className='flex-1'>
+                          <p className='text-sm font-semibold text-sky-900 dark:text-sky-100 flex items-center gap-2'>
+                            ✓ Cálculos disponibles
+                            <span className='inline-flex h-2 w-2 rounded-full bg-sky-600 dark:bg-sky-400 animate-ping'></span>
+                          </p>
+                          <p className='text-xs text-sky-700 dark:text-sky-300 mt-1.5'>
+                            Hay cálculos procesados disponibles. Haz clic en el
+                            botón{' '}
+                            <span className='font-semibold'>
+                              "Ver Cálculo Facturas"
+                            </span>{' '}
+                            para revisarlos.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Indicador de verificación inicial */}
+                {isCheckingInitialData && (
+                  <div className='p-4 rounded-xl bg-gradient-to-r from-slate-50 to-gray-50 dark:from-slate-900/20 dark:to-gray-900/20 border-2 border-slate-300 dark:border-slate-700 shadow-sm'>
+                    <div className='flex items-start gap-3'>
+                      <div className='flex-shrink-0 w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center'>
+                        <div className='h-5 w-5 animate-spin rounded-full border-2 border-slate-600 border-t-transparent dark:border-slate-400' />
+                      </div>
+                      <div className='flex-1'>
+                        <p className='text-sm font-semibold text-slate-900 dark:text-slate-100'>
+                          Verificando datos disponibles...
+                        </p>
+                        <p className='text-xs text-slate-700 dark:text-slate-300 mt-1.5'>
+                          Comprobando si hay cálculos procesados previamente.
                         </p>
                       </div>
                     </div>
@@ -512,21 +616,25 @@ export default function RevisarCalculoFacturaComponent({
                       disabled={
                         isLaunching ||
                         !preciosConfirmados ||
-                        isLoadingValidacion
+                        isLoadingValidacion ||
+                        isProcesando
                       }
                       variant='default'
                       size='sm'
                       title={
-                        !preciosConfirmados
-                          ? 'Debes confirmar todos los precios primero'
-                          : 'Preparar cálculo de facturación'
+                        isProcesando
+                          ? 'Proceso en curso, por favor espere...'
+                          : !preciosConfirmados
+                            ? 'Debes confirmar todos los precios primero'
+                            : 'Preparar cálculo de facturación'
                       }
+                      className='bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md'
                     >
-                      {isLaunching ? (
+                      {isLaunching || isProcesando ? (
                         <>
                           <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
                           <span className='hidden sm:inline'>
-                            Preparando...
+                            {isProcesando ? 'Procesando...' : 'Preparando...'}
                           </span>
                         </>
                       ) : (
@@ -543,14 +651,38 @@ export default function RevisarCalculoFacturaComponent({
                       id='ver-calculo-btn'
                       onClick={handleRevisarCalculo}
                       disabled={
-                        isLoading || !preciosConfirmados || isLoadingValidacion
+                        isLoading ||
+                        !preciosConfirmados ||
+                        isLoadingValidacion ||
+                        isProcesando ||
+                        isCheckingInitialData ||
+                        !isCalculoPreparado
                       }
-                      variant='secondary'
+                      variant={
+                        isCalculoPreparado &&
+                        !isProcesando &&
+                        !isCheckingInitialData
+                          ? 'default'
+                          : 'secondary'
+                      }
                       size='sm'
                       title={
-                        !preciosConfirmados
-                          ? 'Debes confirmar todos los precios primero'
-                          : 'Ver cálculos de facturación'
+                        isCheckingInitialData
+                          ? 'Verificando datos disponibles...'
+                          : isProcesando
+                            ? 'Esperando finalización del proceso...'
+                            : !isCalculoPreparado
+                              ? 'Primero debes preparar el cálculo o espera la verificación inicial'
+                              : !preciosConfirmados
+                                ? 'Debes confirmar todos los precios primero'
+                                : 'Ver cálculos de facturación'
+                      }
+                      className={
+                        isCalculoPreparado &&
+                        !isProcesando &&
+                        !isCheckingInitialData
+                          ? 'bg-sky-600 hover:bg-sky-700 text-white shadow-lg shadow-sky-500/50 ring-2 ring-sky-400 ring-offset-2 animate-pulse'
+                          : ''
                       }
                     >
                       {isLoading ? (
@@ -561,8 +693,16 @@ export default function RevisarCalculoFacturaComponent({
                       ) : (
                         <>
                           <FileTextIcon className='h-4 w-4' />
-                          <span className='hidden sm:inline'>Ver</span>
-                          <span className='sm:hidden'>Ver Cálculos</span>
+                          <span className='hidden sm:inline'>
+                            {isCalculoPreparado && !isProcesando
+                              ? 'Ver Cálculos'
+                              : 'Ver'}
+                          </span>
+                          <span className='sm:hidden'>
+                            {isCalculoPreparado && !isProcesando
+                              ? 'Ver'
+                              : 'Ver'}
+                          </span>
                         </>
                       )}
                     </Button>
@@ -620,22 +760,25 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       id='limpiar-btn'
                       onClick={handleClearFilters}
-                      variant='destructive'
+                      variant='outline'
                       disabled={isLoading}
                       size='sm'
+                      className='border-rose-300 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-700 dark:hover:bg-rose-900/20 dark:hover:text-rose-400'
                     >
                       <Eraser className='h-4 w-4' />
                       <span className='hidden lg:inline'>Limpiar</span>
                     </Button>
 
                     {/* Exportar */}
-                    <div id='exportar-btn'>
+                    <div id='exportar-btn' className='flex items-stretch'>
                       <ExportButton
                         data={dataParaExportar}
                         columns={exportColumnsConCargos}
                         filename={`calculo_factura_${periodoFormateado}`}
                         size='sm'
                         showDropdown={true}
+                        variant='outline'
+                        className='border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-700 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-400 w-full'
                       />
                     </div>
                   </div>
