@@ -51,11 +51,14 @@ import {
   Calendar,
   ChevronDown,
   Eraser,
+  HelpCircle,
   Info,
   Search,
   TrendingUp
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 import { useEffect, useState } from 'react';
 
@@ -213,6 +216,104 @@ export default function PreciosCargoComponent({
     }
   };
 
+  // Pasos del tour interactivo con driver.js
+  const tourSteps = [
+    {
+      element: '#filtros-periodo',
+      popover: {
+        title: '📅 Filtros de Período',
+        description:
+          'Este panel te permite <strong>seleccionar el período</strong> (mes y año) para consultar los precios de cargo históricos o actuales.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#periodo-actual',
+      popover: {
+        title: '📌 Período Activo',
+        description:
+          'Aquí se muestra el <strong>período abierto actualmente</strong> en el sistema. Los filtros se inicializan automáticamente con este período.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#buscar-btn',
+      popover: {
+        title: '🔍 Buscar Precios',
+        description:
+          'Una vez seleccionado el período deseado, haz clic en <strong>Buscar</strong> para cargar los precios de cargo correspondientes a ese mes y año.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
+    },
+    {
+      element: '#limpiar-btn',
+      popover: {
+        title: '🧹 Limpiar Filtros',
+        description:
+          'Este botón <strong>restablece los filtros</strong> al mes y año actual del sistema.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
+    },
+    {
+      element: '#tabs-precios',
+      popover: {
+        title: '🔄 Pestañas de Precios',
+        description:
+          'Usa estas pestañas para alternar entre <strong>Precios ENEL</strong> (distribuidora) y <strong>Precios Enerlova</strong> (propios de la empresa).',
+        side: 'top' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#tabla-enel',
+      popover: {
+        title: '💰 Tabla de Precios ENEL',
+        description:
+          'Aquí se muestran los <strong>precios de cargo publicados por ENEL</strong>. Puedes ver valores anteriores y actuales para comparación histórica.',
+        side: 'top' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#tabla-enerlova',
+      popover: {
+        title: '💼 Tabla de Precios Enerlova',
+        description:
+          'Esta tabla muestra los <strong>precios propios de Enerlova</strong>, fijados internamente para el período actual.',
+        side: 'top' as const,
+        align: 'start' as const
+      }
+    }
+  ];
+
+  // Función para iniciar el tour
+  const startTour = () => {
+    const driverjs = driver({
+      showProgress: true,
+      progressText: 'Paso {{current}} de {{total}}',
+      smoothScroll: true,
+      stagePadding: 4,
+      stageRadius: 6,
+      animate: true,
+      allowClose: true,
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: element => {
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    });
+
+    driverjs.setSteps(tourSteps);
+    driverjs.drive();
+  };
+
   // Mostrar error si existe
   if (error) {
     return (
@@ -235,13 +336,25 @@ export default function PreciosCargoComponent({
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
-        {/* Header */}
-        <ModernHeader
-          title='Precios Cargo'
-          description='Gestión de precios de cargo para facturación'
-        />
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+          {/* Header */}
+          <ModernHeader
+            title='Precios Cargo'
+            description='Gestión de precios de cargo para facturación'
+          />
+
+          {/* Botón de Guía Interactiva */}
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={startTour}
+            className='mb-2'
+          >
+            <HelpCircle className='h-4 w-4' />
+          </Button>
+        </div>
         {/* Filtros */}
-        <Card className='border border-border shadow-sm'>
+        <Card id='filtros-periodo' className='border border-border shadow-sm'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
               className='p-4 border-b border-border cursor-pointer hover:bg-muted/50 transition-colors'
@@ -270,7 +383,7 @@ export default function PreciosCargoComponent({
             </div>
 
             {/* Período seleccionado */}
-            <div className='px-4 pb-4'>
+            <div id='periodo-actual' className='px-4 pb-4'>
               <div className='flex items-center gap-3 p-3 bg-muted/30 rounded-xl border border-border'>
                 <div className='flex items-center gap-2'>
                   <Calendar className='w-4 h-4 text-primary' />
@@ -325,6 +438,7 @@ export default function PreciosCargoComponent({
                 {/* Acciones */}
                 <div className='flex gap-2 justify-end pt-3 border-t border-border'>
                   <Button
+                    id='limpiar-btn'
                     variant='outline'
                     size='sm'
                     onClick={handleClearFilters}
@@ -335,6 +449,7 @@ export default function PreciosCargoComponent({
                   </Button>
 
                   <Button
+                    id='buscar-btn'
                     size='sm'
                     onClick={handleSearch}
                     disabled={isLoading}
@@ -360,7 +475,7 @@ export default function PreciosCargoComponent({
         {/* Tablas de Precios */}
         <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
-            <Tabs defaultValue='enel' className='w-full'>
+            <Tabs id='tabs-precios' defaultValue='enel' className='w-full'>
               <TabsList className='grid w-full grid-cols-2 bg-muted h-10'>
                 <TabsTrigger
                   value='enel'
@@ -402,7 +517,10 @@ export default function PreciosCargoComponent({
                     {months.find(m => m.value === mes)?.label} {anio}
                   </Badge>
                 </div>
-                <div className='rounded-xl border border-border overflow-hidden'>
+                <div
+                  id='tabla-enel'
+                  className='rounded-xl border border-border overflow-hidden'
+                >
                   <DataTablePrecios
                     columns={columnsEnel(
                       mes,
@@ -467,7 +585,10 @@ export default function PreciosCargoComponent({
                     Precios actuales
                   </Badge>
                 </div>
-                <div className='rounded-xl border border-border overflow-hidden'>
+                <div
+                  id='tabla-enerlova'
+                  className='rounded-xl border border-border overflow-hidden'
+                >
                   <DataTablePrecios
                     columns={columns(
                       handleEnerlovaDataUpdate,

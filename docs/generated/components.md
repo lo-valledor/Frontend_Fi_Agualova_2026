@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-23 08:24:15*
+*Generado automáticamente el 2025-10-23 10:52:03*
 
 ## Índice de Componentes
 
@@ -1336,6 +1336,25 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### data-table-nichos-virtualized
+**Archivo**: `app/components/monitor/monitor-lecturas/data-table-nichos-virtualized.tsx`
+**Documentación**:
+```typescript
+/**
+ * Tabla virtualizada para Monitor de Nichos
+ *
+ * Utiliza @tanstack/react-virtual para renderizar solo las filas visibles,
+ * mejorando significativamente el rendimiento con grandes cantidades de datos.
+ *
+ * Características:
+ * - Virtualización de filas (solo renderiza ~20 filas visibles)
+ * - Scroll infinito suave
+ * - Headers agrupados sticky
+ * - Responsive design adaptativo
+ * - Sin paginación (todo el dataset disponible via scroll)
+ */
+```
+
 ### data-table-nichos
 **Archivo**: `app/components/monitor/monitor-lecturas/data-table-nichos.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1621,6 +1640,11 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### consultar-acometida-dialog
+**Archivo**: `app/components/operaciones/corte-reposicion/consultar-acometida-dialog.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### corte-registrado-dialog
 **Archivo**: `app/components/operaciones/corte-reposicion/corte-registrado-dialog.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -1691,11 +1715,6 @@
  * ```
  */
 ```
-
-### marcar-liberar-dialog
-**Archivo**: `app/components/operaciones/corte-reposicion/marcar-liberar-dialog.tsx`
-⚠️ *Sin documentación JSDoc*
-
 
 ### reposicion-solicitada-dialog
 **Archivo**: `app/components/operaciones/corte-reposicion/reposicion-solicitada-dialog.tsx`

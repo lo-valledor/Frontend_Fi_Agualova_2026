@@ -472,12 +472,12 @@ export default function CerrarLecturasComponent({
               </div>
               <div>
                 <CardTitle className='text-base font-medium'>
-                  Estado de Cierre de Lecturas
+                  Estado de Cierre de Lecturas por Nichos
                 </CardTitle>
                 <CardDescription className='text-sm'>
                   {estadoCierreLecturas.length > 0
-                    ? `${estadoCierreLecturas.length} lecturas disponibles para cierre`
-                    : 'No hay lecturas disponibles para cierre'}
+                    ? `${estadoCierreLecturas.length} nichos disponibles para cierre`
+                    : 'No hay nichos disponibles para cierre'}
                 </CardDescription>
               </div>
             </div>
@@ -493,7 +493,7 @@ export default function CerrarLecturasComponent({
                         <div className='absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin'></div>
                       </div>
                       <div className='text-center'>
-                        <p className='font-medium'>Buscando lecturas...</p>
+                        <p className='font-medium'>Buscando nichos...</p>
                         <p className='text-sm text-muted-foreground mt-1'>
                           Por favor espere mientras procesamos su consulta
                         </p>
@@ -614,12 +614,14 @@ export default function CerrarLecturasComponent({
                               {isBlocked ? (
                                 <>
                                   <Ban className='h-4 w-4' />
-                                  Bloqueado ({selectedRows.length})
+                                  Bloqueado por claves críticas (
+                                  {blockers.criticalCount}) nichos (
+                                  {blockers.blockedNichos.length}) )
                                 </>
                               ) : (
                                 <>
                                   <CircleX className='h-4 w-4' />
-                                  Cerrar Lecturas ({selectedRows.length})
+                                  Cerrar Nichos ({selectedRows.length})
                                 </>
                               )}
                             </Button>

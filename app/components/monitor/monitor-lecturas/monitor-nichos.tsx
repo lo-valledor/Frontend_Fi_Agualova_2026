@@ -1,4 +1,3 @@
-import { type PaginationState } from '@tanstack/react-table';
 import { Loader2, RotateCcw, Search, Settings, X, Zap } from 'lucide-react';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -27,7 +26,7 @@ import api from '~/lib/api';
 import type { MedidorNichoItem } from '~/types/monitor';
 
 import { columnGroups, columnsNichos } from './columns-nichos';
-import { DataTableNichos } from './data-table-nichos';
+import { DataTableNichosVirtualized } from './data-table-nichos-virtualized';
 import EditarMedidores from './editar-medidores';
 import { InsercionAutomaticaDialog } from './insercion-automatica-dialog';
 
@@ -51,10 +50,6 @@ export default function MonitorNichos({
     useState<MedidorNichoItem | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [needsRefreshOnClose, setNeedsRefreshOnClose] = useState(false);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 15
-  });
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 300);
   const [isInsercionAutomaticaOpen, setIsInsercionAutomaticaOpen] =
@@ -310,13 +305,11 @@ export default function MonitorNichos({
           </div>
         ) : (
           <div className='h-full overflow-auto'>
-            <DataTableNichos
+            <DataTableNichosVirtualized
               columns={columnsNichos(columnProps)}
               data={filteredResults}
               columnGroups={columnGroups}
               onRowClick={handleRowClick}
-              pagination={pagination}
-              onPaginationChange={setPagination}
             />
           </div>
         )}

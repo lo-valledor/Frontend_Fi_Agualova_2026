@@ -5,8 +5,8 @@ import { Badge } from '~/components/ui/badge';
 import { cn } from '~/lib/utils';
 import type { ConsultarMantenedorRevisionCorte } from '~/types/operaciones';
 
+import { ConsultarAcometidaDialog } from './consultar-acometida-dialog';
 import { CorteRegistradoDialog } from './corte-registrado-dialog';
-import { MarcarLiberarDialog } from './marcar-liberar-dialog';
 import { ReposicionSolicitadaDialog } from './reposicion-solicitada-dialog';
 
 export const columns = (
@@ -241,7 +241,7 @@ export const columns = (
 
       return (
         <div className='flex items-center justify-center gap-0.5 sm:gap-1'>
-          <ReposicionSolicitadaDialog
+          <ConsultarAcometidaDialog
             acometida={acometida}
             onSuccess={handleSuccess}
             disabled={!canEdit}
@@ -251,7 +251,7 @@ export const columns = (
             onSuccess={handleSuccess}
             disabled={!canEdit}
           />
-          <MarcarLiberarDialog
+          <ReposicionSolicitadaDialog
             acometida={acometida}
             onSuccess={handleSuccess}
             disabled={!canEdit}

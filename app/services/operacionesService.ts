@@ -768,8 +768,49 @@ class OperacionesService {
         error: null
       };
     } catch (error) {
-      
-      
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  /**
+   * Obtiene el identificador único del proceso de cálculo de facturación
+   * 
+   * Permite recuperar el ID del proceso correspondiente para una combinación
+   * específica de ciclo, período y modo de facturación. Útil para hacer
+   * seguimiento del estado de un proceso de facturación en curso.
+   *
+   * @param cicloId - ID del ciclo facturable ('1' o '2')
+   * @param periodoId - Período en formato MMYYYY (ej: '102025')
+   * @param modo - Modo de facturación: 1 = Total, 2 = Parcial (por defecto 1)
+   * @returns Promise con identificador del proceso o error
+   *
+   * @example
+   * ```typescript
+   * const { data, error } = await operacionesService.obtenerIdentificadorProcesoActual('1', '102025', 1);
+   * if (data) {
+   *   console.log(`Proceso ID: ${data.procesoId}`);
+   *   // Usar este ID para consultar el estado del proceso
+   * }
+   * ```
+   */
+  async obtenerIdentificadorProcesoActual(
+    cicloId: string,
+    periodoId: string,
+    modo: number = 1
+  ): Promise<OperacionesServiceResponse<IdentificadorProceso>> {
+    try {
+      const response = await api.get('/identificador-proceso', {
+        params: { cicloId, periodoId, modo }
+      });
+
+      return {
+        data: response.data as IdentificadorProceso,
+        error: null
+      };
+    } catch (error) {
       return {
         data: null,
         error: error instanceof Error ? error.message : 'Error desconocido'

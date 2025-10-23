@@ -56,6 +56,7 @@ export function useCalculoFactura({
         '/calculo-prefactura-encabezado',
         { params: requestParams }
       );
+
       const encabezados = encabezadoResponse.data as CalculoPrefacturaDetalle[];
 
       if (!Array.isArray(encabezados) || encabezados.length === 0) {
@@ -69,6 +70,7 @@ export function useCalculoFactura({
       const cargosResponse = await api.get('/calculo-prefactura-cargos', {
         params: requestParams
       });
+
       const cargosData =
         cargosResponse.data as CalculoPrefacturaCargoResponse[];
 

@@ -47,6 +47,7 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { useCalculoFactura } from '~/hooks/operaciones/use-calculo-factura';
 import { useCalculoProceso } from '~/hooks/operaciones/use-calculo-proceso';
+import { useValidacionPrecios } from '~/hooks/operaciones/use-validacion-precios';
 import {
   type Ciclo,
   type EstadoCierreLecturas,
@@ -59,7 +60,7 @@ import { HierarchicalDataTable } from './hierarchical-data-table';
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
   ciclosFacturacionActivos: _ciclosFacturacionActivos,
-  estadoCierreLecturas
+  estadoCierreLecturas: _estadoCierreLecturas
 }: Readonly<{
   periodoAbierto: PeriodoAbierto[];
   ciclosFacturacionActivos: Ciclo[];
@@ -83,18 +84,17 @@ export default function RevisarCalculoFacturaComponent({
     return '';
   }, [periodoAbierto]);
 
-  // Verificar si hay lecturas cerradas disponibles (memoizado)
-  const hayLecturasCerradas = useMemo(() => {
-    if (!estadoCierreLecturas || estadoCierreLecturas.length === 0) {
-      return false;
-    }
-    return estadoCierreLecturas.some(
-      item =>
-        item.cantidadLecturasOK > 0 ||
-        item.cantidadCorregidas > 0 ||
-        item.cantidadClaveNaranja > 0
-    );
-  }, [estadoCierreLecturas]);
+  // Validar que los precios estén confirmados
+  const {
+    preciosConfirmados,
+    isLoading: isLoadingValidacion,
+    preciosConfirmadosCount,
+    preciosPendientesCount,
+    totalPrecios
+  } = useValidacionPrecios({
+    periodoFormateado,
+    cicloId
+  });
 
   // Usar los hooks personalizados
   const {
@@ -244,7 +244,7 @@ export default function RevisarCalculoFacturaComponent({
         popover: {
           title: '🔄 Preparar Cálculo',
           description:
-            '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. Es el primer paso obligatorio.',
+            '¡Empezar aquí! Este botón <strong>prepara</strong> los datos necesarios para el cálculo de facturación. <br/><br/><strong>Requisito:</strong> Primero debes confirmar todos los precios en "Revisar Precios".',
           side: 'bottom' as const,
           align: 'center' as const
         }
@@ -460,6 +460,48 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
                 </div>
 
+                {/* Advertencia de precios no confirmados */}
+                {!isLoadingValidacion && !preciosConfirmados && (
+                  <div className='p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'>
+                    <div className='flex items-start gap-2'>
+                      <AlertCircleIcon className='h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' />
+                      <div className='flex-1'>
+                        <p className='text-sm font-medium text-amber-900 dark:text-amber-100'>
+                          Precios pendientes de confirmación
+                        </p>
+                        <p className='text-xs text-amber-700 dark:text-amber-300 mt-1'>
+                          Debes confirmar {preciosPendientesCount} de{' '}
+                          {totalPrecios} precios en{' '}
+                          <strong>Revisar Precios</strong> antes de procesar
+                          facturas.
+                        </p>
+                        <p className='text-xs text-amber-600 dark:text-amber-400 mt-1'>
+                          ✓ Confirmados: {preciosConfirmadosCount}/
+                          {totalPrecios}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Mensaje de precios confirmados */}
+                {!isLoadingValidacion && preciosConfirmados && (
+                  <div className='p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800'>
+                    <div className='flex items-start gap-2'>
+                      <CheckCircle className='h-4 w-4 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0' />
+                      <div className='flex-1'>
+                        <p className='text-sm font-medium text-emerald-900 dark:text-emerald-100'>
+                          ✓ Todos los precios confirmados
+                        </p>
+                        <p className='text-xs text-emerald-700 dark:text-emerald-300 mt-1'>
+                          {totalPrecios} precios confirmados. Puedes proceder
+                          con el cálculo de facturación.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Acciones */}
                 <div className='pt-4 border-t border-border'>
                   <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
@@ -467,12 +509,16 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       id='preparar-calculo-btn'
                       onClick={handleLanzarCalculo}
-                      disabled={isLaunching || !hayLecturasCerradas}
+                      disabled={
+                        isLaunching ||
+                        !preciosConfirmados ||
+                        isLoadingValidacion
+                      }
                       variant='default'
                       size='sm'
                       title={
-                        !hayLecturasCerradas
-                          ? 'Debe cerrar lecturas antes de preparar el cálculo'
+                        !preciosConfirmados
+                          ? 'Debes confirmar todos los precios primero'
                           : 'Preparar cálculo de facturación'
                       }
                     >
@@ -496,12 +542,14 @@ export default function RevisarCalculoFacturaComponent({
                     <Button
                       id='ver-calculo-btn'
                       onClick={handleRevisarCalculo}
-                      disabled={isLoading || !hayLecturasCerradas}
+                      disabled={
+                        isLoading || !preciosConfirmados || isLoadingValidacion
+                      }
                       variant='secondary'
                       size='sm'
                       title={
-                        !hayLecturasCerradas
-                          ? 'Debe cerrar lecturas antes de ver los cálculos'
+                        !preciosConfirmados
+                          ? 'Debes confirmar todos los precios primero'
                           : 'Ver cálculos de facturación'
                       }
                     >
@@ -526,7 +574,6 @@ export default function RevisarCalculoFacturaComponent({
                       disabled={
                         isAccepting ||
                         selectedContratos.length === 0 ||
-                        !hayLecturasCerradas ||
                         !hasPermission
                       }
                       variant='outline'
@@ -534,11 +581,9 @@ export default function RevisarCalculoFacturaComponent({
                       title={
                         !hasPermission
                           ? 'No tiene permisos para aceptar cálculos'
-                          : !hayLecturasCerradas
-                            ? 'Debe cerrar lecturas antes de aceptar cálculos'
-                            : selectedContratos.length === 0
-                              ? 'Seleccione al menos un contrato'
-                              : 'Aceptar cálculos seleccionados'
+                          : selectedContratos.length === 0
+                            ? 'Seleccione al menos un contrato'
+                            : 'Aceptar cálculos seleccionados'
                       }
                     >
                       {isAccepting ? (

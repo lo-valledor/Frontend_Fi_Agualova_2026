@@ -46,7 +46,13 @@ export function useCalculoProceso({
         cicloFacturacion: parseInt(cicloParaAPI),
         periodoFacturable: periodoFormateado
       };
+
       await api.post('lanzar-calculo-facturacion', requestBody);
+      
+      toast.success('Cálculo de facturación preparado', {
+        description: 'Ahora puedes hacer clic en "Ver Cálculo Facturas"'
+      });
+
       marcarCalculoPreparado();
     } catch (err: any) {
       const errorMessage =
@@ -70,19 +76,21 @@ export function useCalculoProceso({
 
     for (const lecturaId of selectedContratos) {
       try {
-        await api.post('generar-detalle-factura', {
+        const requestBody = {
           lecturaId,
           periodoId: periodoFormateado
-        });
+        };
+
+        await api.post('generar-detalle-factura', requestBody);
         successCount++;
-      } catch (_error) {
+      } catch (_error: any) {
         errorCount++;
       }
     }
 
     if (successCount > 0) {
       toast.success(`${successCount} cálculos aceptados correctamente.`);
-      onCalculoAceptado(); // Refresh data in parent
+      onCalculoAceptado();
     }
     if (errorCount > 0) {
       toast.error(`${errorCount} cálculos fallaron.`);
@@ -105,6 +113,6 @@ export function useCalculoProceso({
     isCalculoPreparado,
     handleLanzarCalculo,
     handleAceptarCalculo,
-    setIsCalculoPreparado // Allow parent to reset
+    setIsCalculoPreparado
   };
 }

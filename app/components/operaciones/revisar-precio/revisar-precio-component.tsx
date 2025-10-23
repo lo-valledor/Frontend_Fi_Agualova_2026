@@ -69,11 +69,14 @@ import {
   ChevronDown,
   ChevronUp,
   ClockIcon,
+  HelpCircle,
   KeyIcon,
   Shield,
   Users
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 import React, { useMemo, useState } from 'react';
 
@@ -515,6 +518,114 @@ export default function RevisarPrecioComponent({
     });
   }, [isAuthorized, onRecargarPrecios]);
 
+  // Pasos del tour interactivo con driver.js
+  const tourSteps = [
+    {
+      element: '#validacion-usuario',
+      popover: {
+        title: '🔐 Validación de Usuario',
+        description:
+          'Este es el <strong>panel de autorización</strong>. Debes ingresar tu contraseña para poder modificar o confirmar precios en el sistema.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#password-field',
+      popover: {
+        title: '🔑 Contraseña de Autorización',
+        description:
+          'Ingresa tu <strong>contraseña</strong> aquí para validar tu identidad y obtener permisos de modificación.',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#autorizar-btn',
+      popover: {
+        title: '✅ Autorizar',
+        description:
+          'Haz clic en <strong>Autorizar</strong> después de ingresar tu contraseña. Una vez autorizado, podrás modificar precios pendientes.',
+        side: 'bottom' as const,
+        align: 'center' as const
+      }
+    },
+    {
+      element: '#confirmar-btn',
+      popover: {
+        title: '📋 Confirmar Cambios',
+        description:
+          'Después de seleccionar los registros que deseas confirmar, usa este botón para <strong>guardar los cambios</strong> en el sistema.',
+        side: 'top' as const,
+        align: 'center' as const
+      }
+    },
+    {
+      element: '#tabs-precios-revision',
+      popover: {
+        title: '🔄 Pestañas de Precios',
+        description:
+          'Alterna entre <strong>Valores ENEL</strong> y <strong>Precios Enerlova</strong> según el ciclo de facturación seleccionado.',
+        side: 'top' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#selector-ciclo',
+      popover: {
+        title: '⏰ Selector de Ciclo',
+        description:
+          'Selecciona el <strong>ciclo de facturación</strong> para ver los precios correspondientes a ese período (día 15 o día 30).',
+        side: 'bottom' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#tabla-valores-enel',
+      popover: {
+        title: '💰 Tabla de Valores ENEL',
+        description:
+          'Aquí se muestran los <strong>precios aplicados de ENEL</strong> para cada contrato. Puedes modificar valores pendientes si estás autorizado.',
+        side: 'top' as const,
+        align: 'start' as const
+      }
+    },
+    {
+      element: '#tabla-precios-enerlova',
+      popover: {
+        title: '💼 Tabla de Precios Enerlova',
+        description:
+          'Esta tabla muestra los <strong>precios de Enerlova por ciclo</strong>. Revisa y confirma los valores antes de la facturación.',
+        side: 'top' as const,
+        align: 'start' as const
+      }
+    }
+  ];
+
+  // Función para iniciar el tour
+  const startTour = () => {
+    const driverjs = driver({
+      showProgress: true,
+      progressText: 'Paso {{current}} de {{total}}',
+      smoothScroll: true,
+      stagePadding: 4,
+      stageRadius: 6,
+      animate: true,
+      allowClose: true,
+      nextBtnText: 'Siguiente',
+      prevBtnText: 'Anterior',
+      doneBtnText: 'Finalizar',
+      onHighlightStarted: element => {
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    });
+
+    driverjs.setSteps(tourSteps);
+    driverjs.drive();
+  };
+
   // Mostrar error si existe
   if (error) {
     return (
@@ -535,14 +646,29 @@ export default function RevisarPrecioComponent({
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
-        {/* Header */}
-        <ModernHeader
-          title='Revisar Precios'
-          description='Gestión y validación de precios del sistema'
-        />
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+          {/* Header */}
+          <ModernHeader
+            title='Revisar Precios'
+            description='Gestión y validación de precios del sistema'
+          />
+
+          {/* Botón de Guía Interactiva */}
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={startTour}
+            className='mb-2'
+          >
+            <HelpCircle className='h-4 w-4' />
+          </Button>
+        </div>
 
         {/* Validación de Usuario */}
-        <Card className='bg-card border border-border shadow-sm'>
+        <Card
+          id='validacion-usuario'
+          className='bg-card border border-border shadow-sm'
+        >
           <Collapsible
             open={isValidacionOpen}
             onOpenChange={setIsValidacionOpen}
@@ -586,7 +712,10 @@ export default function RevisarPrecioComponent({
             <CollapsibleContent>
               <CardContent className='p-3 space-y-4'>
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 items-end'>
-                  <div className='space-y-2 w-full lg:col-span-2'>
+                  <div
+                    id='password-field'
+                    className='space-y-2 w-full lg:col-span-2'
+                  >
                     <Label className='text-sm font-medium flex items-center gap-2'>
                       <KeyIcon className='w-4 h-4 text-primary' />
                       <span className='hidden sm:inline'>
@@ -606,6 +735,7 @@ export default function RevisarPrecioComponent({
                   </div>
                   <div className='flex gap-3 w-full'>
                     <Button
+                      id='autorizar-btn'
                       onClick={validarUsuario}
                       disabled={
                         isLoading || !contrasena || !hasCreatePermission
@@ -650,6 +780,7 @@ export default function RevisarPrecioComponent({
                         </p>
                       </div>
                       <Button
+                        id='confirmar-btn'
                         onClick={confirmarCambios}
                         disabled={
                           isConfirming ||
@@ -732,7 +863,11 @@ export default function RevisarPrecioComponent({
         {/* Tablas de Precios con Tabs */}
         <Card className='bg-card border border-border shadow-sm'>
           <CardContent className='p-3'>
-            <Tabs defaultValue='enel' className='w-full'>
+            <Tabs
+              id='tabs-precios-revision'
+              defaultValue='enel'
+              className='w-full'
+            >
               <TabsList className='w-full justify-start rounded-none border-b bg-transparent p-0'>
                 <TabsTrigger
                   value='enel'
@@ -784,7 +919,10 @@ export default function RevisarPrecioComponent({
                     )}
                   </Badge>
                 </div>
-                <div className='rounded-xl border border-border overflow-hidden bg-card'>
+                <div
+                  id='tabla-valores-enel'
+                  className='rounded-xl border border-border overflow-hidden bg-card'
+                >
                   <DataTable
                     columns={configuredColumnsEnel}
                     data={dataConsultarPreciosUno}
@@ -826,7 +964,10 @@ export default function RevisarPrecioComponent({
                 </div>
 
                 {/* Selector de ciclo */}
-                <div className='flex flex-col lg:flex-row gap-2 lg:gap-3 items-start lg:items-end'>
+                <div
+                  id='selector-ciclo'
+                  className='flex flex-col lg:flex-row gap-2 lg:gap-3 items-start lg:items-end'
+                >
                   <div className='space-y-2 flex-1 w-full'>
                     <Label className='text-xs sm:text-sm font-medium flex items-center gap-2'>
                       <ClockIcon className='w-3 h-3 sm:w-4 sm:h-4 text-primary' />
@@ -869,7 +1010,10 @@ export default function RevisarPrecioComponent({
                 </div>
 
                 {/* Tabla de precios Enerlova */}
-                <div className='rounded-xl border border-border overflow-hidden bg-card'>
+                <div
+                  id='tabla-precios-enerlova'
+                  className='rounded-xl border border-border overflow-hidden bg-card'
+                >
                   <DataTable
                     columns={configuredColumnsEnerlova}
                     data={dataConsultarPreciosDos}
