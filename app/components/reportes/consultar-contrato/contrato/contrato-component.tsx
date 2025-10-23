@@ -1,11 +1,11 @@
 import {
   ArrowLeft,
+  BarChart3,
+  DollarSign,
   FileText,
   Settings,
   TrendingUp,
-  User,
-  Zap
-  //Zap
+  User
 } from 'lucide-react';
 
 import { memo, useMemo, useState } from 'react';
@@ -30,9 +30,10 @@ import type {
 } from '~/types/reportes';
 
 import FacturasAnalyticsSimple from './facturas-analytics-simple';
+import FacturasDashboard from './facturas-dashboard';
 import InformacionContrato from './informacion-contrato';
 import LecturasAnalyticsSimple from './lecturas-analytics-simple';
-import ProyeccionesAvanzadas from './proyecciones-avanzadas';
+import LecturasDashboard from './lecturas-dashboard';
 
 interface ContratoComponentProps {
   detallesContrato: {
@@ -189,7 +190,7 @@ const ContratoComponent = memo(function ContratoComponent({
           onValueChange={setActiveTab}
           className='space-y-4'
         >
-          <TabsList className='grid w-full grid-cols-2 sm:grid-cols-5 h-auto sm:h-11 gap-1 p-1'>
+          <TabsList className='grid w-full grid-cols-2 sm:grid-cols-6 h-auto sm:h-11 gap-1 p-1'>
             <TabsTrigger value='resumen' className='gap-2 h-10 sm:h-9'>
               <User className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Información</span>
@@ -200,22 +201,26 @@ const ContratoComponent = memo(function ContratoComponent({
               <span className='hidden sm:inline'>Lecturas</span>
               <span className='sm:hidden text-xs'>Lect.</span>
             </TabsTrigger>
+            <TabsTrigger
+              value='dashboard-lecturas'
+              className='gap-2 h-10 sm:h-9'
+            >
+              <BarChart3 className='h-4 w-4 flex-shrink-0' />
+              <span className='hidden sm:inline'>Dashboard Lecturas</span>
+              <span className='sm:hidden text-xs'>Dash Lect.</span>
+            </TabsTrigger>
             <TabsTrigger value='facturas' className='gap-2 h-10 sm:h-9'>
               <FileText className='h-4 w-4 flex-shrink-0' />
               <span className='hidden sm:inline'>Facturas</span>
               <span className='sm:hidden text-xs'>Fact.</span>
             </TabsTrigger>
             <TabsTrigger
-              value='proyecciones'
-              className='gap-2 h-10 sm:h-9 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 data-[state=active]:from-blue-100 data-[state=active]:to-purple-100'
+              value='dashboard-facturas'
+              className='gap-2 h-10 sm:h-9'
             >
-              <Zap className='h-4 w-4 flex-shrink-0 text-blue-600 dark:text-blue-400' />
-              <span className='hidden sm:inline text-blue-900 dark:text-blue-100'>
-                Proyecciones IA
-              </span>
-              <span className='sm:hidden text-xs text-blue-900 dark:text-blue-100'>
-                IA
-              </span>
+              <DollarSign className='h-4 w-4 flex-shrink-0' />
+              <span className='hidden sm:inline'>Financiero</span>
+              <span className='sm:hidden text-xs'>Fin.</span>
             </TabsTrigger>
             <TabsTrigger value='tecnico' className='gap-2 h-10 sm:h-9'>
               <Settings className='h-4 w-4 flex-shrink-0' />
@@ -244,6 +249,14 @@ const ContratoComponent = memo(function ContratoComponent({
             />
           </TabsContent>
 
+          {/* Tab: Dashboard de Lecturas */}
+          <TabsContent value='dashboard-lecturas' className='space-y-4'>
+            <LecturasDashboard
+              detalleLecturas={detalleLecturas}
+              contratoId={contratoInfo?.contratoId}
+            />
+          </TabsContent>
+
           {/* Tab: Análisis de Facturas */}
           <TabsContent value='facturas' className='space-y-4'>
             <FacturasAnalyticsSimple
@@ -252,11 +265,11 @@ const ContratoComponent = memo(function ContratoComponent({
             />
           </TabsContent>
 
-          {/* Tab: Proyecciones Avanzadas */}
-          <TabsContent value='proyecciones' className='space-y-4'>
-            <ProyeccionesAvanzadas
-              detalleLecturas={detalleLecturas}
+          {/* Tab: Dashboard Financiero */}
+          <TabsContent value='dashboard-facturas' className='space-y-4'>
+            <FacturasDashboard
               detalleFacturas={detalleFacturas}
+              detalleLecturas={detalleLecturas}
               contratoId={contratoInfo?.contratoId}
             />
           </TabsContent>

@@ -160,7 +160,8 @@ export default function MonitorNichos({
     searchResults();
   };
 
-  if (isLoading) {
+  // Estados iniciales que ocupan todo el espacio
+  if (isLoading && results.length === 0) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
         <LoadingState title='Cargando datos de nichos...' />
@@ -168,20 +169,10 @@ export default function MonitorNichos({
     );
   }
 
-  if (results.length === 0) {
+  if (results.length === 0 && !isLoading) {
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
         <EmptyState message='No se encontraron medidores para los parámetros seleccionados' />
-      </div>
-    );
-  }
-
-  if (filteredResults.length === 0 && searchTerm.trim()) {
-    return (
-      <div className='flex items-center justify-center min-h-[400px]'>
-        <EmptyState
-          message={`No se encontraron medidores que coincidan con "${searchTerm}"`}
-        />
       </div>
     );
   }
@@ -217,8 +208,13 @@ export default function MonitorNichos({
             </Badge>
             <Badge
               variant='outline'
-              className='h-9 bg-muted text-muted-foreground border-border font-semibold text-sm px-3 shadow-sm inline-flex items-center'
+              className={`h-9 font-semibold text-sm px-3 shadow-sm inline-flex items-center ${
+                searchTerm.trim()
+                  ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                  : 'bg-muted text-muted-foreground border-border'
+              }`}
             >
+              {searchTerm.trim() && <Search className='h-3 w-3 mr-1.5' />}
               {filteredResults.length} medidores
               {searchTerm.trim() && ` de ${results.length}`}
             </Badge>
@@ -302,6 +298,35 @@ export default function MonitorNichos({
         {isLoading ? (
           <div className='flex items-center justify-center h-full min-h-[300px]'>
             <LoadingSpinner />
+          </div>
+        ) : filteredResults.length === 0 && searchTerm.trim() ? (
+          <div className='flex flex-col items-center justify-center h-full min-h-[300px] gap-4 p-6'>
+            <div className='p-4 rounded-full bg-muted/50'>
+              <Search className='h-12 w-12 text-muted-foreground' />
+            </div>
+            <div className='text-center space-y-2 max-w-md'>
+              <h3 className='font-semibold text-lg text-foreground'>
+                No se encontraron resultados
+              </h3>
+              <p className='text-sm text-muted-foreground'>
+                No se encontraron medidores que coincidan con{' '}
+                <span className='font-mono bg-muted px-2 py-0.5 rounded text-foreground'>
+                  "{searchTerm}"
+                </span>
+              </p>
+              <p className='text-xs text-muted-foreground'>
+                Mostrando 0 de {results.length} medidores totales
+              </p>
+            </div>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => setSearchTerm('')}
+              className='gap-2'
+            >
+              <X className='h-4 w-4' />
+              Limpiar búsqueda
+            </Button>
           </div>
         ) : (
           <div className='h-full overflow-auto'>

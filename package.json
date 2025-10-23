@@ -77,6 +77,8 @@
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "isbot": "^5.1.27",
+    "jspdf": "^3.0.3",
+    "jspdf-autotable": "^5.0.2",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.513.0",
     "motion": "^12.15.0",

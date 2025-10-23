@@ -543,7 +543,7 @@ export default function RevisarCalculoFacturaComponent({
                             </span>
                           </div>
                           <div className='hidden sm:block'>•</div>
-                          <div>Verificaciones: {intentosPolling}/150</div>
+                          <div>Verificaciones: {intentosPolling}/10</div>
                         </div>
                         <div className='mt-2'>
                           <div className='w-full bg-blue-200 dark:bg-blue-800 rounded-full h-1.5'>

@@ -1,3 +1,5 @@
+import { TrendingDown, TrendingUp, Minus } from 'lucide-react';
+
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
@@ -12,10 +14,15 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     ),
     cell: ({ row }) => {
       const periodo = row.getValue('periodo');
-      return <div className='font-medium'>{periodo as string}</div>;
+      return (
+        <div className='font-medium text-slate-900 dark:text-slate-100'>
+          {periodo as string}
+        </div>
+      );
     },
     enableSorting: true,
-    enableHiding: false
+    enableHiding: false,
+    minSize: 100
   },
   {
     accessorKey: 'nroFactura',
@@ -24,9 +31,14 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     ),
     cell: ({ row }) => {
       const nroFactura = row.getValue('nroFactura');
-      return <Badge variant='outline'>{nroFactura as string}</Badge>;
+      return (
+        <Badge variant='outline' className='font-mono text-xs'>
+          {nroFactura as string}
+        </Badge>
+      );
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 120
   },
   {
     accessorKey: 'tarifa',
@@ -35,9 +47,14 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     ),
     cell: ({ row }) => {
       const tarifa = row.getValue('tarifa');
-      return <div className='text-left'>{tarifa as string}</div>;
+      return (
+        <Badge variant='secondary' className='text-xs'>
+          {tarifa as string}
+        </Badge>
+      );
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 100
   },
   {
     accessorKey: 'fechaEmision',
@@ -46,9 +63,14 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     ),
     cell: ({ row }) => {
       const fecha = row.getValue('fechaEmision');
-      return <div className='text-sm'>{fecha as string}</div>;
+      return (
+        <div className='text-sm text-slate-600 dark:text-slate-400'>
+          {fecha as string}
+        </div>
+      );
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 110
   },
   {
     accessorKey: 'fechaVencimiento',
@@ -56,11 +78,24 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='F. Vencimiento' />
     ),
     cell: ({ row }) => {
-      const fecha = row.getValue('fechaVencimiento');
+      const fecha = row.getValue('fechaVencimiento') as string;
+      const fechaVencimiento = new Date(fecha);
+      const hoy = new Date();
+      const diasDiferencia = Math.ceil(
+        (fechaVencimiento.getTime() - hoy.getTime()) / (1000 * 3600 * 24)
+      );
 
-      return <div className='text-sm'>{fecha as string}</div>;
+      let colorClass = 'text-slate-600 dark:text-slate-400';
+      if (diasDiferencia < 0) {
+        colorClass = 'text-red-600 dark:text-red-400 font-medium';
+      } else if (diasDiferencia <= 7) {
+        colorClass = 'text-amber-600 dark:text-amber-400 font-medium';
+      }
+
+      return <div className={`text-sm ${colorClass}`}>{fecha}</div>;
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 120
   },
   {
     accessorKey: 'valorNeto',
@@ -68,10 +103,15 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Valor Neto' />
     ),
     cell: ({ row }) => {
-      const valor = row.getValue('valorNeto');
-      return <div className='text-left'>${valor?.toLocaleString()}</div>;
+      const valor = row.getValue('valorNeto') as number;
+      return (
+        <div className='text-right font-medium text-cyan-700 dark:text-cyan-400'>
+          ${valor?.toLocaleString('es-CL')}
+        </div>
+      );
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 110
   },
   {
     accessorKey: 'iva',
@@ -79,10 +119,15 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='IVA' />
     ),
     cell: ({ row }) => {
-      const iva = row.getValue('iva');
-      return <div className='text-left'>${iva?.toLocaleString()}</div>;
+      const iva = row.getValue('iva') as number;
+      return (
+        <div className='text-right text-slate-600 dark:text-slate-400'>
+          ${iva?.toLocaleString('es-CL')}
+        </div>
+      );
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 100
   },
   {
     accessorKey: 'valorTotal',
@@ -90,12 +135,15 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Total' />
     ),
     cell: ({ row }) => {
-      const total = row.getValue('valorTotal');
+      const total = row.getValue('valorTotal') as number;
       return (
-        <div className='text-left font-bold'>${total?.toLocaleString()}</div>
+        <div className='text-right font-bold text-emerald-700 dark:text-emerald-400 text-base'>
+          ${total?.toLocaleString('es-CL')}
+        </div>
       );
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 120
   },
   {
     accessorKey: 'consumoPeriodo',
@@ -103,13 +151,41 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       <DataTableColumnHeader column={column} title='Consumo' />
     ),
     cell: ({ row }) => {
-      const consumo = row.getValue('consumoPeriodo');
+      const consumo = row.getValue('consumoPeriodo') as number;
+      const index = row.index;
+
+      // Calcular si el consumo aumentó o disminuyó respecto al período anterior
+      let icon = null;
+      let colorClass = 'text-slate-700 dark:text-slate-300';
+
+      if (index > 0) {
+        const table = row.getContext().table;
+        const rows = table.getCoreRowModel().rows;
+        const prevRow = rows[index - 1];
+        if (prevRow) {
+          const prevConsumo = prevRow.getValue('consumoPeriodo') as number;
+          if (consumo > prevConsumo * 1.05) {
+            icon = <TrendingUp className='h-3 w-3 inline ml-1 text-rose-500' />;
+            colorClass = 'text-rose-600 dark:text-rose-400 font-medium';
+          } else if (consumo < prevConsumo * 0.95) {
+            icon = (
+              <TrendingDown className='h-3 w-3 inline ml-1 text-emerald-500' />
+            );
+            colorClass = 'text-emerald-600 dark:text-emerald-400 font-medium';
+          } else {
+            icon = <Minus className='h-3 w-3 inline ml-1 text-slate-400' />;
+          }
+        }
+      }
+
       return (
-        <div className='text-left text-sm'>
-          {(consumo as number).toLocaleString()} kWh
+        <div className={`text-right ${colorClass}`}>
+          {consumo.toLocaleString('es-CL')} kWh
+          {icon}
         </div>
       );
     },
-    enableSorting: true
+    enableSorting: true,
+    minSize: 130
   }
 ];

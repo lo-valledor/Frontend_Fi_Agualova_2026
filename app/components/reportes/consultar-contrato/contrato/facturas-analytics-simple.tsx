@@ -3,12 +3,25 @@ import {
   ChevronUp,
   DollarSign,
   FileText,
-  TrendingUp
+  TrendingDown,
+  TrendingUp,
+  Activity,
+  PieChart,
+  Calendar
 } from 'lucide-react';
 
 import { memo, useMemo, useState, useRef } from 'react';
 
-import { Bar, BarChart, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  XAxis,
+  YAxis,
+  Line,
+  ComposedChart,
+  ResponsiveContainer,
+  Area
+} from 'recharts';
 
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
@@ -22,7 +35,13 @@ import {
 import { ExportButton } from '~/components/shared/export-button';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription
+} from '~/components/ui/card';
 import { TooltipProvider } from '~/components/ui/tooltip';
 import {
   ChartContainer,
@@ -38,7 +57,9 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
 import type { ExportColumn } from '~/hooks/shared/use-export-data';
+import { useExportPDF, type PDFSection } from '~/hooks/shared/use-export-pdf';
 import type { DetalleFacturas } from '~/types/reportes';
 
 import { facturasTableColumns } from './columns-facturas';
@@ -57,7 +78,12 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
   >('todo');
   const [showDataTable, setShowDataTable] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [activeChart, setActiveChart] = useState<
+    'composition' | 'trends' | 'comparison'
+  >('composition');
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const { exportToPDF } = useExportPDF();
+
   // Columnas para exportación
   const facturasColumns = useMemo(
     (): ExportColumn[] => [
@@ -81,7 +107,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         header: 'Valor Total',
         formatter: (value: number) => `$${value?.toLocaleString('es-CL')}`
       },
-      { key: 'consumoPeriodo', header: 'Consumo Período' }
+      { key: 'consumoPeriodo', header: 'Consumo Período (kWh)' }
     ],
     []
   );
@@ -117,7 +143,6 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
   const calculateBillingPredictions = (data: any[], months: number = 6) => {
     if (data.length < 2) return [];
 
-    // Calcular tendencias para valor total y consumo usando regresión lineal
     const n = data.length;
     let sumX = 0,
       sumYTotal = 0,
@@ -144,16 +169,13 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
       (n * sumXYConsumo - sumX * sumYConsumo) / (n * sumX2 - sumX * sumX);
     const interceptConsumo = (sumYConsumo - slopeConsumo * sumX) / n;
 
-    // Generar predicciones futuras basadas en el último registro real
     const predictions = [];
     const lastRecordedDate = new Date(data[data.length - 1].fecha);
 
     for (let i = 1; i <= months; i++) {
-      // Proyectar desde el último mes con factura registrada
       const futureDate = new Date(lastRecordedDate);
       futureDate.setMonth(futureDate.getMonth() + i);
 
-      // Buscar facturas históricas del mismo mes para ajustar predicción
       const sameMonthData = data.filter(item => {
         const itemDate = new Date(item.fecha);
         return (
@@ -171,7 +193,6 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         interceptConsumo + slopeConsumo * (n + i - 1)
       );
 
-      // Ajustar con promedio histórico del mismo mes si existe
       if (sameMonthData.length > 0) {
         const sameMonthTotalAvg =
           sameMonthData.reduce((sum, item) => sum + item.valorTotal, 0) /
@@ -180,12 +201,11 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           sameMonthData.reduce((sum, item) => sum + item.consumo, 0) /
           sameMonthData.length;
 
-        // Ponderar: 70% tendencia lineal + 30% promedio histórico del mes
         predictedTotal = predictedTotal * 0.7 + sameMonthTotalAvg * 0.3;
         predictedConsumo = predictedConsumo * 0.7 + sameMonthConsumoAvg * 0.3;
       }
 
-      const predictedNeto = predictedTotal * 0.84; // Aproximación IVA 19%
+      const predictedNeto = predictedTotal * 0.84;
       const predictedIva = predictedTotal - predictedNeto;
 
       predictions.push({
@@ -205,7 +225,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
     return predictions;
   };
 
-  // Procesamiento de datos simplificado
+  // Procesamiento de datos mejorado
   const analyticsData = useMemo(() => {
     if (detalleFacturas.length === 0) {
       return {
@@ -213,11 +233,18 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         promedioFactura: 0,
         tendenciaFacturacion: 'stable' as const,
         facturasProcesadas: [],
-        filteredFacturas: []
+        filteredFacturas: [],
+        promedioConsumo: 0,
+        totalConsumo: 0,
+        precioPromedioKwh: 0,
+        maxFactura: 0,
+        minFactura: 0,
+        dataWithBillingPredictions: [],
+        billingPredictions: [],
+        variacionPromedio: 0
       };
     }
 
-    // Procesar facturas con manejo correcto de fechas
     const facturasProcesadas = detalleFacturas
       .map(factura => {
         let fechaEmision;
@@ -225,7 +252,6 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         let fechaCorta;
         let fechaCompleta;
 
-        // Manejar fecha de emisión
         if (
           factura.fechaEmision &&
           typeof factura.fechaEmision === 'string' &&
@@ -242,7 +268,6 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           fechaEmision = new Date(factura.fechaEmision);
         }
 
-        // Manejar fecha de vencimiento
         if (
           factura.fechaVencimiento &&
           typeof factura.fechaVencimiento === 'string' &&
@@ -259,7 +284,6 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           fechaVencimiento = new Date(factura.fechaVencimiento);
         }
 
-        // Verificar si las fechas son válidas
         if (isNaN(fechaEmision.getTime())) {
           fechaEmision = new Date();
           fechaCorta = factura.periodo;
@@ -285,24 +309,22 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           nroFactura: factura.nroFactura,
           fechaCorta,
           fechaCompleta,
-          fecha: fechaEmision.getTime(), // Para ordenamiento
+          fecha: fechaEmision.getTime(),
           valorTotal: factura.valorTotal || 0,
           valorNeto: factura.valorNeto || 0,
           iva: factura.iva || 0,
           consumo: factura.consumoPeriodo || 0,
-          consumoNormalizado: (factura.consumoPeriodo || 0) / 1000, // Normalizado para que se vea bien en el gráfico
+          consumoNormalizado: (factura.consumoPeriodo || 0) / 1000,
           precioKwh:
             factura.consumoPeriodo > 0
               ? (factura.valorNeto || 0) / factura.consumoPeriodo
               : 0
         };
       })
-      .sort((a, b) => a.fecha - b.fecha); // Ordenar por fecha
+      .sort((a, b) => a.fecha - b.fecha);
 
-    // Filtrar por rango de tiempo
     const filteredFacturas = filterByTimeRange(facturasProcesadas, timeRange);
 
-    // Calcular predicciones basadas en TODOS los datos (independiente del filtro)
     const billingPredictions = calculateBillingPredictions(
       facturasProcesadas,
       6
@@ -321,7 +343,38 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
         ? totalFacturado / filteredFacturas.length
         : 0;
 
-    // Tendencia simple (usar datos filtrados)
+    const totalConsumo = filteredFacturas.reduce(
+      (sum, f) => sum + f.consumo,
+      0
+    );
+    const promedioConsumo =
+      filteredFacturas.length > 0 ? totalConsumo / filteredFacturas.length : 0;
+
+    const precioPromedioKwh =
+      totalConsumo > 0 ? totalFacturado / totalConsumo : 0;
+
+    const valoresFacturas = filteredFacturas.map(f => f.valorTotal);
+    const maxFactura =
+      valoresFacturas.length > 0 ? Math.max(...valoresFacturas) : 0;
+    const minFactura =
+      valoresFacturas.length > 0 ? Math.min(...valoresFacturas) : 0;
+
+    // Calcular variación promedio entre períodos
+    let variacionPromedio = 0;
+    if (filteredFacturas.length > 1) {
+      const variaciones = [];
+      for (let i = 1; i < filteredFacturas.length; i++) {
+        const variacion =
+          ((filteredFacturas[i].valorTotal -
+            filteredFacturas[i - 1].valorTotal) /
+            filteredFacturas[i - 1].valorTotal) *
+          100;
+        variaciones.push(variacion);
+      }
+      variacionPromedio =
+        variaciones.reduce((sum, v) => sum + v, 0) / variaciones.length;
+    }
+
     const ultimas2 = filteredFacturas.slice(-2);
     const anteriores2 = filteredFacturas.slice(-4, -2);
 
@@ -346,30 +399,36 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
       facturasProcesadas,
       filteredFacturas,
       dataWithBillingPredictions,
-      billingPredictions
+      billingPredictions,
+      promedioConsumo,
+      totalConsumo,
+      precioPromedioKwh,
+      maxFactura,
+      minFactura,
+      variacionPromedio
     };
   }, [detalleFacturas, timeRange]);
 
   const chartConfig = {
     valorTotal: {
       label: 'Valor Total',
-      color: '#059669' // verde esmeralda
+      color: '#059669'
     },
     valorNeto: {
       label: 'Valor Neto',
-      color: '#0891b2' // cian
+      color: '#0891b2'
     },
     iva: {
       label: 'IVA',
-      color: '#dc2626' // rojo
+      color: '#dc2626'
     },
     consumo: {
       label: 'Consumo (kWh)',
-      color: '#7c3aed' // violeta
+      color: '#7c3aed'
     },
-    consumoNormalizado: {
-      label: 'Consumo Normalizado',
-      color: '#7c3aed' // violeta
+    precioKwh: {
+      label: 'Precio/kWh',
+      color: '#f59e0b'
     }
   };
 
@@ -394,6 +453,89 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
     overscan: 10
   });
 
+  // Función para exportar a PDF
+  const handlePDFExport = async () => {
+    const sections: PDFSection[] = [
+      // KPIs
+      {
+        title: 'Indicadores Principales',
+        type: 'kpis',
+        kpis: [
+          {
+            label: 'Total Facturado',
+            value: `$${analyticsData.totalFacturado.toLocaleString('es-CL')}`
+          },
+          {
+            label: 'Promedio por Factura',
+            value: `$${Math.round(analyticsData.promedioFactura).toLocaleString('es-CL')}`
+          },
+          {
+            label: 'Total Facturas',
+            value: analyticsData.filteredFacturas.length
+          },
+          {
+            label: 'Consumo Total',
+            value: `${Math.round(analyticsData.totalConsumo).toLocaleString('es-CL')} kWh`
+          },
+          {
+            label: 'Precio Promedio/kWh',
+            value: `$${analyticsData.precioPromedioKwh.toFixed(2)}`
+          },
+          {
+            label: 'Variación Promedio',
+            value: `${analyticsData.variacionPromedio.toFixed(1)}%`
+          }
+        ]
+      },
+      // Tabla de facturas
+      {
+        title: 'Detalle de Facturas',
+        type: 'table',
+        data: analyticsData.filteredFacturas,
+        columns: [
+          { key: 'periodo', header: 'Período', width: 25 },
+          { key: 'nroFactura', header: 'N° Factura', width: 25 },
+          {
+            key: 'valorNeto',
+            header: 'Valor Neto',
+            align: 'right',
+            formatter: (val: number) => `$${val.toLocaleString('es-CL')}`
+          },
+          {
+            key: 'iva',
+            header: 'IVA',
+            align: 'right',
+            formatter: (val: number) => `$${val.toLocaleString('es-CL')}`
+          },
+          {
+            key: 'valorTotal',
+            header: 'Total',
+            align: 'right',
+            formatter: (val: number) => `$${val.toLocaleString('es-CL')}`
+          },
+          {
+            key: 'consumo',
+            header: 'Consumo',
+            align: 'right',
+            formatter: (val: number) => `${val.toLocaleString('es-CL')} kWh`
+          }
+        ]
+      }
+    ];
+
+    await exportToPDF(sections, {
+      title: `Análisis de Facturas - Contrato ${contratoId}`,
+      subtitle: `Período: ${timeRange === 'todo' ? 'Todo el historial' : timeRange}`,
+      filename: `facturas_contrato_${contratoId}`,
+      orientation: 'landscape',
+      companyInfo: {
+        name: 'Sistema de Gestión Enerlova',
+        address: 'Reporte generado automáticamente',
+        phone: ''
+      }
+    });
+  };
+
   if (detalleFacturas.length === 0) {
     return (
       <Card className='border bg-background'>
@@ -409,103 +551,174 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
   return (
     <TooltipProvider>
       <div className='space-y-6'>
-        {/* Filtros de tiempo */}
+        {/* Filtros de tiempo y exportación */}
         <Card className='border bg-background'>
           <CardContent className='pt-4'>
-            <div className='flex flex-wrap gap-2'>
-              <Button
-                variant={timeRange === '6m' ? 'default' : 'outline'}
+            <div className='flex flex-col sm:flex-row justify-between gap-4'>
+              <div className='flex flex-wrap gap-2'>
+                <Button
+                  variant={timeRange === '6m' ? 'default' : 'outline'}
+                  size='sm'
+                  onClick={() => setTimeRange('6m')}
+                >
+                  <Calendar className='h-3 w-3 mr-1' />6 meses
+                </Button>
+                <Button
+                  variant={timeRange === '1a' ? 'default' : 'outline'}
+                  size='sm'
+                  onClick={() => setTimeRange('1a')}
+                >
+                  1 año
+                </Button>
+                <Button
+                  variant={timeRange === '2a' ? 'default' : 'outline'}
+                  size='sm'
+                  onClick={() => setTimeRange('2a')}
+                >
+                  2 años
+                </Button>
+                <Button
+                  variant={timeRange === '5a' ? 'default' : 'outline'}
+                  size='sm'
+                  onClick={() => setTimeRange('5a')}
+                >
+                  5 años
+                </Button>
+                <Button
+                  variant={timeRange === 'todo' ? 'default' : 'outline'}
+                  size='sm'
+                  onClick={() => setTimeRange('todo')}
+                >
+                  Todo
+                </Button>
+              </div>
+              <ExportButton
+                data={detalleFacturas}
+                columns={facturasColumns}
+                filename={`facturas_contrato_${contratoId}`}
                 size='sm'
-                onClick={() => setTimeRange('6m')}
-              >
-                Últimos 6 meses
-              </Button>
-              <Button
-                variant={timeRange === '1a' ? 'default' : 'outline'}
-                size='sm'
-                onClick={() => setTimeRange('1a')}
-              >
-                Último año
-              </Button>
-              <Button
-                variant={timeRange === '2a' ? 'default' : 'outline'}
-                size='sm'
-                onClick={() => setTimeRange('2a')}
-              >
-                Últimos 2 años
-              </Button>
-              <Button
-                variant={timeRange === '5a' ? 'default' : 'outline'}
-                size='sm'
-                onClick={() => setTimeRange('5a')}
-              >
-                Últimos 5 años
-              </Button>
-              <Button
-                variant={timeRange === 'todo' ? 'default' : 'outline'}
-                size='sm'
-                onClick={() => setTimeRange('todo')}
-              >
-                Todo el historial
-              </Button>
+                enablePDF={true}
+                onPDFExport={handlePDFExport}
+              />
             </div>
           </CardContent>
         </Card>
 
-        {/* KPIs minimalistas */}
-        <div className='grid gap-4 md:grid-cols-4'>
-          <Card className='border bg-background'>
+        {/* KPIs mejorados en grid */}
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
+          <Card className='border bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium'>Total Facturado</p>
-                  <p className='text-2xl font-bold'>
-                    ${analyticsData.totalFacturado.toLocaleString('es-CL')}
+                <div className='flex-1'>
+                  <p className='text-xs font-medium text-emerald-700 dark:text-emerald-300'>
+                    Total Facturado
                   </p>
-                  <p className='text-xs text-muted-foreground'>
+                  <p className='text-xl font-bold text-emerald-900 dark:text-emerald-100'>
+                    $
+                    {Math.round(analyticsData.totalFacturado).toLocaleString(
+                      'es-CL'
+                    )}
+                  </p>
+                  <p className='text-xs text-emerald-600 dark:text-emerald-400'>
                     {analyticsData.filteredFacturas.length} facturas
                   </p>
                 </div>
-                <DollarSign className='h-4 w-4 text-muted-foreground' />
+                <DollarSign className='h-8 w-8 text-emerald-600 dark:text-emerald-400 opacity-50' />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-background'>
+          <Card className='border bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium'>Promedio</p>
-                  <p className='text-2xl font-bold'>
-                    ${analyticsData.promedioFactura.toLocaleString('es-CL')}
+                <div className='flex-1'>
+                  <p className='text-xs font-medium text-blue-700 dark:text-blue-300'>
+                    Promedio Factura
                   </p>
-                  <p className='text-xs text-muted-foreground'>por factura</p>
-                </div>
-                <FileText className='h-4 w-4 text-muted-foreground' />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className='border bg-background'>
-            <CardContent className='pt-4'>
-              <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium'>Total Períodos</p>
-                  <p className='text-2xl font-bold'>
-                    {analyticsData.filteredFacturas.length}
+                  <p className='text-xl font-bold text-blue-900 dark:text-blue-100'>
+                    $
+                    {Math.round(analyticsData.promedioFactura).toLocaleString(
+                      'es-CL'
+                    )}
                   </p>
-                  <p className='text-xs text-muted-foreground'>facturados</p>
+                  <p className='text-xs text-blue-600 dark:text-blue-400'>
+                    por período
+                  </p>
                 </div>
-                <FileText className='h-4 w-4 text-muted-foreground' />
+                <Activity className='h-8 w-8 text-blue-600 dark:text-blue-400 opacity-50' />
               </div>
             </CardContent>
           </Card>
 
-          <Card className='border bg-background'>
+          <Card className='border bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
-                <div>
-                  <p className='text-sm font-medium'>Tendencia</p>
+                <div className='flex-1'>
+                  <p className='text-xs font-medium text-purple-700 dark:text-purple-300'>
+                    Consumo Total
+                  </p>
+                  <p className='text-xl font-bold text-purple-900 dark:text-purple-100'>
+                    {Math.round(analyticsData.totalConsumo).toLocaleString(
+                      'es-CL'
+                    )}
+                  </p>
+                  <p className='text-xs text-purple-600 dark:text-purple-400'>
+                    kWh
+                  </p>
+                </div>
+                <Activity className='h-8 w-8 text-purple-600 dark:text-purple-400 opacity-50' />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className='border bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900'>
+            <CardContent className='pt-4'>
+              <div className='flex items-center justify-between'>
+                <div className='flex-1'>
+                  <p className='text-xs font-medium text-amber-700 dark:text-amber-300'>
+                    Precio/kWh
+                  </p>
+                  <p className='text-xl font-bold text-amber-900 dark:text-amber-100'>
+                    ${analyticsData.precioPromedioKwh.toFixed(2)}
+                  </p>
+                  <p className='text-xs text-amber-600 dark:text-amber-400'>
+                    promedio
+                  </p>
+                </div>
+                <PieChart className='h-8 w-8 text-amber-600 dark:text-amber-400 opacity-50' />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className='border bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900'>
+            <CardContent className='pt-4'>
+              <div className='flex items-center justify-between'>
+                <div className='flex-1'>
+                  <p className='text-xs font-medium text-rose-700 dark:text-rose-300'>
+                    Factura Máxima
+                  </p>
+                  <p className='text-xl font-bold text-rose-900 dark:text-rose-100'>
+                    $
+                    {Math.round(analyticsData.maxFactura).toLocaleString(
+                      'es-CL'
+                    )}
+                  </p>
+                  <p className='text-xs text-rose-600 dark:text-rose-400'>
+                    peak
+                  </p>
+                </div>
+                <TrendingUp className='h-8 w-8 text-rose-600 dark:text-rose-400 opacity-50' />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className='border bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900'>
+            <CardContent className='pt-4'>
+              <div className='flex items-center justify-between'>
+                <div className='flex-1'>
+                  <p className='text-xs font-medium text-slate-700 dark:text-slate-300'>
+                    Tendencia
+                  </p>
                   <Badge
                     variant={
                       analyticsData.tendenciaFacturacion === 'up'
@@ -514,73 +727,196 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                           ? 'default'
                           : 'secondary'
                     }
+                    className='mt-2'
                   >
-                    {analyticsData.tendenciaFacturacion === 'up'
-                      ? 'Al alza'
-                      : analyticsData.tendenciaFacturacion === 'down'
-                        ? 'A la baja'
-                        : 'Estable'}
+                    {analyticsData.tendenciaFacturacion === 'up' ? (
+                      <>
+                        <TrendingUp className='h-3 w-3 mr-1' />
+                        Al alza
+                      </>
+                    ) : analyticsData.tendenciaFacturacion === 'down' ? (
+                      <>
+                        <TrendingDown className='h-3 w-3 mr-1' />A la baja
+                      </>
+                    ) : (
+                      'Estable'
+                    )}
                   </Badge>
+                  <p className='text-xs text-slate-600 dark:text-slate-400 mt-1'>
+                    {analyticsData.variacionPromedio > 0 ? '+' : ''}
+                    {analyticsData.variacionPromedio.toFixed(1)}%
+                  </p>
                 </div>
-                <TrendingUp className='h-4 w-4 text-muted-foreground' />
+                <FileText className='h-8 w-8 text-slate-600 dark:text-slate-400 opacity-50' />
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Gráfico de composición */}
-        <div className='grid gap-6 lg:grid-cols-1'>
-          {/* Composición de Facturación (Neto + IVA) */}
-          <Card className='border bg-background'>
-            <CardHeader>
-              <CardTitle className='text-base'>
-                Composición de Facturación
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className='aspect-[4/3]'>
-                <BarChart data={analyticsData.filteredFacturas}>
-                  <XAxis
-                    dataKey='fechaCorta'
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    fontSize={12}
-                  />
-                  <YAxis hide />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                    labelFormatter={(label, payload) => {
-                      const item = payload?.[0]?.payload;
-                      if (item) {
-                        return item.fechaCompleta !== item.periodo
-                          ? `${item.periodo} (${item.fechaCompleta})`
-                          : item.periodo;
-                      }
-                      return label;
-                    }}
-                    formatter={(value, name) => [
-                      `$${Number(value).toLocaleString('es-CL')}`,
-                      name === 'valorNeto' ? 'Valor Neto' : 'IVA'
-                    ]}
-                  />
-                  <Bar
-                    dataKey='valorNeto'
-                    fill='#0891b2'
-                    stackId='factura'
-                    radius={[0, 0, 4, 4]}
-                  />
-                  <Bar
-                    dataKey='iva'
-                    fill='#dc2626'
-                    stackId='factura'
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Gráficos con tabs */}
+        <Card className='border bg-background'>
+          <CardHeader>
+            <CardTitle className='text-base'>
+              Análisis Visual de Facturación
+            </CardTitle>
+            <CardDescription>
+              Visualiza tendencias y patrones en tus facturas
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs
+              value={activeChart}
+              onValueChange={v => setActiveChart(v as any)}
+            >
+              <TabsList className='grid w-full grid-cols-3 mb-4'>
+                <TabsTrigger value='composition'>Composición</TabsTrigger>
+                <TabsTrigger value='trends'>Evolución Temporal</TabsTrigger>
+                <TabsTrigger value='comparison'>Precio/kWh</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value='composition' className='mt-0'>
+                <ChartContainer
+                  config={chartConfig}
+                  className='h-[350px] w-full'
+                >
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <BarChart data={analyticsData.filteredFacturas}>
+                      <XAxis
+                        dataKey='fechaCorta'
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        fontSize={11}
+                      />
+                      <YAxis hide />
+                      <ChartTooltip
+                        content={<ChartTooltipContent />}
+                        labelFormatter={(label, payload) => {
+                          const item = payload?.[0]?.payload;
+                          if (item) {
+                            return item.fechaCompleta !== item.periodo
+                              ? `${item.periodo} (${item.fechaCompleta})`
+                              : item.periodo;
+                          }
+                          return label;
+                        }}
+                        formatter={(value, name) => [
+                          `$${Number(value).toLocaleString('es-CL')}`,
+                          name === 'valorNeto' ? 'Valor Neto' : 'IVA'
+                        ]}
+                      />
+                      <Bar
+                        dataKey='valorNeto'
+                        fill='#0891b2'
+                        stackId='factura'
+                        radius={[0, 0, 4, 4]}
+                      />
+                      <Bar
+                        dataKey='iva'
+                        fill='#dc2626'
+                        stackId='factura'
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </TabsContent>
+
+              <TabsContent value='trends' className='mt-0'>
+                <ChartContainer
+                  config={chartConfig}
+                  className='h-[350px] w-full'
+                >
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <ComposedChart data={analyticsData.filteredFacturas}>
+                      <XAxis
+                        dataKey='fechaCorta'
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        fontSize={11}
+                      />
+                      <YAxis hide />
+                      <ChartTooltip
+                        content={<ChartTooltipContent />}
+                        formatter={value => [
+                          `$${Number(value).toLocaleString('es-CL')}`,
+                          'Valor Total'
+                        ]}
+                      />
+                      <defs>
+                        <linearGradient
+                          id='colorValor'
+                          x1='0'
+                          y1='0'
+                          x2='0'
+                          y2='1'
+                        >
+                          <stop
+                            offset='5%'
+                            stopColor='#059669'
+                            stopOpacity={0.3}
+                          />
+                          <stop
+                            offset='95%'
+                            stopColor='#059669'
+                            stopOpacity={0}
+                          />
+                        </linearGradient>
+                      </defs>
+                      <Area
+                        type='monotone'
+                        dataKey='valorTotal'
+                        stroke='#059669'
+                        strokeWidth={2}
+                        fill='url(#colorValor)'
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </TabsContent>
+
+              <TabsContent value='comparison' className='mt-0'>
+                <ChartContainer
+                  config={chartConfig}
+                  className='h-[350px] w-full'
+                >
+                  <ResponsiveContainer width='100%' height='100%'>
+                    <ComposedChart data={analyticsData.filteredFacturas}>
+                      <XAxis
+                        dataKey='fechaCorta'
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        fontSize={11}
+                      />
+                      <YAxis hide />
+                      <ChartTooltip
+                        content={<ChartTooltipContent />}
+                        formatter={value => [
+                          `$${Number(value).toFixed(2)}`,
+                          'Precio por kWh'
+                        ]}
+                      />
+                      <Bar
+                        dataKey='precioKwh'
+                        fill='#f59e0b'
+                        radius={[4, 4, 0, 0]}
+                      />
+                      <Line
+                        type='monotone'
+                        dataKey='precioKwh'
+                        stroke='#dc2626'
+                        strokeWidth={2}
+                        dot={{ fill: '#dc2626', r: 3 }}
+                      />
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
 
         <Separator />
 
@@ -591,19 +927,13 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             onClick={() => setShowDataTable(!showDataTable)}
           >
             <CardTitle className='text-base flex items-center gap-2'>
-              Historial de Facturas ({detalleFacturas.length})
+              Historial Detallado de Facturas ({detalleFacturas.length})
               {showDataTable ? (
                 <ChevronUp className='h-4 w-4' />
               ) : (
                 <ChevronDown className='h-4 w-4' />
               )}
             </CardTitle>
-            <ExportButton
-              data={detalleFacturas}
-              columns={facturasColumns}
-              filename={`facturas_contrato_${contratoId}`}
-              size='sm'
-            />
           </CardHeader>
           {showDataTable && (
             <CardContent>

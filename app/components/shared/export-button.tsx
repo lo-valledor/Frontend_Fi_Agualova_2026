@@ -5,6 +5,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '~/components/ui/dropdown-menu';
 import {
@@ -12,6 +13,8 @@ import {
   type ExportFormat,
   useExportData
 } from '~/hooks/shared/use-export-data';
+
+export type ExtendedExportFormat = ExportFormat | 'pdf';
 
 interface ExportButtonProps<T extends Record<string, any>> {
   data: T[];
@@ -21,7 +24,9 @@ interface ExportButtonProps<T extends Record<string, any>> {
   size?: 'sm' | 'default' | 'lg';
   variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'link';
   showDropdown?: boolean;
-  defaultFormat?: ExportFormat;
+  defaultFormat?: ExtendedExportFormat;
+  enablePDF?: boolean;
+  onPDFExport?: () => void;
 }
 
 export function ExportButton<T extends Record<string, any>>({
@@ -32,24 +37,35 @@ export function ExportButton<T extends Record<string, any>>({
   size = 'sm',
   variant = 'default',
   showDropdown = true,
-  defaultFormat = 'xlsx'
+  defaultFormat = 'xlsx',
+  enablePDF = false,
+  onPDFExport
 }: Readonly<ExportButtonProps<T>>) {
   const { isExporting, exportData } = useExportData<T>();
 
-  const handleExport = async (format: ExportFormat) => {
+  const handleExport = async (format: ExtendedExportFormat) => {
+    if (format === 'pdf') {
+      if (onPDFExport) {
+        onPDFExport();
+      }
+      return;
+    }
+
     await exportData(data, columns, {
-      format,
+      format: format as ExportFormat,
       filename,
       includeHeaders: true
     });
   };
 
-  const getFormatLabel = (format: ExportFormat) => {
+  const getFormatLabel = (format: ExtendedExportFormat) => {
     switch (format) {
       case 'csv':
         return 'CSV';
       case 'xlsx':
         return 'Excel';
+      case 'pdf':
+        return 'PDF';
       default:
         return 'Exportar';
     }
@@ -122,6 +138,19 @@ export function ExportButton<T extends Record<string, any>>({
           <FileText className='mr-2 h-4 w-4 text-blue-600' />
           <span>CSV (.csv)</span>
         </DropdownMenuItem>
+        {enablePDF && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => handleExport('pdf')}
+              disabled={isExporting}
+              className='cursor-pointer'
+            >
+              <FileText className='mr-2 h-4 w-4 text-red-600' />
+              <span>PDF (.pdf)</span>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

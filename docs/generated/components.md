@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-23 13:30:41*
+*Generado automáticamente el 2025-10-23 17:55:10*
 
 ## Índice de Componentes
 
@@ -2096,6 +2096,11 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### facturas-dashboard
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas-dashboard.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### informacion-contrato
 **Archivo**: `app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -2106,8 +2111,8 @@
 ⚠️ *Sin documentación JSDoc*
 
 
-### proyecciones-avanzadas
-**Archivo**: `app/components/reportes/consultar-contrato/contrato/proyecciones-avanzadas.tsx`
+### lecturas-dashboard
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/lecturas-dashboard.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 
