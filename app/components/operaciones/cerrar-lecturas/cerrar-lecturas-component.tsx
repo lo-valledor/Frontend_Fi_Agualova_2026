@@ -98,6 +98,7 @@ import {
 import { DataTable } from '../../data-table/data-table';
 import AlertCerrarLecturas from './alert-cerrar-lecturas';
 import { columns } from './columns';
+import { DataTableVirtualized } from './data-table-virtualized';
 
 export default function CerrarLecturasComponent({
   periodoAbierto,
@@ -116,6 +117,7 @@ export default function CerrarLecturasComponent({
   const [selectedRows, setSelectedRows] = useState<EstadoCierreLecturas[]>([]);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [totalLecturasCerrar, setTotalLecturasCerrar] = useState(0);
+  const [showSinLecturas, setShowSinLecturas] = useState(false);
 
   // Permisos
   const { canCreate, canEdit } = useAuth();
@@ -131,6 +133,31 @@ export default function CerrarLecturasComponent({
     }
     return '';
   }, [periodoAbierto]);
+
+  // Separar nichos con lecturas de los sin lecturas
+  const { nichosConLecturas, nichosSinLecturas } = useMemo(() => {
+    const conLecturas: EstadoCierreLecturas[] = [];
+    const sinLecturas: EstadoCierreLecturas[] = [];
+
+    estadoCierreLecturas.forEach(nicho => {
+      const tieneLecturas =
+        nicho.cantidadLecturasOK > 0 ||
+        nicho.cantidadClaveRoja > 0 ||
+        nicho.cantidadClaveNaranja > 0 ||
+        nicho.cantidadCorregidas > 0;
+
+      if (tieneLecturas) {
+        conLecturas.push(nicho);
+      } else {
+        sinLecturas.push(nicho);
+      }
+    });
+
+    return {
+      nichosConLecturas: conLecturas,
+      nichosSinLecturas: sinLecturas
+    };
+  }, [estadoCierreLecturas]);
 
   /**
    * Convierte el día de facturación seleccionado al ID del ciclo que espera la API
@@ -552,14 +579,66 @@ export default function CerrarLecturasComponent({
 
               return (
                 <div className='space-y-4'>
+                  {/* Estadísticas generales */}
+                  <div className='grid grid-cols-1 sm:grid-cols-3 gap-3'>
+                    <div className='p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800'>
+                      <div className='flex items-center gap-2'>
+                        <CheckCircleIcon className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                        <div>
+                          <div className='text-2xl font-bold text-emerald-700 dark:text-emerald-300'>
+                            {nichosConLecturas.length}
+                          </div>
+                          <div className='text-xs font-medium text-emerald-600 dark:text-emerald-400'>
+                            Nichos con lecturas
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='p-3 rounded-xl bg-slate-50 dark:bg-slate-900/20 border border-slate-200 dark:border-slate-800'>
+                      <div className='flex items-center gap-2'>
+                        <AlertCircleIcon className='h-5 w-5 text-slate-600 dark:text-slate-400' />
+                        <div>
+                          <div className='text-2xl font-bold text-slate-700 dark:text-slate-300'>
+                            {nichosSinLecturas.length}
+                          </div>
+                          <div className='text-xs font-medium text-slate-600 dark:text-slate-400'>
+                            Nichos sin lecturas
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='p-3 rounded-xl bg-primary/10 border border-primary/20'>
+                      <div className='flex items-center gap-2'>
+                        <FileTextIcon className='h-5 w-5 text-primary' />
+                        <div>
+                          <div className='text-2xl font-bold text-primary'>
+                            {estadoCierreLecturas.length}
+                          </div>
+                          <div className='text-xs font-medium text-primary'>
+                            Total nichos
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Encabezado y botón de acción */}
                   <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border'>
                     <div className='flex items-center gap-2'>
                       <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
                         <CheckCircleIcon className='w-4 h-4 text-primary' />
                       </div>
-                      <span className='font-medium text-sm'>
-                        {estadoCierreLecturas.length} registros encontrados
-                      </span>
+                      <div>
+                        <span className='font-medium text-sm'>
+                          Nichos disponibles para cierre
+                        </span>
+                        <p className='text-xs text-muted-foreground'>
+                          {nichosConLecturas.length} nichos con lecturas listas
+                          para procesar
+                        </p>
+                      </div>
                     </div>
                     <div className='flex items-center gap-2'>
                       {(() => {
@@ -630,23 +709,103 @@ export default function CerrarLecturasComponent({
                       })()}
                     </div>
                   </div>
-                  <div className='rounded-xl border border-border overflow-hidden bg-card'>
-                    <DataTable
-                      columns={columns}
-                      data={estadoCierreLecturas}
-                      onRowSelectionChange={setSelectedRows}
-                      rowIdKey='nichoId'
-                      meta={{
-                        allRowsDisabled: estadoCierreLecturas.every(
-                          row =>
-                            row.cantidadLecturasOK === 0 &&
-                            row.cantidadClaveRoja === 0 &&
-                            row.cantidadClaveNaranja === 0 &&
-                            row.cantidadCorregidas === 0
-                        )
-                      }}
-                    />
-                  </div>
+
+                  {/* Tabla de nichos CON lecturas (virtualizada) */}
+                  {nichosConLecturas.length > 0 ? (
+                    <div className='space-y-2'>
+                      <div className='flex items-center justify-between'>
+                        <h3 className='text-sm font-semibold flex items-center gap-2'>
+                          <CheckCircleIcon className='h-4 w-4 text-emerald-600' />
+                          Nichos con lecturas ({nichosConLecturas.length})
+                        </h3>
+                        <div className='text-xs text-muted-foreground'>
+                          Selecciona los nichos a cerrar
+                        </div>
+                      </div>
+                      <DataTableVirtualized
+                        columns={columns}
+                        data={nichosConLecturas}
+                        onRowSelectionChange={setSelectedRows}
+                        rowIdKey='nichoId'
+                      />
+                    </div>
+                  ) : (
+                    <div className='p-8 rounded-xl bg-muted/30 border border-border text-center'>
+                      <CheckCircleIcon className='h-12 w-12 mx-auto text-muted-foreground mb-3' />
+                      <p className='font-medium text-muted-foreground'>
+                        No hay nichos con lecturas para cerrar
+                      </p>
+                      <p className='text-sm text-muted-foreground mt-1'>
+                        Todos los nichos consultados no tienen lecturas
+                        registradas
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Sección colapsable de nichos SIN lecturas */}
+                  {nichosSinLecturas.length > 0 && (
+                    <div className='space-y-2'>
+                      <Card className='border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/20'>
+                        <Collapsible
+                          open={showSinLecturas}
+                          onOpenChange={setShowSinLecturas}
+                        >
+                          <button
+                            className='w-full flex justify-between items-center p-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors text-left rounded-lg'
+                            onClick={() => setShowSinLecturas(!showSinLecturas)}
+                            onKeyDown={e => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setShowSinLecturas(!showSinLecturas);
+                              }
+                            }}
+                            aria-expanded={showSinLecturas}
+                            aria-controls='sin-lecturas-content'
+                            type='button'
+                          >
+                            <div className='flex items-center gap-3'>
+                              <div className='w-8 h-8 bg-slate-200 dark:bg-slate-800 rounded-xl flex items-center justify-center'>
+                                <AlertCircleIcon className='w-4 h-4 text-slate-600 dark:text-slate-400' />
+                              </div>
+                              <div>
+                                <div className='font-medium text-sm text-slate-700 dark:text-slate-300'>
+                                  Nichos sin lecturas (
+                                  {nichosSinLecturas.length})
+                                </div>
+                                <p className='text-xs text-slate-600 dark:text-slate-400'>
+                                  Estos nichos no pueden cerrarse (sin lecturas
+                                  registradas)
+                                </p>
+                              </div>
+                            </div>
+                            <div className='flex items-center'>
+                              {showSinLecturas ? (
+                                <ChevronUp className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                              ) : (
+                                <ChevronDown className='h-4 w-4 text-slate-600 dark:text-slate-400' />
+                              )}
+                            </div>
+                          </button>
+
+                          <CollapsibleContent>
+                            <CardContent className='px-4 pb-4'>
+                              <div className='rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-card'>
+                                <DataTable
+                                  columns={columns}
+                                  data={nichosSinLecturas}
+                                  rowIdKey='nichoId'
+                                  showSearch={false}
+                                  meta={{
+                                    allRowsDisabled: true
+                                  }}
+                                />
+                              </div>
+                            </CardContent>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </Card>
+                    </div>
+                  )}
                 </div>
               );
             })()}

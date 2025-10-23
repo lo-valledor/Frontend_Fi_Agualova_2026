@@ -55,7 +55,7 @@ import {
 } from '~/types/operaciones';
 
 import { columns } from './columnsPrecalculo';
-import { HierarchicalDataTable } from './hierarchical-data-table';
+import { HierarchicalDataTableVirtualized } from './hierarchical-data-table-virtualized';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
@@ -981,7 +981,7 @@ export default function RevisarCalculoFacturaComponent({
 
                   {/* Tabla de datos */}
                   <div>
-                    <HierarchicalDataTable
+                    <HierarchicalDataTableVirtualized
                       columns={columns}
                       data={filteredData}
                       onSelectionChange={handleSelectionChange}

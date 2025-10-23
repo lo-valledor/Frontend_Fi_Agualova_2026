@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-23 13:20:15*
+*Generado automáticamente el 2025-10-23 13:30:41*
 
 ## Índice de Componentes
 
@@ -1622,6 +1622,11 @@
 
 ### columns
 **Archivo**: `app/components/operaciones/cerrar-lecturas/columns.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### data-table-virtualized
+**Archivo**: `app/components/operaciones/cerrar-lecturas/data-table-virtualized.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 
