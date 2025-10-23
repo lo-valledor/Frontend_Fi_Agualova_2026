@@ -768,6 +768,8 @@ class OperacionesService {
         error: null
       };
     } catch (error) {
+      
+      
       return {
         data: null,
         error: error instanceof Error ? error.message : 'Error desconocido'

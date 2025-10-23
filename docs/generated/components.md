@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-22 15:51:36*
+*Generado automáticamente el 2025-10-23 08:24:15*
 
 ## Índice de Componentes
 
@@ -1598,6 +1598,12 @@
  * }
  * ```
  */
+/**
+   * Convierte el día de facturación seleccionado al ID del ciclo que espera la API
+   *
+   * @param diaFacturacion - Día de facturación (ej: "15", "16", "30")
+   * @returns ID del ciclo para la API: '1' para ciclo 15, '2' para ciclo 30
+   */
 ```
 
 ### columns

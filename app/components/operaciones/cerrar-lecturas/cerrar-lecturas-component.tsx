@@ -125,10 +125,51 @@ export default function CerrarLecturasComponent({
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
       const { mes, anio } = periodoAbierto[0];
-      return `${mes.toString().padStart(2, '0')}${anio.toString()}`;
+      const formatted = `${mes.toString().padStart(2, '0')}${anio.toString()}`;
+
+      return formatted;
     }
     return '';
   }, [periodoAbierto]);
+
+  /**
+   * Convierte el día de facturación seleccionado al ID del ciclo que espera la API
+   *
+   * @param diaFacturacion - Día de facturación (ej: "15", "16", "30")
+   * @returns ID del ciclo para la API: '1' para ciclo 15, '2' para ciclo 30
+   */
+  const obtenerCicloParaAPI = (diaFacturacion: string): string => {
+    if (!ciclosFacturacion || ciclosFacturacion.length === 0) {
+      return diaFacturacion;
+    }
+
+    // Buscar el ciclo por día de facturación
+    const ciclo = ciclosFacturacion.find(
+      (c: Ciclo) => c.diaFacturacion === diaFacturacion
+    );
+
+    if (!ciclo) {
+      return diaFacturacion;
+    }
+
+    const descripcion = ciclo.descripcion.toLowerCase();
+
+    // Ciclo 15 (o variantes como 16) → ID 1
+    if (descripcion.includes('15') || descripcion.includes('16')) {
+      return '1';
+    }
+
+    // Ciclo 30 (o fin de mes) → ID 2
+    if (
+      descripcion.includes('30') ||
+      descripcion.includes('31') ||
+      descripcion.includes('fin de mes')
+    ) {
+      return '2';
+    }
+
+    return diaFacturacion;
+  };
 
   const handleSearch = async () => {
     if (!periodoFormateado) {
@@ -146,28 +187,31 @@ export default function CerrarLecturasComponent({
       setError(null);
       setSelectedRows([]); // Limpiar selección en nueva búsqueda
 
+      // Convertir el día de facturación al ID del ciclo
+      const cicloParaAPI = obtenerCicloParaAPI(cicloSeleccionado);
+
       const params = new URLSearchParams();
-      params.append('cicloFacturable', cicloSeleccionado);
+      params.append('cicloFacturable', cicloParaAPI);
       params.append('periodo', periodoFormateado);
 
       const response = await api.get('/estado-cierre-lecturas', {
         params
       });
 
-      if (response.status === 200) {
-        const data = response.data as EstadoCierreLecturas[];
-        setEstadoCierreLecturas(data);
-        console.log(data);
-        if (data.length === 0) {
-          toast.info(
-            'No se encontraron resultados para los criterios seleccionados'
-          );
+      // Guardar los datos en el estado
+      if (response.data && Array.isArray(response.data)) {
+        setEstadoCierreLecturas(response.data);
+
+        if (response.data.length > 0) {
+          toast.success(`Se encontraron ${response.data.length} registros`);
         } else {
-          toast.success(`Se encontraron ${data.length} registros`);
+          toast.info(
+            'No se encontraron lecturas para cerrar en este ciclo y periodo'
+          );
         }
       } else {
-        setError('Error al buscar lecturas');
-        toast.error('Error al buscar lecturas');
+        setEstadoCierreLecturas([]);
+        toast.info('No se encontraron registros');
       }
     } catch (error: any) {
       setError(`Error: ${error.message || 'Error desconocido'}`);
@@ -358,7 +402,9 @@ export default function CerrarLecturasComponent({
                       </Label>
                       <Select
                         value={cicloSeleccionado}
-                        onValueChange={setCicloSeleccionado}
+                        onValueChange={value => {
+                          setCicloSeleccionado(value);
+                        }}
                       >
                         <SelectTrigger
                           id='ciclo'
@@ -368,19 +414,21 @@ export default function CerrarLecturasComponent({
                         </SelectTrigger>
                         <SelectContent>
                           {ciclosFacturacion?.map(
-                            (ciclo: Ciclo, index: number) => (
-                              <SelectItem
-                                key={index}
-                                value={ciclo.diaFacturacion}
-                              >
-                                <div className='flex items-center gap-2'>
-                                  <div className='w-2 h-2 rounded-full bg-primary'></div>
-                                  <span className='font-medium'>
-                                    {ciclo.descripcion}
-                                  </span>
-                                </div>
-                              </SelectItem>
-                            )
+                            (ciclo: Ciclo, index: number) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  value={ciclo.diaFacturacion}
+                                >
+                                  <div className='flex items-center gap-2'>
+                                    <div className='w-2 h-2 rounded-full bg-primary'></div>
+                                    <span className='font-medium'>
+                                      {ciclo.descripcion}
+                                    </span>
+                                  </div>
+                                </SelectItem>
+                              );
+                            }
                           )}
                         </SelectContent>
                       </Select>
@@ -608,7 +656,7 @@ export default function CerrarLecturasComponent({
             isOpen={isAlertOpen}
             onOpenChange={setIsAlertOpen}
             selectedRows={selectedRows}
-            cicloFact={cicloSeleccionado}
+            cicloFact={obtenerCicloParaAPI(cicloSeleccionado)}
             periodo={periodoFormateado}
             onSuccess={handleLecturaCerrada}
             totalLecturas={totalLecturasCerrar}
