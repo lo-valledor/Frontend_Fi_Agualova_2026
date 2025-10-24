@@ -71,7 +71,12 @@ export function VirtualDataTable<TData, TValue>({
     state: {
       globalFilter
     },
-    onGlobalFilterChange: setGlobalFilter
+    onGlobalFilterChange: setGlobalFilter,
+    columnResizeMode: 'onChange',
+    defaultColumn: {
+      minSize: 60,
+      maxSize: 999
+    }
   });
 
   const rows = table.getRowModel().rows;
@@ -109,12 +114,19 @@ export function VirtualDataTable<TData, TValue>({
           overflow: 'auto'
         }}
       >
-        <Table>
+        <Table style={{ tableLayout: 'fixed', width: '100%' }}>
           <TableHeader className='sticky top-0 bg-background z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.column.columnDef.minSize ?? 60}px`,
+                      maxWidth: `${header.column.columnDef.maxSize ?? 999}px`
+                    }}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -157,7 +169,14 @@ export function VirtualDataTable<TData, TValue>({
                       style={{ height: `${virtualRow.size}px` }}
                     >
                       {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id}>
+                        <TableCell
+                          key={cell.id}
+                          style={{
+                            width: `${cell.column.getSize()}px`,
+                            minWidth: `${cell.column.columnDef.minSize ?? 60}px`,
+                            maxWidth: `${cell.column.columnDef.maxSize ?? 999}px`
+                          }}
+                        >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()

@@ -15,6 +15,44 @@ interface TableColumnsProps {
   canEdit?: boolean;
 }
 
+// Función para convertir string de fecha a objeto Date (para ordenamiento)
+const parseDateString = (
+  dateValue: string | Date | null | undefined
+): Date | null => {
+  if (!dateValue) return null;
+
+  if (dateValue instanceof Date) {
+    return dateValue;
+  }
+
+  if (typeof dateValue === 'string') {
+    const dateString = dateValue.trim();
+
+    // Formato DD-MM-YYYY HH:mm:ss (del backend)
+    if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
+      const [fechaParte] = dateString.split(' ');
+      const [dia, mes, año] = fechaParte.split('-');
+      const date = new Date(`${año}-${mes}-${dia}`);
+      return isNaN(date.getTime()) ? null : date;
+    }
+
+    // Formato DD/MM/YYYY (con barra)
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+      const [dia, mes, año] = dateString.split('/');
+      const date = new Date(`${año}-${mes}-${dia}`);
+      return isNaN(date.getTime()) ? null : date;
+    }
+
+    // Formato ISO (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
+      const date = new Date(dateString);
+      return isNaN(date.getTime()) ? null : date;
+    }
+  }
+
+  return null;
+};
+
 // Función robusta para formatear fechas en formato español
 const formatDateToSpanish = (
   dateValue: string | Date | null | undefined
@@ -25,29 +63,57 @@ const formatDateToSpanish = (
 
   // Si es un string, intentar parsearlo
   if (typeof dateValue === 'string') {
-    // Intentar diferentes formatos de fecha
-    const dateFormats = [
-      // Formato ISO (2023-12-31)
-      /^\d{4}-\d{2}-\d{2}/,
-      // Formato DD/MM/YYYY
-      /^\d{2}\/\d{2}\/\d{4}/,
-      // Formato MM/DD/YYYY (formato gringo)
-      /^\d{1,2}\/\d{1,2}\/\d{4}/,
-      // Formato DD-MM-YYYY
-      /^\d{2}-\d{2}-\d{4}/,
-      // Formato MM-DD-YYYY
-      /^\d{1,2}-\d{1,2}-\d{4}/
-    ];
+    const dateString = dateValue.trim();
 
-    // Verificar si la fecha tiene un formato reconocible
-    const isValidFormat = dateFormats.some(format => format.test(dateValue));
+    // Formato DD-MM-YYYY HH:mm:ss (del backend)
+    // Ejemplo: "31-01-2014 00:00:00" o "24-10-2025"
+    if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(dateString)) {
+      const [fechaParte] = dateString.split(' '); // Separar fecha de hora
+      const [dia, mes, año] = fechaParte.split('-');
 
-    if (!isValidFormat) {
-      return 'Fecha inválida';
+      // Crear fecha en formato ISO para evitar ambigüedad
+      date = new Date(`${año}-${mes}-${dia}`);
+
+      // Verificar si la fecha es válida
+      if (isNaN(date.getTime())) {
+        return 'Fecha inválida';
+      }
+
+      // Retornar en formato DD/MM/YYYY
+      return `${dia}/${mes}/${año}`;
     }
 
-    // Intentar crear la fecha
-    date = new Date(dateValue);
+    // Formato DD/MM/YYYY (con barra)
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+      const [dia, mes, año] = dateString.split('/');
+
+      // Crear fecha en formato ISO
+      date = new Date(`${año}-${mes}-${dia}`);
+
+      if (isNaN(date.getTime())) {
+        return 'Fecha inválida';
+      }
+
+      return `${dia}/${mes}/${año}`;
+    }
+
+    // Formato ISO (YYYY-MM-DD)
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
+      date = new Date(dateString);
+
+      if (isNaN(date.getTime())) {
+        return 'Fecha inválida';
+      }
+
+      return date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+    }
+
+    // Si no coincide con ningún formato conocido
+    return 'Fecha inválida';
   } else {
     date = dateValue;
   }
@@ -85,6 +151,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 140,
     minSize: 120,
     maxSize: 180
   },
@@ -113,6 +180,7 @@ export const columns = ({
         </div>
       </div>
     ),
+    size: 350,
     minSize: 240,
     maxSize: 999
   },
@@ -134,6 +202,7 @@ export const columns = ({
         </Badge>
       );
     },
+    size: 120,
     minSize: 100,
     maxSize: 140
   },
@@ -155,6 +224,7 @@ export const columns = ({
         </Badge>
       );
     },
+    size: 100,
     minSize: 100,
     maxSize: 140
   },
@@ -176,6 +246,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 140,
     minSize: 120,
     maxSize: 180
   },
@@ -193,6 +264,19 @@ export const columns = ({
         </div>
       );
     },
+    sortingFn: (rowA, rowB, columnId) => {
+      const dateA = parseDateString(rowA.getValue(columnId));
+      const dateB = parseDateString(rowB.getValue(columnId));
+
+      // Manejar casos donde alguna fecha es null o inválida
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1; // Fechas inválidas van al final
+      if (!dateB) return -1;
+
+      // Comparar timestamps
+      return dateA.getTime() - dateB.getTime();
+    },
+    size: 120,
     minSize: 110,
     maxSize: 140
   },
@@ -203,7 +287,10 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <EstadoBadge estado={row.original.activo} />;
-    }
+    },
+    size: 100,
+    minSize: 80,
+    maxSize: 120
   },
   {
     accessorKey: 'fechaTermino',
@@ -227,6 +314,19 @@ export const columns = ({
         </div>
       );
     },
+    sortingFn: (rowA, rowB, columnId) => {
+      const dateA = parseDateString(rowA.getValue(columnId));
+      const dateB = parseDateString(rowB.getValue(columnId));
+
+      // Manejar casos donde alguna fecha es null o inválida
+      if (!dateA && !dateB) return 0;
+      if (!dateA) return 1; // Fechas inválidas/indefinidas van al final
+      if (!dateB) return -1;
+
+      // Comparar timestamps
+      return dateA.getTime() - dateB.getTime();
+    },
+    size: 120,
     minSize: 110,
     maxSize: 140
   },
@@ -248,6 +348,7 @@ export const columns = ({
         </Badge>
       );
     },
+    size: 130,
     minSize: 120,
     maxSize: 160
   },
@@ -265,6 +366,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 110,
     minSize: 100,
     maxSize: 130
   },
@@ -289,6 +391,7 @@ export const columns = ({
         </Badge>
       );
     },
+    size: 120,
     minSize: 100,
     maxSize: 140
   },
@@ -311,6 +414,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 90,
     minSize: 80,
     maxSize: 100
   }

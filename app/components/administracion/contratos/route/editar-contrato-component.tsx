@@ -112,19 +112,103 @@ export default function EditarContratoComponent({
   const [tipoContrato, setTipoContrato] = useState<TiposContrato[]>([]);
   const [tarifas, setTarifas] = useState<Tarifas[]>([]);
 
+  // Helper para convertir fecha al formato YYYY-MM-DD para inputs tipo date (Frontend)
+  const convertirFechaParaInput = (
+    fechaString: string | null | undefined
+  ): string => {
+    if (!fechaString) return '';
+
+    try {
+      const fechaLimpia = fechaString.trim();
+
+      // Si la fecha ya está en formato YYYY-MM-DD, retornarla tal cual
+      if (/^\d{4}-\d{2}-\d{2}$/.test(fechaLimpia)) {
+        return fechaLimpia;
+      }
+
+      // Si la fecha está en formato DD-MM-YYYY HH:mm:ss (del backend)
+      // Ejemplo: "31-01-2014 00:00:00" o "24-10-2025 00:00:00"
+      if (/^\d{2}-\d{2}-\d{4}(\s+\d{2}:\d{2}:\d{2})?$/.test(fechaLimpia)) {
+        const [fechaParte] = fechaLimpia.split(' '); // Separar fecha de hora
+        const [dia, mes, año] = fechaParte.split('-');
+        const resultado = `${año}-${mes}-${dia}`;
+
+        return resultado;
+      }
+
+      // Si la fecha está en formato DD/MM/YYYY (con barra)
+      if (/^\d{2}\/\d{2}\/\d{4}$/.test(fechaLimpia)) {
+        const [dia, mes, año] = fechaLimpia.split('/');
+        const resultado = `${año}-${mes}-${dia}`;
+        return resultado;
+      }
+
+      // Si la fecha está en formato ISO o timestamp parseable
+      // IMPORTANTE: Solo intentar parsear si NO está en formato DD-MM-YYYY
+      // porque JavaScript lo interpretará mal
+      if (!/^\d{2}-\d{2}-\d{4}/.test(fechaLimpia)) {
+        const fecha = new Date(fechaLimpia);
+        if (!isNaN(fecha.getTime())) {
+          const year = fecha.getFullYear();
+          const month = String(fecha.getMonth() + 1).padStart(2, '0');
+          const day = String(fecha.getDate()).padStart(2, '0');
+          const resultado = `${year}-${month}-${day}`;
+          return resultado;
+        }
+      }
+
+      return '';
+    } catch (_error) {
+      return '';
+    }
+  };
+
+  // Helper para convertir fecha de YYYY-MM-DD (input) a DD/MM/YYYY (SQL Server)
+  const convertirFechaParaBackend = (fechaInput: string): string => {
+    if (!fechaInput) return '';
+
+    try {
+      // Si la fecha está en formato YYYY-MM-DD (del input)
+      if (/^\d{4}-\d{2}-\d{2}$/.test(fechaInput)) {
+        const [year, month, day] = fechaInput.split('-');
+        const resultado = `${day}/${month}/${year}`;
+
+        return resultado;
+      }
+
+      // Si ya está en formato DD/MM/YYYY, retornarla tal cual
+      if (/^\d{2}[/-]\d{2}[/-]\d{4}$/.test(fechaInput)) {
+        const resultado = fechaInput.replace(/-/g, '/');
+
+        return resultado;
+      }
+
+      return fechaInput;
+    } catch (_error) {
+      return fechaInput;
+    }
+  };
+
   // Función para mapear GetContratoPorId a ContratoFormData
   const mapContratoToFormData = (
     contratoData: GetContratoPorId
   ): ContratoFormData => {
-    return {
+    const fechaInicioConvertida = convertirFechaParaInput(
+      contratoData.fechaInicio
+    );
+    const fechaTerminoConvertida = convertirFechaParaInput(
+      contratoData.fechaTermino
+    );
+
+    const mappedData = {
       tipoContrato: contratoData.tipoContrato || '',
       tarifa: contratoData.tarifa || '',
       nombrePropietario: contratoData.nombrePropietario || '',
       nombreCliente: contratoData.nombreCliente || '',
       local: contratoData.localId || '',
-      fechaInicio: contratoData.fechaInicio || '',
+      fechaInicio: fechaInicioConvertida,
       activo: contratoData.activoTexto === 'Si',
-      fechaTermino: contratoData.fechaTermino || '',
+      fechaTermino: fechaTerminoConvertida,
       comunaEnvio: contratoData.codigoComuna || '',
       direccionEnvio: contratoData.direccion || '',
       limiteInvierno: contratoData.limiteInvierno || 0,
@@ -134,6 +218,8 @@ export default function EditarContratoComponent({
       liberadoCorte: contratoData.esMadreTexto === 'Si',
       madre: contratoData.codigoContratoMadre || ''
     };
+
+    return mappedData;
   };
 
   const [formData, setFormData] = useState<ContratoFormData>(() =>
@@ -155,8 +241,7 @@ export default function EditarContratoComponent({
         if (tarifasResult.data) {
           setTarifas(tarifasResult.data);
         }
-      } catch (error) {
-        console.error('Error cargando datos adicionales:', error);
+      } catch (_error) {
         toast.error('Error al cargar datos del formulario');
       }
     };
@@ -336,7 +421,12 @@ export default function EditarContratoComponent({
     const propietario = propietarios.find(
       p => p.nombre.trim() === formData.nombrePropietario.trim()
     );
-    return propietario ? propietario.rut : formData.nombrePropietario;
+
+    const resultado = propietario
+      ? propietario.rut
+      : formData.nombrePropietario;
+
+    return resultado;
   };
 
   // Helper para obtener el RUT del cliente basándose en el nombre
@@ -346,14 +436,20 @@ export default function EditarContratoComponent({
       const cliente = _clientes.find(
         (c: any) => c.nombre.trim() === formData.nombreCliente.trim()
       );
-      if (cliente) return cliente.rut;
+
+      if (cliente) {
+        return cliente.rut;
+      }
     }
 
     // Si no se encuentra en clientes, buscar en propietarios
     const propietario = propietarios.find(
       p => p.nombre.trim() === formData.nombreCliente.trim()
     );
-    return propietario ? propietario.rut : formData.nombreCliente;
+
+    const resultado = propietario ? propietario.rut : formData.nombreCliente;
+
+    return resultado;
   };
 
   const handleSelectMadre = (madreCodigo: string) => {
@@ -420,19 +516,38 @@ export default function EditarContratoComponent({
       // Obtener el ID del contrato desde la URL
       const urlPath = window.location.pathname;
       const urlParts = urlPath.split('/');
-      const contratoIdFromUrl = urlParts[urlParts.length - 1]; // Último segmento de la URL
+      const contratoIdFromUrl = urlParts[urlParts.length - 1];
+
+      // Obtener RUTs
+      const propietarioRut = getPropietarioRut();
+      const clienteRut = getClienteRut();
+
+      // Convertir fechas de YYYY-MM-DD (input) a DD/MM/YYYY (SQL Server)
+      const fechaInicioBackend = convertirFechaParaBackend(
+        formData.fechaInicio
+      );
+      const fechaTerminoBackend = formData.fechaTermino
+        ? convertirFechaParaBackend(formData.fechaTermino)
+        : '';
+
+      console.log('📅 [DEBUG] Fechas originales del formulario:');
+      console.log('  - Fecha Inicio:', formData.fechaInicio);
+      console.log('  - Fecha Termino:', formData.fechaTermino);
+      console.log('📅 [DEBUG] Fechas convertidas para backend:');
+      console.log('  - Fecha Inicio:', fechaInicioBackend);
+      console.log('  - Fecha Termino:', fechaTerminoBackend);
 
       // Preparar los datos para la API usando ModificarContratoProps
       const submitData: any = {
-        codigo: contratoIdFromUrl, // Usar el ID del parámetro URL como código de contrato
+        codigo: contratoIdFromUrl,
         tipoContrato: parseInt(formData.tipoContrato) || 0,
         tarifa: parseInt(formData.tarifa) || 0,
-        propietario: getPropietarioRut(),
-        cliente: getClienteRut(),
+        propietario: propietarioRut,
+        cliente: clienteRut,
         localId: formData.local || '',
-        fechaInicio: formData.fechaInicio,
+        fechaInicio: fechaInicioBackend,
         activo: formData.activo,
-        fechaTermino: formData.fechaTermino,
+        fechaTermino: fechaTerminoBackend,
         direccion: formData.direccionEnvio,
         comuna: formData.comunaEnvio,
         limite: formData.limiteInvierno,
@@ -443,18 +558,30 @@ export default function EditarContratoComponent({
         sinCorte: formData.liberadoCorte ? 1 : 0
       };
 
+      console.log(
+        '📤 [DEBUG] Payload completo a enviar:',
+        JSON.stringify(submitData, null, 2)
+      );
+
+      // Enviar al backend
       const result = await administracionService.modificarContrato(submitData);
 
+      console.log('📥 [DEBUG] Respuesta del backend:', result);
+
       if (result.error) {
+        console.error('❌ [DEBUG] Error en respuesta:', result.error);
         toast.error(result.error || 'Error al actualizar el contrato');
         return;
       }
 
       toast.success('Contrato actualizado exitosamente');
       navigate('/dashboard/administracion/contratos');
-    } catch (error) {
-      console.error('Error al actualizar contrato:', error);
-      toast.error('Error inesperado al actualizar el contrato');
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.mensaje ||
+        error.message ||
+        'Error inesperado al actualizar el contrato';
+      toast.error(errorMsg);
     } finally {
       setIsSubmitting(false);
     }

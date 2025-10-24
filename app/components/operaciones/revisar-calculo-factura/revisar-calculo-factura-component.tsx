@@ -509,6 +509,11 @@ export default function RevisarCalculoFacturaComponent({
                             </span>{' '}
                             para iniciar el procesamiento de facturación.
                           </p>
+                          <p className='text-xs text-emerald-600 dark:text-emerald-400 mt-2 italic'>
+                            💡 Nota: Si hay contratos con tarifa BT4-3, el
+                            procesamiento puede demorar unos segundos
+                            adicionales.
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -531,6 +536,11 @@ export default function RevisarCalculoFacturaComponent({
                           proceso puede tomar varios minutos dependiendo de la
                           cantidad de lecturas cerradas.
                         </p>
+                        <p className='text-xs text-blue-600 dark:text-blue-400 mt-2 italic'>
+                          ℹ️ Nota: Los cargos de tarifa BT4-3 pueden demorar
+                          unos segundos adicionales en procesarse, pero se
+                          mostrarán automáticamente una vez completados.
+                        </p>
                         <div className='mt-2 flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-blue-600 dark:text-blue-400'>
                           <div className='flex items-center gap-1'>
                             <div className='h-2 w-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse'></div>
@@ -543,7 +553,7 @@ export default function RevisarCalculoFacturaComponent({
                             </span>
                           </div>
                           <div className='hidden sm:block'>•</div>
-                          <div>Verificaciones: {intentosPolling}/10</div>
+                          <div>Verificaciones: {intentosPolling}/150</div>
                         </div>
                         <div className='mt-2'>
                           <div className='w-full bg-blue-200 dark:bg-blue-800 rounded-full h-1.5'>

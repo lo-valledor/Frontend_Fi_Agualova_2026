@@ -30,6 +30,7 @@ export function useCalculoProceso({
   const registrosInicialesRef = useRef<number>(0);
   const delayInicialRef = useRef<NodeJS.Timeout | null>(null);
   const tiempoTranscurridoRef = useRef<number>(0);
+  const isCheckingRef = useRef<boolean>(false);
 
   const obtenerCicloParaAPI = (ciclo: string): string => {
     if (ciclo === '1' || ciclo === '2') return ciclo;
@@ -71,14 +72,19 @@ export function useCalculoProceso({
       });
 
       return Array.isArray(response.data) ? response.data.length : 0;
-    } catch (error) {
+    } catch (error: any) {
+      // Si es un 404, es normal que no haya datos aún, no es un error crítico
+      if (error.response?.status === 404) {
+        return 0;
+      }
+      // Solo loguear otros errores que no sean 404
       console.error('Error obteniendo número de registros:', error);
       return 0;
     }
   }, [cicloId, periodoFormateado]);
 
   // Verificar si hay datos disponibles y si cambiaron desde el inicio
-  const verificarDatosDisponibles = useCallback(async (intentoActual: number): Promise<boolean> => {
+  const verificarDatosDisponibles = useCallback(async (intentoActual: number): Promise<{ datosListos: boolean; detenerPolling: boolean }> => {
     try {
       const registrosActuales = await obtenerNumeroRegistros();
       const registrosIniciales = registrosInicialesRef.current;
@@ -86,26 +92,29 @@ export function useCalculoProceso({
       // Caso 1: Hubo cambio (nuevas lecturas procesadas)
       const hayCambio = registrosActuales > registrosIniciales;
       if (registrosActuales > 0 && hayCambio) {
-        return true;
+        return { datosListos: true, detenerPolling: true };
       }
       
-      // Caso 2: Sin cambios pero hay datos existentes
-      // Si después de 8 intentos (32 segundos post-delay) no hay cambios
-      // pero hay registros, asumimos que ya estaban procesados
-      // Esto permite re-ver datos sin esperar indefinidamente
-      const SIN_CAMBIOS_THRESHOLD = 8; // ~32 segundos después del delay inicial
+      // Caso 2: Sin datos después del primer intento -> detener inmediatamente
+      if (intentoActual === 1 && registrosActuales === 0) {
+        return { datosListos: false, detenerPolling: true };
+      }
+      
+      // Caso 3: Sin cambios pero hay datos existentes después de 3 intentos
+      const SIN_CAMBIOS_THRESHOLD = 3; // ~12 segundos después del delay inicial
       if (
         registrosActuales > 0 && 
         registrosActuales === registrosIniciales && 
         intentoActual >= SIN_CAMBIOS_THRESHOLD
       ) {
-        return true; // Datos ya disponibles de antes
+        return { datosListos: true, detenerPolling: true }; // Datos ya disponibles de antes
       }
       
-      return false;
+      return { datosListos: false, detenerPolling: false };
     } catch (error) {
       console.error('Error verificando datos disponibles:', error);
-      return false;
+      // En caso de error, detener el polling
+      return { datosListos: false, detenerPolling: true };
     }
   }, [obtenerNumeroRegistros]);
 
@@ -122,7 +131,7 @@ export function useCalculoProceso({
 
     // Mostrar toast de procesamiento
     toastIdRef.current = toast.loading('Iniciando procesamiento...', {
-      description: `El sistema está generando las prefacturas${registrosIniciales > 0 ? ` (${registrosIniciales} registros previos detectados)` : ''}. Esto puede tomar varios minutos.`,
+      description: `El sistema está generando las prefacturas${registrosIniciales > 0 ? ` (${registrosIniciales} registros previos detectados)` : ''}. Esto puede tomar varios minutos. Nota: Los cargos BT4-3 pueden demorar un poco más.`,
       duration: Infinity
     });
 
@@ -138,8 +147,8 @@ export function useCalculoProceso({
     const DELAY_INICIAL = registrosIniciales > 0 ? 8000 : 12000; // 8 o 12 segundos
     
     const mensajeDelay = registrosIniciales > 0
-      ? `Verificando si hay nuevos cálculos. Se revisará en ${DELAY_INICIAL / 1000} segundos...`
-      : `Esperando que el backend inicie el procesamiento. Los datos se verificarán en ${DELAY_INICIAL / 1000} segundos...`;
+      ? `Verificando si hay nuevos cálculos. Se revisará en ${DELAY_INICIAL / 1000} segundos... (Nota: BT4-3 puede demorar más)`
+      : `Esperando que el backend inicie el procesamiento. Los datos se verificarán en ${DELAY_INICIAL / 1000} segundos... (Nota: BT4-3 puede demorar más)`;
     
     toast.loading('Procesando cálculos...', {
       id: toastIdRef.current,
@@ -157,33 +166,43 @@ export function useCalculoProceso({
         intentos++;
         setIntentosPolling(intentos);
 
-        const datosDisponibles = await verificarDatosDisponibles(intentos);
+        const resultado = await verificarDatosDisponibles(intentos);
 
-        if (datosDisponibles) {
-          // ¡Datos listos!
-          const registrosActuales = await obtenerNumeroRegistros();
-          const nuevosRegistros = registrosActuales - registrosInicialesCapturados;
-          
+        // Si debemos detener el polling
+        if (resultado.detenerPolling) {
           limpiarIntervalos();
           setIsProcesando(false);
-          setIsCalculoPreparado(true);
           
-          const tiempoFinal = tiempoTranscurridoRef.current;
-          
-          // Mensaje diferente según si hubo cambios o no
-          if (nuevosRegistros > 0) {
-            toast.success('¡Cálculos completados!', {
-              description: `Proceso finalizado en ${Math.floor(tiempoFinal / 60)}:${(tiempoFinal % 60).toString().padStart(2, '0')} minutos. Se procesaron ${nuevosRegistros} nuevas lecturas. Haz clic en "Ver Cálculo Facturas".`,
-              duration: 6000
-            });
+          if (resultado.datosListos) {
+            // ¡Datos listos!
+            const registrosActuales = await obtenerNumeroRegistros();
+            const nuevosRegistros = registrosActuales - registrosInicialesCapturados;
+            setIsCalculoPreparado(true);
+            
+            const tiempoFinal = tiempoTranscurridoRef.current;
+            
+            // Mensaje diferente según si hubo cambios o no
+            if (nuevosRegistros > 0) {
+              toast.success('¡Cálculos completados!', {
+                description: `Proceso finalizado en ${Math.floor(tiempoFinal / 60)}:${(tiempoFinal % 60).toString().padStart(2, '0')} minutos. Se procesaron ${nuevosRegistros} nuevas lecturas. Haz clic en "Ver Cálculo Facturas".`,
+                duration: 6000
+              });
+            } else {
+              toast.success('Datos disponibles', {
+                description: `Se encontraron ${registrosActuales} cálculos ya procesados. Haz clic en "Ver Cálculo Facturas" para revisarlos.`,
+                duration: 5000
+              });
+            }
           } else {
-            toast.success('Datos disponibles', {
-              description: `Se encontraron ${registrosActuales} cálculos ya procesados. Haz clic en "Ver Cálculo Facturas" para revisarlos.`,
-              duration: 5000
+            // No hay datos disponibles
+            setIsCalculoPreparado(false);
+            toast.info('No hay datos procesados', {
+              description: 'No se encontraron cálculos de facturación para este periodo y ciclo. Verifica que haya lecturas cerradas y que el proceso de cálculo se haya completado correctamente.',
+              duration: 6000
             });
           }
         } else if (intentos >= MAX_INTENTOS) {
-          // Timeout
+          // Timeout (no debería llegar aquí con la nueva lógica, pero lo dejamos por seguridad)
           limpiarIntervalos();
           setIsProcesando(false);
           
@@ -192,7 +211,7 @@ export function useCalculoProceso({
             duration: 8000
           });
         } else {
-          // Actualizar toast con progreso
+          // Actualizar toast con progreso (solo si seguimos esperando)
           if (toastIdRef.current) {
             const tiempoActual = tiempoTranscurridoRef.current;
             const minutos = Math.floor(tiempoActual / 60);
@@ -204,7 +223,7 @@ export function useCalculoProceso({
             let descripcion = `Tiempo: ${minutos}:${segundos.toString().padStart(2, '0')}. `;
             
             if (tieneRegistrosPrevios) {
-              descripcion += `${registrosActualesAhora} registros encontrados (sin cambios desde el inicio). `;
+              descripcion += `${registrosActualesAhora} registros encontrados (verificando cambios). `;
             } else {
               descripcion += `Buscando nuevos datos... `;
             }
@@ -293,12 +312,18 @@ export function useCalculoProceso({
 
   // Verificar si hay datos disponibles al cargar/cambiar periodo o ciclo
   const verificarDatosIniciales = useCallback(async () => {
+    // Prevenir múltiples llamadas simultáneas
+    if (isCheckingRef.current) {
+      return;
+    }
+    
     if (!periodoFormateado || !cicloId) {
       setIsCheckingInitialData(false);
       return;
     }
 
     try {
+      isCheckingRef.current = true;
       setIsCheckingInitialData(true);
       const numRegistros = await obtenerNumeroRegistros();
       
@@ -313,6 +338,7 @@ export function useCalculoProceso({
       setIsCalculoPreparado(false);
     } finally {
       setIsCheckingInitialData(false);
+      isCheckingRef.current = false;
     }
   }, [periodoFormateado, cicloId, obtenerNumeroRegistros]);
 

@@ -113,7 +113,10 @@ axiosInstance.interceptors.response.use(
 
       case 404: {
         // Excluimos rutas donde un 404 es una respuesta esperada
-        const routesWithExpected404 = ['/datos-basicos-medidor'];
+        const routesWithExpected404 = [
+          '/datos-basicos-medidor',
+          '/calculo-prefactura-encabezado' // 404 esperado cuando no hay cálculos procesados
+        ];
         const isExpected404 = routesWithExpected404.some(route =>
           originalRequest.url?.includes(route)
         );
