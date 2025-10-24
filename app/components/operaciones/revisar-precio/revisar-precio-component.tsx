@@ -759,52 +759,29 @@ export default function RevisarPrecioComponent({
                   </div>
                 </div>
 
-                {/* Resumen de selección y botón confirmar */}
+                {/* Resumen de selección */}
                 {isAuthorized && (
-                  <div className='border-t pt-3 lg:pt-4 space-y-3'>
-                    <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
-                      <div className='space-y-1'>
-                        <h3 className='font-medium text-sm sm:text-base'>
-                          <span className='hidden sm:inline'>
-                            Confirmación de Cambios
-                          </span>
-                          <span className='sm:hidden'>Confirmación</span>
-                        </h3>
-                        <p className='text-xs sm:text-sm'>
-                          <span className='hidden sm:inline'>
-                            Registros seleccionados:{' '}
-                          </span>
-                          <span className='sm:hidden'>Seleccionados: </span>
-                          {selectedEnelRows.length +
-                            selectedEnerlovaRows.length}
-                        </p>
-                      </div>
-                      <Button
-                        id='confirmar-btn'
-                        onClick={confirmarCambios}
-                        disabled={
-                          isConfirming ||
-                          !isAuthorized ||
-                          (selectedEnelRows.length === 0 &&
-                            selectedEnerlovaRows.length === 0)
-                        }
-                        className='bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto'
-                        size='sm'
-                      >
-                        <AlertCircleIcon className='w-4 h-4 mr-2' />
+                  <div className='border-t pt-3 lg:pt-4'>
+                    <div className='space-y-1'>
+                      <h3 className='font-medium text-sm sm:text-base'>
                         <span className='hidden sm:inline'>
-                          {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
+                          Estado de Autorización
                         </span>
-                        <span className='sm:hidden'>
-                          {isConfirming ? '...' : 'Confirmar'}
+                        <span className='sm:hidden'>Estado</span>
+                      </h3>
+                      <p className='text-xs sm:text-sm text-muted-foreground'>
+                        <span className='hidden sm:inline'>
+                          Registros seleccionados:{' '}
                         </span>
-                      </Button>
+                        <span className='sm:hidden'>Seleccionados: </span>
+                        {selectedEnelRows.length + selectedEnerlovaRows.length}
+                      </p>
                     </div>
 
                     {/* Detalle de selección */}
                     {(selectedEnelRows.length > 0 ||
                       selectedEnerlovaRows.length > 0) && (
-                      <div className='p-3 sm:p-4 bg-muted/50 border border-border rounded-xl'>
+                      <div className='p-3 sm:p-4 bg-muted/50 border border-border rounded-xl mt-3'>
                         <div className='flex items-center gap-2 mb-2'>
                           <Users className='w-4 h-4 text-primary' />
                           <span className='text-xs sm:text-sm font-medium'>
@@ -863,6 +840,49 @@ export default function RevisarPrecioComponent({
         {/* Tablas de Precios con Tabs */}
         <Card className='bg-card border border-border shadow-sm'>
           <CardContent className='p-3'>
+            {/* Botón de confirmación */}
+            {isAuthorized && (
+              <div className='mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-muted/30 rounded-lg border border-border'>
+                <div className='space-y-1'>
+                  <h3 className='font-medium text-sm sm:text-base'>
+                    <span className='hidden sm:inline'>
+                      Confirmación de Cambios
+                    </span>
+                    <span className='sm:hidden'>Confirmación</span>
+                  </h3>
+                  <p className='text-xs sm:text-sm text-muted-foreground'>
+                    <span className='hidden sm:inline'>
+                      Registros seleccionados:{' '}
+                    </span>
+                    <span className='sm:hidden'>Seleccionados: </span>
+                    <span className='font-medium text-primary'>
+                      {selectedEnelRows.length + selectedEnerlovaRows.length}
+                    </span>
+                  </p>
+                </div>
+                <Button
+                  id='confirmar-btn'
+                  onClick={confirmarCambios}
+                  disabled={
+                    isConfirming ||
+                    !isAuthorized ||
+                    (selectedEnelRows.length === 0 &&
+                      selectedEnerlovaRows.length === 0)
+                  }
+                  className='bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto'
+                  size='sm'
+                >
+                  <AlertCircleIcon className='w-4 h-4 mr-2' />
+                  <span className='hidden sm:inline'>
+                    {isConfirming ? 'Procesando...' : 'Confirmar Cambios'}
+                  </span>
+                  <span className='sm:hidden'>
+                    {isConfirming ? '...' : 'Confirmar'}
+                  </span>
+                </Button>
+              </div>
+            )}
+
             <Tabs
               id='tabs-precios-revision'
               defaultValue='enel'

@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-24 11:56:12*
+*Generado automáticamente el 2025-10-24 14:31:13*
 
 ## Índice de Componentes
 
@@ -259,8 +259,8 @@
  * Flujo de trabajo:
  * 1. Usuario visualiza tabla de cargos por tipo de contrato
  * 2. Acciones disponibles:
- *    - Editar (navegación a formulario de edición)
- *    - Eliminar (con confirmación)
+ *   - Editar (navegación a formulario de edición)
+ *   - Eliminar (con confirmación)
  * 3. Sistema recarga datos automáticamente
  *
  * Arquitectura:
@@ -2096,11 +2096,6 @@
 ⚠️ *Sin documentación JSDoc*
 
 
-### facturas-dashboard
-**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas-dashboard.tsx`
-⚠️ *Sin documentación JSDoc*
-
-
 ### informacion-contrato
 **Archivo**: `app/components/reportes/consultar-contrato/contrato/informacion-contrato.tsx`
 ⚠️ *Sin documentación JSDoc*
@@ -2111,8 +2106,63 @@
 ⚠️ *Sin documentación JSDoc*
 
 
-### lecturas-dashboard
-**Archivo**: `app/components/reportes/consultar-contrato/contrato/lecturas-dashboard.tsx`
+### billing-dashboard
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/billing-dashboard.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### billing-evolution-chart
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/billing-evolution-chart.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### billing-kpis
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/billing-kpis.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### consumption-details-table
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/consumption-details-table.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### consumption-trend-chart
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/consumption-trend-chart.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### cost-analysis-chart
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/cost-analysis-chart.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### cost-distribution
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/cost-distribution.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### energy-consumption-dashboard
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/energy-consumption-dashboard.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### invoices-table
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/invoices-table.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### overconsumption-analysis
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/overconsumption-analysis.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### payment-timeline
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/payment-timeline.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
+### period-comparison
+**Archivo**: `app/components/reportes/consultar-contrato/contrato/facturas/period-comparison.tsx`
 ⚠️ *Sin documentación JSDoc*
 
 

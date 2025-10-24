@@ -38,7 +38,7 @@ const condicionContratoFormSchema = z.object({
   descripcion: z.string().min(1, { message: 'La descripción es requerida.' }),
   conceptoId: z.number().min(1, { message: 'El concepto es requerido.' }),
   usaPorcentaje: z.boolean(),
-  valor: z.number().min(0, { message: 'El valor debe ser mayor o igual a 0.' }),
+  valor: z.number({ message: 'El valor es requerido.' }),
   estado: z.boolean()
 });
 
@@ -283,11 +283,7 @@ export default function CondicionesContratoModalForm({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                variant="default"
-              >
+              <Button type='submit' disabled={isLoading} variant='default'>
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear' : 'Actualizar'}
               </Button>

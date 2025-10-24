@@ -27,16 +27,20 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.id}</div>;
-    }
+    },
+    minSize: 80,
+    maxSize: 100
   },
   {
-    id: 'descripcion',
+    id: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
-      return <div className='font-medium'>{row.original.descripcion}</div>;
-    }
+      return <div className='font-medium'>{row.original.nombre}</div>;
+    },
+    minSize: 250,
+    maxSize: 400
   },
   {
     id: 'concepto',
@@ -45,7 +49,9 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.concepto}</div>;
-    }
+    },
+    minSize: 200,
+    maxSize: 300
   },
   {
     id: 'factorPorcentual',
@@ -54,7 +60,9 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.factorPorcentual}</div>;
-    }
+    },
+    minSize: 150,
+    maxSize: 180
   },
   {
     id: 'valorFijo',
@@ -63,7 +71,9 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       return <div className='font-medium'>{row.original.valorFijo}</div>;
-    }
+    },
+    minSize: 150,
+    maxSize: 180
   },
   {
     accessorKey: 'estado',
@@ -88,7 +98,9 @@ export const columns = ({
     enableSorting: true,
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
-    }
+    },
+    minSize: 120,
+    maxSize: 150
   },
   {
     id: 'actions',
@@ -101,6 +113,8 @@ export const columns = ({
         item={row.original}
         disableEdit={!canEdit}
       />
-    )
+    ),
+    minSize: 120,
+    maxSize: 150
   }
 ];

@@ -12,7 +12,6 @@ import type {
 interface UseCalculoFacturaProps {
   periodoFormateado: string;
   cicloId: string;
-  isCalculoPreparado: boolean;
 }
 
 export function useCalculoFactura({
@@ -95,10 +94,16 @@ export function useCalculoFactura({
       setData(datosCombinados);
       toast.success(`Se encontraron ${datosCombinados.length} registros`);
     } catch (err: any) {
-      const errorMessage =
-        err.response?.data?.mensaje || err.message || 'Error desconocido';
-      setError(errorMessage);
-      toast.error(`Error: ${errorMessage}`);
+      // Si es un 404, es un caso esperado (no hay lecturas cerradas)
+      if (err.response?.status === 404) {
+        setError('NO_LECTURAS_CERRADAS'); // Código especial para identificar 404
+        // No mostrar toast de error para 404, solo para otros errores
+      } else {
+        const errorMessage =
+          err.response?.data?.mensaje || err.message || 'Error desconocido';
+        setError(errorMessage);
+        toast.error(`Error: ${errorMessage}`);
+      }
       setData([]);
     } finally {
       setIsLoading(false);

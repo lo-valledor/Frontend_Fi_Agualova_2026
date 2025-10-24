@@ -652,7 +652,7 @@ export interface GetCargoTipoContrato {
 
 export interface GetCondicionesContrato {
   id: number;
-  descripcion: string;
+  nombre: string;
   concepto: string;
   factorPorcentual: string;
   valorFijo: number | null;

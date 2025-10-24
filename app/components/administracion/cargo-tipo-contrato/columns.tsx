@@ -34,8 +34,26 @@ export const columns = ({
             >
               {data.tipoContratoDescripcion}
             </div>
+          </div>
+        </div>
+      );
+    },
+    size: 200,
+    minSize: 180,
+    maxSize: 250
+  },
+  {
+    accessorKey: 'cargoFacturableDescripcion',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Cargo Facturable' />
+    ),
+    cell: ({ row }) => {
+      const data = row.original;
+      return (
+        <div className='flex items-center space-x-3 min-w-0'>
+          <div className='min-w-0'>
             <div
-              className='text-xs  truncate'
+              className='font-medium text-xs sm:text-sm  truncate'
               title={data.cargoFacturableDescripcion}
             >
               {data.cargoFacturableDescripcion}
@@ -44,6 +62,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 200,
     minSize: 180,
     maxSize: 250
   },
@@ -63,6 +82,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 150,
     minSize: 140,
     maxSize: 180
   },
@@ -79,6 +99,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 190,
     minSize: 170,
     maxSize: 220
   },
@@ -88,6 +109,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => <EstadoBadge estado={row.getValue('estado')} />,
+    size: 110,
     minSize: 100,
     maxSize: 120
   },
@@ -107,6 +129,7 @@ export const columns = ({
         />
       </div>
     ),
+    size: 110,
     minSize: 100,
     maxSize: 120
   }

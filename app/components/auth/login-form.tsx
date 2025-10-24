@@ -1,4 +1,13 @@
-import { AlertCircleIcon, Eye, EyeOff, Loader2, Lock, Moon, Sun, User } from 'lucide-react';
+import {
+  AlertCircleIcon,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Moon,
+  Sun,
+  User
+} from 'lucide-react';
 
 import type React from 'react';
 import { useState } from 'react';
@@ -81,8 +90,9 @@ export function LoginForm({
       <Button
         onClick={toggleTheme}
         variant='ghost'
+        tabIndex={-1}
         className='absolute top-5 right-5 z-20 p-2.5 rounded-xl bg-background transition-all duration-200'
-        aria-label='Toggle theme'
+        aria-label='Cambiar tema'
       >
         {theme === 'light' ? (
           <Moon className='h-4 w-4' />
@@ -93,9 +103,7 @@ export function LoginForm({
 
       {/* Header */}
       <div className='pt-10 pb-6 px-8 text-center border-b border-border'>
-        <h1 className='text-3xl font-bold mb-2'>
-          Bienvenido
-        </h1>
+        <h1 className='text-3xl font-bold mb-2'>Bienvenido</h1>
         <p className='text-sm text-muted-foreground'>
           Inicia sesión para acceder al sistema
         </p>
@@ -105,7 +113,10 @@ export function LoginForm({
       <div className='p-8'>
         <form onSubmit={handleSubmitEvent} className='space-y-5'>
           {errorMessage && (
-            <Alert variant='destructive' className='rounded-xl bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50'>
+            <Alert
+              variant='destructive'
+              className='rounded-xl bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/50'
+            >
               <AlertCircleIcon className='text-red-600 dark:text-red-400' />
               <AlertDescription className='text-red-700 dark:text-red-400 font-medium'>
                 {errorMessage}
@@ -115,10 +126,7 @@ export function LoginForm({
 
           <div className='space-y-4'>
             <div className='space-y-2'>
-              <Label
-                htmlFor='usuario'
-                className='block text-sm font-semibold'
-              >
+              <Label htmlFor='usuario' className='block text-sm font-semibold'>
                 Correo Electrónico
               </Label>
               <div className='relative group'>
@@ -148,6 +156,7 @@ export function LoginForm({
                 </Label>
                 <Link
                   to='/auth/forgot-password'
+                  tabIndex={-1}
                   className='text-xs font-medium transition-colors text-primary hover:underline'
                 >
                   ¿Olvidaste tu contraseña?
@@ -170,7 +179,11 @@ export function LoginForm({
                 <button
                   type='button'
                   onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
                   className='absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors'
+                  aria-label={
+                    showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                  }
                 >
                   {showPassword ? (
                     <EyeOff className='h-5 w-5 text-primary/30 group-focus-within:text-primary/70 transition-colors' />
@@ -184,7 +197,7 @@ export function LoginForm({
 
           <Button
             type='submit'
-            variant="default"
+            variant='default'
             disabled={loading}
             className='w-full h-12 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 mt-6'
           >

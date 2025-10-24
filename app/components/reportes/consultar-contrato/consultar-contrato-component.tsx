@@ -25,8 +25,8 @@ export default function ConsultarContratoComponent({
       <div className='container mx-auto px-3 sm:px-4 lg:px-6 py-4 space-y-4 sm:space-y-6'>
         {/* Header */}
         <ModernHeader
-          title='Consultar Contratos'
-          description='Busca y consulta información detallada de los contratos'
+          title='Consultar Contratos Activos'
+          description='Busca y consulta información detallada de los contratos activos'
         />
 
         {/* Table */}

@@ -64,8 +64,8 @@ export function useValidacionPrecios({
         )
       ]);
 
-      const preciosUno = responsePreciosUno.data || [];
-      const preciosDos = responsePreciosDos.data || [];
+      const preciosUno = (responsePreciosUno.data as RevisarPrecioUno[]) || [];
+      const preciosDos = (responsePreciosDos.data as RevisarPrecioDos[]) || [];
 
       // Filtrar solo precios con índice válido (los que deben ser confirmados)
       const preciosUnoValidos = preciosUno.filter(

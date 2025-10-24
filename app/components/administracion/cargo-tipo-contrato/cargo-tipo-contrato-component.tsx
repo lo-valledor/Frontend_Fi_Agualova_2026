@@ -10,8 +10,8 @@
  * Flujo de trabajo:
  * 1. Usuario visualiza tabla de cargos por tipo de contrato
  * 2. Acciones disponibles:
- *    - Editar (navegación a formulario de edición)
- *    - Eliminar (con confirmación)
+ *   - Editar (navegación a formulario de edición)
+ *   - Eliminar (con confirmación)
  * 3. Sistema recarga datos automáticamente
  *
  * Arquitectura:
@@ -41,10 +41,10 @@
  * ```
  */
 /* eslint-disable unused-imports/no-unused-vars */
-import { Plus, Search } from 'lucide-react';
+import { Plus, Filter, X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 
 import { useNavigate } from 'react-router';
 
@@ -53,7 +53,6 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
   type SortingState
@@ -63,7 +62,14 @@ import { LoadingSpinner } from '~/components/loading-spinner';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { Input } from '~/components/ui/input';
+import { Label } from '~/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '~/components/ui/select';
 import {
   Table,
   TableBody,
@@ -91,7 +97,7 @@ export default function CargoTipoContratoComponent({
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [tipoContratoFilter, setTipoContratoFilter] = useState<string>('all');
   const [sorting, setSorting] = useState<SortingState>([]);
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const router = useNavigate();
@@ -105,6 +111,24 @@ export default function CargoTipoContratoComponent({
   useEffect(() => {
     setData(initialData);
   }, [initialData]);
+
+  // Obtener tipos de contrato únicos para el filtro
+  const tiposContratoUnicos = useMemo(() => {
+    const tipos = new Set(
+      data.map(item => item.tipoContratoDescripcion).filter(Boolean)
+    );
+    return Array.from(tipos).sort();
+  }, [data]);
+
+  // Filtrar datos basado en el filtro de tipo de contrato
+  const filteredData = useMemo(() => {
+    if (tipoContratoFilter === 'all') {
+      return data;
+    }
+    return data.filter(
+      item => item.tipoContratoDescripcion === tipoContratoFilter
+    );
+  }, [data, tipoContratoFilter]);
 
   const refetchData = async () => {
     setIsLoading(true);
@@ -158,20 +182,17 @@ export default function CargoTipoContratoComponent({
 
   // Table setup with react-table
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns: columns({
       onEdit: handleEdit,
       onDelete: handleDelete,
       canEdit: hasEditPermission
     }),
     state: {
-      sorting,
-      globalFilter
+      sorting
     },
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel()
   });
 
@@ -216,19 +237,53 @@ export default function CargoTipoContratoComponent({
                 <LoadingSpinner />
               </div>
             )}
-            {/* Search */}
-            <div className='flex justify-between items-center mb-3'>
+            {/* Filtros */}
+            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4'>
               <div className='text-sm text-muted-foreground'>
-                {rows.length} registros
+                Mostrando {rows.length} de {data.length} registros
               </div>
-              <div className='relative w-64'>
-                <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                <Input
-                  placeholder='Buscar por tipo de contrato, condición o descripción...'
-                  value={globalFilter ?? ''}
-                  onChange={event => setGlobalFilter(event.target.value)}
-                  className='pl-8 h-8 text-sm'
-                />
+
+              <div className='flex items-center gap-3 w-full sm:w-auto'>
+                {/* Filtro por Tipo de Contrato */}
+                <div className='flex items-center gap-2 flex-1 sm:flex-initial'>
+                  <Label
+                    htmlFor='tipo-contrato-filter'
+                    className='text-xs whitespace-nowrap'
+                  >
+                    <Filter className='h-3 w-3 inline mr-1' />
+                    Tipo de Contrato:
+                  </Label>
+                  <Select
+                    value={tipoContratoFilter}
+                    onValueChange={setTipoContratoFilter}
+                  >
+                    <SelectTrigger
+                      id='tipo-contrato-filter'
+                      className='h-8 text-sm w-[200px]'
+                    >
+                      <SelectValue placeholder='Todos' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='all'>Todos</SelectItem>
+                      {tiposContratoUnicos.map(tipo => (
+                        <SelectItem key={tipo} value={tipo}>
+                          {tipo}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {tipoContratoFilter !== 'all' && (
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='h-8 px-2'
+                      onClick={() => setTipoContratoFilter('all')}
+                      title='Limpiar filtro'
+                    >
+                      <X className='h-4 w-4' />
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 

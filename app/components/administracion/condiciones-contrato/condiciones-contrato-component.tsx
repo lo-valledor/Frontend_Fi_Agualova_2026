@@ -235,7 +235,7 @@ export default function CondicionesContratoComponent({
               className='rounded-md border overflow-auto'
               style={{ height: '600px' }}
             >
-              <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+              <Table style={{ tableLayout: 'fixed', width: '1200px', minWidth: '100%' }}>
                 <TableHeader className='sticky top-0 z-10 bg-background'>
                   {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
@@ -252,7 +252,9 @@ export default function CondicionesContratoComponent({
                             style={{
                               width: `${width}px`,
                               minWidth: `${width}px`,
-                              maxWidth: `${columnDef.maxSize || width}px`
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap'
                             }}
                           >
                             {header.isPlaceholder
@@ -297,11 +299,12 @@ export default function CondicionesContratoComponent({
                           return (
                             <TableCell
                               key={cell.id}
-                              className='h-[60px] px-3 py-1 text-sm'
+                              className='h-[60px] px-3 py-1 text-sm overflow-hidden'
                               style={{
                                 width: `${width}px`,
                                 minWidth: `${width}px`,
-                                maxWidth: `${columnDef.maxSize || width}px`
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
                               }}
                             >
                               {flexRender(

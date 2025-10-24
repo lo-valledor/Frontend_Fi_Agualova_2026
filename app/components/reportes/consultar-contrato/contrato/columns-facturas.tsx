@@ -150,7 +150,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Consumo' />
     ),
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const consumo = row.getValue('consumoPeriodo') as number;
       const index = row.index;
 
@@ -159,7 +159,6 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       let colorClass = 'text-slate-700 dark:text-slate-300';
 
       if (index > 0) {
-        const table = row.getContext().table;
         const rows = table.getCoreRowModel().rows;
         const prevRow = rows[index - 1];
         if (prevRow) {
