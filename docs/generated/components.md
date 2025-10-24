@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-24 14:31:13*
+*Generado automáticamente el 2025-10-24 14:38:03*
 
 ## Índice de Componentes
 
@@ -429,9 +429,9 @@
  * Flujo de trabajo:
  * 1. Usuario visualiza tabla de condiciones de contrato
  * 2. Acciones disponibles:
- *    - Crear nueva condición (modal)
- *    - Editar condición existente (modal)
- *    - Ver detalles completos (modal)
+ * - Crear nueva condición (modal)
+ * - Editar condición existente (modal)
+ * - Ver detalles completos (modal)
  * 3. Sistema valida datos antes de guardar
  * 4. Recarga automática después de operaciones
  *

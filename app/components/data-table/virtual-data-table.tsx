@@ -93,14 +93,17 @@ export function VirtualDataTable<TData, TValue>({
   return (
     <div className='space-y-4'>
       {/* Search */}
-      <div className='flex items-center gap-2'>
-        <div className='relative flex-1'>
-          <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+      <div className='flex justify-between items-center'>
+        <div className='text-sm text-muted-foreground'>
+          {rows.length} registros
+        </div>
+        <div className='relative w-64'>
+          <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
           <Input
             placeholder={searchPlaceholder}
             value={globalFilter ?? ''}
             onChange={event => setGlobalFilter(event.target.value)}
-            className='pl-9'
+            className='pl-8 h-8 text-sm'
           />
         </div>
       </div>
@@ -202,17 +205,6 @@ export function VirtualDataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
-
-      {/* Stats */}
-      <div className='flex items-center justify-between text-sm text-muted-foreground'>
-        <div>
-          Mostrando {virtualItems.length} de {rows.length} filas
-        </div>
-        <div>
-          {rows.length} total
-          {rows.length !== data.length && ` (${data.length} sin filtrar)`}
-        </div>
       </div>
     </div>
   );

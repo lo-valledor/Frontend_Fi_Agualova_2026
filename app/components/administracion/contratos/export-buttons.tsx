@@ -25,7 +25,7 @@ export function ExportButtons({
         data={allContratos}
         columns={contractColumns}
         filename='contratos_completos'
-        className='w-full sm:w-auto'
+        className='w-full sm:w-auto  bg-emerald-600 hover:bg-emerald-700 text-white'
       />
 
       {/* Exportar Filtrados */}

@@ -26,7 +26,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
-      return <div className='font-medium'>{row.original.id}</div>;
+      return <div className='font-medium truncate'>{row.original.id}</div>;
     },
     minSize: 80,
     maxSize: 100
@@ -37,7 +37,11 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
-      return <div className='font-medium'>{row.original.nombre}</div>;
+      return (
+        <div className='font-medium truncate' title={row.original.nombre}>
+          {row.original.nombre}
+        </div>
+      );
     },
     minSize: 250,
     maxSize: 400
@@ -48,7 +52,11 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Concepto' />
     ),
     cell: ({ row }) => {
-      return <div className='font-medium'>{row.original.concepto}</div>;
+      return (
+        <div className='font-medium truncate' title={row.original.concepto}>
+          {row.original.concepto}
+        </div>
+      );
     },
     minSize: 200,
     maxSize: 300
@@ -59,7 +67,11 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Factor Porcentual' />
     ),
     cell: ({ row }) => {
-      return <div className='font-medium'>{row.original.factorPorcentual}</div>;
+      return (
+        <div className='font-medium truncate'>
+          {row.original.factorPorcentual}
+        </div>
+      );
     },
     minSize: 150,
     maxSize: 180
@@ -70,7 +82,9 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Valor Fijo' />
     ),
     cell: ({ row }) => {
-      return <div className='font-medium'>{row.original.valorFijo}</div>;
+      return (
+        <div className='font-medium truncate'>{row.original.valorFijo}</div>
+      );
     },
     minSize: 150,
     maxSize: 180

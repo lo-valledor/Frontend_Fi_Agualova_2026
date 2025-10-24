@@ -11,9 +11,9 @@
  * Flujo de trabajo:
  * 1. Usuario visualiza tabla de condiciones de contrato
  * 2. Acciones disponibles:
- *    - Crear nueva condición (modal)
- *    - Editar condición existente (modal)
- *    - Ver detalles completos (modal)
+ * - Crear nueva condición (modal)
+ * - Editar condición existente (modal)
+ * - Ver detalles completos (modal)
  * 3. Sistema valida datos antes de guardar
  * 4. Recarga automática después de operaciones
  *
@@ -235,7 +235,13 @@ export default function CondicionesContratoComponent({
               className='rounded-md border overflow-auto'
               style={{ height: '600px' }}
             >
-              <Table style={{ tableLayout: 'fixed', width: '1200px', minWidth: '100%' }}>
+              <Table
+                style={{
+                  tableLayout: 'fixed',
+                  width: '1200px',
+                  minWidth: '100%'
+                }}
+              >
                 <TableHeader className='sticky top-0 z-10 bg-background'>
                   {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
