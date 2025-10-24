@@ -359,7 +359,7 @@ export default function ContratantesComponent({
               className='rounded-md border overflow-auto'
               style={{ height: '600px' }}
             >
-              <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+              <Table style={{ width: '100%' }}>
                 <TableHeader className='sticky top-0 z-10 bg-background'>
                   {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
@@ -410,8 +410,7 @@ export default function ContratantesComponent({
                           width: '100%',
                           height: '60px',
                           transform: `translateY(${virtualRow.start}px)`,
-                          display: 'table',
-                          tableLayout: 'fixed'
+                          display: 'table'
                         }}
                         className='border-b hover:bg-muted'
                       >

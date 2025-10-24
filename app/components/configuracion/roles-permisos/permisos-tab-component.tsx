@@ -531,10 +531,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
               ref={tableContainerRef}
               className='overflow-auto border rounded-xl bg-background max-h-[80vh]'
             >
-              <table
-                className='w-full border-collapse relative'
-                style={{ tableLayout: 'fixed' }}
-              >
+              <table className='w-full border-collapse relative' style={{}}>
                 <thead className='sticky top-0 bg-background z-10'>
                   <tr>
                     <th
@@ -623,8 +620,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                           width: '100%',
                           height: `${rowHeight}px`,
                           transform: `translateY(${virtualRow.start}px)`,
-                          display: 'table',
-                          tableLayout: 'fixed'
+                          display: 'table'
                         }}
                         className='hover:muted'
                       >

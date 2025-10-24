@@ -86,38 +86,6 @@ export function hasAllPermissions(
 }
 
 /**
- * Logger de permisos para desarrollo
- * Solo registra en consola si estamos en modo desarrollo
- * @param route - Ruta siendo verificada
- * @param permissions - Permisos del usuario para esa ruta
- * 
- * @example
- * ```ts
- * logPermissionCheck('/dashboard/monitor/monitor-lecturas', {
- *   canView: true,
- *   canCreate: false,
- *   canEdit: false,
- *   canDelete: false
- * });
- * ```
- */
-export function logPermissionCheck(
-  route: string,
-  permissions: {
-    canView: boolean;
-    canCreate: boolean;
-    canEdit: boolean;
-    canDelete: boolean;
-  }
-): void {
-  if (import.meta.env.DEV) {
-    console.group(`🔐 Permission Check: ${route}`);
-    console.table(permissions);
-    console.groupEnd();
-  }
-}
-
-/**
  * Formatea el nombre de una ruta para mostrar en mensajes
  * @param route - Ruta a formatear
  * @returns Nombre formateado de la ruta

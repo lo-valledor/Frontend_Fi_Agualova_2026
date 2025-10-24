@@ -3,16 +3,12 @@ import React from 'react';
 import { Outlet, useRouteError } from 'react-router';
 
 import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
-import { PermissionsDebug } from '~/components/debug/PermissionsDebug';
 import { AppSidebar } from '~/components/sidebar/app-sidebar';
 import { SiteHeader } from '~/components/sidebar/site-header';
 import { SidebarInset } from '~/components/ui/sidebar';
 import { SidebarProvider } from '~/components/ui/sidebar';
 
 const DashboardLayout = () => {
-  // Solo mostrar debug en desarrollo
-  const isDev = import.meta.env.DEV;
-
   return (
     <SidebarProvider>
       <AppSidebar variant='inset' />
@@ -24,7 +20,6 @@ const DashboardLayout = () => {
           </div>
         </div>
       </SidebarInset>
-      {isDev && <PermissionsDebug />}
     </SidebarProvider>
   );
 };

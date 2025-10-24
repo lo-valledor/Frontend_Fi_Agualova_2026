@@ -5,7 +5,10 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { authService } from '../services/authService';
-import { rolesPermisosService, type PermisosUsuario } from '../services/rolesPermisosService';
+import {
+  rolesPermisosService,
+  type PermisosUsuario
+} from '../services/rolesPermisosService';
 
 export interface UserData {
   id: string;
@@ -88,18 +91,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const loadUserPermissions = async (userId: string) => {
     try {
       setPermissionsLoading(true);
-      console.log('🔐 Cargando permisos para usuario:', userId);
       const response = await rolesPermisosService.getPermisosUsuario(userId);
 
       if (response.error) {
-        console.error('❌ Error al cargar permisos:', response.error);
         setPermissions([]);
       } else {
-        console.log('✅ Permisos cargados:', response.data);
         setPermissions(response.data || []);
       }
-    } catch (error) {
-      console.error('❌ Error al cargar permisos:', error);
+    } catch {
       setPermissions([]);
     } finally {
       setPermissionsLoading(false);

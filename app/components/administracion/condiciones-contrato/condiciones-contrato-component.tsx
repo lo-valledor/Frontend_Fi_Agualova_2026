@@ -237,7 +237,6 @@ export default function CondicionesContratoComponent({
             >
               <Table
                 style={{
-                  tableLayout: 'fixed',
                   width: '1200px',
                   minWidth: '100%'
                 }}
@@ -294,8 +293,7 @@ export default function CondicionesContratoComponent({
                           width: '100%',
                           height: '60px',
                           transform: `translateY(${virtualRow.start}px)`,
-                          display: 'table',
-                          tableLayout: 'fixed'
+                          display: 'table'
                         }}
                         className='border-b hover:bg-muted'
                       >

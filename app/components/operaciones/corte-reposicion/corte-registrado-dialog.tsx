@@ -90,70 +90,65 @@ export function CorteRegistradoDialog({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <DialogContent className='mx-4 sm:max-w-md rounded-xl border border-rose-200/40 bg-white/95 backdrop-blur-sm dark:border-rose-800/40 dark:bg-gray-900/95'>
+      <DialogContent className='mx-4 sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle className='flex items-center gap-2 text-rose-900 dark:text-rose-100 text-base sm:text-lg'>
-            <div className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 flex-shrink-0'>
-              <Scissors className='h-2.5 w-2.5 sm:h-3 sm:w-3' />
+          <DialogTitle className='flex items-center gap-2 text-sm'>
+            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 flex-shrink-0'>
+              <Scissors className='h-3 w-3 text-white' />
             </div>
-            <span className='truncate'>Registrar Corte</span>
+            <span className='truncate'>Registrar Corte - {acometida}</span>
           </DialogTitle>
-          <DialogDescription className='text-rose-700 dark:text-rose-300 text-sm sm:text-base'>
-            Complete los datos para registrar el corte de la acometida{' '}
-            <span className='font-mono font-medium text-xs sm:text-sm break-all'>
-              {acometida}
-            </span>
-            .
+          <DialogDescription className='text-xs'>
+            Complete los datos para registrar el corte
           </DialogDescription>
         </DialogHeader>
-        <div className='grid gap-3 sm:gap-4 py-3 sm:py-4'>
-          <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4'>
-            <Label
-              htmlFor='fecha'
-              className='sm:text-right flex items-center gap-1 text-sm sm:text-base'
-            >
-              <Calendar className='h-3 w-3' />
-              Fecha
-            </Label>
-            <Input
-              id='fecha'
-              value={fecha}
-              onChange={e => setFecha(e.target.value)}
-              placeholder='dd-MM-yyyy'
-              className='sm:col-span-3 text-sm sm:text-base h-9 sm:h-10'
-            />
-          </div>
-          <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4'>
-            <Label
-              htmlFor='hora'
-              className='sm:text-right flex items-center gap-1 text-sm sm:text-base'
-            >
-              <Clock className='h-3 w-3' />
-              Hora
-            </Label>
-            <Input
-              id='hora'
-              value={hora}
-              onChange={e => setHora(e.target.value)}
-              placeholder='HH:mm:ss'
-              className='sm:col-span-3 text-sm sm:text-base h-9 sm:h-10'
-            />
-          </div>
-          <div className='grid grid-cols-1 sm:grid-cols-4 items-center gap-2 sm:gap-4'>
-            <Label
-              htmlFor='periodo'
-              className='sm:text-right flex items-center gap-1 text-sm sm:text-base'
-            >
-              <Hash className='h-3 w-3' />
-              Periodo
-            </Label>
-            <Input
-              id='periodo'
-              value={periodo}
-              onChange={e => setPeriodo(e.target.value)}
-              placeholder='MMAAAA'
-              className='sm:col-span-3 text-sm sm:text-base h-9 sm:h-10'
-            />
+        <div className='space-y-3'>
+          <div className='bg-muted rounded-lg p-3 border space-y-3'>
+            <div className='space-y-1'>
+              <Label
+                htmlFor='fecha'
+                className='flex items-center gap-1 text-xs'
+              >
+                <Calendar className='h-3 w-3' />
+                Fecha
+              </Label>
+              <Input
+                id='fecha'
+                value={fecha}
+                onChange={e => setFecha(e.target.value)}
+                placeholder='dd-MM-yyyy'
+                className='text-xs h-8'
+              />
+            </div>
+            <div className='space-y-1'>
+              <Label htmlFor='hora' className='flex items-center gap-1 text-xs'>
+                <Clock className='h-3 w-3' />
+                Hora
+              </Label>
+              <Input
+                id='hora'
+                value={hora}
+                onChange={e => setHora(e.target.value)}
+                placeholder='HH:mm:ss'
+                className='text-xs h-8'
+              />
+            </div>
+            <div className='space-y-1'>
+              <Label
+                htmlFor='periodo'
+                className='flex items-center gap-1 text-xs'
+              >
+                <Hash className='h-3 w-3' />
+                Periodo
+              </Label>
+              <Input
+                id='periodo'
+                value={periodo}
+                onChange={e => setPeriodo(e.target.value)}
+                placeholder='MMAAAA'
+                className='text-xs h-8'
+              />
+            </div>
           </div>
         </div>
         <DialogFooter>
@@ -161,8 +156,9 @@ export function CorteRegistradoDialog({
             type='submit'
             onClick={handleSubmit}
             disabled={!isFormValid || isSubmitting}
-            className='w-full sm:w-auto bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-sm sm:text-base'
+            className='w-full text-xs h-8'
           >
+            <Scissors className='h-3 w-3 mr-1' />
             {isSubmitting ? 'Guardando...' : 'Guardar'}
           </Button>
         </DialogFooter>

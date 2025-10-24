@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-24 14:38:03*
+*Generado automáticamente el 2025-10-24 14:53:36*
 
 ## Índice de Componentes
 
@@ -259,8 +259,8 @@
  * Flujo de trabajo:
  * 1. Usuario visualiza tabla de cargos por tipo de contrato
  * 2. Acciones disponibles:
- *   - Editar (navegación a formulario de edición)
- *   - Eliminar (con confirmación)
+ * - Editar (navegación a formulario de edición)
+ * - Eliminar (con confirmación)
  * 3. Sistema recarga datos automáticamente
  *
  * Arquitectura:
@@ -268,8 +268,8 @@
  * - Navegación a ruta para edición
  * - DeleteDialog para eliminación segura
  * - API endpoints:
- *   * GET /cargoTipoContrato-buscar (consulta)
- *   * DELETE /cargoTipoContrato-eliminar/:id (eliminación)
+ * - GET /cargoTipoContrato-buscar (consulta)
+ * - DELETE /cargoTipoContrato-eliminar/:id (eliminación)
  *
  * Nota:
  * - Funcionalidad de agregar deshabilitada temporalmente
@@ -1086,16 +1086,6 @@
  *   searchPlaceholder="Buscar..."
  * />
  * ```
- */
-```
-
-### PermissionsDebug
-**Archivo**: `app/components/debug/PermissionsDebug.tsx`
-**Documentación**:
-```typescript
-/**
- * Componente de debugging para visualizar permisos del usuario
- * Solo para desarrollo - remover en producción
  */
 ```
 

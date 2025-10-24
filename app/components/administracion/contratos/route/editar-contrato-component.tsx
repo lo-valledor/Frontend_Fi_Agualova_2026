@@ -991,7 +991,7 @@ export default function EditarContratoComponent({
                 className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
               >
                 <div className='min-w-[500px]'>
-                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead
@@ -1055,8 +1055,7 @@ export default function EditarContratoComponent({
                                 width: '100%',
                                 height: '50px',
                                 transform: `translateY(${virtualRow.start}px)`,
-                                display: 'table',
-                                tableLayout: 'fixed'
+                                display: 'table'
                               }}
                               className='hover:bg-muted/50'
                             >
@@ -1130,7 +1129,7 @@ export default function EditarContratoComponent({
                 className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
               >
                 <div className='min-w-[500px]'>
-                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead
@@ -1192,8 +1191,7 @@ export default function EditarContratoComponent({
                               width: '100%',
                               height: '50px',
                               transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table',
-                              tableLayout: 'fixed'
+                              display: 'table'
                             }}
                             className='hover:bg-muted/50'
                           >
@@ -1267,7 +1265,7 @@ export default function EditarContratoComponent({
                 className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
               >
                 <div className='min-w-[500px]'>
-                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead
@@ -1329,8 +1327,7 @@ export default function EditarContratoComponent({
                               width: '100%',
                               height: '50px',
                               transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table',
-                              tableLayout: 'fixed'
+                              display: 'table'
                             }}
                             className='hover:bg-muted/50'
                           >
@@ -1404,7 +1401,7 @@ export default function EditarContratoComponent({
                 className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
               >
                 <div className='min-w-[600px]'>
-                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead
@@ -1471,8 +1468,7 @@ export default function EditarContratoComponent({
                               width: '100%',
                               height: '60px',
                               transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table',
-                              tableLayout: 'fixed'
+                              display: 'table'
                             }}
                             className='hover:bg-muted/50'
                           >
@@ -1560,7 +1556,7 @@ export default function EditarContratoComponent({
                 className='border rounded-xl bg-background h-[45vh] sm:h-[50vh] overflow-auto'
               >
                 <div className='min-w-[500px]'>
-                  <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                  <Table style={{ width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
                         <TableHead
@@ -1622,8 +1618,7 @@ export default function EditarContratoComponent({
                               width: '100%',
                               height: '50px',
                               transform: `translateY(${virtualRow.start}px)`,
-                              display: 'table',
-                              tableLayout: 'fixed'
+                              display: 'table'
                             }}
                             className='hover:bg-muted/50'
                           >

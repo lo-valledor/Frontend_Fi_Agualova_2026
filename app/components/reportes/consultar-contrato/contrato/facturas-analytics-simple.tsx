@@ -942,7 +942,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                 className='rounded-md border overflow-auto'
                 style={{ height: '500px' }}
               >
-                <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+                <Table style={{ width: '100%' }}>
                   <TableHeader className='sticky top-0 z-10 bg-background'>
                     {table.getHeaderGroups().map(headerGroup => (
                       <TableRow
@@ -993,8 +993,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                             width: '100%',
                             height: '50px',
                             transform: `translateY(${virtualRow.start}px)`,
-                            display: 'table',
-                            tableLayout: 'fixed'
+                            display: 'table'
                           }}
                           className='border-b hover:bg-muted'
                         >

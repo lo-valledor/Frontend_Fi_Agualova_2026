@@ -117,7 +117,7 @@ export function VirtualDataTable<TData, TValue>({
           overflow: 'auto'
         }}
       >
-        <Table style={{ tableLayout: 'fixed', width: '100%' }}>
+        <Table style={{ width: '100%' }}>
           <TableHeader className='sticky top-0 bg-background z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
