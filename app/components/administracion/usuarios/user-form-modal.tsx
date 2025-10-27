@@ -1,4 +1,15 @@
-import { AlertCircle, CheckCircle2, Eye, EyeOff, User } from 'lucide-react';
+import {
+  AlertCircle,
+  Briefcase,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  Shield,
+  User,
+  UserCircle
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import type React from 'react';
@@ -24,6 +35,8 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select';
+import { Switch } from '~/components/ui/switch';
+import { Separator } from '~/components/ui/separator';
 import { useAdministracion } from '~/hooks/use-administracion';
 import type {
   ActualizarUsuarioProps,
@@ -49,9 +62,7 @@ export function UserFormModal({
 }: UserFormModalProps) {
   const { createUsuario, updateUsuario, loadingState } = useAdministracion();
   const [showPassword, setShowPassword] = useState(false);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState<string>('');
 
@@ -113,7 +124,6 @@ export function UserFormModal({
       });
     }
     // Resetear estados de contraseña
-    setCurrentPassword('');
     setConfirmPassword('');
     setPasswordError('');
   }, [user, mode, isOpen]);
@@ -153,20 +163,14 @@ export function UserFormModal({
         await createUsuario(formData);
         toast.success('Usuario creado exitosamente');
       } else if (mode === 'edit' && user) {
-        // Modo editar: requiere contraseña actual para cualquier actualización
-        if (!currentPassword.trim()) {
-          setPasswordError(
-            'Debe ingresar su contraseña actual para realizar cambios'
-          );
-          toast.error('Contraseña actual requerida');
-          return;
-        }
-
-        const { contrasena: _contrasena, ...restOfUpdateData } = updateData;
-
+        // Modo editar
         const updatePayload: ActualizarUsuarioProps = {
-          ...restOfUpdateData,
-          contrasena: currentPassword // Contraseña actual para validación
+          nombreDeUsuario: updateData.nombreDeUsuario,
+          contrasena: '', // No se requiere contraseña actual para actualizar
+          nombres: updateData.nombres,
+          apellidos: updateData.apellidos,
+          departamento: updateData.departamento,
+          activo: updateData.activo
         };
 
         // Si se proporciona una nueva contraseña, validarla
@@ -186,15 +190,6 @@ export function UserFormModal({
           if (!passwordsMatch(formData.contrasena, confirmPassword)) {
             setPasswordError('Las contraseñas no coinciden');
             toast.error('Las contraseñas no coinciden');
-            return;
-          }
-
-          // Validar que la nueva contraseña sea diferente de la actual
-          if (formData.contrasena === currentPassword) {
-            setPasswordError(
-              'La nueva contraseña debe ser diferente de la actual'
-            );
-            toast.error('La nueva contraseña debe ser diferente de la actual');
             return;
           }
 
@@ -250,229 +245,212 @@ export function UserFormModal({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='nombres'>Nombres</Label>
-              <Input
-                id='nombres'
-                value={formData.nombres}
-                onChange={e => handleInputChange('nombres', e.target.value)}
-                placeholder='Ingresa los nombres'
-                required
-                disabled={isLoading}
-              />
+        <form onSubmit={handleSubmit} className='space-y-5'>
+          {/* Sección: Información Personal */}
+          <div className='space-y-4'>
+            <div className='flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
+              <UserCircle className='h-4 w-4' />
+              <span>Información Personal</span>
             </div>
-            <div className='space-y-2'>
-              <Label htmlFor='apellidos'>Apellidos</Label>
-              <Input
-                id='apellidos'
-                value={formData.apellidos}
-                onChange={e => handleInputChange('apellidos', e.target.value)}
-                placeholder='Ingresa los apellidos'
-                required
-                disabled={isLoading}
-              />
+            <div className='grid grid-cols-2 gap-4'>
+              <div className='space-y-2'>
+                <Label htmlFor='nombres' className='flex items-center gap-2'>
+                  <User className='h-3.5 w-3.5 text-muted-foreground' />
+                  Nombres
+                </Label>
+                <Input
+                  id='nombres'
+                  value={formData.nombres}
+                  onChange={e => handleInputChange('nombres', e.target.value)}
+                  placeholder='Ej: Juan Carlos'
+                  required
+                  disabled={isLoading}
+                  className='transition-all'
+                />
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='apellidos' className='flex items-center gap-2'>
+                  <User className='h-3.5 w-3.5 text-muted-foreground' />
+                  Apellidos
+                </Label>
+                <Input
+                  id='apellidos'
+                  value={formData.apellidos}
+                  onChange={e => handleInputChange('apellidos', e.target.value)}
+                  placeholder='Ej: Pérez García'
+                  required
+                  disabled={isLoading}
+                  className='transition-all'
+                />
+              </div>
             </div>
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor='nombreDeUsuario'>Nombre de Usuario</Label>
-            <Input
-              id='nombreDeUsuario'
-              value={formData.nombreDeUsuario}
-              onChange={e =>
-                handleInputChange('nombreDeUsuario', e.target.value)
-              }
-              placeholder='Ingresa el nombre de usuario'
-              required
-              disabled={isLoading}
-            />
-          </div>
+          <Separator />
 
-          {/* Contraseña Actual (solo en modo edición) */}
-          {mode === 'edit' && (
+          {/* Sección: Credenciales */}
+          <div className='space-y-4'>
+            <div className='flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
+              <Lock className='h-4 w-4' />
+              <span>Credenciales de Acceso</span>
+            </div>
             <div className='space-y-2'>
               <Label
-                htmlFor='currentPassword'
+                htmlFor='nombreDeUsuario'
                 className='flex items-center gap-2'
               >
-                Contraseña Actual
-                <span className='text-red-500'>*</span>
+                <Mail className='h-3.5 w-3.5 text-muted-foreground' />
+                Nombre de Usuario
+              </Label>
+              <Input
+                id='nombreDeUsuario'
+                value={formData.nombreDeUsuario}
+                onChange={e =>
+                  handleInputChange('nombreDeUsuario', e.target.value)
+                }
+                placeholder='Ej: jperez'
+                required
+                disabled={isLoading}
+                className='transition-all'
+              />
+            </div>
+
+            {/* Contraseña / Nueva Contraseña */}
+            <div className='space-y-2'>
+              <Label htmlFor='contrasena' className='flex items-center gap-2'>
+                <Lock className='h-3.5 w-3.5 text-muted-foreground' />
+                {mode === 'add' ? 'Contraseña' : 'Nueva Contraseña (opcional)'}
               </Label>
               <div className='relative'>
                 <Input
-                  id='currentPassword'
-                  type={showCurrentPassword ? 'text' : 'password'}
-                  value={currentPassword}
+                  id='contrasena'
+                  type={showPassword ? 'text' : 'password'}
+                  value={formData.contrasena}
                   onChange={e => {
-                    setCurrentPassword(e.target.value);
+                    handleInputChange('contrasena', e.target.value);
                     setPasswordError('');
                   }}
-                  placeholder='Ingrese su contraseña actual'
-                  required
+                  placeholder={
+                    mode === 'add'
+                      ? 'Ingresa una contraseña segura'
+                      : 'Dejar vacío para mantener la actual'
+                  }
+                  required={mode === 'add'}
                   disabled={isLoading}
-                  className='pr-10'
+                  className='pr-10 transition-all'
                 />
                 <button
                   type='button'
-                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors'
                   tabIndex={-1}
                 >
-                  {showCurrentPassword ? (
+                  {showPassword ? (
                     <EyeOff className='h-5 w-5' />
                   ) : (
                     <Eye className='h-5 w-5' />
                   )}
                 </button>
               </div>
-              <p className='text-xs text-muted-foreground'>
-                Por seguridad, debe ingresar su contraseña actual para realizar
-                cualquier cambio
-              </p>
-            </div>
-          )}
 
-          {/* Contraseña / Nueva Contraseña */}
-          <div className='space-y-2'>
-            <Label htmlFor='contrasena'>
-              {mode === 'add' ? 'Contraseña' : 'Nueva Contraseña (opcional)'}
-            </Label>
-            <div className='relative'>
-              <Input
-                id='contrasena'
-                type={showPassword ? 'text' : 'password'}
-                value={formData.contrasena}
-                onChange={e => {
-                  handleInputChange('contrasena', e.target.value);
-                  setPasswordError('');
-                }}
-                placeholder={
-                  mode === 'add'
-                    ? 'Ingresa una contraseña segura'
-                    : 'Dejar vacío para mantener la actual'
-                }
-                required={mode === 'add'}
-                disabled={isLoading}
-                className='pr-10'
-              />
-              <button
-                type='button'
-                onClick={() => setShowPassword(!showPassword)}
-                className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700'
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <EyeOff className='h-5 w-5' />
-                ) : (
-                  <Eye className='h-5 w-5' />
+              {/* Indicador de fortaleza */}
+              {formData.contrasena && (
+                <PasswordStrengthIndicator
+                  password={formData.contrasena}
+                  showRules={true}
+                  showWarnings={true}
+                />
+              )}
+            </div>
+
+            {/* Confirmar Contraseña */}
+            {(mode === 'add' || formData.contrasena.trim()) && (
+              <div className='space-y-2'>
+                <Label
+                  htmlFor='confirmPassword'
+                  className='flex items-center gap-2'
+                >
+                  <Lock className='h-3.5 w-3.5 text-muted-foreground' />
+                  Confirmar Contraseña
+                </Label>
+                <div className='relative'>
+                  <Input
+                    id='confirmPassword'
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={e => {
+                      setConfirmPassword(e.target.value);
+                      setPasswordError('');
+                    }}
+                    placeholder='Confirma tu contraseña'
+                    required={
+                      mode === 'add' || formData.contrasena.trim().length > 0
+                    }
+                    disabled={isLoading}
+                    className='pr-10 transition-all'
+                  />
+                  <button
+                    type='button'
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors'
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className='h-5 w-5' />
+                    ) : (
+                      <Eye className='h-5 w-5' />
+                    )}
+                  </button>
+                </div>
+
+                {/* Validación de coincidencia */}
+                {confirmPassword && formData.contrasena && (
+                  <div className='flex items-center gap-2 text-xs'>
+                    {passwordsMatch(formData.contrasena, confirmPassword) ? (
+                      <>
+                        <CheckCircle2 className='h-3.5 w-3.5 text-green-600 dark:text-green-400' />
+                        <span className='text-green-700 dark:text-green-400 font-medium'>
+                          Las contraseñas coinciden
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className='h-3.5 w-3.5 text-red-600 dark:text-red-400' />
+                        <span className='text-red-700 dark:text-red-400'>
+                          Las contraseñas no coinciden
+                        </span>
+                      </>
+                    )}
+                  </div>
                 )}
-              </button>
-            </div>
+              </div>
+            )}
 
-            {/* Indicador de fortaleza */}
-            {formData.contrasena && (
-              <PasswordStrengthIndicator
-                password={formData.contrasena}
-                showRules={true}
-                showWarnings={true}
-              />
+            {/* Error de contraseña */}
+            {passwordError && (
+              <Alert variant='destructive'>
+                <AlertCircle className='h-4 w-4' />
+                <AlertDescription>{passwordError}</AlertDescription>
+              </Alert>
             )}
           </div>
 
-          {/* Confirmar Contraseña */}
-          {(mode === 'add' || formData.contrasena.trim()) && (
-            <div className='space-y-2'>
-              <Label htmlFor='confirmPassword'>Confirmar Contraseña</Label>
-              <div className='relative'>
-                <Input
-                  id='confirmPassword'
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={confirmPassword}
-                  onChange={e => {
-                    setConfirmPassword(e.target.value);
-                    setPasswordError('');
-                  }}
-                  placeholder='Confirma tu contraseña'
-                  required={
-                    mode === 'add' || formData.contrasena.trim().length > 0
-                  }
-                  disabled={isLoading}
-                  className='pr-10'
-                />
-                <button
-                  type='button'
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className='absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700'
-                  tabIndex={-1}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className='h-5 w-5' />
-                  ) : (
-                    <Eye className='h-5 w-5' />
-                  )}
-                </button>
-              </div>
+          <Separator />
 
-              {/* Validación de coincidencia */}
-              {confirmPassword && formData.contrasena && (
-                <div className='flex items-center gap-2 text-xs'>
-                  {passwordsMatch(formData.contrasena, confirmPassword) ? (
-                    <>
-                      <CheckCircle2 className='h-3.5 w-3.5 text-green-600 dark:text-green-400' />
-                      <span className='text-green-700 dark:text-green-400 font-medium'>
-                        Las contraseñas coinciden
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className='h-3.5 w-3.5 text-red-600 dark:text-red-400' />
-                      <span className='text-red-700 dark:text-red-400'>
-                        Las contraseñas no coinciden
-                      </span>
-                    </>
-                  )}
-                </div>
-              )}
+          {/* Sección: Configuración de Perfil */}
+          <div className='space-y-4'>
+            <div className='flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
+              <Shield className='h-4 w-4' />
+              <span>Configuración de Perfil</span>
             </div>
-          )}
 
-          {/* Error de contraseña */}
-          {passwordError && (
-            <Alert variant='destructive'>
-              <AlertCircle className='h-4 w-4' />
-              <AlertDescription>{passwordError}</AlertDescription>
-            </Alert>
-          )}
-
-          <div className='space-y-2'>
-            <Label htmlFor='departamento'>Departamento</Label>
-            <Select
-              value={formData.departamento.toString()}
-              onValueChange={value =>
-                handleInputChange('departamento', Number.parseInt(value))
-              }
-              disabled={isLoading}
-            >
-              <SelectTrigger className='w-full'>
-                <SelectValue placeholder='Selecciona un departamento' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='1'>Gerencia</SelectItem>
-                <SelectItem value='2'>Tecnología</SelectItem>
-                <SelectItem value='3'>Recaudación</SelectItem>
-                <SelectItem value='4'>Seguridad</SelectItem>
-                <SelectItem value='5'>RR.HH</SelectItem>
-                <SelectItem value='6'>Enerlova</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className='grid grid-cols-2 gap-4'>
+            {/* Perfil (solo en modo creación) */}
             {mode === 'add' && (
               <div className='space-y-2'>
-                <Label htmlFor='perfilId'>Perfil</Label>
+                <Label htmlFor='perfilId' className='flex items-center gap-2'>
+                  <Shield className='h-3.5 w-3.5 text-muted-foreground' />
+                  Perfil de Usuario
+                </Label>
                 <Select
                   value={formData.perfilId.toString()}
                   onValueChange={value =>
@@ -480,7 +458,7 @@ export function UserFormModal({
                   }
                   disabled={isLoading}
                 >
-                  <SelectTrigger className='w-full'>
+                  <SelectTrigger className='w-full transition-all'>
                     <SelectValue placeholder='Selecciona un perfil' />
                   </SelectTrigger>
                   <SelectContent>
@@ -499,47 +477,84 @@ export function UserFormModal({
                 </Select>
               </div>
             )}
+
+            {/* Departamento */}
             <div className='space-y-2'>
-              <Label htmlFor='activo'>Estado</Label>
+              <Label htmlFor='departamento' className='flex items-center gap-2'>
+                <Briefcase className='h-3.5 w-3.5 text-muted-foreground' />
+                Departamento
+              </Label>
               <Select
-                value={formData.activo.toString()}
+                value={formData.departamento.toString()}
                 onValueChange={value =>
-                  handleInputChange('activo', value === 'true')
+                  handleInputChange('departamento', Number.parseInt(value))
                 }
                 disabled={isLoading}
               >
-                <SelectTrigger className='w-full'>
-                  <SelectValue />
+                <SelectTrigger className='w-full transition-all'>
+                  <SelectValue placeholder='Selecciona un departamento' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='true'>Activo</SelectItem>
-                  <SelectItem value='false'>Inactivo</SelectItem>
+                  <SelectItem value='1'>Gerencia</SelectItem>
+                  <SelectItem value='2'>Tecnología</SelectItem>
+                  <SelectItem value='3'>Recaudación</SelectItem>
+                  <SelectItem value='4'>Seguridad</SelectItem>
+                  <SelectItem value='5'>RR.HH</SelectItem>
+                  <SelectItem value='6'>Enerlova</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Estado - Ahora con Switch */}
+            <div className='flex items-center justify-between p-4 rounded-lg border bg-muted/50'>
+              <div className='space-y-0.5'>
+                <Label
+                  htmlFor='activo'
+                  className='text-base font-medium cursor-pointer'
+                >
+                  Estado del Usuario
+                </Label>
+                <p className='text-sm text-muted-foreground'>
+                  {formData.activo
+                    ? 'El usuario puede acceder al sistema'
+                    : 'El usuario no puede iniciar sesión'}
+                </p>
+              </div>
+              <Switch
+                id='activo'
+                checked={formData.activo}
+                onCheckedChange={value => handleInputChange('activo', value)}
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
-          <DialogFooter className='gap-2 pt-4'>
+          <DialogFooter className='gap-3 pt-6'>
             <Button
               type='button'
               variant='outline'
               onClick={onClose}
               disabled={isLoading}
+              className='min-w-24'
             >
               Cancelar
             </Button>
             <Button
               type='submit'
-              variant="default"
+              variant='default'
               disabled={isLoading}
+              className='min-w-32'
             >
-              {isLoading
-                ? mode === 'add'
-                  ? 'Creando...'
-                  : 'Guardando...'
-                : mode === 'add'
-                  ? 'Crear'
-                  : 'Actualizar'}
+              {isLoading ? (
+                <span className='flex items-center gap-2'>
+                  <span className='h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                  {mode === 'add' ? 'Creando...' : 'Guardando...'}
+                </span>
+              ) : (
+                <span>
+                  {mode === 'add' ? 'Crear Usuario' : 'Guardar Cambios'}
+                </span>
+              )}
             </Button>
           </DialogFooter>
         </form>

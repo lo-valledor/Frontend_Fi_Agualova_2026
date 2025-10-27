@@ -93,16 +93,7 @@ export function NavUser({ user }: NavUserProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className='py-2 sm:py-2.5'>
-              <Link
-                to='/dashboard/profile'
-                className='flex items-center gap-1.5 sm:gap-2 cursor-pointer text-xs sm:text-sm'
-              >
-                <User className='h-3 w-3 sm:h-4 sm:w-4' />
-                <span>Mi Perfil</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+
             <DropdownMenuItem
               onClick={handleSignOut}
               className='gap-1.5 sm:gap-2 text-destructive focus:text-destructive py-2 sm:py-2.5 text-xs sm:text-sm'

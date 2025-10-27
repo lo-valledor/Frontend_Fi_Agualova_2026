@@ -137,7 +137,6 @@ export default [
             'routes/dashboard/administracion/condiciones-contrato.tsx'
           )
         ]),
-        route('profile', 'routes/dashboard/profile.tsx'),
         ...prefix('mantencion', [
           route('zonas', 'routes/dashboard/mantencion/zonas.tsx'),
           route('sector', 'routes/dashboard/mantencion/sector.tsx'),

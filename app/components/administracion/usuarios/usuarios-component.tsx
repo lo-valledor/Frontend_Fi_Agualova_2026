@@ -4,7 +4,7 @@
  * Funcionalidades principales:
  * - Visualización de usuarios del sistema en tabla
  * - Creación de nuevos usuarios con validación de contraseña
- * - Edición de usuarios existentes
+ * - Edición de usuarios existentes (sin requerir contraseña actual)
  * - Eliminación de usuarios con confirmación
  * - Asignación de perfiles y departamentos
  * - Gestión de estado activo/inactivo
@@ -14,10 +14,10 @@
  * 1. Usuario visualiza tabla de usuarios del sistema
  * 2. Acciones disponibles:
  *    - Crear nuevo usuario (modal con validación de contraseña)
- *    - Editar usuario existente (modal)
+ *    - Editar usuario existente (modal, nueva contraseña opcional)
  *    - Eliminar usuario (con confirmación)
  * 3. Sistema valida:
- *    - Contraseña segura (8+ caracteres, mayúsculas, minúsculas, números, especiales)
+ *    - Contraseña segura en creación y cambio (8+ caracteres, mayúsculas, minúsculas, números, especiales)
  *    - Coincidencia de contraseñas
  *    - Datos requeridos
  * 4. Recarga automática de lista después de operaciones
@@ -91,7 +91,7 @@ export default function UsuariosComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  const { fetchUsuarios, deleteUsuario, loadingState } = useAdministracion();
+  const { deleteUsuario } = useAdministracion();
 
   // Permisos
   const { canCreate, canEdit } = useAuth();
