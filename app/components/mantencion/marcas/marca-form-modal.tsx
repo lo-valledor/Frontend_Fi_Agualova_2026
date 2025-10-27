@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -18,6 +19,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -110,7 +112,7 @@ export default function MarcaFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Marca' : 'Editar Marca'}
@@ -125,21 +127,27 @@ export default function MarcaFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='space-y-4 pt-4'
+            className='space-y-4'
           >
             <FormField
               control={form.control}
               name='codigo'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Código de la Marca</FormLabel>
+                  <FormLabel>Código</FormLabel>
                   <FormControl>
                     <Input
                       placeholder='Ej: ABC123'
                       {...field}
                       disabled={mode === 'edit'}
+                      className={mode === 'edit' ? 'bg-muted' : ''}
                     />
                   </FormControl>
+                  <FormDescription>
+                    {mode === 'edit'
+                      ? 'El código no se puede modificar'
+                      : 'Máximo 20 caracteres'}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -150,10 +158,11 @@ export default function MarcaFormModal({
               name='nombre'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre de la Marca</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Input placeholder='Ej: Siemens' {...field} />
                   </FormControl>
+                  <FormDescription>Máximo 100 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -168,17 +177,9 @@ export default function MarcaFormModal({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                variant="default"
-              >
-                {(() => {
-                  if (isLoading) {
-                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
-                  }
-                  return mode === 'add' ? 'Crear Marca' : 'Actualizar Marca';
-                })()}
+              <Button type='submit' disabled={isLoading} variant='default'>
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                {mode === 'add' ? 'Crear Marca' : 'Actualizar Marca'}
               </Button>
             </DialogFooter>
           </form>

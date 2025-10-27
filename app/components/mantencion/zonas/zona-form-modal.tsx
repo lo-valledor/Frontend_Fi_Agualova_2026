@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -115,7 +116,7 @@ export default function ZonaFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Zona' : 'Editar Zona'}
@@ -130,17 +131,18 @@ export default function ZonaFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='space-y-4 pt-4'
+            className='space-y-4'
           >
             <FormField
               control={form.control}
               name='nombre'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre de la Zona</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Input placeholder='Ej: Zona Norte' {...field} />
                   </FormControl>
+                  <FormDescription>Máximo 50 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -155,6 +157,7 @@ export default function ZonaFormModal({
                   <FormControl>
                     <Input placeholder='Ej: ZN-01' {...field} />
                   </FormControl>
+                  <FormDescription>Máximo 20 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -190,17 +193,9 @@ export default function ZonaFormModal({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                variant="default"
-              >
-                {(() => {
-                  if (isLoading) {
-                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
-                  }
-                  return mode === 'add' ? 'Crear Zona' : 'Actualizar Zona';
-                })()}
+              <Button type='submit' disabled={isLoading} variant='default'>
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                {mode === 'add' ? 'Crear Zona' : 'Actualizar Zona'}
               </Button>
             </DialogFooter>
           </form>

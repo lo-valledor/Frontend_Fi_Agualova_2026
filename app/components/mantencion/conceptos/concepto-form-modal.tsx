@@ -86,15 +86,41 @@ export default function ConceptoFormModal({
 
   React.useEffect(() => {
     if (isOpen) {
+      console.log('🔍 DEBUG - Concepto:', concepto);
+      console.log('🔍 DEBUG - AsociadoId:', concepto?.asociadoId);
+      console.log(
+        '🔍 DEBUG - AsociadoDescripcion:',
+        concepto?.asociadoDescripcion
+      );
+      console.log('🔍 DEBUG - ComboAsociados:', comboAsociadoConceptos);
+
+      // Buscar el asociadoId a partir de la descripción si no viene el ID
+      let asociadoIdFinal = concepto?.asociadoId;
+
+      if (!asociadoIdFinal && concepto?.asociadoDescripcion) {
+        const asociadoEncontrado = comboAsociadoConceptos.find(
+          a => a.descripcion === concepto.asociadoDescripcion
+        );
+        if (asociadoEncontrado) {
+          asociadoIdFinal = asociadoEncontrado.id;
+          console.log(
+            '🔍 DEBUG - Asociado encontrado por descripción:',
+            asociadoEncontrado
+          );
+        }
+      }
+
+      console.log('🔍 DEBUG - AsociadoId final:', asociadoIdFinal);
+
       form.reset({
         denominacion: concepto?.denominacion || '',
         descripcion: concepto?.descripcion || '',
         unidad: concepto?.unidad || '',
         fijoVariable: concepto?.fijoVariable || '',
-        asociadoId: concepto?.asociadoId || undefined
+        asociadoId: asociadoIdFinal ?? undefined
       });
     }
-  }, [isOpen, concepto, form]);
+  }, [isOpen, concepto, comboAsociadoConceptos, form]);
 
   const onSubmit = async (data: ConceptoFormData) => {
     try {
@@ -115,7 +141,7 @@ export default function ConceptoFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[600px]'>
+      <DialogContent className='sm:max-w-[550px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Concepto' : 'Editar Concepto'}
@@ -195,7 +221,9 @@ export default function ConceptoFormModal({
                           ? {
                               value: field.value,
                               label:
-                                field.value === 'FIJO' ? 'Fijo' : 'Variable'
+                                field.value === 'FIJO' || field.value === 'F'
+                                  ? 'Fijo'
+                                  : 'Variable'
                             }
                           : null
                       }
@@ -203,8 +231,8 @@ export default function ConceptoFormModal({
                         field.onChange(selectedOption?.value || '')
                       }
                       options={[
-                        { value: 'FIJO', label: 'Fijo' },
-                        { value: 'VARIABLE', label: 'Variable' }
+                        { value: 'F', label: 'Fijo' },
+                        { value: 'V', label: 'Variable' }
                       ]}
                       placeholder='Seleccione el tipo'
                       isClearable
@@ -230,37 +258,52 @@ export default function ConceptoFormModal({
                 <Controller
                   name='asociadoId'
                   control={form.control}
-                  render={({ field }) => (
-                    <Select
-                      value={
-                        field.value
-                          ? comboAsociadoConceptos.find(
-                              a => a.id === field.value
-                            )
+                  render={({ field }) => {
+                    console.log('🔍 DEBUG Field value:', field.value);
+                    console.log(
+                      '🔍 DEBUG Field value type:',
+                      typeof field.value
+                    );
+
+                    // Filtrar el elemento "Seleccione.." (id: 0)
+                    const validAsociados = comboAsociadoConceptos.filter(
+                      a => a.id !== 0
+                    );
+
+                    const selectedAsociado =
+                      field.value != null && field.value !== 0
+                        ? validAsociados.find(a => a.id === field.value)
+                        : null;
+
+                    console.log('🔍 DEBUG selectedAsociado:', selectedAsociado);
+                    console.log('🔍 DEBUG validAsociados:', validAsociados);
+
+                    return (
+                      <Select
+                        value={
+                          selectedAsociado
                             ? {
-                                value: comboAsociadoConceptos.find(
-                                  a => a.id === field.value
-                                )!.id,
-                                label: comboAsociadoConceptos.find(
-                                  a => a.id === field.value
-                                )!.descripcion
+                                value: selectedAsociado.id,
+                                label: selectedAsociado.descripcion
                               }
                             : null
-                          : null
-                      }
-                      onChange={(selectedOption: any) =>
-                        field.onChange(selectedOption?.value || undefined)
-                      }
-                      options={comboAsociadoConceptos.map(asociado => ({
-                        value: asociado.id,
-                        label: asociado.descripcion
-                      }))}
-                      placeholder='Seleccione el asociado'
-                      isClearable
-                      className='mt-1'
-                      styles={selectStyles}
-                    />
-                  )}
+                        }
+                        onChange={(selectedOption: any) => {
+                          const newValue = selectedOption?.value ?? undefined;
+                          console.log('🔍 DEBUG onChange newValue:', newValue);
+                          field.onChange(newValue);
+                        }}
+                        options={validAsociados.map(asociado => ({
+                          value: asociado.id,
+                          label: asociado.descripcion
+                        }))}
+                        placeholder='Seleccione el asociado'
+                        isClearable
+                        className='mt-1'
+                        styles={selectStyles}
+                      />
+                    );
+                  }}
                 />
                 <p className='text-sm text-muted-foreground mt-1'>
                   Seleccione un concepto asociado
@@ -273,7 +316,7 @@ export default function ConceptoFormModal({
               </div>
             </div>
 
-            <DialogFooter>
+            <DialogFooter className='gap-2'>
               <Button
                 type='button'
                 variant='outline'
@@ -282,11 +325,7 @@ export default function ConceptoFormModal({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                variant="default"
-              >
+              <Button type='submit' disabled={isLoading} variant='default'>
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear Concepto' : 'Actualizar Concepto'}
               </Button>

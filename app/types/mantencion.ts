@@ -28,6 +28,7 @@ export type Conceptos = {
   unidad: string;
   fijoVariable: string;
   asociadoId?: number;
+  asociadoDescripcion?: string | null;
 };
 
 export type ComboAsociadoConceptos = {

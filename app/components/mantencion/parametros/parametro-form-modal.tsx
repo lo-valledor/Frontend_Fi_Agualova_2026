@@ -104,7 +104,7 @@ export default function ParametroFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[500px]'>
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Parámetro' : 'Editar Parámetro'}
@@ -190,7 +190,7 @@ export default function ParametroFormModal({
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className='gap-2'>
               <Button
                 type='button'
                 variant='outline'
@@ -199,11 +199,7 @@ export default function ParametroFormModal({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                variant="default"
-              >
+              <Button type='submit' disabled={isLoading} variant='default'>
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear Parámetro' : 'Actualizar Parámetro'}
               </Button>

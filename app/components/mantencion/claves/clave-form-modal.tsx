@@ -132,7 +132,7 @@ export default function ClaveFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='sm:max-w-[500px]'>
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nueva Clave' : 'Editar Clave'}
@@ -202,10 +202,7 @@ export default function ClaveFormModal({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tipo</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder='Seleccione el tipo' />
@@ -247,7 +244,7 @@ export default function ClaveFormModal({
               )}
             />
 
-            <DialogFooter>
+            <DialogFooter className='gap-2'>
               <Button
                 type='button'
                 variant='outline'
@@ -256,11 +253,7 @@ export default function ClaveFormModal({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                variant="default"
-              >
+              <Button type='submit' disabled={isLoading} variant='default'>
                 {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 {mode === 'add' ? 'Crear Clave' : 'Actualizar Clave'}
               </Button>

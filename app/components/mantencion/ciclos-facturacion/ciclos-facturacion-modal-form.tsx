@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -137,7 +138,7 @@ export default function CiclosFacturacionModalForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='sm:max-w-[550px]'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add'
@@ -154,7 +155,7 @@ export default function CiclosFacturacionModalForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='space-y-4 pt-4'
+            className='space-y-4'
           >
             <FormField
               control={form.control}
@@ -173,83 +174,79 @@ export default function CiclosFacturacionModalForm({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name='diaFacturacion'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Día de Facturación</FormLabel>
-                  <FormControl>
-                    <Input
-                      type='number'
-                      min='1'
-                      max='31'
-                      placeholder='1'
-                      {...field}
-                      onChange={e =>
-                        field.onChange(parseInt(e.target.value) || 1)
-                      }
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Día del mes en que se realiza la facturación (1-31)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+              <FormField
+                control={form.control}
+                name='diaFacturacion'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Día Facturación</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        min='1'
+                        max='31'
+                        placeholder='1'
+                        {...field}
+                        onChange={e =>
+                          field.onChange(parseInt(e.target.value) || 1)
+                        }
+                      />
+                    </FormControl>
+                    <FormDescription>1-31</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name='diaInicioLectura'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Día de Inicio de Lectura</FormLabel>
-                  <FormControl>
-                    <Input
-                      type='number'
-                      min='1'
-                      max='31'
-                      placeholder='1'
-                      {...field}
-                      onChange={e =>
-                        field.onChange(parseInt(e.target.value) || 1)
-                      }
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Día del mes en que inicia el período de lecturas (1-31)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name='diaInicioLectura'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Día Inicio Lectura</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        min='1'
+                        max='31'
+                        placeholder='1'
+                        {...field}
+                        onChange={e =>
+                          field.onChange(parseInt(e.target.value) || 1)
+                        }
+                      />
+                    </FormControl>
+                    <FormDescription>1-31</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name='diasVencimientoFactura'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Días de Vencimiento</FormLabel>
-                  <FormControl>
-                    <Input
-                      type='number'
-                      min='1'
-                      max='365'
-                      placeholder='30'
-                      {...field}
-                      onChange={e =>
-                        field.onChange(parseInt(e.target.value) || 30)
-                      }
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Número de días para el vencimiento de la factura
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name='diasVencimientoFactura'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Días Vencimiento</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='number'
+                        min='1'
+                        max='365'
+                        placeholder='30'
+                        {...field}
+                        onChange={e =>
+                          field.onChange(parseInt(e.target.value) || 30)
+                        }
+                      />
+                    </FormControl>
+                    <FormDescription>Días</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -281,17 +278,9 @@ export default function CiclosFacturacionModalForm({
               >
                 Cancelar
               </Button>
-              <Button
-                type='submit'
-                disabled={isLoading}
-                variant="default"
-              >
-                {(() => {
-                  if (isLoading) {
-                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
-                  }
-                  return mode === 'add' ? 'Crear Ciclo' : 'Actualizar Ciclo';
-                })()}
+              <Button type='submit' disabled={isLoading} variant='default'>
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                {mode === 'add' ? 'Crear Ciclo' : 'Actualizar Ciclo'}
               </Button>
             </DialogFooter>
           </form>

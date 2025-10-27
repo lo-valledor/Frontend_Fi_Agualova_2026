@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -154,7 +155,7 @@ export default function SectorFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Sector' : 'Editar Sector'}
@@ -169,17 +170,18 @@ export default function SectorFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='space-y-4 pt-4'
+            className='space-y-4'
           >
             <FormField
               control={form.control}
               name='nombre'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre del Sector</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Input placeholder='Ej: Sector Norte' {...field} />
                   </FormControl>
+                  <FormDescription>Máximo 50 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -215,6 +217,9 @@ export default function SectorFormModal({
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormDescription>
+                    Seleccione la zona a la que pertenece
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -253,14 +258,10 @@ export default function SectorFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingZonas}
-                variant="default"
+                variant='default'
               >
-                {(() => {
-                  if (isLoading) {
-                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
-                  }
-                  return mode === 'add' ? 'Crear Sector' : 'Actualizar Sector';
-                })()}
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                {mode === 'add' ? 'Crear Sector' : 'Actualizar Sector'}
               </Button>
             </DialogFooter>
           </form>

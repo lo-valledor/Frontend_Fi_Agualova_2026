@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -176,7 +177,7 @@ export default function NichoFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className='sm:max-w-[425px]'>
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>
             {mode === 'add' ? 'Agregar Nuevo Nicho' : 'Editar Nicho'}
@@ -191,7 +192,7 @@ export default function NichoFormModal({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='space-y-4 pt-4'
+            className='space-y-4'
           >
             <FormField
               control={form.control}
@@ -226,6 +227,9 @@ export default function NichoFormModal({
                       ))}
                     </SelectContent>
                   </Select>
+                  <FormDescription>
+                    Seleccione el sector al que pertenece
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -236,10 +240,11 @@ export default function NichoFormModal({
               name='nombre'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nombre del Nicho</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Input placeholder='Ej: Nicho Norte 1' {...field} />
                   </FormControl>
+                  <FormDescription>Máximo 50 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -254,6 +259,7 @@ export default function NichoFormModal({
                   <FormControl>
                     <Input placeholder='Ej: Pasaje Los Aromos 123' {...field} />
                   </FormControl>
+                  <FormDescription>Máximo 100 caracteres</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -292,14 +298,10 @@ export default function NichoFormModal({
               <Button
                 type='submit'
                 disabled={isLoading || isLoadingSectores}
-                variant="default"
+                variant='default'
               >
-                {(() => {
-                  if (isLoading) {
-                    return mode === 'add' ? 'Creando...' : 'Actualizando...';
-                  }
-                  return mode === 'add' ? 'Crear Nicho' : 'Actualizar Nicho';
-                })()}
+                {isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                {mode === 'add' ? 'Crear Nicho' : 'Actualizar Nicho'}
               </Button>
             </DialogFooter>
           </form>
