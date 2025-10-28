@@ -38,9 +38,9 @@ export const columns = ({
         </div>
       );
     },
-    size: 200,
-    minSize: 180,
-    maxSize: 250
+    size: 165,
+    minSize: 140,
+    maxSize: 190
   },
   {
     accessorKey: 'cargoFacturableDescripcion',
@@ -62,9 +62,9 @@ export const columns = ({
         </div>
       );
     },
-    size: 200,
-    minSize: 180,
-    maxSize: 250
+    size: 175,
+    minSize: 150,
+    maxSize: 200
   },
   {
     accessorKey: 'condicionContratoDescripcion',
@@ -82,9 +82,9 @@ export const columns = ({
         </div>
       );
     },
-    size: 150,
-    minSize: 140,
-    maxSize: 180
+    size: 140,
+    minSize: 120,
+    maxSize: 160
   },
   {
     accessorKey: 'descripcion',
@@ -99,9 +99,9 @@ export const columns = ({
         </div>
       );
     },
-    size: 190,
-    minSize: 170,
-    maxSize: 220
+    size: 155,
+    minSize: 130,
+    maxSize: 180
   },
   {
     accessorKey: 'estado',
@@ -109,9 +109,9 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Estado' />
     ),
     cell: ({ row }) => <EstadoBadge estado={row.getValue('estado')} />,
-    size: 110,
-    minSize: 100,
-    maxSize: 120
+    size: 90,
+    minSize: 80,
+    maxSize: 100
   },
   {
     id: 'actions',
@@ -129,8 +129,8 @@ export const columns = ({
         />
       </div>
     ),
-    size: 110,
-    minSize: 100,
-    maxSize: 120
+    size: 90,
+    minSize: 80,
+    maxSize: 100
   }
 ];

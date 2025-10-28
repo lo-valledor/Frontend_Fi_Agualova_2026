@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-27 12:16:58*
+*Generado automáticamente el 2025-10-28 14:38:41*
 
 ## Índice de Componentes
 
@@ -888,6 +888,11 @@
 ⚠️ *Sin documentación JSDoc*
 
 
+### user-permissions-modal
+**Archivo**: `app/components/administracion/usuarios/user-permissions-modal.tsx`
+⚠️ *Sin documentación JSDoc*
+
+
 ### usuarios-component
 **Archivo**: `app/components/administracion/usuarios/usuarios-component.tsx`
 **Documentación**:
@@ -907,26 +912,29 @@
  * Flujo de trabajo:
  * 1. Usuario visualiza tabla de usuarios del sistema
  * 2. Acciones disponibles:
- *    - Crear nuevo usuario (modal con validación de contraseña)
- *    - Editar usuario existente (modal, nueva contraseña opcional)
- *    - Eliminar usuario (con confirmación)
+ * - Crear nuevo usuario (modal con validación de contraseña)
+ * - Editar usuario existente (modal, nueva contraseña opcional)
+ * - Eliminar usuario (con confirmación)
+ * - Ver permisos del usuario
  * 3. Sistema valida:
- *    - Contraseña segura en creación y cambio (8+ caracteres, mayúsculas, minúsculas, números, especiales)
- *    - Coincidencia de contraseñas
- *    - Datos requeridos
+ * - Contraseña segura en creación y cambio (8+ caracteres, mayúsculas, minúsculas, números, especiales)
+ * - Coincidencia de contraseñas
+ * - Datos requeridos
  * 4. Recarga automática de lista después de operaciones
  *
  * Arquitectura:
  * - DataTable con columnas: nombre, usuario, perfil, departamento, estado, acciones
  * - Modal UserFormModal con dos modos (add/edit)
+ * - Modal UserPermissionsModal para visualizar permisos
  * - Hook useAdministracion para operaciones CRUD
  * - DeleteConfirmationDialog para eliminación segura
  * - Validación de contraseñas con password-validation utils
  * - API endpoints:
- *   * POST /crear (creación de usuario)
- *   * PUT /actualizar/:id (actualización)
- *   * DELETE /eliminar/:id (eliminación)
- *   * GET /listar (revalidación)
+ * POST /registrar (creación de usuario)
+ * PUT /actualizar/:id (actualización)
+ * DELETE /eliminar/:id (eliminación)
+ * GET /listar (revalidación)
+ * GET /ObtenerPermisoUsuario/:id (permisos del usuario)
  *
  * Perfiles disponibles:
  * - Administrador

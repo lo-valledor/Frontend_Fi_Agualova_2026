@@ -44,8 +44,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 200,
-    maxSize: 280
+    size: 190,
+    minSize: 160,
+    maxSize: 220
   },
   {
     accessorKey: 'nombre',
@@ -66,8 +67,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 100,
-    maxSize: 120
+    size: 100,
+    minSize: 90,
+    maxSize: 110
   },
   {
     accessorKey: 'direccion',
@@ -94,8 +96,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 200,
-    maxSize: 250
+    size: 175,
+    minSize: 150,
+    maxSize: 200
   },
   {
     accessorKey: 'contacto',
@@ -119,8 +122,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 180,
-    maxSize: 220
+    size: 150,
+    minSize: 130,
+    maxSize: 170
   },
   {
     accessorKey: 'email',
@@ -141,8 +145,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 200,
-    maxSize: 250
+    size: 165,
+    minSize: 140,
+    maxSize: 190
   },
   {
     id: 'actions',
@@ -163,6 +168,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 90,
     minSize: 80,
     maxSize: 100,
     enableSorting: false

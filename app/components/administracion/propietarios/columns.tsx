@@ -36,8 +36,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 220
+    size: 170,
+    minSize: 140,
+    maxSize: 200
   },
   {
     accessorKey: 'email',
@@ -58,8 +59,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 220
+    size: 170,
+    minSize: 140,
+    maxSize: 200
   },
   {
     accessorKey: 'telefono',
@@ -80,8 +82,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 220
+    size: 130,
+    minSize: 110,
+    maxSize: 150
   },
   {
     accessorKey: 'celular',
@@ -102,8 +105,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 220
+    size: 130,
+    minSize: 110,
+    maxSize: 150
   },
   {
     accessorKey: 'comuna',
@@ -124,8 +128,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 220
+    size: 130,
+    minSize: 110,
+    maxSize: 150
   },
   {
     id: 'actions',
@@ -146,6 +151,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 90,
     minSize: 80,
     maxSize: 100,
     enableSorting: false

@@ -13,26 +13,29 @@
  * Flujo de trabajo:
  * 1. Usuario visualiza tabla de usuarios del sistema
  * 2. Acciones disponibles:
- *    - Crear nuevo usuario (modal con validación de contraseña)
- *    - Editar usuario existente (modal, nueva contraseña opcional)
- *    - Eliminar usuario (con confirmación)
+ * - Crear nuevo usuario (modal con validación de contraseña)
+ * - Editar usuario existente (modal, nueva contraseña opcional)
+ * - Eliminar usuario (con confirmación)
+ * - Ver permisos del usuario
  * 3. Sistema valida:
- *    - Contraseña segura en creación y cambio (8+ caracteres, mayúsculas, minúsculas, números, especiales)
- *    - Coincidencia de contraseñas
- *    - Datos requeridos
+ * - Contraseña segura en creación y cambio (8+ caracteres, mayúsculas, minúsculas, números, especiales)
+ * - Coincidencia de contraseñas
+ * - Datos requeridos
  * 4. Recarga automática de lista después de operaciones
  *
  * Arquitectura:
  * - DataTable con columnas: nombre, usuario, perfil, departamento, estado, acciones
  * - Modal UserFormModal con dos modos (add/edit)
+ * - Modal UserPermissionsModal para visualizar permisos
  * - Hook useAdministracion para operaciones CRUD
  * - DeleteConfirmationDialog para eliminación segura
  * - Validación de contraseñas con password-validation utils
  * - API endpoints:
- *   * POST /crear (creación de usuario)
- *   * PUT /actualizar/:id (actualización)
- *   * DELETE /eliminar/:id (eliminación)
- *   * GET /listar (revalidación)
+ * POST /registrar (creación de usuario)
+ * PUT /actualizar/:id (actualización)
+ * DELETE /eliminar/:id (eliminación)
+ * GET /listar (revalidación)
+ * GET /ObtenerPermisoUsuario/:id (permisos del usuario)
  *
  * Perfiles disponibles:
  * - Administrador
@@ -77,6 +80,7 @@ import type { Usuarios } from '~/types/administracion';
 import { columns } from './columns';
 import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { UserFormModal } from './user-form-modal';
+import { UserPermissionsModal } from './user-permissions-modal';
 import { useRevalidator } from 'react-router';
 
 export default function UsuariosComponent({
@@ -87,6 +91,7 @@ export default function UsuariosComponent({
   const [usuarios, setUsuarios] = useState<Usuarios[]>(initialUsuarios);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPermissionsModalOpen, setIsPermissionsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Usuarios | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
@@ -119,6 +124,11 @@ export default function UsuariosComponent({
   const handleDeleteUser = useCallback((user: Usuarios) => {
     setSelectedUser(user);
     setIsDeleteDialogOpen(true);
+  }, []);
+
+  const handleViewPermissions = useCallback((user: Usuarios) => {
+    setSelectedUser(user);
+    setIsPermissionsModalOpen(true);
   }, []);
 
   const handleUserSuccess = useCallback(() => {
@@ -184,6 +194,7 @@ export default function UsuariosComponent({
               columns={columns({
                 onEdit: handleEditUser,
                 onDelete: handleDeleteUser,
+                onViewPermissions: handleViewPermissions,
                 canEdit: hasEditPermission
               })}
               data={usuarios}
@@ -198,6 +209,11 @@ export default function UsuariosComponent({
           onSuccess={handleUserSuccess}
           user={selectedUser}
           mode={modalMode}
+        />
+        <UserPermissionsModal
+          isOpen={isPermissionsModalOpen}
+          onClose={() => setIsPermissionsModalOpen(false)}
+          user={selectedUser}
         />
         <DeleteConfirmationDialog
           isOpen={isDeleteDialogOpen}

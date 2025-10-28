@@ -58,7 +58,7 @@ const ForgotPassword = () => {
             </div>
 
             {/* Footer */}
-            <div className='text-sm text-white/70'>
+            <div className='text-sm text-white/70 text-center'>
               © {new Date().getFullYear()} Enerlova. Todos los derechos
               reservados.
             </div>

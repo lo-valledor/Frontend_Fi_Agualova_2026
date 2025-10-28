@@ -69,6 +69,7 @@ export function UserFormModal({
   const [formData, setFormData] = useState<CrearUsuarioProps>({
     nombreDeUsuario: '',
     contrasena: '',
+    email: '',
     perfilId: 1,
     nombres: '',
     apellidos: '',
@@ -98,6 +99,7 @@ export function UserFormModal({
       setFormData({
         nombreDeUsuario: user.nombreDeUsuario,
         contrasena: '',
+        email: user.email || '',
         perfilId: user.perfilId,
         nombres: user.nombres,
         apellidos: user.apellidos,
@@ -108,6 +110,7 @@ export function UserFormModal({
       setFormData({
         nombreDeUsuario: '',
         contrasena: '',
+        email: '',
         perfilId: 1,
         nombres: '',
         apellidos: '',
@@ -299,7 +302,7 @@ export function UserFormModal({
                 htmlFor='nombreDeUsuario'
                 className='flex items-center gap-2'
               >
-                <Mail className='h-3.5 w-3.5 text-muted-foreground' />
+                <User className='h-3.5 w-3.5 text-muted-foreground' />
                 Nombre de Usuario
               </Label>
               <Input
@@ -313,6 +316,29 @@ export function UserFormModal({
                 disabled={isLoading}
                 className='transition-all'
               />
+            </div>
+
+            {/* Email */}
+            <div className='space-y-2'>
+              <Label htmlFor='email' className='flex items-center gap-2'>
+                <Mail className='h-3.5 w-3.5 text-muted-foreground' />
+                Correo Electrónico
+              </Label>
+              <Input
+                id='email'
+                type='email'
+                value={formData.email}
+                onChange={e => handleInputChange('email', e.target.value)}
+                placeholder='Ej: jperez@lovalledor.cl'
+                required={mode === 'add'}
+                disabled={isLoading || mode === 'edit'}
+                className='transition-all'
+              />
+              {mode === 'edit' && (
+                <p className='text-xs text-muted-foreground'>
+                  El correo electrónico no se puede modificar
+                </p>
+              )}
             </div>
 
             {/* Contraseña / Nueva Contraseña */}

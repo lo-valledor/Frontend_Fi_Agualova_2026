@@ -242,68 +242,14 @@ export default function AbrirPeriodoFacturacion({
                 </p>
               </div>
             ) : (
-              <div className='space-y-4'>
-                {/* Estadísticas */}
-                <div className='grid grid-cols-1 sm:grid-cols-3 gap-3'>
-                  <div className='bg-muted/30 rounded-xl p-3 border border-border'>
-                    <div className='flex items-center gap-2'>
-                      <CheckCircle className='w-4 h-4 text-success' />
-                      <div>
-                        <div className='text-xl font-semibold text-foreground'>
-                          {
-                            periodosData.filter(
-                              p => p.epf_descripcion === 'Abierto'
-                            ).length
-                          }
-                        </div>
-                        <div className='text-xs text-muted-foreground'>
-                          Períodos Abiertos
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='bg-muted/30 rounded-xl p-3 border border-border'>
-                    <div className='flex items-center gap-2'>
-                      <Clock className='w-4 h-4 text-destructive' />
-                      <div>
-                        <div className='text-xl font-semibold text-foreground'>
-                          {
-                            periodosData.filter(
-                              p => p.epf_descripcion === 'Cerrado'
-                            ).length
-                          }
-                        </div>
-                        <div className='text-xs text-muted-foreground'>
-                          Períodos Cerrados
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='bg-muted/30 rounded-xl p-3 border border-border'>
-                    <div className='flex items-center gap-2'>
-                      <History className='w-4 h-4 text-foreground' />
-                      <div>
-                        <div className='text-xl font-semibold text-foreground'>
-                          {periodosData.length}
-                        </div>
-                        <div className='text-xs text-muted-foreground'>
-                          Total Períodos
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tabla */}
-                <div className='rounded-xl border border-border overflow-hidden'>
-                  <DataTable
-                    columns={columns}
-                    data={periodosData}
-                    initialSorting={[{ id: 'Column1', desc: true }]}
-                    searchPlaceholder='Buscar por descripción o ID...'
-                    defaultPageSize={10}
-                  />
-                </div>
+              <div className='rounded-xl border border-border overflow-hidden'>
+                <DataTable
+                  columns={columns}
+                  data={periodosData}
+                  initialSorting={[{ id: 'Column1', desc: true }]}
+                  searchPlaceholder='Buscar por descripción o ID...'
+                  defaultPageSize={10}
+                />
               </div>
             )}
           </CardContent>

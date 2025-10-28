@@ -394,7 +394,7 @@ export function useAdministracion() {
       createUsuario: { isLoading: true }
     }));
     try {
-      const response = await api.post('/crear', userData);
+      const response = await api.post('/registrar', userData);
       return response.data;
     } finally {
       setLoadingState(prev => ({

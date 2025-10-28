@@ -45,24 +45,15 @@
  * }
  * ```
  */
-import { Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
 import { useAuth } from '~/context/AuthContext';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type SortingState
-} from '@tanstack/react-table';
-
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -73,17 +64,8 @@ import {
   DialogHeader,
   DialogTitle
 } from '~/components/ui/dialog';
-import { Input } from '~/components/ui/input';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table';
 import type { GetCondicionesContrato } from '~/types/administracion';
 import type { Conceptos } from '~/types/mantencion';
 
@@ -109,9 +91,6 @@ export default function CondicionesContratoComponent({
   const [selectedCondicionId, setSelectedCondicionId] = useState<number | null>(
     null
   );
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const revalidator = useRevalidator();
 
@@ -154,35 +133,6 @@ export default function CondicionesContratoComponent({
     );
   };
 
-  // Table setup with react-table
-  const table = useReactTable({
-    data: condicionesContrato,
-    columns: columns({
-      onEdit: handleEditCondicionContrato,
-      onView: handleViewCondicionContrato,
-      editingCondicionContrato: null,
-      canEdit: hasEditPermission
-    }),
-    state: {
-      sorting,
-      globalFilter
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel()
-  });
-
-  // Virtualization setup
-  const { rows } = table.getRowModel();
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 60,
-    overscan: 10
-  });
-
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
@@ -213,122 +163,18 @@ export default function CondicionesContratoComponent({
         {/* Table */}
         <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
-            {/* Search */}
-            <div className='flex justify-between items-center mb-3'>
-              <div className='text-sm text-muted-foreground'>
-                {rows.length} registros
-              </div>
-              <div className='relative w-64'>
-                <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
-                <Input
-                  placeholder='Buscar condiciones...'
-                  value={globalFilter ?? ''}
-                  onChange={event => setGlobalFilter(event.target.value)}
-                  className='pl-8 h-8 text-sm'
-                />
-              </div>
-            </div>
-
-            {/* Virtualized Table */}
-            <div
-              ref={tableContainerRef}
-              className='rounded-md border overflow-auto'
-              style={{ height: '600px' }}
-            >
-              <Table
-                style={{
-                  width: '1200px',
-                  minWidth: '100%'
-                }}
-              >
-                <TableHeader className='sticky top-0 z-10 bg-background'>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className='hover:bg-transparent'
-                    >
-                      {headerGroup.headers.map(header => {
-                        const columnDef = header.column.columnDef;
-                        const width = columnDef.minSize || 150;
-                        return (
-                          <TableHead
-                            key={header.id}
-                            className='h-10 px-3 text-xs font-medium'
-                            style={{
-                              width: `${width}px`,
-                              minWidth: `${width}px`,
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
-                            }}
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody
-                  style={{
-                    height: `${rowVirtualizer.getTotalSize()}px`,
-                    position: 'relative'
-                  }}
-                >
-                  {rowVirtualizer.getVirtualItems().map(virtualRow => {
-                    const row = rows[virtualRow.index];
-                    return (
-                      <TableRow
-                        key={row.id}
-                        data-index={virtualRow.index}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '60px',
-                          transform: `translateY(${virtualRow.start}px)`,
-                          display: 'table'
-                        }}
-                        className='border-b hover:bg-muted'
-                      >
-                        {row.getVisibleCells().map(cell => {
-                          const columnDef = cell.column.columnDef;
-                          const width = columnDef.minSize || 150;
-                          return (
-                            <TableCell
-                              key={cell.id}
-                              className='h-[60px] px-3 py-1 text-sm overflow-hidden'
-                              style={{
-                                width: `${width}px`,
-                                minWidth: `${width}px`,
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap'
-                              }}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-              {rows.length === 0 && (
-                <div className='h-20 flex items-center justify-center text-sm text-muted-foreground'>
-                  No se encontraron resultados.
-                </div>
-              )}
-            </div>
+            <VirtualDataTable
+              columns={columns({
+                onEdit: handleEditCondicionContrato,
+                onView: handleViewCondicionContrato,
+                editingCondicionContrato: null,
+                canEdit: hasEditPermission
+              })}
+              data={condicionesContrato}
+              searchPlaceholder='Buscar condiciones...'
+              estimateRowHeight={60}
+              maxHeight='600px'
+            />
           </CardContent>
         </Card>
 

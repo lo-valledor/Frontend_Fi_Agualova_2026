@@ -44,20 +44,12 @@
 import { Plus, Filter, X } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 import { useNavigate } from 'react-router';
 
 import { useAuth } from '~/context/AuthContext';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type SortingState
-} from '@tanstack/react-table';
-
+import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -70,14 +62,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '~/components/ui/table';
 import api from '~/lib/api';
 import type { GetCargoTipoContrato } from '~/types/administracion';
 
@@ -98,8 +82,6 @@ export default function CargoTipoContratoComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
   const [tipoContratoFilter, setTipoContratoFilter] = useState<string>('all');
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const tableContainerRef = useRef<HTMLDivElement>(null);
   const router = useNavigate();
 
   // Permisos
@@ -180,31 +162,6 @@ export default function CargoTipoContratoComponent({
     }
   };
 
-  // Table setup with react-table
-  const table = useReactTable({
-    data: filteredData,
-    columns: columns({
-      onEdit: handleEdit,
-      onDelete: handleDelete,
-      canEdit: hasEditPermission
-    }),
-    state: {
-      sorting
-    },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel()
-  });
-
-  // Virtualization setup
-  const { rows } = table.getRowModel();
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => tableContainerRef.current,
-    estimateSize: () => 60,
-    overscan: 10
-  });
-
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
@@ -240,7 +197,7 @@ export default function CargoTipoContratoComponent({
             {/* Filtros */}
             <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4'>
               <div className='text-sm text-muted-foreground'>
-                Mostrando {rows.length} de {data.length} registros
+                Mostrando {filteredData.length} de {data.length} registros
               </div>
 
               <div className='flex items-center gap-3 w-full sm:w-auto'>
@@ -288,97 +245,17 @@ export default function CargoTipoContratoComponent({
             </div>
 
             {/* Virtualized Table */}
-            <div
-              ref={tableContainerRef}
-              className='rounded-md border overflow-auto'
-              style={{ height: '600px' }}
-            >
-              <Table style={{ width: '100%' }}>
-                <TableHeader className='sticky top-0 z-10 bg-background'>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className='hover:bg-transparent'
-                    >
-                      {headerGroup.headers.map(header => {
-                        const columnDef = header.column.columnDef;
-                        const width = columnDef.minSize || 150;
-                        return (
-                          <TableHead
-                            key={header.id}
-                            className='h-10 px-3 text-xs font-medium'
-                            style={{
-                              width: `${width}px`,
-                              minWidth: `${width}px`,
-                              maxWidth: `${columnDef.maxSize || width}px`
-                            }}
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                          </TableHead>
-                        );
-                      })}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody
-                  style={{
-                    height: `${rowVirtualizer.getTotalSize()}px`,
-                    position: 'relative'
-                  }}
-                >
-                  {rowVirtualizer.getVirtualItems().map(virtualRow => {
-                    const row = rows[virtualRow.index];
-                    return (
-                      <TableRow
-                        key={row.id}
-                        data-index={virtualRow.index}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '60px',
-                          transform: `translateY(${virtualRow.start}px)`,
-                          display: 'table'
-                        }}
-                        className='border-b hover:bg-muted'
-                      >
-                        {row.getVisibleCells().map(cell => {
-                          const columnDef = cell.column.columnDef;
-                          const width = columnDef.minSize || 150;
-                          return (
-                            <TableCell
-                              key={cell.id}
-                              className='h-[60px] px-3 py-1 text-sm'
-                              style={{
-                                width: `${width}px`,
-                                minWidth: `${width}px`,
-                                maxWidth: `${columnDef.maxSize || width}px`
-                              }}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-              {rows.length === 0 && (
-                <div className='h-20 flex items-center justify-center text-sm text-muted-foreground'>
-                  No se encontraron resultados.
-                </div>
-              )}
-            </div>
+            <VirtualDataTable
+              columns={columns({
+                onEdit: handleEdit,
+                onDelete: handleDelete,
+                canEdit: hasEditPermission
+              })}
+              data={filteredData}
+              searchPlaceholder='Buscar cargo tipo contrato...'
+              estimateRowHeight={60}
+              maxHeight='600px'
+            />
           </CardContent>
         </Card>
 

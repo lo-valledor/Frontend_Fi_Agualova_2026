@@ -28,8 +28,9 @@ export const columns = ({
     cell: ({ row }) => {
       return <div className='font-medium truncate'>{row.original.id}</div>;
     },
-    minSize: 80,
-    maxSize: 100
+    size: 70,
+    minSize: 60,
+    maxSize: 80
   },
   {
     id: 'nombre',
@@ -43,8 +44,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 250,
-    maxSize: 400
+    size: 215,
+    minSize: 180,
+    maxSize: 250
   },
   {
     id: 'concepto',
@@ -58,8 +60,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 200,
-    maxSize: 300
+    size: 175,
+    minSize: 150,
+    maxSize: 200
   },
   {
     id: 'factorPorcentual',
@@ -73,8 +76,9 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 150,
-    maxSize: 180
+    size: 135,
+    minSize: 120,
+    maxSize: 150
   },
   {
     id: 'valorFijo',
@@ -86,8 +90,9 @@ export const columns = ({
         <div className='font-medium truncate'>{row.original.valorFijo}</div>
       );
     },
-    minSize: 150,
-    maxSize: 180
+    size: 115,
+    minSize: 100,
+    maxSize: 130
   },
   {
     accessorKey: 'estado',
@@ -113,8 +118,9 @@ export const columns = ({
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
-    minSize: 120,
-    maxSize: 150
+    size: 105,
+    minSize: 90,
+    maxSize: 120
   },
   {
     id: 'actions',
@@ -128,7 +134,8 @@ export const columns = ({
         disableEdit={!canEdit}
       />
     ),
-    minSize: 120,
-    maxSize: 150
+    size: 90,
+    minSize: 80,
+    maxSize: 100
   }
 ];

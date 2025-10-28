@@ -7,11 +7,24 @@ export interface Usuarios {
   departamento: number;
   activo: boolean;
   fechaCreacion: string;
+  email: string | null;
+  roles: any[];
+}
+
+export interface PermisoUsuario {
+  idMenu: number;
+  nombreMenu: string;
+  ruta: string;
+  puedeVer: boolean;
+  puedeCrear: boolean;
+  puedeEditar: boolean;
+  puedeEliminar: boolean;
 }
 
 export interface CrearUsuarioProps {
   nombreDeUsuario: string;
   contrasena: string;
+  email: string;
   perfilId: number;
   nombres: string;
   apellidos: string;
