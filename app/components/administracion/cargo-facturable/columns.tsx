@@ -171,9 +171,9 @@ export const columns = ({
         </span>
       </Badge>
     ),
-    size: 140,
-    minSize: 120,
-    maxSize: 160
+    size: 200,
+    minSize: 180,
+    maxSize: 300
   },
   {
     accessorKey: 'tarifa',
@@ -191,9 +191,9 @@ export const columns = ({
         </span>
       </Badge>
     ),
-    size: 130,
-    minSize: 110,
-    maxSize: 150
+    size: 140,
+    minSize: 120,
+    maxSize: 170
   },
   {
     accessorKey: 'tipoMedidor',
