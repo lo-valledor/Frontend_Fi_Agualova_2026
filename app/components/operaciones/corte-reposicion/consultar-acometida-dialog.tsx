@@ -1,4 +1,4 @@
-import { Eye, MessageSquare, Unlock } from 'lucide-react';
+import { Download, Eye, MessageSquare, Unlock } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
@@ -13,7 +13,14 @@ import {
   DialogTrigger
 } from '~/components/ui/dialog';
 import { Label } from '~/components/ui/label';
-import { Table, TableBody, TableCell, TableRow } from '~/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table';
 import { Textarea } from '~/components/ui/textarea';
 import {
   Tooltip,
@@ -37,6 +44,15 @@ interface ConsultarAcometidaData {
   reFechaIngreso: string;
 }
 
+interface FacturaImpaga {
+  clRut: string;
+  seCodigo: string;
+  faNumero: number;
+  faFechaVencimiento: string;
+  faTotal: number;
+  faSaldo: number;
+}
+
 interface ConsultarAcometidaDialogProps {
   acometida: string;
   onSuccess: () => void;
@@ -51,13 +67,17 @@ export function ConsultarAcometidaDialog({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ConsultarAcometidaData | null>(null);
+  const [facturasImpagas, setFacturasImpagas] = useState<FacturaImpaga[]>([]);
+  const [loadingFacturas, setLoadingFacturas] = useState(false);
   const [comentario, setComentario] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Cargar datos cuando se abre el diálogo
   useEffect(() => {
     if (open) {
       void loadData();
+      void loadFacturasImpagas();
     }
   }, [open]);
 
@@ -85,6 +105,58 @@ export function ConsultarAcometidaDialog({
       toast.error('Error al cargar los datos de la acometida');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadFacturasImpagas = async () => {
+    setLoadingFacturas(true);
+    try {
+      const response = await api.get<FacturaImpaga[]>(
+        `facturas-impagas/${acometida}/2`
+      );
+
+      if (response.data && Array.isArray(response.data)) {
+        setFacturasImpagas(response.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar facturas impagas:', error);
+      toast.error('Error al cargar las facturas impagas');
+    } finally {
+      setLoadingFacturas(false);
+    }
+  };
+
+  const handleExportarExcel = async () => {
+    setIsExporting(true);
+    try {
+      const response = await api.get('exportar-facturas-impagas', {
+        params: { acometida },
+        responseType: 'blob'
+      });
+
+      // Crear un link temporal para descargar el archivo
+      // El tipado de axios con responseType: 'blob' retorna response.data como "unknown"
+      // así que lo forzamos a Blob de manera segura para su uso en el objeto URL.
+      const blob =
+        response.data instanceof Blob
+          ? response.data
+          : new Blob([response.data as BlobPart]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `facturas-impagas-${acometida}.xlsx`);
+      document.body.appendChild(link);
+
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Excel exportado correctamente');
+    } catch (error) {
+      console.error('Error al exportar Excel:', error);
+      toast.error('Error al exportar las facturas a Excel');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -146,7 +218,7 @@ export function ConsultarAcometidaDialog({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <DialogContent className='mx-4 sm:max-w-xl'>
+      <DialogContent className='mx-4 sm:max-w-2xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2 text-sm'>
             <div className='flex h-5 w-5 items-center justify-center rounded-full bg-primary flex-shrink-0'>
@@ -293,6 +365,87 @@ export function ConsultarAcometidaDialog({
                   </TableRow>
                 </TableBody>
               </Table>
+            </div>
+
+            {/* Facturas Impagas */}
+            <div className='border-t pt-3'>
+              <div className='flex items-center justify-between mb-2'>
+                <h3 className='text-sm font-semibold'>Facturas Impagas</h3>
+                <Button
+                  onClick={handleExportarExcel}
+                  disabled={isExporting || facturasImpagas.length === 0}
+                  size='sm'
+                  variant='outline'
+                  className='h-7 text-xs'
+                >
+                  <Download className='h-3 w-3 mr-1' />
+                  {isExporting ? 'Exportando...' : 'Exportar Excel'}
+                </Button>
+              </div>
+
+              {loadingFacturas ? (
+                <div className='flex items-center justify-center py-4'>
+                  <div className='animate-spin rounded-full h-5 w-5 border-b-2 border-primary'></div>
+                </div>
+              ) : facturasImpagas.length > 0 ? (
+                <div className='border rounded-lg overflow-hidden'>
+                  <div className='max-h-[300px] overflow-y-auto'>
+                    <Table>
+                      <TableHeader className='sticky top-0 bg-muted z-10'>
+                        <TableRow>
+                          <TableHead className='text-xs py-2'>
+                            N° Factura
+                          </TableHead>
+                          <TableHead className='text-xs py-2'>
+                            Vencimiento
+                          </TableHead>
+                          <TableHead className='text-xs py-2 text-right'>
+                            Total
+                          </TableHead>
+                          <TableHead className='text-xs py-2 text-right'>
+                            Saldo
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {facturasImpagas.map((factura, index) => (
+                          <TableRow key={index} className='border-border'>
+                            <TableCell className='font-mono text-xs py-2'>
+                              {factura.faNumero}
+                            </TableCell>
+                            <TableCell className='text-xs py-2'>
+                              {new Date(
+                                factura.faFechaVencimiento
+                              ).toLocaleDateString('es-CL')}
+                            </TableCell>
+                            <TableCell className='font-mono text-xs py-2 text-right'>
+                              {formatCurrency(factura.faTotal)}
+                            </TableCell>
+                            <TableCell className='font-mono text-xs py-2 text-right'>
+                              {formatCurrency(factura.faSaldo)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <div className='bg-muted px-3 py-2 text-xs font-medium border-t'>
+                    Total facturas: {facturasImpagas.length} | Total adeudado:{' '}
+                    {formatCurrency(
+                      facturasImpagas.reduce(
+                        (sum, factura) => sum + factura.faSaldo,
+                        0
+                      )
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className='flex flex-col items-center justify-center py-4 border rounded-lg bg-muted/50'>
+                  <p className='text-muted-foreground text-xs'>
+                    No hay facturas impagas
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Sección de comentario para liberar */}

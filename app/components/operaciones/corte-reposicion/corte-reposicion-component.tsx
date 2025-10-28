@@ -60,10 +60,10 @@
  */
 import {
   ArrowUpToLine,
-  BarChart3,
   CheckCircle2,
   ChevronDown,
   Download,
+  FileSpreadsheet,
   FileText,
   HelpCircle,
   ListChecks,
@@ -87,15 +87,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger
-} from '~/components/ui/dialog';
-import { Table, TableBody, TableCell, TableRow } from '~/components/ui/table';
 import api from '~/lib/api';
 import type {
   ConsultarMantenedorRevisionCorte,
@@ -169,6 +160,31 @@ export default function CorteReposicionComponent({
     } catch (error) {
       console.error('Error al exportar Excel corte:', error);
       toast.error('Error al exportar el archivo');
+    }
+  };
+
+  const handleExportarFacturasImpagas = async () => {
+    try {
+      const res = await api.get('exportar-facturas-impagas', {
+        responseType: 'blob'
+      });
+
+      // El tipado de axios con responseType: 'blob' retorna response.data como "unknown"
+      // así que lo forzamos a Blob de manera segura para su uso en el objeto URL.
+      const blob =
+        res.data instanceof Blob ? res.data : new Blob([res.data as BlobPart]);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'facturas-impagas-completo.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      toast.success('Facturas impagas exportadas correctamente');
+    } catch (error) {
+      console.error('Error al exportar facturas impagas:', error);
+      toast.error('Error al exportar las facturas impagas');
     }
   };
 
@@ -258,11 +274,11 @@ export default function CorteReposicionComponent({
       }
     },
     {
-      element: '#ver-totales-btn',
+      element: '#facturas-impagas-btn',
       popover: {
-        title: '📊 Ver Totales',
+        title: '📊 Exportar Facturas Impagas',
         description:
-          'Muestra un <strong>resumen estadístico</strong> de todos los estados: Pendientes, Liberados, Cortados y Reposición Solicitada.',
+          'Exporta a Excel <strong>todas las facturas impagas</strong> del sistema. Útil para análisis y reportes financieros.',
         side: 'bottom' as const,
         align: 'center' as const
       }
@@ -399,92 +415,16 @@ export default function CorteReposicionComponent({
                       )}
                       Buscar
                     </Button>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button
-                          id='ver-totales-btn'
-                          variant='outline'
-                          size='sm'
-                          className='gap-1.5 w-full'
-                        >
-                          <BarChart3 className='h-4 w-4' />
-                          Ver Totales
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className='sm:max-w-md'>
-                        <DialogHeader>
-                          <DialogTitle className='flex items-center gap-2'>
-                            <div className='flex h-6 w-6 items-center justify-center rounded-xl bg-primary/10'>
-                              <BarChart3 className='h-4 w-4 text-primary' />
-                            </div>
-                            Totales de Corte y Reposición
-                          </DialogTitle>
-                          <DialogDescription className='text-muted-foreground'>
-                            Resumen de estados de corte y reposición
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className='py-4'>
-                          <Table className='border-border'>
-                            <TableBody>
-                              <TableRow className='border-b border-border hover:bg-muted/30'>
-                                <TableCell className='py-2 font-medium'>
-                                  Pendiente
-                                </TableCell>
-                                <TableCell className='py-2 text-center'>
-                                  :
-                                </TableCell>
-                                <TableCell className='py-2 text-right font-semibold'>
-                                  {getCantidadPorCodigo('NULL')}
-                                </TableCell>
-                              </TableRow>
-                              <TableRow className='border-b border-border hover:bg-muted/30'>
-                                <TableCell className='py-2 font-medium'>
-                                  Liberado
-                                </TableCell>
-                                <TableCell className='py-2 text-center'>
-                                  :
-                                </TableCell>
-                                <TableCell className='py-2 text-right font-semibold'>
-                                  {getCantidadPorCodigo('1')}
-                                </TableCell>
-                              </TableRow>
-                              <TableRow className='border-b border-border hover:bg-muted/30'>
-                                <TableCell className='py-2 font-medium'>
-                                  Cortado
-                                </TableCell>
-                                <TableCell className='py-2 text-center'>
-                                  :
-                                </TableCell>
-                                <TableCell className='py-2 text-right font-semibold'>
-                                  {getCantidadPorCodigo('2')}
-                                </TableCell>
-                              </TableRow>
-                              <TableRow className='border-b border-border hover:bg-muted/30'>
-                                <TableCell className='py-2 font-medium'>
-                                  Reposición Solicitada
-                                </TableCell>
-                                <TableCell className='py-2 text-center'>
-                                  :
-                                </TableCell>
-                                <TableCell className='py-2 text-right font-semibold'>
-                                  {getCantidadPorCodigo('3')}
-                                </TableCell>
-                              </TableRow>
-                              <TableRow className='bg-muted/50 border-b border-border font-bold'>
-                                <TableCell className='py-2'>TOTAL</TableCell>
-                                <TableCell className='py-2 text-center'>
-                                  :
-                                </TableCell>
-                                <TableCell className='py-2 text-right'>
-                                  {getCantidadPorCodigo('TOTAL')}
-                                </TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-
+                    <Button
+                      id='facturas-impagas-btn'
+                      variant='outline'
+                      size='sm'
+                      onClick={handleExportarFacturasImpagas}
+                      className='gap-1.5 w-full bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                    >
+                      <FileSpreadsheet className='h-4 w-4' />
+                      Facturas Impagas
+                    </Button>
                     <Button
                       id='export-buttons'
                       variant='default'

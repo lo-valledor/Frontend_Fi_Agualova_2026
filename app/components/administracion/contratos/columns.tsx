@@ -202,9 +202,9 @@ export const columns = ({
         </Badge>
       );
     },
-    size: 120,
-    minSize: 100,
-    maxSize: 140
+    size: 250,
+    minSize: 230,
+    maxSize: 290
   },
   {
     accessorKey: 'tarifa',
@@ -378,16 +378,17 @@ export const columns = ({
     cell: ({ row }) => {
       return row.original.liberadoCorte ? (
         <Badge
-          variant='outline'
+          variant='default'
           className='bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800 text-xs px-1 sm:px-2'
         >
-          <span className='hidden sm:inline'>Liberado</span>
-          <span className='sm:hidden'>Sí</span>
+          <span className='hidden sm:inline'>Sí</span>
         </Badge>
       ) : (
-        <Badge variant='secondary' className='text-xs px-1 sm:px-2'>
-          <span className='hidden sm:inline'>No Liberado</span>
-          <span className='sm:hidden'>No</span>
+        <Badge
+          variant='destructive'
+          className='bg-red-100 text-red-800 border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800 text-xs px-1 sm:px-2'
+        >
+          <span className='hidden sm:inline'>No</span>
         </Badge>
       );
     },
