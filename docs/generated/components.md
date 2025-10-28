@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-28 14:38:41*
+*Generado automáticamente el 2025-10-28 14:42:34*
 
 ## Índice de Componentes
 
@@ -962,6 +962,21 @@
  *   return <UsuariosComponent usuarios={loaderData.usuarios} />;
  * }
  * ```
+ */
+```
+
+### auth-layout
+**Archivo**: `app/components/auth/auth-layout.tsx`
+**Documentación**:
+```typescript
+/**
+ * Layout compartido para las páginas de autenticación
+ * Incluye el panel izquierdo con logo y footer, y el panel derecho con el formulario
+ *
+ * @param {object} root0 - Props del componente
+ * @param {React.ReactNode} root0.children - Formulario de autenticación a renderizar
+ * @param {string} [root0.title] - Título opcional para mostrar en el logo móvil
+ * @returns {JSX.Element} Layout de autenticación completo
  */
 ```
 
