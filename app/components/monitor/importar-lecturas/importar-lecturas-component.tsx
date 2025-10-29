@@ -31,38 +31,10 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
+import type { EstadoProcesamiento, ProcesamientoResult, RegistrosPendientes, ValidacionLecturasPendientes } from '~/types/monitor';
 
 // Interfaces para los nuevos endpoints
-interface EstadoProcesamiento {
-  periodoActivo: string;
-  registrosPendientes: number;
-  fechaConsulta: string;
-  estado: string;
-}
 
-interface RegistrosPendientes {
-  registrosPendientes: number;
-  mensaje: string;
-}
-
-interface DetalleProcesamientoItem {
-  numeroSerie: string;
-  tarifa: string;
-  lecturaAnteriorKwh: number;
-  consumoEnergiaKwh: number;
-  usuarioCarga: string;
-  estado: string;
-  mensaje: string;
-}
-
-interface ProcesamientoResult {
-  exitoso: boolean;
-  mensaje: string;
-  registrosActualizados: number;
-  fechaProcesamiento: string;
-  periodo: string;
-  detalles: DetalleProcesamientoItem[];
-}
 
 export default function ImportarLecturasComponent() {
   const [file, setFile] = useState<File | null>(null);
@@ -76,7 +48,7 @@ export default function ImportarLecturasComponent() {
 
   // Estados para los nuevos endpoints
   const [estadoProcesamiento, setEstadoProcesamiento] =
-    useState<EstadoProcesamiento | null>(null);
+    useState<EstadoProcesamiento| null>(null);
   const [registrosPendientes, setRegistrosPendientes] =
     useState<RegistrosPendientes | null>(null);
   const [loadingEstado, setLoadingEstado] = useState(false);
@@ -85,6 +57,10 @@ export default function ImportarLecturasComponent() {
   const [procesamientoResult, setProcesamientoResult] =
     useState<ProcesamientoResult | null>(null);
   const [showResultModal, setShowResultModal] = useState(false);
+  const [validacionLecturas, setValidacionLecturas] =
+    useState<ValidacionLecturasPendientes | null>(null);
+  const [loadingValidacion, setLoadingValidacion] = useState(false);
+  const [showDetallesPendientes, setShowDetallesPendientes] = useState(false);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -447,9 +423,51 @@ export default function ImportarLecturasComponent() {
     }
   };
 
+  // Función para validar lecturas pendientes
+  const fetchValidacionLecturasPendientes = async () => {
+    setLoadingValidacion(true);
+    try {
+      const token = localStorage.getItem('token');
+      const VITE_API_URL = import.meta.env.VITE_API_URL;
+      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/Enerlova';
+      const url = `${baseUrl}/validar-lecturas-pendientes`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data?.mensaje || 'Error al validar lecturas pendientes'
+        );
+      }
+
+      setValidacionLecturas(data);
+
+      // Si hay pendientes, mostrar mensaje
+      if (!data.sinPendientes) {
+        toast.warning(
+          `Hay ${data.totalPendientes} medidores pendientes por asignar`
+        );
+      }
+    } catch (error: any) {
+      console.error('Error al validar lecturas:', error);
+      toast.error(error.message || 'Error al validar lecturas pendientes');
+    } finally {
+      setLoadingValidacion(false);
+    }
+  };
+
   // Cargar estado inicial
   useEffect(() => {
     fetchEstadoProcesamiento();
+    fetchValidacionLecturasPendientes();
   }, []);
 
   return (
@@ -571,8 +589,7 @@ export default function ImportarLecturasComponent() {
               <Button
                 onClick={procesarBT1BT2}
                 disabled={
-                  processingBT ||
-                  (estadoProcesamiento?.registrosPendientes === 0)
+                  processingBT || estadoProcesamiento?.registrosPendientes === 0
                 }
                 variant='destructive'
                 className='w-full gap-2'
@@ -696,6 +713,162 @@ export default function ImportarLecturasComponent() {
               </AlertDescription>
             </Alert>
           )}
+
+          {/* Alerta de sectores pendientes de preparación */}
+          {validacionLecturas && !validacionLecturas.sinPendientes && (
+            <Card className='border-red-200 dark:border-red-800 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/20 shadow-lg'>
+              <CardContent className='pt-6'>
+                <div className='space-y-4'>
+                  {/* Header con icono y título */}
+                  <div className='flex items-start gap-4'>
+                    <div className='relative flex-shrink-0'>
+                      <div className='absolute inset-0 bg-red-500 dark:bg-red-600 rounded-full blur-xl opacity-30 animate-pulse' />
+                      <div className='relative p-3 bg-red-100 dark:bg-red-900/50 rounded-full'>
+                        <AlertCircle className='h-7 w-7 text-red-600 dark:text-red-400' />
+                      </div>
+                    </div>
+                    <div className='flex-1 min-w-0'>
+                      <h3 className='text-lg font-bold text-red-900 dark:text-red-100 mb-1 flex items-center gap-2'>
+                        🚫 Restricción Activa
+                      </h3>
+                      <p className='text-sm font-medium text-red-800 dark:text-red-200'>
+                        {validacionLecturas.mensaje}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={fetchValidacionLecturasPendientes}
+                      disabled={loadingValidacion}
+                      variant='outline'
+                      size='sm'
+                      className='flex-shrink-0 border-red-300 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30'
+                    >
+                      <RefreshCw
+                        className={`h-3.5 w-3.5 mr-1.5 ${loadingValidacion ? 'animate-spin' : ''}`}
+                      />
+                      Actualizar
+                    </Button>
+                  </div>
+
+                  {/* Stats Cards */}
+                  <div className='grid grid-cols-2 gap-3'>
+                    <div className='p-4 bg-white dark:bg-background/50 rounded-lg border border-red-200 dark:border-red-800 shadow-sm'>
+                      <div className='flex items-center gap-2 mb-1'>
+                        <div className='h-2 w-2 rounded-full bg-orange-500 animate-pulse' />
+                        <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
+                          Período
+                        </span>
+                      </div>
+                      <p className='text-2xl font-bold text-foreground'>
+                        {validacionLecturas.periodo}
+                      </p>
+                    </div>
+                    <div className='p-4 bg-white dark:bg-background/50 rounded-lg border border-red-200 dark:border-red-800 shadow-sm'>
+                      <div className='flex items-center gap-2 mb-1'>
+                        <div className='h-2 w-2 rounded-full bg-red-500 animate-pulse' />
+                        <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
+                          Pendientes
+                        </span>
+                      </div>
+                      <p className='text-2xl font-bold text-red-600 dark:text-red-400'>
+                        {validacionLecturas.totalPendientes}
+                        <span className='text-sm font-normal text-muted-foreground ml-2'>
+                          medidores
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Collapsible Detalles */}
+                  <Collapsible
+                    open={showDetallesPendientes}
+                    onOpenChange={setShowDetallesPendientes}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant='outline'
+                        size='sm'
+                        className='w-full justify-between border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30'
+                      >
+                        <span className='flex items-center gap-2 text-sm font-medium'>
+                          <FileSpreadsheet className='h-4 w-4' />
+                          Detalles por Sector y Nicho
+                          <Badge variant='secondary' className='ml-1'>
+                            {validacionLecturas.detalles.length}
+                          </Badge>
+                        </span>
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 ${showDetallesPendientes ? 'rotate-180' : ''}`}
+                        />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <div className='mt-3 p-3 bg-white/80 dark:bg-background/30 rounded-lg border border-red-200 dark:border-red-800 max-h-64 overflow-y-auto'>
+                        <div className='space-y-2'>
+                          {validacionLecturas.detalles.map((detalle, idx) => (
+                            <div
+                              key={idx}
+                              className='group p-3 bg-gradient-to-r from-white to-red-50/50 dark:from-background dark:to-red-950/20 rounded-lg border border-red-100 dark:border-red-900 hover:shadow-md transition-all duration-200'
+                            >
+                              <div className='flex items-center justify-between gap-3'>
+                                <div className='flex-1 min-w-0'>
+                                  <div className='flex items-center gap-2 mb-1'>
+                                    <div className='h-1.5 w-1.5 rounded-full bg-red-500' />
+                                    <p className='font-semibold text-foreground text-sm truncate'>
+                                      {detalle.sector}
+                                    </p>
+                                  </div>
+                                  <p className='text-xs text-muted-foreground pl-3.5 flex items-center gap-1.5'>
+                                    <span className='opacity-50'>📍</span>
+                                    Nicho: {detalle.nicho}
+                                  </p>
+                                </div>
+                                <Badge
+                                  variant='destructive'
+                                  className='flex-shrink-0 shadow-sm'
+                                >
+                                  <span className='font-bold'>
+                                    {detalle.cantidad}
+                                  </span>
+                                  <span className='ml-1 opacity-90 text-[10px]'>
+                                    {detalle.cantidad === 1
+                                      ? 'pendiente'
+                                      : 'pendientes'}
+                                  </span>
+                                </Badge>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  {/* Warning Box */}
+                  <div className='relative overflow-hidden p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm'>
+                    <div className='absolute top-0 right-0 w-32 h-32 bg-amber-300/10 dark:bg-amber-700/10 rounded-full -mr-16 -mt-16' />
+                    <div className='relative flex gap-3'>
+                      <div className='flex-shrink-0'>
+                        <div className='p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg'>
+                          <AlertCircle className='h-5 w-5 text-amber-600 dark:text-amber-400' />
+                        </div>
+                      </div>
+                      <div>
+                        <p className='text-sm font-bold text-amber-900 dark:text-amber-100 mb-1'>
+                          ⚠️ Acción Requerida
+                        </p>
+                        <p className='text-xs text-amber-800 dark:text-amber-200 leading-relaxed'>
+                          No podrás cargar archivos Excel ni procesar lecturas
+                          hasta que todos los medidores estén asignados para el
+                          registro de lectura. Por favor, completa la
+                          preparación de todos los sectores.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Modal de resultado del procesamiento */}
@@ -795,13 +968,27 @@ export default function ImportarLecturasComponent() {
             {/* Zona de Drop/Upload */}
             {!file ? (
               <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
+                onDragOver={
+                  validacionLecturas?.sinPendientes !== false
+                    ? handleDragOver
+                    : undefined
+                }
+                onDragLeave={
+                  validacionLecturas?.sinPendientes !== false
+                    ? handleDragLeave
+                    : undefined
+                }
+                onDrop={
+                  validacionLecturas?.sinPendientes !== false
+                    ? handleDrop
+                    : undefined
+                }
                 className={`relative border-2 border-dashed rounded-radius p-12 transition-all duration-300 ${
-                  isDragging
-                    ? 'border-primary bg-primary/5 scale-[1.02]'
-                    : 'border-border hover:border-primary hover:bg-accent/50'
+                  validacionLecturas?.sinPendientes === false
+                    ? 'border-muted bg-muted/20 opacity-60 cursor-not-allowed'
+                    : isDragging
+                      ? 'border-primary bg-primary/5 scale-[1.02]'
+                      : 'border-border hover:border-primary hover:bg-accent/50'
                 }`}
               >
                 <div className='flex flex-col items-center gap-6 text-center'>
@@ -828,12 +1015,16 @@ export default function ImportarLecturasComponent() {
 
                   <div>
                     <p className='text-lg font-semibold text-background-900 dark:text-background-100 mb-2'>
-                      {isDragging
-                        ? '¡Suelta el archivo aquí!'
-                        : 'Arrastra tu archivo Excel'}
+                      {validacionLecturas?.sinPendientes === false
+                        ? 'Carga de archivos bloqueada'
+                        : isDragging
+                          ? '¡Suelta el archivo aquí!'
+                          : 'Arrastra tu archivo Excel'}
                     </p>
                     <p className='text-sm text-background-600 dark:text-background-400'>
-                      o haz clic en el botón para seleccionar
+                      {validacionLecturas?.sinPendientes === false
+                        ? 'Completa la preparación de sectores para habilitar'
+                        : 'o haz clic en el botón para seleccionar'}
                     </p>
                   </div>
 
@@ -843,16 +1034,27 @@ export default function ImportarLecturasComponent() {
                     onChange={handleFileInput}
                     className='hidden'
                     id='file-upload'
+                    disabled={validacionLecturas?.sinPendientes === false}
                   />
 
-                  <Button asChild>
-                    <label
-                      htmlFor='file-upload'
-                      className='cursor-pointer gap-2'
-                    >
-                      <FileSpreadsheet className='h-4 w-4' />
-                      Seleccionar Archivo
-                    </label>
+                  <Button
+                    asChild={validacionLecturas?.sinPendientes !== false}
+                    disabled={validacionLecturas?.sinPendientes === false}
+                  >
+                    {validacionLecturas?.sinPendientes !== false ? (
+                      <label
+                        htmlFor='file-upload'
+                        className='cursor-pointer gap-2'
+                      >
+                        <FileSpreadsheet className='h-4 w-4' />
+                        Seleccionar Archivo
+                      </label>
+                    ) : (
+                      <>
+                        <FileSpreadsheet className='h-4 w-4' />
+                        Seleccionar Archivo
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -894,7 +1096,9 @@ export default function ImportarLecturasComponent() {
                 {isValidFile && !isValidating && (
                   <Button
                     onClick={handleImportar}
-                    disabled={isImporting}
+                    disabled={
+                      isImporting || validacionLecturas?.sinPendientes === false
+                    }
                     variant='default'
                     size='lg'
                     className='w-full gap-2'
@@ -907,7 +1111,11 @@ export default function ImportarLecturasComponent() {
                     ) : (
                       <>
                         <Upload className='h-5 w-5' />
-                        <span>Importar Lecturas</span>
+                        <span>
+                          {validacionLecturas?.sinPendientes === false
+                            ? 'Importación Bloqueada'
+                            : 'Importar Lecturas'}
+                        </span>
                       </>
                     )}
                   </Button>

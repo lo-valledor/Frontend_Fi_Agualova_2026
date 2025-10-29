@@ -195,3 +195,51 @@ export interface CompararConsumoMedidor {
   lM_ValorLecturaActual: number;
   lM_ConsumoPeriodo: number;
 }
+
+// Importar ImportarLecturas
+
+export interface EstadoProcesamiento {
+  periodoActivo: string;
+  registrosPendientes: number;
+  fechaConsulta: string;
+  estado: string;
+}
+
+export interface RegistrosPendientes {
+  registrosPendientes: number;
+  mensaje: string;
+}
+
+export interface DetalleLecturaPendiente {
+  sector: string;
+  nicho: string;
+  estado: number;
+  cantidad: number;
+}
+
+export interface ValidacionLecturasPendientes {
+  mensaje: string;
+  sinPendientes: boolean;
+  periodo: string;
+  totalPendientes: number;
+  detalles: DetalleLecturaPendiente[];
+}
+
+export interface DetalleProcesamientoItem {
+  numeroSerie: string;
+  tarifa: string;
+  lecturaAnteriorKwh: number;
+  consumoEnergiaKwh: number;
+  usuarioCarga: string;
+  estado: string;
+  mensaje: string;
+}
+
+export interface ProcesamientoResult {
+  exitoso: boolean;
+  mensaje: string;
+  registrosActualizados: number;
+  fechaProcesamiento: string;
+  periodo: string;
+  detalles: DetalleProcesamientoItem[];
+}
