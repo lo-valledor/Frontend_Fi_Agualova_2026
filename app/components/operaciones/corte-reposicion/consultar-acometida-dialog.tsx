@@ -261,28 +261,12 @@ export function ConsultarAcometidaDialog({
                   </TableRow>
                   <TableRow className='border-border'>
                     <TableCell className='font-medium text-xs py-1'>
-                      Número Factura
+                      ID Contrato
                     </TableCell>
                     <TableCell className='text-xs py-1'>:</TableCell>
                     <TableCell className='font-mono text-xs py-1'>
                       {data.ctId}
                     </TableCell>
-                  </TableRow>
-                  <TableRow className='border-border'>
-                    <TableCell className='font-medium text-xs py-1'>
-                      Fecha Vencimiento
-                    </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
-                    <TableCell className='text-xs py-1'>
-                      {data.reFechaIngreso}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow className='border-border'>
-                    <TableCell className='font-medium text-xs py-1'>
-                      Fecha de pago
-                    </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
-                    <TableCell className='text-xs py-1'>-</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
