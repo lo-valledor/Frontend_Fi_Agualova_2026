@@ -1,5 +1,5 @@
 # Documentación de Componentes
-*Generado automáticamente el 2025-10-29 17:16:26*
+*Generado automáticamente el 2025-10-30 12:41:26*
 
 ## Índice de Componentes
 
@@ -1707,7 +1707,7 @@
  *   * GET /consulta-mantenedor-revision-corte
  *   * POST /modificar-revision
  *   * POST /ingresar-revision
- *   * POST /finalizar-revision
+ *   * POST /eliminar-revision
  *   * GET /exportar-* (para Excel)
  *
  * @param {Object} props - Props del componente
