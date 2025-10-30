@@ -38,12 +38,10 @@ import {
   type ValidarSectoresPendientes
 } from '~/types/operaciones';
 
-import DialogLecturasPendientes from './dialog-lecturas-pendientes';
 import TablaAsignacionSectores from './tabla-asignacion-sectores';
 
 export default function PrepararLecturasComponent({
   periodoAbierto,
-  lecturasPendientes,
   sectores,
   opcionesPreparar,
   asignacionSectores,
@@ -176,13 +174,6 @@ export default function PrepararLecturasComponent({
         <ModernHeader
           title='Preparación de Lecturas'
           description='Gestión de asignación de sectores para lectura'
-          actions={
-            <DialogLecturasPendientes
-              data={lecturasPendientes || undefined}
-              isLoading={false}
-              onRefresh={() => Promise.resolve(undefined)}
-            />
-          }
         />
 
         {/* Filtros de Búsqueda */}

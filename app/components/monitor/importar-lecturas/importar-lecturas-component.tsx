@@ -31,10 +31,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
-import type { EstadoProcesamiento, ProcesamientoResult, RegistrosPendientes, ValidacionLecturasPendientes } from '~/types/monitor';
+import type {
+  EstadoProcesamiento,
+  ProcesamientoResult,
+  RegistrosPendientes,
+  ValidacionLecturasPendientes
+} from '~/types/monitor';
 
 // Interfaces para los nuevos endpoints
-
 
 export default function ImportarLecturasComponent() {
   const [file, setFile] = useState<File | null>(null);
@@ -48,7 +52,7 @@ export default function ImportarLecturasComponent() {
 
   // Estados para los nuevos endpoints
   const [estadoProcesamiento, setEstadoProcesamiento] =
-    useState<EstadoProcesamiento| null>(null);
+    useState<EstadoProcesamiento | null>(null);
   const [registrosPendientes, setRegistrosPendientes] =
     useState<RegistrosPendientes | null>(null);
   const [loadingEstado, setLoadingEstado] = useState(false);
@@ -430,7 +434,12 @@ export default function ImportarLecturasComponent() {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
       const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/Enerlova';
-      const url = `${baseUrl}/validar-lecturas-pendientes`;
+
+      // Usar período actual si está disponible; de lo contrario, fallback a 102025
+      const periodoActual = estadoProcesamiento?.periodoActivo || '102025';
+      const cicloFacturable = 1; // hardcodeado por ahora
+
+      const url = `${baseUrl}/consultar-asignacion-sectores?cicloFacturable=${cicloFacturable}&periodo=${periodoActual}`;
 
       const response = await fetch(url, {
         method: 'GET',
@@ -448,12 +457,23 @@ export default function ImportarLecturasComponent() {
         );
       }
 
-      setValidacionLecturas(data);
+      const esArray = Array.isArray(data);
+      const sinPendientes = esArray && data.length === 0;
+      const totalPendientes = esArray ? data.length : 0;
 
-      // Si hay pendientes, mostrar mensaje
-      if (!data.sinPendientes) {
+      setValidacionLecturas({
+        sinPendientes,
+        mensaje: sinPendientes
+          ? 'No hay asignaciones pendientes por preparar'
+          : 'Hay asignaciones pendientes por preparar',
+        periodo: periodoActual,
+        totalPendientes,
+        detalles: [] // Detalles opcionales; podemos mapear si se requieren más adelante
+      });
+
+      if (!sinPendientes) {
         toast.warning(
-          `Hay ${data.totalPendientes} medidores pendientes por asignar`
+          `Hay ${totalPendientes} asignaciones pendientes por preparar`
         );
       }
     } catch (error: any) {
