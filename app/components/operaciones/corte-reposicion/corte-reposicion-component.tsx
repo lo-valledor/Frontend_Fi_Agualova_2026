@@ -38,7 +38,7 @@
  *   * GET /consulta-mantenedor-revision-corte
  *   * POST /modificar-revision
  *   * POST /ingresar-revision
- *   * POST /finalizar-revision
+ *   * POST /eliminar-revision
  *   * GET /exportar-* (para Excel)
  *
  * @param {Object} props - Props del componente
@@ -67,9 +67,9 @@ import {
   FileText,
   HelpCircle,
   ListChecks,
-  Loader2,
   Play,
-  Search
+  Search,
+  AlertTriangle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
@@ -87,6 +87,17 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
+import { Spinner } from '~/components/ui/spinner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '~/components/ui/alert-dialog';
 import api from '~/lib/api';
 import type {
   ConsultarMantenedorRevisionCorte,
@@ -110,6 +121,17 @@ export default function CorteReposicionComponent({
   >(initialMantenedorCorteData);
   const [isSearching, setIsSearching] = useState(false);
 
+  // Estados de loading para cada botón
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
+  const [isExportingCorte, setIsExportingCorte] = useState(false);
+  const [isExportingFacturas, setIsExportingFacturas] = useState(false);
+  const [isActivating, setIsActivating] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [isFinalizing, setIsFinalizing] = useState(false);
+
+  // Estado para el AlertDialog de confirmación
+  const [showFinalizarDialog, setShowFinalizarDialog] = useState(false);
+
   // Permisos
   const { canCreate, canEdit, canDelete } = useAuth();
   const route = '/dashboard/operaciones/corte-reposicion';
@@ -124,6 +146,7 @@ export default function CorteReposicionComponent({
   };
 
   const handleExportarExcel = async () => {
+    setIsExportingExcel(true);
     try {
       const res = await api.get('exportar-mantenedor-revision', {
         responseType: 'blob'
@@ -140,10 +163,13 @@ export default function CorteReposicionComponent({
     } catch (error) {
       console.error('Error al exportar Excel:', error);
       toast.error('Error al exportar el archivo');
+    } finally {
+      setIsExportingExcel(false);
     }
   };
 
   const handleExportarExcelCorte = async () => {
+    setIsExportingCorte(true);
     try {
       const res = await api.get('exportar-revision-corte', {
         responseType: 'blob'
@@ -160,10 +186,13 @@ export default function CorteReposicionComponent({
     } catch (error) {
       console.error('Error al exportar Excel corte:', error);
       toast.error('Error al exportar el archivo');
+    } finally {
+      setIsExportingCorte(false);
     }
   };
 
   const handleExportarFacturasImpagas = async () => {
+    setIsExportingFacturas(true);
     try {
       const res = await api.get('exportar-facturas-impagas', {
         responseType: 'blob'
@@ -185,6 +214,8 @@ export default function CorteReposicionComponent({
     } catch (error) {
       console.error('Error al exportar facturas impagas:', error);
       toast.error('Error al exportar las facturas impagas');
+    } finally {
+      setIsExportingFacturas(false);
     }
   };
 
@@ -207,6 +238,7 @@ export default function CorteReposicionComponent({
   };
 
   const handleActivarActualizacion = async () => {
+    setIsActivating(true);
     try {
       const res = await api.post('modificar-revision');
       if (res.status === 200) {
@@ -218,10 +250,13 @@ export default function CorteReposicionComponent({
     } catch (error) {
       console.error('Error al activar la actualización:', error);
       toast.error('Error al activar la actualización.');
+    } finally {
+      setIsActivating(false);
     }
   };
 
   const handleIniciar = async () => {
+    setIsStarting(true);
     try {
       const res = await api.post('ingresar-revision');
       if (res.status === 200) {
@@ -233,12 +268,16 @@ export default function CorteReposicionComponent({
     } catch (error) {
       console.error('Error al iniciar el proceso de revisión:', error);
       toast.error('Error al iniciar el proceso de revisión.');
+    } finally {
+      setIsStarting(false);
     }
   };
 
-  const handleFinalizar = async () => {
+  const handleConfirmarFinalizar = async () => {
+    setIsFinalizing(true);
+    setShowFinalizarDialog(false);
     try {
-      const res = await api.post('finalizar-revision');
+      const res = await api.delete('eliminar-revision');
       if (res.status === 200) {
         toast.success('Proceso de revisión finalizado correctamente.');
         void handleBuscar();
@@ -248,6 +287,8 @@ export default function CorteReposicionComponent({
     } catch (error) {
       console.error('Error al finalizar el proceso:', error);
       toast.error('Error al finalizar el proceso.');
+    } finally {
+      setIsFinalizing(false);
     }
   };
 
@@ -409,7 +450,7 @@ export default function CorteReposicionComponent({
                       className='gap-1.5 w-full'
                     >
                       {isSearching ? (
-                        <Loader2 className='h-4 w-4 animate-spin' />
+                        <Spinner className='h-4 w-4' />
                       ) : (
                         <Search className='h-4 w-4' />
                       )}
@@ -420,9 +461,14 @@ export default function CorteReposicionComponent({
                       variant='outline'
                       size='sm'
                       onClick={handleExportarFacturasImpagas}
+                      disabled={isExportingFacturas}
                       className='gap-1.5 w-full bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30'
                     >
-                      <FileSpreadsheet className='h-4 w-4' />
+                      {isExportingFacturas ? (
+                        <Spinner className='h-4 w-4' />
+                      ) : (
+                        <FileSpreadsheet className='h-4 w-4' />
+                      )}
                       Facturas Impagas
                     </Button>
                     <Button
@@ -430,18 +476,28 @@ export default function CorteReposicionComponent({
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcel}
+                      disabled={isExportingExcel}
                       className='gap-1.5 bg-emerald-500 hover:bg-emerald-600 w-full'
                     >
-                      <Download className='h-4 w-4' />
+                      {isExportingExcel ? (
+                        <Spinner className='h-4 w-4' />
+                      ) : (
+                        <Download className='h-4 w-4' />
+                      )}
                       Exportar
                     </Button>
                     <Button
                       variant='default'
                       size='sm'
                       onClick={handleExportarExcelCorte}
+                      disabled={isExportingCorte}
                       className='gap-1.5 bg-emerald-500 hover:bg-emerald-600 w-full'
                     >
-                      <Download className='h-4 w-4' />
+                      {isExportingCorte ? (
+                        <Spinner className='h-4 w-4' />
+                      ) : (
+                        <Download className='h-4 w-4' />
+                      )}
                       Exportar Corte
                     </Button>
                     <Button
@@ -449,7 +505,7 @@ export default function CorteReposicionComponent({
                       variant='link'
                       size='sm'
                       onClick={handleActivarActualizacion}
-                      disabled={!hasEditPermission}
+                      disabled={!hasEditPermission || isActivating}
                       title={
                         !hasEditPermission
                           ? 'No tiene permisos para actualizar'
@@ -457,14 +513,18 @@ export default function CorteReposicionComponent({
                       }
                       className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90 w-full'
                     >
-                      <ArrowUpToLine className='h-4 w-4' />
+                      {isActivating ? (
+                        <Spinner className='h-4 w-4' />
+                      ) : (
+                        <ArrowUpToLine className='h-4 w-4' />
+                      )}
                       Actualizar
                     </Button>
                     <Button
                       variant='destructive'
                       size='sm'
                       onClick={handleIniciar}
-                      disabled={!hasCreatePermission}
+                      disabled={!hasCreatePermission || isStarting}
                       title={
                         !hasCreatePermission
                           ? 'No tiene permisos para iniciar'
@@ -472,14 +532,18 @@ export default function CorteReposicionComponent({
                       }
                       className='gap-1.5 w-full'
                     >
-                      <Play className='h-4 w-4' />
+                      {isStarting ? (
+                        <Spinner className='h-4 w-4' />
+                      ) : (
+                        <Play className='h-4 w-4' />
+                      )}
                       Iniciar
                     </Button>
                     <Button
                       variant='secondary'
                       size='sm'
-                      onClick={handleFinalizar}
-                      disabled={!hasDeletePermission}
+                      onClick={() => setShowFinalizarDialog(true)}
+                      disabled={!hasDeletePermission || isFinalizing}
                       title={
                         !hasDeletePermission
                           ? 'No tiene permisos para finalizar'
@@ -487,7 +551,11 @@ export default function CorteReposicionComponent({
                       }
                       className='gap-1.5 w-full'
                     >
-                      <CheckCircle2 className='h-4 w-4' />
+                      {isFinalizing ? (
+                        <Spinner className='h-4 w-4' />
+                      ) : (
+                        <CheckCircle2 className='h-4 w-4' />
+                      )}
                       Finalizar
                     </Button>
                   </div>
@@ -586,6 +654,70 @@ export default function CorteReposicionComponent({
             </div>
           </Card>
         </div>
+
+        {/* AlertDialog de confirmación para finalizar */}
+        <AlertDialog
+          open={showFinalizarDialog}
+          onOpenChange={setShowFinalizarDialog}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <div className='flex items-center gap-3 mb-2'>
+                <div className='p-3 bg-amber-100 dark:bg-amber-900/30 rounded-full'>
+                  <AlertTriangle className='h-6 w-6 text-amber-600 dark:text-amber-400' />
+                </div>
+                <AlertDialogTitle className='text-xl'>
+                  ¿Confirmar Finalización?
+                </AlertDialogTitle>
+              </div>
+              <AlertDialogDescription className='space-y-3 text-base'>
+                <p className='font-medium text-foreground'>
+                  Estás a punto de{' '}
+                  <span className='font-bold text-destructive'>
+                    eliminar el proceso de revisión actual
+                  </span>
+                  .
+                </p>
+                <div className='p-3 bg-amber-50 dark:bg-amber-950/30 rounded-lg border border-amber-200 dark:border-amber-800'>
+                  <p className='text-sm text-amber-900 dark:text-amber-100'>
+                    <strong>⚠️ Advertencia:</strong> Esta acción no se puede
+                    deshacer.
+                  </p>
+                  <ul className='mt-2 ml-4 text-sm text-amber-800 dark:text-amber-200 list-disc space-y-1'>
+                    <li>Se eliminará toda la información del proceso actual</li>
+                    <li>Los datos de revisión se perderán permanentemente</li>
+                    <li>Deberás iniciar un nuevo proceso desde cero</li>
+                  </ul>
+                </div>
+                <p className='text-sm'>
+                  ¿Estás seguro de que deseas continuar?
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isFinalizing}>
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmarFinalizar}
+                disabled={isFinalizing}
+                className='bg-destructive hover:bg-destructive/90 text-destructive-foreground'
+              >
+                {isFinalizing ? (
+                  <>
+                    <Spinner className='h-4 w-4 mr-2 text-white' />
+                    <span className='text-white'>Finalizando...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className='h-4 w-4 mr-2 text-white' />
+                    <span className='text-white'>Sí, Finalizar</span>
+                  </>
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
