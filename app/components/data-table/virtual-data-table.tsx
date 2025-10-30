@@ -72,6 +72,19 @@ export function VirtualDataTable<TData, TValue>({
       globalFilter
     },
     onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const searchValue = String(filterValue).toLowerCase().trim();
+      
+      if (!searchValue) return true;
+      
+      // Buscar en todos los valores de la fila
+      const rowValues = Object.values(row.original as Record<string, any>);
+      
+      return rowValues.some(value => {
+        if (value === null || value === undefined) return false;
+        return String(value).toLowerCase().includes(searchValue);
+      });
+    },
     columnResizeMode: 'onChange',
     defaultColumn: {
       minSize: 60,
