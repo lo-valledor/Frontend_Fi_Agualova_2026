@@ -250,6 +250,23 @@ export function ConsultarAcometidaDialog({
                       {data.clRut}
                     </TableCell>
                   </TableRow>
+                  <TableRow>
+                    <TableCell className='font-medium text-xs py-1 w-2/5'>
+                      Nombre Cliente
+                    </TableCell>
+                    <TableCell className='text-xs py-1 w-8'>:</TableCell>
+                    <TableCell className='text-xs py-1'>
+                      {data.clRazonSocialCompleto}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Información de cliente */}
+            <div className='bg-card rounded-lg p-2 border'>
+              <Table>
+                <TableBody>
                   <TableRow className='border-border'>
                     <TableCell className='font-medium text-xs py-1'>
                       Acometida
@@ -266,23 +283,6 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='text-xs py-1'>:</TableCell>
                     <TableCell className='font-mono text-xs py-1'>
                       {data.ctId}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Información de cliente */}
-            <div className='bg-card rounded-lg p-2 border'>
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className='font-medium text-xs py-1 w-2/5'>
-                      Nombre Cliente
-                    </TableCell>
-                    <TableCell className='text-xs py-1 w-8'>:</TableCell>
-                    <TableCell className='text-xs py-1'>
-                      {data.clRazonSocialCompleto}
                     </TableCell>
                   </TableRow>
                   <TableRow>
