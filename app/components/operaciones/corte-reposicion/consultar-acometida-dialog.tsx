@@ -193,6 +193,11 @@ export function ConsultarAcometidaDialog({
     }).format(value);
   };
 
+  // Celda estándar para los dos puntos con ancho y alineación uniforme
+  const ColonCell = () => (
+    <TableCell className='text-xs py-1 w-3 text-center'>:</TableCell>
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <TooltipProvider>
@@ -239,13 +244,13 @@ export function ConsultarAcometidaDialog({
           <div className='space-y-3'>
             {/* Información principal */}
             <div className='bg-muted rounded-lg p-2 border'>
-              <Table>
+              <Table className='table-fixed w-full'>
                 <TableBody>
                   <TableRow className='border-border'>
                     <TableCell className='font-medium text-xs py-1 w-2/5'>
                       RUT
                     </TableCell>
-                    <TableCell className='text-xs py-1 w-8'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='font-mono text-xs py-1'>
                       {data.clRut}
                     </TableCell>
@@ -254,7 +259,7 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='font-medium text-xs py-1 w-2/5'>
                       Nombre Cliente
                     </TableCell>
-                    <TableCell className='text-xs py-1 w-8'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='text-xs py-1'>
                       {data.clRazonSocialCompleto}
                     </TableCell>
@@ -265,13 +270,13 @@ export function ConsultarAcometidaDialog({
 
             {/* Información de cliente */}
             <div className='bg-card rounded-lg p-2 border'>
-              <Table>
+              <Table className='table-fixed w-full'>
                 <TableBody>
                   <TableRow className='border-border'>
                     <TableCell className='font-medium text-xs py-1'>
                       Acometida
                     </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='font-mono text-xs py-1'>
                       {data.seCodigo}
                     </TableCell>
@@ -280,7 +285,7 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='font-medium text-xs py-1'>
                       ID Contrato
                     </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='font-mono text-xs py-1'>
                       {data.ctId}
                     </TableCell>
@@ -289,7 +294,7 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='font-medium text-xs py-1'>
                       N° Serie Medidor
                     </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='font-mono text-xs py-1'>
                       {data.meNSerie}
                     </TableCell>
@@ -298,7 +303,7 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='font-medium text-xs py-1'>
                       Sección
                     </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='text-xs py-1'>
                       {data.secDescripcion}
                     </TableCell>
@@ -307,7 +312,7 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='font-medium text-xs py-1'>
                       Nivel
                     </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='text-xs py-1'>
                       {data.niDescripcion}
                     </TableCell>
@@ -318,13 +323,13 @@ export function ConsultarAcometidaDialog({
 
             {/* Información financiera */}
             <div className='bg-accent rounded-lg p-2 border'>
-              <Table>
+              <Table className='table-fixed w-full'>
                 <TableBody>
                   <TableRow className='border-border'>
                     <TableCell className='font-medium text-xs py-1 w-2/5'>
                       Total
                     </TableCell>
-                    <TableCell className='text-xs py-1 w-8'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='font-mono font-bold text-sm py-1'>
                       {formatCurrency(data.reDeudaTotal)}
                     </TableCell>
@@ -333,7 +338,7 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='font-medium text-xs py-1'>
                       Saldo
                     </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
+                    <ColonCell />
                     <TableCell className='font-mono font-bold text-sm py-1'>
                       {formatCurrency(data.reDeudaTotal)}
                     </TableCell>
@@ -342,7 +347,9 @@ export function ConsultarAcometidaDialog({
                     <TableCell className='font-medium text-xs py-1'>
                       HC Asociada
                     </TableCell>
-                    <TableCell className='text-xs py-1'>:</TableCell>
+                    <TableCell className='text-xs py-1 w-3 text-center'>
+                      :
+                    </TableCell>
                     <TableCell className='font-mono text-xs py-1'>
                       {data.reCantDocumentos}
                     </TableCell>

@@ -74,15 +74,22 @@ export function VirtualDataTable<TData, TValue>({
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: (row, columnId, filterValue) => {
       const searchValue = String(filterValue).toLowerCase().trim();
-      
+      const searchNoDots = searchValue.replace(/\./g, '');
+
       if (!searchValue) return true;
-      
+
       // Buscar en todos los valores de la fila
       const rowValues = Object.values(row.original as Record<string, any>);
-      
+
       return rowValues.some(value => {
         if (value === null || value === undefined) return false;
-        return String(value).toLowerCase().includes(searchValue);
+        const valueStr = String(value).toLowerCase();
+        const valueNoDots = valueStr.replace(/\./g, '');
+
+        // Coincide normal o sin puntos (útil para RUT formateados 77.497.420-2)
+        return (
+          valueStr.includes(searchValue) || valueNoDots.includes(searchNoDots)
+        );
       });
     },
     columnResizeMode: 'onChange',
