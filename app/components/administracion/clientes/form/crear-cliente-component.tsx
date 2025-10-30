@@ -38,7 +38,7 @@ import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
 import { administracionService } from '~/services';
 import type { GetComunas, GetGiros } from '~/types/administracion';
-import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
+import { formatRut, isValidRutFormat, isValidRut } from '~/utils/rut-utils';
 
 const createClienteSchema = (existingClients: string[]) =>
   z.object({
@@ -47,6 +47,9 @@ const createClienteSchema = (existingClients: string[]) =>
       .min(1, 'El RUT es requerido')
       .refine(isValidRutFormat, {
         message: 'El RUT debe tener el formato 12345678-9'
+      })
+      .refine(isValidRut, {
+        message: 'El dígito verificador del RUT no corresponde'
       })
       .refine(
         rut => {
@@ -151,6 +154,12 @@ export default function CrearClienteComponent() {
 
     // Validar formato
     if (!isValidRutFormat(rut)) {
+      setRutValidationStatus('invalid');
+      return;
+    }
+
+    // Validar dígito verificador
+    if (!isValidRut(rut)) {
       setRutValidationStatus('invalid');
       return;
     }
@@ -290,7 +299,9 @@ export default function CrearClienteComponent() {
                           <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
                             {!isValidRutFormat(form.watch('rut'))
                               ? 'El RUT debe tener el formato 12345678-9'
-                              : 'Este RUT ya está registrado en el sistema'}
+                              : existingClients.includes(form.watch('rut'))
+                                ? 'Este RUT ya está registrado en el sistema'
+                                : 'El dígito verificador no corresponde'}
                           </p>
                         )}
                       </FormItem>

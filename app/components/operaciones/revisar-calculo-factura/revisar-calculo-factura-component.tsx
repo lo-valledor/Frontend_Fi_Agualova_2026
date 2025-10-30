@@ -343,7 +343,9 @@ export default function RevisarCalculoFacturaComponent({
         {/* Panel de Control */}
         <Card className='border border-border shadow-sm'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
-            <button
+            <Button
+              variant='outline'
+              size='sm'
               className='w-full flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 transition-colors text-left'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
               onKeyDown={e => {
@@ -376,7 +378,7 @@ export default function RevisarCalculoFacturaComponent({
                   <ChevronDown className='h-4 w-4 text-muted-foreground' />
                 )}
               </div>
-            </button>
+            </Button>
 
             <CollapsibleContent>
               <CardContent className='px-4 pb-4'>

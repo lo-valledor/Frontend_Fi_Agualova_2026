@@ -5,6 +5,7 @@ import {
   ChevronUp,
   Eraser,
   FileTextIcon,
+  Info,
   SearchIcon,
   UsersIcon
 } from 'lucide-react';
@@ -38,12 +39,11 @@ import {
   type ValidarSectoresPendientes
 } from '~/types/operaciones';
 
-import DialogLecturasPendientes from './dialog-lecturas-pendientes';
 import TablaAsignacionSectores from './tabla-asignacion-sectores';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 
 export default function PrepararLecturasComponent({
   periodoAbierto,
-  lecturasPendientes,
   sectores,
   opcionesPreparar,
   asignacionSectores,
@@ -68,6 +68,7 @@ export default function PrepararLecturasComponent({
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
+  const [hasSearched, setHasSearched] = useState(false);
   const prevLoadingRef = useRef(isLoadingAsignacion);
 
   // Efecto para mostrar toast cuando termine la carga
@@ -138,6 +139,7 @@ export default function PrepararLecturasComponent({
 
     try {
       setError(null);
+      setHasSearched(true);
       const cicloParaAPI = obtenerCicloParaAPI(cicloSeleccionado);
 
       // Ejecutar la recarga - el toast de éxito se mostrará cuando se actualice el estado
@@ -166,6 +168,7 @@ export default function PrepararLecturasComponent({
     setCicloSeleccionado('');
     setAsignacionSectores([]);
     setError(null);
+    setHasSearched(false);
     toast.success('Filtros limpiados');
   };
 
@@ -176,13 +179,6 @@ export default function PrepararLecturasComponent({
         <ModernHeader
           title='Preparación de Lecturas'
           description='Gestión de asignación de sectores para lectura'
-          actions={
-            <DialogLecturasPendientes
-              data={lecturasPendientes || undefined}
-              isLoading={false}
-              onRefresh={() => Promise.resolve(undefined)}
-            />
-          }
         />
 
         {/* Filtros de Búsqueda */}
@@ -360,6 +356,35 @@ export default function PrepararLecturasComponent({
                 );
               }
 
+              if (
+                hasSearched &&
+                asignacionSectores.length === 0 &&
+                !isLoadingAsignacion
+              ) {
+                return (
+                  <Alert className='border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900'>
+                    <Info className='h-5 w-5 text-blue-600 dark:text-blue-400' />
+                    <AlertTitle className='text-blue-800 dark:text-blue-300 font-semibold'>
+                      No se encontraron sectores para los criterios
+                      seleccionados
+                    </AlertTitle>
+                    <AlertDescription className='text-blue-700 dark:text-blue-400 mt-2'>
+                      Esto puede suceder porque:
+                      <ul className='list-disc list-inside mt-2 space-y-1 ml-2'>
+                        <li>
+                          Ya fueron preparadas las lecturas para este ciclo y
+                          periodo
+                        </li>
+                        <li>
+                          No hay asignaciones pendientes por preparar para este
+                          ciclo y periodo
+                        </li>
+                      </ul>
+                    </AlertDescription>
+                  </Alert>
+                );
+              }
+
               if (error) {
                 return (
                   <div className='p-3 rounded-xl bg-destructive/10 border border-destructive/20'>
@@ -386,7 +411,7 @@ export default function PrepararLecturasComponent({
                 );
               }
 
-              if (asignacionSectores.length === 0) {
+              if (!hasSearched && asignacionSectores.length === 0) {
                 return (
                   <div className='flex flex-col items-center justify-center h-48 gap-3'>
                     <div className='w-12 h-12 bg-background rounded-xl flex items-center justify-center'>
