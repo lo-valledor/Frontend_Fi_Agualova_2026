@@ -98,7 +98,6 @@ export default function ZonaFormModal({
       }
       onSuccess();
     } catch (error) {
-      console.error('Error al procesar la zona:', error);
       toast.error(
         mode === 'add'
           ? 'Error al crear la zona'

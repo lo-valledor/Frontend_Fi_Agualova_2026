@@ -120,7 +120,6 @@ export default function DetallePreciosEnerlova({
 
       setData(datosNormalizados);
     } catch (error) {
-      console.error('Error al obtener datos:', error);
       toast.error('Error al cargar los precios del cargo');
       setData([]);
     } finally {
@@ -159,7 +158,6 @@ export default function DetallePreciosEnerlova({
       dateParts[1].length !== 2 ||
       dateParts[2].length !== 4
     ) {
-      console.error(
         'Formato de fecha de entrada inesperado:',
         ultimaFechaFin,
         'Se esperaba DD-MM-YYYY.'
@@ -179,7 +177,6 @@ export default function DetallePreciosEnerlova({
       const fechaFinDate = new Date(fechaFormatoISO + 'T00:00:00Z');
 
       if (isNaN(fechaFinDate.getTime())) {
-        console.error('Error: Invalid Date al crear objeto Date.');
         return '';
       }
 
@@ -199,7 +196,6 @@ export default function DetallePreciosEnerlova({
 
       return nuevaFechaInicioStringDDMMYYYY;
     } catch (error) {
-      console.error('Error al procesar la fecha:', error);
       return '';
     }
   };

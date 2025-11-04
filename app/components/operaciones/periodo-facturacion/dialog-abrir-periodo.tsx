@@ -86,7 +86,6 @@ export default function DialogAbrirPeriodo({
         );
       }
     } catch (error: any) {
-      console.error('Error:', error);
       let errorMessage = error.response.data;
 
       if (error.response) {

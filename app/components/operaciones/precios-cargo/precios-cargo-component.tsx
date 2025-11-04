@@ -161,7 +161,6 @@ export default function PreciosCargoComponent({
           setAnio(response.data[0].anio.toString());
         }
       } catch (error) {
-        console.error('Error consultando periodo abierto:', error);
       }
     }
     fetchPeriodoAbierto();
@@ -182,7 +181,6 @@ export default function PreciosCargoComponent({
       setTablaEnel(response.data as PreciosCargoEnel[]);
       toast.success('Búsqueda completada exitosamente');
     } catch (_error) {
-      console.error(_error);
       toast.error('Error al buscar precios de cargo');
     } finally {
       setIsLoading(false);
@@ -209,7 +207,6 @@ export default function PreciosCargoComponent({
       setTablaEnerlova(response.data as PreciosCargoEnerlova[]);
       toast.success('Datos actualizados correctamente');
     } catch (error) {
-      console.error('Error al actualizar datos de Enerlova:', error);
       toast.error('Error al actualizar los datos');
     } finally {
       setIsLoading(false);

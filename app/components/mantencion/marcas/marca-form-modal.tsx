@@ -94,7 +94,6 @@ export default function MarcaFormModal({
 
       onSuccess();
     } catch (error) {
-      console.error('Error al procesar marca:', error);
       toast.error(
         mode === 'add'
           ? 'Error al crear la marca'

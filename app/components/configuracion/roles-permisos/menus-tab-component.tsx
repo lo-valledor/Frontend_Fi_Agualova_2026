@@ -104,14 +104,11 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         esVisible: formData.visible
       };
 
-      console.log('📤 Creando menú con payload:', menuPayload);
 
       const result = await rolesPermisosService.crearMenu(menuPayload);
 
-      console.log('📥 Respuesta del servicio:', result);
 
       if (result.error) {
-        console.error('❌ Error al crear menú:', result.error);
         toast.error(result.error, {
           duration: 5000,
           description: 'Revisa la consola para más detalles'
@@ -123,7 +120,6 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         onDataChange?.();
       }
     } catch (error) {
-      console.error('❌ Error inesperado:', error);
       toast.error('Error inesperado al crear el menú', {
         description: error instanceof Error ? error.message : 'Error desconocido'
       });

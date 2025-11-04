@@ -101,7 +101,6 @@ export function ConsultarAcometidaDialog({
         toast.error('No se encontraron datos para esta acometida');
       }
     } catch (error) {
-      console.error('Error al consultar acometida:', error);
       toast.error('Error al cargar los datos de la acometida');
     } finally {
       setLoading(false);
@@ -119,7 +118,6 @@ export function ConsultarAcometidaDialog({
         setFacturasImpagas(response.data);
       }
     } catch (error) {
-      console.error('Error al cargar facturas impagas:', error);
       toast.error('Error al cargar las facturas impagas');
     } finally {
       setLoadingFacturas(false);
@@ -153,7 +151,6 @@ export function ConsultarAcometidaDialog({
 
       toast.success('Excel exportado correctamente');
     } catch (error) {
-      console.error('Error al exportar Excel:', error);
       toast.error('Error al exportar las facturas a Excel');
     } finally {
       setIsExporting(false);
@@ -177,7 +174,6 @@ export function ConsultarAcometidaDialog({
       // Limpiar formulario
       setComentario('');
     } catch (error) {
-      console.error('Error al marcar como liberado:', error);
       toast.error('Error al registrar la liberación. Intente nuevamente.');
     } finally {
       setIsSubmitting(false);

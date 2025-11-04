@@ -58,7 +58,6 @@ export function AsociarSubempalmeModal({
         setSubempalmes(response.data as SubempalmeOption[]);
       }
     } catch (error) {
-      console.error('Error al cargar subempalmes:', error);
     } finally {
       setIsLoadingSubempalmes(false);
     }
@@ -87,7 +86,6 @@ export function AsociarSubempalmeModal({
         setBusquedaSubempalme('');
       }
     } catch (error) {
-      console.error('❌ Error al asociar subempalme:', error);
       alert('Error al asociar subempalme al medidor');
     } finally {
       setIsAsociando(false);

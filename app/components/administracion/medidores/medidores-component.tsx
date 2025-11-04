@@ -220,7 +220,6 @@ export default function MedidoresComponent({
           // setIsModalOpen(false); // <- Comentado para mantener modal abierto
           return { codigoMedidor: result.codigoMedidor };
         } else {
-          console.warn(
             '⚠️ WARNING - No se encontró codigoMedidor en la respuesta'
           );
           await refetchMedidores();
@@ -234,7 +233,6 @@ export default function MedidoresComponent({
       }
     } catch (error) {
       toast.error('Error al guardar el medidor.');
-      console.error(error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -253,7 +251,6 @@ export default function MedidoresComponent({
       setSelectedMedidor(null);
     } catch (error) {
       toast.error('Error al eliminar el medidor.');
-      console.error(error);
     } finally {
       setIsLoading(false);
     }

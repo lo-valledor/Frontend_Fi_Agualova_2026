@@ -253,7 +253,6 @@ export default function CargoFacturableModalForm({
       onClose();
       onSuccess();
     } catch (error: any) {
-      console.error('Error al guardar el cargo facturable:', error);
       toast.error('Error al guardar el cargo facturable');
     }
   };

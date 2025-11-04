@@ -11,7 +11,6 @@ export function formatToDate(dateString: string | null): string {
     return format(new Date(dateString), 'dd-MM-yyyy');
   } catch (error) {
     // Intentar extraer la fecha si es un string en formato ISO
-    console.error('Error al formatear la fecha:', error);
     return String(dateString).split('T')[0] || '-';
   }
 }
@@ -27,7 +26,6 @@ export function formatToTime(dateString: string | null): string {
     return format(new Date(dateString), 'HH:mm:ss');
   } catch (error) {
     // Intentar extraer la hora si es un string en formato ISO
-    console.error('Error al formatear la hora:', error);
     return String(dateString).split('T')[1]?.split('.')[0] || '-';
   }
 }

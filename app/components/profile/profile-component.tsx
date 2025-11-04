@@ -77,7 +77,6 @@ export default function ProfileComponent() {
           activo: userData.activo
         });
       } catch (error) {
-        console.error('Error al cargar datos del usuario:', error);
         toast.error('Error al cargar los datos del perfil');
       } finally {
         setLoadingUserData(false);
@@ -154,7 +153,6 @@ export default function ProfileComponent() {
       setNewPassword('');
       setConfirmPassword('');
     } catch (error: any) {
-      console.error('Error al actualizar perfil:', error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||

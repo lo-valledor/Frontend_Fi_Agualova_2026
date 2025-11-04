@@ -97,7 +97,6 @@ export default function SectorFormModal({
 
         setZonas(zonasData);
       } catch (error) {
-        console.error('Error al cargar las zonas:', error);
         toast.error('No se pudieron cargar las zonas.');
       } finally {
         setIsLoadingZonas(false);
@@ -137,7 +136,6 @@ export default function SectorFormModal({
       }
       onSuccess();
     } catch (error) {
-      console.error('Error al procesar sector:', error);
       toast.error(
         mode === 'add'
           ? 'Error al crear el sector'

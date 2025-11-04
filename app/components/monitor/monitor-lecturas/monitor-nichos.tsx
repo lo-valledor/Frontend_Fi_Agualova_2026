@@ -86,7 +86,6 @@ export default function MonitorNichos({
       const response = await api.get('/lecturas-nicho', { params });
       setResults(response.data as MedidorNichoItem[]);
     } catch (error) {
-      console.error('Error al obtener lecturas de nicho:', error);
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);

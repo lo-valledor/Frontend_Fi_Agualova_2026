@@ -150,7 +150,6 @@ export default function CargoFacturableComponent({
       }
       handleSuccess();
     } catch (error) {
-      console.error('Error al guardar el cargo facturable:', error);
       toast.error('Error al guardar el cargo facturable.');
     }
   };

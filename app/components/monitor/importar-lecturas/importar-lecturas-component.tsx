@@ -241,7 +241,6 @@ export default function ImportarLecturasComponent() {
         toast.success('Archivo válido - listo para cargar');
       }
     } catch (err) {
-      console.error('Error al validar archivo:', err);
       const errorMsg =
         'Error al validar el archivo Excel. Verifica que el formato sea correcto.';
       setError(errorMsg);
@@ -318,7 +317,6 @@ export default function ImportarLecturasComponent() {
       toast.success(mensaje);
       handleRemoveFile();
     } catch (error: any) {
-      console.error('Error al cargar archivo:', error);
       const errorMessage = error.message || 'Error al cargar el archivo';
       toast.error(errorMessage);
     } finally {
@@ -351,7 +349,6 @@ export default function ImportarLecturasComponent() {
 
       setEstadoProcesamiento(data);
     } catch (error: any) {
-      console.error('Error al obtener estado:', error);
       toast.error(error.message || 'Error al obtener estado de procesamiento');
     } finally {
       setLoadingEstado(false);
@@ -384,7 +381,6 @@ export default function ImportarLecturasComponent() {
       setRegistrosPendientes(data);
       toast.success(data.mensaje || 'Registros obtenidos correctamente');
     } catch (error: any) {
-      console.error('Error al obtener registros:', error);
       toast.error(error.message || 'Error al obtener registros pendientes');
     } finally {
       setLoadingRegistros(false);
@@ -420,7 +416,6 @@ export default function ImportarLecturasComponent() {
       // Refrescar estado después del procesamiento
       fetchEstadoProcesamiento();
     } catch (error: any) {
-      console.error('Error al procesar:', error);
       toast.error(error.message || 'Error al procesar BT1-BT2');
     } finally {
       setProcessingBT(false);
@@ -477,7 +472,6 @@ export default function ImportarLecturasComponent() {
         );
       }
     } catch (error: any) {
-      console.error('Error al validar lecturas:', error);
       toast.error(error.message || 'Error al validar lecturas pendientes');
     } finally {
       setLoadingValidacion(false);

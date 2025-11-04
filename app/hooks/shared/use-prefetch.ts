@@ -41,7 +41,6 @@ export function usePrefetch(
       
       document.head.appendChild(link);
 
-      console.log(`🚀 Prefetching: ${routePath}`);
     }, delay);
 
     return () => {
@@ -96,7 +95,6 @@ export function usePrefetchMultiple(
         
         document.head.appendChild(link);
 
-        console.log(`🚀 Prefetching [${index + 1}/${routes.length}]: ${route}`);
       }, delay);
 
       timers.push(timer);
@@ -152,7 +150,6 @@ export function usePrefetchConditional(
             
             document.head.appendChild(link);
 
-            console.log(`🚀 Conditional Prefetch: ${route}`);
           });
         }
       });
@@ -200,7 +197,6 @@ export function usePrefetchOnHover(routePath: string) {
     
     document.head.appendChild(link);
 
-    console.log(`🚀 Hover Prefetch: ${routePath}`);
   };
 
   return {

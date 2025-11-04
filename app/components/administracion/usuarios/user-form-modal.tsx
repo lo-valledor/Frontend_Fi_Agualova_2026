@@ -206,7 +206,6 @@ export function UserFormModal({
       onSuccess?.();
       onClose();
     } catch (error: any) {
-      console.error('Error al procesar usuario:', error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||

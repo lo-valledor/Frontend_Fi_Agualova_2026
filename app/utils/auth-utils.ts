@@ -28,7 +28,6 @@ export function getAuthenticatedUser(): DecodedToken | null {
 
     return decoded;
   } catch (error) {
-    console.error('❌ Failed to decode token:', error);
     localStorage.removeItem('token');
     return null;
   }

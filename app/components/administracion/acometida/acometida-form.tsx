@@ -237,7 +237,6 @@ export function AcometidaForm({
       form.reset();
       onClose();
     } catch (error: any) {
-      console.error('Error al guardar acometida:', error);
 
       // Manejo más específico de errores
       if (error.response?.status === 400) {

@@ -87,7 +87,6 @@ export default function TarifaFormModal({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error al guardar la tarifa:', error);
     }
   };
 

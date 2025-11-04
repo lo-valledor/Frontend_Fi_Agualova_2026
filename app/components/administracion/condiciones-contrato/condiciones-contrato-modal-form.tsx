@@ -121,7 +121,6 @@ export default function CondicionesContratoModalForm({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error al guardar la condición de contrato:', error);
       toast.error('Error al guardar la condición de contrato');
     }
   };

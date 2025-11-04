@@ -294,7 +294,6 @@ export default function DialogNuevoValorEnerlova({
         if (onSuccess) onSuccess();
       }
     } catch (error) {
-      console.error('Error al agregar precio:', error);
       toast.error('Error al agregar el precio');
     } finally {
       setIsLoading(false);

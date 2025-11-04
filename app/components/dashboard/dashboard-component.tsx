@@ -176,7 +176,6 @@ const AdminAnalyticsComponent = () => {
           loading: false
         });
       } catch (error) {
-        console.error('Error al cargar datos de análisis:', error);
         setAnalyticsData(prev => ({ ...prev, loading: false }));
       }
     };

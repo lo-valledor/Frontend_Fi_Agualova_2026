@@ -67,7 +67,6 @@ export default function ConceptosComponent({
         toast.success('Concepto eliminado exitosamente');
         revalidator.revalidate();
       } catch (error) {
-        console.error('Error al eliminar concepto:', error);
         toast.error('Error al eliminar el concepto');
       }
     }

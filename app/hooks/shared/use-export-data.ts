@@ -190,7 +190,6 @@ export function useExportData<T extends Record<string, any>>() {
         duration: 4000
       });
     } catch (error) {
-      console.error('Error al exportar:', error);
       toast.error('Error al exportar los datos', {
         description: 'Inténtalo de nuevo en unos momentos'
       });

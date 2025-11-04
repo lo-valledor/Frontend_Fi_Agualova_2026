@@ -149,7 +149,6 @@ export default function UsuariosComponent({
         revalidator.revalidate();
         setSelectedUser(null);
       } catch (error: any) {
-        console.error('Error al eliminar usuario:', error);
         const errorMessage =
           error.response?.data?.message ||
           error.message ||

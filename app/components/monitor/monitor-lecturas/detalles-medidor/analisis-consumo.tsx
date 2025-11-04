@@ -88,7 +88,6 @@ export default function AnalisisConsumo({
         });
         setDatosComparacion(response.data as CompararConsumoMedidor[]);
       } catch (e) {
-        console.error('Error fetching comparison data:', e);
         setDatosComparacion([]);
       }
     };

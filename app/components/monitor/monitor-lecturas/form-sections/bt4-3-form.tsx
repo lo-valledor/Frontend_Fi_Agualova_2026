@@ -874,7 +874,6 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         toast.error('Error al actualizar la lectura BT-4.3');
       }
     } catch (error: any) {
-      console.error('Error al enviar los datos BT-4.3:', error);
       toast.error(
         `Error al conectar con el servidor: ${
           error.message || 'Error desconocido'
