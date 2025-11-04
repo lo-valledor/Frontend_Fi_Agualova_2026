@@ -133,7 +133,6 @@ export default function CrearArchivosSapComponent() {
 
       toast.success(`Archivo "${filename}" descargado exitosamente`);
     } catch (error: any) {
-      console.error('Error al descargar archivo de encabezado:', error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
@@ -182,7 +181,6 @@ export default function CrearArchivosSapComponent() {
 
       toast.success(`Archivo "${filename}" descargado exitosamente`);
     } catch (error: any) {
-      console.error('Error al descargar archivo de detalle:', error);
       const errorMessage =
         error.response?.data?.message ||
         error.message ||

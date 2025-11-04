@@ -65,7 +65,6 @@ export default function ParametrosComponent({
         toast.success('Parámetro eliminado exitosamente');
         revalidator.revalidate();
       } catch (error) {
-        console.error('Error al eliminar parámetro:', error);
         toast.error('Error al eliminar el parámetro');
       }
     }

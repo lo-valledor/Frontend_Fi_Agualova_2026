@@ -98,7 +98,6 @@ export default function ParametroFormModal({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error al guardar el parámetro:', error);
     }
   };
 

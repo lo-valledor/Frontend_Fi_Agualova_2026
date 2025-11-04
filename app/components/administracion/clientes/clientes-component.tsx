@@ -150,7 +150,6 @@ export default function ClientesComponent({
           setDetailedCliente(clienteConvertido);
           setIsDetailsOpen(true);
         } catch (error) {
-          console.error('Error al cargar detalles del cliente:', error);
           toast.error('Error al cargar los detalles del cliente');
           setIsDetailsOpen(false);
         } finally {

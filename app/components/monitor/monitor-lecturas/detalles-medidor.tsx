@@ -124,7 +124,6 @@ export default function DetallesMedidor({
         setError('No se pudieron cargar los datos del medidor');
       }
     } catch (error) {
-      console.error('Error general al obtener datos:', error);
       // Error silencioso - el estado de error se muestra en la UI
       setError('Error al obtener los datos del medidor');
     } finally {

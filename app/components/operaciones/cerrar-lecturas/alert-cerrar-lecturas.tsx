@@ -86,7 +86,6 @@ export default function AlertCerrarLecturas({
           errorCount++;
         }
       } catch (error: any) {
-        console.error(
           `Error al cerrar lecturas para nicho ${row.nichoId}:`,
           error
         );

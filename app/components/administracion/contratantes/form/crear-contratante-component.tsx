@@ -138,7 +138,6 @@ export default function CrearContratanteComponent() {
           );
         }
       } catch (error) {
-        console.error('Error loading data:', error);
         toast.error('Error al cargar datos del formulario');
       }
     };
@@ -191,7 +190,6 @@ export default function CrearContratanteComponent() {
       toast.success('Contratante creado exitosamente');
       navigate('/dashboard/administracion/contratantes');
     } catch (error) {
-      console.error('Error al crear contratante:', error);
       toast.error('Error al crear el contratante');
     } finally {
       setIsSubmitting(false);

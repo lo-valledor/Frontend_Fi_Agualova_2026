@@ -383,7 +383,6 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
         toast.error('Error al actualizar la lectura');
       }
     } catch (error: any) {
-      console.error('Error al enviar los datos:', error);
       toast.error(
         `Error al conectar con el servidor: ${
           error.message || 'Error desconocido'

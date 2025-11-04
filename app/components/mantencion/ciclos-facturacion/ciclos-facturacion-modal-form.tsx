@@ -120,7 +120,6 @@ export default function CiclosFacturacionModalForm({
 
       onSuccess();
     } catch (error) {
-      console.error('Error al procesar ciclo de facturación:', error);
       toast.error(
         mode === 'add'
           ? 'Error al crear el ciclo de facturación'

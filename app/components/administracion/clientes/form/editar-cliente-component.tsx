@@ -170,7 +170,6 @@ export default function EditarClienteComponent() {
           });
         }
       } catch (error) {
-        console.error('Error loading data:', error);
         toast.error('Error al cargar datos del cliente');
         navigate('/dashboard/administracion/clientes');
       } finally {
@@ -228,7 +227,6 @@ export default function EditarClienteComponent() {
       toast.success('Cliente actualizado exitosamente');
       navigate('/dashboard/administracion/clientes');
     } catch (error) {
-      console.error('Error al actualizar cliente:', error);
       toast.error('Error al actualizar el cliente');
     } finally {
       setIsSubmitting(false);

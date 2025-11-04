@@ -405,7 +405,6 @@ export default function EditarTipoContrato({
         window.history.back();
       }, 1500);
     } catch (error) {
-      console.error('Error al guardar:', error);
       toast.error('Error al guardar la configuración');
     } finally {
       setIsSaving(false);

@@ -387,7 +387,6 @@ export function useCalculoFacturacionFlow({
       }
     } catch (error) {
       toast.error('Error inesperado en el flujo');
-      console.error('Error en flujo:', error);
     } finally {
       setIsRunning(false);
     }

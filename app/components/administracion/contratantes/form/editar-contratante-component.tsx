@@ -156,7 +156,6 @@ export default function EditarContratanteComponent() {
           });
         }
       } catch (error) {
-        console.error('Error loading data:', error);
         toast.error('Error al cargar datos del contratante');
         navigate('/dashboard/administracion/contratantes');
       } finally {
@@ -214,7 +213,6 @@ export default function EditarContratanteComponent() {
       toast.success('Contratante actualizado exitosamente');
       navigate('/dashboard/administracion/contratantes');
     } catch (error) {
-      console.error('Error al actualizar contratante:', error);
       toast.error('Error al actualizar el contratante');
     } finally {
       setIsSubmitting(false);

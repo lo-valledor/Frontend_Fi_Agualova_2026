@@ -61,7 +61,6 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
       error: null
     };
   } catch (error) {
-    console.error('Error en clientLoader de roles y permisos:', error);
     return {
       roles: [],
       menus: [],

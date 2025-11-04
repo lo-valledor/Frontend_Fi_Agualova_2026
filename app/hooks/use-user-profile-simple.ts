@@ -33,7 +33,6 @@ export function useUserProfileSimple(): UseUserProfileSimpleReturn {
 
         if (response.error) {
           // Si hay error, crear datos simulados
-          console.warn('Error al obtener usuario:', response.error);
           const mockUserData = userService.createMockUserData(user);
           setUserData(mockUserData);
         } else {
@@ -43,7 +42,6 @@ export function useUserProfileSimple(): UseUserProfileSimpleReturn {
         const errorMessage =
           err instanceof Error ? err.message : 'Error desconocido';
         setError(errorMessage);
-        console.error('Error al obtener perfil del usuario:', errorMessage);
 
         // Fallback: crear datos simulados
         if (user) {
@@ -72,7 +70,6 @@ export function useUserProfileSimple(): UseUserProfileSimpleReturn {
 
         if (response.error) {
           // Si hay error en la API, actualizar localmente
-          console.warn('Error al actualizar en API:', response.error);
           const updatedUserData = {
             ...userData,
             nombreDeUsuario: data.nombreDeUsuario,

@@ -161,7 +161,6 @@ export default function CorteReposicionComponent({
       document.body.removeChild(a);
       toast.success('Archivo exportado correctamente');
     } catch (error) {
-      console.error('Error al exportar Excel:', error);
       toast.error('Error al exportar el archivo');
     } finally {
       setIsExportingExcel(false);
@@ -184,7 +183,6 @@ export default function CorteReposicionComponent({
       document.body.removeChild(a);
       toast.success('Archivo exportado correctamente');
     } catch (error) {
-      console.error('Error al exportar Excel corte:', error);
       toast.error('Error al exportar el archivo');
     } finally {
       setIsExportingCorte(false);
@@ -212,7 +210,6 @@ export default function CorteReposicionComponent({
       window.URL.revokeObjectURL(url);
       toast.success('Facturas impagas exportadas correctamente');
     } catch (error) {
-      console.error('Error al exportar facturas impagas:', error);
       toast.error('Error al exportar las facturas impagas');
     } finally {
       setIsExportingFacturas(false);
@@ -230,7 +227,6 @@ export default function CorteReposicionComponent({
         toast.success(`Se encontraron ${res.data.length} registros`);
       }
     } catch (error) {
-      console.error('Error al buscar datos de corte y reposición:', error);
       toast.error('Error al buscar los datos de corte y reposición.');
     } finally {
       setIsSearching(false);
@@ -248,7 +244,6 @@ export default function CorteReposicionComponent({
         toast.error('Error al activar la actualización.');
       }
     } catch (error) {
-      console.error('Error al activar la actualización:', error);
       toast.error('Error al activar la actualización.');
     } finally {
       setIsActivating(false);
@@ -266,7 +261,6 @@ export default function CorteReposicionComponent({
         toast.error('Error al iniciar el proceso de revisión.');
       }
     } catch (error) {
-      console.error('Error al iniciar el proceso de revisión:', error);
       toast.error('Error al iniciar el proceso de revisión.');
     } finally {
       setIsStarting(false);
@@ -285,7 +279,6 @@ export default function CorteReposicionComponent({
         toast.error('Error al finalizar el proceso de revisión.');
       }
     } catch (error) {
-      console.error('Error al finalizar el proceso:', error);
       toast.error('Error al finalizar el proceso.');
     } finally {
       setIsFinalizing(false);

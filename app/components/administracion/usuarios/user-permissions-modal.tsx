@@ -51,7 +51,6 @@ export function UserPermissionsModal({
       );
       setPermisos(response.data as PermisoUsuario[]);
     } catch (error: any) {
-      console.error('Error al obtener permisos:', error);
       toast.error(
         error.response?.data?.message ||
           error.message ||

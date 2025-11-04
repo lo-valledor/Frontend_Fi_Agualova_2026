@@ -69,7 +69,6 @@ export default function ClavesComponent({
           toast.success('Clave eliminada exitosamente');
           revalidator.revalidate();
         } catch (error) {
-          console.error('Error al eliminar clave:', error);
           toast.error('Error al eliminar la clave');
         }
       }

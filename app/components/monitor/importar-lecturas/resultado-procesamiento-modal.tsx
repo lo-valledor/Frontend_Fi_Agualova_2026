@@ -77,7 +77,6 @@ export function ResultadoProcesamientoModal({
         hour12: false
       });
     } catch (error) {
-      console.error('Error al formatear fecha:', error);
       return fechaString;
     }
   };
@@ -154,7 +153,6 @@ export function ResultadoProcesamientoModal({
 
       toast.success('Archivo Excel exportado correctamente');
     } catch (error) {
-      console.error('Error al exportar a Excel:', error);
       toast.error('Error al exportar el archivo Excel');
     }
   };

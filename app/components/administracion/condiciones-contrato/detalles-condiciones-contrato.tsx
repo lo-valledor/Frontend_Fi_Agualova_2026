@@ -100,7 +100,6 @@ export default function DetallesCondicionesContrato({
         setCondicion(response.data as GetCondicionesContratoPorId);
         setError(null);
       } catch (err) {
-        console.error(
           'Error al cargar los detalles de la condición de contrato:',
           err
         );

@@ -55,7 +55,6 @@ export function DatePicker({
       }
       return isValid(parsedDate) ? parsedDate : undefined;
     } catch (error) {
-      console.error('Error al parsear la fecha:', error);
       return undefined;
     }
   }, [date]);

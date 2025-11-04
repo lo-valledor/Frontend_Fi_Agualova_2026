@@ -92,7 +92,6 @@ export default function CrearMedidorComponent({
         duration: 2000
       });
     } catch (error) {
-      console.error('Error al copiar ID del medidor:', error);
       toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
     }
   };
@@ -200,10 +199,6 @@ export default function CrearMedidorComponent({
 
   // Manejo de errores HTTP
   const handleHttpError = (error: any) => {
-    console.error('❌ Error completo al crear medidor:', error);
-    console.error('❌ Error response:', error.response);
-    console.error('❌ Error data:', error.response?.data);
-
     const errorMessages: Record<number, string> = {
       500: 'Error interno del servidor. Verifica que todos los datos sean válidos.',
       400: 'Datos inválidos. Revisa la información ingresada.',
@@ -235,12 +230,9 @@ export default function CrearMedidorComponent({
 
       const submitData = prepareSubmitData();
 
-      console.log('📤 [DEBUG] Payload enviado:', submitData);
       const result = await administracionService.crearMedidor(submitData);
-      console.log('📨 [DEBUG] Respuesta del backend:', result);
 
       if (result.error) {
-        console.error('❌ Error del servicio:', result.error);
         toast.error(result.error || 'Error al crear el medidor');
         return;
       }
@@ -278,7 +270,6 @@ export default function CrearMedidorComponent({
       });
       setModalExito(true);
     } catch (error: any) {
-      console.error('❌ Error en handleSubmit:', error);
       handleHttpError(error);
     } finally {
       setIsSubmitting(false);

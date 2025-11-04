@@ -41,14 +41,12 @@ export function useUserProfile(): UseUserProfileReturn {
           setUserData(usuarioEncontrado);
         } else {
           // Si no se encuentra, crear datos simulados basados en el token
-          console.warn(
             'Usuario no encontrado en la lista, usando datos del token'
           );
           throw new Error('Usuario no encontrado');
         }
       } catch (_apiError) {
         // Fallback: crear datos simulados basados en el token
-        console.warn(
           'No se pudo obtener datos del usuario desde la API, usando datos del token'
         );
 
@@ -68,7 +66,6 @@ export function useUserProfile(): UseUserProfileReturn {
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Error desconocido');
       setError(error);
-      console.error('Error al obtener perfil del usuario:', error);
     } finally {
       setIsLoading(false);
     }
@@ -112,7 +109,6 @@ export function useUserProfile(): UseUserProfileReturn {
           }
         } catch (_apiError) {
           // Fallback: actualizar solo localmente
-          console.warn(
             'No se pudo actualizar en la API, actualizando solo localmente'
           );
           setUserData(prev =>

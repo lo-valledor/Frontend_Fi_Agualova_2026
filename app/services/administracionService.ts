@@ -813,7 +813,6 @@ class AdministracionService {
         error: null
       };
     } catch (error: any) {
-      console.error('Error al crear contrato:', error);
       return {
         data: null,
         error:
@@ -849,16 +848,11 @@ class AdministracionService {
         error: null
       };
     } catch (error: any) {
-      console.error('Error al modificar contrato:', error);
-
       // Extraer información detallada del error
       let errorMessage: string;
 
       if (error.response) {
         // Error de respuesta del servidor (4xx, 5xx)
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-        console.error('Error response headers:', error.response.headers);
 
         errorMessage =
           error.response.data?.message ||
@@ -1093,7 +1087,6 @@ class AdministracionService {
         error: null
       };
     } catch (error: any) {
-      console.error('Error al modificar medidor:', error);
       return {
         data: null,
         error:
@@ -1129,7 +1122,6 @@ class AdministracionService {
         error: null
       };
     } catch (error: any) {
-      console.error('Error al crear contratante:', error);
       return {
         data: null,
         error:
@@ -1169,7 +1161,6 @@ class AdministracionService {
         error: null
       };
     } catch (error: any) {
-      console.error('Error al sincronizar propietarios:', error);
       return {
         data: null,
         error:

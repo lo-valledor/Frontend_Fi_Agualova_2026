@@ -283,7 +283,6 @@ export function useExportPDF() {
         duration: 4000
       });
     } catch (error) {
-      console.error('Error al generar PDF:', error);
       toast.error('Error al generar el PDF', {
         description: 'Inténtalo de nuevo en unos momentos'
       });

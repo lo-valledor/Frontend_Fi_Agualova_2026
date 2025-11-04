@@ -210,8 +210,6 @@ export default function RevisarPrecioComponent({
         toast.error('Respuesta inválida del servidor');
       }
     } catch (error: any) {
-      console.error('Error al validar usuario:', error);
-
       // Manejo específico de errores de validación vs errores de sesión
       if (error.response?.status === 401) {
         // Verificar si es un error de contraseña incorrecta vs sesión expirada
@@ -304,13 +302,8 @@ export default function RevisarPrecioComponent({
             confirmacionesExitosas++;
           } else {
             confirmacionesFallidas++;
-            console.warn(
-              `Error al confirmar: ${item.codigo}, status: ${response.status}`
-            );
           }
         } catch (error: any) {
-          console.error(`Error al confirmar precio ${item.codigo}:`, error);
-
           // Manejo específico de errores de autorización
           if (error.response?.status === 401) {
             const errorMessage =
@@ -327,9 +320,6 @@ export default function RevisarPrecioComponent({
               errorMessage.toLowerCase().includes('permisos')
             ) {
               // Error de autorización específico - continuar con otros registros
-              console.warn(
-                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`
-              );
             } else {
               // Error de sesión expirada - detener proceso
               toast.error(
@@ -355,13 +345,8 @@ export default function RevisarPrecioComponent({
             confirmacionesExitosas++;
           } else {
             confirmacionesFallidas++;
-            console.warn(
-              `Error al confirmar: ${item.codigo}, status: ${response.status}`
-            );
           }
         } catch (error: any) {
-          console.error(`Error al confirmar precio ${item.codigo}:`, error);
-
           // Manejo específico de errores de autorización
           if (error.response?.status === 401) {
             const errorMessage =
@@ -378,9 +363,6 @@ export default function RevisarPrecioComponent({
               errorMessage.toLowerCase().includes('permisos')
             ) {
               // Error de autorización específico - continuar con otros registros
-              console.warn(
-                `Sin permisos para confirmar ${item.codigo}: ${errorMessage}`
-              );
             } else {
               // Error de sesión expirada - detener proceso
               toast.error(
@@ -412,15 +394,11 @@ export default function RevisarPrecioComponent({
       }
 
       if (confirmacionesFallidas > 0) {
-        console.warn(
-          `Total de confirmaciones fallidas: ${confirmacionesFallidas}`
-        );
         toast.error(
           `No se pudieron confirmar ${confirmacionesFallidas} registros`
         );
       }
     } catch (error) {
-      console.error('Error al confirmar cambios:', error);
       toast.error('Error al confirmar cambios');
     } finally {
       setIsConfirming(false);
@@ -432,7 +410,6 @@ export default function RevisarPrecioComponent({
       // setIsLoadingCiclo(true);
       await onCicloChange(nuevoCiclo);
     } catch (error) {
-      console.error('Error al cambiar el ciclo:', error);
       toast.error('Error al cambiar el ciclo');
     } finally {
       //    setIsLoadingCiclo(false);

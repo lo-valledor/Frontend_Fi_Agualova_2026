@@ -95,7 +95,6 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
         );
       }
     } catch (error: any) {
-      console.error('Error al reabrir la medición:', error);
 
       // Mostrar mensaje de error más detallado
       if (error.response) {

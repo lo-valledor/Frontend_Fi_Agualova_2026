@@ -126,8 +126,6 @@ export default function DialogModificarPrecio({
         toast.error('No se pudo modificar el precio');
       }
     } catch (error: any) {
-      console.error('Error al modificar precio:', error);
-
       // Manejo específico de errores de autorización vs errores de sesión
       if (error.response?.status === 401) {
         const errorMessage =

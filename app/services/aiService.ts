@@ -431,13 +431,11 @@ class AIService {
       });
 
       if (!response.ok) {
-        console.warn('Servicio de IA no disponible');
         return null;
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error verificando servicio de IA:', error);
       return null;
     }
   }
@@ -457,7 +455,6 @@ class AIService {
         { method: 'POST' }
       );
     } catch (error) {
-      console.error('Error obteniendo proyecciones IA:', error);
       return null;
     }
   }
@@ -474,7 +471,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error obteniendo estado modelo:', e);
       return null;
     }
   }
@@ -491,7 +487,6 @@ class AIService {
         { method: 'POST' }
       );
     } catch (e) {
-      console.error('Error reentrenando modelo:', e);
       return null;
     }
   }
@@ -508,7 +503,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error obteniendo info cache:', e);
       return null;
     }
   }
@@ -525,7 +519,6 @@ class AIService {
         { method: 'DELETE' }
       );
     } catch (e) {
-      console.error('Error invalidando cache:', e);
       return null;
     }
   }
@@ -541,7 +534,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error verificando salud cache:', e);
       return null;
     }
   }
@@ -557,7 +549,6 @@ class AIService {
         { method: 'POST' }
       );
     } catch (e) {
-      console.error('Error ejecutando preentrenamiento global:', e);
       return null;
     }
   }
@@ -581,7 +572,6 @@ class AIService {
         }
       );
     } catch (e) {
-      console.error('Error preentrenando contrato:', e);
       return null;
     }
   }
@@ -597,7 +587,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error obteniendo estado scheduler:', e);
       return null;
     }
   }
@@ -613,7 +602,6 @@ class AIService {
       );
       return true;
     } catch (e) {
-      console.error('Error ejecutando job preentrenamiento:', e);
       return false;
     }
   }
@@ -628,7 +616,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error obteniendo db-status diagnóstico:', e);
       return null;
     }
   }
@@ -643,7 +630,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error obteniendo coverage contratos:', e);
       return null;
     }
   }
@@ -661,7 +647,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error obteniendo detalle diagnóstico contrato:', e);
       return null;
     }
   }
@@ -680,7 +665,6 @@ class AIService {
         { method: 'POST', body: JSON.stringify(request) }
       );
     } catch (error) {
-      console.error('Error en detección de anomalías:', error);
       return null;
     }
   }
@@ -696,7 +680,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error estado detector anomalías:', e);
       return null;
     }
   }
@@ -714,7 +697,6 @@ class AIService {
         { method: 'POST', body: JSON.stringify(items) }
       );
     } catch (e) {
-      console.error('Error análisis batch anomalías:', e);
       return null;
     }
   }
@@ -733,7 +715,6 @@ class AIService {
         { method: 'POST', body: JSON.stringify(request) }
       );
     } catch (error) {
-      console.error('Error en predicción de lectura:', error);
       return null;
     }
   }
@@ -749,7 +730,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error estado predictor lecturas:', e);
       return null;
     }
   }
@@ -767,7 +747,6 @@ class AIService {
         { method: 'POST', body: JSON.stringify(requests) }
       );
     } catch (e) {
-      console.error('Error batch predicción lecturas:', e);
       return null;
     }
   }
@@ -783,7 +762,6 @@ class AIService {
         { method: 'GET' }
       );
     } catch (e) {
-      console.error('Error obteniendo estadísticas nicho:', e);
       return null;
     }
   }
@@ -808,7 +786,6 @@ class AIService {
       const data = await response.json();
       return data.anomalias || [];
     } catch (error) {
-      console.error('Error obteniendo anomalías pendientes:', error);
       return null;
     }
   }
@@ -838,7 +815,6 @@ class AIService {
 
       return response.ok;
     } catch (error) {
-      console.error('Error marcando anomalía como revisada:', error);
       return false;
     }
   }
@@ -858,7 +834,6 @@ class AIService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error obteniendo estadísticas IA:', error);
       return null;
     }
   }

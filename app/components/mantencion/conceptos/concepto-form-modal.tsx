@@ -86,14 +86,6 @@ export default function ConceptoFormModal({
 
   React.useEffect(() => {
     if (isOpen) {
-      console.log('🔍 DEBUG - Concepto:', concepto);
-      console.log('🔍 DEBUG - AsociadoId:', concepto?.asociadoId);
-      console.log(
-        '🔍 DEBUG - AsociadoDescripcion:',
-        concepto?.asociadoDescripcion
-      );
-      console.log('🔍 DEBUG - ComboAsociados:', comboAsociadoConceptos);
-
       // Buscar el asociadoId a partir de la descripción si no viene el ID
       let asociadoIdFinal = concepto?.asociadoId;
 
@@ -103,14 +95,8 @@ export default function ConceptoFormModal({
         );
         if (asociadoEncontrado) {
           asociadoIdFinal = asociadoEncontrado.id;
-          console.log(
-            '🔍 DEBUG - Asociado encontrado por descripción:',
-            asociadoEncontrado
-          );
         }
       }
-
-      console.log('🔍 DEBUG - AsociadoId final:', asociadoIdFinal);
 
       form.reset({
         denominacion: concepto?.denominacion || '',
@@ -135,7 +121,6 @@ export default function ConceptoFormModal({
       onSuccess();
       onClose();
     } catch (error) {
-      console.error('Error al guardar el concepto:', error);
     }
   };
 
@@ -259,12 +244,6 @@ export default function ConceptoFormModal({
                   name='asociadoId'
                   control={form.control}
                   render={({ field }) => {
-                    console.log('🔍 DEBUG Field value:', field.value);
-                    console.log(
-                      '🔍 DEBUG Field value type:',
-                      typeof field.value
-                    );
-
                     // Filtrar el elemento "Seleccione.." (id: 0)
                     const validAsociados = comboAsociadoConceptos.filter(
                       a => a.id !== 0
@@ -274,9 +253,6 @@ export default function ConceptoFormModal({
                       field.value != null && field.value !== 0
                         ? validAsociados.find(a => a.id === field.value)
                         : null;
-
-                    console.log('🔍 DEBUG selectedAsociado:', selectedAsociado);
-                    console.log('🔍 DEBUG validAsociados:', validAsociados);
 
                     return (
                       <Select
@@ -290,7 +266,6 @@ export default function ConceptoFormModal({
                         }
                         onChange={(selectedOption: any) => {
                           const newValue = selectedOption?.value ?? undefined;
-                          console.log('🔍 DEBUG onChange newValue:', newValue);
                           field.onChange(newValue);
                         }}
                         options={validAsociados.map(asociado => ({

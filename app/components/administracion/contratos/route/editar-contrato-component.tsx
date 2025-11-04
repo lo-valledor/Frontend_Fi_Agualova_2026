@@ -530,13 +530,6 @@ export default function EditarContratoComponent({
         ? convertirFechaParaBackend(formData.fechaTermino)
         : '';
 
-      console.log('📅 [DEBUG] Fechas originales del formulario:');
-      console.log('  - Fecha Inicio:', formData.fechaInicio);
-      console.log('  - Fecha Termino:', formData.fechaTermino);
-      console.log('📅 [DEBUG] Fechas convertidas para backend:');
-      console.log('  - Fecha Inicio:', fechaInicioBackend);
-      console.log('  - Fecha Termino:', fechaTerminoBackend);
-
       // Preparar los datos para la API usando ModificarContratoProps
       const submitData: any = {
         codigo: contratoIdFromUrl,
@@ -558,18 +551,10 @@ export default function EditarContratoComponent({
         sinCorte: formData.liberadoCorte ? 1 : 0
       };
 
-      console.log(
-        '📤 [DEBUG] Payload completo a enviar:',
-        JSON.stringify(submitData, null, 2)
-      );
-
       // Enviar al backend
       const result = await administracionService.modificarContrato(submitData);
 
-      console.log('📥 [DEBUG] Respuesta del backend:', result);
-
       if (result.error) {
-        console.error('❌ [DEBUG] Error en respuesta:', result.error);
         toast.error(result.error || 'Error al actualizar el contrato');
         return;
       }

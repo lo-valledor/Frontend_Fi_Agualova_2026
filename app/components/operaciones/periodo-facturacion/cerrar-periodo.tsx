@@ -76,7 +76,6 @@ export default function CerrarPeriodo({
         toast.error('Error al cerrar el periodo');
       }
     } catch (error) {
-      console.error('Error al cerrar periodo:', error);
       toast.error('Error al cerrar el periodo');
     } finally {
       setIsLoading(false);

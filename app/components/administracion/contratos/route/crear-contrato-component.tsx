@@ -155,7 +155,6 @@ export default function CrearContratoComponent({
           setTarifas(tarifasResult.data);
         }
       } catch (error) {
-        console.error('Error cargando datos adicionales:', error);
         toast.error('Error al cargar datos del formulario');
       }
     };
@@ -180,8 +179,6 @@ export default function CrearContratoComponent({
         duration: 2000
       });
     } catch (error) {
-      console.error('Error al copiar ID del contrato:', error);
-      // Fallback: intentar seleccionar el texto si el portapapeles falla
       toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
     }
   };
@@ -533,7 +530,6 @@ export default function CrearContratoComponent({
       return propietarioCliente.rut;
     }
 
-    console.warn('Cliente no encontrado, usando RUT del propietario.');
     return propietarioRut;
   };
 
@@ -582,10 +578,6 @@ export default function CrearContratoComponent({
 
   // Manejo de errores HTTP
   const handleHttpError = (error: any) => {
-    console.error('❌ Error completo al crear contrato:', error);
-    console.error('❌ Error response:', error.response);
-    console.error('❌ Error data:', error.response?.data);
-
     const errorMessages: Record<number, string> = {
       500: 'Error interno del servidor. Verifica que todos los datos sean válidos.',
       400: 'Datos inválidos. Revisa la información ingresada.',
@@ -631,7 +623,6 @@ export default function CrearContratoComponent({
       const result = await administracionService.crearContrato(submitData);
 
       if (result.error) {
-        console.error('❌ Error del servicio:', result.error);
         toast.error(result.error || 'Error al crear el contrato');
         return;
       }
@@ -666,7 +657,6 @@ export default function CrearContratoComponent({
 
       // No navegar automáticamente - el usuario decide cuándo salir
     } catch (error: any) {
-      console.error('❌ Error en handleSubmit:', error);
       handleHttpError(error);
     } finally {
       setIsSubmitting(false);

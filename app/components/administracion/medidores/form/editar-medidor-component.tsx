@@ -238,7 +238,6 @@ export default function EditarMedidorComponent({
       const result = await administracionService.modificarMedidor(submitData);
 
       if (result.error) {
-        console.error('Error del servicio:', result.error);
         toast.error(result.error || 'Error al modificar el medidor');
         return;
       }
@@ -250,7 +249,6 @@ export default function EditarMedidorComponent({
         onSuccess(medidorId);
       }
     } catch (error: any) {
-      console.error('❌ [JSON-DEBUG] Error en handleFormSubmit:', {
         error,
         message: error.message,
         stack: error.stack

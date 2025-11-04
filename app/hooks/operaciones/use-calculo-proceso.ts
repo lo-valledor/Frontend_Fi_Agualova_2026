@@ -74,7 +74,6 @@ export function useCalculoProceso({
         await api.post('generar-detalle-factura', requestBody);
         successCount++;
       } catch (error: any) {
-        console.error(`Error al generar detalle de factura para lectura ${lecturaId}:`, error);
         errorCount++;
       }
     }

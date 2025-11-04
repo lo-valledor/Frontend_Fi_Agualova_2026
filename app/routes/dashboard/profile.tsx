@@ -134,7 +134,6 @@ export default function ProfilePage() {
         nuevaContrasena: ''
       }));
     } catch (error: any) {
-      console.error('Error al actualizar perfil:', error);
       const errorMessage =
         error?.response?.data?.message ||
         error?.message ||

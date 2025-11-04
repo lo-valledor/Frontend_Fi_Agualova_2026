@@ -54,7 +54,6 @@ export default function DialogAgregarPrecios({
         if (onSuccess) onSuccess();
       }
     } catch (error) {
-      console.error('Error al agregar precios:', error);
       toast.error('Error al agregar los precios');
     } finally {
       setIsLoading(false);
