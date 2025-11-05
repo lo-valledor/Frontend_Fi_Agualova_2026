@@ -24,7 +24,12 @@ export function useExportData<T extends Record<string, any>>() {
   const formatDateForExport = (date: string | null | undefined): string => {
     if (!date) return '';
     try {
-      return new Date(date).toLocaleDateString('es-CL');
+      const dateObj = new Date(date);
+      // Verificar si la fecha es válida
+      if (Number.isNaN(dateObj.getTime())) {
+        return '';
+      }
+      return dateObj.toLocaleDateString('es-CL');
     } catch {
       return '';
     }
@@ -190,6 +195,7 @@ export function useExportData<T extends Record<string, any>>() {
         duration: 4000
       });
     } catch (error) {
+      console.error('Error durante la exportación:', error);
       toast.error('Error al exportar los datos', {
         description: 'Inténtalo de nuevo en unos momentos'
       });

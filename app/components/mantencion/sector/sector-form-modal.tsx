@@ -136,6 +136,7 @@ export default function SectorFormModal({
       }
       onSuccess();
     } catch (error) {
+      console.error(error);
       toast.error(
         mode === 'add'
           ? 'Error al crear el sector'

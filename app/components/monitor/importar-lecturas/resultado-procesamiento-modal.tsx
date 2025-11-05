@@ -77,6 +77,7 @@ export function ResultadoProcesamientoModal({
         hour12: false
       });
     } catch (error) {
+      console.error('Error al formatear la fecha:', error);
       return fechaString;
     }
   };
@@ -91,7 +92,10 @@ export function ResultadoProcesamientoModal({
         ['Mensaje:', resultado.mensaje],
         ['Registros Actualizados:', resultado.registrosActualizados],
         ['Período:', resultado.periodo],
-        ['Fecha de Procesamiento:', formatearFechaLocal(resultado.fechaProcesamiento)],
+        [
+          'Fecha de Procesamiento:',
+          formatearFechaLocal(resultado.fechaProcesamiento)
+        ],
         [''],
         ['DETALLES DEL PROCESAMIENTO']
       ];
@@ -153,6 +157,7 @@ export function ResultadoProcesamientoModal({
 
       toast.success('Archivo Excel exportado correctamente');
     } catch (error) {
+      console.error('Error al exportar a Excel:', error);
       toast.error('Error al exportar el archivo Excel');
     }
   };

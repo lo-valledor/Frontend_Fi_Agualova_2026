@@ -241,6 +241,7 @@ export default function ImportarLecturasComponent() {
         toast.success('Archivo válido - listo para cargar');
       }
     } catch (err) {
+      console.error('Error al validar el archivo Excel:', err);
       const errorMsg =
         'Error al validar el archivo Excel. Verifica que el formato sea correcto.';
       setError(errorMsg);

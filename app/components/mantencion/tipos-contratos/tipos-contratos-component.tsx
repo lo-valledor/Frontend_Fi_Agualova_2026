@@ -65,6 +65,7 @@ export default function TiposContratosComponent({
         toast.success('Tipo de contrato eliminado exitosamente');
         revalidator.revalidate();
       } catch (error) {
+        console.error('Error al eliminar el tipo de contrato:', error);
         toast.error('Error al eliminar el tipo de contrato');
       }
     }

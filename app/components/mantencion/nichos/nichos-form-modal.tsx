@@ -93,6 +93,7 @@ export default function NichoFormModal({
 
         setSectores(result.data);
       } catch (error) {
+        console.error(error);
         toast.error('No se pudieron cargar los sectores.');
       } finally {
         setIsLoadingSectores(false);
@@ -157,6 +158,7 @@ export default function NichoFormModal({
       );
       onSuccess();
     } catch (error) {
+      console.error(error);
       toast.error(
         mode === 'add'
           ? 'Error al crear el nicho'

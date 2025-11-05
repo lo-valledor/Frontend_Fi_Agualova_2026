@@ -208,6 +208,7 @@ export default function CambioMedidorComponent() {
         }
       }
     } catch (error) {
+      console.error('Error al buscar medidor antiguo:', error);
       toast.error('No se pudo obtener la información del medidor');
     } finally {
       setIsLoading(false);
@@ -259,6 +260,10 @@ export default function CambioMedidorComponent() {
         setCurrentStep(3);
       }
     } catch (error) {
+      console.error(
+        'Error al obtener la información del nuevo medidor:',
+        error
+      );
       toast.error('No se pudo obtener la información del nuevo medidor');
     } finally {
       setIsLoading(false);
