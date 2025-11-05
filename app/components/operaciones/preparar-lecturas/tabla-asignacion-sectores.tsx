@@ -129,6 +129,69 @@ export default function TablaAsignacionSectores({
     setSelectAll(!selectAll);
   };
 
+  // Helper function to extract error message
+  const extractErrorMessage = (error: any): string => {
+    if (error.response?.data?.mensaje) {
+      return error.response.data.mensaje;
+    }
+    if (error.response?.data) {
+      return 'Sin detalles en la respuesta';
+    }
+    return error.message || 'Error desconocido';
+  };
+
+  // Helper function to process a single nicho
+  const procesarNicho = async (
+    nicho: NichoSeleccionado
+  ): Promise<{ success: boolean; message: string }> => {
+    const requestData: PrepararLecturasRequest = {
+      nichoId: nicho.nichoId,
+      cantLecturas: nicho.cantidad,
+      cicloFact: cicloFacturable,
+      periodo: periodo
+    };
+
+    try {
+      const response = await api.post('/generar-proceso-lecturas', requestData);
+
+      if (response.status >= 200 && response.status < 300) {
+        return {
+          success: true,
+          message: `Nicho ${nicho.nichoId} (${nicho.descripcion}) procesado correctamente`
+        };
+      }
+
+      const errorMessage =
+        (response.data && typeof response.data === 'object' && 'mensaje' in response.data
+          ? (response.data as { mensaje?: string }).mensaje
+          : undefined) || 'Sin detalles en la respuesta';
+      return {
+        success: false,
+        message: `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: `Error al procesar nicho ${nicho.nichoId}: ${extractErrorMessage(error)}`
+      };
+    }
+  };
+
+  // Helper function to show results toast
+  const mostrarResultados = (results: { success: number; errors: number }) => {
+    if (results.errors === 0) {
+      toast.success(`${results.success} nichos procesados correctamente`);
+    } else if (results.success === 0) {
+      toast.error(
+        `No se pudo procesar ningún nicho. ${results.errors} errores.`
+      );
+    } else {
+      toast.warning(
+        `${results.success} nichos procesados. ${results.errors} con errores.`
+      );
+    }
+  };
+
   // Función para preparar lecturas de los nichos seleccionados
   const prepararLecturas = async () => {
     if (selectedNichos.length === 0) {
@@ -145,82 +208,21 @@ export default function TablaAsignacionSectores({
       setIsSubmitting(true);
       setSubmitResults({ success: 0, errors: 0, messages: [] });
 
-      const results = {
-        success: 0,
-        errors: 0,
-        messages: [] as string[]
-      };
+      const results = { success: 0, errors: 0, messages: [] as string[] };
 
       for (const nicho of selectedNichos) {
-        const requestData: PrepararLecturasRequest = {
-          nichoId: nicho.nichoId,
-          cantLecturas: nicho.cantidad,
-          cicloFact: cicloFacturable,
-          periodo: periodo
-        };
+        const resultado = await procesarNicho(nicho);
 
-        try {
-          const response = await api.post(
-            '/generar-proceso-lecturas',
-            requestData
-          );
-
-          if (response.status >= 200 && response.status < 300) {
-            results.success++;
-            results.messages.push(
-              `Nicho ${nicho.nichoId} (${nicho.descripcion}) procesado correctamente`
-            );
-          } else {
-            results.errors++;
-            let errorMessage = 'Sin detalles';
-            if (response.data && typeof response.data === 'object') {
-              errorMessage =
-                (response.data as any).mensaje ||
-                'Sin detalles en la respuesta';
-            }
-            results.messages.push(
-              `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`
-            );
-          }
-        } catch (error: any) {
+        if (resultado.success) {
+          results.success++;
+        } else {
           results.errors++;
-          let errorMessage = 'Error desconocido';
-
-          if (error.response && typeof error.response === 'object') {
-            if (
-              error.response.data &&
-              typeof error.response.data === 'object'
-            ) {
-              errorMessage =
-                (error.response.data as any).mensaje ||
-                error.message ||
-                'Error en la respuesta';
-            } else {
-              errorMessage = error.message || 'Error en la solicitud';
-            }
-          } else {
-            errorMessage = error.message || 'Error al procesar la solicitud';
-          }
-
-          results.messages.push(
-            `Error al procesar nicho ${nicho.nichoId}: ${errorMessage}`
-          );
         }
+        results.messages.push(resultado.message);
       }
 
       setSubmitResults(results);
-
-      if (results.errors === 0) {
-        toast.success(`${results.success} nichos procesados correctamente`);
-      } else if (results.success === 0) {
-        toast.error(
-          `No se pudo procesar ningún nicho. ${results.errors} errores.`
-        );
-      } else {
-        toast.warning(
-          `${results.success} nichos procesados. ${results.errors} con errores.`
-        );
-      }
+      mostrarResultados(results);
 
       if (results.errors === 0) {
         setSelectedNichos([]);
@@ -238,6 +240,58 @@ export default function TablaAsignacionSectores({
       setIsSubmitting(false);
     }
   };
+
+  // Helper function to get result type
+  const getResultType = () => {
+    if (submitResults.errors === 0) return 'success';
+    if (submitResults.success === 0) return 'error';
+    return 'warning';
+  };
+
+  // Helper function to get CSS classes based on result type
+  const getResultClasses = () => {
+    const resultType = getResultType();
+
+    const classes = {
+      container: {
+        success: 'bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800',
+        error: 'bg-linear-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800',
+        warning: 'bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800'
+      },
+      iconWrapper: {
+        success: 'bg-green-100 dark:bg-green-800/50',
+        error: 'bg-red-100 dark:bg-red-800/50',
+        warning: 'bg-amber-100 dark:bg-amber-800/50'
+      },
+      text: {
+        success: 'text-green-700 dark:text-green-300',
+        error: 'text-red-700 dark:text-red-300',
+        warning: 'text-amber-700 dark:text-amber-300'
+      }
+    };
+
+    return {
+      container: classes.container[resultType],
+      iconWrapper: classes.iconWrapper[resultType],
+      text: classes.text[resultType]
+    };
+  };
+
+  // Helper function to get the appropriate icon
+  const getResultIcon = () => {
+    const resultType = getResultType();
+    const iconProps = 'h-5 w-5';
+
+    if (resultType === 'success') {
+      return <CheckCircle2 className={`${iconProps} text-green-600 dark:text-green-400`} />;
+    }
+    if (resultType === 'error') {
+      return <AlertCircle className={`${iconProps} text-red-600 dark:text-red-400`} />;
+    }
+    return <Info className={`${iconProps} text-amber-600 dark:text-amber-400`} />;
+  };
+
+  const resultClasses = getResultClasses();
 
   return (
     <div className='space-y-4'>
@@ -275,7 +329,7 @@ export default function TablaAsignacionSectores({
               !hasPermission
             }
             title={
-              !hasPermission ? 'No tiene permisos para preparar lecturas' : ''
+              hasPermission ? '' : 'No tiene permisos para preparar lecturas'
             }
             className='gap-2 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 w-full sm:w-auto'
             size='sm'
@@ -289,7 +343,7 @@ export default function TablaAsignacionSectores({
               {isSubmitting ? 'Procesando...' : 'Preparar Lecturas'}
             </span>
             <span className='sm:hidden'>
-              {isSubmitting ? '...' : 'Preparar'}
+              {isSubmitting ? 'Procesando...' : 'Preparar'}
             </span>
           </Button>
         </div>
@@ -297,48 +351,20 @@ export default function TablaAsignacionSectores({
 
       {/* Resultados del envío */}
       {submitResults.messages.length > 0 && (
-        <div
-          className={`rounded-xl p-4 border ${
-            submitResults.errors === 0
-              ? 'bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800'
-              : submitResults.success === 0
-                ? 'bg-linear-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800'
-                : 'bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800'
-          }`}
-        >
+        <div className={`rounded-xl p-4 border ${resultClasses.container}`}>
           <div className='flex gap-3 items-start mb-3'>
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                submitResults.errors === 0
-                  ? 'bg-green-100 dark:bg-green-800/50'
-                  : submitResults.success === 0
-                    ? 'bg-red-100 dark:bg-red-800/50'
-                    : 'bg-amber-100 dark:bg-amber-800/50'
-              }`}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center ${resultClasses.iconWrapper}`}
             >
-              {submitResults.errors === 0 ? (
-                <CheckCircle2 className='h-5 w-5 text-green-600 dark:text-green-400' />
-              ) : submitResults.success === 0 ? (
-                <AlertCircle className='h-5 w-5 text-red-600 dark:text-red-400' />
-              ) : (
-                <Info className='h-5 w-5 text-amber-600 dark:text-amber-400' />
-              )}
+              {getResultIcon()}
             </div>
             <div className='flex-1'>
-              <p
-                className={`font-medium ${
-                  submitResults.errors === 0
-                    ? 'text-green-700 dark:text-green-300'
-                    : submitResults.success === 0
-                      ? 'text-red-700 dark:text-red-300'
-                      : 'text-amber-700 dark:text-amber-300'
-                }`}
-              >
+              <p className={`font-medium ${resultClasses.text}`}>
                 Resultados del proceso
               </p>
               <div className='max-h-32 overflow-y-auto mt-2 space-y-1'>
-                {submitResults.messages.map((message, index) => (
-                  <p key={index} className='text-sm text-muted-foreground'>
+                {submitResults.messages.map((message) => (
+                  <p key={message} className='text-sm text-muted-foreground'>
                     • {message}
                   </p>
                 ))}
@@ -374,7 +400,7 @@ export default function TablaAsignacionSectores({
                     aria-label='Seleccionar todos'
                     disabled={!hasPermission}
                     title={
-                      !hasPermission ? 'No tiene permisos para seleccionar' : ''
+                      hasPermission ? '' : 'No tiene permisos para seleccionar'
                     }
                   />
                 </TableHead>
@@ -398,7 +424,7 @@ export default function TablaAsignacionSectores({
                     <span className='sm:hidden'>Med</span>
                   </div>
                 </TableHead>
-                <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4 w-[80px] sm:w-[120px]'>
+                <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4 w-20 sm:w-[120px]'>
                   Estado
                 </TableHead>
               </TableRow>
@@ -418,10 +444,36 @@ export default function TablaAsignacionSectores({
                     </div>
                   </TableCell>
                 </TableRow>
-              ) : data.length > 0 ? (
-                data.map((item, index) => (
+              ) : data.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className='text-center h-32 px-4'>
+                    <div className='flex justify-center items-center flex-col gap-2 sm:gap-3'>
+                      <div className='w-12 h-12 sm:w-16 sm:h-16 bg-background rounded-xl flex items-center justify-center'>
+                        <Info className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400' />
+                      </div>
+                      <div className='text-center space-y-1'>
+                        <p className='font-medium text-sm sm:text-base'>
+                          <span className='hidden sm:inline'>
+                            No hay sectores disponibles
+                          </span>
+                          <span className='sm:hidden'>Sin sectores</span>
+                        </p>
+                        <p className='text-xs sm:text-sm text-muted-foreground'>
+                          <span className='hidden sm:inline'>
+                            Selecciona un ciclo y realiza una búsqueda
+                          </span>
+                          <span className='sm:hidden'>
+                            Realiza una búsqueda
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                data.map((item) => (
                   <TableRow
-                    key={index}
+                    key={item.nichoId}
                     className={
                       isNichoSelected(item.nichoId)
                         ? ' hover:from-emerald-50 hover:to-teal-50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 border-l-4 border-border'
@@ -435,9 +487,9 @@ export default function TablaAsignacionSectores({
                         aria-label={`Seleccionar nicho ${item.nichoId}`}
                         disabled={!hasPermission}
                         title={
-                          !hasPermission
-                            ? 'No tiene permisos para seleccionar'
-                            : ''
+                          hasPermission
+                            ? ''
+                            : 'No tiene permisos para seleccionar'
                         }
                       />
                     </TableCell>
@@ -482,32 +534,6 @@ export default function TablaAsignacionSectores({
                     </TableCell>
                   </TableRow>
                 ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className='text-center h-32 px-4'>
-                    <div className='flex justify-center items-center flex-col gap-2 sm:gap-3'>
-                      <div className='w-12 h-12 sm:w-16 sm:h-16 bg-background rounded-xl flex items-center justify-center'>
-                        <Info className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400' />
-                      </div>
-                      <div className='text-center space-y-1'>
-                        <p className='font-medium text-sm sm:text-base'>
-                          <span className='hidden sm:inline'>
-                            No hay sectores disponibles
-                          </span>
-                          <span className='sm:hidden'>Sin sectores</span>
-                        </p>
-                        <p className='text-xs sm:text-sm text-muted-foreground'>
-                          <span className='hidden sm:inline'>
-                            Selecciona un ciclo y realiza una búsqueda
-                          </span>
-                          <span className='sm:hidden'>
-                            Realiza una búsqueda
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </TableCell>
-                </TableRow>
               )}
             </TableBody>
           </Table>

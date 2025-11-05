@@ -114,36 +114,36 @@ const AdminAnalyticsComponent = () => {
         // Procesar contratos por tipo
         const contratosPorTipo: { [key: string]: number } = {};
         if (Array.isArray(contratosRes.data)) {
-          contratosRes.data.forEach((contrato: any) => {
+          for (const contrato of contratosRes.data) {
             const tipo = contrato.tipoContrato || 'Sin Tipo';
             contratosPorTipo[tipo] = (contratosPorTipo[tipo] || 0) + 1;
-          });
+          }
         }
 
         // Procesar clientes por tipo (empresa/persona)
         let empresas = 0;
         let personas = 0;
         if (Array.isArray(clientesRes.data)) {
-          clientesRes.data.forEach((cliente: any) => {
+          for (const cliente of clientesRes.data) {
             if (cliente.esEmpresa) {
               empresas++;
             } else {
               personas++;
             }
-          });
+          }
         }
 
         // Procesar medidores por tipo y estado
         const medidoresPorTipo: { [key: string]: number } = {};
         const medidoresPorEstado: { [key: string]: number } = {};
         if (Array.isArray(medidoresRes.data)) {
-          medidoresRes.data.forEach((medidor: any) => {
+          for (const medidor of medidoresRes.data) {
             const tipo = medidor.tipo || 'Sin Tipo';
             medidoresPorTipo[tipo] = (medidoresPorTipo[tipo] || 0) + 1;
 
             const estado = medidor.estado || 'Sin Estado';
             medidoresPorEstado[estado] = (medidoresPorEstado[estado] || 0) + 1;
-          });
+          }
         }
 
         // Procesar acometidas por sector
@@ -162,10 +162,10 @@ const AdminAnalyticsComponent = () => {
           }
         }
 
-        acometidasData.forEach((acometida: any) => {
+        for (const acometida of acometidasData) {
           const sector = acometida.sectorDescripcion || 'Sin Sector';
           acometidasPorSector[sector] = (acometidasPorSector[sector] || 0) + 1;
-        });
+        }
 
         setAnalyticsData({
           contratosPorTipo,
@@ -560,7 +560,7 @@ const AdminAnalyticsComponent = () => {
                           variant={getBadgeVariant(estado)}
                           className='text-xs px-1 sm:px-2'
                         >
-                          <span className='truncate max-w-[80px] sm:max-w-none'>
+                          <span className='truncate max-w-20 sm:max-w-none'>
                             {estado}
                           </span>
                         </Badge>
@@ -695,12 +695,12 @@ export default function DashboardComponent({
   lecturasPendientes,
   corte,
   limiteInvierno
-}: {
+}: Readonly<{
   periodoAbierto: PeriodoAbierto;
   lecturasPendientes: ValidarSectoresPendientes;
   corte: TotalesCorteReposicion;
   limiteInvierno: GetLimiteInvierno;
-}) {
+}>) {
   // Prefetch de rutas más frecuentes para navegación instantánea
   usePrefetchMultiple(
     [
@@ -789,7 +789,7 @@ export default function DashboardComponent({
         };
 
         if (corte && Array.isArray(corte)) {
-          corte.forEach((item: any) => {
+          for (const item of corte) {
             switch (item.codigo) {
               case 'NULL':
                 totalesCorte.pendiente = item.cantidad || 0;
@@ -807,7 +807,7 @@ export default function DashboardComponent({
                 totalesCorte.total = item.cantidad || 0;
                 break;
             }
-          });
+          }
         }
 
         // Actualizar los datos reales
@@ -828,6 +828,7 @@ export default function DashboardComponent({
           });
         }, 100);
       } catch (_error) {
+        console.error('Error processing dashboard data:', _error);
         setDashboardData(prev => ({ ...prev, loading: false }));
       }
     };

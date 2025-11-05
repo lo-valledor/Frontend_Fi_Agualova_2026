@@ -64,10 +64,10 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   // ✅ OPTIMIZACIÓN: Map de permisos para búsqueda O(1) en lugar de O(n)
   const permisosMap = useMemo(() => {
     const map = new Map<string, PermisoRolMenu>();
-    permisos.forEach(p => {
+    for (const p of permisos) {
       const key = `${p.idRol}-${p.idMenu}`;
       map.set(key, p);
-    });
+    }
     return map;
   }, [permisos]);
 
@@ -180,6 +180,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
         toast.error(`❌ Error al guardar los ${errorCount} permisos`);
       }
     } catch (_error) {
+      console.error(_error);
       toast.error('Error inesperado al guardar cambios');
     } finally {
       setIsSaving(false);
@@ -524,7 +525,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
         ) : (
           <div className='relative'>
             {/* Indicador de scroll */}
-            <div className='absolute top-0 right-0 z-20 bg-gradient-to-l from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
+            <div className='absolute top-0 right-0 z-20 bg-linear-to-l from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
             <div className='absolute top-0 left-64 z-20 bg-linear-to-r from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
 
             <div
@@ -644,9 +645,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                               </Badge>
                               <div
                                 className={`font-medium truncate ${
-                                  compactView
-                                    ? 'max-w-[160px]'
-                                    : 'max-w-[180px]'
+                                  compactView ? 'max-w-40' : 'max-w-45'
                                 }`}
                                 title={menu.nombreMenu}
                               >

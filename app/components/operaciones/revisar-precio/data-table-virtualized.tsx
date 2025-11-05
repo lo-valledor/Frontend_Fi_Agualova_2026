@@ -40,7 +40,7 @@ export function DataTableVirtualized<TData, TValue>({
   rowId = 'codigo' as keyof TData,
   enableSelection = false,
   isLoading = false
-}: DataTableVirtualizedProps<TData, TValue>) {
+}: Readonly<DataTableVirtualizedProps<TData, TValue>>) {
   // Estado interno para la selección de filas
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -50,9 +50,9 @@ export function DataTableVirtualized<TData, TValue>({
     if (!enableSelection || !selectedRowIds || !rowId) return;
 
     const newRowSelection: RowSelectionState = {};
-    selectedRowIds.forEach(id => {
+    for (const id of selectedRowIds) {
       newRowSelection[id] = true;
-    });
+    }
     setRowSelection(newRowSelection);
   }, [selectedRowIds, enableSelection, rowId]);
 
@@ -113,10 +113,10 @@ export function DataTableVirtualized<TData, TValue>({
     <div className='space-y-2'>
       {/* Información de resultados */}
       <div className='text-xs text-muted-foreground px-1'>
-        Mostrando {rows.length} registro{rows.length !== 1 ? 's' : ''}
+        Mostrando {rows.length} registro{rows.length === 1 ? '' : 's'}
         {enableSelection &&
           Object.keys(rowSelection).length > 0 &&
-          ` (${Object.keys(rowSelection).length} seleccionado${Object.keys(rowSelection).length !== 1 ? 's' : ''})`}
+          ` (${Object.keys(rowSelection).length} seleccionado${Object.keys(rowSelection).length === 1 ? '' : 's'})`}
       </div>
 
       {/* Table con virtualización */}
