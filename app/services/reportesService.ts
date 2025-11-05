@@ -128,6 +128,7 @@ class ReportesService {
       const response = await api.get(endpoint);
       return this.processApiResponse<T>(response);
     } catch (error) {
+      console.error('Error durante la llamada a la API:', error);
       return [];
     }
   }

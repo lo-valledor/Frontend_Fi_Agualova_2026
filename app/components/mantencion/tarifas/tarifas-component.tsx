@@ -65,6 +65,7 @@ export default function TarifasComponent({
         toast.success('Tarifa eliminada exitosamente');
         revalidator.revalidate();
       } catch (error) {
+        console.error('Error al eliminar la tarifa:', error);
         toast.error('Error al eliminar la tarifa');
       }
     }

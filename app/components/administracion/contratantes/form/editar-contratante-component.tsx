@@ -10,7 +10,6 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
-import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
 import api from '~/lib/api';
@@ -57,7 +56,6 @@ type ContratanteFormData = z.infer<ReturnType<typeof createContratanteSchema>>;
 export default function EditarContratanteComponent() {
   const navigate = useNavigate();
   const { id: rut } = useParams<{ id: string }>();
-  const { theme } = useTheme();
 
   // Permisos
   const { canEdit } = useAuth();

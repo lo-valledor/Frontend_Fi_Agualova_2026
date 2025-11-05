@@ -572,6 +572,7 @@ export default function ResultadosBusqueda({
       }
       setExpandedFilas(newExpandedState);
     } catch (error) {
+      console.error('Error al buscar lecturas:', error);
       setSearchError(null); // Cambiado para coincidir con el tipo esperado
       toast.error('Error al buscar lecturas');
     } finally {

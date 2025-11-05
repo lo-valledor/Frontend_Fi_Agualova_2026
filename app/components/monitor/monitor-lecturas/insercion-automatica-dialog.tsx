@@ -109,6 +109,7 @@ export function InsercionAutomaticaDialog({
         onSuccess();
       }
     } catch (error) {
+      console.error('Error al procesar inserción automática:', error);
       toast.error('Error al procesar inserción automática');
       setFase('confirmacion');
     }

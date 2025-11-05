@@ -13,8 +13,7 @@ interface TableColumnsProps {
 
 export const columns = ({
   onEdit,
-  onDelete,
-  canEdit = true
+  onDelete
 }: TableColumnsProps): ColumnDef<Sectores>[] => [
   {
     accessorKey: 'nombre',

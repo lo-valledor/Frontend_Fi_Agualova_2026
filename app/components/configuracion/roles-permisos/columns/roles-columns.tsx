@@ -5,10 +5,13 @@ import { Button } from '~/components/ui/button';
 import type { Roles } from '~/types/roles-permisos';
 
 export const createRolesColumns = (
-onEdit: (rol: Roles) => void, onDelete: (rol: Roles) => void, handleViewPermissions: (rol: Roles) => void) => [
+  onEdit: (rol: Roles) => void,
+  onDelete: (rol: Roles) => void
+) => [
   {
-    accessorKey: 'idRol',
+    id: 'idRol',
     header: 'ID',
+    accessorKey: 'idRol',
     cell: ({ row }: any) => (
       <Badge
         variant='secondary'

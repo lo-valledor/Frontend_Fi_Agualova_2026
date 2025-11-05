@@ -66,11 +66,10 @@ interface NichoSeleccionado {
 export default function TablaAsignacionSectores({
   data,
   isLoading,
-  sectores = [],
   periodo = '',
   cicloFacturable = '',
   onRecargarDatos
-}: TablaAsignacionSectoresWithDescriptionProps) {
+}: Readonly<TablaAsignacionSectoresWithDescriptionProps>) {
   // Estados
   const [selectedNichos, setSelectedNichos] = useState<NichoSeleccionado[]>([]);
   const [selectAll, setSelectAll] = useState(false);

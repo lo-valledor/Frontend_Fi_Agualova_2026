@@ -167,7 +167,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
   };
 
   const rolesColumns = useMemo(
-    () => createRolesColumns(handleEdit, handleDelete, handleViewPermissions),
+    () => createRolesColumns(handleEdit, handleDelete),
     [handleEdit, handleDelete, handleViewPermissions]
   );
 

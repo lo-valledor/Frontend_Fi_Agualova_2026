@@ -128,6 +128,7 @@ export function AdminAnalytics() {
           loading: false
         });
       } catch (error) {
+        console.error('Error fetching analytics data:', error);
         setAnalyticsData(prev => ({ ...prev, loading: false }));
       }
     };

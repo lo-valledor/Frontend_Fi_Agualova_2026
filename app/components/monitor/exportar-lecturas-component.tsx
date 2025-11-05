@@ -214,6 +214,7 @@ export default function ExportarLecturasComponent({
 
       toast.success('Archivo exportado correctamente');
     } catch (error) {
+      console.error('Error al exportar lecturas:', error);
       toast.error('Error al exportar lecturas');
     } finally {
       setIsExporting(false);

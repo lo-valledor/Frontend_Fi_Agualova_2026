@@ -337,6 +337,7 @@ export default function RevisarPrecioComponent({
         );
       }
     } catch (error) {
+      console.error('Error al confirmar cambios:', error);
       toast.error('Error al confirmar cambios');
     } finally {
       setIsConfirming(false);
@@ -345,19 +346,10 @@ export default function RevisarPrecioComponent({
 
   const handleCicloChange = async (nuevoCiclo: string) => {
     try {
-      // setIsLoadingCiclo(true);
       await onCicloChange(nuevoCiclo);
     } catch (error) {
       toast.error('Error al cambiar el ciclo', error as any);
-    } finally {
-      //    setIsLoadingCiclo(false);
     }
-  };
-
-  // Función para verificar si el ciclo seleccionado es válido para el mes actual
-  const _esCicloValido = () => {
-    if (!dataPeriodoAbierto || dataPeriodoAbierto.length === 0) return true;
-    return true; // Ya no hay restricciones para febrero
   };
 
   // Configurar columnas con las propiedades necesarias

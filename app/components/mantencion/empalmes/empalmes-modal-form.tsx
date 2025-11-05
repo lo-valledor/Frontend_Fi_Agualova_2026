@@ -135,6 +135,7 @@ export default function EmpalmesModalForm({
       }
       onSuccess();
     } catch (error) {
+      console.error(error);
       toast.error(
         mode === 'add'
           ? 'Error al crear el empalme'

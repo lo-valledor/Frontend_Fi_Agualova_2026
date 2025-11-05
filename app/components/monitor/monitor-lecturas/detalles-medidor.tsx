@@ -125,6 +125,7 @@ export default function DetallesMedidor({
       }
     } catch (error) {
       // Error silencioso - el estado de error se muestra en la UI
+      console.error('Error al obtener los datos del medidor:', error);
       setError('Error al obtener los datos del medidor');
     } finally {
       setIsLoading(false);
