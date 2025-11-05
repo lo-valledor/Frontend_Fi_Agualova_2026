@@ -1,0 +1,70 @@
+# ============================================
+# Docker Compose - Entorno STAGING
+# ============================================
+#
+# Este entorno es para pruebas de staging antes de producción
+# Se sincroniza automáticamente desde main vía merge
+#
+# Uso:
+#   docker-compose -f docker-compose.staging.yml up -d --build
+#
+# Variables de entorno opcionales (archivo .env):
+#   VITE_API_URL - URL del backend staging (default: http://192.168.1.139:8082/Enerlova)
+#   STAGING_PORT - Puerto para staging (default: 3000)
+#
+version: "3.8"
+
+services:
+  # Frontend Staging (puerto 3000)
+  frontend-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://192.168.1.139:8082/Enerlova}
+        NODE_ENV: staging
+        VITE_APP_ENV: staging
+
+    image: enerlova-frontend:staging
+
+    container_name: enerlova-frontend-staging
+
+    ports:
+      - "${STAGING_PORT:-3000}:80"
+
+    environment:
+      - NODE_ENV=staging
+      - VITE_APP_ENV=staging
+
+    networks:
+      - enerlova-staging-network
+
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+    # Limitar recursos
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+    # Logging para staging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  enerlova-staging-network:
+    driver: bridge
