@@ -64,7 +64,7 @@ export default function AnalisisConsumo({
   dataEtapaDos,
   dataEtapaCuatro,
   error
-}: AnalisisConsumoProps) {
+}: Readonly<AnalisisConsumoProps>) {
   const [periodoSeleccionado, setPeriodoSeleccionado] =
     useState<PeriodoTiempo>('todo');
   const [datosComparacion, setDatosComparacion] = useState<
@@ -204,8 +204,7 @@ export default function AnalisisConsumo({
       const periodoMinimo =
         datosValidos.find(item => item.LM_ConsumoPeriodo === consumoMinimo)
           ?.LM_Periodo || '';
-      const ultimoPeriodo =
-        datosValidos[datosValidos.length - 1]?.LM_Periodo || '';
+      const ultimoPeriodo = datosValidos.at(-1)?.LM_Periodo || '';
 
       return {
         consumoTotal,
@@ -279,11 +278,8 @@ export default function AnalisisConsumo({
   let ultimoConsumo = 0;
   let periodoUltimoConsumo = '';
   if (datosValidosOrdenados.length > 0) {
-    ultimoConsumo =
-      datosValidosOrdenados[datosValidosOrdenados.length - 1]
-        ?.LM_ConsumoPeriodo || 0;
-    periodoUltimoConsumo =
-      datosValidosOrdenados[datosValidosOrdenados.length - 1]?.LM_Periodo;
+    ultimoConsumo = datosValidosOrdenados.at(-1)?.LM_ConsumoPeriodo || 0;
+    periodoUltimoConsumo = datosValidosOrdenados.at(-1)?.LM_Periodo ?? '';
   }
 
   // Mes anterior
@@ -291,11 +287,8 @@ export default function AnalisisConsumo({
   let periodoMesAnterior = '';
   let variacionMesAnterior = null;
   if (datosValidosOrdenados.length >= 2) {
-    consumoMesAnterior =
-      datosValidosOrdenados[datosValidosOrdenados.length - 2]
-        ?.LM_ConsumoPeriodo;
-    periodoMesAnterior =
-      datosValidosOrdenados[datosValidosOrdenados.length - 2]?.LM_Periodo;
+    consumoMesAnterior = datosValidosOrdenados.at(-2)?.LM_ConsumoPeriodo;
+    periodoMesAnterior = datosValidosOrdenados.at(-2)?.LM_Periodo ?? '';
     if (
       consumoMesAnterior !== null &&
       consumoMesAnterior !== undefined &&

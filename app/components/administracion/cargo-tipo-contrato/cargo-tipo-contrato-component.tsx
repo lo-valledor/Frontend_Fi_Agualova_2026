@@ -1,46 +1,3 @@
-/**
- * Componente principal para Gestión de Cargos por Tipo de Contrato
- *
- * Funcionalidades principales:
- * - Visualización de relación entre cargos y tipos de contrato
- * - Edición de cargos asociados a tipos de contrato (navegación a /edit/:id)
- * - Eliminación de asociaciones con confirmación
- * - Recarga automática de datos después de operaciones
- *
- * Flujo de trabajo:
- * 1. Usuario visualiza tabla de cargos por tipo de contrato
- * 2. Acciones disponibles:
- * - Editar (navegación a formulario de edición)
- * - Eliminar (con confirmación)
- * 3. Sistema recarga datos automáticamente
- *
- * Arquitectura:
- * - DataTable con columnas personalizadas
- * - Navegación a ruta para edición
- * - DeleteDialog para eliminación segura
- * - API endpoints:
- * - GET /cargoTipoContrato-buscar (consulta)
- * - DELETE /cargoTipoContrato-eliminar/:id (eliminación)
- *
- * Nota:
- * - Funcionalidad de agregar deshabilitada temporalmente
- * - Se recomienda implementar a futuro
- *
- * @param {Object} props - Props del componente
- * @param {GetCargoTipoContrato[]} props.cargoTipoContrato - Lista de asociaciones
- *
- * @example
- * ```tsx
- * export default function CargoTipoContratoRoute({ loaderData }) {
- *   return (
- *     <CargoTipoContratoComponent
- *       cargoTipoContrato={loaderData.cargoTipoContrato}
- *     />
- *   );
- * }
- * ```
- */
-/* eslint-disable unused-imports/no-unused-vars */
 import { Plus, Filter, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -70,16 +27,14 @@ import { DeleteDialog } from './delete-dialog';
 
 export default function CargoTipoContratoComponent({
   cargoTipoContrato: initialData
-}: {
+}: Readonly<{
   cargoTipoContrato: GetCargoTipoContrato[];
-}) {
+}>) {
   const [data, setData] = useState<GetCargoTipoContrato[]>(initialData);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<GetCargoTipoContrato | null>(
     null
   );
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isLoading, setIsLoading] = useState(false);
   const [tipoContratoFilter, setTipoContratoFilter] = useState<string>('all');
   const router = useNavigate();
@@ -99,7 +54,7 @@ export default function CargoTipoContratoComponent({
     const tipos = new Set(
       data.map(item => item.tipoContratoDescripcion).filter(Boolean)
     );
-    return Array.from(tipos).sort();
+    return Array.from(tipos).sort((a, b) => a.localeCompare(b));
   }, [data]);
 
   // Filtrar datos basado en el filtro de tipo de contrato
@@ -118,6 +73,7 @@ export default function CargoTipoContratoComponent({
       const response = await api.get('cargoTipoContrato-buscar');
       setData(response.data as GetCargoTipoContrato[]);
     } catch (_error) {
+      console.error(_error);
       toast.error('Error al recargar los datos.');
     } finally {
       setIsLoading(false);
@@ -128,7 +84,7 @@ export default function CargoTipoContratoComponent({
     router('/dashboard/administracion/cargo-tipo-contrato/crear');
   };
 
-  const handleEdit = async (item: GetCargoTipoContrato) => {
+  const handleEdit = (item: GetCargoTipoContrato) => {
     router(
       `/dashboard/administracion/cargo-tipo-contrato/edit/${item.tipoContratoId}`
     );
@@ -137,11 +93,6 @@ export default function CargoTipoContratoComponent({
   const handleDelete = (item: GetCargoTipoContrato) => {
     setSelectedItem(item);
     setIsDeleteDialogOpen(true);
-  };
-
-  const handleSubmit = async (formData: any) => {
-    await api.post('cargoTipoContrato-guardarConfiguracion', formData);
-    await refetchData();
   };
 
   const handleConfirmDelete = async () => {
@@ -154,6 +105,7 @@ export default function CargoTipoContratoComponent({
       toast.success('Relación eliminada exitosamente');
       await refetchData();
     } catch (_error) {
+      console.error(_error);
       toast.error('Error al eliminar la relación.');
     } finally {
       setIsLoading(false);
@@ -176,9 +128,9 @@ export default function CargoTipoContratoComponent({
                 size='sm'
                 disabled={!hasCreatePermission}
                 title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear cargos tipo contrato'
-                    : ''
+                  hasCreatePermission
+                    ? ''
+                    : 'No tiene permisos para crear cargos tipo contrato'
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />

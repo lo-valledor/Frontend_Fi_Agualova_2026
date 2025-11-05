@@ -1,16 +1,3 @@
-/**
- * Tabla virtualizada para Monitor de Nichos
- *
- * Utiliza @tanstack/react-virtual para renderizar solo las filas visibles,
- * mejorando significativamente el rendimiento con grandes cantidades de datos.
- *
- * Características:
- * - Virtualización de filas (solo renderiza ~20 filas visibles)
- * - Scroll infinito suave
- * - Headers agrupados sticky
- * - Responsive design adaptativo
- * - Sin paginación (todo el dataset disponible via scroll)
- */
 import {
   type ColumnDef,
   type SortingState,
@@ -110,7 +97,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
   data,
   columnGroups,
   onRowClick
-}: DataTableNichosVirtualizedProps<TData, TValue>) {
+}: Readonly<DataTableNichosVirtualizedProps<TData, TValue>>) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'numero', desc: false } // Ordenar por # ascendente por defecto
   ]);
@@ -213,7 +200,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
     > = {};
 
     // Preparar grupos y contar spans
-    visibleColumnGroups.forEach(group => {
+    for (const group of visibleColumnGroups) {
       groupedRow[group.id] = {
         span: 0,
         title: group.title,
@@ -221,13 +208,13 @@ export function DataTableNichosVirtualized<TData, TValue>({
       };
 
       // Contar columnas en cada grupo
-      headerGroup.headers.forEach(header => {
+      for (const header of headerGroup.headers) {
         const columnId = header.column.id;
         if (group.columns.includes(columnId)) {
           groupedRow[group.id].span++;
         }
-      });
-    });
+      }
+    }
 
     return (
       <TableRow
@@ -282,7 +269,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
 
   return (
     <div className='space-y-3'>
-      <div className='rounded-xl border border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
+      <div className='rounded-xl border border-border/60 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80'>
         <div className='relative overflow-hidden'>
           {/* Contenedor con scroll virtual */}
           <div
@@ -452,7 +439,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
           {/* Indicadores de scroll horizontal */}
           {(screenSize === 'mobile' || screenSize === 'tabletPortrait') && (
             <>
-              <div className='absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-end pr-1'>
+              <div className='absolute inset-y-0 right-0 w-6 bg-linear-to-l from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-end pr-1'>
                 <div className='text-muted-foreground/60 text-xs animate-pulse'>
                   →
                 </div>
@@ -466,7 +453,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
           {/* Sombra de scroll para tablets */}
           {screenSize === 'tablet' && (
             <>
-              <div className='absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-background/70 to-transparent pointer-events-none z-10' />
+              <div className='absolute inset-y-0 right-0 w-4 bg-linear-to-l from-background/70 to-transparent pointer-events-none z-10' />
               <div className='absolute inset-y-0 left-0 w-4 bg-linear-to-r from-background/70 to-transparent pointer-events-none z-10 opacity-0 transition-opacity' />
             </>
           )}

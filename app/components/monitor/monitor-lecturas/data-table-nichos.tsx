@@ -103,7 +103,7 @@ export function DataTableNichos<TData, TValue>({
   onRowClick,
   pagination,
   onPaginationChange
-}: DataTableNichosProps<TData, TValue>) {
+}: Readonly<DataTableNichosProps<TData, TValue>>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [screenSize, setScreenSize] = useState<
     'mobile' | 'tabletPortrait' | 'tablet' | 'desktopSmall' | 'desktop'
@@ -189,7 +189,7 @@ export function DataTableNichos<TData, TValue>({
     > = {};
 
     // Preparar grupos y contar spans
-    visibleColumnGroups.forEach(group => {
+    for (const group of visibleColumnGroups) {
       groupedRow[group.id] = {
         span: 0,
         title: group.title,
@@ -197,13 +197,13 @@ export function DataTableNichos<TData, TValue>({
       };
 
       // Contar columnas en cada grupo
-      headerGroup.headers.forEach(header => {
+      for (const header of headerGroup.headers) {
         const columnId = header.column.id;
         if (group.columns.includes(columnId)) {
           groupedRow[group.id].span++;
         }
-      });
-    });
+      }
+    }
 
     return (
       <TableRow
@@ -262,7 +262,7 @@ export function DataTableNichos<TData, TValue>({
 
   return (
     <div className='space-y-3'>
-      <div className='rounded-xl border border-border/60 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80'>
+      <div className='rounded-xl border border-border/60 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80'>
         <div className='relative overflow-hidden'>
           {/* Contenedor con scroll horizontal mejorado */}
           <div className='overflow-x-auto scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-muted/10 hover:scrollbar-thumb-muted-foreground/50 transition-colors'>
@@ -393,7 +393,7 @@ export function DataTableNichos<TData, TValue>({
           {(screenSize === 'mobile' || screenSize === 'tabletPortrait') && (
             <>
               {/* Indicador de scroll derecha */}
-              <div className='absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-end pr-1'>
+              <div className='absolute inset-y-0 right-0 w-6 bg-linear-to-l from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-end pr-1'>
                 <div className='text-muted-foreground/60 text-xs animate-pulse'>
                   →
                 </div>
@@ -408,7 +408,7 @@ export function DataTableNichos<TData, TValue>({
           {/* Sombra de scroll para tablets */}
           {screenSize === 'tablet' && (
             <>
-              <div className='absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-background/70 to-transparent pointer-events-none z-10' />
+              <div className='absolute inset-y-0 right-0 w-4 bg-linear-to-l from-background/70 to-transparent pointer-events-none z-10' />
               <div className='absolute inset-y-0 left-0 w-4 bg-linear-to-r from-background/70 to-transparent pointer-events-none z-10 opacity-0 transition-opacity' />
             </>
           )}

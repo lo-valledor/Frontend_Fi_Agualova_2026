@@ -143,8 +143,8 @@ const calculateNichoStats = (nicho: NichoBusqueda) => {
   let normal = 0;
   let sinlec = 0;
 
-  nicho.filas.forEach((fila: Fila) => {
-    fila.medidores.forEach((medidor: Medidor) => {
+  for (const fila of nicho.filas) {
+    for (const medidor of fila.medidores) {
       total++;
       const status = getMeterStatus(medidor.claveHtml);
 
@@ -153,8 +153,8 @@ const calculateNichoStats = (nicho: NichoBusqueda) => {
       else if (status.severity === 2) info++;
       else if (status.severity === 1) sinlec++;
       else normal++;
-    });
-  });
+    }
+  }
 
   return { total, critical, warning, info, normal, sinlec };
 };
@@ -461,7 +461,7 @@ export default function ResultadosBusqueda({
   medidor,
   clave,
   triggerSearch
-}: {
+}: Readonly<{
   sector: string;
   periodo: string;
   stfechaini: string;
@@ -470,7 +470,7 @@ export default function ResultadosBusqueda({
   medidor: string;
   clave: string;
   triggerSearch: number;
-}) {
+}>) {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [results, setResults] = useState<ResultsState>({ nichos: [] });
@@ -534,8 +534,8 @@ export default function ResultadosBusqueda({
         responseData.data &&
         typeof responseData.data === 'object'
       ) {
-        rawNichos = Array.isArray((responseData.data as any).nichos)
-          ? (responseData.data as any).nichos
+        rawNichos = Array.isArray(responseData.data.nichos)
+          ? responseData.data.nichos
           : [];
       } else if (
         'nichos' in responseData &&
@@ -605,9 +605,7 @@ export default function ResultadosBusqueda({
     }
   }, [isNichoModalOpen, needsNichoRefresh, handleRefresh]);
 
-  interface ToggleFilaFn {
-    (nichoIndex: number, filaIndex: number): void;
-  }
+  type ToggleFilaFn = (nichoIndex: number, filaIndex: number) => void;
 
   const toggleFila: ToggleFilaFn = (nichoIndex, filaIndex) => {
     const key = `${nichoIndex}-${filaIndex}`;
@@ -617,9 +615,7 @@ export default function ResultadosBusqueda({
     }));
   };
 
-  interface HandleNichoChangeFn {
-    (index: number): void;
-  }
+  type HandleNichoChangeFn = (index: number) => void;
 
   const handleNichoChange: HandleNichoChangeFn = index => {
     setSelectedNichoIndex(index);
@@ -780,7 +776,7 @@ export default function ResultadosBusqueda({
                                 </p>
                                 <p className='text-xl sm:text-2xl font-semibold'>
                                   {results.nichos.length} nicho
-                                  {results.nichos.length !== 1 ? 's' : ''}
+                                  {results.nichos.length === 1 ? '' : 's'}
                                 </p>
                               </div>
                             </div>
@@ -1202,7 +1198,7 @@ export default function ResultadosBusqueda({
                                         status={status}
                                         size='lg'
                                       />
-                                      <div className='flex-grow'>
+                                      <div className='grow'>
                                         <div className='font-medium'>
                                           {status.label}
                                         </div>
@@ -1363,9 +1359,7 @@ export default function ResultadosBusqueda({
                           >
                             <Card className='overflow-hidden border-0 shadow-sm bg-card/50 backdrop-blur-sm'>
                               <Collapsible
-                                open={
-                                  isExpanded !== undefined ? isExpanded : true
-                                }
+                                open={isExpanded ?? true}
                                 onOpenChange={() =>
                                   toggleFila(selectedNichoIndex, filaIndex)
                                 }

@@ -153,6 +153,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         onDataChange?.();
       }
     } catch (_error) {
+      console.error(_error);
       toast.error('Error inesperado al actualizar el menú');
     } finally {
       setIsLoading(false);
@@ -176,6 +177,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         onDataChange?.();
       }
     } catch (_error) {
+      console.error(_error);
       toast.error('Error inesperado al eliminar el menú');
     } finally {
       setIsLoading(false);

@@ -242,7 +242,7 @@ export function ResultadoProcesamientoModal({
                       <TableHead className='min-w-[140px]'>
                         Número de Serie
                       </TableHead>
-                      <TableHead className='min-w-[80px]'>Tarifa</TableHead>
+                      <TableHead className='min-w-20'>Tarifa</TableHead>
                       <TableHead className='text-right min-w-[150px]'>
                         Lectura Ant. (kWh)
                       </TableHead>
