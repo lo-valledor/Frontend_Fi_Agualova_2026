@@ -14,6 +14,57 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `pnpm format:check` - Check code formatting
 - `pnpm ci` - Full CI pipeline (typecheck + lint + build)
 
+## Testing Commands
+
+- `pnpm test` - Run tests in watch mode
+- `pnpm test:ui` - Run tests with Vitest UI
+- `pnpm test:run` - Run tests once (CI mode)
+- `pnpm test:coverage` - Generate coverage reports
+
+### Testing Setup
+
+- **Framework**: Vitest with jsdom environment
+- **Utilities**: React Testing Library
+- **Test Files**: Located alongside source files with `.test.ts` or `.test.tsx` extension
+- **Mocks**: Configured in [test/setup.ts](./test/setup.ts) (localStorage, matchMedia, IntersectionObserver)
+- **Existing Tests**:
+  - `app/utils/rut-utils.test.ts` - Chilean RUT validation
+  - `app/utils/date-formatter.test.ts` - Date formatting utilities
+  - `app/utils/auth-utils.test.ts` - JWT token decoding
+  - `app/utils/password-validation.test.ts` - Password security validation (61 tests)
+  - `app/hooks/use-mobile.test.ts` - Mobile device detection
+  - `app/hooks/shared/use-export-data.test.ts` - CSV/Excel export functionality (18 tests)
+  - `app/hooks/shared/use-export-pdf.test.ts` - PDF generation (partial coverage)
+
+### Testing Guidelines
+
+**When to Write Tests**:
+- All utility functions in `app/utils/` (especially security-related)
+- Custom hooks that contain business logic
+- Complex data transformations
+- Form validation logic
+
+**Test Structure**:
+```typescript
+describe('ComponentName or functionName', () => {
+  describe('specific feature', () => {
+    it('should describe expected behavior', () => {
+      // Arrange
+      // Act
+      // Assert
+    });
+  });
+});
+```
+
+**Best Practices**:
+- Test behavior, not implementation details
+- Use descriptive test names in Spanish (matching codebase language)
+- Mock external dependencies (API calls, localStorage, etc.)
+- Test edge cases and error conditions
+- For hooks, use `renderHook` from React Testing Library
+- For components with user interaction, use `userEvent` library
+
 ## Architecture Overview
 
 ### Tech Stack
