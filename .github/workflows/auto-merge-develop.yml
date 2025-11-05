@@ -1,0 +1,70 @@
+name: 🔄 Auto Merge to Develop
+
+# Se ejecuta cuando hay un push a main que pasa el CI
+on:
+  workflow_run:
+    workflows: ["🚀 CI/CD Pipeline"]
+    types:
+      - completed
+    branches:
+      - main
+      - master
+
+jobs:
+  auto-merge-develop:
+    name: 🔀 Merge main → develop (theirs strategy)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔧 Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: 🔄 Fetch all branches
+        run: |
+          git fetch origin
+          git checkout develop || git checkout -b develop
+          git pull origin develop || true
+
+      - name: 🔀 Merge main to develop (theirs strategy)
+        run: |
+          echo "🔀 Merging main into develop with -X theirs strategy..."
+
+          # Intentar merge con estrategia theirs
+          if git merge origin/main -X theirs -m "🔀 Auto-merge main to develop (theirs strategy)"; then
+            echo "✅ Merge successful!"
+          else
+            echo "⚠️ Merge had conflicts, resolving with theirs strategy..."
+            # Resolver conflictos forzando theirs
+            git checkout --theirs .
+            git add -A
+            git commit -m "🔀 Auto-merge main to develop (conflicts resolved with theirs)"
+          fi
+
+      - name: 📤 Push to develop
+        run: |
+          echo "📤 Pushing changes to develop..."
+          git push origin develop
+          echo "✅ Successfully pushed to develop!"
+          echo "🚀 Staging deployment will trigger automatically"
+
+      - name: 📢 Create merge summary
+        run: |
+          echo "### 🔀 Auto-Merge Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **From**: \`main\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **To**: \`develop\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Strategy**: \`-X theirs\` (prefer incoming changes)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ✅ Merged successfully" >> $GITHUB_STEP_SUMMARY
+          echo "- **Next**: Staging deployment will trigger on port 3000" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Recent commits merged:**" >> $GITHUB_STEP_SUMMARY
+          git log --oneline -5 >> $GITHUB_STEP_SUMMARY
