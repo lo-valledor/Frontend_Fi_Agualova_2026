@@ -16,9 +16,6 @@ export { operacionesService } from './operacionesService';
 // Servicios de mantención
 export { mantencionService } from './mantencionService';
 
-// Servicios de IA
-export { aiService } from './aiService';
-
 // Tipos de servicios
 export type {
   MonitorServiceResponse,
@@ -27,16 +24,3 @@ export type {
 export type { AdministracionServiceResponse } from './administracionService';
 export type { OperacionesServiceResponse } from './operacionesService';
 export type { MantencionServiceResponse } from './mantencionService';
-
-// Tipos de IA
-export type {
-  ProyeccionIARequest,
-  ProyeccionIAResponse,
-  ProyeccionMensual,
-  ProyeccionMetadata,
-  AnomaliaRequest,
-  AnomaliaResponse,
-  LecturaFaltanteRequest,
-  LecturaFaltanteResponse,
-  HealthResponse
-} from './aiService';
