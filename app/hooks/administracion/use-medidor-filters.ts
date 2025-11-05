@@ -14,7 +14,7 @@ export function useMedidorFilters(
   medidores: GetMedidores[],
   filters: MedidorFilters
 ) {
-  // Extraer opciones �nicas de los medidores
+  // Extraer opciones únicas de los medidores
   const filterOptions = useMemo((): FilterOptions => {
     const marcas = [
       ...new Set(medidores.map(m => m.marca).filter(Boolean))
@@ -75,7 +75,7 @@ export function useMedidorFilters(
         return false;
       }
 
-      // Filtro por rango de d�gitos
+      // Filtro por rango de dígitos
       if (filters.digitosMin || filters.digitosMax) {
         const digitos = medidor.digitos;
 
@@ -113,7 +113,7 @@ export function useMedidorFilters(
         }
       }
 
-      // Filtro por tiene ubicaci�n
+      // Filtro por tiene ubicación
       if (filters.tieneUbicacion && filters.tieneUbicacion !== 'all') {
         const tieneUbicacion = Boolean(
           medidor.ubicacion && medidor.ubicacion.trim() !== ''
@@ -163,7 +163,7 @@ export function useMedidorFilters(
 
           if (filters.fechaInicioHasta) {
             const fechaHasta = new Date(filters.fechaInicioHasta);
-            // Agregar un d�a para incluir la fecha hasta completa
+            // Agregar un día para incluir la fecha hasta completa
             fechaHasta.setDate(fechaHasta.getDate() + 1);
             if (fechaInicio >= fechaHasta) {
               return false;

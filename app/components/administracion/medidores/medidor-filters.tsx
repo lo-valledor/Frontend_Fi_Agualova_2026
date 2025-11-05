@@ -208,9 +208,9 @@ export function MedidorFiltersComponent({
               </div>
             </div>
 
-            {/* Segunda fila de filtros - Rangos num�ricos */}
+            {/* Segunda fila de filtros - Rangos numéricos */}
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4'>
-              {/* Rango de D�gitos */}
+              {/* Rango de Dígitos */}
               <div className='space-y-2'>
                 <Label className='text-sm font-medium'>Dígitos (Min)</Label>
                 <Input
@@ -273,10 +273,10 @@ export function MedidorFiltersComponent({
 
             {/* Tercera fila de filtros - Filtros de contenido */}
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
-              {/* Tiene Ubicaci�n */}
+              {/* Tiene Ubicación */}
               <div className='space-y-2'>
                 <Label htmlFor='tieneUbicacion' className='text-sm font-medium'>
-                  Tiene Ubicaci�n
+                  Tiene Ubicación
                 </Label>
                 <Select
                   value={filters.tieneUbicacion}
@@ -289,8 +289,8 @@ export function MedidorFiltersComponent({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value='all'>Todos</SelectItem>
-                    <SelectItem value='true'>Con Ubicaci�n</SelectItem>
-                    <SelectItem value='false'>Sin Ubicaci�n</SelectItem>
+                    <SelectItem value='true'>Con Ubicación</SelectItem>
+                    <SelectItem value='false'>Sin Ubicación</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -437,7 +437,7 @@ export function MedidorFiltersComponent({
                           variant='outline'
                           className='bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs sm:text-sm'
                         >
-                          D�gitos: {filters.digitosMin || '...'} -{' '}
+                          Dígitos: {filters.digitosMin || '...'} -{' '}
                           {filters.digitosMax || '...'}
                           <Button
                             variant='ghost'
@@ -478,7 +478,7 @@ export function MedidorFiltersComponent({
                             variant='outline'
                             className='bg-cyan-50 text-cyan-700 border-cyan-200 dark:bg-cyan-900/20 dark:text-cyan-300 dark:border-cyan-800 text-xs sm:text-sm'
                           >
-                            Ubicaci�n:{' '}
+                            Ubicación:{' '}
                             {filters.tieneUbicacion === 'true' ? 'Con' : 'Sin'}
                             <Button
                               variant='ghost'
