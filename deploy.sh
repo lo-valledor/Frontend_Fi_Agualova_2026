@@ -25,67 +25,70 @@ show_help() {
     echo "  $0 dev     # Despliega solo desarrollo"
 }
 
-# Función para desplegar producción
+COMPOSE_BIN=""
+
+# Detectar comando compose (docker compose vs docker-compose)
+detect_compose() {
+    if command -v docker &>/dev/null && docker compose version &>/dev/null; then
+        COMPOSE_BIN="docker compose"
+    elif command -v docker-compose &>/dev/null; then
+        COMPOSE_BIN="docker-compose"
+    else
+        echo "❌ No se encontró Docker Compose (ni plugin ni binario)." >&2
+        exit 1
+    fi
+}
+
+# Función para desplegar producción (proyecto aislado: enerlova_prod)
 deploy_prod() {
     echo "📦 Desplegando entorno de PRODUCCIÓN..."
     echo "🌐 Puerto: 8080"
     echo "🔗 API: http://192.168.1.139:8081/Enerlova"
 
-    docker-compose -f docker-compose.prod.yml down
-    docker-compose -f docker-compose.prod.yml up --build -d
+    # Usamos un nombre de proyecto distinto para que 'down' no afecte dev
+    PROJECT=enerlova_prod
+    $COMPOSE_BIN -p "$PROJECT" -f docker-compose.prod.yml up --build -d
 
-    echo "✅ Entorno de producción desplegado exitosamente"
+    echo "✅ Entorno de producción desplegado / actualizado"
     echo "🌍 Acceso: http://localhost:8080"
 }
 
-# Función para desplegar desarrollo
+# Función para desplegar desarrollo (proyecto aislado: enerlova_dev)
 deploy_dev() {
-    echo "🛠️  Desplegando entorno de DESARROLLO..."
+    echo "🛠️  Desplegando entorno de DESARROLLO / UAT..."
     echo "🌐 Puerto: 3000"
     echo "🔗 API: http://192.168.1.139:8082/Enerlova"
     echo "🎨 Tema: Colores naranjas con badge DEV"
 
-    docker-compose -f docker-compose.dev.yml down
-    docker-compose -f docker-compose.dev.yml up --build -d
+    PROJECT=enerlova_dev
+    $COMPOSE_BIN -p "$PROJECT" -f docker-compose.dev.yml up --build -d
 
-    echo "✅ Entorno de desarrollo desplegado exitosamente"
+    echo "✅ Entorno de desarrollo desplegado / actualizado"
     echo "🌍 Acceso: http://localhost:3000"
 }
 
 # Función para desplegar ambos entornos
 deploy_both() {
-    echo "🚀 Desplegando AMBOS entornos simultáneamente..."
+    echo "🚀 Desplegando AMBOS entornos de forma independiente..."
+    echo "(Usando proyectos separados: enerlova_prod y enerlova_dev)"
     echo ""
-    echo "🔵 PRODUCCIÓN:"
-    echo "   Puerto: 8080"
-    echo "   API: http://192.168.1.139:8081/Enerlova"
-    echo "   Tema: Colores azules, sin badge"
+    deploy_prod
+    deploy_dev
     echo ""
-    echo "🟠 DESARROLLO:"
-    echo "   Puerto: 3000"
-    echo "   API: http://192.168.1.139:8082/Enerlova"
-    echo "   Tema: Colores naranjas con badge DEV"
-    echo ""
-
-    docker-compose -f docker-compose.multi.yml down
-    docker-compose -f docker-compose.multi.yml up --build -d
-
-    echo ""
-    echo "✅ Ambos entornos desplegados exitosamente"
-    echo ""
+    echo "✅ Ambos entornos activos"
     echo "🔵 PRODUCCIÓN: http://localhost:8080"
     echo "🟠 DESARROLLO: http://localhost:3000"
     echo ""
-    echo "Ambos entornos están en la misma red: enerlova-network"
+    echo "Si deseas ver logs:"
+    echo "  $COMPOSE_BIN -p enerlova_prod logs -f"
+    echo "  $COMPOSE_BIN -p enerlova_dev logs -f"
 }
 
 # Función para detener servicios
 stop_services() {
-    echo "🛑 Deteniendo todos los servicios..."
-    docker-compose -f docker-compose.multi.yml down 2>/dev/null
-    docker-compose -f docker-compose.prod.yml down 2>/dev/null
-    docker-compose -f docker-compose.dev.yml down 2>/dev/null
-    docker-compose down 2>/dev/null
+    echo "🛑 Deteniendo servicios (prod + dev)..."
+    $COMPOSE_BIN -p enerlova_prod down 2>/dev/null || true
+    $COMPOSE_BIN -p enerlova_dev down 2>/dev/null || true
     echo "✅ Servicios detenidos"
 }
 
@@ -100,25 +103,24 @@ clean_all() {
 
 # Función para mostrar estado
 show_status() {
-    echo "📊 Estado de los servicios:"
+    echo "📊 Estado de los servicios (filtrado):"
+    docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}' | grep -E 'enerlova-frontend-(dev|prod)' || echo "No hay contenedores en ejecución"
     echo ""
-    echo "Contenedores activos:"
-    docker ps --filter "name=enerlova-frontend" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+    echo "🔵 Producción (project: enerlova_prod):"
+    $COMPOSE_BIN -p enerlova_prod ps 2>/dev/null || echo "(no activo)"
     echo ""
-    echo "Detalle completo:"
-    docker-compose -f docker-compose.multi.yml ps 2>/dev/null || echo "No hay servicios en docker-compose.multi.yml"
+    echo "🟠 Desarrollo (project: enerlova_dev):"
+    $COMPOSE_BIN -p enerlova_dev ps 2>/dev/null || echo "(no activo)"
 }
 
-# Validar que Docker esté disponible
+# Validar que Docker esté disponible y detectar compose
 if ! command -v docker &> /dev/null; then
     echo "❌ Error: Docker no está instalado o no está en el PATH"
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null; then
-    echo "❌ Error: Docker Compose no está instalado o no está en el PATH"
-    exit 1
-fi
+detect_compose
+echo "ℹ️ Usando: $COMPOSE_BIN"
 
 # Procesar argumentos
 case "${1:-help}" in

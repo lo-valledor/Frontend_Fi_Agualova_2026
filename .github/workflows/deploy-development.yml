@@ -15,13 +15,13 @@ on:
   workflow_dispatch:
     inputs:
       force_deploy:
-        description: 'Force deployment to development'
+        description: "Force deployment to development"
         required: true
-        default: 'false'
+        default: "false"
         type: choice
         options:
-          - 'true'
-          - 'false'
+          - "true"
+          - "false"
 
 jobs:
   deploy-development:
@@ -63,8 +63,11 @@ jobs:
           username: ${{ secrets.DEV_USER }}
           key: ${{ secrets.DEV_SSH_KEY }}
           script: |
+            set -e
             cd /path/to/your/app
             git pull origin develop
-            docker-compose -f docker-compose.develop.yml down
-            docker-compose -f docker-compose.develop.yml up --build -d
-            docker system prune -f
+            # Usar proyecto aislado para que no afecte producción
+            if docker compose version >/dev/null 2>&1; then COMPOSE="docker compose"; elif command -v docker-compose >/dev/null 2>&1; then COMPOSE="docker-compose"; else echo "Docker Compose no disponible"; exit 1; fi
+            $COMPOSE -p enerlova_dev -f docker-compose.develop.yml up -d --build
+            # Limpieza ligera (evitar borrar imágenes compartidas recientes)
+            docker image prune -f || true

@@ -1,5 +1,3 @@
-/* eslint-disable unused-imports/no-unused-vars */
-// oxlint-disable no-unused-vars
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -40,7 +38,7 @@ export default function MedidoresComponent({
   const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(
     null
   );
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   // Estados para filtros
