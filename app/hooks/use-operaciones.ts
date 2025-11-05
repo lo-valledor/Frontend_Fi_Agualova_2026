@@ -18,6 +18,33 @@ import type {
   ValidarSectoresPendientes
 } from '~/types/operaciones';
 
+// ✅ REFACTOR: Extraer lógica común de carga de datos
+async function handleDataLoad<T, R = T>(
+  fetchFn: () => Promise<{ data?: T | null; error?: string | null }>,
+  setData: (data: R | null) => void,
+  setError: (error: string | null) => void,
+  setLoading: (loading: boolean) => void
+): Promise<void> {
+  try {
+    setLoading(true);
+    setError(null);
+
+    const result = await fetchFn();
+
+    if (result.error) {
+      setError(result.error);
+    } else if (result.data) {
+      setData(result.data as R);
+    } else {
+      setError('No se pudieron cargar los datos');
+    }
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Error desconocido');
+  } finally {
+    setLoading(false);
+  }
+}
+
 export function usePrepararLecturasData() {
   const [data, setData] = useState<{
     periodoAbierto: PeriodoAbierto[];
@@ -29,50 +56,21 @@ export function usePrepararLecturasData() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await operacionesService.getPrepararLecturasData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => operacionesService.getPrepararLecturasData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
-  const refreshData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const result = await operacionesService.getPrepararLecturasData();
-
-      if (result.error) {
-        setError(result.error);
-      } else if (result.data) {
-        setData(result.data);
-      } else {
-        setError('No se pudieron cargar los datos');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const refreshData = () =>
+    handleDataLoad(
+      () => operacionesService.getPrepararLecturasData(),
+      setData,
+      setError,
+      setLoading
+    );
 
   return {
     data,
@@ -137,28 +135,12 @@ export function usePreciosCargo(mes: string, anio: string) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await operacionesService.getPreciosCargoData(mes, anio);
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => operacionesService.getPreciosCargoData(mes, anio),
+      setData,
+      setError,
+      setLoading
+    );
   }, [mes, anio]);
 
   return {
@@ -182,28 +164,12 @@ export function useRevisarPrecio(dia: string = '15') {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await operacionesService.getRevisarPrecioData(dia);
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => operacionesService.getRevisarPrecioData(dia),
+      setData,
+      setError,
+      setLoading
+    );
   }, [dia]);
 
   const refreshPrecios = useCallback(
@@ -263,28 +229,12 @@ export function useCorteReposicion() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await operacionesService.getCorteReposicionData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => operacionesService.getCorteReposicionData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -303,28 +253,12 @@ export function useCerrarLecturas() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await operacionesService.getCerrarLecturasData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => operacionesService.getCerrarLecturasData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -343,28 +277,12 @@ export function usePeriodoFacturacion() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await operacionesService.getPeriodoFacturacionData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => operacionesService.getPeriodoFacturacionData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {

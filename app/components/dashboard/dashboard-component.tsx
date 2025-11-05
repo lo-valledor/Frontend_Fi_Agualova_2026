@@ -89,6 +89,117 @@ const quickActions = [
   }
 ];
 
+// Helper functions para procesar datos de analytics (reduce complejidad cognitiva)
+const procesarContratosPorTipo = (data: any[]): { [key: string]: number } => {
+  const contratosPorTipo: { [key: string]: number } = {};
+  if (!Array.isArray(data)) return contratosPorTipo;
+
+  for (const contrato of data) {
+    const tipo = contrato.tipoContrato || 'Sin Tipo';
+    contratosPorTipo[tipo] = (contratosPorTipo[tipo] || 0) + 1;
+  }
+  return contratosPorTipo;
+};
+
+const procesarClientesPorTipo = (
+  data: any[]
+): { empresa: number; persona: number } => {
+  let empresas = 0;
+  let personas = 0;
+
+  if (!Array.isArray(data)) return { empresa: 0, persona: 0 };
+
+  for (const cliente of data) {
+    if (cliente.esEmpresa) {
+      empresas++;
+    } else {
+      personas++;
+    }
+  }
+  return { empresa: empresas, persona: personas };
+};
+
+const procesarMedidores = (
+  data: any[]
+): {
+  porTipo: { [key: string]: number };
+  porEstado: { [key: string]: number };
+} => {
+  const medidoresPorTipo: { [key: string]: number } = {};
+  const medidoresPorEstado: { [key: string]: number } = {};
+
+  if (!Array.isArray(data)) {
+    return { porTipo: medidoresPorTipo, porEstado: medidoresPorEstado };
+  }
+
+  for (const medidor of data) {
+    const tipo = medidor.tipo || 'Sin Tipo';
+    medidoresPorTipo[tipo] = (medidoresPorTipo[tipo] || 0) + 1;
+
+    const estado = medidor.estado || 'Sin Estado';
+    medidoresPorEstado[estado] = (medidoresPorEstado[estado] || 0) + 1;
+  }
+
+  return { porTipo: medidoresPorTipo, porEstado: medidoresPorEstado };
+};
+
+const procesarAcometidasPorSector = (
+  response: any
+): { [key: string]: number } => {
+  const acometidasPorSector: { [key: string]: number } = {};
+  let acometidasData: any[] = [];
+
+  if (!response.data) return acometidasPorSector;
+
+  if (Array.isArray(response.data)) {
+    acometidasData = response.data;
+  } else if (
+    typeof response.data === 'object' &&
+    'data' in response.data &&
+    Array.isArray(response.data.data)
+  ) {
+    acometidasData = response.data.data;
+  }
+
+  for (const acometida of acometidasData) {
+    const sector = acometida.sectorDescripcion || 'Sin Sector';
+    acometidasPorSector[sector] = (acometidasPorSector[sector] || 0) + 1;
+  }
+
+  return acometidasPorSector;
+};
+
+// Componente helper para renderizar el centro del gráfico donut
+const renderDonutLabel =
+  (value: number, label: string = 'Total') =>
+  ({ viewBox }: any) => {
+    if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+      return (
+        <text
+          x={viewBox.cx}
+          y={viewBox.cy}
+          textAnchor='middle'
+          dominantBaseline='middle'
+        >
+          <tspan
+            x={viewBox.cx}
+            y={viewBox.cy}
+            className='fill-foreground text-2xl font-bold'
+          >
+            {value.toLocaleString()}
+          </tspan>
+          <tspan
+            x={viewBox.cx}
+            y={(viewBox.cy || 0) + 20}
+            className='fill-muted-foreground text-sm'
+          >
+            {label}
+          </tspan>
+        </text>
+      );
+    }
+  };
+
 // Componente de Análisis de Administración
 const AdminAnalyticsComponent = () => {
   const [analyticsData, setAnalyticsData] = useState({
@@ -111,65 +222,19 @@ const AdminAnalyticsComponent = () => {
             api.get('buscar-Acometida')
           ]);
 
-        // Procesar contratos por tipo
-        const contratosPorTipo: { [key: string]: number } = {};
-        if (Array.isArray(contratosRes.data)) {
-          for (const contrato of contratosRes.data) {
-            const tipo = contrato.tipoContrato || 'Sin Tipo';
-            contratosPorTipo[tipo] = (contratosPorTipo[tipo] || 0) + 1;
-          }
-        }
-
-        // Procesar clientes por tipo (empresa/persona)
-        let empresas = 0;
-        let personas = 0;
-        if (Array.isArray(clientesRes.data)) {
-          for (const cliente of clientesRes.data) {
-            if (cliente.esEmpresa) {
-              empresas++;
-            } else {
-              personas++;
-            }
-          }
-        }
-
-        // Procesar medidores por tipo y estado
-        const medidoresPorTipo: { [key: string]: number } = {};
-        const medidoresPorEstado: { [key: string]: number } = {};
-        if (Array.isArray(medidoresRes.data)) {
-          for (const medidor of medidoresRes.data) {
-            const tipo = medidor.tipo || 'Sin Tipo';
-            medidoresPorTipo[tipo] = (medidoresPorTipo[tipo] || 0) + 1;
-
-            const estado = medidor.estado || 'Sin Estado';
-            medidoresPorEstado[estado] = (medidoresPorEstado[estado] || 0) + 1;
-          }
-        }
-
-        // Procesar acometidas por sector
-        const acometidasPorSector: { [key: string]: number } = {};
-        let acometidasData: any[] = [];
-
-        if (acometidasRes.data) {
-          if (Array.isArray(acometidasRes.data)) {
-            acometidasData = acometidasRes.data;
-          } else if (
-            typeof acometidasRes.data === 'object' &&
-            'data' in acometidasRes.data &&
-            Array.isArray(acometidasRes.data.data)
-          ) {
-            acometidasData = acometidasRes.data.data;
-          }
-        }
-
-        for (const acometida of acometidasData) {
-          const sector = acometida.sectorDescripcion || 'Sin Sector';
-          acometidasPorSector[sector] = (acometidasPorSector[sector] || 0) + 1;
-        }
+        const contratosPorTipo = procesarContratosPorTipo(
+          contratosRes.data as any[]
+        );
+        const clientesPorTipo = procesarClientesPorTipo(
+          clientesRes.data as any[]
+        );
+        const { porTipo: medidoresPorTipo, porEstado: medidoresPorEstado } =
+          procesarMedidores(medidoresRes.data as any[]);
+        const acometidasPorSector = procesarAcometidasPorSector(acometidasRes);
 
         setAnalyticsData({
           contratosPorTipo,
-          clientesPorTipo: { empresa: empresas, persona: personas },
+          clientesPorTipo,
           medidoresPorTipo,
           medidoresPorEstado,
           acometidasPorSector,
@@ -312,35 +377,7 @@ const AdminAnalyticsComponent = () => {
                     innerRadius={50}
                     strokeWidth={2}
                   >
-                    <Label
-                      content={({ viewBox }) => {
-                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                          return (
-                            <text
-                              x={viewBox.cx}
-                              y={viewBox.cy}
-                              textAnchor='middle'
-                              dominantBaseline='middle'
-                            >
-                              <tspan
-                                x={viewBox.cx}
-                                y={viewBox.cy}
-                                className='fill-foreground text-2xl font-bold'
-                              >
-                                {totalContratos.toLocaleString()}
-                              </tspan>
-                              <tspan
-                                x={viewBox.cx}
-                                y={(viewBox.cy || 0) + 20}
-                                className='fill-muted-foreground text-sm'
-                              >
-                                Total
-                              </tspan>
-                            </text>
-                          );
-                        }
-                      }}
-                    />
+                    <Label content={renderDonutLabel(totalContratos)} />
                   </Pie>
                 </PieChart>
               </ChartContainer>
@@ -418,35 +455,7 @@ const AdminAnalyticsComponent = () => {
                     innerRadius={50}
                     strokeWidth={2}
                   >
-                    <Label
-                      content={({ viewBox }) => {
-                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                          return (
-                            <text
-                              x={viewBox.cx}
-                              y={viewBox.cy}
-                              textAnchor='middle'
-                              dominantBaseline='middle'
-                            >
-                              <tspan
-                                x={viewBox.cx}
-                                y={viewBox.cy}
-                                className='fill-foreground text-2xl font-bold'
-                              >
-                                {totalClientes.toLocaleString()}
-                              </tspan>
-                              <tspan
-                                x={viewBox.cx}
-                                y={(viewBox.cy || 0) + 20}
-                                className='fill-muted-foreground text-sm'
-                              >
-                                Total
-                              </tspan>
-                            </text>
-                          );
-                        }
-                      }}
-                    />
+                    <Label content={renderDonutLabel(totalClientes)} />
                   </Pie>
                 </PieChart>
               </ChartContainer>
@@ -621,36 +630,12 @@ const AdminAnalyticsComponent = () => {
                     strokeWidth={2}
                   >
                     <Label
-                      content={({ viewBox }) => {
-                        if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-                          const totalAcometidas = Object.values(
-                            analyticsData.acometidasPorSector
-                          ).reduce((acc, curr) => acc + curr, 0);
-                          return (
-                            <text
-                              x={viewBox.cx}
-                              y={viewBox.cy}
-                              textAnchor='middle'
-                              dominantBaseline='middle'
-                            >
-                              <tspan
-                                x={viewBox.cx}
-                                y={viewBox.cy}
-                                className='fill-foreground text-2xl font-bold'
-                              >
-                                {totalAcometidas.toLocaleString()}
-                              </tspan>
-                              <tspan
-                                x={viewBox.cx}
-                                y={(viewBox.cy || 0) + 20}
-                                className='fill-muted-foreground text-sm'
-                              >
-                                Total
-                              </tspan>
-                            </text>
-                          );
-                        }
-                      }}
+                      content={renderDonutLabel(
+                        Object.values(analyticsData.acometidasPorSector).reduce(
+                          (acc, curr) => acc + curr,
+                          0
+                        )
+                      )}
                     />
                   </Pie>
                 </PieChart>
@@ -688,6 +673,26 @@ const AdminAnalyticsComponent = () => {
       </Card>
     </div>
   );
+};
+
+// Helper para renderizar el período actual (evita ternarios anidados)
+const renderPeriodoActual = (
+  loading: boolean,
+  periodoActual: { mes: number; anio: number; estado: string }
+) => {
+  if (loading) {
+    return <span className='animate-pulse text-muted-foreground'>---</span>;
+  }
+
+  if (periodoActual.mes > 0) {
+    return (
+      <span>
+        {periodoActual.mes.toString().padStart(2, '0')}/{periodoActual.anio}
+      </span>
+    );
+  }
+
+  return <span className='text-sm sm:text-base text-red-500'>Sin período</span>;
 };
 
 export default function DashboardComponent({
@@ -852,21 +857,9 @@ export default function DashboardComponent({
             </CardHeader>
             <CardContent>
               <div className='text-lg sm:text-2xl font-bold font-mono'>
-                {dashboardData.loading ? (
-                  <span className='animate-pulse text-muted-foreground'>
-                    ---
-                  </span>
-                ) : dashboardData.periodoActual.mes > 0 ? (
-                  <span>
-                    {dashboardData.periodoActual.mes
-                      .toString()
-                      .padStart(2, '0')}
-                    /{dashboardData.periodoActual.anio}
-                  </span>
-                ) : (
-                  <span className='text-sm sm:text-base text-red-500'>
-                    Sin período
-                  </span>
+                {renderPeriodoActual(
+                  dashboardData.loading,
+                  dashboardData.periodoActual
                 )}
               </div>
               <p className='text-xs text-muted-foreground'>
@@ -1010,9 +1003,9 @@ export default function DashboardComponent({
           </CardHeader>
           <CardContent>
             <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-              {quickActions.map((action, index) => (
+              {quickActions.map(action => (
                 <Button
-                  key={index}
+                  key={action.href}
                   variant='outline'
                   className='h-auto flex-col items-start gap-2 p-3 sm:p-4 text-left hover:bg-muted/50'
                   asChild

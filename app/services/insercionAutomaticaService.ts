@@ -181,7 +181,8 @@ export function validarLecturaParaInsercionAutomatica(
 
   // 5. Calcular consumo y detectar anomalías
   const consumo = energiaActiva - lecturaAnterior;
-  const consumoAnterior = parseFloat(medidor.LM_ConsumoMesAnterior) || null;
+  const consumoAnterior =
+    Number.parseFloat(medidor.LM_ConsumoMesAnterior) || null;
   const anomalia = detectarConsumoAnomalo(
     energiaActiva,
     lecturaAnterior,
@@ -216,7 +217,6 @@ export function validarLecturaParaInsercionAutomatica(
     return { valido: false, razones, severidad };
   }
 
-  // Todo validado correctamente
   razones.push(`Consumo válido: ${consumo} kWh`);
   return { valido: true, razones, severidad: 'ok' };
 }
@@ -290,7 +290,7 @@ export function analizarMedidoresParaInsercion(medidores: MedidorNichoItem[]): {
   const autoInsertables: LecturaParaInsertar[] = [];
   const requierenRevision: LecturaParaInsertar[] = [];
 
-  medidores.forEach(medidor => {
+  for (const medidor of medidores) {
     const validacion = validarLecturaParaInsercionAutomatica(medidor);
     const lecturaActual = medidor.LMC_EnergiaActiva || 0;
     const lecturaAnterior = medidor.LM_ValorUltimaLectura || 0;
@@ -318,7 +318,7 @@ export function analizarMedidoresParaInsercion(medidores: MedidorNichoItem[]): {
     } else {
       requierenRevision.push(lecturaParaInsertar);
     }
-  });
+  }
 
   return {
     autoInsertables,

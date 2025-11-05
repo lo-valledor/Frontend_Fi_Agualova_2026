@@ -48,7 +48,7 @@ export const PASSWORD_RULES: PasswordValidationRule[] = [
   {
     id: 'special',
     label: 'Al menos un carácter especial',
-    validator: pwd => /[!@#$%^&*()_+\-=\\[\]{};':"\\|,.<>\\/?]/.test(pwd),
+    validator: pwd => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pwd),
     message: 'Debe incluir al menos un carácter especial (!@#$%&*...)'
   }
 ];
@@ -94,16 +94,44 @@ export function validatePassword(password: string): {
     warnings.push('Evite repetir el mismo carácter 3 o más veces consecutivas');
   }
 
-  // Verificar secuencias
-  if (
-    /(?:abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)/i.test(
-      password
-    )
-  ) {
+  // Verificar secuencias de letras
+  const hasLetterSequence = () => {
+    const lower = password.toLowerCase();
+    for (let i = 0; i < lower.length - 2; i++) {
+      const charCode = lower.codePointAt(i) || 0;
+      if (charCode >= 97 && charCode <= 122) {
+        if (
+          lower.codePointAt(i + 1) === charCode + 1 &&
+          lower.codePointAt(i + 2) === charCode + 2
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  if (hasLetterSequence()) {
     warnings.push('Evite usar secuencias de letras consecutivas');
   }
 
-  if (/(?:012|123|234|345|456|567|678|789|890)/.test(password)) {
+  // Verificar secuencias de números
+  const hasNumberSequence = () => {
+    for (let i = 0; i < password.length - 2; i++) {
+      const charCode = password.codePointAt(i) || 0;
+      if (charCode >= 48 && charCode <= 57) {
+        if (
+          password.codePointAt(i + 1) === charCode + 1 &&
+          password.codePointAt(i + 2) === charCode + 2
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  if (hasNumberSequence()) {
     warnings.push('Evite usar secuencias de números consecutivos');
   }
 
@@ -181,9 +209,9 @@ export function generatePasswordSuggestions(password: string): string[] {
     suggestions.push(
       'Asegúrese de cumplir con todos los requisitos de seguridad:'
     );
-    validation.failedRules.forEach(rule => {
+    for (const rule of validation.failedRules) {
       suggestions.push(`  • ${rule.label}`);
-    });
+    }
   }
 
   if (validation.warnings.length > 0) {

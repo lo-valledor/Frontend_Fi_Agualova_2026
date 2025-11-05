@@ -46,7 +46,7 @@ export const columns = ({
         className='text-xs font-mono px-1 sm:px-2'
         title={row.original.codigoEnerlova}
       >
-        <span className='truncate max-w-[80px] sm:max-w-none'>
+        <span className='truncate max-w-20 sm:max-w-none'>
           {row.original.codigoEnerlova}
         </span>
       </Badge>
@@ -166,7 +166,7 @@ export const columns = ({
         className='flex items-center gap-1.5 bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-900/20 dark:text-violet-300 dark:border-violet-800 text-xs px-1 sm:px-2'
         title={row.original.concepto}
       >
-        <span className='truncate max-w-[80px] sm:max-w-none'>
+        <span className='truncate max-w-20 sm:max-w-none'>
           {row.original.concepto}
         </span>
       </Badge>
@@ -186,7 +186,7 @@ export const columns = ({
         className='flex items-center gap-1.5 bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs px-1 sm:px-2'
         title={row.original.tarifa}
       >
-        <span className='truncate max-w-[80px] sm:max-w-none'>
+        <span className='truncate max-w-20 sm:max-w-none'>
           {row.original.tarifa}
         </span>
       </Badge>
@@ -206,7 +206,7 @@ export const columns = ({
         className='flex items-center gap-1.5 bg-teal-100 text-teal-800 border-teal-200 dark:bg-teal-900/20 dark:text-teal-300 dark:border-teal-800 text-xs px-1 sm:px-2'
         title={row.original.tipoMedidor}
       >
-        <span className='truncate max-w-[80px] sm:max-w-none'>
+        <span className='truncate max-w-20 sm:max-w-none'>
           {row.original.tipoMedidor}
         </span>
       </Badge>

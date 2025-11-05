@@ -72,7 +72,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Condición' />
     ),
     cell: ({ row }) => {
-      const condicion = row.getValue('condicionContratoDescripcion') as string;
+      const condicion: string = row.getValue('condicionContratoDescripcion');
       return (
         <div
           className='font-medium text-xs sm:text-sm truncate'
@@ -92,7 +92,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => {
-      const descripcion = row.getValue('descripcion') as string;
+      const descripcion: string = row.getValue('descripcion');
       return (
         <div className='text-xs sm:text-sm truncate' title={descripcion}>
           {descripcion}

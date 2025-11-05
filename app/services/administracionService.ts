@@ -221,7 +221,7 @@ class AdministracionService {
     }>
   > {
     try {
-      const [resContratos] = await Promise.all([api.get('contrato/buscar')]);
+      const resContratos = await api.get('contrato/buscar');
 
       return {
         data: {

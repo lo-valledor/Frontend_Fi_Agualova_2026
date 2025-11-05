@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
     // Si no hay respuesta del servidor, es un error de red o timeout
     if (!error.response) {
       toast.error('Error de red. Por favor, verifica tu conexión.');
-      return Promise.reject(error);
+      throw new Error(error);
     }
 
     const { status, data } = error.response;
@@ -74,7 +74,7 @@ axiosInstance.interceptors.response.use(
 
         if (isExpected401) {
           // Dejamos que el error sea manejado por la lógica del componente
-          return Promise.reject(error);
+          throw new Error(error);
         }
 
         // Si ya se intentó refrescar el token, no volver a intentarlo
@@ -84,7 +84,7 @@ axiosInstance.interceptors.response.use(
           );
           localStorage.removeItem('token');
           globalThis.location.href = '/session-expired';
-          return Promise.reject(error);
+          throw new Error(error);
         }
 
         originalRequest._retry = true;
@@ -107,7 +107,7 @@ axiosInstance.interceptors.response.use(
           );
           localStorage.removeItem('token');
           globalThis.location.href = '/session-expired';
-          return Promise.reject(refreshError);
+          throw refreshError;
         }
       }
 
@@ -123,7 +123,7 @@ axiosInstance.interceptors.response.use(
 
         if (isExpected404) {
           // Dejamos que el error sea manejado por la lógica del componente
-          return Promise.reject(error);
+          throw new Error(error);
         }
 
         // Para 404s inesperados, mostrar mensaje de error
@@ -140,7 +140,7 @@ axiosInstance.interceptors.response.use(
         toast.error(data?.message || 'Ha ocurrido un error inesperado.');
         break;
     }
-    return Promise.reject(error);
+    throw new Error(error);
   }
 );
 

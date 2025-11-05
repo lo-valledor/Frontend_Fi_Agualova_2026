@@ -255,8 +255,8 @@ export function ResultadoProcesamientoModal({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {resultado.detalles.map((detalle, idx) => (
-                      <TableRow key={idx}>
+                    {resultado.detalles.map((detalle) => (
+                      <TableRow key={detalle.numeroSerie}>
                         <TableCell className='font-mono text-xs'>
                           {detalle.numeroSerie}
                         </TableCell>

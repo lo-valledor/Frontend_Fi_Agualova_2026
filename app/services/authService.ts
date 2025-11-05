@@ -48,6 +48,7 @@ export const authService = {
       localStorage.removeItem('token');
       toast.success('Cierre de sesión exitoso');
     } catch (_error) {
+      console.error(_error);
       toast.error('Error al cerrar sesión');
     }
   },
@@ -58,6 +59,7 @@ export const authService = {
         await axiosInstance.post<LoginResponse>('/refresh-token');
       return response.data.token;
     } catch (_error) {
+      console.error(_error);
       throw new Error('Error al refrescar el token');
     }
   },
@@ -66,6 +68,7 @@ export const authService = {
     try {
       await axiosInstance.post('/forgot-password', { email });
     } catch (_error) {
+      console.error(_error);
       throw new Error('Error al solicitar la recuperación de contraseña');
     }
   },

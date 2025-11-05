@@ -8,7 +8,7 @@
  * @returns RUT limpio con solo números, K y guión
  */
 export const cleanRut = (rut: string): string => {
-  return rut.replace(/[^\dkK-]/g, '').toUpperCase();
+  return rut.replaceAll(/[^\dkK-]/g, '').toUpperCase();
 };
 
 /**
@@ -99,7 +99,7 @@ export const formatRutWithDots = (rut: string): string => {
   const [body, verifier] = formatted.split('-');
 
   // Agregar puntos cada 3 dígitos desde la derecha
-  const bodyWithDots = body.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const bodyWithDots = body.replaceAll(/\B(?=(\d{3})+(?!\d))/g, '.');
 
   return `${bodyWithDots}-${verifier}`;
 };

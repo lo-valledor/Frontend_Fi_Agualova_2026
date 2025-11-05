@@ -35,7 +35,7 @@ export function useCurrentRoutePermissions() {
 
   // En React Router v7, podemos usar globalThis.location.pathname
   const currentRoute =
-    typeof window !== 'undefined' ? globalThis.location.pathname : '';
+    typeof globalThis === 'undefined' ? '' : globalThis.location.pathname;
 
   return {
     currentRoute,

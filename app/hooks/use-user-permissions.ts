@@ -54,42 +54,35 @@ export function useUserPermissions(): UseUserPermissionsReturn {
     fetchPermissions();
   }, []);
 
-  const hasPermission = (ruta: string): boolean => {
-    if (!ruta) return false;
-
-    // Normalizar la ruta para comparación
+  const findPermission = (ruta: string): PermisosUsuario | undefined => {
+    if (!ruta) return undefined;
     const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
+    return permissions.find(p => p.ruta === normalizedRuta);
+  };
 
-    const permission = permissions.find(p => p.ruta === normalizedRuta);
-    return permission ? permission.puedeVer : false;
+  const hasPermission = (ruta: string): boolean => {
+    const permission = findPermission(ruta);
+    return permission?.puedeVer ?? false;
   };
 
   const canView = (ruta: string): boolean => {
-    if (!ruta) return false;
-    const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
-    const permission = permissions.find(p => p.ruta === normalizedRuta);
-    return permission ? permission.puedeVer : false;
+    const permission = findPermission(ruta);
+    return permission?.puedeVer ?? false;
   };
 
   const canCreate = (ruta: string): boolean => {
-    if (!ruta) return false;
-    const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
-    const permission = permissions.find(p => p.ruta === normalizedRuta);
-    return permission ? permission.puedeCrear : false;
+    const permission = findPermission(ruta);
+    return permission?.puedeCrear ?? false;
   };
 
   const canEdit = (ruta: string): boolean => {
-    if (!ruta) return false;
-    const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
-    const permission = permissions.find(p => p.ruta === normalizedRuta);
-    return permission ? permission.puedeEditar : false;
+    const permission = findPermission(ruta);
+    return permission?.puedeEditar ?? false;
   };
 
   const canDelete = (ruta: string): boolean => {
-    if (!ruta) return false;
-    const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
-    const permission = permissions.find(p => p.ruta === normalizedRuta);
-    return permission ? permission.puedeEliminar : false;
+    const permission = findPermission(ruta);
+    return permission?.puedeEliminar ?? false;
   };
 
   return {

@@ -16,47 +16,11 @@ import type {
   Zonas
 } from '~/types/mantencion';
 
-/**
- * Interfaz estándar para respuestas del servicio de mantención
- * Encapsula el resultado exitoso o error de operaciones
- *
- * @template T - Tipo de datos que retorna la operación exitosa
- */
 export interface MantencionServiceResponse<T> {
-  /** Datos devueltos en caso de éxito, null si hay error */
   data: T | null;
-  /** Mensaje de error si falla la operación, null si es exitosa */
   error: string | null;
 }
-
-/**
- * Servicio para operaciones de mantención del sistema
- *
- * Maneja las operaciones CRUD y consultas para entidades de mantención como:
- * - Ciclos de facturación
- * - Claves, conceptos y empalmes
- * - Marcas, nichos y parámetros
- * - Sectores, tarifas, tipos de contrato y zonas
- *
- * Todas las operaciones retornan un objeto MantencionServiceResponse
- * que encapsula el resultado o error.
- */
 class MantencionService {
-  /**
-   * Normaliza respuestas de API con formato variable
-   *
-   * El backend puede retornar datos en dos formatos diferentes:
-   * - Formato anidado: `{ data: { data: T[] } }`
-   * - Formato directo: `{ data: T[] }`
-   *
-   * Este método normaliza ambos casos y retorna siempre un array.
-   *
-   * @template T - Tipo de elementos del array esperado
-   * @param response - Respuesta de axios con estructura variable
-   * @returns Array de tipo T, o array vacío si no se encuentra data válida
-   *
-   * @private
-   */
   private processApiResponse<T>(response: any): T[] {
     if (
       response.data &&
@@ -71,21 +35,6 @@ class MantencionService {
     return [];
   }
 
-  /**
-   * Obtiene la lista de ciclos de facturación
-   *
-   * @returns Promise con array de ciclos o error
-   *
-   * @example
-   * ```typescript
-   * const { data, error } = await mantencionService.getCiclosFacturacion();
-   * if (error) {
-   *   console.error('Error:', error);
-   * } else {
-   *   console.log('Ciclos:', data);
-   * }
-   * ```
-   */
   async getCiclosFacturacion(): Promise<
     MantencionServiceResponse<CiclosFacturacion[]>
   > {
@@ -103,11 +52,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de claves del sistema
-   *
-   * @returns Promise con array de claves o error
-   */
   async getClaves(): Promise<MantencionServiceResponse<Claves[]>> {
     try {
       const response = await api.get('/buscarClaves');
@@ -123,23 +67,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene conceptos y su combo asociado en paralelo
-   *
-   * Realiza dos peticiones simultáneas para optimizar el tiempo de carga:
-   * - Conceptos del sistema
-   * - Combo asociado a conceptos
-   *
-   * @returns Promise con objeto conteniendo ambos arrays o error
-   *
-   * @example
-   * ```typescript
-   * const { data, error } = await mantencionService.getConceptosData();
-   * if (data) {
-   *   const { conceptos, comboAsociadoConceptos } = data;
-   * }
-   * ```
-   */
   async getConceptosData(): Promise<
     MantencionServiceResponse<{
       conceptos: Conceptos[];
@@ -169,11 +96,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de empalmes
-   *
-   * @returns Promise con array de empalmes o error
-   */
   async getEmpalmes(): Promise<MantencionServiceResponse<Empalme[]>> {
     try {
       const response = await api.get('/buscarEmpalmes');
@@ -189,11 +111,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de marcas de medidores
-   *
-   * @returns Promise con array de marcas o error
-   */
   async getMarcas(): Promise<MantencionServiceResponse<Marca[]>> {
     try {
       const response = await api.get('/buscarMarca');
@@ -209,11 +126,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de nichos
-   *
-   * @returns Promise con array de nichos o error
-   */
   async getNichos(): Promise<MantencionServiceResponse<Nicho[]>> {
     try {
       const response = await api.get('/buscarNichoM');
@@ -229,18 +141,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Crea un nuevo nicho en el sistema
-   *
-   * @param nicho - Datos del nicho a crear
-   * @returns Promise con el nicho creado o error
-   *
-   * @example
-   * ```typescript
-   * const nuevoNicho = { nombre: 'Nicho A', descripcion: 'Descripción' };
-   * const { data, error } = await mantencionService.createNicho(nuevoNicho);
-   * ```
-   */
   async createNicho(
     nicho: CreateNichoRequest
   ): Promise<MantencionServiceResponse<Nicho>> {
@@ -258,20 +158,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Actualiza un nicho existente
-   *
-   * @param id - ID del nicho a actualizar
-   * @param nicho - Datos actualizados del nicho
-   * @returns Promise con el nicho actualizado o error
-   *
-   * @example
-   * ```typescript
-   * const { data, error } = await mantencionService.updateNicho(1, {
-   *   nombre: 'Nicho Actualizado'
-   * });
-   * ```
-   */
   async updateNicho(
     id: number,
     nicho: UpdateNichoRequest
@@ -290,11 +176,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de parámetros del sistema
-   *
-   * @returns Promise con array de parámetros o error
-   */
   async getParametros(): Promise<MantencionServiceResponse<Parametro[]>> {
     try {
       const response = await api.get('/buscarParametro');
@@ -310,11 +191,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de sectores
-   *
-   * @returns Promise con array de sectores o error
-   */
   async getSectores(): Promise<MantencionServiceResponse<Sectores[]>> {
     try {
       const response = await api.get('/buscarSector');
@@ -330,11 +206,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de tarifas
-   *
-   * @returns Promise con array de tarifas o error
-   */
   async getTarifas(): Promise<MantencionServiceResponse<Tarifas[]>> {
     try {
       const response = await api.get('/buscarTarifa');
@@ -350,11 +221,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de tipos de contratos
-   *
-   * @returns Promise con array de tipos de contrato o error
-   */
   async getTiposContratos(): Promise<
     MantencionServiceResponse<TiposContrato[]>
   > {
@@ -372,11 +238,6 @@ class MantencionService {
     }
   }
 
-  /**
-   * Obtiene la lista de zonas
-   *
-   * @returns Promise con array de zonas o error
-   */
   async getZonas(): Promise<MantencionServiceResponse<Zonas[]>> {
     try {
       const response = await api.get('/buscarZona');
@@ -393,14 +254,4 @@ class MantencionService {
   }
 }
 
-/**
- * Instancia singleton del servicio de mantención
- *
- * @example
- * ```typescript
- * import { mantencionService } from '~/services/mantencionService';
- *
- * const { data, error } = await mantencionService.getCiclosFacturacion();
- * ```
- */
 export const mantencionService = new MantencionService();

@@ -50,7 +50,7 @@ export function CargoFiltersComponent({
   conceptos,
   tarifas,
   tiposMedidor
-}: CargoFiltersProps) {
+}: Readonly<CargoFiltersProps>) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof CargoFilters, value: string) => {
@@ -112,8 +112,8 @@ export function CargoFiltersComponent({
                     className='bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200'
                   >
                     {activeFiltersCount} filtro
-                    {activeFiltersCount !== 1 ? 's' : ''} activo
-                    {activeFiltersCount !== 1 ? 's' : ''}
+                    {activeFiltersCount === 1 ? '' : 's'} activo
+                    {activeFiltersCount === 1 ? '' : 's'}
                   </Badge>
                 )}
                 <Button variant='ghost' size='sm' className=''>

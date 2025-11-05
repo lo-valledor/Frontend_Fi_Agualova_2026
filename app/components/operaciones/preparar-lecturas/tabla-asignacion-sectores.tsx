@@ -162,7 +162,9 @@ export default function TablaAsignacionSectores({
       }
 
       const errorMessage =
-        (response.data && typeof response.data === 'object' && 'mensaje' in response.data
+        (response.data &&
+        typeof response.data === 'object' &&
+        'mensaje' in response.data
           ? (response.data as { mensaje?: string }).mensaje
           : undefined) || 'Sin detalles en la respuesta';
       return {
@@ -254,9 +256,12 @@ export default function TablaAsignacionSectores({
 
     const classes = {
       container: {
-        success: 'bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800',
-        error: 'bg-linear-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800',
-        warning: 'bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800'
+        success:
+          'bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800',
+        error:
+          'bg-linear-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800',
+        warning:
+          'bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800'
       },
       iconWrapper: {
         success: 'bg-green-100 dark:bg-green-800/50',
@@ -283,15 +288,134 @@ export default function TablaAsignacionSectores({
     const iconProps = 'h-5 w-5';
 
     if (resultType === 'success') {
-      return <CheckCircle2 className={`${iconProps} text-green-600 dark:text-green-400`} />;
+      return (
+        <CheckCircle2
+          className={`${iconProps} text-green-600 dark:text-green-400`}
+        />
+      );
     }
     if (resultType === 'error') {
-      return <AlertCircle className={`${iconProps} text-red-600 dark:text-red-400`} />;
+      return (
+        <AlertCircle
+          className={`${iconProps} text-red-600 dark:text-red-400`}
+        />
+      );
     }
-    return <Info className={`${iconProps} text-amber-600 dark:text-amber-400`} />;
+    return (
+      <Info className={`${iconProps} text-amber-600 dark:text-amber-400`} />
+    );
   };
 
   const resultClasses = getResultClasses();
+
+  // REFACTOR: Extraer renderizado de filas de tabla
+  const renderTableRows = () => {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={6} className='text-center h-32'>
+            <div className='flex justify-center items-center flex-col gap-3'>
+              <div className='relative'>
+                <div className='w-12 h-12 rounded-full border-4 border-border'></div>
+                <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-border border-t-transparent animate-spin'></div>
+              </div>
+              <span className='text-emerald-700 dark:text-emerald-300 font-medium'>
+                Cargando sectores...
+              </span>
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (data.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={6} className='text-center h-32 px-4'>
+            <div className='flex justify-center items-center flex-col gap-2 sm:gap-3'>
+              <div className='w-12 h-12 sm:w-16 sm:h-16 bg-background rounded-xl flex items-center justify-center'>
+                <Info className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400' />
+              </div>
+              <div className='text-center space-y-1'>
+                <p className='font-medium text-sm sm:text-base'>
+                  <span className='hidden sm:inline'>
+                    No hay sectores disponibles
+                  </span>
+                  <span className='sm:hidden'>Sin sectores</span>
+                </p>
+                <p className='text-xs sm:text-sm text-muted-foreground'>
+                  <span className='hidden sm:inline'>
+                    Selecciona un ciclo y realiza una búsqueda
+                  </span>
+                  <span className='sm:hidden'>Realiza una búsqueda</span>
+                </p>
+              </div>
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return data.map(item => (
+      <TableRow
+        key={item.nichoId}
+        className={
+          isNichoSelected(item.nichoId)
+            ? ' hover:from-emerald-50 hover:to-teal-50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 border-l-4 border-border'
+            : 'hover:bg-muted'
+        }
+      >
+        <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
+          <Checkbox
+            checked={isNichoSelected(item.nichoId)}
+            onCheckedChange={() => handleSelectNicho(item)}
+            aria-label={`Seleccionar nicho ${item.nichoId}`}
+            disabled={!hasPermission}
+            title={hasPermission ? '' : 'No tiene permisos para seleccionar'}
+          />
+        </TableCell>
+        <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
+          {item.descripcionSector}
+        </TableCell>
+
+        <TableCell className='px-2 sm:px-4 py-2 sm:py-3 hidden sm:table-cell'>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className='max-w-[250px] truncate text-sm'>
+                  {item.descripcionNicho}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className='max-w-xs'>{item.descripcionNicho}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </TableCell>
+        <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
+          <div className='font-medium bg-background px-2 sm:px-3 py-1 rounded-full inline-block text-xs sm:text-sm'>
+            {item.cantidadMedidores}
+          </div>
+        </TableCell>
+        <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
+          {isNichoSelected(item.nichoId) ? (
+            <Badge className='bg-linear-to-r from-emerald-500 to-teal-600 border-0 text-xs px-1 sm:px-2'>
+              <span className='hidden sm:inline'>Seleccionado</span>
+              <span className='sm:hidden'>Sel</span>
+            </Badge>
+          ) : (
+            <Badge
+              variant='outline'
+              className='bg-background border-border text-xs px-1 sm:px-2'
+            >
+              <span className='hidden sm:inline'>Pendiente</span>
+              <span className='sm:hidden'>Pend</span>
+            </Badge>
+          )}
+        </TableCell>
+      </TableRow>
+    ));
+  };
 
   return (
     <div className='space-y-4'>
@@ -363,7 +487,7 @@ export default function TablaAsignacionSectores({
                 Resultados del proceso
               </p>
               <div className='max-h-32 overflow-y-auto mt-2 space-y-1'>
-                {submitResults.messages.map((message) => (
+                {submitResults.messages.map(message => (
                   <p key={message} className='text-sm text-muted-foreground'>
                     • {message}
                   </p>
@@ -429,113 +553,7 @@ export default function TablaAsignacionSectores({
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className='text-center h-32'>
-                    <div className='flex justify-center items-center flex-col gap-3'>
-                      <div className='relative'>
-                        <div className='w-12 h-12 rounded-full border-4 border-border'></div>
-                        <div className='absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-border border-t-transparent animate-spin'></div>
-                      </div>
-                      <span className='text-emerald-700 dark:text-emerald-300 font-medium'>
-                        Cargando sectores...
-                      </span>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : data.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className='text-center h-32 px-4'>
-                    <div className='flex justify-center items-center flex-col gap-2 sm:gap-3'>
-                      <div className='w-12 h-12 sm:w-16 sm:h-16 bg-background rounded-xl flex items-center justify-center'>
-                        <Info className='h-6 w-6 sm:h-8 sm:w-8 text-slate-400' />
-                      </div>
-                      <div className='text-center space-y-1'>
-                        <p className='font-medium text-sm sm:text-base'>
-                          <span className='hidden sm:inline'>
-                            No hay sectores disponibles
-                          </span>
-                          <span className='sm:hidden'>Sin sectores</span>
-                        </p>
-                        <p className='text-xs sm:text-sm text-muted-foreground'>
-                          <span className='hidden sm:inline'>
-                            Selecciona un ciclo y realiza una búsqueda
-                          </span>
-                          <span className='sm:hidden'>
-                            Realiza una búsqueda
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                data.map((item) => (
-                  <TableRow
-                    key={item.nichoId}
-                    className={
-                      isNichoSelected(item.nichoId)
-                        ? ' hover:from-emerald-50 hover:to-teal-50 dark:hover:from-emerald-900/20 dark:hover:to-teal-900/20 border-l-4 border-border'
-                        : 'hover:bg-muted'
-                    }
-                  >
-                    <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
-                      <Checkbox
-                        checked={isNichoSelected(item.nichoId)}
-                        onCheckedChange={() => handleSelectNicho(item)}
-                        aria-label={`Seleccionar nicho ${item.nichoId}`}
-                        disabled={!hasPermission}
-                        title={
-                          hasPermission
-                            ? ''
-                            : 'No tiene permisos para seleccionar'
-                        }
-                      />
-                    </TableCell>
-                    <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
-                      {item.descripcionSector}
-                    </TableCell>
-
-                    <TableCell className='px-2 sm:px-4 py-2 sm:py-3 hidden sm:table-cell'>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className='max-w-[250px] truncate text-sm'>
-                              {item.descripcionNicho}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className='max-w-xs'>{item.descripcionNicho}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </TableCell>
-                    <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
-                      <div className='font-medium bg-background px-2 sm:px-3 py-1 rounded-full inline-block text-xs sm:text-sm'>
-                        {item.cantidadMedidores}
-                      </div>
-                    </TableCell>
-                    <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
-                      {isNichoSelected(item.nichoId) ? (
-                        <Badge className='bg-linear-to-r from-emerald-500 to-teal-600 border-0 text-xs px-1 sm:px-2'>
-                          <span className='hidden sm:inline'>Seleccionado</span>
-                          <span className='sm:hidden'>Sel</span>
-                        </Badge>
-                      ) : (
-                        <Badge
-                          variant='outline'
-                          className='bg-background border-border text-xs px-1 sm:px-2'
-                        >
-                          <span className='hidden sm:inline'>Pendiente</span>
-                          <span className='sm:hidden'>Pend</span>
-                        </Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
+            <TableBody>{renderTableRows()}</TableBody>
           </Table>
         </ScrollArea>
       </div>

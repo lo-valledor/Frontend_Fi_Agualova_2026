@@ -45,7 +45,7 @@ export function AcometidaFiltersComponent({
   onFiltersChange,
   onClearFilters,
   filterOptions
-}: AcometidaFiltersProps) {
+}: Readonly<AcometidaFiltersProps>) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleFilterChange = (key: keyof AcometidaFilters, value: string) => {
@@ -89,8 +89,8 @@ export function AcometidaFiltersComponent({
                     className='bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-200'
                   >
                     {activeFiltersCount} filtro
-                    {activeFiltersCount !== 1 ? 's' : ''} activo
-                    {activeFiltersCount !== 1 ? 's' : ''}
+                    {activeFiltersCount === 1 ? '' : 's'} activo
+                    {activeFiltersCount === 1 ? '' : 's'}
                   </Badge>
                 )}
                 <Button

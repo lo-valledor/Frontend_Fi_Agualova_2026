@@ -5,8 +5,8 @@
  * Ejecutar: node scripts/sonar-optimizer.js
  */
 
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { glob } from 'glob';
 
 const PATTERNS = {
@@ -33,15 +33,10 @@ const PATTERNS = {
 };
 
 class SonarOptimizer {
-  constructor() {
-    this.filesProcessed = 0;
-    this.changesApplied = 0;
-    this.issuesFound = [];
-  }
+  filesProcessed = 0;
+  changesApplied = 0;
+  issuesFound = [];
 
-  /**
-   * Procesa todos los archivos TypeScript/TSX del proyecto
-   */
   async optimize() {
     console.log('🔍 Buscando archivos para optimizar...\n');
 
@@ -65,9 +60,6 @@ class SonarOptimizer {
     this.printReport();
   }
 
-  /**
-   * Procesa un archivo individual
-   */
   async processFile(filePath) {
     try {
       const content = fs.readFileSync(filePath, 'utf-8');
@@ -135,22 +127,27 @@ class SonarOptimizer {
         return acc;
       }, {});
 
-      Object.entries(grouped)
+      const topIssues = Object.entries(grouped)
         .sort(([, a], [, b]) => b.length - a.length)
-        .slice(0, 10)
-        .forEach(([file, issues]) => {
-          const total = issues.reduce((sum, i) => sum + i.count, 0);
-          console.log(`  📄 ${path.relative(process.cwd(), file)}`);
-          console.log(
-            `     ${total} issues: ${issues.map(i => i.pattern).join(', ')}`
-          );
-        });
+        .slice(0, 10);
+
+      for (const [file, issues] of topIssues) {
+        const total = issues.reduce((sum, i) => sum + i.count, 0);
+        console.log(`  📄 ${path.relative(process.cwd(), file)}`);
+        console.log(
+          `     ${total} issues: ${issues.map(i => i.pattern).join(', ')}`
+        );
+      }
     }
 
     console.log('\n' + '='.repeat(60));
   }
 }
 
-// Ejecutar optimización
 const optimizer = new SonarOptimizer();
-optimizer.optimize().catch(console.error);
+try {
+  await optimizer.optimize();
+} catch (error) {
+  console.error(error);
+  process.exit(1);
+}

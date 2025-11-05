@@ -22,7 +22,7 @@ export function DeleteDialog({
   onClose,
   onConfirm,
   data
-}: DeleteDialogProps) {
+}: Readonly<DeleteDialogProps>) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
@@ -30,15 +30,11 @@ export function DeleteDialog({
           <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminará la relación entre el
-            tipo de contrato{' '}
-            <span className='font-semibold text-foreground'>
+            tipo de contrato <span className='font-semibold text-foreground'>
               {data?.tipoContratoDescripcion}
-            </span>{' '}
-            y el cargo facturable{' '}
-            <span className='font-semibold text-foreground'>
+            </span> y el cargo facturable <span className='font-semibold text-foreground'>
               {data?.cargoFacturableDescripcion}
-            </span>
-            .
+            </span>.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

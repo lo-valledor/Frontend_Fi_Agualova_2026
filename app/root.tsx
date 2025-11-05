@@ -39,7 +39,7 @@ export const links = () => [
   }
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const isDev =
     import.meta.env.VITE_APP_ENV === 'development' || import.meta.env.DEV;
 
@@ -60,7 +60,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function AppLayout({ children }: { children: React.ReactNode }) {
+function AppLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const navigation = useNavigation();
   const loadingBar = useLoadingBar();
 
@@ -98,7 +98,7 @@ export default function App() {
   return <Outlet />;
 }
 
-export function ErrorBoundary({ error }: { error: unknown }) {
+export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   let message = '¡Ups!';
   let details = 'Ha ocurrido un error inesperado.';
   let stack: string | undefined;

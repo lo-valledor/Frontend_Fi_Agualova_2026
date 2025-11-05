@@ -6,56 +6,52 @@ import {
 } from '~/services/monitorService';
 import type { Periodo, Sector } from '~/types/monitor';
 
+// ✅ REFACTOR: Helper genérico para eliminar duplicación de lógica de carga
+async function handleMonitorLoad<T>(
+  fetchFn: () => Promise<{ data?: T | null; error?: string | null }>,
+  setData: (d: T | null) => void,
+  setError: (e: string | null) => void,
+  setLoading: (v: boolean) => void
+): Promise<void> {
+  try {
+    setLoading(true);
+    setError(null);
+    const result = await fetchFn();
+    if (result.error) {
+      setError(result.error);
+    } else if (result.data) {
+      setData(result.data);
+    } else {
+      setError('No se pudieron cargar los datos');
+    }
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'Error desconocido');
+  } finally {
+    setLoading(false);
+  }
+}
+
 export function useMonitorData() {
   const [data, setData] = useState<MonitorBasicData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await monitorService.getBasicData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleMonitorLoad(
+      () => monitorService.getBasicData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
-  const refreshData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const result = await monitorService.getBasicData();
-
-      if (result.error) {
-        setError(result.error);
-      } else if (result.data) {
-        setData(result.data);
-      } else {
-        setError('No se pudieron cargar los datos');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const refreshData = () =>
+    handleMonitorLoad(
+      () => monitorService.getBasicData(),
+      setData,
+      setError,
+      setLoading
+    );
 
   return {
     data,
@@ -75,28 +71,12 @@ export function useMonitorPeriodosAndSectores() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await monitorService.getPeriodosAndSectores();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleMonitorLoad(
+      () => monitorService.getPeriodosAndSectores(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {

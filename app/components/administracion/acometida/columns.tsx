@@ -20,7 +20,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
-      const id = row.getValue('acometidaId') as number;
+      const id: number = row.getValue('acometidaId');
       return (
         <div className='flex items-center gap-2'>
           <span className='font-mono text-xs sm:text-sm font-medium'>{id}</span>
@@ -36,7 +36,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Código' />
     ),
     cell: ({ row }) => {
-      const codigo = row.getValue('codigo') as string;
+      const codigo: string = row.getValue('codigo');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
@@ -57,7 +57,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Ubicación' />
     ),
     cell: ({ row }) => {
-      const ubicacion = row.getValue('ubicacion') as string;
+      const ubicacion: string = row.getValue('ubicacion');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
@@ -78,7 +78,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Contrato' />
     ),
     cell: ({ row }) => {
-      const contratoId = row.getValue('contratoId') as string;
+      const contratoId: string = row.getValue('contratoId');
       return (
         <div className='flex items-center gap-2'>
           <Badge
@@ -86,7 +86,7 @@ export const columns = ({
             className='bg-sky-100 text-sky-800 border-sky-200 dark:bg-sky-900/20 dark:text-sky-300 dark:border-sky-800 text-xs font-mono px-1 sm:px-2'
             title={contratoId}
           >
-            <span className='truncate max-w-[80px] sm:max-w-none'>
+            <span className='truncate max-w-20 sm:max-w-none'>
               {contratoId}
             </span>
           </Badge>
@@ -102,7 +102,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Empalme' />
     ),
     cell: ({ row }) => {
-      const empalme = row.getValue('empalmeDescripcion') as string;
+      const empalme: string = row.getValue('empalmeDescripcion');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
@@ -123,7 +123,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Nicho' />
     ),
     cell: ({ row }) => {
-      const nicho = row.getValue('nichoDescripcion') as string;
+      const nicho: string = row.getValue('nichoDescripcion');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
@@ -144,7 +144,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Sector' />
     ),
     cell: ({ row }) => {
-      const sector = row.getValue('sectorDescripcion') as string;
+      const sector: string = row.getValue('sectorDescripcion');
       return (
         <div className='flex items-center gap-2'>
           <Badge
@@ -152,9 +152,7 @@ export const columns = ({
             className='bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-300 dark:border-indigo-800 text-xs font-medium px-1 sm:px-2'
             title={sector}
           >
-            <span className='truncate max-w-[80px] sm:max-w-none'>
-              {sector}
-            </span>
+            <span className='truncate max-w-20 sm:max-w-none'>{sector}</span>
           </Badge>
         </div>
       );
@@ -168,7 +166,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Límite kW' />
     ),
     cell: ({ row }) => {
-      const limite = row.getValue('limitePotencia') as number | null;
+      const limite: number | null = row.getValue('limitePotencia');
 
       if (limite === null || limite === 0) {
         return (
@@ -203,7 +201,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='N° Medidor' />
     ),
     cell: ({ row }) => {
-      const numeroMedidor = row.getValue('numeroMedidor') as string;
+      const numeroMedidor: string = row.getValue('numeroMedidor');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span

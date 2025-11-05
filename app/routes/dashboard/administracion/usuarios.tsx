@@ -27,7 +27,7 @@ export async function clientLoader(): Promise<LoaderData> {
   return { usuarios: result.data };
 }
 
-export default function Usuarios({ loaderData }: { loaderData: LoaderData }) {
+export default function Usuarios({ loaderData }: Readonly<{ loaderData: LoaderData }>) {
   const { usuarios } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Usuarios' }];
   return (

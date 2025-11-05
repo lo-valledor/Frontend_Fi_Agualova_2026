@@ -485,28 +485,29 @@ export default function ResultadosBusqueda({
   const api = useApiWithLoadingBar();
   const { canCreate } = useAuth();
 
-  // Search function (same as before)
-  const searchResults = async () => {
+  // ✅ REFACTOR: Extraer validación de campos
+  const validateSearchFields = (): boolean => {
     if (!sector) {
       toast.error('Sector no seleccionado');
-      return;
+      return false;
     }
     if (!periodo) {
       toast.error('Periodo no seleccionado');
-      return;
+      return false;
     }
     if (!stfechaini) {
       toast.error('Fecha de inicio no seleccionada');
-      return;
+      return false;
     }
     if (!stfechafin) {
       toast.error('Fecha de fin no seleccionada');
-      return;
+      return false;
     }
+    return true;
+  };
 
-    setIsSearching(true);
-    setSearchError(null);
-
+  // ✅ REFACTOR: Extraer construcción de parámetros
+  const buildSearchParams = () => {
     const params = new URLSearchParams({
       sector,
       periodo,
@@ -518,37 +519,68 @@ export default function ResultadosBusqueda({
     if (medidor) params.append('medidor', medidor);
     if (clave) params.append('clave', clave);
 
+    return params;
+  };
+
+  // ✅ REFACTOR: Extraer procesamiento de respuesta
+  const processSearchResponse = (response: any) => {
+    // Asegurarse de que la respuesta tenga la estructura esperada
+    const responseData =
+      response.data && typeof response.data === 'object'
+        ? response.data
+        : { nichos: [] };
+
+    // Extraer los nichos de la respuesta con validación de tipo
+    let rawNichos: any[] = [];
+    if (
+      'data' in responseData &&
+      responseData.data &&
+      typeof responseData.data === 'object'
+    ) {
+      rawNichos = Array.isArray(responseData.data.nichos)
+        ? responseData.data.nichos
+        : [];
+    } else if ('nichos' in responseData && Array.isArray(responseData.nichos)) {
+      rawNichos = responseData.nichos;
+    }
+
+    // Aseguramos que cada nicho tenga la propiedad 'nombre'
+    return rawNichos.map((nicho: any, index: number) => ({
+      nombre: nicho.nombre || `Nicho ${index + 1}`,
+      filas: Array.isArray(nicho.filas) ? nicho.filas : []
+    }));
+  };
+
+  // ✅ REFACTOR: Extraer inicialización de estado expandido
+  const initializeExpandedState = (nichos: any[]) => {
+    const newExpandedState: Record<string, boolean> = {};
+    if (nichos && nichos.length > 0) {
+      for (const [nichoIndex, nicho] of nichos.entries()) {
+        if (Array.isArray(nicho.filas)) {
+          for (const [filaIndex] of nicho.filas.entries()) {
+            const key = `${nichoIndex}-${filaIndex}`;
+            newExpandedState[key] = expandedFilas[key] ?? true;
+          }
+        }
+      }
+    }
+    return newExpandedState;
+  };
+
+  // Search function (refactored)
+  const searchResults = async () => {
+    if (!validateSearchFields()) {
+      return;
+    }
+
+    setIsSearching(true);
+    setSearchError(null);
+
+    const params = buildSearchParams();
+
     try {
       const response = await api.get('/sector', { params });
-
-      // Asegurarse de que la respuesta tenga la estructura esperada
-      const responseData =
-        response.data && typeof response.data === 'object'
-          ? response.data
-          : { nichos: [] };
-
-      // Extraer los nichos de la respuesta con validación de tipo
-      let rawNichos: any[] = [];
-      if (
-        'data' in responseData &&
-        responseData.data &&
-        typeof responseData.data === 'object'
-      ) {
-        rawNichos = Array.isArray(responseData.data.nichos)
-          ? responseData.data.nichos
-          : [];
-      } else if (
-        'nichos' in responseData &&
-        Array.isArray(responseData.nichos)
-      ) {
-        rawNichos = responseData.nichos;
-      }
-
-      // Aseguramos que cada nicho tenga la propiedad 'nombre'
-      const nichos = rawNichos.map((nicho: any, index: number) => ({
-        nombre: nicho.nombre || `Nicho ${index + 1}`,
-        filas: Array.isArray(nicho.filas) ? nicho.filas : []
-      }));
+      const nichos = processSearchResponse(response);
 
       setResults({ nichos });
 
@@ -558,18 +590,7 @@ export default function ResultadosBusqueda({
       }
 
       // Initialize expanded state for all filas
-      const newExpandedState: Record<string, boolean> = {};
-      if (nichos && nichos.length > 0) {
-        nichos.forEach((nicho, nichoIndex) => {
-          // Nos aseguramos de que filas.map esté disponible
-          if (Array.isArray(nicho.filas)) {
-            nicho.filas.forEach((fila, filaIndex) => {
-              const key = `${nichoIndex}-${filaIndex}`;
-              newExpandedState[key] = expandedFilas[key] ?? true; // Mantener estado previo o expandir por defecto
-            });
-          }
-        });
-      }
+      const newExpandedState = initializeExpandedState(nichos);
       setExpandedFilas(newExpandedState);
     } catch (error) {
       console.error('Error al buscar lecturas:', error);
@@ -670,8 +691,8 @@ export default function ResultadosBusqueda({
           className='space-y-4'
         >
           <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3'>
-            {[...Array(6)].map((_, i) => (
-              <Card key={i}>
+            {Array.from({ length: 6 }, (_, i) => (
+              <Card key={`skeleton-card-${i}`}>
                 <CardContent className='p-3'>
                   <Skeleton
                     height={60}
@@ -1022,7 +1043,7 @@ export default function ResultadosBusqueda({
                     const isActive = index === selectedNichoIndex;
 
                     return (
-                      <TooltipProvider key={`tab-${index}`}>
+                      <TooltipProvider key={`nicho-${nicho.nombre}-${index}`}>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -1222,11 +1243,14 @@ export default function ResultadosBusqueda({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant='outline' size='sm' className='gap-1'>
-                            {viewMode === 'detailed' ? (
+                            {/* ✅ REFACTOR: Extraer lógica de ícono */}
+                            {viewMode === 'detailed' && (
                               <BarChart3 className='h-4 w-4' />
-                            ) : viewMode === 'compact' ? (
+                            )}
+                            {viewMode === 'compact' && (
                               <AlertCircle className='h-4 w-4' />
-                            ) : (
+                            )}
+                            {viewMode === 'cards' && (
                               <Grid3X3 className='h-4 w-4' />
                             )}
                             <span className='hidden sm:inline'>
@@ -1286,9 +1310,9 @@ export default function ResultadosBusqueda({
                               !canCreate('/dashboard/monitor/monitor-lecturas')
                             }
                             title={
-                              !canCreate('/dashboard/monitor/monitor-lecturas')
-                                ? 'No tiene permisos para ingresar lecturas'
-                                : ''
+                              canCreate('/dashboard/monitor/monitor-lecturas')
+                                ? ''
+                                : 'No tiene permisos para ingresar lecturas'
                             }
                             onClick={() => {
                               setIsNichoModalOpen(true);

@@ -15,7 +15,7 @@ export function FilterSummary({
   filteredCargos,
   activeFilters,
   isFiltered
-}: FilterSummaryProps) {
+}: Readonly<FilterSummaryProps>) {
   if (!isFiltered) return null;
 
   const percentageShown =
@@ -49,8 +49,8 @@ export function FilterSummary({
               <TrendingUp className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
             )}
             <Badge variant='secondary' className='text-xs'>
-              {activeFilters} filtro{activeFilters !== 1 ? 's' : ''} aplicado
-              {activeFilters !== 1 ? 's' : ''}
+              {activeFilters} filtro{activeFilters === 1 ? '' : 's'} aplicado
+              {activeFilters === 1 ? '' : 's'}
             </Badge>
           </div>
         </div>

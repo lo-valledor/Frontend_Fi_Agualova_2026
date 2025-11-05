@@ -40,6 +40,196 @@ const PermisoCheckbox = React.memo<PermisoCheckboxProps>(
 
 PermisoCheckbox.displayName = 'PermisoCheckbox';
 
+// Componente auxiliar para grupo de checkboxes de permisos (reduce anidación)
+interface PermisoCheckboxGroupProps {
+  permiso: PermisoRolMenu | undefined;
+  rolId: number;
+  menuId: number;
+  onTogglePermiso: (
+    idRol: number,
+    idMenu: number,
+    tipoPermiso: string,
+    valor: boolean
+  ) => void;
+  layout?: 'mobile' | 'table';
+}
+
+const PermisoCheckboxGroup = React.memo<PermisoCheckboxGroupProps>(
+  ({ permiso, rolId, menuId, onTogglePermiso, layout = 'table' }) => {
+    const handleChange =
+      (tipoPermiso: string) => (checked: boolean | 'indeterminate') => {
+        onTogglePermiso(rolId, menuId, tipoPermiso, !!checked);
+      };
+
+    if (layout === 'mobile') {
+      return (
+        <div className='grid grid-cols-2 gap-3'>
+          <div className='space-y-2'>
+            <div className='flex items-center gap-2'>
+              <PermisoCheckbox
+                checked={permiso?.puedeVer || false}
+                onCheckedChange={handleChange('puedeVer')}
+                className='h-4 w-4 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600'
+              />
+              <span className='text-sm text-blue-600 dark:text-blue-400'>
+                Ver
+              </span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <PermisoCheckbox
+                checked={permiso?.puedeCrear || false}
+                onCheckedChange={handleChange('puedeCrear')}
+                className='h-4 w-4 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600'
+              />
+              <span className='text-sm text-emerald-600 dark:text-emerald-400'>
+                Crear
+              </span>
+            </div>
+          </div>
+          <div className='space-y-2'>
+            <div className='flex items-center gap-2'>
+              <PermisoCheckbox
+                checked={permiso?.puedeEditar || false}
+                onCheckedChange={handleChange('puedeEditar')}
+                className='h-4 w-4 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600'
+              />
+              <span className='text-sm text-amber-600 dark:text-amber-400'>
+                Editar
+              </span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <PermisoCheckbox
+                checked={permiso?.puedeEliminar || false}
+                onCheckedChange={handleChange('puedeEliminar')}
+                className='h-4 w-4 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600'
+              />
+              <span className='text-sm text-rose-600 dark:text-rose-400'>
+                Eliminar
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className='grid grid-cols-4 gap-1'>
+        {/* Ver */}
+        <div className='flex items-center justify-center'>
+          <PermisoCheckbox
+            checked={permiso?.puedeVer || false}
+            onCheckedChange={handleChange('puedeVer')}
+            className='h-4 w-4 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600'
+          />
+        </div>
+        {/* Crear */}
+        <div className='flex items-center justify-center'>
+          <PermisoCheckbox
+            checked={permiso?.puedeCrear || false}
+            onCheckedChange={handleChange('puedeCrear')}
+            className='h-4 w-4 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600'
+          />
+        </div>
+        {/* Editar */}
+        <div className='flex items-center justify-center'>
+          <PermisoCheckbox
+            checked={permiso?.puedeEditar || false}
+            onCheckedChange={handleChange('puedeEditar')}
+            className='h-4 w-4 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600'
+          />
+        </div>
+        {/* Eliminar */}
+        <div className='flex items-center justify-center'>
+          <PermisoCheckbox
+            checked={permiso?.puedeEliminar || false}
+            onCheckedChange={handleChange('puedeEliminar')}
+            className='h-4 w-4 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600'
+          />
+        </div>
+      </div>
+    );
+  }
+);
+
+PermisoCheckboxGroup.displayName = 'PermisoCheckboxGroup';
+
+// Componente MobileView extraído
+interface MobileViewProps {
+  filteredMenus: Menus[];
+  visibleRoles: Roles[];
+  getPermiso: (idRol: number, idMenu: number) => PermisoRolMenu | undefined;
+  onTogglePermiso: (
+    idRol: number,
+    idMenu: number,
+    tipoPermiso: string,
+    valor: boolean
+  ) => void;
+}
+
+const MobileView = React.memo<MobileViewProps>(
+  ({ filteredMenus, visibleRoles, getPermiso, onTogglePermiso }) => (
+    <div className='space-y-4'>
+      {filteredMenus.map(menu => (
+        <Card key={menu.idMenu} className='border-border'>
+          <CardHeader className='pb-3'>
+            <div className='flex items-center justify-between'>
+              <div className='space-y-1'>
+                <div className='flex items-center gap-2'>
+                  <Badge variant='outline' className='font-mono text-xs'>
+                    #{menu.idMenu}
+                  </Badge>
+                  <span className='font-medium text-sm'>{menu.nombreMenu}</span>
+                </div>
+                {menu.ruta && (
+                  <div className='text-xs text-slate-500 font-mono'>
+                    {menu.ruta}
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className='pt-0'>
+            <div className='space-y-3'>
+              {visibleRoles.map(rol => {
+                const permiso = getPermiso(rol.idRol, menu.idMenu);
+                return (
+                  <div
+                    key={rol.idRol}
+                    className='border border-slate-100 dark:border-slate-700 rounded-xl p-3'
+                  >
+                    <div className='flex items-center justify-between mb-3'>
+                      <div className='flex items-center gap-2'>
+                        <Badge
+                          variant='secondary'
+                          className='font-mono text-xs'
+                        >
+                          #{rol.idRol}
+                        </Badge>
+                        <span className='font-medium text-sm'>
+                          {rol.nombreRol}
+                        </span>
+                      </div>
+                    </div>
+                    <PermisoCheckboxGroup
+                      permiso={permiso}
+                      rolId={rol.idRol}
+                      menuId={menu.idMenu}
+                      onTogglePermiso={onTogglePermiso}
+                      layout='mobile'
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  )
+);
+
+MobileView.displayName = 'MobileView';
+
 const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   roles,
   menus,
@@ -187,139 +377,25 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
     }
   }, [pendingChanges, onDataChange]);
 
-  // ✅ NUEVA FUNCIÓN: Descartar cambios pendientes
   const handleDiscardChanges = useCallback(() => {
     setPendingChanges(new Map());
     toast.info('Cambios descartados');
   }, []);
 
-  // Componente para vista móvil
-  const MobileView = () => (
-    <div className='space-y-4'>
-      {filteredMenus.map(menu => (
-        <Card key={menu.idMenu} className='border-border'>
-          <CardHeader className='pb-3'>
-            <div className='flex items-center justify-between'>
-              <div className='space-y-1'>
-                <div className='flex items-center gap-2'>
-                  <Badge variant='outline' className='font-mono text-xs'>
-                    #{menu.idMenu}
-                  </Badge>
-                  <span className='font-medium text-sm'>{menu.nombreMenu}</span>
-                </div>
-                {menu.ruta && (
-                  <div className='text-xs text-slate-500 font-mono'>
-                    {menu.ruta}
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className='pt-0'>
-            <div className='space-y-3'>
-              {visibleRoles.map(rol => {
-                const permiso = getPermiso(rol.idRol, menu.idMenu);
-                return (
-                  <div
-                    key={rol.idRol}
-                    className='border border-slate-100 dark:border-slate-700 rounded-xl p-3'
-                  >
-                    <div className='flex items-center justify-between mb-3'>
-                      <div className='flex items-center gap-2'>
-                        <Badge
-                          variant='secondary'
-                          className='font-mono text-xs'
-                        >
-                          #{rol.idRol}
-                        </Badge>
-                        <span className='font-medium text-sm'>
-                          {rol.nombreRol}
-                        </span>
-                      </div>
-                    </div>
-                    <div className='grid grid-cols-2 gap-3'>
-                      <div className='space-y-2'>
-                        <div className='flex items-center gap-2'>
-                          <PermisoCheckbox
-                            checked={permiso?.puedeVer || false}
-                            onCheckedChange={checked =>
-                              handleTogglePermiso(
-                                rol.idRol,
-                                menu.idMenu,
-                                'puedeVer',
-                                !!checked
-                              )
-                            }
-                            className='h-4 w-4 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600'
-                          />
-                          <span className='text-sm text-blue-600 dark:text-blue-400'>
-                            Ver
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-2'>
-                          <PermisoCheckbox
-                            checked={permiso?.puedeCrear || false}
-                            onCheckedChange={checked =>
-                              handleTogglePermiso(
-                                rol.idRol,
-                                menu.idMenu,
-                                'puedeCrear',
-                                !!checked
-                              )
-                            }
-                            className='h-4 w-4 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600'
-                          />
-                          <span className='text-sm text-emerald-600 dark:text-emerald-400'>
-                            Crear
-                          </span>
-                        </div>
-                      </div>
-                      <div className='space-y-2'>
-                        <div className='flex items-center gap-2'>
-                          <PermisoCheckbox
-                            checked={permiso?.puedeEditar || false}
-                            onCheckedChange={checked =>
-                              handleTogglePermiso(
-                                rol.idRol,
-                                menu.idMenu,
-                                'puedeEditar',
-                                !!checked
-                              )
-                            }
-                            className='h-4 w-4 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600'
-                          />
-                          <span className='text-sm text-amber-600 dark:text-amber-400'>
-                            Editar
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-2'>
-                          <PermisoCheckbox
-                            checked={permiso?.puedeEliminar || false}
-                            onCheckedChange={checked =>
-                              handleTogglePermiso(
-                                rol.idRol,
-                                menu.idMenu,
-                                'puedeEliminar',
-                                !!checked
-                              )
-                            }
-                            className='h-4 w-4 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600'
-                          />
-                          <span className='text-sm text-rose-600 dark:text-rose-400'>
-                            Eliminar
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
+  // REFACTOR: Extraer handlers para reducir anidación
+  const handleToggleRole = useCallback((roleId: number) => {
+    setSelectedRoles(prev =>
+      prev.includes(roleId)
+        ? prev.filter(id => id !== roleId)
+        : [...prev, roleId]
+    );
+  }, []);
+
+  const handleToggleAllRoles = useCallback(() => {
+    setSelectedRoles(
+      selectedRoles.length === roles.length ? [] : roles.map(r => r.idRol)
+    );
+  }, [selectedRoles.length, roles]);
 
   if (roles.length === 0 || menus.length === 0) {
     return (
@@ -447,13 +523,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                     selectedRoles.includes(role.idRol) ? 'default' : 'outline'
                   }
                   size='sm'
-                  onClick={() => {
-                    setSelectedRoles(prev =>
-                      prev.includes(role.idRol)
-                        ? prev.filter(id => id !== role.idRol)
-                        : [...prev, role.idRol]
-                    );
-                  }}
+                  onClick={() => handleToggleRole(role.idRol)}
                   className='h-7 px-2 text-xs'
                 >
                   {role.nombreRol}
@@ -463,13 +533,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                 <Button
                   variant='outline'
                   size='sm'
-                  onClick={() => {
-                    setSelectedRoles(
-                      selectedRoles.length === roles.length
-                        ? []
-                        : roles.map(r => r.idRol)
-                    );
-                  }}
+                  onClick={handleToggleAllRoles}
                   className='h-7 px-2 text-xs'
                 >
                   {selectedRoles.length === roles.length
@@ -521,7 +585,12 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
       <CardContent className='pt-0'>
         {viewMode === 'mobile' ? (
-          <MobileView />
+          <MobileView
+            filteredMenus={filteredMenus}
+            visibleRoles={visibleRoles}
+            getPermiso={getPermiso}
+            onTogglePermiso={handleTogglePermiso}
+          />
         ) : (
           <div className='relative'>
             {/* Indicador de scroll */}
@@ -678,68 +747,13 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
                               }}
                               className={`border-b border-l ${compactView ? 'p-1' : 'p-3'}`}
                             >
-                              <div className='grid grid-cols-4 gap-1'>
-                                {/* Ver */}
-                                <div className='flex items-center justify-center'>
-                                  <PermisoCheckbox
-                                    checked={permiso?.puedeVer || false}
-                                    onCheckedChange={checked =>
-                                      handleTogglePermiso(
-                                        rol.idRol,
-                                        menu.idMenu,
-                                        'puedeVer',
-                                        !!checked
-                                      )
-                                    }
-                                    className='h-4 w-4 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600'
-                                  />
-                                </div>
-                                {/* Crear */}
-                                <div className='flex items-center justify-center'>
-                                  <PermisoCheckbox
-                                    checked={permiso?.puedeCrear || false}
-                                    onCheckedChange={checked =>
-                                      handleTogglePermiso(
-                                        rol.idRol,
-                                        menu.idMenu,
-                                        'puedeCrear',
-                                        !!checked
-                                      )
-                                    }
-                                    className='h-4 w-4 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600'
-                                  />
-                                </div>
-                                {/* Editar */}
-                                <div className='flex items-center justify-center'>
-                                  <PermisoCheckbox
-                                    checked={permiso?.puedeEditar || false}
-                                    onCheckedChange={checked =>
-                                      handleTogglePermiso(
-                                        rol.idRol,
-                                        menu.idMenu,
-                                        'puedeEditar',
-                                        !!checked
-                                      )
-                                    }
-                                    className='h-4 w-4 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600'
-                                  />
-                                </div>
-                                {/* Eliminar */}
-                                <div className='flex items-center justify-center'>
-                                  <PermisoCheckbox
-                                    checked={permiso?.puedeEliminar || false}
-                                    onCheckedChange={checked =>
-                                      handleTogglePermiso(
-                                        rol.idRol,
-                                        menu.idMenu,
-                                        'puedeEliminar',
-                                        !!checked
-                                      )
-                                    }
-                                    className='h-4 w-4 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600'
-                                  />
-                                </div>
-                              </div>
+                              <PermisoCheckboxGroup
+                                permiso={permiso}
+                                rolId={rol.idRol}
+                                menuId={menu.idMenu}
+                                onTogglePermiso={handleTogglePermiso}
+                                layout='table'
+                              />
                             </td>
                           );
                         })}

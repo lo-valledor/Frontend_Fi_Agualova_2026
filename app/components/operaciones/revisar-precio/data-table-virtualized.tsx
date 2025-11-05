@@ -109,6 +109,76 @@ export function DataTableVirtualized<TData, TValue>({
 
   const virtualItems = rowVirtualizer.getVirtualItems();
 
+  //  REFACTOR: Extraer renderizado de filas de tabla
+  const renderTableRows = () => {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} className='h-16 text-center'>
+            <div className='flex justify-center items-center'>
+              <Loader2 className='h-5 w-5 animate-spin' />
+              <span className='ml-2 text-muted-foreground text-sm'>
+                Actualizando datos...
+              </span>
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (rows.length === 0) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} className='h-16 text-center'>
+            <span className='text-sm text-muted-foreground'>No results.</span>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return (
+      <>
+        {/* Espaciador superior */}
+        {virtualItems.length > 0 && (
+          <tr
+            style={{
+              height: `${virtualItems[0]?.start ?? 0}px`
+            }}
+          />
+        )}
+
+        {/* Filas virtualizadas */}
+        {virtualItems.map(virtualRow => {
+          const row = rows[virtualRow.index];
+          return (
+            <TableRow
+              key={row.id}
+              data-index={virtualRow.index}
+              data-state={row.getIsSelected() && 'selected'}
+            >
+              {row.getVisibleCells().map(cell => (
+                <TableCell key={cell.id} className='py-2'>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          );
+        })}
+
+        {/* Espaciador inferior */}
+        {virtualItems.length > 0 && (
+          <tr
+            style={{
+              height: `${
+                rowVirtualizer.getTotalSize() - (virtualItems.at(-1)?.end ?? 0)
+              }px`
+            }}
+          />
+        )}
+      </>
+    );
+  };
+
   return (
     <div className='space-y-2'>
       {/* Información de resultados */}
@@ -144,78 +214,7 @@ export function DataTableVirtualized<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-16 text-center'
-                >
-                  <div className='flex justify-center items-center'>
-                    <Loader2 className='h-5 w-5 animate-spin' />
-                    <span className='ml-2 text-muted-foreground text-sm'>
-                      Actualizando datos...
-                    </span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : rows.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-16 text-center'
-                >
-                  <span className='text-sm text-muted-foreground'>
-                    No results.
-                  </span>
-                </TableCell>
-              </TableRow>
-            ) : (
-              <>
-                {/* Espaciador superior */}
-                {virtualItems.length > 0 && (
-                  <tr
-                    style={{
-                      height: `${virtualItems[0]?.start ?? 0}px`
-                    }}
-                  />
-                )}
-
-                {/* Filas virtualizadas */}
-                {virtualItems.map(virtualRow => {
-                  const row = rows[virtualRow.index];
-                  return (
-                    <TableRow
-                      key={row.id}
-                      data-index={virtualRow.index}
-                      data-state={row.getIsSelected() && 'selected'}
-                    >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell key={cell.id} className='py-2'>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
-
-                {/* Espaciador inferior */}
-                {virtualItems.length > 0 && (
-                  <tr
-                    style={{
-                      height: `${
-                        rowVirtualizer.getTotalSize() -
-                        (virtualItems[virtualItems.length - 1]?.end ?? 0)
-                      }px`
-                    }}
-                  />
-                )}
-              </>
-            )}
-          </TableBody>
+          <TableBody>{renderTableRows()}</TableBody>
         </Table>
       </div>
     </div>
