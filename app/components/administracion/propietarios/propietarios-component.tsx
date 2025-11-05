@@ -212,7 +212,7 @@ export default function PropietariosComponent({
         window.location.reload();
       }
     } catch (error) {
-      toast.error('Error al sincronizar propietarios');
+      toast.error('Error al sincronizar propietarios', error as any);
     } finally {
       setIsSyncing(false);
     }

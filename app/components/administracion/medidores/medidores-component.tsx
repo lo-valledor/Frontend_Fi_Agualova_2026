@@ -1,65 +1,4 @@
-/**
- * Componente principal para Gestión de Medidores
- *
- * Funcionalidades principales:
- * - Visualización de medidores con tabla paginada y filtrable
- * - Creación de nuevos medidores (navegación a /crear)
- * - Edición de medidores existentes (navegación a /:id)
- * - Eliminación de medidores con confirmación
- * - Asociación de medidor a subempalme
- * - Filtros avanzados por marca, tipo, modelo, estado, dígitos, multiplicador
- * - Exportación de datos a Excel
- * - Resumen de estadísticas de filtrado
- *
- * Flujo de trabajo:
- * 1. Usuario visualiza tabla de medidores
- * 2. Puede aplicar filtros por múltiples criterios
- * 3. Acciones disponibles por medidor:
- *    - Editar (navegación a formulario)
- *    - Eliminar (con confirmación)
- *    - Asociar a subempalme (modal específico)
- * 4. Recarga automática después de cada operación
- *
- * Arquitectura:
- * - DataTable con columnas personalizadas y acciones
- * - Hook useMedidorFilters para filtrado
- * - Navegación a rutas para crear/editar
- * - Modal AsociarSubempalmeModal para asociación
- * - DeleteConfirmationDialog para eliminación segura
- * - FilterSummary para estadísticas
- * - API endpoints:
- *   * POST /crear-medidor
- *   * PUT /actualizar-medidor/:id
- *   * DELETE /eliminar-medidor/:id
- *   * GET /medidores (revalidación)
- *
- * Filtros disponibles:
- * - Marca (select)
- * - Tipo (select: Monofásico/Trifásico)
- * - Modelo (select)
- * - Estado (select)
- * - Número de dígitos (rango min-max)
- * - Constante multiplicar (rango min-max)
- * - Fecha inicio (rango desde-hasta)
- * - Tiene ubicación (sí/no/todos)
- * - Tiene acometida (sí/no/todos)
- *
- * @param {Object} props - Props del componente
- * @param {GetMedidores[]} props.medidores - Lista de medidores
- * @param {Marca[]} props.marcas - Marcas disponibles para filtros y formularios
- *
- * @example
- * ```tsx
- * export default function MedidoresRoute({ loaderData }) {
- *   return (
- *     <MedidoresComponent
- *       medidores={loaderData.medidores}
- *       marcas={loaderData.marcas}
- *     />
- *   );
- * }
- * ```
- */
+// oxlint-disable no-unused-vars
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -74,11 +13,7 @@ import { Card, CardContent } from '~/components/ui/card';
 import { useExportMedidores } from '~/hooks/administracion/use-export-medidores';
 import { useMedidorFilters } from '~/hooks/administracion/use-medidor-filters';
 import api from '~/lib/api';
-import type {
-  ActualizarMedidorProps,
-  CrearMedidorProps,
-  GetMedidores
-} from '~/types/administracion';
+import type { GetMedidores } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
 
 import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
@@ -93,21 +28,18 @@ import { ModernHeader } from '~/components/shared/modern-header';
 import { useNavigate } from 'react-router';
 
 export default function MedidoresComponent({
-  medidores: initialMedidores,
-  marcas
+  medidores: initialMedidores
 }: Readonly<{
   medidores: GetMedidores[];
   marcas: Marca[];
 }>) {
   const [medidores, setMedidores] = useState<GetMedidores[]>(initialMedidores);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isAsociarModalOpen, setIsAsociarModalOpen] = useState(false);
   const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(
     null
   );
-  const [modalMode] = useState<'add' | 'edit'>('add');
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   // Estados para filtros
@@ -131,11 +63,7 @@ export default function MedidoresComponent({
     medidores,
     filters
   );
-  // Tipos de medidores hardcodeados como placeholder
-  const [tipos] = useState([
-    { id: 1, nombre: 'Monofásico' },
-    { id: 2, nombre: 'Trifásico' }
-  ]);
+
   const navigate = useNavigate();
 
   // Permisos
@@ -198,47 +126,6 @@ export default function MedidoresComponent({
     setIsAsociarModalOpen(true);
   }, []);
 
-  const handleSubmit = async (
-    data: CrearMedidorProps | ActualizarMedidorProps,
-    mode: 'add' | 'edit'
-  ): Promise<{ codigoMedidor?: number } | void> => {
-    setIsLoading(true);
-    try {
-      if (mode === 'add') {
-        const response = await api.post('/MedidorCrear', data);
-
-        toast.success('Medidor creado exitosamente');
-
-        // Extraer el código del medidor de la respuesta
-        const result = response.data as {
-          mensaje: string;
-          codigoMedidor: number;
-        };
-        if (result?.codigoMedidor) {
-          await refetchMedidores();
-          // NO cerrar el modal automáticamente para que el usuario vea el código generado
-          // setIsModalOpen(false); // <- Comentado para mantener modal abierto
-          return { codigoMedidor: result.codigoMedidor };
-        } else {
-            '⚠️ WARNING - No se encontró codigoMedidor en la respuesta'
-          );
-          await refetchMedidores();
-          setIsModalOpen(false);
-        }
-      } else {
-        await api.put(`/MedidorModificar`, data);
-        toast.success('Medidor actualizado exitosamente');
-        await refetchMedidores();
-        setIsModalOpen(false);
-      }
-    } catch (error) {
-      toast.error('Error al guardar el medidor.');
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleConfirmDelete = async () => {
     if (!selectedMedidor) return;
 
@@ -250,7 +137,7 @@ export default function MedidoresComponent({
       setIsDeleteDialogOpen(false);
       setSelectedMedidor(null);
     } catch (error) {
-      toast.error('Error al eliminar el medidor.');
+      toast.error('Error al eliminar el medidor.', error as any);
     } finally {
       setIsLoading(false);
     }

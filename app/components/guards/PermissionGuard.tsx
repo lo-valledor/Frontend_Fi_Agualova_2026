@@ -8,13 +8,6 @@ interface PermissionGuardProps {
   fallbackPath?: string;
 }
 
-/**
- * Componente que protege rutas basándose en permisos del usuario
- *
- * @param children - Contenido a renderizar si el usuario tiene permisos
- * @param requiredPermission - Tipo de permiso requerido (por defecto 'view')
- * @param fallbackPath - Ruta a la que redirigir si no tiene permisos (por defecto '/dashboard')
- */
 export function PermissionGuard({
   children,
   requiredPermission = 'view',
@@ -33,9 +26,7 @@ export function PermissionGuard({
   }
 
   // Buscar el permiso para la ruta actual
-  const currentPermission = permissions.find(
-    p => p.ruta === location.pathname
-  );
+  const currentPermission = permissions.find(p => p.ruta === location.pathname);
 
   // Verificar si tiene el permiso requerido
   let hasRequiredPermission = false;
@@ -68,16 +59,11 @@ export function PermissionGuard({
   return <>{children}</>;
 }
 
-/**
- * Hook para verificar permisos en componentes
- */
 export function usePermissionCheck() {
   const location = useLocation();
   const { permissions, canView, canCreate, canEdit, canDelete } = useAuth();
 
-  const currentPermission = permissions.find(
-    p => p.ruta === location.pathname
-  );
+  const currentPermission = permissions.find(p => p.ruta === location.pathname);
 
   return {
     permission: currentPermission,

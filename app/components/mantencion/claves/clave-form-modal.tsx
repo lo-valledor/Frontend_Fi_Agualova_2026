@@ -126,6 +126,7 @@ export default function ClaveFormModal({
       onSuccess();
       onClose();
     } catch (error) {
+      console.error('Error al guardar la clave:', error);
     }
   };
 

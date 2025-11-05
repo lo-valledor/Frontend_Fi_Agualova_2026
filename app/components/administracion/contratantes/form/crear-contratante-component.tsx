@@ -90,7 +90,7 @@ export default function CrearContratanteComponent() {
     }
   }, [hasCreatePermission, navigate]);
 
-  const [giros, setGiros] = useState<GetGiros[]>([]);
+  const [, setGiros] = useState<GetGiros[]>([]);
   const [comunas, setComunas] = useState<GetComunas[]>([]);
   const [existingContratantes, setExistingContratantes] = useState<string[]>(
     []
@@ -138,7 +138,7 @@ export default function CrearContratanteComponent() {
           );
         }
       } catch (error) {
-        toast.error('Error al cargar datos del formulario');
+        toast.error('Error al cargar datos del formulario', error as any);
       }
     };
 
@@ -190,7 +190,7 @@ export default function CrearContratanteComponent() {
       toast.success('Contratante creado exitosamente');
       navigate('/dashboard/administracion/contratantes');
     } catch (error) {
-      toast.error('Error al crear el contratante');
+      toast.error('Error al crear el contratante', error as any);
     } finally {
       setIsSubmitting(false);
     }
@@ -198,7 +198,7 @@ export default function CrearContratanteComponent() {
 
   return (
     <div className='min-h-screen bg-background'>
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Crear Nuevo Contratante'

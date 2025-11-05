@@ -56,7 +56,10 @@ export function CorteRegistradoDialog({
       setHora('');
       setPeriodo('');
     } catch (error) {
-      toast.error('Error al registrar el corte. Intente nuevamente.');
+      toast.error(
+        'Error al registrar el corte. Intente nuevamente.',
+        error as any
+      );
     } finally {
       setIsSubmitting(false);
     }

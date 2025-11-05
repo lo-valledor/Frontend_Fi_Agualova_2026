@@ -120,7 +120,7 @@ export default function DetallePreciosEnerlova({
 
       setData(datosNormalizados);
     } catch (error) {
-      toast.error('Error al cargar los precios del cargo');
+      toast.error('Error al cargar los precios del cargo', error as any);
       setData([]);
     } finally {
       setIsLoading(false);
@@ -158,6 +158,7 @@ export default function DetallePreciosEnerlova({
       dateParts[1].length !== 2 ||
       dateParts[2].length !== 4
     ) {
+      console.error(
         'Formato de fecha de entrada inesperado:',
         ultimaFechaFin,
         'Se esperaba DD-MM-YYYY.'
@@ -196,6 +197,7 @@ export default function DetallePreciosEnerlova({
 
       return nuevaFechaInicioStringDDMMYYYY;
     } catch (error) {
+      console.error('Error al calcular nueva fecha de inicio:', error);
       return '';
     }
   };

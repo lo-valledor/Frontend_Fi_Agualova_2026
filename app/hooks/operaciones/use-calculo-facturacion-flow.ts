@@ -386,7 +386,7 @@ export function useCalculoFacturacionFlow({
         await ejecutarPasosSiguientes(2);
       }
     } catch (error) {
-      toast.error('Error inesperado en el flujo');
+      toast.error('Error inesperado en el flujo', error as any);
     } finally {
       setIsRunning(false);
     }

@@ -40,7 +40,7 @@ const DetailItem = ({
     className={`flex items-start gap-3 p-3 sm:gap-4 sm:p-4 rounded-xl transition-all duration-200 ${className}`}
   >
     {Icon && (
-      <div className='flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center'>
+      <div className='shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center'>
         <Icon className='w-4 h-4 sm:w-5 sm:h-5 text-primary' />
       </div>
     )}
@@ -48,7 +48,7 @@ const DetailItem = ({
       <p className='text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1'>
         {label}
       </p>
-      <div className='text-sm font-medium text-foreground break-words'>
+      <div className='text-sm font-medium text-foreground wrap-break-word'>
         {typeof value === 'string' && value ? (
           value
         ) : typeof value === 'number' ? (
@@ -100,6 +100,7 @@ export default function DetallesCondicionesContrato({
         setCondicion(response.data as GetCondicionesContratoPorId);
         setError(null);
       } catch (err) {
+        console.error(
           'Error al cargar los detalles de la condición de contrato:',
           err
         );
@@ -146,11 +147,11 @@ export default function DetallesCondicionesContrato({
   return (
     <div className='space-y-6 pb-6'>
       {/* Header con información principal */}
-      <div className='relative overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/10 dark:border-primary/5'>
-        <div className='absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-50'></div>
+      <div className='relative overflow-hidden rounded-xl bg-linear-to-br from-primary/10 via-primary/5 to-background border border-primary/10 dark:border-primary/5'>
+        <div className='absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-50'></div>
         <div className='relative p-4 sm:p-6'>
           <div className='flex flex-col sm:flex-row items-start sm:items-center gap-4'>
-            <div className='w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 dark:from-primary/10 dark:to-primary/5 flex items-center justify-center shadow-lg'>
+            <div className='w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-linear-to-br from-primary/20 to-primary/10 dark:from-primary/10 dark:to-primary/5 flex items-center justify-center shadow-lg'>
               <FileText className='w-8 h-8 sm:w-10 sm:h-10 text-primary' />
             </div>
             <div className='flex-1'>

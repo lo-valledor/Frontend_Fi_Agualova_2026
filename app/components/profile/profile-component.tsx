@@ -1,4 +1,12 @@
-import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2, Save, User } from 'lucide-react';
+import {
+  AlertCircle,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Loader2,
+  Save,
+  User
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 import type React from 'react';
@@ -25,10 +33,7 @@ import {
 } from '~/components/ui/select';
 import { useAuth } from '~/context/AuthContext';
 import { useAdministracion } from '~/hooks/use-administracion';
-import type {
-  ActualizarUsuarioProps,
-  Usuarios
-} from '~/types/administracion';
+import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 import { isPasswordSecure, passwordsMatch } from '~/utils/password-validation';
 
 export default function ProfileComponent() {
@@ -64,9 +69,11 @@ export default function ProfileComponent() {
 
       try {
         setLoadingUserData(true);
-        const userData: Usuarios = await getUsuarioById(Number.parseInt(user.id));
+        const userData: Usuarios = await getUsuarioById(
+          Number.parseInt(user.id)
+        );
         setCurrentUserData(userData);
-        
+
         // Inicializar formData con los datos del usuario
         setFormData({
           nombreDeUsuario: userData.nombreDeUsuario,
@@ -77,7 +84,7 @@ export default function ProfileComponent() {
           activo: userData.activo
         });
       } catch (error) {
-        toast.error('Error al cargar los datos del perfil');
+        toast.error('Error al cargar los datos del perfil', error as any);
       } finally {
         setLoadingUserData(false);
       }
@@ -147,7 +154,7 @@ export default function ProfileComponent() {
       setIsSaving(true);
       await updateUsuario(currentUserData.idUsuario, updatePayload);
       toast.success('Perfil actualizado exitosamente');
-      
+
       // Limpiar campos de contraseña después de actualizar
       setCurrentPassword('');
       setNewPassword('');
@@ -176,7 +183,9 @@ export default function ProfileComponent() {
     return (
       <div className='flex items-center justify-center h-64'>
         <Loader2 className='h-8 w-8 animate-spin text-muted-foreground' />
-        <p className='ml-3 text-muted-foreground'>Cargando datos del perfil...</p>
+        <p className='ml-3 text-muted-foreground'>
+          Cargando datos del perfil...
+        </p>
       </div>
     );
   }
@@ -335,9 +344,7 @@ export default function ProfileComponent() {
 
             {/* Nueva Contraseña */}
             <div className='space-y-2'>
-              <Label htmlFor='newPassword'>
-                Nueva Contraseña (opcional)
-              </Label>
+              <Label htmlFor='newPassword'>Nueva Contraseña (opcional)</Label>
               <div className='relative'>
                 <Input
                   id='newPassword'
@@ -378,7 +385,9 @@ export default function ProfileComponent() {
             {/* Confirmar Contraseña */}
             {newPassword.trim() && (
               <div className='space-y-2'>
-                <Label htmlFor='confirmPassword'>Confirmar Nueva Contraseña</Label>
+                <Label htmlFor='confirmPassword'>
+                  Confirmar Nueva Contraseña
+                </Label>
                 <div className='relative'>
                   <Input
                     id='confirmPassword'

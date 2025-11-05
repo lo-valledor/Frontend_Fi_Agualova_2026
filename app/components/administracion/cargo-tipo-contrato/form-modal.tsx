@@ -328,7 +328,7 @@ export function FormModal({
                         name={`grilla.${index}.condicionId`}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Condición</FormLabel>
+                            <FormLabel>Condiciónasfsafasfs</FormLabel>
                             <UiSelect
                               onValueChange={value =>
                                 field.onChange(Number(value))
@@ -343,7 +343,7 @@ export function FormModal({
                               <SelectContent>
                                 {condiciones.map(c => (
                                   <SelectItem key={c.id} value={String(c.id)}>
-                                    {c.descripcion}
+                                    {c.nombre}
                                   </SelectItem>
                                 ))}
                               </SelectContent>

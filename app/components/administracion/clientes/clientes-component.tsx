@@ -1,58 +1,3 @@
-/**
- * Componente principal para Gestión de Clientes
- *
- * Funcionalidades principales:
- * - Visualización de clientes (personas y empresas) en tabla
- * - Creación de nuevos clientes (navegación a ruta /crear)
- * - Edición de clientes existentes (navegación a ruta /:rut)
- * - Visualización de detalles completos en modal
- * - Filtros avanzados por tipo, comuna, contacto, teléfono y email
- * - Exportación de datos a Excel
- * - Resumen de estadísticas de filtrado
- *
- * Flujo de trabajo:
- * 1. Usuario visualiza tabla de clientes
- * 2. Puede aplicar filtros para buscar clientes específicos
- * 3. Acciones disponibles por cliente:
- *    - Ver detalles completos (modal)
- *    - Editar (navegación a formulario de edición)
- *    - Crear nuevo (navegación a formulario de creación)
- * 4. Sistema muestra estadísticas de filtrado
- *
- * Arquitectura:
- * - DataTable con columnas personalizadas
- * - Hook useClientFilters para filtrado
- * - Modal ClienteDetailsModal para visualización
- * - Navegación a rutas para crear/editar
- * - FilterSummary para estadísticas
- * - API endpoint: getClienteByRut para detalles
- *
- * Filtros disponibles:
- * - Es empresa (sí/no/todos)
- * - Comuna (select)
- * - Código comuna (select)
- * - Tiene contacto (sí/no/todos)
- * - Tiene teléfono (sí/no/todos)
- * - Tiene email (sí/no/todos)
- *
- * @param {Object} props - Props del componente
- * @param {GetClientes[]} props.clientes - Lista de clientes
- * @param {GetGiros[]} props.giros - Giros comerciales disponibles
- * @param {GetComunas[]} props.comunas - Comunas disponibles
- *
- * @example
- * ```tsx
- * export default function ClientesRoute({ loaderData }) {
- *   return (
- *     <ClientesComponent
- *       clientes={loaderData.clientes}
- *       giros={loaderData.giros}
- *       comunas={loaderData.comunas}
- *     />
- *   );
- * }
- * ```
- */
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -150,7 +95,7 @@ export default function ClientesComponent({
           setDetailedCliente(clienteConvertido);
           setIsDetailsOpen(true);
         } catch (error) {
-          toast.error('Error al cargar los detalles del cliente');
+          toast.error('Error al cargar los detalles del cliente', error as any);
           setIsDetailsOpen(false);
         } finally {
           setDetailingClienteRut(null);

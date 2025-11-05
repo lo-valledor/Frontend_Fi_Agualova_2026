@@ -121,6 +121,7 @@ export default function ConceptoFormModal({
       onSuccess();
       onClose();
     } catch (error) {
+      console.error('Error al guardar el concepto:', error);
     }
   };
 

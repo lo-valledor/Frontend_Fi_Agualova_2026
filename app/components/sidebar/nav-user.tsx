@@ -1,8 +1,6 @@
-import { ChevronsUpDown, LogOut, User } from 'lucide-react';
+import { ChevronsUpDown, LogOut } from 'lucide-react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
-
-import { Link } from 'react-router';
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import {
@@ -38,7 +36,7 @@ export function NavUser({ user }: NavUserProps) {
     try {
       await logout();
     } catch (error) {
-      toast.error('Error al cerrar sesión');
+      toast.error('Error al cerrar sesión', error as any);
     }
   };
 

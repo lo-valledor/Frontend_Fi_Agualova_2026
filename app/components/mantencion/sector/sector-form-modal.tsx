@@ -97,7 +97,7 @@ export default function SectorFormModal({
 
         setZonas(zonasData);
       } catch (error) {
-        toast.error('No se pudieron cargar las zonas.');
+        toast.error('No se pudieron cargar las zonas.', error as any);
       } finally {
         setIsLoadingZonas(false);
       }

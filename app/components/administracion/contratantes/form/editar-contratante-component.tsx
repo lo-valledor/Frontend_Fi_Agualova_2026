@@ -10,7 +10,6 @@ import { useNavigate, useParams } from 'react-router';
 
 import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
-import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
@@ -74,14 +73,14 @@ export default function EditarContratanteComponent() {
   }, [hasEditPermission, navigate]);
 
   const [contratante, setContratante] = useState<GetContratante | null>(null);
-  const [giros, setGiros] = useState<GetGiros[]>([]);
-  const [comunas, setComunas] = useState<GetComunas[]>([]);
+  const [, setGiros] = useState<GetGiros[]>([]);
+  const [, setComunas] = useState<GetComunas[]>([]);
   const [existingContratantes, setExistingContratantes] = useState<string[]>(
     []
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [rutValidationStatus, setRutValidationStatus] = useState<
+  const [, setRutValidationStatus] = useState<
     'idle' | 'checking' | 'valid' | 'invalid'
   >('idle');
 
@@ -104,8 +103,6 @@ export default function EditarContratanteComponent() {
       correo: ''
     }
   });
-
-  const selectStyles = getReactSelectStyles(theme);
 
   useEffect(() => {
     const loadData = async () => {
@@ -156,7 +153,7 @@ export default function EditarContratanteComponent() {
           });
         }
       } catch (error) {
-        toast.error('Error al cargar datos del contratante');
+        toast.error('Error al cargar datos del contratante', error as any);
         navigate('/dashboard/administracion/contratantes');
       } finally {
         setIsLoading(false);
@@ -213,7 +210,7 @@ export default function EditarContratanteComponent() {
       toast.success('Contratante actualizado exitosamente');
       navigate('/dashboard/administracion/contratantes');
     } catch (error) {
-      toast.error('Error al actualizar el contratante');
+      toast.error('Error al actualizar el contratante', error as any);
     } finally {
       setIsSubmitting(false);
     }

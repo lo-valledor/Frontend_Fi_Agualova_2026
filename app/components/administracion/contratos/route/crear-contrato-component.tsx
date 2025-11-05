@@ -155,7 +155,7 @@ export default function CrearContratoComponent({
           setTarifas(tarifasResult.data);
         }
       } catch (error) {
-        toast.error('Error al cargar datos del formulario');
+        toast.error('Error al cargar datos del formulario', error as any);
       }
     };
 
@@ -179,7 +179,10 @@ export default function CrearContratoComponent({
         duration: 2000
       });
     } catch (error) {
-      toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
+      toast.error(
+        'Error al copiar. Intente seleccionar manualmente el ID.',
+        error as any
+      );
     }
   };
 

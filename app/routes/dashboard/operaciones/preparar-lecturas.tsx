@@ -65,6 +65,7 @@ export default function PrepararLecturas({ loaderData }: Route.ComponentProps) {
           setAsignacionSectores(result.data);
         }
       } catch (error) {
+        console.error('Error al obtener la asignación de sectores:', error);
         setAsignacionSectores([]);
       } finally {
         setIsLoadingAsignacion(false);

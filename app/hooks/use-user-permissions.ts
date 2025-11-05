@@ -15,9 +15,6 @@ interface UseUserPermissionsReturn {
   refetch: () => Promise<void>;
 }
 
-/**
- * Hook para obtener y gestionar los permisos del usuario autenticado
- */
 export function useUserPermissions(): UseUserPermissionsReturn {
   const [permissions, setPermissions] = useState<PermisosUsuario[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,9 +54,6 @@ export function useUserPermissions(): UseUserPermissionsReturn {
     fetchPermissions();
   }, []);
 
-  /**
-   * Verifica si el usuario tiene permiso para acceder a una ruta
-   */
   const hasPermission = (ruta: string): boolean => {
     if (!ruta) return false;
 
@@ -70,9 +64,6 @@ export function useUserPermissions(): UseUserPermissionsReturn {
     return permission ? permission.puedeVer : false;
   };
 
-  /**
-   * Verifica si el usuario puede ver una ruta específica
-   */
   const canView = (ruta: string): boolean => {
     if (!ruta) return false;
     const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
@@ -80,9 +71,6 @@ export function useUserPermissions(): UseUserPermissionsReturn {
     return permission ? permission.puedeVer : false;
   };
 
-  /**
-   * Verifica si el usuario puede crear en una ruta específica
-   */
   const canCreate = (ruta: string): boolean => {
     if (!ruta) return false;
     const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
@@ -90,9 +78,6 @@ export function useUserPermissions(): UseUserPermissionsReturn {
     return permission ? permission.puedeCrear : false;
   };
 
-  /**
-   * Verifica si el usuario puede editar en una ruta específica
-   */
   const canEdit = (ruta: string): boolean => {
     if (!ruta) return false;
     const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;
@@ -100,9 +85,6 @@ export function useUserPermissions(): UseUserPermissionsReturn {
     return permission ? permission.puedeEditar : false;
   };
 
-  /**
-   * Verifica si el usuario puede eliminar en una ruta específica
-   */
   const canDelete = (ruta: string): boolean => {
     if (!ruta) return false;
     const normalizedRuta = ruta.startsWith('/') ? ruta : `/${ruta}`;

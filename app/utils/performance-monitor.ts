@@ -1,13 +1,13 @@
 /**
  * Performance Monitoring con Web Vitals
- * 
+ *
  * Monitorea métricas clave de performance:
  * - LCP (Largest Contentful Paint)
  * - FID (First Input Delay)
  * - CLS (Cumulative Layout Shift)
  * - FCP (First Contentful Paint)
  * - TTFB (Time to First Byte)
- * 
+ *
  * Solo funciona en producción para no afectar desarrollo
  */
 
@@ -20,12 +20,10 @@ interface PerformanceMetric {
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-/**
- * Determina el rating de una métrica basado en umbrales
- * @param name
- * @param value
- */
-function getRating(name: string, value: number): 'good' | 'needs-improvement' | 'poor' {
+function getRating(
+  name: string,
+  value: number
+): 'good' | 'needs-improvement' | 'poor' {
   const thresholds = {
     LCP: { good: 2500, poor: 4000 },
     FID: { good: 100, poor: 300 },
@@ -42,14 +40,15 @@ function getRating(name: string, value: number): 'good' | 'needs-improvement' | 
   return 'poor';
 }
 
-/**
- * Envía métrica a analytics (puedes integrar con Google Analytics, etc.)
- * @param metric
- */
 function sendToAnalytics(metric: PerformanceMetric) {
   if (isDevelopment) {
     // En desarrollo, solo log a consola
-    const emoji = metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
+    const emoji =
+      metric.rating === 'good'
+        ? '✅'
+        : metric.rating === 'needs-improvement'
+          ? '⚠️'
+          : '❌';
     console.log(
       `${emoji} Performance: ${metric.name} = ${metric.value.toFixed(2)}ms (${metric.rating})`
     );
@@ -65,13 +64,6 @@ function sendToAnalytics(metric: PerformanceMetric) {
       metric_delta: metric.value
     });
   }
-
-  // O enviar a tu propio backend:
-  // fetch('/api/analytics/performance', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(metric)
-  // });
 }
 
 /**
@@ -82,28 +74,28 @@ export function initPerformanceMonitoring() {
 
   // LCP - Largest Contentful Paint
   try {
-    const lcpObserver = new PerformanceObserver((list) => {
+    const lcpObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1] as any;
-      
+
       const metric: PerformanceMetric = {
         name: 'LCP',
         value: lastEntry.renderTime || lastEntry.loadTime,
         rating: getRating('LCP', lastEntry.renderTime || lastEntry.loadTime),
         timestamp: Date.now()
       };
-      
+
       sendToAnalytics(metric);
     });
-    
+
     lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
   } catch (e) {
-    console.warn('LCP monitoring not supported');
+    console.warn('LCP monitoring not supported', e);
   }
 
   // FID - First Input Delay
   try {
-    const fidObserver = new PerformanceObserver((list) => {
+    const fidObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
       entries.forEach((entry: any) => {
         const metric: PerformanceMetric = {
@@ -112,45 +104,45 @@ export function initPerformanceMonitoring() {
           rating: getRating('FID', entry.processingStart - entry.startTime),
           timestamp: Date.now()
         };
-        
+
         sendToAnalytics(metric);
       });
     });
-    
+
     fidObserver.observe({ type: 'first-input', buffered: true });
   } catch (e) {
-    console.warn('FID monitoring not supported');
+    console.warn('FID monitoring not supported', e);
   }
 
   // CLS - Cumulative Layout Shift
   try {
     let clsValue = 0;
-    const clsObserver = new PerformanceObserver((list) => {
+    const clsObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
       entries.forEach((entry: any) => {
         if (!entry.hadRecentInput) {
           clsValue += entry.value;
         }
       });
-      
+
       const metric: PerformanceMetric = {
         name: 'CLS',
         value: clsValue,
         rating: getRating('CLS', clsValue),
         timestamp: Date.now()
       };
-      
+
       sendToAnalytics(metric);
     });
-    
+
     clsObserver.observe({ type: 'layout-shift', buffered: true });
   } catch (e) {
-    console.warn('CLS monitoring not supported');
+    console.warn('CLS monitoring not supported', e);
   }
 
   // FCP - First Contentful Paint
   try {
-    const fcpObserver = new PerformanceObserver((list) => {
+    const fcpObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
       entries.forEach((entry: any) => {
         const metric: PerformanceMetric = {
@@ -159,38 +151,39 @@ export function initPerformanceMonitoring() {
           rating: getRating('FCP', entry.startTime),
           timestamp: Date.now()
         };
-        
+
         sendToAnalytics(metric);
       });
     });
-    
+
     fcpObserver.observe({ type: 'paint', buffered: true });
   } catch (e) {
-    console.warn('FCP monitoring not supported');
+    console.warn('FCP monitoring not supported', e);
   }
 
   // TTFB - Time to First Byte
   try {
-    const navigationEntry = performance.getEntriesByType('navigation')[0] as any;
+    const navigationEntry = performance.getEntriesByType(
+      'navigation'
+    )[0] as any;
     if (navigationEntry) {
       const metric: PerformanceMetric = {
         name: 'TTFB',
         value: navigationEntry.responseStart - navigationEntry.requestStart,
-        rating: getRating('TTFB', navigationEntry.responseStart - navigationEntry.requestStart),
+        rating: getRating(
+          'TTFB',
+          navigationEntry.responseStart - navigationEntry.requestStart
+        ),
         timestamp: Date.now()
       };
-      
+
       sendToAnalytics(metric);
     }
   } catch (e) {
-    console.warn('TTFB monitoring not supported');
+    console.warn('TTFB monitoring not supported', e);
   }
 }
 
-/**
- * Hook para monitorear performance de componentes específicos
- * @param componentName
- */
 export function measureComponentPerformance(componentName: string) {
   if (typeof window === 'undefined') return { start: () => {}, end: () => {} };
 
@@ -202,17 +195,24 @@ export function measureComponentPerformance(componentName: string) {
     },
     end: () => {
       const duration = performance.now() - startTime;
-      
+
       if (isDevelopment) {
-        console.log(`⏱️ ${componentName} render time: ${duration.toFixed(2)}ms`);
+        console.log(
+          `⏱️ ${componentName} render time: ${duration.toFixed(2)}ms`
+        );
       }
-      
+
       // Enviar a analytics si es muy lento (>100ms)
       if (duration > 100) {
         sendToAnalytics({
           name: `Component_${componentName}`,
           value: duration,
-          rating: duration > 500 ? 'poor' : duration > 200 ? 'needs-improvement' : 'good',
+          rating:
+            duration > 500
+              ? 'poor'
+              : duration > 200
+                ? 'needs-improvement'
+                : 'good',
           timestamp: Date.now()
         });
       }
@@ -220,9 +220,6 @@ export function measureComponentPerformance(componentName: string) {
   };
 }
 
-/**
- * Obtiene métricas actuales de performance
- */
 export function getCurrentPerformanceMetrics() {
   if (typeof window === 'undefined') return null;
 
@@ -238,15 +235,18 @@ export function getCurrentPerformanceMetrics() {
     domInteractive: navigation?.domInteractive,
     domComplete: navigation?.domComplete,
     loadComplete: navigation?.loadEventEnd - navigation?.loadEventStart,
-    
+
     // Paint Timing
-    fcp: paint.find((entry: any) => entry.name === 'first-contentful-paint')?.startTime,
-    
+    fcp: paint.find((entry: any) => entry.name === 'first-contentful-paint')
+      ?.startTime,
+
     // Memory (si está disponible)
-    memory: (performance as any).memory ? {
-      usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
-      totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
-      jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit
-    } : null
+    memory: (performance as any).memory
+      ? {
+          usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
+          totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
+          jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit
+        }
+      : null
   };
 }

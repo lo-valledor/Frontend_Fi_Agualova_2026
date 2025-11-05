@@ -17,6 +17,7 @@ export const isTokenValid = (token: string): boolean => {
     const currentTime = Date.now() / 1000;
     return decoded.exp > currentTime;
   } catch (error) {
+    console.error('Error al validar el token:', error);
     return false;
   }
 };
@@ -39,6 +40,7 @@ export const parseTokenData = (token: string): TokenData => {
   try {
     return jwtDecode<TokenData>(token);
   } catch (error) {
+    console.error('Error al decodificar el token:', error);
     throw new Error('Token inválido');
   }
 };

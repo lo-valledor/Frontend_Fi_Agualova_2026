@@ -1,65 +1,3 @@
-/**
- * Componente principal para Revisión de Precios de Facturación
- *
- * Funcionalidades principales:
- * - Visualización de precios aplicados ENEL vs Enerlova
- * - Validación de permisos de usuario para modificación
- * - Modificación de precios individuales por contrato
- * - Filtros por ciclo de facturación y periodo
- * - Tabs para alternar entre ENEL y Enerlova
- * - Sistema de autorización con clave maestra
- *
- * Flujo de trabajo:
- * 1. Usuario accede al componente
- * 2. Sistema valida permisos del usuario
- * 3. Usuario selecciona ciclo de facturación
- * 4. Sistema carga precios aplicados para el periodo
- * 5. Usuario puede:
- *    - Ver detalles de precios ENEL/Enerlova en tabs
- *    - Modificar precio individual (si tiene permisos)
- *    - Ingresar clave maestra para modificaciones sensibles
- * 6. Sistema actualiza precios vía API
- *
- * Sistema de autorización:
- * - Validación inicial de usuario (/validar-usuario-precio)
- * - Clave maestra requerida para modificar
- * - Diálogo modal para ingreso de clave
- * - Validación de clave antes de permitir edición
- *
- * Arquitectura:
- * - Tabs component con 2 pestañas (ENEL / Enerlova)
- * - DataTables con columnas especializadas:
- *   * TablaValoresEnel: Precios ENEL por contrato
- *   * TablaValoresEnerlova: Precios Enerlova por contrato
- * - Modal DialogModificarPrecio para ediciones
- * - Estados para validación, filtros y datos
- * - API endpoints:
- *   * GET /validar-usuario-precio
- *   * POST /consulta-precio-uno (ENEL)
- *   * POST /consulta-precio-dos (Enerlova)
- *   * PUT /modificar-precio
- *
- * @param {Object} props - Props del componente
- * @param {PeriodoAbierto[]} props.periodoAbierto - Periodo activo
- * @param {Ciclo[]} props.ciclosFacturacion - Ciclos disponibles
- * @param {RevisarPrecioUno[]} props.precioUnoData - Datos iniciales ENEL
- * @param {RevisarPrecioDos[]} props.precioDosData - Datos iniciales Enerlova
- *
- * @example
- * ```tsx
- * // Usado en app/routes/operaciones/revisar-precio.tsx
- * export default function RevisarPrecioRoute({ loaderData }) {
- *   return (
- *     <RevisarPrecioComponent
- *       periodoAbierto={loaderData.periodoAbierto}
- *       ciclosFacturacion={loaderData.ciclos}
- *       precioUnoData={loaderData.precioUno}
- *       precioDosData={loaderData.precioDos}
- *     />
- *   );
- * }
- * ```
- */
 import {
   AlertCircleIcon,
   BarChartIcon,
@@ -410,7 +348,7 @@ export default function RevisarPrecioComponent({
       // setIsLoadingCiclo(true);
       await onCicloChange(nuevoCiclo);
     } catch (error) {
-      toast.error('Error al cambiar el ciclo');
+      toast.error('Error al cambiar el ciclo', error as any);
     } finally {
       //    setIsLoadingCiclo(false);
     }

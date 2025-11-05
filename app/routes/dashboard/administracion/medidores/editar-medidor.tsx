@@ -74,6 +74,7 @@ export async function clientLoader({ params }: { params: { codigo: string } }) {
       cantidadLecturas
     };
   } catch (error) {
+    console.error('Error al cargar datos:', error);
     return {
       medidor: null,
       marca: [],
@@ -118,6 +119,7 @@ export default function EditarMedidor({
         duration: 2000
       });
     } catch (error) {
+      console.error('Error al copiar:', error);
       toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
     }
   };

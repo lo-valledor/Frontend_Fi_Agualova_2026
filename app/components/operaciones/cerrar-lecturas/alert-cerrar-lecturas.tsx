@@ -86,6 +86,7 @@ export default function AlertCerrarLecturas({
           errorCount++;
         }
       } catch (error: any) {
+        console.error(
           `Error al cerrar lecturas para nicho ${row.nichoId}:`,
           error
         );
@@ -169,7 +170,7 @@ export default function AlertCerrarLecturas({
           {alertSummary.hasWarnings && (
             <div className='bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-md p-3 sm:p-4'>
               <div className='flex items-start gap-2'>
-                <AlertTriangle className='h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0' />
+                <AlertTriangle className='h-4 w-4 text-orange-600 dark:text-orange-400 mt-0.5 shrink-0' />
                 <div className='flex-1'>
                   <p className='text-xs sm:text-sm text-orange-700 dark:text-orange-300 font-medium'>
                     <span className='hidden sm:inline'>

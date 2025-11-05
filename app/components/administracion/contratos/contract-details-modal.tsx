@@ -85,6 +85,7 @@ export function ContractDetailsModal({
 
         setDetailsData(mockDetails);
       } catch (err) {
+        console.error('Error al cargar los detalles del contrato:', err);
         setError('Error al cargar los detalles del contrato');
       } finally {
         setIsLoading(false);

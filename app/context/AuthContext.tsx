@@ -57,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const isValid = decoded.exp > currentTime;
       return isValid;
     } catch (error) {
+      console.error('Error al validar el token:', error);
       return false;
     }
   };
@@ -81,7 +82,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         fullName: decoded.NombreUsuario
       };
     } catch (error) {
-      throw new Error('Token inválido');
+      throw new Error('Token inválido', { cause: error });
     }
   };
 
@@ -156,6 +157,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           } else {
             // Token expirado o inválido
             localStorage.removeItem('token');
+            console.warn(
               'Token expirado o inválido, removido del localStorage'
             );
           }
@@ -164,6 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           setPermissions([]);
         }
       } catch (error) {
+        console.error('Error al inicializar la autenticación:', error);
         localStorage.removeItem('token');
       } finally {
         setLoading(false);
@@ -187,6 +190,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
               await loadUserPermissions(userData.id);
             }
           } catch (error) {
+            console.error('Error al procesar el token actualizado:', error);
           }
         }
       }
@@ -218,10 +222,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const isValid = isTokenValid(token);
         if (!isValid) {
+          console.warn(
             'Token posiblemente inválido, pero continuando con el login'
           );
         }
       } catch (validationError) {
+        console.warn(
           'Error al validar token, pero continuando:',
           validationError
         );
@@ -256,6 +262,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setLoading(true);
       await authService.logout();
     } catch (err) {
+      // Ignorar errores en el logout del servidor
+      console.error('Error al hacer logout en el servidor:', err);
     } finally {
       // Siempre limpiar la sesión local, incluso si hay error en el servidor
       localStorage.removeItem('token');

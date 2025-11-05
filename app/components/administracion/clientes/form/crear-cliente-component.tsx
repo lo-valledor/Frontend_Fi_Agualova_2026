@@ -138,7 +138,7 @@ export default function CrearClienteComponent() {
           setExistingClients(clientesDataResult.data.clientes.map(c => c.rut));
         }
       } catch (error) {
-        toast.error('Error al cargar datos del formulario');
+        toast.error('Error al cargar datos del formulario', error as any);
       }
     };
 
@@ -189,7 +189,7 @@ export default function CrearClienteComponent() {
       toast.success('Cliente creado exitosamente');
       navigate('/dashboard/administracion/clientes');
     } catch (error) {
-      toast.error('Error al crear el cliente');
+      toast.error('Error al crear el cliente', error as any);
     } finally {
       setIsSubmitting(false);
     }

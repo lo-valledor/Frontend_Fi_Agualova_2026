@@ -32,6 +32,7 @@ export function useClaves(): UseClaves {
         const response = await api.get('/Claves');
         setClaves(response.data as Clave[]);
       } catch (err) {
+        console.error('Error al cargar las claves de lectura:', err);
         setError('Error al cargar las claves de lectura');
       } finally {
         setIsLoading(false);

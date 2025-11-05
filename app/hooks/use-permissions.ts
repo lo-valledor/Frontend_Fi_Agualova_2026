@@ -27,15 +27,6 @@ export function usePermissions(route: string) {
   };
 }
 
-/**
- * Hook para verificar permisos en la ruta actual
- * Útil cuando el componente necesita verificar permisos de su propia ruta
- * 
- * @example
- * ```tsx
- * const { canCreate } = useCurrentRoutePermissions();
- * ```
- */
 export function useCurrentRoutePermissions() {
   const { canView, canCreate, canEdit, canDelete, permissionsLoading } = useAuth();
   

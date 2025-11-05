@@ -5,10 +5,7 @@ import { Button } from '~/components/ui/button';
 import type { Roles } from '~/types/roles-permisos';
 
 export const createRolesColumns = (
-  onEdit: (rol: Roles) => void,
-  onDelete: (rol: Roles) => void,
-  onViewPermissions: (rol: Roles) => void
-) => [
+onEdit: (rol: Roles) => void, onDelete: (rol: Roles) => void, handleViewPermissions: (rol: Roles) => void) => [
   {
     accessorKey: 'idRol',
     header: 'ID',

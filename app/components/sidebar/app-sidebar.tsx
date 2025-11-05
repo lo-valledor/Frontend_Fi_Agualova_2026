@@ -7,7 +7,7 @@ import {
   Users,
   Wrench
 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
 
 import * as React from 'react';
 import { Link, useLocation } from 'react-router';
@@ -350,7 +350,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 return (
                   <motion.div
                     key={item.title}
-                    variants={itemVariants}
+                    variants={itemVariants as Variants}
                     initial='hidden'
                     animate='visible'
                     transition={{ delay: index * 0.1 }}

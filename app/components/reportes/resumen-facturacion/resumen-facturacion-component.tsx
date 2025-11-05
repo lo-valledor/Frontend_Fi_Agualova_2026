@@ -195,8 +195,6 @@ export default function ResumenFacturacionComponent({
     return { ...totales, cambioEnergia, cambioFactura, cambioCantidad };
   };
 
-  const resumen = calcularResumen();
-
   const formatearNumero = (valor: number) => {
     return new Intl.NumberFormat('es-CL').format(Math.round(valor));
   };

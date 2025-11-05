@@ -188,7 +188,9 @@ export function useExportPDF() {
               const tableData = section.data.map((row: any) => {
                 return section.columns!.map(col => {
                   const value = row[col.key];
-                  return col.formatter ? col.formatter(value) : String(value || '');
+                  return col.formatter
+                    ? col.formatter(value)
+                    : String(value || '');
                 });
               });
 
@@ -283,9 +285,10 @@ export function useExportPDF() {
         duration: 4000
       });
     } catch (error) {
-      toast.error('Error al generar el PDF', {
-        description: 'Inténtalo de nuevo en unos momentos'
-      });
+      toast.error(
+        'Error al generar el PDF. Inténtalo de nuevo más tarde',
+        error as any
+      );
     } finally {
       setIsExporting(false);
     }
@@ -296,4 +299,3 @@ export function useExportPDF() {
     exportToPDF
   };
 }
-
