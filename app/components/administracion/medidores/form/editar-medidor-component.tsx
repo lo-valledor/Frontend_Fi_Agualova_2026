@@ -249,13 +249,11 @@ export default function EditarMedidorComponent({
         onSuccess(medidorId);
       }
     } catch (error: any) {
-        error,
-        message: error.message,
-        stack: error.stack
-      });
-      toast.error('Error al modificar el medidor');
+      console.error('Error al modificar el medidor:', error);
     } finally {
       setIsSubmitting(false);
+
+      toast.error('Error al modificar el medidor');
     }
   };
 

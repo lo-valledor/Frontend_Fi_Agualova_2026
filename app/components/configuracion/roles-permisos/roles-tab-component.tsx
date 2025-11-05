@@ -160,7 +160,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         onDataChange?.();
       }
     } catch (_error) {
-      toast.error('Error inesperado al eliminar el rol');
+      toast.error('Error inesperado al eliminar el rol', _error as any);
     } finally {
       setIsLoading(false);
     }

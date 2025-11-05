@@ -24,15 +24,6 @@ interface DataTableSkeletonProps {
   showPagination?: boolean;
 }
 
-/**
- * Skeleton loader genérico para tablas de datos
- * Usado en páginas de administración, mantención, etc.
- * @param root0
- * @param root0.columns
- * @param root0.rows
- * @param root0.showHeader
- * @param root0.showPagination
- */
 export function DataTableSkeleton({
   columns = 5,
   rows = 10,

@@ -112,10 +112,6 @@ export function PasswordStrengthIndicator({
   );
 }
 
-/**
- * Obtiene el color de texto según el score de fortaleza
- * @param score
- */
 function getStrengthTextColor(score: number): string {
   const colorMap: Record<number, string> = {
     0: 'text-red-600 dark:text-red-400',

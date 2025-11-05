@@ -52,9 +52,6 @@ class ReportesService {
     return [];
   }
 
-  /**
-   * Obtiene datos del combo empalmes y periodos facturables
-   */
   async getResumenFacturacion(): Promise<
     ReportesServiceResponse<{
       comboEmpalmes: ComboEmpalmes[];
@@ -83,11 +80,6 @@ class ReportesService {
     }
   }
 
-  /**
-   * Obtiene la facturación por cargo para un período y empalme específicos
-   * @param periodo
-   * @param emId
-   */
   async getFacturacionPorCargo(
     periodo: string,
     emId: number
@@ -131,10 +123,6 @@ class ReportesService {
     }
   }
 
-  /**
-   * Helper para hacer llamadas API individuales con manejo de errores
-   * @param endpoint
-   */
   private async safeApiCall<T>(endpoint: string): Promise<T[]> {
     try {
       const response = await api.get(endpoint);
@@ -144,10 +132,6 @@ class ReportesService {
     }
   }
 
-  /**
-   * Obtiene todos los detalles de un contrato específico
-   * @param contratoId
-   */
   async getDetallesPorContrato(contratoId: number): Promise<
     ReportesServiceResponse<{
       detallePropietario: DetallePropietario[];

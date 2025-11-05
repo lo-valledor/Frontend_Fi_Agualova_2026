@@ -73,10 +73,6 @@ const COMMON_PATTERNS = [
   /batman/i
 ];
 
-/**
- * Valida si una contraseña cumple con todas las reglas de seguridad
- * @param password
- */
 export function validatePassword(password: string): {
   isValid: boolean;
   failedRules: PasswordValidationRule[];
@@ -118,10 +114,6 @@ export function validatePassword(password: string): {
   };
 }
 
-/**
- * Calcula la fortaleza de una contraseña (0-4)
- * @param password
- */
 export function calculatePasswordStrength(password: string): PasswordStrength {
   if (!password) {
     return {
@@ -174,11 +166,6 @@ export function calculatePasswordStrength(password: string): PasswordStrength {
   };
 }
 
-/**
- * Valida que dos contraseñas coincidan
- * @param password
- * @param confirmPassword
- */
 export function passwordsMatch(
   password: string,
   confirmPassword: string
@@ -186,10 +173,6 @@ export function passwordsMatch(
   return password === confirmPassword && password.length > 0;
 }
 
-/**
- * Genera sugerencias para mejorar una contraseña
- * @param password
- */
 export function generatePasswordSuggestions(password: string): string[] {
   const suggestions: string[] = [];
   const validation = validatePassword(password);
@@ -216,10 +199,6 @@ export function generatePasswordSuggestions(password: string): string[] {
   return suggestions;
 }
 
-/**
- * Verifica si una contraseña es suficientemente segura para el sistema
- * @param password
- */
 export function isPasswordSecure(password: string): {
   isSecure: boolean;
   reason?: string;

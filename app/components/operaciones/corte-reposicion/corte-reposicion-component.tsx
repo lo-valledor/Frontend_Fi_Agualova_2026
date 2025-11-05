@@ -1,63 +1,3 @@
-/**
- * Componente principal para Corte y Reposición de Servicios
- *
- * Funcionalidades principales:
- * - Visualización de estados de corte y reposición por cliente
- * - Gestión del ciclo completo: Pendiente → Liberado → Cortado → Reposición
- * - Exportación de datos a Excel (2 formatos)
- * - Control del proceso de revisión (Activar, Iniciar, Finalizar)
- * - Estadísticas rápidas de estados
- * - Tour interactivo para nuevos usuarios (driver.js)
- *
- * Flujo del proceso de corte:
- * 1. **Activar Actualización**: Prepara el sistema para revisar
- * 2. **Iniciar**: Comienza proceso de revisión de cortes
- * 3. **Buscar**: Carga datos del mantenedor de revisión
- * 4. **Gestión por estado**:
- *    - NULL/Pendiente: Cliente pendiente de revisión
- *    - 1/Liberado: Cliente liberado de corte
- *    - 2/Cortado: Cliente con servicio cortado
- *    - 3/Reposición Solicitada: Solicitud de reconexión
- * 5. **Finalizar**: Cierra el proceso de revisión
- *
- * Características especiales:
- * - **Tour Interactivo**: Guía paso a paso con driver.js (7 pasos)
- * - **Estadísticas en tiempo real**: Cards con totales por estado
- * - **Exportación dual**: Mantenedor completo y Revisión de corte
- * - **Tabla con acciones**: Marcar/Liberar, Registrar corte, Solicitar reposición
- * - **Modales especializados**: Confirmación de cada acción
- *
- * Arquitectura:
- * - Usa DataTable con columnas personalizadas
- * - Componentes modales:
- *   * CorteRegistradoDialog: Registrar corte ejecutado
- *   * MarcarLiberarDialog: Liberar cliente de corte
- *   * ReposicionSolicitadaDialog: Solicitar reconexión
- * - Estados para datos, búsqueda y selección
- * - API endpoints:
- *   * GET /consulta-mantenedor-revision-corte
- *   * POST /modificar-revision
- *   * POST /ingresar-revision
- *   * POST /eliminar-revision
- *   * GET /exportar-* (para Excel)
- *
- * @param {Object} props - Props del componente
- * @param {TotalesCorteReposicion[]} props.totalesData - Totales por estado
- * @param {ConsultarMantenedorRevisionCorte[]} props.mantenedorCorteData - Datos de revisión
- *
- * @example
- * ```tsx
- * // Usado en app/routes/operaciones/corte-reposicion.tsx
- * export default function CorteReposicionRoute({ loaderData }) {
- *   return (
- *     <CorteReposicionComponent
- *       totalesData={loaderData.totales}
- *       mantenedorCorteData={loaderData.mantenedor}
- *     />
- *   );
- * }
- * ```
- */
 import {
   ArrowUpToLine,
   CheckCircle2,
@@ -161,7 +101,7 @@ export default function CorteReposicionComponent({
       document.body.removeChild(a);
       toast.success('Archivo exportado correctamente');
     } catch (error) {
-      toast.error('Error al exportar el archivo');
+      toast.error('Error al exportar el archivo', error as any);
     } finally {
       setIsExportingExcel(false);
     }
@@ -183,7 +123,7 @@ export default function CorteReposicionComponent({
       document.body.removeChild(a);
       toast.success('Archivo exportado correctamente');
     } catch (error) {
-      toast.error('Error al exportar el archivo');
+      toast.error('Error al exportar el archivo', error as any);
     } finally {
       setIsExportingCorte(false);
     }
@@ -210,7 +150,7 @@ export default function CorteReposicionComponent({
       window.URL.revokeObjectURL(url);
       toast.success('Facturas impagas exportadas correctamente');
     } catch (error) {
-      toast.error('Error al exportar las facturas impagas');
+      toast.error('Error al exportar las facturas impagas', error as any);
     } finally {
       setIsExportingFacturas(false);
     }
@@ -227,7 +167,10 @@ export default function CorteReposicionComponent({
         toast.success(`Se encontraron ${res.data.length} registros`);
       }
     } catch (error) {
-      toast.error('Error al buscar los datos de corte y reposición.');
+      toast.error(
+        'Error al buscar los datos de corte y reposición.',
+        error as any
+      );
     } finally {
       setIsSearching(false);
     }
@@ -244,7 +187,7 @@ export default function CorteReposicionComponent({
         toast.error('Error al activar la actualización.');
       }
     } catch (error) {
-      toast.error('Error al activar la actualización.');
+      toast.error('Error al activar la actualización.', error as any);
     } finally {
       setIsActivating(false);
     }
@@ -261,7 +204,7 @@ export default function CorteReposicionComponent({
         toast.error('Error al iniciar el proceso de revisión.');
       }
     } catch (error) {
-      toast.error('Error al iniciar el proceso de revisión.');
+      toast.error('Error al iniciar el proceso de revisión.', error as any);
     } finally {
       setIsStarting(false);
     }
@@ -279,7 +222,7 @@ export default function CorteReposicionComponent({
         toast.error('Error al finalizar el proceso de revisión.');
       }
     } catch (error) {
-      toast.error('Error al finalizar el proceso.');
+      toast.error('Error al finalizar el proceso.', error as any);
     } finally {
       setIsFinalizing(false);
     }

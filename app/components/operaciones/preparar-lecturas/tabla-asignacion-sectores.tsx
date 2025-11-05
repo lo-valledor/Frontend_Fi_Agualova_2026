@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
 
@@ -238,21 +238,6 @@ export default function TablaAsignacionSectores({
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  // Crear un mapa de sectores para búsqueda rápida por ID
-  const sectoresMap = useMemo(() => {
-    const map = new Map<number, ConsultarSectores>();
-    sectores.forEach(sector => {
-      map.set(sector.secId, sector);
-    });
-    return map;
-  }, [sectores]);
-
-  // Función para obtener la descripción del sector
-  const getSectorDescripcion = (sectorId: number): string => {
-    const sector = sectoresMap.get(sectorId);
-    return sector ? sector.secDescripcion : `Sector ${sectorId}`;
   };
 
   return (

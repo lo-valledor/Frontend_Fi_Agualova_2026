@@ -1,50 +1,3 @@
-/**
- * Componente principal para Gestión de Precios de Cargo
- *
- * Funcionalidades principales:
- * - Visualización de precios de cargo ENEL y Enerlova
- * - Filtros por mes y año para consultas históricas
- * - Tabs para alternar entre precios ENEL y Enerlova
- * - Exportación de datos a Excel
- * - Actualización de valores de precios
- * - Visualización de detalles expandidos
- *
- * Arquitectura:
- * - Tabs component con 2 pestañas (ENEL / Enerlova)
- * - DataTablePrecios con columnas especializadas para cada tipo
- * - Filtros de período (mes/año)
- * - Estados locales para filtros y datos cargados
- * - API endpoints:
- *   * POST /consulta-precios-enel
- *   * POST /consulta-precios-enerlova
- *
- * Pestañas disponibles:
- * 1. **ENEL**: Precios de cargo de la distribuidora ENEL
- * 2. **Enerlova**: Precios propios de Enerlova
- *
- * @param {Object} props - Props del componente
- * @param {PreciosCargoEnel[]} props.tablaEnel - Datos iniciales de precios ENEL
- * @param {PreciosCargoEnerlova[]} props.tablaEnerlova - Datos iniciales de precios Enerlova
- * @param {string} props.initialMes - Mes inicial del filtro
- * @param {string} props.initialAnio - Año inicial del filtro
- * @param {string | null} props.error - Error de carga inicial
- *
- * @example
- * ```tsx
- * // Usado en app/routes/operaciones/precios-cargo.tsx
- * export default function PreciosCargoRoute({ loaderData }) {
- *   return (
- *     <PreciosCargoComponent
- *       tablaEnel={loaderData.tablaEnel}
- *       tablaEnerlova={loaderData.tablaEnerlova}
- *       initialMes={loaderData.mes}
- *       initialAnio={loaderData.anio}
- *       error={loaderData.error}
- *     />
- *   );
- * }
- * ```
- */
 import {
   BarChart,
   Building2,
@@ -161,6 +114,7 @@ export default function PreciosCargoComponent({
           setAnio(response.data[0].anio.toString());
         }
       } catch (error) {
+        console.error('Error al obtener el periodo abierto:', error);
       }
     }
     fetchPeriodoAbierto();
@@ -181,7 +135,7 @@ export default function PreciosCargoComponent({
       setTablaEnel(response.data as PreciosCargoEnel[]);
       toast.success('Búsqueda completada exitosamente');
     } catch (_error) {
-      toast.error('Error al buscar precios de cargo');
+      toast.error('Error al buscar precios de cargo', _error as any);
     } finally {
       setIsLoading(false);
     }
@@ -207,7 +161,7 @@ export default function PreciosCargoComponent({
       setTablaEnerlova(response.data as PreciosCargoEnerlova[]);
       toast.success('Datos actualizados correctamente');
     } catch (error) {
-      toast.error('Error al actualizar los datos');
+      toast.error('Error al actualizar los datos', error as any);
     } finally {
       setIsLoading(false);
     }

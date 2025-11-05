@@ -94,7 +94,7 @@ export default function CondicionesContratoModalForm({
       const conceptoId = conceptoEncontrado?.id || 0;
 
       form.reset({
-        descripcion: condicionContrato?.descripcion || '',
+        descripcion: condicionContrato?.nombre || '',
         conceptoId: conceptoId,
         usaPorcentaje: usaPorcentaje,
         valor: valor,
@@ -121,7 +121,7 @@ export default function CondicionesContratoModalForm({
       onSuccess();
       onClose();
     } catch (error) {
-      toast.error('Error al guardar la condición de contrato');
+      toast.error('Error al guardar la condición de contrato', error as any);
     }
   };
 

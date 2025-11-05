@@ -188,9 +188,10 @@ export function useExportContratos() {
         duration: 4000
       });
     } catch (error) {
-      toast.error('Error al exportar los datos', {
-        description: 'Inténtalo de nuevo en unos momentos'
-      });
+      toast.error(
+        'Error al exportar los datos, inténtalo de nuevo más tarde',
+        error as any
+      );
     } finally {
       setIsExporting(false);
     }

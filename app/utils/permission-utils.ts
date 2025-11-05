@@ -34,18 +34,6 @@ export function getPermissionMessage(
   return customMessage || PERMISSION_MESSAGES[permissionType];
 }
 
-/**
- * Verifica si el usuario tiene al menos uno de los permisos especificados
- * @param permissions - Objeto con los permisos del usuario
- * @returns true si tiene al menos un permiso
- * 
- * @example
- * ```ts
- * const permissions = { canView: false, canCreate: true, canEdit: false, canDelete: false };
- * const hasAny = hasAnyPermission(permissions);
- * // Returns: true
- * ```
- */
 export function hasAnyPermission(permissions: {
   canView: boolean;
   canCreate: boolean;
@@ -60,19 +48,6 @@ export function hasAnyPermission(permissions: {
   );
 }
 
-/**
- * Verifica si el usuario tiene todos los permisos especificados
- * @param permissions - Objeto con los permisos del usuario
- * @param required - Array con los permisos requeridos
- * @returns true si tiene todos los permisos requeridos
- * 
- * @example
- * ```ts
- * const permissions = { canView: true, canCreate: true, canEdit: false, canDelete: false };
- * const hasAll = hasAllPermissions(permissions, ['canView', 'canCreate']);
- * // Returns: true
- * ```
- */
 export function hasAllPermissions(
   permissions: {
     canView: boolean;
@@ -85,17 +60,6 @@ export function hasAllPermissions(
   return required.every(permission => permissions[permission]);
 }
 
-/**
- * Formatea el nombre de una ruta para mostrar en mensajes
- * @param route - Ruta a formatear
- * @returns Nombre formateado de la ruta
- * 
- * @example
- * ```ts
- * formatRouteName('/dashboard/monitor/monitor-lecturas');
- * // Returns: "Monitor Lecturas"
- * ```
- */
 export function formatRouteName(route: string): string {
   const segments = route.split('/').filter(Boolean);
   const lastSegment = segments[segments.length - 1];
@@ -106,18 +70,6 @@ export function formatRouteName(route: string): string {
     .join(' ');
 }
 
-/**
- * Obtiene un resumen de los permisos del usuario
- * @param permissions - Objeto con los permisos
- * @returns Array con los nombres de los permisos activos
- * 
- * @example
- * ```ts
- * const permissions = { canView: true, canCreate: true, canEdit: false, canDelete: false };
- * getPermissionsSummary(permissions);
- * // Returns: ['Ver', 'Crear']
- * ```
- */
 export function getPermissionsSummary(permissions: {
   canView: boolean;
   canCreate: boolean;
@@ -134,21 +86,6 @@ export function getPermissionsSummary(permissions: {
   return summary;
 }
 
-/**
- * Verifica si una lista de rutas está completamente accesible
- * @param checkPermission - Función para verificar permisos
- * @param routes - Array de rutas a verificar
- * @returns Objeto con las rutas accesibles e inaccesibles
- * 
- * @example
- * ```ts
- * const result = checkMultipleRoutes(
- *   canView,
- *   ['/dashboard/monitor/monitor-lecturas', '/dashboard/operaciones/revisar-precio']
- * );
- * // Returns: { accessible: [...], inaccessible: [...] }
- * ```
- */
 export function checkMultipleRoutes(
   checkPermission: (route: string) => boolean,
   routes: string[]

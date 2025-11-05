@@ -1,5 +1,5 @@
 import { Moon, Sun } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
 
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
@@ -39,7 +39,7 @@ export function ModeToggle() {
         {theme === 'light' ? (
           <motion.div
             key='sun'
-            variants={iconVariants}
+            variants={iconVariants as Variants}
             initial='initial'
             animate='animate'
             exit='exit'
@@ -49,7 +49,7 @@ export function ModeToggle() {
         ) : (
           <motion.div
             key='moon'
-            variants={iconVariants}
+            variants={iconVariants as Variants}
             initial='initial'
             animate='animate'
             exit='exit'

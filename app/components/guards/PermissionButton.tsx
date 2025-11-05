@@ -13,13 +13,6 @@ interface PermissionButtonProps
   asChild?: boolean;
 }
 
-/**
- * Componente Button que se deshabilita automáticamente según permisos
- *
- * @param requiredPermission - Tipo de permiso requerido
- * @param hideIfNoPermission - Si es true, oculta el botón en lugar de deshabilitarlo
- * @param children - Contenido del botón
- */
 export function PermissionButton({
   requiredPermission,
   hideIfNoPermission = false,
@@ -31,9 +24,7 @@ export function PermissionButton({
   const { permissions } = useAuth();
 
   // Buscar el permiso para la ruta actual
-  const currentPermission = permissions.find(
-    p => p.ruta === location.pathname
-  );
+  const currentPermission = permissions.find(p => p.ruta === location.pathname);
 
   // Verificar si tiene el permiso requerido
   let hasPermission = false;
@@ -82,9 +73,7 @@ export function PermissionWrapper({
   const location = useLocation();
   const { permissions } = useAuth();
 
-  const currentPermission = permissions.find(
-    p => p.ruta === location.pathname
-  );
+  const currentPermission = permissions.find(p => p.ruta === location.pathname);
 
   let hasPermission = false;
 

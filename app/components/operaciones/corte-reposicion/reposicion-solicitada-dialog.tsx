@@ -45,7 +45,7 @@ export function ReposicionSolicitadaDialog({
       toast.success('Reposición solicitada correctamente');
       onSuccess();
     } catch (error) {
-      toast.error('Error al solicitar reposición. Intente nuevamente.');
+      toast.error('Error al solicitar reposición. Intente nuevamente.', error as any);
     } finally {
       setIsSubmitting(false);
     }

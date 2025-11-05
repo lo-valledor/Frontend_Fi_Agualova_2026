@@ -1,9 +1,5 @@
 import { format } from 'date-fns';
 
-/**
- * Formatea una fecha a formato DD-MM-YYYY
- * @param dateString
- */
 export function formatToDate(dateString: string | null): string {
   if (!dateString) return '-';
 
@@ -11,29 +7,23 @@ export function formatToDate(dateString: string | null): string {
     return format(new Date(dateString), 'dd-MM-yyyy');
   } catch (error) {
     // Intentar extraer la fecha si es un string en formato ISO
+    console.error('Error formatting date:', error);
     return String(dateString).split('T')[0] || '-';
   }
 }
 
-/**
- * Formatea una fecha a formato HH:mm:ss
- * @param dateString
- */
 export function formatToTime(dateString: string | null): string {
   if (!dateString) return '-';
 
   try {
     return format(new Date(dateString), 'HH:mm:ss');
-  } catch (error) {
+  } catch (_error) {
     // Intentar extraer la hora si es un string en formato ISO
+    console.error('Error formatting time:', _error);
     return String(dateString).split('T')[1]?.split('.')[0] || '-';
   }
 }
 
-/**
- * Formatea una fecha al formato YYYYMMDD (usado en las consultas a la API)
- * @param dateString
- */
 export function formatToYYYYMMDD(dateString: string): string {
   if (!dateString) return '';
 

@@ -3,20 +3,20 @@ import { useRef } from 'react';
 
 /**
  * Hook para Virtual Scrolling optimizado
- * 
+ *
  * Solo renderiza los elementos visibles en el viewport,
  * mejorando dramáticamente el performance en listas grandes
- * 
+ *
  * @param items - Array de items a virtualizar
  * @param estimateSize - Altura estimada de cada item en px (default: 50)
  * @param overscan - Número de items extra a renderizar fuera del viewport (default: 5)
- * 
+ *
  * @returns {Object} - Virtualizer instance y ref del contenedor
- * 
+ *
  * @example
  * ```tsx
  * const { virtualizer, parentRef } = useVirtualScroll(data, 60);
- * 
+ *
  * return (
  *   <div ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
  *     <div style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}>
@@ -67,47 +67,7 @@ export function useVirtualScroll<T>(
   };
 }
 
-/**
- * Hook para Virtual Scrolling con altura dinámica
- * 
- * Útil cuando los items tienen alturas variables
- * 
- * @param items - Array de items a virtualizar
- * @param measureElement - Función para medir la altura de cada elemento
- * @param overscan - Número de items extra a renderizar
- * 
- * @example
- * ```tsx
- * const { virtualizer, parentRef, measureElement } = useVirtualScrollDynamic(data);
- * 
- * return (
- *   <div ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
- *     <div style={{ height: `${virtualizer.getTotalSize()}px`, position: 'relative' }}>
- *       {virtualizer.getVirtualItems().map(virtualItem => (
- *         <div
- *           key={virtualItem.key}
- *           data-index={virtualItem.index}
- *           ref={measureElement}
- *           style={{
- *             position: 'absolute',
- *             top: 0,
- *             left: 0,
- *             width: '100%',
- *             transform: `translateY(${virtualItem.start}px)`
- *           }}
- *         >
- *           {data[virtualItem.index]}
- *         </div>
- *       ))}
- *     </div>
- *   </div>
- * );
- * ```
- */
-export function useVirtualScrollDynamic<T>(
-  items: T[],
-  overscan: number = 5
-) {
+export function useVirtualScrollDynamic<T>(items: T[], overscan: number = 5) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({
@@ -117,7 +77,8 @@ export function useVirtualScrollDynamic<T>(
     overscan,
     // Habilitar medición dinámica
     measureElement:
-      typeof window !== 'undefined' && navigator.userAgent.indexOf('Firefox') === -1
+      typeof window !== 'undefined' &&
+      navigator.userAgent.indexOf('Firefox') === -1
         ? element => element?.getBoundingClientRect().height
         : undefined
   });

@@ -44,6 +44,7 @@ export default function DetalleLecturaBT43({
         const response = await api.get(`/detalle-tabla-bt-4-3/${lecturaId}`);
         setLectura(response.data as LecturaBT43[]);
       } catch (error) {
+        console.error('Error al obtener los detalles de la lectura:', error);
       } finally {
         setIsLoading(false);
       }

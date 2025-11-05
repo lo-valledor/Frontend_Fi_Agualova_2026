@@ -14,16 +14,6 @@ export interface ApiDebugOptions {
   showInConsole?: boolean;
 }
 
-/**
- * Registra información de debug de una llamada API
- * @param root0
- * @param root0.endpoint
- * @param root0.method
- * @param root0.payload
- * @param root0.response
- * @param root0.expectedTemplate
- * @param root0.showInConsole
- */
 export function debugApi({
   endpoint,
   method,
@@ -73,11 +63,6 @@ export function debugApi({
   console.groupEnd();
 }
 
-/**
- * Valida si un objeto coincide con una plantilla
- * @param data
- * @param template
- */
 function validateAgainstTemplate(data: any, template: any) {
   const missingFields: string[] = [];
   const extraFields: string[] = [];
@@ -116,9 +101,6 @@ function validateAgainstTemplate(data: any, template: any) {
   return { isValid, missingFields, extraFields, typeMismatches };
 }
 
-/**
- * Plantillas de datos esperados para diferentes endpoints
- */
 export const API_TEMPLATES = {
   // Roles y Permisos
   rol: {
@@ -156,12 +138,6 @@ export const API_TEMPLATES = {
   }
 };
 
-/**
- * Helper para crear logs de error con contexto
- * @param endpoint
- * @param error
- * @param context
- */
 export function logApiError(
   endpoint: string,
   error: any,

@@ -88,6 +88,7 @@ export default function TipoContratoFormModal({
       onSuccess();
       onClose();
     } catch (error) {
+      console.error('Error al guardar el tipo de contrato:', error);
     }
   };
 

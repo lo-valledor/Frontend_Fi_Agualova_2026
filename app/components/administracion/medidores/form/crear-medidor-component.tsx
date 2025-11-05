@@ -92,7 +92,10 @@ export default function CrearMedidorComponent({
         duration: 2000
       });
     } catch (error) {
-      toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
+      toast.error(
+        'Error al copiar. Intente seleccionar manualmente el ID.',
+        error as any
+      );
     }
   };
 

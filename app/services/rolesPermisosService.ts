@@ -105,10 +105,6 @@ export interface RelacionRolMenu {
 }
 
 class RolesPermisosService {
-  /**
-   * Función helper para procesar respuestas de API que devuelven arrays
-   * @param response
-   */
   private processApiResponse<T>(response: any): T[] {
     if (Array.isArray(response.data)) {
       return response.data;
@@ -134,10 +130,6 @@ class RolesPermisosService {
     return [];
   }
 
-  /**
-   * Función helper para procesar respuestas de API que devuelven objetos únicos
-   * @param response
-   */
   private processSingleApiResponse<T>(response: any): T | null {
     if (response?.data) {
       if (typeof response.data === 'object' && 'data' in response.data) {
@@ -152,14 +144,11 @@ class RolesPermisosService {
   // MÉTODOS PARA ROLES
   // ============================================
 
-  /**
-   * Lista todos los roles configurados en el sistema
-   */
   async getRoles(): Promise<RolesPermisosServiceResponse<Roles[]>> {
     try {
       const response = await api.get('listarRoles');
       const roles = this.processApiResponse<any>(response);
-      
+
       // Mapear los datos del backend al formato esperado
       // El backend devuelve idUsuario pero debería ser idRol
       const mappedRoles = roles.map((rol: any) => ({
@@ -168,7 +157,7 @@ class RolesPermisosService {
         descripcion: rol.descripcion,
         estadoRol: rol.estadoRol
       }));
-      
+
       return {
         data: mappedRoles,
         error: null
@@ -181,10 +170,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Obtiene los detalles de un rol específico por su ID
-   * @param id
-   */
   async getRolById(id: number): Promise<RolesPermisosServiceResponse<Roles>> {
     try {
       const response = await api.get(`ObtenerRolpor/${id}`);
@@ -200,10 +185,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Crea un nuevo rol en el sistema
-   * @param rolData
-   */
   async crearRol(
     rolData: CrearRolData
   ): Promise<RolesPermisosServiceResponse<Roles>> {
@@ -233,10 +214,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Actualiza la información de un rol existente
-   * @param rolData
-   */
   async actualizarRol(
     rolData: ActualizarRolData
   ): Promise<RolesPermisosServiceResponse<Roles>> {
@@ -266,10 +243,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Elimina un rol del sistema por su ID
-   * @param id
-   */
   async eliminarRol(
     id: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
@@ -294,29 +267,26 @@ class RolesPermisosService {
   // MÉTODOS PARA MENÚS
   // ============================================
 
-  /**
-   * Lista todos los menús disponibles en el sistema
-   */
   async getMenus(): Promise<RolesPermisosServiceResponse<Menus[]>> {
     const endpoint = 'ListarMenus';
-    
+
     try {
       debugApi({
         endpoint,
         method: 'GET',
         expectedTemplate: [API_TEMPLATES.menu]
       });
-      
+
       const response = await api.get(endpoint);
       const data = this.processApiResponse<Menus>(response);
-      
+
       debugApi({
         endpoint,
         method: 'GET',
         response: data,
         expectedTemplate: [API_TEMPLATES.menu]
       });
-      
+
       return {
         data,
         error: null
@@ -330,10 +300,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Obtiene los detalles de un menú específico por su ID
-   * @param idMenu
-   */
   async getMenuById(
     idMenu: number
   ): Promise<RolesPermisosServiceResponse<Menus>> {
@@ -351,10 +317,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Crea un nuevo menú en el sistema
-   * @param menuData
-   */
   async crearMenu(
     menuData: CrearMenuData
   ): Promise<RolesPermisosServiceResponse<Menus>> {
@@ -409,7 +371,9 @@ class RolesPermisosService {
         }
         // Si tiene errores de validación
         else if (error.response.data.errors) {
-          const validationErrors = Object.values(error.response.data.errors).flat();
+          const validationErrors = Object.values(
+            error.response.data.errors
+          ).flat();
           errorMessage = validationErrors.join(', ');
         }
         // Si tiene un mensaje directo
@@ -431,10 +395,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Actualiza la información de un menú existente
-   * @param menuData
-   */
   async actualizarMenu(
     menuData: ActualizarMenuData
   ): Promise<RolesPermisosServiceResponse<Menus>> {
@@ -486,7 +446,9 @@ class RolesPermisosService {
         if (error.response.data.title) {
           errorMessage = error.response.data.title;
         } else if (error.response.data.errors) {
-          const validationErrors = Object.values(error.response.data.errors).flat();
+          const validationErrors = Object.values(
+            error.response.data.errors
+          ).flat();
           errorMessage = validationErrors.join(', ');
         } else if (error.response.data.message) {
           errorMessage = error.response.data.message;
@@ -504,10 +466,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Elimina un menú del sistema
-   * @param idMenu
-   */
   async eliminarMenu(
     idMenu: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
@@ -532,10 +490,6 @@ class RolesPermisosService {
   // MÉTODOS PARA PERMISOS DE USUARIOS
   // ============================================
 
-  /**
-   * Obtiene los permisos de menú asignados a un usuario específico
-   * @param codigoUsuario
-   */
   async getPermisosUsuario(
     codigoUsuario: string
   ): Promise<RolesPermisosServiceResponse<PermisosUsuario[]>> {
@@ -557,15 +511,11 @@ class RolesPermisosService {
   // MÉTODOS PARA ROL MENÚ
   // ============================================
 
-  /**
-   * Lista todos los menús y permisos asociados a un rol específico
-   * @param idRol
-   */
   async getMenusPorRol(
     idRol: number
   ): Promise<RolesPermisosServiceResponse<RolMenu[]>> {
     const endpoint = `ListarMenu/${idRol}`;
-    
+
     try {
       debugApi({
         endpoint,
@@ -573,17 +523,17 @@ class RolesPermisosService {
         payload: { idRol },
         expectedTemplate: [API_TEMPLATES.permisoRolMenu]
       });
-      
+
       const response = await api.get(endpoint);
       const data = this.processApiResponse<RolMenu>(response);
-      
+
       debugApi({
         endpoint,
         method: 'GET',
         response: data,
         expectedTemplate: [API_TEMPLATES.permisoRolMenu]
       });
-      
+
       return {
         data,
         error: null
@@ -597,11 +547,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Obtiene la relación específica entre un rol y un menú determinado
-   * @param idRol
-   * @param idMenu
-   */
   async getRelacionRolMenu(
     idRol: number,
     idMenu: number
@@ -620,10 +565,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Asigna o actualiza los permisos de un rol sobre un menú
-   * @param permisosData
-   */
   async asignarPermisos(
     permisosData: AsignarPermisosData
   ): Promise<RolesPermisosServiceResponse<RelacionRolMenu>> {
@@ -663,10 +604,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Asigna permisos usando el formato directo del API
-   * @param permisoData
-   */
   async asignarPermisoDirecto(
     permisoData: AsignarPermisoDirecto
   ): Promise<RolesPermisosServiceResponse<any>> {
@@ -674,7 +611,8 @@ class RolesPermisosService {
 
     try {
       // Formato de fecha sin milisegundos: YYYY-MM-DDTHH:mm:ss
-      const fechaActual = permisoData.fechaAsignacion || new Date().toISOString().split('.')[0];
+      const fechaActual =
+        permisoData.fechaAsignacion || new Date().toISOString().split('.')[0];
 
       const dataToSend = {
         idRol: permisoData.idRol,
@@ -710,7 +648,7 @@ class RolesPermisosService {
       }
 
       const responseData = this.processSingleApiResponse<any>(response);
-      
+
       debugApi({
         endpoint,
         method: 'POST',
@@ -723,7 +661,7 @@ class RolesPermisosService {
       };
     } catch (error: any) {
       logApiError(endpoint, error, { permisoData });
-      
+
       return {
         data: null,
         error:
@@ -735,11 +673,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Elimina la relación de permisos entre un rol y un menú
-   * @param idRol
-   * @param idMenu
-   */
   async eliminarRelacionRolMenu(
     idRol: number,
     idMenu: number
@@ -765,10 +698,6 @@ class RolesPermisosService {
   // MÉTODOS PARA USUARIO ROL
   // ============================================
 
-  /**
-   * Obtiene los roles asignados a un usuario
-   * @param codigoUsuario
-   */
   async getRolesUsuario(
     codigoUsuario: string
   ): Promise<RolesPermisosServiceResponse<Roles[]>> {
@@ -786,11 +715,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Asigna uno o más roles a un usuario
-   * @param codigoUsuario
-   * @param rolesData
-   */
   async asignarRolesUsuario(
     codigoUsuario: string,
     rolesData: AsignarRolesUsuarioData
@@ -822,11 +746,6 @@ class RolesPermisosService {
     }
   }
 
-  /**
-   * Quita un rol específico a un usuario
-   * @param codigoUsuario
-   * @param idRol
-   */
   async quitarRolUsuario(
     codigoUsuario: string,
     idRol: number

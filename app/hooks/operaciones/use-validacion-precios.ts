@@ -18,13 +18,6 @@ interface ValidacionPreciosResult {
   verificarPrecios: () => Promise<void>;
 }
 
-/**
- * Hook para validar si los precios están confirmados antes de permitir
- * el cálculo de facturación.
- * 
- * Verifica tanto los precios ENEL (tabla uno) como los precios Enerlova (tabla dos).
- * Solo retorna true si TODOS los precios con índice válido están confirmados.
- */
 export function useValidacionPrecios({
   periodoFormateado,
   cicloId

@@ -39,9 +39,10 @@ export function useCalculoProceso({
       };
 
       await api.post('lanzar-calculo-facturacion', requestBody);
-      
+
       toast.success('Proceso de cálculo iniciado exitosamente', {
-        description: 'El sistema está procesando los cálculos de facturación. Este proceso puede tardar varios minutos dependiendo de la cantidad de lecturas. Por favor, espere unos minutos y luego haga clic en "Ver Cálculo Facturas" para revisar los resultados.',
+        description:
+          'El sistema está procesando los cálculos de facturación. Este proceso puede tardar varios minutos dependiendo de la cantidad de lecturas. Por favor, espere unos minutos y luego haga clic en "Ver Cálculo Facturas" para revisar los resultados.',
         duration: 8000
       });
     } catch (err: any) {
@@ -73,7 +74,11 @@ export function useCalculoProceso({
 
         await api.post('generar-detalle-factura', requestBody);
         successCount++;
-      } catch (error: any) {
+      } catch (error) {
+        console.error(
+          `Error al aceptar cálculo para lectura ${lecturaId}:`,
+          error
+        );
         errorCount++;
       }
     }

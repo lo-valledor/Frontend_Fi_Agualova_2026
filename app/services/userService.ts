@@ -12,9 +12,6 @@ export interface UserServiceResponse<T> {
 }
 
 class UserService {
-  /**
-   * Obtiene todos los usuarios
-   */
   async getAllUsers(): Promise<UserServiceResponse<Usuarios[]>> {
     try {
       const response = await api.get('/listar');
@@ -32,10 +29,6 @@ class UserService {
     }
   }
 
-  /**
-   * Obtiene un usuario específico por ID
-   * @param userId
-   */
   async getUserById(
     userId: string | number
   ): Promise<UserServiceResponse<Usuarios>> {
@@ -107,10 +100,6 @@ class UserService {
     }
   }
 
-  /**
-   * Obtiene un usuario por nombre de usuario
-   * @param username
-   */
   async getUserByUsername(
     username: string
   ): Promise<UserServiceResponse<Usuarios>> {
@@ -172,10 +161,6 @@ class UserService {
     }
   }
 
-  /**
-   * Obtiene el perfil del usuario actualmente autenticado desde la API.
-   * La API identifica al usuario a través del token JWT enviado por el interceptor de Axios.
-   */
   async getOwnProfile(): Promise<UserServiceResponse<Usuarios>> {
     try {
       // Asumimos que tienes un endpoint como '/me' o '/profile' que devuelve el usuario logueado
@@ -198,11 +183,6 @@ class UserService {
     }
   }
 
-  /**
-   * Actualiza un usuario
-   * @param userId
-   * @param userData
-   */
   async updateUser(
     userId: number,
     userData: ActualizarUsuarioProps
@@ -240,10 +220,6 @@ class UserService {
     }
   }
 
-  /**
-   * Crea datos simulados de usuario basados en el token
-   * @param user
-   */
   createMockUserData(user: any): Usuarios {
     const nameParts = user.fullName.split(' ');
     return {
@@ -254,7 +230,9 @@ class UserService {
       apellidos: nameParts.slice(1).join(' ') || '',
       departamento: 1, // Valor por defecto
       activo: true,
-      fechaCreacion: new Date().toISOString()
+      fechaCreacion: new Date().toISOString(),
+      email: null,
+      roles: []
     };
   }
 
@@ -265,18 +243,11 @@ class UserService {
     userCache.clear();
   }
 
-  /**
-   * Limpia el caché de un usuario específico
-   * @param userId
-   */
   clearUserCache(userId: string | number): void {
     const userIdStr = userId.toString();
     userCache.delete(`user_${userIdStr}`);
   }
 
-  /**
-   * Obtiene estadísticas del caché
-   */
   getCacheStats(): {
     size: number;
     entries: Array<{ key: string; age: number }>;

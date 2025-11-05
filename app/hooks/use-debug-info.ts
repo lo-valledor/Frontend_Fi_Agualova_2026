@@ -104,6 +104,7 @@ export const useDebugInfo = () => {
       setDebugInfo(info);
 
       if (proxyInfo.detected) {
+        console.warn(
           '  Esto puede causar problemas con las headers de autorización'
         );
       }
