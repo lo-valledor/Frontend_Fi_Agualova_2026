@@ -397,7 +397,7 @@ export default function RevisarCalculoFacturaComponent({
                           className='p-3 rounded-xl bg-background border border-border'
                         >
                           <div className='flex items-center gap-3'>
-                            <div className='w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0'>
+                            <div className='w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center shrink-0'>
                               <CalendarIcon className='w-4 h-4 text-primary' />
                             </div>
                             <div>
@@ -413,7 +413,7 @@ export default function RevisarCalculoFacturaComponent({
                       ) : (
                         <div className='p-3 rounded-xl bg-muted/50 border border-border'>
                           <div className='flex items-center gap-3'>
-                            <div className='w-8 h-8 bg-muted rounded-xl flex items-center justify-center flex-shrink-0'>
+                            <div className='w-8 h-8 bg-muted rounded-xl flex items-center justify-center shrink-0'>
                               <AlertCircleIcon className='w-4 h-4 text-muted-foreground' />
                             </div>
                             <div>
@@ -437,7 +437,7 @@ export default function RevisarCalculoFacturaComponent({
                       </Label>
                       <div className='p-3 rounded-xl bg-background border border-border'>
                         <div className='flex items-center gap-3'>
-                          <div className='w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center flex-shrink-0'>
+                          <div className='w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center shrink-0'>
                             <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
                           </div>
                           <div className='flex-1 min-w-0'>
@@ -460,7 +460,7 @@ export default function RevisarCalculoFacturaComponent({
                 {!isLoadingValidacion && !preciosConfirmados && (
                   <div className='p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'>
                     <div className='flex items-start gap-2'>
-                      <AlertCircleIcon className='h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' />
+                      <AlertCircleIcon className='h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0' />
                       <div className='flex-1'>
                         <p className='text-sm font-medium text-amber-900 dark:text-amber-100'>
                           Precios pendientes de confirmación
@@ -482,9 +482,9 @@ export default function RevisarCalculoFacturaComponent({
 
                 {/* Mensaje de precios confirmados */}
                 {!isLoadingValidacion && preciosConfirmados && (
-                  <div className='p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-2 border-emerald-300 dark:border-emerald-700 shadow-sm'>
+                  <div className='p-4 rounded-xl bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-2 border-emerald-300 dark:border-emerald-700 shadow-sm'>
                     <div className='flex items-start gap-3'>
-                      <div className='flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center'>
+                      <div className='shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center'>
                         <CheckCircle className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
                       </div>
                       <div className='flex-1'>
@@ -527,7 +527,7 @@ export default function RevisarCalculoFacturaComponent({
                           ? 'Debes confirmar todos los precios primero'
                           : 'Preparar cálculo de facturación'
                       }
-                      className='bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md'
+                      className='bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md'
                     >
                       {isLaunching ? (
                         <>
@@ -755,7 +755,7 @@ export default function RevisarCalculoFacturaComponent({
                         </p>
 
                         <Button
-                          onClick={() => window.location.reload()}
+                          onClick={() => globalThis.location.reload()}
                           variant='outline'
                           size='sm'
                           className='mt-3 border-rose-200 hover:bg-rose-50 dark:border-rose-700 dark:hover:bg-rose-900/20'

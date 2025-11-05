@@ -26,7 +26,7 @@ export function useUserPermissions(): UseUserPermissionsReturn {
       setError(null);
 
       const user = getAuthenticatedUser();
-      if (!user || !user.id) {
+      if (!user?.id) {
         setPermissions([]);
         setError('Usuario no autenticado');
         return;

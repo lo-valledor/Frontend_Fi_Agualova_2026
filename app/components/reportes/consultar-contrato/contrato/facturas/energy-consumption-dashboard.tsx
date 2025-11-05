@@ -200,7 +200,7 @@ const EnergyConsumptionDashboard = memo(function EnergyConsumptionDashboard({
       {/* KPIs Cards */}
       <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
         {/* Consumo Promedio Mensual */}
-        <Card className='border bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
+        <Card className='border bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
           <CardContent className='pt-4'>
             <div className='flex items-center justify-between'>
               <div className='flex-1'>
@@ -234,7 +234,7 @@ const EnergyConsumptionDashboard = memo(function EnergyConsumptionDashboard({
         </Card>
 
         {/* Consumo Último Periodo */}
-        <Card className='border bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
+        <Card className='border bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
           <CardContent className='pt-4'>
             <div className='flex items-center justify-between'>
               <div className='flex-1'>
@@ -266,7 +266,7 @@ const EnergyConsumptionDashboard = memo(function EnergyConsumptionDashboard({
         </Card>
 
         {/* Total Acumulado Anual */}
-        <Card className='border bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900'>
+        <Card className='border bg-linear-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900'>
           <CardContent className='pt-4'>
             <div className='flex items-center justify-between'>
               <div className='flex-1'>
@@ -304,7 +304,7 @@ const EnergyConsumptionDashboard = memo(function EnergyConsumptionDashboard({
         </Card>
 
         {/* Alertas de Sobreconsumo */}
-        <Card className='border bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900'>
+        <Card className='border bg-linear-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900'>
           <CardContent className='pt-4'>
             <div className='flex items-center justify-between'>
               <div className='flex-1'>

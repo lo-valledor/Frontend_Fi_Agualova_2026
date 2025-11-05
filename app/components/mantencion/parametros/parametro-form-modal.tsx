@@ -61,7 +61,7 @@ export default function ParametroFormModal({
   onSuccess,
   parametro,
   mode
-}: ParametroFormModalProps) {
+}: Readonly<ParametroFormModalProps>) {
   const form = useForm<ParametroFormData>({
     resolver: zodResolver(parametroSchema),
     defaultValues: {

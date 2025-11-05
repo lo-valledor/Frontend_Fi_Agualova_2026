@@ -24,7 +24,7 @@ export default function DetalleMedidorNuevo({
     // Convertir valores numéricos
     if (id === 'constante_multiplicar' || id === 'estado_medidor') {
       const numValue = value === '' ? 0 : Number(value);
-      if (!isNaN(numValue)) {
+      if (!Number.isNaN(numValue)) {
         onDetalleMedidorChange({
           target: {
             id,
@@ -41,7 +41,7 @@ export default function DetalleMedidorNuevo({
     <Card className='w-full rounded-xl border border-border bg-card/50 backdrop-blur-sm shadow-lg'>
       <CardHeader className='bg-muted/30 border-b border-border p-3 sm:p-6'>
         <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-          <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-500 shadow-sm flex-shrink-0'>
+          <div className='flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-emerald-500 shadow-sm shrink-0'>
             <Zap className='h-3 w-3 sm:h-4 sm:w-4 text-white' />
           </div>
           <div className='min-w-0'>

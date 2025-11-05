@@ -134,7 +134,7 @@ export default function NichoFormModal({
     setIsLoading(true);
     try {
       const payload = {
-        sectorId: parseInt(data.sectorId, 10),
+        sectorId: Number.parseInt(data.sectorId, 10),
         nombre: data.nombre,
         ubicacion: data.ubicacion,
         estado: data.estado

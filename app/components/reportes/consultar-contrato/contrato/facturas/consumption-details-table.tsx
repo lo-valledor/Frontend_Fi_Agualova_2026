@@ -51,7 +51,7 @@ const getNombreMes = (mes: string) => {
     'Nov',
     'Dic'
   ];
-  const mesNum = parseInt(mes, 10);
+  const mesNum = Number.parseInt(mes, 10);
   return meses[mesNum - 1] || mes;
 };
 

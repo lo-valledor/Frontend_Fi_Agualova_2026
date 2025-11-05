@@ -245,7 +245,7 @@ export default function TablaAsignacionSectores({
       {selectedNichos.length > 0 && (
         <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-background border border-border'>
           <div className='flex items-center gap-2 sm:gap-3'>
-            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 dark:bg-emerald-800/50 rounded-xl flex items-center justify-center flex-shrink-0'>
+            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 dark:bg-emerald-800/50 rounded-xl flex items-center justify-center shrink-0'>
               <CheckCircle2 className='w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400' />
             </div>
             <div>
@@ -277,7 +277,7 @@ export default function TablaAsignacionSectores({
             title={
               !hasPermission ? 'No tiene permisos para preparar lecturas' : ''
             }
-            className='gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 w-full sm:w-auto'
+            className='gap-2 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 w-full sm:w-auto'
             size='sm'
           >
             {isSubmitting ? (
@@ -300,10 +300,10 @@ export default function TablaAsignacionSectores({
         <div
           className={`rounded-xl p-4 border ${
             submitResults.errors === 0
-              ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800'
+              ? 'bg-linear-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800'
               : submitResults.success === 0
-                ? 'bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800'
-                : 'bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800'
+                ? 'bg-linear-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800'
+                : 'bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800'
           }`}
         >
           <div className='flex gap-3 items-start mb-3'>
@@ -466,7 +466,7 @@ export default function TablaAsignacionSectores({
                     </TableCell>
                     <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
                       {isNichoSelected(item.nichoId) ? (
-                        <Badge className='bg-gradient-to-r from-emerald-500 to-teal-600 border-0 text-xs px-1 sm:px-2'>
+                        <Badge className='bg-linear-to-r from-emerald-500 to-teal-600 border-0 text-xs px-1 sm:px-2'>
                           <span className='hidden sm:inline'>Seleccionado</span>
                           <span className='sm:hidden'>Sel</span>
                         </Badge>

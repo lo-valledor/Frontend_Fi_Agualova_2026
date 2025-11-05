@@ -82,7 +82,7 @@ export function useExportData<T extends Record<string, any>>() {
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      link.remove();
       URL.revokeObjectURL(url);
     }
   };
@@ -152,7 +152,7 @@ export function useExportData<T extends Record<string, any>>() {
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      link.remove();
       URL.revokeObjectURL(url);
     }
   };

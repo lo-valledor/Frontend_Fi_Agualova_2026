@@ -39,24 +39,24 @@ export const ContractHydrateFallback: React.FC = () => {
         </CardHeader>
         <CardContent className='space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className='space-y-2'>
+            {Array.from({ length: 4 }, (_, i) => (
+              <div key={`filter-skeleton-${i}`} className='space-y-2'>
                 <Skeleton className='h-4 w-24' />
                 <Skeleton className='h-10 w-full' />
               </div>
             ))}
           </div>
           <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className='space-y-2'>
+            {Array.from({ length: 3 }, (_, i) => (
+              <div key={`filter-extra-${i}`} className='space-y-2'>
                 <Skeleton className='h-4 w-20' />
                 <Skeleton className='h-10 w-full' />
               </div>
             ))}
           </div>
           <div className='flex flex-wrap gap-2'>
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className='h-6 w-20 rounded-full' />
+            {Array.from({ length: 3 }, (_, i) => (
+              <Skeleton key={`badge-skeleton-${i}`} className='h-6 w-20 rounded-full' />
             ))}
           </div>
         </CardContent>
@@ -76,16 +76,16 @@ export const ContractHydrateFallback: React.FC = () => {
         <CardContent>
           {/* Header de tabla */}
           <div className='grid grid-cols-6 gap-4 p-4 border-b'>
-            {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className='h-4 w-full' />
+            {Array.from({ length: 6 }, (_, i) => (
+              <Skeleton key={`table-header-${i}`} className='h-4 w-full' />
             ))}
           </div>
 
           {/* Filas de tabla */}
-          {[...Array(8)].map((_, rowIndex) => (
-            <div key={rowIndex} className='grid grid-cols-6 gap-4 p-4 border-b'>
-              {[...Array(6)].map((_, colIndex) => (
-                <div key={colIndex} className='space-y-1'>
+          {Array.from({ length: 8 }, (_, rowIndex) => (
+            <div key={`table-row-${rowIndex}`} className='grid grid-cols-6 gap-4 p-4 border-b'>
+              {Array.from({ length: 6 }, (_, colIndex) => (
+                <div key={`table-cell-${rowIndex}-${colIndex}`} className='space-y-1'>
                   <Skeleton className='h-4 w-full' />
                   {colIndex === 0 && <Skeleton className='h-3 w-3/4' />}
                 </div>
@@ -110,7 +110,7 @@ export const ContractHydrateFallback: React.FC = () => {
       <div className='fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50'>
         <Card className='w-full max-w-md border-0 shadow-2xl bg-background'>
           <CardHeader className='text-center pb-4'>
-            <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-sky-500 to-indigo-600 shadow-lg'>
+            <div className='mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-r from-sky-500 to-indigo-600 shadow-lg'>
               <FileText className='h-8 w-8' />
             </div>
             <CardTitle className='text-xl font-semibold'>
@@ -138,7 +138,7 @@ export const ContractHydrateFallback: React.FC = () => {
               </div>
               <div className='h-2 bg-background rounded-full overflow-hidden'>
                 <div
-                  className='h-full bg-gradient-to-r from-sky-500 to-indigo-600 rounded-full animate-pulse'
+                  className='h-full bg-linear-to-r from-sky-500 to-indigo-600 rounded-full animate-pulse'
                   style={{ width: '85%' }}
                 ></div>
               </div>
@@ -163,7 +163,7 @@ export const ContractHydrateFallback: React.FC = () => {
             {/* Retry Button */}
             <div className='pt-4'>
               <Button
-                onClick={() => window.location.reload()}
+                onClick={() => globalThis.location.reload()}
                 variant='outline'
                 className='w-full'
               >

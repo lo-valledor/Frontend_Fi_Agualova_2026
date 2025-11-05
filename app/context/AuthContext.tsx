@@ -196,10 +196,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    globalThis.addEventListener('storage', handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      globalThis.removeEventListener('storage', handleStorageChange);
     };
   }, [navigate]);
 

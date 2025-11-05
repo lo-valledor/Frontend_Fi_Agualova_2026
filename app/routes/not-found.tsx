@@ -63,7 +63,7 @@ export default function NotFound() {
           <Button
             variant='outline'
             className='w-full'
-            onClick={() => window.history.back()}
+            onClick={() => globalThis.history.back()}
           >
             Página anterior
           </Button>

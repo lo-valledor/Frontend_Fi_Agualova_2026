@@ -128,7 +128,7 @@ export default function DialogNuevoValorEnerlova({
     const valorLimpio = valorStr.replace(',', '.');
 
     const numero = parseFloat(valorLimpio);
-    return isNaN(numero) ? 0 : numero;
+    return Number.isNaN(numero) ? 0 : numero;
   };
 
   // Manejador para el cambio de valor con formato
@@ -265,7 +265,7 @@ export default function DialogNuevoValorEnerlova({
       const fechaFinFormateada = formatearFechaADDMMYYYY(formValues.fecha_fin);
 
       const payload = {
-        codigo: parseInt(formValues.codigo),
+        codigo: Number.parseInt(formValues.codigo),
         fechaInicio: formValues.fecha_inicio,
         fechaFin: fechaFinFormateada,
         valor: formValues.valor

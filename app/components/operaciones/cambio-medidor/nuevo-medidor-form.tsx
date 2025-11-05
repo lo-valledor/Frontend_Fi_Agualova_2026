@@ -45,7 +45,7 @@ export default function NuevoMedidorForm({
             <Button
               variant='ghost'
               size='icon'
-              className='h-6 w-6 sm:h-8 sm:w-8 rounded-full hover:bg-muted flex-shrink-0'
+              className='h-6 w-6 sm:h-8 sm:w-8 rounded-full hover:bg-muted shrink-0'
             >
               {isOpen ? (
                 <ChevronUp className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />

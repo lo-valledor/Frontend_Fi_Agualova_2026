@@ -16,8 +16,8 @@ export const generateNextCode = (
   const numbers = existingCodes
     .map(code => {
       if (typeof code === 'number') return code;
-      const parsed = parseInt(code.toString(), 10);
-      return isNaN(parsed) ? 0 : parsed;
+      const parsed = Number.parseInt(code.toString(), 10);
+      return Number.isNaN(parsed) ? 0 : parsed;
     })
     .filter(num => num > 0)
     .sort((a, b) => a - b);
@@ -80,6 +80,6 @@ export const extractNumberFromCode = (
 
   const numberPart = prefix ? code.slice(prefix.length) : code;
 
-  const parsed = parseInt(numberPart, 10);
-  return isNaN(parsed) ? 0 : parsed;
+  const parsed = Number.parseInt(numberPart, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
 };

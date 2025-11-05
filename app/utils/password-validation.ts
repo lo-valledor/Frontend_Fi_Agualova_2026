@@ -42,7 +42,7 @@ export const PASSWORD_RULES: PasswordValidationRule[] = [
   {
     id: 'number',
     label: 'Al menos un número',
-    validator: pwd => /[0-9]/.test(pwd),
+    validator: pwd => /\d/.test(pwd),
     message: 'Debe incluir al menos un número (0-9)'
   },
   {

@@ -34,11 +34,10 @@ export default function InformacionMedidor({
   error,
   lecturaId
 }: InformacionMedidorProps) {
-
   const colorClasses = {
-      sky: 'bg-background dark:bg-background border-sky-500 focus-within:bg-ring',
+    sky: 'bg-background dark:bg-background border-sky-500 focus-within:bg-ring'
   };
-  
+
   return (
     <Card className='border-0 shadow-none bg-transparent'>
       <CardHeader className='px-0 pb-2'>
@@ -52,13 +51,15 @@ export default function InformacionMedidor({
       <CardContent className='px-0 space-y-3'>
         {error ? (
           <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
-            <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+            <AlertCircle className='h-3 w-3 mt-0.5 shrink-0' />
             <span>{error}</span>
           </div>
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
             {/* Medidor */}
-            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
+            <div
+              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
+            >
               <div className='flex items-center gap-2 mb-1.5'>
                 <IdCard className='h-3 w-3 ' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -71,7 +72,9 @@ export default function InformacionMedidor({
             </div>
 
             {/* Tipo */}
-            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
+            <div
+              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
+            >
               <div className='flex items-center gap-2 mb-1.5'>
                 <Zap className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -84,7 +87,9 @@ export default function InformacionMedidor({
             </div>
 
             {/* Tarifa */}
-            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
+            <div
+              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
+            >
               <div className='flex items-center gap-2 mb-1.5'>
                 <Key className='h-3 w-3 text-amber-600 dark:text-amber-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -101,7 +106,7 @@ export default function InformacionMedidor({
                       <Button
                         variant='ghost'
                         size='sm'
-                        className='h-7 px-2 text-xs flex-shrink-0 hover:bg-primary/10'
+                        className='h-7 px-2 text-xs shrink-0 hover:bg-primary/10'
                       >
                         <span>Ver detalle</span>
                         <ChevronRight className='h-3.5 w-3.5 ml-1' />
@@ -136,7 +141,9 @@ export default function InformacionMedidor({
             </div>
 
             {/* Constante */}
-            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
+            <div
+              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
+            >
               <div className='flex items-center gap-2 mb-1.5'>
                 <Gauge className='h-3 w-3 text-purple-600 dark:text-purple-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
@@ -149,7 +156,9 @@ export default function InformacionMedidor({
             </div>
 
             {/* Subempalme */}
-            <div className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}>
+            <div
+              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
+            >
               <div className='flex items-center gap-2 mb-1.5'>
                 <PlugIcon className='h-3 w-3 text-orange-600 dark:text-orange-400' />
                 <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>

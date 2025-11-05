@@ -125,7 +125,7 @@ export const columns = (
       const formatValue = (val: string) => {
         if (isNoValue) return val;
         const number = parseFloat(val.replace(',', '.'));
-        return isNaN(number)
+        return Number.isNaN(number)
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,
@@ -164,7 +164,7 @@ export const columns = (
       const formatValue = (val: string) => {
         if (isNoValue) return val;
         const number = parseFloat(val.replace(',', '.'));
-        return isNaN(number)
+        return Number.isNaN(number)
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,
@@ -203,7 +203,7 @@ export const columns = (
       const formatValue = (val: string) => {
         if (isNoValue) return val;
         const number = parseFloat(val.replace(',', '.'));
-        return isNaN(number)
+        return Number.isNaN(number)
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,

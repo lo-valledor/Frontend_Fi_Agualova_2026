@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SonarQube Dashboard - Enerlova</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+
+      header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .subtitle {
+        opacity: 0.9;
+        font-size: 1.1rem;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+      }
+
+      .metric-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border-left: 4px solid #667eea;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .metric-card.success {
+        border-left-color: #10b981;
+      }
+      .metric-card.warning {
+        border-left-color: #f59e0b;
+      }
+      .metric-card.error {
+        border-left-color: #ef4444;
+      }
+
+      .metric-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+      }
+
+      .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #1f2937;
+      }
+
+      .metric-description {
+        color: #9ca3af;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+      }
+
+      .actions {
+        padding: 2rem;
+        background: #f8f9fa;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .actions h2 {
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+
+      .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+      }
+
+      .btn-secondary:hover {
+        background: #667eea;
+        color: white;
+      }
+
+      .checklist {
+        padding: 2rem;
+      }
+
+      .checklist h2 {
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+
+      .checklist-item {
+        padding: 1rem;
+        background: #f8f9fa;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .checklist-item input[type='checkbox'] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+
+      .checklist-item.checked {
+        background: #d1fae5;
+        border-left: 4px solid #10b981;
+      }
+
+      footer {
+        padding: 2rem;
+        text-align: center;
+        color: #6b7280;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .progress-bar {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🎯 SonarQube Dashboard</h1>
+        <p class="subtitle">
+          Enerlova Frontend - Análisis de Calidad de Código
+        </p>
+      </header>
+
+      <div class="metrics">
+        <div class="metric-card success">
+          <div class="metric-label">Code Smells</div>
+          <div class="metric-value">23</div>
+          <div class="metric-description">Objetivo: &lt;50</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 54%"></div>
+          </div>
+        </div>
+
+        <div class="metric-card success">
+          <div class="metric-label">Bugs</div>
+          <div class="metric-value">0</div>
+          <div class="metric-description">Objetivo: 0</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 100%"></div>
+          </div>
+        </div>
+
+        <div class="metric-card warning">
+          <div class="metric-label">Cobertura</div>
+          <div class="metric-value">68%</div>
+          <div class="metric-description">Objetivo: &gt;80%</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 68%"></div>
+          </div>
+        </div>
+
+        <div class="metric-card success">
+          <div class="metric-label">Duplicación</div>
+          <div class="metric-value">1.2%</div>
+          <div class="metric-description">Objetivo: &lt;3%</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 60%"></div>
+          </div>
+        </div>
+
+        <div class="metric-card warning">
+          <div class="metric-label">Deuda Técnica</div>
+          <div class="metric-value">3.2h</div>
+          <div class="metric-description">Objetivo: &lt;2h</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 62%"></div>
+          </div>
+        </div>
+
+        <div class="metric-card success">
+          <div class="metric-label">Vulnerabilidades</div>
+          <div class="metric-value">0</div>
+          <div class="metric-description">Objetivo: 0</div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="checklist">
+        <h2>📋 Quick Checklist</h2>
+        <div class="checklist-item">
+          <input type="checkbox" id="check1" />
+          <label for="check1"
+            >Corregir todos los parseInt() → Number.parseInt()</label
+          >
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="check2" />
+          <label for="check2"
+            >Convertir .forEach() a for...of donde aplique</label
+          >
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="check3" />
+          <label for="check3"
+            >Reducir complejidad cognitiva en top 5 archivos</label
+          >
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="check4" />
+          <label for="check4">Añadir JSDoc a funciones públicas</label>
+        </div>
+        <div class="checklist-item">
+          <input type="checkbox" id="check5" />
+          <label for="check5">Aumentar cobertura de tests >80%</label>
+        </div>
+      </div>
+
+      <div class="actions">
+        <h2>🚀 Acciones Rápidas</h2>
+        <div class="action-buttons">
+          <button
+            class="btn btn-primary"
+            onclick="runCommand('pnpm run sonar:optimize')"
+          >
+            Optimizar Código
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="runCommand('pnpm run quality:check')"
+          >
+            Verificar Calidad
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="runCommand('pnpm run lint:fix')"
+          >
+            Fix Automático
+          </button>
+          <button
+            class="btn btn-secondary"
+            onclick="runCommand('pnpm run coverage')"
+          >
+            Ver Cobertura
+          </button>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          💡 <strong>Tip:</strong> Ejecuta
+          <code>pnpm run quality:check</code> antes de cada commit
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.875rem">
+          Última actualización: <span id="lastUpdate"></span>
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      // Actualizar fecha
+      document.getElementById('lastUpdate').textContent =
+        new Date().toLocaleString('es-ES');
+
+      // Manejar checkboxes
+      document.querySelectorAll('.checklist-item input').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+          this.closest('.checklist-item').classList.toggle(
+            'checked',
+            this.checked
+          );
+          saveProgress();
+        });
+
+        // Cargar estado guardado
+        const saved = localStorage.getItem(checkbox.id);
+        if (saved === 'true') {
+          checkbox.checked = true;
+          checkbox.closest('.checklist-item').classList.add('checked');
+        }
+      });
+
+      function saveProgress() {
+        document.querySelectorAll('.checklist-item input').forEach(checkbox => {
+          localStorage.setItem(checkbox.id, checkbox.checked);
+        });
+      }
+
+      function runCommand(command) {
+        alert(`Comando a ejecutar:\n\n${command}\n\nEjecútalo en tu terminal.`);
+      }
+    </script>
+  </body>
+</html>

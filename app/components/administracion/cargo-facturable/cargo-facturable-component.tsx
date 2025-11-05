@@ -71,7 +71,7 @@ export default function CargoFacturableComponent({
     setIsModalOpen(true);
   };
 
-  const handleEditCargo = async (cargo: BuscarCargoFacturable) => {
+  const handleEditCargo = (cargo: BuscarCargoFacturable) => {
     if (!hasEditPermission) {
       toast.error('No tiene permisos para editar cargos facturables');
       return;
@@ -158,9 +158,9 @@ export default function CargoFacturableComponent({
                 size='sm'
                 disabled={!hasCreatePermission}
                 title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear cargos facturables'
-                    : ''
+                  hasCreatePermission
+                    ? ''
+                    : 'No tiene permisos para crear cargos facturables'
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />

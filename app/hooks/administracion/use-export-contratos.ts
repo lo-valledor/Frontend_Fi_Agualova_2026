@@ -21,7 +21,7 @@ export function useExportContratos() {
 
     try {
       const date = new Date(dateString);
-      if (isNaN(date.getTime())) return dateString || '';
+      if (Number.isNaN(date.getTime())) return dateString || '';
 
       return date.toLocaleDateString('es-CL', {
         day: '2-digit',

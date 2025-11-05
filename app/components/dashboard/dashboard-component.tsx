@@ -354,14 +354,14 @@ const AdminAnalyticsComponent = () => {
                   >
                     <div className='flex items-center gap-2 min-w-0'>
                       <div
-                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0'
+                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0'
                         style={{ backgroundColor: item.fill }}
                       ></div>
                       <span className='text-xs sm:text-sm font-medium truncate'>
                         {item.tipo}
                       </span>
                     </div>
-                    <div className='text-sm sm:text-lg font-bold flex-shrink-0'>
+                    <div className='text-sm sm:text-lg font-bold shrink-0'>
                       <NumberFlow
                         value={item.cantidad}
                         plugins={[continuous]}
@@ -535,7 +535,7 @@ const AdminAnalyticsComponent = () => {
                         <NumberFlow
                           value={cantidad}
                           plugins={[continuous]}
-                          className='tabular-nums font-medium flex-shrink-0'
+                          className='tabular-nums font-medium shrink-0'
                         />
                       </div>
                     ))}
@@ -567,7 +567,7 @@ const AdminAnalyticsComponent = () => {
                         <NumberFlow
                           value={cantidad}
                           plugins={[continuous]}
-                          className='tabular-nums font-medium flex-shrink-0'
+                          className='tabular-nums font-medium shrink-0'
                         />
                       </div>
                     ))}
@@ -665,14 +665,14 @@ const AdminAnalyticsComponent = () => {
                   >
                     <div className='flex items-center gap-2 min-w-0'>
                       <div
-                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full flex-shrink-0'
+                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0'
                         style={{ backgroundColor: item.fill }}
                       ></div>
                       <span className='text-xs sm:text-sm font-medium truncate'>
                         {item.sector}
                       </span>
                     </div>
-                    <div className='text-sm sm:text-lg font-bold flex-shrink-0'>
+                    <div className='text-sm sm:text-lg font-bold shrink-0'>
                       <NumberFlow
                         value={item.cantidad}
                         plugins={[continuous]}
@@ -824,7 +824,7 @@ export default function DashboardComponent({
           setDisplayData({
             lecturasPendientes: lecturasPendientesCount,
             totalesCorte,
-            limiteInvierno: parseInt(limiteInvierno?.valor || '0', 10)
+            limiteInvierno: Number.parseInt(limiteInvierno?.valor || '0', 10)
           });
         }, 100);
       } catch (_error) {

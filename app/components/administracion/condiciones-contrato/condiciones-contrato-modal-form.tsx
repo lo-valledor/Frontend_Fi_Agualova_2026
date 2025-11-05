@@ -60,7 +60,7 @@ export default function CondicionesContratoModalForm({
   condicionContrato,
   mode,
   conceptos
-}: CondicionesContratoModalFormProps) {
+}: Readonly<CondicionesContratoModalFormProps>) {
   const { theme } = useTheme();
   const form = useForm<CondicionContratoFormValues>({
     resolver: zodResolver(condicionContratoFormSchema),
@@ -82,9 +82,9 @@ export default function CondicionesContratoModalForm({
   useEffect(() => {
     if (isOpen) {
       // Determinar si usa porcentaje basado en los datos existentes
-      const usaPorcentaje = condicionContrato?.factorPorcentual ? true : false;
+      const usaPorcentaje = !!condicionContrato?.factorPorcentual;
       const valor = usaPorcentaje
-        ? parseFloat(condicionContrato?.factorPorcentual || '0')
+        ? Number.parseFloat(condicionContrato?.factorPorcentual || '0')
         : condicionContrato?.valorFijo || 0;
 
       // Encontrar el conceptoId basado en el nombre del concepto

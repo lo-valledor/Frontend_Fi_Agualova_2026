@@ -37,7 +37,7 @@ export default function AntiguoMedidorForm({
             <span className='sm:hidden'>Medidor Antiguo</span>
           </span>
         </div>
-        <ChevronDown className='h-4 w-4 sm:h-5 sm:w-5 text-purple-600 transition-all ui-open:rotate-180 dark:text-purple-400 flex-shrink-0' />
+        <ChevronDown className='h-4 w-4 sm:h-5 sm:w-5 text-purple-600 transition-all ui-open:rotate-180 dark:text-purple-400 shrink-0' />
       </CollapsibleTrigger>
 
       <CollapsibleContent>

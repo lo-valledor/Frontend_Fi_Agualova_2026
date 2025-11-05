@@ -110,12 +110,12 @@ export default function EditarMedidorComponent({
     if (!fecha) return '';
 
     // Si ya está en formato yyyy-MM-dd, devolverla como está
-    if (RegExp(/^\d{4}-\d{2}-\d{2}$/).exec(fecha)) {
+    if (new RegExp(/^\d{4}-\d{2}-\d{2}$/).exec(fecha)) {
       return fecha;
     }
 
     // Si está en formato dd-MM-yyyy, convertir a yyyy-MM-dd
-    if (RegExp(/^\d{2}-\d{2}-\d{4}$/).exec(fecha)) {
+    if (new RegExp(/^\d{2}-\d{2}-\d{4}$/).exec(fecha)) {
       const [dia, mes, ano] = fecha.split('-');
       return `${ano}-${mes}-${dia}`;
     }
@@ -207,7 +207,7 @@ export default function EditarMedidorComponent({
         if (!fecha) return '';
 
         // Si está en formato yyyy-MM-dd, convertir a dd-MM-yyyy
-        if (fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        if (new RegExp(/^\d{4}-\d{2}-\d{2}$/).exec(fecha)) {
           const [ano, mes, dia] = fecha.split('-');
           return `${dia}-${mes}-${ano}`;
         }
@@ -245,7 +245,7 @@ export default function EditarMedidorComponent({
       // Notificar éxito al componente padre
       toast.success('Medidor modificado exitosamente');
       if (onSuccess) {
-        const medidorId = parseInt(medidor.mM_ID) || 0;
+        const medidorId = Number.parseInt(medidor.mM_ID) || 0;
         onSuccess(medidorId);
       }
     } catch (error: any) {
@@ -385,7 +385,7 @@ export default function EditarMedidorComponent({
                             .map(m => ({ value: m.codigo, label: m.nombre }))
                             .find(m => m.value === field.value)}
                           onChange={option =>
-                            field.onChange(option ? (option as any).value : '')
+                            field.onChange(option ? (option).value : '')
                           }
                           placeholder='Seleccione una marca'
                           styles={selectStyles}

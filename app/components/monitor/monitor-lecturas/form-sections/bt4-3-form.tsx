@@ -49,11 +49,11 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     [result.LM_ValorUltimaLectura]
   );
   const valorReactivaAnterior = useMemo(
-    () => parseInt(result.LMC_ValorUltimaLectEnergiaReactiva1),
+    () => Number.parseInt(result.LMC_ValorUltimaLectEnergiaReactiva1),
     [result.LMC_ValorUltimaLectEnergiaReactiva1]
   );
   const consumoAnterior = useMemo(
-    () => parseInt(result.LM_ConsumoMesAnterior),
+    () => Number.parseInt(result.LM_ConsumoMesAnterior),
     [result.LM_ConsumoMesAnterior]
   );
   const constante = useMemo(
@@ -120,11 +120,11 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   // Calcular consumo de energía activa (función estable)
   const calcularConsumoActiva = useCallback(
     (value: string) => {
-      if (!value || isNaN(Number(value))) {
+      if (!value || Number.isNaN(Number(value))) {
         return { consumo: '', tipo: null, vlecturadigitos: 0 };
       }
 
-      const valorActual = parseInt(value);
+      const valorActual = Number.parseInt(value);
       let vlecturadigitos = valorActual;
       let tipo: 'menor' | 'igual' | 'mayor' | null = null;
 
@@ -178,11 +178,11 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   // Calcular consumo de energía reactiva (función estable)
   const calcularConsumoReactiva = useCallback(
     (value: string) => {
-      if (!value || isNaN(Number(value))) {
+      if (!value || Number.isNaN(Number(value))) {
         return { consumo: '', tipo: null, vlecturadigitos: 0 };
       }
 
-      const valorActual = parseInt(value);
+      const valorActual = Number.parseInt(value);
       let vlecturadigitos = valorActual;
       let tipo: 'menor' | 'igual' | 'mayor' | null = null;
 
@@ -317,9 +317,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   // Validar que la lectura no exceda el número de dígitos del medidor
   const validarDigitos = useCallback(
     (value: string) => {
-      if (!value || isNaN(Number(value))) return false;
+      if (!value || Number.isNaN(Number(value))) return false;
 
-      const valorNumerico = parseInt(value);
+      const valorNumerico = Number.parseInt(value);
       const maxValue = Math.pow(10, digito) - 1; // 10^digitos - 1
 
       return valorNumerico <= maxValue;
@@ -418,7 +418,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
   // Detectar consumos anómalos en energía activa (muy altos o negativos con muchos 9s)
   const detectarConsumoActivaAnomalo = useCallback(() => {
-    if (!consumoActivaCalculado || isNaN(Number(consumoActivaCalculado))) {
+    if (
+      !consumoActivaCalculado ||
+      Number.isNaN(Number(consumoActivaCalculado))
+    ) {
       return { esAnomalo: false, tipo: '', mensaje: '' };
     }
 
@@ -456,7 +459,10 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
   // Detectar consumos anómalos en energía reactiva (muy altos o negativos con muchos 9s)
   const detectarConsumoReactivaAnomalo = useCallback(() => {
-    if (!consumoReactivaCalculado || isNaN(Number(consumoReactivaCalculado))) {
+    if (
+      !consumoReactivaCalculado ||
+      Number.isNaN(Number(consumoReactivaCalculado))
+    ) {
       return { esAnomalo: false, tipo: '', mensaje: '' };
     }
 
@@ -510,7 +516,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         return;
       }
       // Validar que sea numérico
-      if (isNaN(Number(value))) {
+      if (Number.isNaN(Number(value))) {
         toast.error('Solo se permiten valores numéricos en Energía Activa');
         return;
       }
@@ -527,7 +533,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         return;
       }
       setInputActivaValue(value);
-      if (value && !isNaN(Number(value))) {
+      if (value && !Number.isNaN(Number(value))) {
         const resultado = calcularConsumoActiva(value);
         setConsumoActivaCalculado(resultado.consumo);
         setTipoLecturaActiva(resultado.tipo);
@@ -554,7 +560,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         return;
       }
       // Validar que sea numérico
-      if (isNaN(Number(value))) {
+      if (Number.isNaN(Number(value))) {
         toast.error('Solo se permiten valores numéricos en Energía Reactiva');
         return;
       }
@@ -571,7 +577,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         return;
       }
       setInputReactivaValue(value);
-      if (value && !isNaN(Number(value))) {
+      if (value && !Number.isNaN(Number(value))) {
         const resultado = calcularConsumoReactiva(value);
         setConsumoReactivaCalculado(resultado.consumo);
         setTipoLecturaReactiva(resultado.tipo);
@@ -598,7 +604,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
   // Validar la lectura de energía activa
   const validarLecturaActiva = useCallback(() => {
-    if (!inputActivaValue || isNaN(Number(inputActivaValue))) {
+    if (!inputActivaValue || Number.isNaN(Number(inputActivaValue))) {
       toast.error(
         'Por favor ingrese un valor numérico válido para Energía Activa'
       );
@@ -640,7 +646,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
   // Validar la lectura de energía reactiva
   const validarLecturaReactiva = useCallback(() => {
-    if (!inputReactivaValue || isNaN(Number(inputReactivaValue))) {
+    if (!inputReactivaValue || Number.isNaN(Number(inputReactivaValue))) {
       toast.error(
         'Por favor ingrese un valor numérico válido para Energía Reactiva'
       );
@@ -800,12 +806,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
     const data: FormDataBT43 = {
       lmId: result.LM_ID,
-      lecturaActiva: parseInt(inputActivaValue),
+      lecturaActiva: Number.parseInt(inputActivaValue),
       claveActivaId,
-      lecturaReactiva: parseInt(inputReactivaValue),
+      lecturaReactiva: Number.parseInt(inputReactivaValue),
       claveReactivaId,
-      consumoActiva: parseInt(consumoActivaCalculado),
-      consumoReactiva: parseInt(consumoReactivaCalculado),
+      consumoActiva: Number.parseInt(consumoActivaCalculado),
+      consumoReactiva: Number.parseInt(consumoReactivaCalculado),
       dp: demandaData.dp,
       dpFecha: demandaData.dpFecha,
       dpHora: demandaData.dpHora,
@@ -1008,7 +1014,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               if (anomalia.esAnomalo && consumoActivaCalculado) {
                 return (
                   <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-md border border-red-200 dark:border-red-800'>
-                    <AlertCircle className='h-4 w-4 flex-shrink-0 mt-0.5' />
+                    <AlertCircle className='h-4 w-4 shrink-0 mt-0.5' />
                     <div className='flex-1'>
                       <div className='font-semibold mb-1'>
                         Consumo anómalo detectado (Activa)
@@ -1121,7 +1127,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
               if (anomalia.esAnomalo && consumoReactivaCalculado) {
                 return (
                   <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-md border border-red-200 dark:border-red-800'>
-                    <AlertCircle className='h-4 w-4 flex-shrink-0 mt-0.5' />
+                    <AlertCircle className='h-4 w-4 shrink-0 mt-0.5' />
                     <div className='flex-1'>
                       <div className='font-semibold mb-1'>
                         Consumo anómalo detectado (Reactiva)

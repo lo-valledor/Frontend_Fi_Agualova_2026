@@ -54,7 +54,7 @@ export default function ClavesLectura({
             </div>
           ) : (
             <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
-              <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+              <AlertCircle className='h-3 w-3 mt-0.5 shrink-0' />
               <span>{error}</span>
             </div>
           )
@@ -81,7 +81,7 @@ export default function ClavesLectura({
                     <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide block sm:hidden'>
                       Descripción
                     </span>
-                    <p className='text-sm text-foreground leading-relaxed break-words'>
+                    <p className='text-sm text-foreground leading-relaxed wrap-break-word'>
                       {item.CLA_Descripcion}
                     </p>
                   </div>
@@ -124,7 +124,7 @@ export default function ClavesLectura({
         {hasClaveCritica && (
           <div className='space-y-3 pt-2 border-t border-border/30'>
             <div className='flex items-center gap-2 p-3 bg-orange-50 dark:bg-orange-950/20 rounded-xl border border-orange-200 dark:border-orange-800'>
-              <History className='h-4 w-4 text-orange-600 dark:text-orange-400 flex-shrink-0' />
+              <History className='h-4 w-4 text-orange-600 dark:text-orange-400 shrink-0' />
               <span className='text-sm text-orange-700 dark:text-orange-300 font-medium'>
                 Resolver lectura con clave para lectura crítica
               </span>
@@ -136,7 +136,7 @@ export default function ClavesLectura({
                 onClick={onAceptarLectura}
                 className='w-full sm:w-auto px-4 sm:px-6 py-3 sm:py-2 h-auto sm:h-10 text-sm font-medium bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:bg-red-600 dark:hover:bg-red-500 transition-all duration-200 shadow-sm hover:shadow-md'
               >
-                <Key className='h-4 w-4 mr-2 flex-shrink-0' />
+                <Key className='h-4 w-4 mr-2 shrink-0' />
                 <span className='leading-tight text-center'>
                   <span className='block sm:inline'>Aceptar Lectura</span>
                   <span className='block sm:inline sm:ml-1'>

@@ -69,7 +69,7 @@ class UserService {
 
       const usuarios = allUsersResponse.data!;
       const usuarioEncontrado = usuarios.find(
-        u => u.idUsuario === parseInt(userIdStr)
+        u => u.idUsuario === Number.parseInt(userIdStr)
       );
 
       if (!usuarioEncontrado) {
@@ -223,9 +223,9 @@ class UserService {
   createMockUserData(user: any): Usuarios {
     const nameParts = user.fullName.split(' ');
     return {
-      idUsuario: parseInt(user.id),
+      idUsuario: Number.parseInt(user.id),
       nombreDeUsuario: user.username,
-      perfilId: parseInt(user.profileId),
+      perfilId: Number.parseInt(user.profileId),
       nombres: nameParts[0] || '',
       apellidos: nameParts.slice(1).join(' ') || '',
       departamento: 1, // Valor por defecto

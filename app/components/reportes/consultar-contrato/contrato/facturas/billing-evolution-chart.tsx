@@ -54,7 +54,7 @@ const getNombreMes = (mes: string) => {
     'Nov',
     'Dic'
   ];
-  const mesNum = parseInt(mes, 10);
+  const mesNum = Number.parseInt(mes, 10);
   return meses[mesNum - 1] || mes;
 };
 
@@ -86,7 +86,7 @@ const BillingEvolutionChart = memo(function BillingEvolutionChart({
 
     return facturas.filter(f => {
       const { mes, ano } = extraerAnoMes(f.periodo);
-      const fecha = new Date(parseInt(ano), parseInt(mes) - 1, 1);
+      const fecha = new Date(parseInt(ano), Number.parseInt(mes) - 1, 1);
       return fecha >= cutoffDate;
     });
   }, [facturas, timeRange]);

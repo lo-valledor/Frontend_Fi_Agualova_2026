@@ -52,7 +52,7 @@ export const dispatchTokenChange = (
   action: 'login' | 'logout',
   token?: string
 ) => {
-  window.dispatchEvent(
+  globalThis.dispatchEvent(
     new CustomEvent(TOKEN_CHANGED_EVENT, {
       detail: { action, token }
     })
@@ -67,9 +67,9 @@ export const listenToTokenChanges = (
     callback(customEvent.detail.action, customEvent.detail.token);
   };
 
-  window.addEventListener(TOKEN_CHANGED_EVENT, handler);
+  globalThis.addEventListener(TOKEN_CHANGED_EVENT, handler);
 
   return () => {
-    window.removeEventListener(TOKEN_CHANGED_EVENT, handler);
+    globalThis.removeEventListener(TOKEN_CHANGED_EVENT, handler);
   };
 };

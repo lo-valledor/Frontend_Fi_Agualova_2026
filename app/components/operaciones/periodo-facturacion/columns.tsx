@@ -9,7 +9,7 @@ import { type Periodos } from '~/types/operaciones';
 const parseFecha = (fecha: string): Date | null => {
   const [day, month, year] = fecha.split('-').map(Number);
 
-  if (isNaN(day) || isNaN(month) || isNaN(year)) {
+  if (Number.isNaN(day) || Number.isNaN(month) || Number.isNaN(year)) {
     return null;
   }
 

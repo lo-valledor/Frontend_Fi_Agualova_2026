@@ -197,7 +197,7 @@ export default function CrearClienteComponent() {
 
   return (
     <div className='min-h-screen bg-background'>
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Crear Nuevo Cliente'
@@ -226,9 +226,9 @@ export default function CrearClienteComponent() {
                   variant='default'
                   disabled={isSubmitting || !hasCreatePermission}
                   title={
-                    !hasCreatePermission
-                      ? 'No tiene permisos para crear clientes'
-                      : ''
+                    hasCreatePermission
+                      ? ''
+                      : 'No tiene permisos para crear clientes'
                   }
                 >
                   <Save className='h-4 w-4' />
@@ -272,13 +272,15 @@ export default function CrearClienteComponent() {
                                 const formatted = formatRut(e.target.value);
                                 field.onChange(formatted);
                               }}
-                              className={`h-11 pr-10 ${
-                                rutValidationStatus === 'valid'
-                                  ? 'border-green-500 focus:border-green-500'
-                                  : rutValidationStatus === 'invalid'
-                                    ? 'border-red-500 focus:border-red-500'
-                                    : ''
-                              }`}
+                              className={`h-11 pr-10 ${(() => {
+                                if (rutValidationStatus === 'valid') {
+                                  return 'border-green-500 focus:border-green-500';
+                                }
+                                if (rutValidationStatus === 'invalid') {
+                                  return 'border-red-500 focus:border-red-500';
+                                }
+                                return '';
+                              })()}`}
                             />
                             {rutValidationStatus === 'valid' && (
                               <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
@@ -295,11 +297,16 @@ export default function CrearClienteComponent() {
                         <FormMessage />
                         {rutValidationStatus === 'invalid' && (
                           <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
-                            {!isValidRutFormat(form.watch('rut'))
-                              ? 'El RUT debe tener el formato 12345678-9'
-                              : existingClients.includes(form.watch('rut'))
-                                ? 'Este RUT ya está registrado en el sistema'
-                                : 'El dígito verificador no corresponde'}
+                            {(() => {
+                              const currentRut = form.watch('rut');
+                              if (!isValidRutFormat(currentRut)) {
+                                return 'El RUT debe tener el formato 12345678-9';
+                              }
+                              if (existingClients.includes(currentRut)) {
+                                return 'Este RUT ya está registrado en el sistema';
+                              }
+                              return 'El dígito verificador no corresponde';
+                            })()}
                           </p>
                         )}
                       </FormItem>

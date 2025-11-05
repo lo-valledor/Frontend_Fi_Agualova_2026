@@ -43,10 +43,10 @@ const InfoItem = ({
   value?: React.ReactNode;
 }) => (
   <div className='flex items-start gap-3'>
-    <div className='flex-shrink-0'>{icon}</div>
+    <div className='shrink-0'>{icon}</div>
     <div className='flex-1 min-w-0'>
       <p className='text-xs font-medium'>{label}</p>
-      <div className='font-semibold text-slate-800 dark:text-slate-200 break-words'>
+      <div className='font-semibold text-slate-800 dark:text-slate-200 wrap-break-word'>
         {value || (
           <span className='text-sm font-normal text-slate-400 italic'>
             No especificado
@@ -61,7 +61,7 @@ export function ContratanteDetailsModal({
   isOpen,
   onClose,
   contratante
-}: ContratanteDetailsModalProps) {
+}: Readonly<ContratanteDetailsModalProps>) {
   const [detailsData, setDetailsData] = useState<GetContratante | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,7 +87,7 @@ export function ContratanteDetailsModal({
       <DialogContent className='sm:max-w-[800px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader className='space-y-3 pb-6'>
           <div className='flex items-center gap-4'>
-            <div className='p-3 bg-gradient-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 rounded-xl shadow-sm'>
+            <div className='p-3 bg-linear-to-br from-orange-100 to-amber-100 dark:from-orange-900/30 dark:to-amber-900/30 rounded-xl shadow-sm'>
               {detailsData?.esEmpresa ? (
                 <Building2 className='h-6 w-6 text-orange-600 dark:text-orange-400' />
               ) : (
@@ -95,7 +95,7 @@ export function ContratanteDetailsModal({
               )}
             </div>
             <div>
-              <DialogTitle className='text-2xl font-bold bg-gradient-to-r from-orange-800 to-amber-800 dark:from-orange-200 dark:to-amber-200 bg-clip-text text-transparent'>
+              <DialogTitle className='text-2xl font-bold bg-linear-to-r from-orange-800 to-amber-800 dark:from-orange-200 dark:to-amber-200 bg-clip-text text-transparent'>
                 Detalles del Contratante
               </DialogTitle>
               <DialogDescription className='text-base text-muted-foreground mt-1'>
@@ -148,7 +148,7 @@ export function ContratanteDetailsModal({
         ) : detailsData ? (
           <div className='space-y-6'>
             <Card className='border-orange-200/50 dark:border-orange-800/50 shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-orange-50/80 to-amber-50/80 dark:from-orange-900/20 dark:to-amber-900/20 rounded-t-lg'>
+              <CardHeader className='bg-linear-to-r from-orange-50/80 to-amber-50/80 dark:from-orange-900/20 dark:to-amber-900/20 rounded-t-lg'>
                 <div className='flex items-center gap-2'>
                   <UserCheck className='h-5 w-5 text-orange-600 dark:text-orange-400' />
                   <CardTitle className='text-lg text-orange-800 dark:text-orange-200'>
@@ -205,7 +205,7 @@ export function ContratanteDetailsModal({
             </Card>
 
             <Card className='border-blue-200/50 dark:border-blue-800/50 shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-blue-50/80 to-sky-50/80 dark:from-blue-900/20 dark:to-sky-900/20 rounded-t-lg'>
+              <CardHeader className='bg-linear-to-r from-blue-50/80 to-sky-50/80 dark:from-blue-900/20 dark:to-sky-900/20 rounded-t-lg'>
                 <div className='flex items-center gap-2'>
                   <Phone className='h-5 w-5 ' />
                   <CardTitle className='text-lg text-blue-800 dark:text-blue-200'>
@@ -245,7 +245,7 @@ export function ContratanteDetailsModal({
             </Card>
 
             <Card className='border-emerald-200/50 dark:border-emerald-800/50 shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg'>
+              <CardHeader className='bg-linear-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg'>
                 <div className='flex items-center gap-2'>
                   <MapPinned className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
                   <CardTitle className='text-lg text-emerald-800 dark:text-emerald-200'>

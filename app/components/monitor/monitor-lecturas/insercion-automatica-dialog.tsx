@@ -303,7 +303,7 @@ export function InsercionAutomaticaDialog({
                                         key={idx}
                                         className='text-xs text-muted-foreground flex items-start gap-1'
                                       >
-                                        <AlertCircle className='h-3 w-3 text-muted-foreground flex-shrink-0 mt-0.5' />
+                                        <AlertCircle className='h-3 w-3 text-muted-foreground shrink-0 mt-0.5' />
                                         <span>{razon}</span>
                                       </div>
                                     )

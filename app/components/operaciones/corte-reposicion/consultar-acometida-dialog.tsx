@@ -139,7 +139,7 @@ export function ConsultarAcometidaDialog({
         response.data instanceof Blob
           ? response.data
           : new Blob([response.data as BlobPart]);
-      const url = window.URL.createObjectURL(blob);
+      const url = globalThis.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', `facturas-impagas-${acometida}.xlsx`);
@@ -147,7 +147,7 @@ export function ConsultarAcometidaDialog({
 
       link.click();
       link.remove();
-      window.URL.revokeObjectURL(url);
+      globalThis.URL.revokeObjectURL(url);
 
       toast.success('Excel exportado correctamente');
     } catch (error) {
@@ -225,7 +225,7 @@ export function ConsultarAcometidaDialog({
       <DialogContent className='mx-4 sm:max-w-2xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2 text-sm'>
-            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-primary flex-shrink-0'>
+            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-primary shrink-0'>
               <Eye className='h-3 w-3 text-primary-foreground' />
             </div>
             <span className='truncate'>Consulta - {acometida}</span>

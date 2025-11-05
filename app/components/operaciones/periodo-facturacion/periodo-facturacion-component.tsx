@@ -157,7 +157,7 @@ export default function AbrirPeriodoFacturacion({
               <div className='flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 p-3 bg-muted/30 rounded-xl border border-border'>
                 <div className='flex-1 space-y-1'>
                   <div className='flex items-start gap-2'>
-                    <AlertTriangle className='w-4 h-4 text-warning mt-0.5 flex-shrink-0' />
+                    <AlertTriangle className='w-4 h-4 text-warning mt-0.5 shrink-0' />
                     <p className='text-xs text-foreground'>
                       Para crear un nuevo período de facturación, primero debe
                       cerrar el actual.

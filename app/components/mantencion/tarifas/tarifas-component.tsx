@@ -54,7 +54,7 @@ export default function TarifasComponent({
 
   const handleDelete = async (tarifa: Tarifas) => {
     if (
-      window.confirm(
+      globalThis.confirm(
         `¿Está seguro de que desea eliminar la tarifa "${tarifa.nombre}"?`
       )
     ) {

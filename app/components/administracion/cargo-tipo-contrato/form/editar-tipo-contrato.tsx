@@ -329,7 +329,7 @@ export default function EditarTipoContrato({
   const handleAgregarCargoMonofasico = () => {
     if (
       selectedCargoMonofasico &&
-      !cargosMonofasicoAgregados.find(
+      !cargosMonofasicoAgregados.some(
         c => c.id === selectedCargoMonofasico.data.id
       )
     ) {
@@ -344,7 +344,7 @@ export default function EditarTipoContrato({
   const handleAgregarCargoTrifasico = () => {
     if (
       selectedCargoTrifasico &&
-      !cargosTrifasicoAgregados.find(
+      !cargosTrifasicoAgregados.some(
         c => c.id === selectedCargoTrifasico.data.id
       )
     ) {
@@ -359,7 +359,7 @@ export default function EditarTipoContrato({
   const handleAgregarCargoAmbos = () => {
     if (
       selectedCargoAmbos &&
-      !cargosAmbosAgregados.find(c => c.id === selectedCargoAmbos.data.id)
+      !cargosAmbosAgregados.some(c => c.id === selectedCargoAmbos.data.id)
     ) {
       setCargosAmbosAgregados(prev => [...prev, selectedCargoAmbos.data]);
       setSelectedCargoAmbos(null);
@@ -402,9 +402,10 @@ export default function EditarTipoContrato({
       // Si la respuesta es exitosa, mostrar mensaje y redirigir
       toast.success('Configuración guardada exitosamente');
       setTimeout(() => {
-        window.history.back();
+        globalThis.history.back();
       }, 1500);
     } catch (error) {
+      console.error('Error al guardar la configuración:', error);
       toast.error('Error al guardar la configuración');
     } finally {
       setIsSaving(false);
@@ -413,7 +414,7 @@ export default function EditarTipoContrato({
 
   const handleVolver = () => {
     // Navegar de vuelta al mantenedor de Cargo Tipo Contrato
-    window.history.back();
+    globalThis.history.back();
   };
 
   const handleCancelar = () => {
@@ -424,13 +425,13 @@ export default function EditarTipoContrato({
     setSelectedCargoMonofasico(null);
     setSelectedCargoTrifasico(null);
     setSelectedCargoAmbos(null);
-    window.history.back();
+    globalThis.history.back();
   };
 
   return (
     <div className='min-h-screen bg-background'>
       {/* Header */}
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Modificar Cargo Tipo de Contrato'
@@ -458,9 +459,9 @@ export default function EditarTipoContrato({
                   variant='default'
                   disabled={isSaving || !hasEditPermission}
                   title={
-                    !hasEditPermission
-                      ? 'No tiene permisos para editar cargo tipo contrato'
-                      : ''
+                    hasEditPermission
+                      ? ''
+                      : 'No tiene permisos para editar cargo tipo contrato'
                   }
                 >
                   {isSaving ? (

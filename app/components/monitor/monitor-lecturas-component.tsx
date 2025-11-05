@@ -260,7 +260,7 @@ const MonitorLecturasComponent = ({
               {/* Sector Selection - Clean Grid */}
               <div className='space-y-3 sm:space-y-4' id='sector-selector'>
                 <div className='flex items-center gap-2 sm:gap-3'>
-                  <div className='w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center flex-shrink-0'>
+                  <div className='w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex items-center justify-center shrink-0'>
                     <MapPin className='w-4 h-4 sm:w-5 sm:h-5' />
                   </div>
                   <div className='min-w-0 flex-1'>
@@ -322,7 +322,7 @@ const MonitorLecturasComponent = ({
                   id='periodo-selector'
                 >
                   <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                    <Calendar className='w-3 h-3 text-primary flex-shrink-0' />
+                    <Calendar className='w-3 h-3 text-primary shrink-0' />
                     Periodo
                   </Label>
                   {periodos && periodos.length > 0 ? (
@@ -358,7 +358,7 @@ const MonitorLecturasComponent = ({
                 {/* Fecha Inicio */}
                 <div className='space-y-1 w-full sm:w-1/3'>
                   <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                    <Calendar className='w-3 h-3 text-primary flex-shrink-0' />
+                    <Calendar className='w-3 h-3 text-primary shrink-0' />
                     Fecha Inicio
                   </Label>
                   <Input
@@ -375,7 +375,7 @@ const MonitorLecturasComponent = ({
                   id='fecha-fin-selector'
                 >
                   <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                    <Calendar className='w-3 h-3 text-primary flex-shrink-0' />
+                    <Calendar className='w-3 h-3 text-primary shrink-0' />
                     Fecha Fin
                   </Label>
                   <Input
@@ -442,7 +442,7 @@ const MonitorLecturasComponent = ({
                       {/* Clave */}
                       <div className='space-y-2 w-full'>
                         <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                          <KeyRound className='w-3 h-3 text-primary flex-shrink-0' />
+                          <KeyRound className='w-3 h-3 text-primary shrink-0' />
                           Clave
                         </Label>
                         {claves && claves.length > 0 ? (
@@ -453,7 +453,7 @@ const MonitorLecturasComponent = ({
                                 setSelectedClave(null);
                               } else {
                                 const clave = claves?.find(
-                                  c => c.IdClave === parseInt(value)
+                                  c => c.IdClave === Number.parseInt(value)
                                 );
                                 setSelectedClave(clave || null);
                               }
@@ -485,7 +485,7 @@ const MonitorLecturasComponent = ({
                       {/* Estado */}
                       <div className='space-y-2 w-full'>
                         <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                          <ListFilter className='w-3 h-3 text-primary flex-shrink-0' />
+                          <ListFilter className='w-3 h-3 text-primary shrink-0' />
                           Estado
                         </Label>
                         <Select
@@ -523,7 +523,7 @@ const MonitorLecturasComponent = ({
                       {/* Medidor */}
                       <div className='space-y-2 w-full'>
                         <Label className='text-xs sm:text-sm font-medium text-foreground flex items-center gap-1'>
-                          <Hash className='w-3 h-3 text-primary flex-shrink-0' />
+                          <Hash className='w-3 h-3 text-primary shrink-0' />
                           Número de Serie
                         </Label>
                         <Input

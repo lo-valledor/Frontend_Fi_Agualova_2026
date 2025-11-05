@@ -124,7 +124,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
   // Hook para detectar el tamaño de pantalla
   useEffect(() => {
     const checkScreenSize = () => {
-      const width = window.innerWidth;
+      const width = globalThis.innerWidth;
       if (width < 640) {
         setScreenSize('mobile');
       } else if (width < 768) {
@@ -139,8 +139,8 @@ export function DataTableNichosVirtualized<TData, TValue>({
     };
 
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    globalThis.addEventListener('resize', checkScreenSize);
+    return () => globalThis.removeEventListener('resize', checkScreenSize);
   }, []);
 
   // Filtrar columnas según el tamaño de pantalla
@@ -457,7 +457,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
                   →
                 </div>
               </div>
-              <div className='absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-start pl-1 opacity-0 transition-opacity'>
+              <div className='absolute inset-y-0 left-0 w-6 bg-linear-to-r from-background via-background/60 to-transparent pointer-events-none z-20 flex items-center justify-start pl-1 opacity-0 transition-opacity'>
                 <div className='text-muted-foreground/60 text-xs'>←</div>
               </div>
             </>
@@ -467,7 +467,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
           {screenSize === 'tablet' && (
             <>
               <div className='absolute inset-y-0 right-0 w-4 bg-gradient-to-l from-background/70 to-transparent pointer-events-none z-10' />
-              <div className='absolute inset-y-0 left-0 w-4 bg-gradient-to-r from-background/70 to-transparent pointer-events-none z-10 opacity-0 transition-opacity' />
+              <div className='absolute inset-y-0 left-0 w-4 bg-linear-to-r from-background/70 to-transparent pointer-events-none z-10 opacity-0 transition-opacity' />
             </>
           )}
         </div>

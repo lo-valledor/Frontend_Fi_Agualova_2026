@@ -109,6 +109,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         onDataChange?.();
       }
     } catch (_error) {
+      console.error(_error);
       toast.error('Error inesperado al crear el rol');
     } finally {
       setIsLoading(false);
@@ -139,6 +140,7 @@ const RolesTabComponent: React.FC<RolesTabComponentProps> = ({
         onDataChange?.();
       }
     } catch (_error) {
+      console.error(_error);
       toast.error('Error inesperado al actualizar el rol');
     } finally {
       setIsLoading(false);

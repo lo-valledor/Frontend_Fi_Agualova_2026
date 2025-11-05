@@ -8,8 +8,7 @@ import {
   MapPin,
   Phone,
   Save,
-  User,
-  XCircle
+  User
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -262,7 +261,7 @@ export default function EditarClienteComponent() {
 
   return (
     <div className='min-h-screen bg-background'>
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Editar Cliente'
@@ -291,9 +290,9 @@ export default function EditarClienteComponent() {
                   variant='default'
                   disabled={isSubmitting || !hasEditPermission}
                   title={
-                    !hasEditPermission
-                      ? 'No tiene permisos para editar clientes'
-                      : ''
+                    hasEditPermission
+                      ? ''
+                      : 'No tiene permisos para editar clientes'
                   }
                 >
                   <Save className='h-4 w-4' />
@@ -322,51 +321,52 @@ export default function EditarClienteComponent() {
                   <FormField
                     control={form.control}
                     name='rut'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className='flex items-center gap-2'>
-                          <FileText className='h-4 w-4' />
-                          RUT
-                        </FormLabel>
-                        <FormControl>
-                          <div className='relative'>
-                            <Input
-                              placeholder='12345678-9'
-                              {...field}
-                              onBlur={e => {
-                                const formatted = formatRut(e.target.value);
-                                field.onChange(formatted);
-                              }}
-                              className={`h-11 pr-10 ${
-                                rutValidationStatus === 'valid'
-                                  ? 'border-green-500 focus:border-green-500'
-                                  : rutValidationStatus === 'invalid'
-                                    ? 'border-red-500 focus:border-red-500'
-                                    : ''
-                              }`}
-                            />
-                            {rutValidationStatus === 'valid' && (
-                              <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
-                                <CheckCircle2 className='h-5 w-5 text-green-500' />
-                              </div>
-                            )}
-                            {rutValidationStatus === 'invalid' && (
-                              <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
-                                <XCircle className='h-5 w-5 text-red-500' />
-                              </div>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                        {rutValidationStatus === 'invalid' && (
-                          <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
-                            {!isValidRutFormat(form.watch('rut'))
-                              ? 'El RUT debe tener el formato 12345678-9'
-                              : 'Este RUT ya está registrado en el sistema'}
-                          </p>
-                        )}
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const getRutInputClassName = () => {
+                        if (rutValidationStatus === 'valid') {
+                          return 'border-green-500 focus:border-green-500';
+                        }
+                        if (rutValidationStatus === 'invalid') {
+                          return 'border-red-500 focus:border-red-500';
+                        }
+                        return '';
+                      };
+
+                      return (
+                        <FormItem>
+                          <FormLabel className='flex items-center gap-2'>
+                            <FileText className='h-4 w-4' />
+                            RUT
+                          </FormLabel>
+                          <FormControl>
+                            <div className='relative'>
+                              <Input
+                                placeholder='12345678-9'
+                                {...field}
+                                onBlur={e => {
+                                  const formatted = formatRut(e.target.value);
+                                  field.onChange(formatted);
+                                }}
+                                className={`h-11 pr-10 ${getRutInputClassName()}`}
+                              />
+                              {rutValidationStatus === 'valid' && (
+                                <div className='absolute inset-y-0 right-0 flex items-center pr-3'>
+                                  <CheckCircle2 className='h-5 w-5 text-green-500' />
+                                </div>
+                              )}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                          {rutValidationStatus === 'invalid' && (
+                            <p className='text-sm text-red-600 dark:text-red-400 mt-1'>
+                              {isValidRutFormat(form.watch('rut'))
+                                ? 'Este RUT ya está registrado en el sistema'
+                                : 'El RUT debe tener el formato 12345678-9'}
+                            </p>
+                          )}
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <FormField

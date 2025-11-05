@@ -4,7 +4,7 @@ import { useIsMobile } from './use-mobile';
 
 describe('useIsMobile', () => {
   beforeEach(() => {
-    // Reset window.innerWidth
+    // Reset globalThis.innerWidth
     Object.defineProperty(window, 'innerWidth', {
       writable: true,
       configurable: true,
@@ -41,7 +41,7 @@ describe('useIsMobile', () => {
         configurable: true,
         value: 500
       });
-      window.dispatchEvent(new Event('resize'));
+      globalThis.dispatchEvent(new Event('resize'));
     });
 
     // Nota: El hook usa matchMedia, no resize event directamente

@@ -40,10 +40,10 @@ const InfoItem = ({
   value?: React.ReactNode;
 }) => (
   <div className='flex items-start gap-3'>
-    <div className='flex-shrink-0'>{icon}</div>
+    <div className='shrink-0'>{icon}</div>
     <div className='flex-1 min-w-0'>
       <p className='text-xs font-medium'>{label}</p>
-      <div className='font-semibold text-slate-800 dark:text-slate-200 break-words'>
+      <div className='font-semibold text-slate-800 dark:text-slate-200 wrap-break-word'>
         {value || (
           <span className='text-sm font-normal text-slate-400 italic'>
             No especificado
@@ -80,11 +80,11 @@ export function PropietarioDetailsModal({
       <DialogContent className='sm:max-w-[800px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader className='space-y-3 pb-6'>
           <div className='flex items-center gap-4'>
-            <div className='p-3 bg-gradient-to-br from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 rounded-xl shadow-sm'>
+            <div className='p-3 bg-linear-to-br from-emerald-100 to-green-100 dark:from-emerald-900/30 dark:to-green-900/30 rounded-xl shadow-sm'>
               <User className='h-6 w-6 text-emerald-600 dark:text-emerald-400' />
             </div>
             <div>
-              <DialogTitle className='text-2xl font-bold bg-gradient-to-r from-emerald-800 to-green-800 dark:from-emerald-200 dark:to-green-200 bg-clip-text text-transparent'>
+              <DialogTitle className='text-2xl font-bold bg-linear-to-r from-emerald-800 to-green-800 dark:from-emerald-200 dark:to-green-200 bg-clip-text text-transparent'>
                 Detalles del Propietario
               </DialogTitle>
               <DialogDescription className='text-base text-muted-foreground mt-1'>
@@ -137,7 +137,7 @@ export function PropietarioDetailsModal({
         ) : detailsData ? (
           <div className='space-y-6'>
             <Card className='border-emerald-200/50 dark:border-emerald-800/50 shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg'>
+              <CardHeader className='bg-linear-to-r from-emerald-50/80 to-green-50/80 dark:from-emerald-900/20 dark:to-green-900/20 rounded-t-lg'>
                 <div className='flex items-center gap-2'>
                   <UserCheck className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
                   <CardTitle className='text-lg text-emerald-800 dark:text-emerald-200'>
@@ -168,7 +168,7 @@ export function PropietarioDetailsModal({
             </Card>
 
             <Card className='border-blue-200/50 dark:border-blue-800/50 shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-blue-50/80 to-sky-50/80 dark:from-blue-900/20 dark:to-sky-900/20 rounded-t-lg'>
+              <CardHeader className='bg-linear-to-r from-blue-50/80 to-sky-50/80 dark:from-blue-900/20 dark:to-sky-900/20 rounded-t-lg'>
                 <div className='flex items-center gap-2'>
                   <Phone className='h-5 w-5 ' />
                   <CardTitle className='text-lg text-blue-800 dark:text-blue-200'>
@@ -208,7 +208,7 @@ export function PropietarioDetailsModal({
             </Card>
 
             <Card className='border-teal-200/50 dark:border-teal-800/50 shadow-sm'>
-              <CardHeader className='bg-gradient-to-r from-teal-50/80 to-cyan-50/80 dark:from-teal-900/20 dark:to-cyan-900/20 rounded-t-lg'>
+              <CardHeader className='bg-linear-to-r from-teal-50/80 to-cyan-50/80 dark:from-teal-900/20 dark:to-cyan-900/20 rounded-t-lg'>
                 <div className='flex items-center gap-2'>
                   <MapPinned className='h-5 w-5 text-teal-600 dark:text-teal-400' />
                   <CardTitle className='text-lg text-teal-800 dark:text-teal-200'>

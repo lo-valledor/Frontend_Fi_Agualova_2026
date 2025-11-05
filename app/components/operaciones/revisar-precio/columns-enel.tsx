@@ -109,7 +109,7 @@ export const columnsEnel: ColumnDef<RevisarPrecioUno>[] = [
         // Remover separadores de miles (puntos) y reemplazar coma decimal por punto
         const cleanValue = val.replace(/\./g, '').replace(',', '.');
         const number = parseFloat(cleanValue);
-        return isNaN(number)
+        return Number.isNaN(number)
           ? val
           : number.toLocaleString('es-CL', {
               minimumFractionDigits: 2,

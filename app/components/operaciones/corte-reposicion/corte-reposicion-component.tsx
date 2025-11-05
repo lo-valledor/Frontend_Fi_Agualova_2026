@@ -92,7 +92,7 @@ export default function CorteReposicionComponent({
         responseType: 'blob'
       });
 
-      const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
+      const url = globalThis.URL.createObjectURL(new Blob([res.data as Blob]));
       const a = document.createElement('a');
       a.href = url;
       a.download = 'mantenedor_revision.xlsx';
@@ -114,7 +114,7 @@ export default function CorteReposicionComponent({
         responseType: 'blob'
       });
 
-      const url = window.URL.createObjectURL(new Blob([res.data as Blob]));
+      const url = globalThis.URL.createObjectURL(new Blob([res.data as Blob]));
       const a = document.createElement('a');
       a.href = url;
       a.download = 'revision_corte.xlsx';
@@ -140,14 +140,14 @@ export default function CorteReposicionComponent({
       // así que lo forzamos a Blob de manera segura para su uso en el objeto URL.
       const blob =
         res.data instanceof Blob ? res.data : new Blob([res.data as BlobPart]);
-      const url = window.URL.createObjectURL(blob);
+      const url = globalThis.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'facturas-impagas-completo.xlsx';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
+      globalThis.URL.revokeObjectURL(url);
       toast.success('Facturas impagas exportadas correctamente');
     } catch (error) {
       toast.error('Error al exportar las facturas impagas', error as any);

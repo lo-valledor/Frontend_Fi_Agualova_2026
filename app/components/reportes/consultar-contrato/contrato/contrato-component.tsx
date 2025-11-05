@@ -192,12 +192,12 @@ const ContratoComponent = memo(function ContratoComponent({
         >
           <TabsList className='grid w-full grid-cols-2 sm:grid-cols-4 h-auto sm:h-11 gap-1 p-1'>
             <TabsTrigger value='resumen' className='gap-2 h-10 sm:h-9'>
-              <User className='h-4 w-4 flex-shrink-0' />
+              <User className='h-4 w-4 shrink-0' />
               <span className='hidden sm:inline'>Información</span>
               <span className='sm:hidden text-xs'>Info</span>
             </TabsTrigger>
             <TabsTrigger value='lecturas' className='gap-2 h-10 sm:h-9'>
-              <TrendingUp className='h-4 w-4 flex-shrink-0' />
+              <TrendingUp className='h-4 w-4 shrink-0' />
               <span className='hidden sm:inline'>Lecturas</span>
               <span className='sm:hidden text-xs'>Lect.</span>
             </TabsTrigger>
@@ -205,12 +205,12 @@ const ContratoComponent = memo(function ContratoComponent({
               value='consumo-electrico'
               className='gap-2 h-10 sm:h-9'
             >
-              <Activity className='h-4 w-4 flex-shrink-0' />
+              <Activity className='h-4 w-4 shrink-0' />
               <span className='hidden sm:inline'>Consumo Eléctrico</span>
               <span className='sm:hidden text-xs'>Cons.</span>
             </TabsTrigger> */}
             <TabsTrigger value='facturas' className='gap-2 h-10 sm:h-9'>
-              <FileText className='h-4 w-4 flex-shrink-0' />
+              <FileText className='h-4 w-4 shrink-0' />
               <span className='hidden sm:inline'>Facturas</span>
               <span className='sm:hidden text-xs'>Fact.</span>
             </TabsTrigger>
@@ -218,12 +218,12 @@ const ContratoComponent = memo(function ContratoComponent({
               value='dashboard-facturas'
               className='gap-2 h-10 sm:h-9'
             >
-              <DollarSign className='h-4 w-4 flex-shrink-0' />
+              <DollarSign className='h-4 w-4 shrink-0' />
               <span className='hidden sm:inline'>Dashboard Facturación</span>
               <span className='sm:hidden text-xs'>Dash F.</span>
             </TabsTrigger> */}
             <TabsTrigger value='tecnico' className='gap-2 h-10 sm:h-9'>
-              <Settings className='h-4 w-4 flex-shrink-0' />
+              <Settings className='h-4 w-4 shrink-0' />
               <span className='hidden sm:inline'>Técnico</span>
               <span className='sm:hidden text-xs'>Téc.</span>
             </TabsTrigger>

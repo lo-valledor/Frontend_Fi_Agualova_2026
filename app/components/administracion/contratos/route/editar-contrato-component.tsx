@@ -148,7 +148,7 @@ export default function EditarContratoComponent({
       // porque JavaScript lo interpretará mal
       if (!/^\d{2}-\d{2}-\d{4}/.test(fechaLimpia)) {
         const fecha = new Date(fechaLimpia);
-        if (!isNaN(fecha.getTime())) {
+        if (!Number.isNaN(fecha.getTime())) {
           const year = fecha.getFullYear();
           const month = String(fecha.getMonth() + 1).padStart(2, '0');
           const day = String(fecha.getDate()).padStart(2, '0');
@@ -159,6 +159,7 @@ export default function EditarContratoComponent({
 
       return '';
     } catch (_error) {
+      console.error('Error al convertir fecha:', _error);
       return '';
     }
   };
@@ -178,13 +179,14 @@ export default function EditarContratoComponent({
 
       // Si ya está en formato DD/MM/YYYY, retornarla tal cual
       if (/^\d{2}[/-]\d{2}[/-]\d{4}$/.test(fechaInput)) {
-        const resultado = fechaInput.replace(/-/g, '/');
+        const resultado = fechaInput.replaceAll('-', '/');
 
         return resultado;
       }
 
       return fechaInput;
     } catch (_error) {
+      console.error('Error al convertir fecha para backend:', _error);
       return fechaInput;
     }
   };
@@ -242,6 +244,7 @@ export default function EditarContratoComponent({
           setTarifas(tarifasResult.data);
         }
       } catch (_error) {
+        console.error('Error al cargar datos adicionales:', _error);
         toast.error('Error al cargar datos del formulario');
       }
     };
@@ -514,9 +517,9 @@ export default function EditarContratoComponent({
 
     try {
       // Obtener el ID del contrato desde la URL
-      const urlPath = window.location.pathname;
+      const urlPath = globalThis.location.pathname;
       const urlParts = urlPath.split('/');
-      const contratoIdFromUrl = urlParts[urlParts.length - 1];
+      const contratoIdFromUrl = urlParts.at(-1);
 
       // Obtener RUTs
       const propietarioRut = getPropietarioRut();
@@ -533,8 +536,8 @@ export default function EditarContratoComponent({
       // Preparar los datos para la API usando ModificarContratoProps
       const submitData: any = {
         codigo: contratoIdFromUrl,
-        tipoContrato: parseInt(formData.tipoContrato) || 0,
-        tarifa: parseInt(formData.tarifa) || 0,
+        tipoContrato: Number.parseInt(formData.tipoContrato) || 0,
+        tarifa: Number.parseInt(formData.tarifa) || 0,
         propietario: propietarioRut,
         cliente: clienteRut,
         localId: formData.local || '',
@@ -575,7 +578,7 @@ export default function EditarContratoComponent({
   return (
     <div className='min-h-screen bg-background'>
       {/* Header */}
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Editar Contrato'
@@ -607,9 +610,9 @@ export default function EditarContratoComponent({
                   className='gap-2 bg-primary hover:bg-primary/90'
                   disabled={isSubmitting || !hasEditPermission}
                   title={
-                    !hasEditPermission
-                      ? 'No tiene permisos para editar contratos'
-                      : ''
+                    hasEditPermission
+                      ? ''
+                      : 'No tiene permisos para editar contratos'
                   }
                 >
                   <Save className='h-4 w-4' />
@@ -850,7 +853,7 @@ export default function EditarContratoComponent({
                     onChange={e =>
                       handleInputChange(
                         'limiteInvierno',
-                        parseInt(e.target.value) || 0
+                        Number.parseInt(e.target.value) || 0
                       )
                     }
                     placeholder='0'
@@ -944,7 +947,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Propietarios */}
         <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-success/10 rounded-xl'>
@@ -1083,7 +1086,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Locales */}
         <Dialog open={modalLocal} onOpenChange={setModalLocal}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-secondary/10 rounded-xl'>
@@ -1219,7 +1222,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Madres */}
         <Dialog open={modalMadres} onOpenChange={setModalMadres}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-warning/10 rounded-xl'>
@@ -1355,7 +1358,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Clientes */}
         <Dialog open={modalCliente} onOpenChange={setModalCliente}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-primary/10 rounded-xl'>
@@ -1510,7 +1513,7 @@ export default function EditarContratoComponent({
 
         {/* Modal de Selección de Comunas */}
         <Dialog open={modalComuna} onOpenChange={setModalComuna}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-primary/10 rounded-xl'>

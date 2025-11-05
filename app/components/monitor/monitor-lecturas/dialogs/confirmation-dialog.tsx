@@ -107,7 +107,7 @@ export function ConfirmationDialog({
           className={`flex items-start gap-2 text-xs px-3 py-2 rounded-xl border ${alertStyles[alertColor]}`}
         >
           <AlertCircle
-            className={`h-3 w-3 mt-0.5 flex-shrink-0 ${iconStyles[alertColor]}`}
+            className={`h-3 w-3 mt-0.5 shrink-0 ${iconStyles[alertColor]}`}
           />
           <span className={textStyles[alertColor]}>{message}</span>
         </div>

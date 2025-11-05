@@ -61,7 +61,7 @@ export function NavUser({ user }: NavUserProps) {
                     {user.name.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <ChevronsUpDown className='ml-auto h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground transition-transform duration-200 group-hover:text-foreground group-data-[state=open]:rotate-180 flex-shrink-0' />
+                <ChevronsUpDown className='ml-auto h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground transition-transform duration-200 group-hover:text-foreground group-data-[state=open]:rotate-180 shrink-0' />
               </SidebarMenuButton>
             </motion.div>
           </DropdownMenuTrigger>

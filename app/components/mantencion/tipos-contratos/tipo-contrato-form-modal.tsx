@@ -52,12 +52,12 @@ export default function TipoContratoFormModal({
   onSuccess,
   tipoContrato,
   mode
-}: TipoContratoFormModalProps) {
+}: Readonly<TipoContratoFormModalProps>) {
   const form = useForm<TipoContratoFormData>({
     resolver: zodResolver(tipoContratoSchema),
     defaultValues: {
       nombre: tipoContrato?.nombre || '',
-      estado: tipoContrato?.estado === false ? false : true
+      estado: tipoContrato?.estado !== false
     }
   });
 
@@ -67,7 +67,7 @@ export default function TipoContratoFormModal({
     if (isOpen) {
       form.reset({
         nombre: tipoContrato?.nombre || '',
-        estado: tipoContrato?.estado === false ? false : true
+        estado: tipoContrato?.estado !== false
       });
     }
   }, [isOpen, tipoContrato, form]);
@@ -76,6 +76,8 @@ export default function TipoContratoFormModal({
     try {
       const { default: api } = await import('~/lib/api');
 
+
+      
       if (mode === 'add') {
         await api.post('/crearTipoContrato', data);
       } else {

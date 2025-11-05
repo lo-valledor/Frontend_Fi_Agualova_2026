@@ -21,7 +21,7 @@ import type { EtapaUno, LecturaBT43 } from '~/types/monitor';
 
 // Helper para formatear fechas de forma segura
 const formatSafeDate = (date: string | null, formatString: string) => {
-  if (!date || isNaN(new Date(date).getTime())) {
+  if (!date || Number.isNaN(new Date(date).getTime())) {
     return 'Sin registro';
   }
   return format(new Date(date), formatString);

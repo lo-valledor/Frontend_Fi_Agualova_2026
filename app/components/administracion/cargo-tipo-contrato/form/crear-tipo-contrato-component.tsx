@@ -232,7 +232,6 @@ export default function CrearTipoContratoComponent({
       }
     }
   };
-
   // Función para quitar condición de contrato
   const handleQuitarCondicion = (index: number) => {
     setCondicionesAgregadas(prev => prev.filter((_, i) => i !== index));
@@ -242,7 +241,7 @@ export default function CrearTipoContratoComponent({
   const handleAgregarCargoMonofasico = () => {
     if (
       selectedCargoMonofasico &&
-      !cargosMonofasicoAgregados.find(
+      !cargosMonofasicoAgregados.some(
         c => c.id === selectedCargoMonofasico.data.id
       )
     ) {
@@ -257,7 +256,7 @@ export default function CrearTipoContratoComponent({
   const handleAgregarCargoTrifasico = () => {
     if (
       selectedCargoTrifasico &&
-      !cargosTrifasicoAgregados.find(
+      !cargosTrifasicoAgregados.some(
         c => c.id === selectedCargoTrifasico.data.id
       )
     ) {
@@ -272,7 +271,7 @@ export default function CrearTipoContratoComponent({
   const handleAgregarCargoAmbos = () => {
     if (
       selectedCargoAmbos &&
-      !cargosAmbosAgregados.find(c => c.id === selectedCargoAmbos.data.id)
+      !cargosAmbosAgregados.some(c => c.id === selectedCargoAmbos.data.id)
     ) {
       setCargosAmbosAgregados(prev => [...prev, selectedCargoAmbos.data]);
       setSelectedCargoAmbos(null);
@@ -334,7 +333,7 @@ export default function CrearTipoContratoComponent({
       // Si la respuesta es exitosa, mostrar mensaje y redirigir
       toast.success('Cargo tipo contrato creado exitosamente');
       setTimeout(() => {
-        window.history.back();
+        globalThis.history.back();
       }, 1500);
     } catch (error: any) {
       // Mostrar mensaje de error más específico si está disponible
@@ -352,7 +351,7 @@ export default function CrearTipoContratoComponent({
 
   const handleVolver = () => {
     // Navegar de vuelta al mantenedor de Cargo Tipo Contrato
-    window.history.back();
+    globalThis.history.back();
   };
 
   const handleCancelar = () => {
@@ -369,13 +368,13 @@ export default function CrearTipoContratoComponent({
     setSelectedCondicion(null);
     setSelectedCargo(null);
     setDescripcion('');
-    window.history.back();
+    globalThis.history.back();
   };
 
   return (
     <div className='min-h-screen bg-background'>
       {/* Header */}
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Crear Cargo Tipo de Contrato'

@@ -93,7 +93,7 @@ export default function ResumenFacturacionComponent({
     try {
       const response = await reportesService.getFacturacionPorCargo(
         selectedPeriodo,
-        parseInt(selectedEmpalme, 10)
+        Number.parseInt(selectedEmpalme, 10)
       );
 
       if (response.error) {

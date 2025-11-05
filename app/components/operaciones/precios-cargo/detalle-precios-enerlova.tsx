@@ -53,12 +53,12 @@ const normalizarValor = (valor: string | number | undefined): number => {
       // Europeo: quitar puntos (miles), cambiar coma por punto (decimal)
       const limpio = valor.replace(/\./g, '').replace(',', '.');
       const numero = parseFloat(limpio);
-      return isNaN(numero) ? 0 : numero;
+      return Number.isNaN(numero) ? 0 : numero;
     }
     // Si solo tiene coma, es decimal latino: 11,32 => 11.32
     if (valor.includes(',') && !valor.includes('.')) {
       const numero = parseFloat(valor.replace(',', '.'));
-      return isNaN(numero) ? 0 : numero;
+      return Number.isNaN(numero) ? 0 : numero;
     }
     // Si solo tiene punto, puede ser decimal o miles
     // Si hay más de 3 dígitos antes del punto, probablemente es miles
@@ -67,11 +67,11 @@ const normalizarValor = (valor: string | number | undefined): number => {
       // Ejemplo: 1.132 => 1132
       const limpio = valor.replace(/\./g, '');
       const numero = parseFloat(limpio);
-      return isNaN(numero) ? 0 : numero;
+      return Number.isNaN(numero) ? 0 : numero;
     }
     // Si solo tiene punto y menos de 3 dígitos después, tratar como decimal
     const numero = parseFloat(valor);
-    return isNaN(numero) ? 0 : numero;
+    return Number.isNaN(numero) ? 0 : numero;
   }
   return 0;
 };
@@ -177,7 +177,7 @@ export default function DetallePreciosEnerlova({
       // 3. Crear objeto Date en UTC
       const fechaFinDate = new Date(fechaFormatoISO + 'T00:00:00Z');
 
-      if (isNaN(fechaFinDate.getTime())) {
+      if (Number.isNaN(fechaFinDate.getTime())) {
         return '';
       }
 
@@ -217,7 +217,7 @@ export default function DetallePreciosEnerlova({
     const fechaISO = `${partes[2]}-${partes[1]}-${partes[0]}`;
     const fecha = new Date(fechaISO);
 
-    return isNaN(fecha.getTime()) ? null : fecha;
+    return Number.isNaN(fecha.getTime()) ? null : fecha;
   };
 
   // Filtrar datos según el período seleccionado

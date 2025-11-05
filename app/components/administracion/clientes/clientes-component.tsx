@@ -141,9 +141,9 @@ export default function ClientesComponent({
                 size='sm'
                 disabled={!hasCreatePermission}
                 title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear clientes'
-                    : ''
+                  hasCreatePermission
+                    ? ''
+                    : 'No tiene permisos para crear clientes'
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />

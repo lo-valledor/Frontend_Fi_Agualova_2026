@@ -61,7 +61,7 @@ export const calculateRutVerifier = (rutBody: string): string => {
 
   // Sumar cada dígito multiplicado por su peso
   for (let i = rutBody.length - 1; i >= 0; i--) {
-    sum += parseInt(rutBody[i]) * multiplier;
+    sum += Number.parseInt(rutBody[i]) * multiplier;
     multiplier = multiplier === 7 ? 2 : multiplier + 1;
   }
 

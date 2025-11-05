@@ -198,13 +198,13 @@ export function AdminAnalytics() {
                   <div key={tipo} className='flex justify-between items-center'>
                     <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                       <div
-                        className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
+                        className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} shrink-0`}
                       ></div>
                       <span className='text-xs sm:text-sm font-medium truncate'>
                         {tipo}
                       </span>
                     </div>
-                    <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
+                    <div className='text-lg sm:text-xl font-bold shrink-0'>
                       <NumberFlow
                         value={cantidad}
                         plugins={[continuous]}
@@ -243,12 +243,12 @@ export function AdminAnalytics() {
             <div className='space-y-3 sm:space-y-4'>
               <div className='flex justify-between items-center'>
                 <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-                  <Building className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0' />
+                  <Building className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500 shrink-0' />
                   <span className='text-xs sm:text-sm font-medium'>
                     Empresas
                   </span>
                 </div>
-                <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
+                <div className='text-lg sm:text-xl font-bold shrink-0'>
                   <NumberFlow
                     value={analyticsData.clientesPorTipo.empresa}
                     plugins={[continuous]}
@@ -258,12 +258,12 @@ export function AdminAnalytics() {
               </div>
               <div className='flex justify-between items-center'>
                 <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
-                  <User className='h-3 w-3 sm:h-4 sm:w-4 text-orange-500 flex-shrink-0' />
+                  <User className='h-3 w-3 sm:h-4 sm:w-4 text-orange-500 shrink-0' />
                   <span className='text-xs sm:text-sm font-medium'>
                     Personas
                   </span>
                 </div>
-                <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
+                <div className='text-lg sm:text-xl font-bold shrink-0'>
                   <NumberFlow
                     value={analyticsData.clientesPorTipo.persona}
                     plugins={[continuous]}
@@ -321,7 +321,7 @@ export function AdminAnalytics() {
                       >
                         <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                           <div
-                            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
+                            className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${getColorForIndex(index)} shrink-0`}
                           ></div>
                           <span className='truncate'>{tipo}</span>
                         </div>
@@ -401,13 +401,13 @@ export function AdminAnalytics() {
                   >
                     <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
                       <div
-                        className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} flex-shrink-0`}
+                        className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${getColorForIndex(index)} shrink-0`}
                       ></div>
                       <span className='text-xs sm:text-sm font-medium truncate'>
                         {sector}
                       </span>
                     </div>
-                    <div className='text-lg sm:text-xl font-bold flex-shrink-0'>
+                    <div className='text-lg sm:text-xl font-bold shrink-0'>
                       <NumberFlow
                         value={cantidad}
                         plugins={[continuous]}

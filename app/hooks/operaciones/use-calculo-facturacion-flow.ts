@@ -114,7 +114,7 @@ export function useCalculoFacturacionFlow({
     try {
       const cicloParaAPI = obtenerCicloParaAPI(cicloId);
       const response = await operacionesService.lanzarCalculoFacturacion(
-        parseInt(cicloParaAPI),
+        Number.parseInt(cicloParaAPI),
         periodoFormateado
       );
 

@@ -27,8 +27,7 @@ export function SiteHeader() {
 
   // Detectar si es entorno UAT (puerto 3000) o Core
   const isUAT =
-    typeof window !== 'undefined' &&
-    (window.location.port !== '8080');
+    typeof window !== 'undefined' && globalThis.location.port !== '8080';
   const environment = isUAT ? 'Sistema UAT' : 'Sistema Core';
 
   return (
@@ -84,7 +83,7 @@ export function SiteHeader() {
           </h1>
           <div className='flex items-center gap-1 sm:gap-2 ml-auto'>
             <div>
-              <Badge variant='outline' className='px-2 py-1'> 
+              <Badge variant='outline' className='px-2 py-1'>
                 <Label className='text-xs text-primary'>{environment}</Label>
               </Badge>
             </div>

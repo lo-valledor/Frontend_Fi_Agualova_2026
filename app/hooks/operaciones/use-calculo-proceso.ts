@@ -34,7 +34,7 @@ export function useCalculoProceso({
     try {
       const cicloParaAPI = obtenerCicloParaAPI(cicloId);
       const requestBody = {
-        cicloFacturacion: parseInt(cicloParaAPI),
+        cicloFacturacion: Number.parseInt(cicloParaAPI),
         periodoFacturable: periodoFormateado
       };
 

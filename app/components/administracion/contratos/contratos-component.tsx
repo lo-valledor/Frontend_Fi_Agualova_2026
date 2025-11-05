@@ -177,7 +177,7 @@ export default function ContratosComponent({
           <CardContent className='relative p-2 sm:p-4 lg:p-6'>
             {filteredContracts.length === 0 ? (
               <div className='flex flex-col items-center justify-center py-8 sm:py-12'>
-                <div className='flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
+                <div className='flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-linear-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
                   <FileText className='h-6 w-6 sm:h-8 sm:w-8' />
                 </div>
                 <p className='text-base sm:text-lg font-medium text-center'>

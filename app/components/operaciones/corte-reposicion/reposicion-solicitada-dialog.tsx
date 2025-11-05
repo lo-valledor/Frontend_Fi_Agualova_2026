@@ -45,7 +45,10 @@ export function ReposicionSolicitadaDialog({
       toast.success('Reposición solicitada correctamente');
       onSuccess();
     } catch (error) {
-      toast.error('Error al solicitar reposición. Intente nuevamente.', error as any);
+      toast.error(
+        'Error al solicitar reposición. Intente nuevamente.',
+        error as any
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -79,7 +82,7 @@ export function ReposicionSolicitadaDialog({
       <AlertDialogContent className='mx-4 sm:max-w-md'>
         <AlertDialogHeader>
           <AlertDialogTitle className='flex items-center gap-2 text-sm'>
-            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 flex-shrink-0'>
+            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 shrink-0'>
               <Undo2 className='h-3 w-3 text-white' />
             </div>
             <span className='truncate'>Solicitar Reposición - {acometida}</span>
@@ -96,7 +99,7 @@ export function ReposicionSolicitadaDialog({
             </p>
           </div>
           <div className='flex items-start gap-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800'>
-            <AlertTriangle className='h-3 w-3 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' />
+            <AlertTriangle className='h-3 w-3 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0' />
             <p className='text-xs text-amber-700 dark:text-amber-300'>
               Esta acción no se puede deshacer una vez confirmada.
             </p>

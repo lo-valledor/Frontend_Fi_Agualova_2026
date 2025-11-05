@@ -54,7 +54,7 @@ export default function TiposContratosComponent({
 
   const handleDelete = async (tipoContrato: TiposContrato) => {
     if (
-      window.confirm(
+      globalThis.confirm(
         `¿Está seguro de que desea eliminar el tipo de contrato "${tipoContrato.nombre}"?`
       )
     ) {

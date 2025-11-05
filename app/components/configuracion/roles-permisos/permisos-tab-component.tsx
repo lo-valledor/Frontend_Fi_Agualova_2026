@@ -525,7 +525,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
           <div className='relative'>
             {/* Indicador de scroll */}
             <div className='absolute top-0 right-0 z-20 bg-gradient-to-l from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
-            <div className='absolute top-0 left-64 z-20 bg-gradient-to-r from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
+            <div className='absolute top-0 left-64 z-20 bg-linear-to-r from-white dark:from-slate-900 to-transparent w-8 h-full pointer-events-none opacity-50' />
 
             <div
               ref={tableContainerRef}

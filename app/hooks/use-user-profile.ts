@@ -34,7 +34,7 @@ export function useUserProfile(): UseUserProfileReturn {
 
         // Buscar el usuario por ID
         const usuarioEncontrado = usuarios.find(
-          u => u.idUsuario === parseInt(user.id)
+          u => u.idUsuario === Number.parseInt(user.id)
         );
 
         if (usuarioEncontrado) {
@@ -54,9 +54,9 @@ export function useUserProfile(): UseUserProfileReturn {
         );
 
         const mockUserData: Usuarios = {
-          idUsuario: parseInt(user.id),
+          idUsuario: Number.parseInt(user.id),
           nombreDeUsuario: user.username,
-          perfilId: parseInt(user.profileId),
+          perfilId: Number.parseInt(user.profileId),
           nombres: user.fullName.split(' ')[0] || '',
           apellidos: user.fullName.split(' ').slice(1).join(' ') || '',
           departamento: 1, // Valor por defecto

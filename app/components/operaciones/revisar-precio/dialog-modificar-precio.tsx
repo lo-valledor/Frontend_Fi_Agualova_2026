@@ -71,7 +71,7 @@ export default function DialogModificarPrecio({
       return false;
     }
 
-    if (isNaN(Number(valor)) || Number(valor) <= 0) {
+    if (Number.isNaN(Number(valor)) || Number(valor) <= 0) {
       setError('El valor debe ser un número positivo');
       return false;
     }

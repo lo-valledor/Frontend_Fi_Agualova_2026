@@ -40,8 +40,8 @@ export default function DialogAgregarPrecios({
     try {
       setIsLoading(true);
       const response = await api.post('/ingresar-precio-cargo', {
-        mes: parseInt(mes),
-        año: parseInt(anio),
+        mes: Number.parseInt(mes),
+        año: Number.parseInt(anio),
         codigo: codigo,
         valor: parseFloat(valores.valor1),
         valor2: parseFloat(valores.valor2),

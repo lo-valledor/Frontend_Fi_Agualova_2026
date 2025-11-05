@@ -538,14 +538,14 @@ export default function CrearContratoComponent({
 
   // Helper para validar valores numéricos
   const validateNumericValues = () => {
-    const tipoContratoNum = parseInt(formData.tipoContrato);
-    const tarifaNum = parseInt(formData.tarifa);
+    const tipoContratoNum = Number.parseInt(formData.tipoContrato);
+    const tarifaNum = Number.parseInt(formData.tarifa);
 
-    if (isNaN(tipoContratoNum) || tipoContratoNum <= 0) {
+    if (Number.isNaN(tipoContratoNum) || tipoContratoNum <= 0) {
       throw new Error('Tipo de contrato no válido');
     }
 
-    if (isNaN(tarifaNum) || tarifaNum <= 0) {
+    if (Number.isNaN(tarifaNum) || tarifaNum <= 0) {
       throw new Error('Tarifa no válida');
     }
 
@@ -669,7 +669,7 @@ export default function CrearContratoComponent({
   return (
     <div className='min-h-screen bg-background'>
       {/* Header */}
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Crear Nuevo Contrato'
@@ -962,7 +962,7 @@ export default function CrearContratoComponent({
                     onChange={e =>
                       handleInputChange(
                         'limiteInvierno',
-                        parseInt(e.target.value) || 0
+                        Number.parseInt(e.target.value) || 0
                       )
                     }
                     placeholder='0'
@@ -1056,7 +1056,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Propietarios */}
         <Dialog open={modalPropietario} onOpenChange={setModalPropietario}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>
@@ -1202,7 +1202,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Locales */}
         <Dialog open={modalLocal} onOpenChange={setModalLocal}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-violet-100 dark:bg-violet-900/30 rounded-xl'>
@@ -1344,7 +1344,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Madres */}
         <Dialog open={modalMadres} onOpenChange={setModalMadres}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-amber-100 dark:bg-amber-900/30 rounded-xl'>
@@ -1486,7 +1486,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Clientes */}
         <Dialog open={modalCliente} onOpenChange={setModalCliente}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl'>
@@ -1651,7 +1651,7 @@ export default function CrearContratoComponent({
 
         {/* Modal de Selección de Comunas */}
         <Dialog open={modalComuna} onOpenChange={setModalComuna}>
-          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-[768px] xl:min-w-[896px] 2xl:min-w-[1024px] max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
+          <DialogContent className='min-w-[320px] sm:min-w-[480px] md:min-w-[640px] lg:min-w-3xl xl:min-w-4xl 2xl:min-w-5xl max-w-7xl max-h-[85vh] sm:max-h-[80vh] overflow-hidden'>
             <DialogHeader>
               <div className='flex items-center gap-3'>
                 <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>

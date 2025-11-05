@@ -109,7 +109,7 @@ const BillingKPIs = memo(function BillingKPIs({ facturas }: BillingKPIsProps) {
   return (
     <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
       {/* Facturación Promedio */}
-      <Card className='border bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
+      <Card className='border bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
         <CardContent className='pt-4'>
           <div className='flex items-center justify-between'>
             <div className='flex-1'>
@@ -141,7 +141,7 @@ const BillingKPIs = memo(function BillingKPIs({ facturas }: BillingKPIsProps) {
       </Card>
 
       {/* Última Factura */}
-      <Card className='border bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
+      <Card className='border bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
         <CardContent className='pt-4'>
           <div className='flex items-center justify-between'>
             <div className='flex-1'>
@@ -176,7 +176,7 @@ const BillingKPIs = memo(function BillingKPIs({ facturas }: BillingKPIsProps) {
       </Card>
 
       {/* Gasto Acumulado Anual */}
-      <Card className='border bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900'>
+      <Card className='border bg-linear-to-br from-violet-50 to-violet-100 dark:from-violet-950 dark:to-violet-900'>
         <CardContent className='pt-4'>
           <div className='flex items-center justify-between'>
             <div className='flex-1'>
@@ -198,7 +198,7 @@ const BillingKPIs = memo(function BillingKPIs({ facturas }: BillingKPIsProps) {
       </Card>
 
       {/* Costo Promedio por kWh */}
-      <Card className='border bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900'>
+      <Card className='border bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900'>
         <CardContent className='pt-4'>
           <div className='flex items-center justify-between'>
             <div className='flex-1'>

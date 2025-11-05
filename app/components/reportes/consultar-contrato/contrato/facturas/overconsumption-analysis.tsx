@@ -51,7 +51,7 @@ const getNombreMes = (mes: string) => {
     'Nov',
     'Dic'
   ];
-  const mesNum = parseInt(mes, 10);
+  const mesNum = Number.parseInt(mes, 10);
   return meses[mesNum - 1] || mes;
 };
 
@@ -326,7 +326,7 @@ const OverconsumptionAnalysis = memo(function OverconsumptionAnalysis({
           {/* Recomendaciones */}
           <div className='mt-6 p-4 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900 rounded-lg'>
             <div className='flex items-start gap-3'>
-              <AlertTriangle className='h-5 w-5 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5' />
+              <AlertTriangle className='h-5 w-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5' />
               <div className='space-y-1'>
                 <p className='text-sm font-medium text-rose-900 dark:text-rose-100'>
                   Recomendaciones para reducir el sobreconsumo:

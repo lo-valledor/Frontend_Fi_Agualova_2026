@@ -62,9 +62,9 @@ export function hasAllPermissions(
 
 export function formatRouteName(route: string): string {
   const segments = route.split('/').filter(Boolean);
-  const lastSegment = segments[segments.length - 1];
+  const lastSegment = segments.at(-1);
   
-  return lastSegment
+  return (lastSegment || '')
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
@@ -93,13 +93,13 @@ export function checkMultipleRoutes(
   const accessible: string[] = [];
   const inaccessible: string[] = [];
   
-  routes.forEach(route => {
+  for (const route of routes) {
     if (checkPermission(route)) {
       accessible.push(route);
     } else {
       inaccessible.push(route);
     }
-  });
+  }
   
   return { accessible, inaccessible };
 }

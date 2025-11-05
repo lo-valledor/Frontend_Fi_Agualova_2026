@@ -177,7 +177,7 @@ export default function ExportarLecturasComponent({
       });
 
       // Crear un enlace para descargar el archivo
-      const url = window.URL.createObjectURL(
+      const url = globalThis.URL.createObjectURL(
         new Blob([response.data as BlobPart])
       );
       const link = document.createElement('a');

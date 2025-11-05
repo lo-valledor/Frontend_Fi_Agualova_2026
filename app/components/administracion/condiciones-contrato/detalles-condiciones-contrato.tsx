@@ -9,9 +9,9 @@ import {
   Percent,
   Settings,
   TrendingUp,
+  Loader2,
   XCircle
 } from 'lucide-react';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import React, { useEffect, useState } from 'react';
@@ -22,7 +22,6 @@ import type { GetCondicionesContratoPorId } from '~/types/administracion';
 
 interface DetallesCondicionesContratoProps {
   condicionId: number;
-  onClose: () => void;
 }
 
 const DetailItem = ({
@@ -35,37 +34,45 @@ const DetailItem = ({
   value: React.ReactNode;
   icon?: React.ComponentType<{ className?: string }>;
   className?: string;
-}) => (
-  <div
-    className={`flex items-start gap-3 p-3 sm:gap-4 sm:p-4 rounded-xl transition-all duration-200 ${className}`}
-  >
-    {Icon && (
-      <div className='shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center'>
-        <Icon className='w-4 h-4 sm:w-5 sm:h-5 text-primary' />
-      </div>
-    )}
-    <div className='flex-1 min-w-0'>
-      <p className='text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1'>
-        {label}
-      </p>
-      <div className='text-sm font-medium text-foreground wrap-break-word'>
-        {typeof value === 'string' && value ? (
-          value
-        ) : typeof value === 'number' ? (
-          value.toString()
-        ) : typeof value === 'boolean' ? (
-          value ? (
-            'Activo'
-          ) : (
-            'Inactivo'
-          )
-        ) : (
-          <span className='text-muted-foreground italic'>No especificado</span>
-        )}
+}) => {
+  const renderValue = () => {
+    if (typeof value === 'string' && value) {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      return value.toString();
+    }
+
+    if (typeof value === 'boolean') {
+      return value ? 'Activo' : 'Inactivo';
+    }
+
+    return (
+      <span className='text-muted-foreground italic'>No especificado</span>
+    );
+  };
+
+  return (
+    <div
+      className={`flex items-start gap-3 p-3 sm:gap-4 sm:p-4 rounded-xl transition-all duration-200 ${className}`}
+    >
+      {Icon && (
+        <div className='shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary/10 dark:bg-primary/5 flex items-center justify-center'>
+          <Icon className='w-4 h-4 sm:w-5 sm:h-5 text-primary' />
+        </div>
+      )}
+      <div className='flex-1 min-w-0'>
+        <p className='text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1'>
+          {label}
+        </p>
+        <div className='text-sm font-medium text-foreground wrap-break-word'>
+          {renderValue()}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const SectionTitle = ({
   icon: Icon,
@@ -84,7 +91,7 @@ const SectionTitle = ({
 
 export default function DetallesCondicionesContrato({
   condicionId
-}: DetallesCondicionesContratoProps) {
+}: Readonly<DetallesCondicionesContratoProps>) {
   const [condicion, setCondicion] =
     useState<GetCondicionesContratoPorId | null>(null);
   const [loading, setLoading] = useState(true);

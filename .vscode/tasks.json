@@ -105,7 +105,7 @@
                 "owner": "jsdoc",
                 "fileLocation": "relative",
                 "pattern": {
-                    "regexp": "^ERROR: (.+):(\\d+):(\\d+): (.+)$",
+                    "RegExp": "^ERROR: (.+):(\\d+):(\\d+): (.+)$",
                     "file": 1,
                     "line": 2,
                     "column": 3,

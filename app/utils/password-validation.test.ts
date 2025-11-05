@@ -5,9 +5,12 @@ import {
   passwordsMatch,
   generatePasswordSuggestions,
   isPasswordSecure,
-  PASSWORD_RULES,
-  type PasswordValidationRule
+  PASSWORD_RULES
 } from './password-validation';
+
+// Helper function to reduce nesting and improve readability
+const hasWarningWith = (warnings: string[], text: string) =>
+  warnings.some(w => w.includes(text));
 
 describe('password-validation', () => {
   describe('PASSWORD_RULES', () => {
@@ -16,13 +19,13 @@ describe('password-validation', () => {
     });
 
     it('todas las reglas deberían tener propiedades requeridas', () => {
-      PASSWORD_RULES.forEach(rule => {
+      for (const rule of PASSWORD_RULES) {
         expect(rule).toHaveProperty('id');
         expect(rule).toHaveProperty('label');
         expect(rule).toHaveProperty('validator');
         expect(rule).toHaveProperty('message');
         expect(typeof rule.validator).toBe('function');
-      });
+      }
     });
 
     it('regla de longitud debería validar mínimo 8 caracteres', () => {
@@ -140,15 +143,13 @@ describe('password-validation', () => {
         const result = validatePassword('Paaassss123!');
 
         expect(result.warnings.length).toBeGreaterThan(0);
-        expect(result.warnings.some(w => w.includes('repetir'))).toBe(true);
+        expect(hasWarningWith(result.warnings, 'repetir')).toBe(true);
       });
 
       it('no debería advertir sobre 2 repeticiones', () => {
         const result = validatePassword('Paassword123!');
 
-        expect(
-          result.warnings.some(w => w.includes('repetir'))
-        ).toBe(false);
+        expect(hasWarningWith(result.warnings, 'repetir')).toBe(false);
       });
     });
 
@@ -157,7 +158,7 @@ describe('password-validation', () => {
         const result = validatePassword('Abcdef123!');
 
         expect(result.warnings.length).toBeGreaterThan(0);
-        expect(result.warnings.some(w => w.includes('secuencias de letras'))).toBe(
+        expect(hasWarningWith(result.warnings, 'secuencias de letras')).toBe(
           true
         );
       });
@@ -166,7 +167,7 @@ describe('password-validation', () => {
         const result = validatePassword('Pass1234!');
 
         expect(result.warnings.length).toBeGreaterThan(0);
-        expect(result.warnings.some(w => w.includes('secuencias de números'))).toBe(
+        expect(hasWarningWith(result.warnings, 'secuencias de números')).toBe(
           true
         );
       });
@@ -174,7 +175,7 @@ describe('password-validation', () => {
       it('debería detectar secuencias en mayúsculas', () => {
         const result = validatePassword('ABC1234!pwd');
 
-        expect(result.warnings.some(w => w.includes('secuencias de letras'))).toBe(
+        expect(hasWarningWith(result.warnings, 'secuencias de letras')).toBe(
           true
         );
       });
@@ -256,11 +257,11 @@ describe('password-validation', () => {
         'VeryStrongP@ssw0rd!2024'
       ];
 
-      passwords.forEach(pwd => {
+      for (const pwd of passwords) {
         const result = calculatePasswordStrength(pwd);
         expect(result.score).toBeGreaterThanOrEqual(0);
         expect(result.score).toBeLessThanOrEqual(4);
-      });
+      }
     });
 
     it('percentage debería estar entre 0-100', () => {
@@ -279,13 +280,19 @@ describe('password-validation', () => {
         4: 'Muy fuerte'
       };
 
-      Object.entries(labelMap).forEach(([score, label]) => {
+      for (const [score] of Object.entries(labelMap)) {
         // Crear contraseñas de diferentes fortalezas
-        const result = calculatePasswordStrength('Test' + '!'.repeat(parseInt(score) + 1) + '123Abc');
-        expect(['Muy débil', 'Débil', 'Aceptable', 'Fuerte', 'Muy fuerte']).toContain(
-          result.label
+        const result = calculatePasswordStrength(
+          'Test' + '!'.repeat(Number.parseInt(score) + 1) + '123Abc'
         );
-      });
+        expect([
+          'Muy débil',
+          'Débil',
+          'Aceptable',
+          'Fuerte',
+          'Muy fuerte'
+        ]).toContain(result.label);
+      }
     });
 
     it('debería asignar colores apropiados', () => {
@@ -361,13 +368,13 @@ describe('password-validation', () => {
     it('debería sugerir 12 caracteres si es más corta', () => {
       const suggestions = generatePasswordSuggestions('Pass!123');
 
-      expect(suggestions.some(s => s.includes('12 caracteres'))).toBe(true);
+      expect(hasWarningWith(suggestions, '12 caracteres')).toBe(true);
     });
 
     it('no debería sugerir 12 caracteres si ya los tiene', () => {
       const suggestions = generatePasswordSuggestions('LongPassword!123');
 
-      expect(suggestions.some(s => s.includes('12 caracteres'))).toBe(false);
+      expect(hasWarningWith(suggestions, '12 caracteres')).toBe(false);
     });
 
     it('debería retornar array vacío para contraseña excelente', () => {
@@ -382,7 +389,7 @@ describe('password-validation', () => {
     it('debería incluir íconos en sugerencias', () => {
       const suggestions = generatePasswordSuggestions('Pass!1');
 
-      expect(suggestions.some(s => s.includes('💡'))).toBe(true);
+      expect(hasWarningWith(suggestions, '💡')).toBe(true);
     });
   });
 
@@ -473,7 +480,7 @@ describe('password-validation', () => {
     });
 
     it('debería manejar caracteres especiales raros', () => {
-      const result = validatePassword('Test[]{}<>|\\123Aa');
+      const result = validatePassword(String.raw`Test[]{}<>|\123Aa`);
 
       expect(typeof result.isValid).toBe('boolean');
     });

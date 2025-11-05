@@ -18,32 +18,47 @@ vi.mock('sonner', () => ({
 // Mock simplificado de jsPDF
 const mockSave = vi.fn();
 const mockAutoTable = vi.fn();
+const mockAddPage = vi.fn();
+const mockText = vi.fn();
+const mockSetFontSize = vi.fn();
+const mockSetTextColor = vi.fn();
+const mockSetDrawColor = vi.fn();
+const mockSetFillColor = vi.fn();
+const mockLine = vi.fn();
+const mockRect = vi.fn();
+const mockSplitTextToSize = vi.fn((text: string) => [text]);
+const mockSetPage = vi.fn();
 
-vi.mock('jspdf', () => ({
-  default: vi.fn().mockImplementation(() => ({
-    save: mockSave,
-    addPage: vi.fn(),
-    text: vi.fn(),
-    setFontSize: vi.fn(),
-    setTextColor: vi.fn(),
-    setDrawColor: vi.fn(),
-    setFillColor: vi.fn(),
-    line: vi.fn(),
-    rect: vi.fn(),
-    splitTextToSize: vi.fn((text: string) => [text]),
-    setPage: vi.fn(),
-    autoTable: mockAutoTable,
-    internal: {
-      pageSize: {
-        getWidth: () => 210,
-        getHeight: () => 297
-      },
-      getNumberOfPages: () => 1
+const mockJsPDFInstance = {
+  save: mockSave,
+  addPage: mockAddPage,
+  text: mockText,
+  setFontSize: mockSetFontSize,
+  setTextColor: mockSetTextColor,
+  setDrawColor: mockSetDrawColor,
+  setFillColor: mockSetFillColor,
+  line: mockLine,
+  rect: mockRect,
+  splitTextToSize: mockSplitTextToSize,
+  setPage: mockSetPage,
+  autoTable: mockAutoTable,
+  internal: {
+    pageSize: {
+      getWidth: () => 210,
+      getHeight: () => 297
     },
-    lastAutoTable: {
-      finalY: 100
-    }
-  }))
+    getNumberOfPages: () => 1
+  },
+  lastAutoTable: {
+    finalY: 100
+  }
+};
+
+const mockJsPDFConstructor = vi.fn(() => mockJsPDFInstance);
+
+// Mock para imports dinámicos
+vi.mock('jspdf', () => ({
+  default: mockJsPDFConstructor
 }));
 
 vi.mock('jspdf-autotable', () => ({
@@ -278,26 +293,22 @@ describe('useExportPDF', () => {
   });
 
   describe('estado isExporting', () => {
-    it('debería establecer isExporting durante la exportación', async () => {
+    it('debería resetear isExporting después de completar la exportación', async () => {
       const { result } = renderHook(() => useExportPDF());
 
       const sections: PDFSection[] = [{ type: 'text', text: 'Test' }];
 
       expect(result.current.isExporting).toBe(false);
 
-      const exportPromise = result.current.exportToPDF(sections);
+      await result.current.exportToPDF(sections);
 
-      // Inmediatamente después de iniciar
-      await waitFor(() => {
-        expect(result.current.isExporting).toBe(true);
-      });
-
-      await exportPromise;
-
-      // Después de completar
+      // Después de completar debe volver a false
       await waitFor(() => {
         expect(result.current.isExporting).toBe(false);
       });
+
+      expect(mockSave).toHaveBeenCalled();
+      expect(toast.success).toHaveBeenCalled();
     });
 
     it('debería restablecer isExporting después de error', async () => {

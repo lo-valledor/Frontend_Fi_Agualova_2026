@@ -33,7 +33,7 @@ export default function NuevoContratoForm({
         <CollapsibleTrigger asChild>
           <div className='flex justify-between items-center p-3 sm:p-4 cursor-pointer hover:bg-muted/30 rounded-t-lg border-b border-border/60'>
             <div className='flex items-center gap-2 sm:gap-3 min-w-0'>
-              <div className='p-1.5 sm:p-2.5 bg-primary/10 rounded-xl shadow-sm flex-shrink-0'>
+              <div className='p-1.5 sm:p-2.5 bg-primary/10 rounded-xl shadow-sm shrink-0'>
                 <FileText className='h-4 w-4 sm:h-5 sm:w-5 text-primary' />
               </div>
               <div className='min-w-0'>
@@ -52,7 +52,7 @@ export default function NuevoContratoForm({
             <Button
               variant='ghost'
               size='icon'
-              className='h-6 w-6 sm:h-8 sm:w-8 rounded-full hover:bg-muted flex-shrink-0'
+              className='h-6 w-6 sm:h-8 sm:w-8 rounded-full hover:bg-muted shrink-0'
             >
               {isOpen ? (
                 <ChevronUp className='h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground' />

@@ -127,7 +127,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
               <strong>Navegador:</strong> {navigator.userAgent}
             </li>
             <li>
-              <strong>URL:</strong> {window.location.href}
+              <strong>URL:</strong> {globalThis.location.href}
             </li>
             <li>
               <strong>Token en localStorage:</strong>{' '}
@@ -149,7 +149,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
 
         <div className='flex gap-4'>
           <button
-            onClick={() => window.location.reload()}
+            onClick={() => globalThis.location.reload()}
             className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700'
           >
             Recargar página
@@ -157,7 +157,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
           <button
             onClick={() => {
               localStorage.clear();
-              window.location.href = '/auth/login';
+              globalThis.location.href = '/auth/login';
             }}
             className='px-4 py-2 bg-red-600 rounded hover:bg-red-700'
           >

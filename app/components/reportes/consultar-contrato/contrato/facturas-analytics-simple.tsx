@@ -260,9 +260,9 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           const [datePart] = factura.fechaEmision.split(' ');
           const [day, month, year] = datePart.split('/');
           fechaEmision = new Date(
-            parseInt(year),
-            parseInt(month) - 1,
-            parseInt(day)
+            Number.parseInt(year),
+            Number.parseInt(month) - 1,
+            Number.parseInt(day)
           );
         } else {
           fechaEmision = new Date(factura.fechaEmision);
@@ -276,15 +276,15 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           const [datePart] = factura.fechaVencimiento.split(' ');
           const [day, month, year] = datePart.split('/');
           fechaVencimiento = new Date(
-            parseInt(year),
-            parseInt(month) - 1,
-            parseInt(day)
+            Number.parseInt(year),
+            Number.parseInt(month) - 1,
+            Number.parseInt(day)
           );
         } else {
           fechaVencimiento = new Date(factura.fechaVencimiento);
         }
 
-        if (isNaN(fechaEmision.getTime())) {
+        if (Number.isNaN(fechaEmision.getTime())) {
           fechaEmision = new Date();
           fechaCorta = factura.periodo;
           fechaCompleta = factura.periodo;
@@ -300,7 +300,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
           });
         }
 
-        if (isNaN(fechaVencimiento.getTime())) {
+        if (Number.isNaN(fechaVencimiento.getTime())) {
           fechaVencimiento = new Date();
         }
 
@@ -606,7 +606,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
 
         {/* KPIs mejorados en grid */}
         <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-          <Card className='border bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
+          <Card className='border bg-linear-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950 dark:to-emerald-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex-1'>
@@ -628,7 +628,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
+          <Card className='border bg-linear-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex-1'>
@@ -650,7 +650,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900'>
+          <Card className='border bg-linear-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex-1'>
@@ -671,7 +671,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900'>
+          <Card className='border bg-linear-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex-1'>
@@ -690,7 +690,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900'>
+          <Card className='border bg-linear-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex-1'>
@@ -712,7 +712,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             </CardContent>
           </Card>
 
-          <Card className='border bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900'>
+          <Card className='border bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900'>
             <CardContent className='pt-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex-1'>

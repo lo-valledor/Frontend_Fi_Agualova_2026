@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 // oxlint-disable no-unused-vars
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -39,7 +40,7 @@ export default function MedidoresComponent({
   const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(
     null
   );
-  const [, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
   // Estados para filtros
@@ -104,6 +105,7 @@ export default function MedidoresComponent({
       const data = response.data as GetMedidores[];
       setMedidores(data);
     } catch (_error) {
+      console.error('Error al recargar los medidores', _error);
       toast.error('Error al recargar los medidores.');
     } finally {
       setIsFetching(false);
@@ -176,9 +178,9 @@ export default function MedidoresComponent({
                 size='sm'
                 disabled={!hasCreatePermission}
                 title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear medidores'
-                    : ''
+                  hasCreatePermission
+                    ? ''
+                    : 'No tiene permisos para crear medidores'
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />

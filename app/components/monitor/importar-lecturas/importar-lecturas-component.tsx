@@ -731,12 +731,12 @@ export default function ImportarLecturasComponent() {
 
           {/* Alerta de sectores pendientes de preparación */}
           {validacionLecturas && !validacionLecturas.sinPendientes && (
-            <Card className='border-red-200 dark:border-red-800 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/20 shadow-lg'>
+            <Card className='border-red-200 dark:border-red-800 bg-linear-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/20 shadow-lg'>
               <CardContent className='pt-6'>
                 <div className='space-y-4'>
                   {/* Header con icono y título */}
                   <div className='flex items-start gap-4'>
-                    <div className='relative flex-shrink-0'>
+                    <div className='relative shrink-0'>
                       <div className='absolute inset-0 bg-red-500 dark:bg-red-600 rounded-full blur-xl opacity-30 animate-pulse' />
                       <div className='relative p-3 bg-red-100 dark:bg-red-900/50 rounded-full'>
                         <AlertCircle className='h-7 w-7 text-red-600 dark:text-red-400' />
@@ -755,7 +755,7 @@ export default function ImportarLecturasComponent() {
                       disabled={loadingValidacion}
                       variant='outline'
                       size='sm'
-                      className='flex-shrink-0 border-red-300 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30'
+                      className='shrink-0 border-red-300 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30'
                     >
                       <RefreshCw
                         className={`h-3.5 w-3.5 mr-1.5 ${loadingValidacion ? 'animate-spin' : ''}`}
@@ -822,7 +822,7 @@ export default function ImportarLecturasComponent() {
                           {validacionLecturas.detalles.map((detalle, idx) => (
                             <div
                               key={idx}
-                              className='group p-3 bg-gradient-to-r from-white to-red-50/50 dark:from-background dark:to-red-950/20 rounded-lg border border-red-100 dark:border-red-900 hover:shadow-md transition-all duration-200'
+                              className='group p-3 bg-linear-to-r from-white to-red-50/50 dark:from-background dark:to-red-950/20 rounded-lg border border-red-100 dark:border-red-900 hover:shadow-md transition-all duration-200'
                             >
                               <div className='flex items-center justify-between gap-3'>
                                 <div className='flex-1 min-w-0'>
@@ -839,7 +839,7 @@ export default function ImportarLecturasComponent() {
                                 </div>
                                 <Badge
                                   variant='destructive'
-                                  className='flex-shrink-0 shadow-sm'
+                                  className='shrink-0 shadow-sm'
                                 >
                                   <span className='font-bold'>
                                     {detalle.cantidad}
@@ -859,10 +859,10 @@ export default function ImportarLecturasComponent() {
                   </Collapsible>
 
                   {/* Warning Box */}
-                  <div className='relative overflow-hidden p-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm'>
+                  <div className='relative overflow-hidden p-4 bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm'>
                     <div className='absolute top-0 right-0 w-32 h-32 bg-amber-300/10 dark:bg-amber-700/10 rounded-full -mr-16 -mt-16' />
                     <div className='relative flex gap-3'>
-                      <div className='flex-shrink-0'>
+                      <div className='shrink-0'>
                         <div className='p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg'>
                           <AlertCircle className='h-5 w-5 text-amber-600 dark:text-amber-400' />
                         </div>

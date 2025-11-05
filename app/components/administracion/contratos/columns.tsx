@@ -33,20 +33,20 @@ const parseDateString = (
       const [fechaParte] = dateString.split(' ');
       const [dia, mes, año] = fechaParte.split('-');
       const date = new Date(`${año}-${mes}-${dia}`);
-      return isNaN(date.getTime()) ? null : date;
+      return Number.isNaN(date.getTime()) ? null : date;
     }
 
     // Formato DD/MM/YYYY (con barra)
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
       const [dia, mes, año] = dateString.split('/');
       const date = new Date(`${año}-${mes}-${dia}`);
-      return isNaN(date.getTime()) ? null : date;
+      return Number.isNaN(date.getTime()) ? null : date;
     }
 
     // Formato ISO (YYYY-MM-DD)
     if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
       const date = new Date(dateString);
-      return isNaN(date.getTime()) ? null : date;
+      return Number.isNaN(date.getTime()) ? null : date;
     }
   }
 
@@ -75,7 +75,7 @@ const formatDateToSpanish = (
       date = new Date(`${año}-${mes}-${dia}`);
 
       // Verificar si la fecha es válida
-      if (isNaN(date.getTime())) {
+      if (Number.isNaN(date.getTime())) {
         return 'Fecha inválida';
       }
 
@@ -90,7 +90,7 @@ const formatDateToSpanish = (
       // Crear fecha en formato ISO
       date = new Date(`${año}-${mes}-${dia}`);
 
-      if (isNaN(date.getTime())) {
+      if (Number.isNaN(date.getTime())) {
         return 'Fecha inválida';
       }
 
@@ -101,7 +101,7 @@ const formatDateToSpanish = (
     if (/^\d{4}-\d{2}-\d{2}/.test(dateString)) {
       date = new Date(dateString);
 
-      if (isNaN(date.getTime())) {
+      if (Number.isNaN(date.getTime())) {
         return 'Fecha inválida';
       }
 
@@ -119,7 +119,7 @@ const formatDateToSpanish = (
   }
 
   // Verificar si la fecha es válida
-  if (isNaN(date.getTime())) {
+  if (Number.isNaN(date.getTime())) {
     return 'Fecha inválida';
   }
 

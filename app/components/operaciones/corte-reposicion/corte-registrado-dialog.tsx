@@ -95,7 +95,7 @@ export function CorteRegistradoDialog({
       <DialogContent className='mx-4 sm:max-w-md'>
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2 text-sm'>
-            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 flex-shrink-0'>
+            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 shrink-0'>
               <Scissors className='h-3 w-3 text-white' />
             </div>
             <span className='truncate'>Registrar Corte - {acometida}</span>

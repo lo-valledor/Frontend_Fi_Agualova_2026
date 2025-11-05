@@ -29,7 +29,7 @@ export default function InformacionLectura({
           {label}
         </span>
       </div>
-      <p className='text-sm font-semibold text-foreground break-words'>
+      <p className='text-sm font-semibold text-foreground wrap-break-word'>
         {value ?? '-'}
         {value && unit && (
           <span className='text-xs font-normal text-muted-foreground ml-1'>
@@ -53,12 +53,12 @@ export default function InformacionLectura({
       <CardContent className='px-0 space-y-3'>
         {error ? (
           <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
-            <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+            <AlertCircle className='h-3 w-3 mt-0.5 shrink-0' />
             <span>{error}</span>
           </div>
         ) : !lectura ? (
           <div className='flex items-start gap-2 text-xs text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/20 px-3 py-2 rounded-xl border border-blue-200 dark:border-blue-800'>
-            <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+            <AlertCircle className='h-3 w-3 mt-0.5 shrink-0' />
             <span>No hay datos de la lectura del período en consulta.</span>
           </div>
         ) : (
@@ -95,7 +95,7 @@ export default function InformacionLectura({
                     Observaciones
                   </span>
                 </div>
-                <p className='text-sm text-foreground italic break-words'>
+                <p className='text-sm text-foreground italic wrap-break-word'>
                   {lectura.LM_Observaciones}
                 </p>
               </div>

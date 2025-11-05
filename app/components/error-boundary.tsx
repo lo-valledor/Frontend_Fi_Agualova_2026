@@ -25,12 +25,12 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
     if (resetError) {
       resetError();
     } else {
-      window.location.reload();
+      globalThis.location.reload();
     }
   };
 
   const handleGoHome = () => {
-    window.location.href = '/dashboard';
+    globalThis.location.href = '/dashboard';
   };
 
   const handleLogout = () => {
@@ -40,7 +40,7 @@ export const ErrorBoundary: React.FC<ErrorBoundaryProps> = ({
     sessionStorage.clear();
 
     // Redireccionar al login
-    window.location.href = '/auth/login';
+    globalThis.location.href = '/auth/login';
   };
 
   return (

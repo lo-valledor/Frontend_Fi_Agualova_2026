@@ -56,7 +56,7 @@ export default function ConceptosComponent({
 
   const handleDelete = async (concepto: Conceptos) => {
     if (
-      window.confirm(
+      globalThis.confirm(
         `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`
       )
     ) {

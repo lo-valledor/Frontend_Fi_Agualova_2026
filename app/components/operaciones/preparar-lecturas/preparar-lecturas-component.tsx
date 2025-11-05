@@ -223,7 +223,7 @@ export default function PrepararLecturasComponent({
                       </Label>
                       {periodoAbierto && periodoAbierto.length > 0 ? (
                         <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
-                          <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                          <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center shrink-0'>
                             <CalendarIcon className='w-4 h-4 text-primary' />
                           </div>
                           <div>
@@ -237,7 +237,7 @@ export default function PrepararLecturasComponent({
                         </div>
                       ) : (
                         <div className='flex items-center gap-3 p-3 rounded-xl bg-background border border-border'>
-                          <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center flex-shrink-0'>
+                          <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center shrink-0'>
                             <AlertCircleIcon className='w-4 h-4' />
                           </div>
                           <div>

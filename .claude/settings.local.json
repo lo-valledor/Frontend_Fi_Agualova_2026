@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm test:coverage:*)"
+      "Bash(pnpm test:*)"
     ],
     "deny": [],
     "ask": [],

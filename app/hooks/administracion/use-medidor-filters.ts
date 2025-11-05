@@ -79,11 +79,17 @@ export function useMedidorFilters(
       if (filters.digitosMin || filters.digitosMax) {
         const digitos = medidor.digitos;
 
-        if (filters.digitosMin && digitos < parseInt(filters.digitosMin)) {
+        if (
+          filters.digitosMin &&
+          digitos < Number.parseInt(filters.digitosMin)
+        ) {
           return false;
         }
 
-        if (filters.digitosMax && digitos > parseInt(filters.digitosMax)) {
+        if (
+          filters.digitosMax &&
+          digitos > Number.parseInt(filters.digitosMax)
+        ) {
           return false;
         }
       }

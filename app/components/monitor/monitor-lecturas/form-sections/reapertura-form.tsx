@@ -60,7 +60,7 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
     // Preparar los datos para enviar al servidor
     const dataToSend = {
       lecturaId: result.LM_ID.toString(),
-      claveId: parseInt(selectedClave),
+      claveId: Number.parseInt(selectedClave),
       descripcion: descripcionReapertura.trim()
     };
 
@@ -95,7 +95,6 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
         );
       }
     } catch (error: any) {
-
       // Mostrar mensaje de error más detallado
       if (error.response) {
         // El servidor respondió con un código de estado fuera del rango 2xx
@@ -128,7 +127,7 @@ export function ReaperturaForm({ result, onSuccess }: ReaperturaFormProps) {
     <div className='space-y-3'>
       {/* Alerta informativa compacta */}
       <div className='flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 px-3 py-2 rounded-xl border border-border'>
-        <AlertCircle className='h-3 w-3 mt-0.5 flex-shrink-0' />
+        <AlertCircle className='h-3 w-3 mt-0.5 shrink-0' />
         <span>
           Medición cerrada. Seleccione un motivo y proporcione una descripción
           para reabrirla.

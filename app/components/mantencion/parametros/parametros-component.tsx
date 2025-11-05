@@ -54,7 +54,7 @@ export default function ParametrosComponent({
 
   const handleDelete = async (parametro: Parametro) => {
     if (
-      window.confirm(
+      globalThis.confirm(
         `¿Está seguro de que desea eliminar el parámetro "${parametro.descripcion}"?`
       )
     ) {

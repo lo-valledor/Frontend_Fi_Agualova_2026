@@ -148,9 +148,9 @@ export default function CondicionesContratoComponent({
                 size='sm'
                 disabled={!hasCreatePermission}
                 title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear condiciones de contrato'
-                    : ''
+                  hasCreatePermission
+                    ? ''
+                    : 'No tiene permisos para crear condiciones de contrato'
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -202,7 +202,6 @@ export default function CondicionesContratoComponent({
               {selectedCondicionId && (
                 <DetallesCondicionesContrato
                   condicionId={selectedCondicionId}
-                  onClose={() => setIsDetailsOpen(false)}
                 />
               )}
             </ScrollArea>

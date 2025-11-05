@@ -189,7 +189,7 @@ export default function ProfilePage() {
               {error || 'No se pudieron cargar los datos del usuario'}
             </p>
             <Button
-              onClick={() => window.location.reload()}
+              onClick={() => globalThis.location.reload()}
               variant='outline'
               className='border-rose-200 text-rose-700 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-900/20'
             >

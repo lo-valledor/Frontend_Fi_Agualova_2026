@@ -65,9 +65,9 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
   // Validar que la lectura no exceda el número de dígitos del medidor
   const validarDigitos = useCallback(
     (value: string) => {
-      if (!value || isNaN(Number(value))) return false;
+      if (!value || Number.isNaN(Number(value))) return false;
 
-      const valorNumerico = parseInt(value);
+      const valorNumerico = Number.parseInt(value);
       const maxValue = Math.pow(10, digito) - 1; // 10^digitos - 1
 
       return valorNumerico <= maxValue;
@@ -83,11 +83,11 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
   // Función estable para calcular el consumo
   const calcularConsumo = useCallback(
     (value: string) => {
-      if (!value || isNaN(Number(value))) {
+      if (!value || Number.isNaN(Number(value))) {
         return { consumo: '', tipo: null, vlecturadigitos: 0 };
       }
 
-      const valorActual = parseInt(value);
+      const valorActual = Number.parseInt(value);
       let vlecturadigitos = valorActual;
       let tipo: 'menor' | 'igual' | 'mayor' | null = null;
 
@@ -178,7 +178,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
         return;
       }
       // Validar que sea numérico
-      if (isNaN(Number(value))) {
+      if (Number.isNaN(Number(value))) {
         toast.error('Solo se permiten valores numéricos');
         return;
       }
@@ -195,7 +195,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
         return;
       }
       setInputValue(value);
-      if (value && !isNaN(Number(value))) {
+      if (value && !Number.isNaN(Number(value))) {
         const resultado = calcularConsumo(value);
         setConsumoCalculado(resultado.consumo);
         setTipoLectura(resultado.tipo);
@@ -247,7 +247,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
 
   // Validar la lectura
   const validarLectura = useCallback(() => {
-    if (!inputValue || isNaN(Number(inputValue))) {
+    if (!inputValue || Number.isNaN(Number(inputValue))) {
       toast.error('Por favor ingrese un valor numérico válido');
       return;
     }
@@ -507,7 +507,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
               if (anomalia.esAnomalo && consumoCalculado) {
                 return (
                   <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-md border border-red-200 dark:border-red-800'>
-                    <AlertCircle className='h-4 w-4 flex-shrink-0 mt-0.5' />
+                    <AlertCircle className='h-4 w-4 shrink-0 mt-0.5' />
                     <div className='flex-1'>
                       <div className='font-semibold mb-1'>
                         Consumo anómalo detectado

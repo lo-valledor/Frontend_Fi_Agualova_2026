@@ -163,7 +163,7 @@ export default function EditarMedidor({
       <BreadcrumbSetter items={pageBreadcrumbs} />
 
       {/* Header */}
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
         <div className='container mx-auto px-4 py-4'>
           <ModernHeader
             title='Editar Medidor'

@@ -85,7 +85,7 @@ export function FechaCell({ fecha }: { fecha: string | Date }) {
   const date = typeof fecha === 'string' ? new Date(fecha) : fecha;
   return (
     <div className='text-sm text-muted-foreground'>
-      {isNaN(date.getTime()) ? '' : date.toLocaleDateString('es-ES')}
+      {Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('es-ES')}
     </div>
   );
 }

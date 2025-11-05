@@ -72,9 +72,9 @@ export function PasswordStrengthIndicator({
                   className='flex items-center gap-2 text-xs'
                 >
                   {isPassed ? (
-                    <CheckCircle2 className='h-3.5 w-3.5 text-green-600 dark:text-green-400 flex-shrink-0' />
+                    <CheckCircle2 className='h-3.5 w-3.5 text-green-600 dark:text-green-400 shrink-0' />
                   ) : (
-                    <AlertCircle className='h-3.5 w-3.5 text-slate-400 dark:text-slate-600 flex-shrink-0' />
+                    <AlertCircle className='h-3.5 w-3.5 text-slate-400 dark:text-slate-600 shrink-0' />
                   )}
                   <span
                     className={

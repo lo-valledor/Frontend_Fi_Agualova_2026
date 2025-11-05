@@ -198,7 +198,7 @@ const StatusIndicator = ({
       transition={{ duration: 0.2 }}
       className={`rounded-full ${status.bgColor} ${
         sizeClasses[size ?? 'md']
-      } flex-shrink-0`}
+      } shrink-0`}
     />
   );
 };
@@ -758,7 +758,7 @@ export default function ResultadosBusqueda({
                             initial={{ opacity: 0, y: -10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
-                            className='bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border-2 border-primary/20'
+                            className='bg-linear-to-r from-primary/10 to-primary/5 rounded-lg sm:rounded-xl p-3 sm:p-4 md:p-6 border-2 border-primary/20'
                           >
                             <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4'>
                               <div className='flex items-center gap-2 sm:gap-3 md:gap-4'>
@@ -799,11 +799,11 @@ export default function ResultadosBusqueda({
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.3, delay: 0.1 }}
-                                className='group bg-gradient-to-r from-red-50 to-transparent dark:from-red-950/20 dark:to-transparent border-l-4 border-red-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                                className='group bg-linear-to-r from-red-50 to-transparent dark:from-red-950/20 dark:to-transparent border-l-4 border-red-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
                               >
                                 <div className='flex items-center justify-between gap-2'>
                                   <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
-                                    <div className='p-1.5 sm:p-2 bg-red-100 dark:bg-red-900/30 rounded-lg flex-shrink-0'>
+                                    <div className='p-1.5 sm:p-2 bg-red-100 dark:bg-red-900/30 rounded-lg shrink-0'>
                                       <AlertCircle className='h-4 w-4 sm:h-5 sm:w-5 text-red-500' />
                                     </div>
                                     <div className='min-w-0'>
@@ -815,7 +815,7 @@ export default function ResultadosBusqueda({
                                       </p>
                                     </div>
                                   </div>
-                                  <div className='text-right flex-shrink-0'>
+                                  <div className='text-right shrink-0'>
                                     <p className='text-xl sm:text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400'>
                                       <NumberFlow value={stats.critical} />
                                     </p>
@@ -842,11 +842,11 @@ export default function ResultadosBusqueda({
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.3, delay: 0.15 }}
-                                className='group bg-gradient-to-r from-orange-50 to-transparent dark:from-orange-950/20 dark:to-transparent border-l-4 border-orange-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                                className='group bg-linear-to-r from-orange-50 to-transparent dark:from-orange-950/20 dark:to-transparent border-l-4 border-orange-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
                               >
                                 <div className='flex items-center justify-between gap-2'>
                                   <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
-                                    <div className='p-1.5 sm:p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex-shrink-0'>
+                                    <div className='p-1.5 sm:p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg shrink-0'>
                                       <AlertTriangle className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
                                     </div>
                                     <div className='min-w-0'>
@@ -858,7 +858,7 @@ export default function ResultadosBusqueda({
                                       </p>
                                     </div>
                                   </div>
-                                  <div className='text-right flex-shrink-0'>
+                                  <div className='text-right shrink-0'>
                                     <p className='text-xl sm:text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400'>
                                       <NumberFlow value={stats.warning} />
                                     </p>
@@ -884,11 +884,11 @@ export default function ResultadosBusqueda({
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.3, delay: 0.2 }}
-                                className='group bg-gradient-to-r from-yellow-50 to-transparent dark:from-yellow-950/20 dark:to-transparent border-l-4 border-yellow-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                                className='group bg-linear-to-r from-yellow-50 to-transparent dark:from-yellow-950/20 dark:to-transparent border-l-4 border-yellow-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
                               >
                                 <div className='flex items-center justify-between gap-2'>
                                   <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
-                                    <div className='p-1.5 sm:p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex-shrink-0'>
+                                    <div className='p-1.5 sm:p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg shrink-0'>
                                       <Info className='h-4 w-4 sm:h-5 sm:w-5 text-yellow-500' />
                                     </div>
                                     <div className='min-w-0'>
@@ -900,7 +900,7 @@ export default function ResultadosBusqueda({
                                       </p>
                                     </div>
                                   </div>
-                                  <div className='text-right flex-shrink-0'>
+                                  <div className='text-right shrink-0'>
                                     <p className='text-xl sm:text-2xl md:text-3xl font-bold text-yellow-600 dark:text-yellow-400'>
                                       <NumberFlow value={stats.info} />
                                     </p>
@@ -926,11 +926,11 @@ export default function ResultadosBusqueda({
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.3, delay: 0.25 }}
-                                className='group bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-950/20 dark:to-transparent border-l-4 border-gray-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                                className='group bg-linear-to-r from-gray-50 to-transparent dark:from-gray-950/20 dark:to-transparent border-l-4 border-gray-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
                               >
                                 <div className='flex items-center justify-between gap-2'>
                                   <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
-                                    <div className='p-1.5 sm:p-2 bg-gray-100 dark:bg-gray-900/30 rounded-lg flex-shrink-0'>
+                                    <div className='p-1.5 sm:p-2 bg-gray-100 dark:bg-gray-900/30 rounded-lg shrink-0'>
                                       <History className='h-4 w-4 sm:h-5 sm:w-5 text-gray-500' />
                                     </div>
                                     <div className='min-w-0'>
@@ -942,7 +942,7 @@ export default function ResultadosBusqueda({
                                       </p>
                                     </div>
                                   </div>
-                                  <div className='text-right flex-shrink-0'>
+                                  <div className='text-right shrink-0'>
                                     <p className='text-xl sm:text-2xl md:text-3xl font-bold text-gray-600 dark:text-gray-400'>
                                       <NumberFlow value={stats.sinlec} />
                                     </p>
@@ -968,11 +968,11 @@ export default function ResultadosBusqueda({
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.3, delay: 0.3 }}
-                                className='group bg-gradient-to-r from-emerald-50 to-transparent dark:from-emerald-950/20 dark:to-transparent border-l-4 border-emerald-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                                className='group bg-linear-to-r from-emerald-50 to-transparent dark:from-emerald-950/20 dark:to-transparent border-l-4 border-emerald-500 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
                               >
                                 <div className='flex items-center justify-between gap-2'>
                                   <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
-                                    <div className='p-1.5 sm:p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex-shrink-0'>
+                                    <div className='p-1.5 sm:p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg shrink-0'>
                                       <RefreshCw className='h-4 w-4 sm:h-5 sm:w-5 text-emerald-500' />
                                     </div>
                                     <div className='min-w-0'>
@@ -984,7 +984,7 @@ export default function ResultadosBusqueda({
                                       </p>
                                     </div>
                                   </div>
-                                  <div className='text-right flex-shrink-0'>
+                                  <div className='text-right shrink-0'>
                                     <p className='text-xl sm:text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400'>
                                       <NumberFlow value={stats.normal} />
                                     </p>

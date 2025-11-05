@@ -75,7 +75,7 @@ export const columns: ColumnDef<EstadoCierreLecturas>[] = [
             <div className='flex items-center gap-1'>
               <div
                 className={cn(
-                  'w-2 h-2 rounded-full flex-shrink-0',
+                  'w-2 h-2 rounded-full shrink-0',
                   hasCritical
                     ? 'bg-red-500 animate-pulse'
                     : hasWarning

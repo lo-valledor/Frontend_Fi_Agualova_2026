@@ -58,7 +58,7 @@ export default function ClavesComponent({
   const handleDelete = useCallback(
     async (clave: Claves) => {
       if (
-        window.confirm(
+        globalThis.confirm(
           `¿Está seguro de que desea eliminar la clave "${clave.codigo}"?`
         )
       ) {

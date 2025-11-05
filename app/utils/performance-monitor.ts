@@ -11,6 +11,10 @@
  * Solo funciona en producción para no afectar desarrollo
  */
 
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+type PerformanceRating = 'good' | 'needs-improvement' | 'poor';
+
 interface PerformanceMetric {
   name: string;
   value: number;
@@ -18,12 +22,7 @@ interface PerformanceMetric {
   timestamp: number;
 }
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-
-function getRating(
-  name: string,
-  value: number
-): 'good' | 'needs-improvement' | 'poor' {
+function getRating(name: string, value: number): PerformanceRating {
   const thresholds = {
     LCP: { good: 2500, poor: 4000 },
     FID: { good: 100, poor: 300 },
@@ -40,15 +39,16 @@ function getRating(
   return 'poor';
 }
 
+function getEmojiForRating(rating: PerformanceRating): string {
+  if (rating === 'good') return '✅';
+  if (rating === 'needs-improvement') return '⚠️';
+  return '❌';
+}
+
 function sendToAnalytics(metric: PerformanceMetric) {
   if (isDevelopment) {
     // En desarrollo, solo log a consola
-    const emoji =
-      metric.rating === 'good'
-        ? '✅'
-        : metric.rating === 'needs-improvement'
-          ? '⚠️'
-          : '❌';
+    const emoji = getEmojiForRating(metric.rating);
     console.log(
       `${emoji} Performance: ${metric.name} = ${metric.value.toFixed(2)}ms (${metric.rating})`
     );
@@ -57,8 +57,8 @@ function sendToAnalytics(metric: PerformanceMetric) {
 
   // En producción, enviar a tu servicio de analytics
   // Ejemplo con Google Analytics:
-  if (typeof window !== 'undefined' && (window as any).gtag) {
-    (window as any).gtag('event', metric.name, {
+  if (typeof globalThis !== 'undefined' && (globalThis as any).gtag) {
+    (globalThis as any).gtag('event', metric.name, {
       value: Math.round(metric.value),
       metric_rating: metric.rating,
       metric_delta: metric.value
@@ -70,13 +70,13 @@ function sendToAnalytics(metric: PerformanceMetric) {
  * Observa Web Vitals usando Performance Observer API
  */
 export function initPerformanceMonitoring() {
-  if (typeof window === 'undefined') return;
+  if (typeof globalThis === 'undefined') return;
 
   // LCP - Largest Contentful Paint
   try {
     const lcpObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
-      const lastEntry = entries[entries.length - 1] as any;
+      const lastEntry = entries.at(-1) as any;
 
       const metric: PerformanceMetric = {
         name: 'LCP',
@@ -97,16 +97,16 @@ export function initPerformanceMonitoring() {
   try {
     const fidObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry: any) => {
+      for (const entry of entries) {
         const metric: PerformanceMetric = {
           name: 'FID',
-          value: entry.processingStart - entry.startTime,
-          rating: getRating('FID', entry.processingStart - entry.startTime),
+          value: (entry as any).processingStart - entry.startTime,
+          rating: getRating('FID', (entry as any).processingStart - entry.startTime),
           timestamp: Date.now()
         };
 
         sendToAnalytics(metric);
-      });
+      }
     });
 
     fidObserver.observe({ type: 'first-input', buffered: true });
@@ -119,11 +119,11 @@ export function initPerformanceMonitoring() {
     let clsValue = 0;
     const clsObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry: any) => {
-        if (!entry.hadRecentInput) {
-          clsValue += entry.value;
+      for (const entry of entries) {
+        if (!(entry as any).hadRecentInput) {
+          clsValue += (entry as any).value;
         }
-      });
+      }
 
       const metric: PerformanceMetric = {
         name: 'CLS',
@@ -144,16 +144,16 @@ export function initPerformanceMonitoring() {
   try {
     const fcpObserver = new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry: any) => {
+      for (const entry of entries) {
         const metric: PerformanceMetric = {
           name: 'FCP',
-          value: entry.startTime,
-          rating: getRating('FCP', entry.startTime),
+          value: (entry as any).startTime,
+          rating: getRating('FCP', (entry as any).startTime),
           timestamp: Date.now()
         };
 
         sendToAnalytics(metric);
-      });
+      }
     });
 
     fcpObserver.observe({ type: 'paint', buffered: true });
@@ -185,7 +185,8 @@ export function initPerformanceMonitoring() {
 }
 
 export function measureComponentPerformance(componentName: string) {
-  if (typeof window === 'undefined') return { start: () => {}, end: () => {} };
+  if (typeof globalThis === 'undefined')
+    return { start: () => {}, end: () => {} };
 
   let startTime: number;
 
@@ -201,18 +202,21 @@ export function measureComponentPerformance(componentName: string) {
           `⏱️ ${componentName} render time: ${duration.toFixed(2)}ms`
         );
       }
-
       // Enviar a analytics si es muy lento (>100ms)
       if (duration > 100) {
+        let rating: PerformanceRating;
+        if (duration > 500) {
+          rating = 'poor';
+        } else if (duration > 200) {
+          rating = 'needs-improvement';
+        } else {
+          rating = 'good';
+        }
+
         sendToAnalytics({
           name: `Component_${componentName}`,
           value: duration,
-          rating:
-            duration > 500
-              ? 'poor'
-              : duration > 200
-                ? 'needs-improvement'
-                : 'good',
+          rating,
           timestamp: Date.now()
         });
       }
@@ -221,8 +225,7 @@ export function measureComponentPerformance(componentName: string) {
 }
 
 export function getCurrentPerformanceMetrics() {
-  if (typeof window === 'undefined') return null;
-
+  if (typeof globalThis === 'undefined') return null;
   const navigation = performance.getEntriesByType('navigation')[0] as any;
   const paint = performance.getEntriesByType('paint');
 

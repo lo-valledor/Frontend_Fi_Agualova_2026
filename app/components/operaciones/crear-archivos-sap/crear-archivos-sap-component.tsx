@@ -70,7 +70,7 @@ export default function CrearArchivosSapComponent() {
       });
 
       // Create download link
-      const url = window.URL.createObjectURL(blob);
+      const url = globalThis.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
@@ -83,7 +83,7 @@ export default function CrearArchivosSapComponent() {
       // Cleanup after a small delay
       setTimeout(() => {
         document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+        globalThis.URL.revokeObjectURL(url);
       }, 100);
 
       toast.success(`Archivo "${filename}" descargado exitosamente`);
@@ -118,7 +118,7 @@ export default function CrearArchivosSapComponent() {
       });
 
       // Create download link
-      const url = window.URL.createObjectURL(blob);
+      const url = globalThis.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = filename;
@@ -131,7 +131,7 @@ export default function CrearArchivosSapComponent() {
       // Cleanup after a small delay
       setTimeout(() => {
         document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+        globalThis.URL.revokeObjectURL(url);
       }, 100);
 
       toast.success(`Archivo "${filename}" descargado exitosamente`);

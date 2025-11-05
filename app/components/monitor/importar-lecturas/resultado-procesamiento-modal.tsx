@@ -48,7 +48,7 @@ export function ResultadoProcesamientoModal({
   isOpen,
   onClose,
   resultado
-}: ResultadoProcesamientoModalProps) {
+}: Readonly<ResultadoProcesamientoModalProps>) {
   if (!resultado) return null;
 
   // Función para convertir fecha UTC a zona horaria local
@@ -62,7 +62,7 @@ export function ResultadoProcesamientoModal({
       const fecha = new Date(fechaUTC);
 
       // Verificar si la fecha es válida
-      if (isNaN(fecha.getTime())) {
+      if (Number.isNaN(fecha.getTime())) {
         return fechaString; // Si no se puede parsear, retornar el original
       }
 
@@ -111,7 +111,6 @@ export function ResultadoProcesamientoModal({
         'Mensaje'
       ];
 
-      // Preparar datos de detalles
       const datosDetalles = resultado.detalles.map(detalle => [
         detalle.numeroSerie,
         detalle.tarifa,
@@ -122,7 +121,6 @@ export function ResultadoProcesamientoModal({
         detalle.mensaje || '-'
       ]);
 
-      // Combinar todo
       const datosCompletos = [
         ...resumenData,
         encabezadosDetalles,

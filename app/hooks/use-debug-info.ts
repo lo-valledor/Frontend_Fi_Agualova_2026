@@ -65,12 +65,14 @@ export const useDebugInfo = () => {
     }
 
     // Verificar si XMLHttpRequest ha sido modificado
-    if (window.XMLHttpRequest.toString().includes('native code') === false) {
+    if (
+      globalThis.XMLHttpRequest.toString().includes('native code') === false
+    ) {
       evidence.push('XMLHttpRequest modificado (posible proxy)');
     }
 
     // Verificar headers personalizados en fetch
-    const originalFetch = window.fetch;
+    const originalFetch = globalThis.fetch;
     if (originalFetch.toString().includes('native code') === false) {
       evidence.push('fetch() modificado (posible interceptor)');
     }
@@ -90,7 +92,7 @@ export const useDebugInfo = () => {
 
       const info: DebugInfo = {
         userAgent,
-        url: window.location.href,
+        url: globalThis.location.href,
         sessionStorageSupported: typeof Storage !== 'undefined',
         hasToken: !!token,
         tokenPreview: token ? `${token.substring(0, 20)}...` : undefined,

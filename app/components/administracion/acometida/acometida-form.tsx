@@ -169,46 +169,64 @@ export function AcometidaForm({
     contratosDisponibles
   ]);
 
+  // Helper functions
+  const validateFormData = (data: any) => {
+    const empalmeId = Number(data.empalmeId);
+    const nichoId = Number(data.nichoId);
+    const codigo = data.codigo.trim();
+    const limitePotencia = data.limitePotencia
+      ? Number(data.limitePotencia)
+      : 0;
+    const contratoId = data.contratoId.trim();
+
+    if (Number.isNaN(empalmeId) || empalmeId <= 0) {
+      toast.error('Empalme no válido');
+      return null;
+    }
+    if (Number.isNaN(nichoId) || nichoId <= 0) {
+      toast.error('Nicho no válido');
+      return null;
+    }
+    if (codigo.length === 0) {
+      toast.error('Código de acometida no válido');
+      return null;
+    }
+    if (Number.isNaN(limitePotencia) || limitePotencia < 0) {
+      toast.error('Límite de potencia no válido');
+      return null;
+    }
+    if (!isEdit && (!contratoId || contratoId.length === 0)) {
+      toast.error('Debe seleccionar un contrato');
+      return null;
+    }
+
+    const contratoIdFinal = isEdit
+      ? contratoId || acometida?.contratoId || ''
+      : contratoId;
+
+    return { empalmeId, nichoId, codigo, limitePotencia, contratoIdFinal };
+  };
+
+  const handleError = (error: any) => {
+    if (error.response?.status === 400) {
+      const errorMessage =
+        error.response?.data?.message ||
+        'Datos inválidos enviados al servidor';
+      toast.error(`Error de validación: ${errorMessage}`);
+    } else if (error.response?.status === 500) {
+      toast.error('Error interno del servidor');
+    } else {
+      toast.error('Error al guardar la acometida');
+    }
+  };
+
   // Handlers
   const handleSubmit = async (data: any) => {
     try {
-      // Validación adicional antes del envío
-      const empalmeId = Number(data.empalmeId);
-      const nichoId = Number(data.nichoId);
-      const codigo = data.codigo.trim();
-      const limitePotencia = data.limitePotencia
-        ? Number(data.limitePotencia)
-        : 0;
-      const contratoId = data.contratoId.trim();
+      const validated = validateFormData(data);
+      if (!validated) return;
 
-      // Validación adicional
-      if (isNaN(empalmeId) || empalmeId <= 0) {
-        toast.error('Empalme no válido');
-        return;
-      }
-      if (isNaN(nichoId) || nichoId <= 0) {
-        toast.error('Nicho no válido');
-        return;
-      }
-      if (codigo.length === 0) {
-        toast.error('Código de acometida no válido');
-        return;
-      }
-      if (isNaN(limitePotencia) || limitePotencia < 0) {
-        toast.error('Límite de potencia no válido');
-        return;
-      }
-
-      // En creación, el contratoId es obligatorio
-      if (!isEdit && (!contratoId || contratoId.length === 0)) {
-        toast.error('Debe seleccionar un contrato');
-        return;
-      }
-
-      // En edición, si no hay contratoId en el formulario, usar el original
-      const contratoIdFinal = isEdit
-        ? contratoId || acometida?.contratoId || ''
-        : contratoId;
+      const { empalmeId, nichoId, codigo, limitePotencia, contratoIdFinal } = validated;
 
       if (isEdit && acometida) {
         const submitData: ActualizarAcometidaProps = {
@@ -219,7 +237,6 @@ export function AcometidaForm({
           contratoId: contratoIdFinal,
           limitePotencia
         };
-
         await onSubmit(submitData);
       } else {
         const submitData: CrearAcometidaProps = {
@@ -230,25 +247,13 @@ export function AcometidaForm({
           codigo,
           limitePotencia
         };
-
         await onSubmit(submitData);
       }
 
       form.reset();
       onClose();
     } catch (error: any) {
-
-      // Manejo más específico de errores
-      if (error.response?.status === 400) {
-        const errorMessage =
-          error.response?.data?.message ||
-          'Datos inválidos enviados al servidor';
-        toast.error(`Error de validación: ${errorMessage}`);
-      } else if (error.response?.status === 500) {
-        toast.error('Error interno del servidor');
-      } else {
-        toast.error('Error al guardar la acometida');
-      }
+      handleError(error);
     }
   };
 
@@ -776,7 +781,7 @@ export function AcometidaForm({
                         </TableCell>
                         <TableCell className='font-medium'>
                           <div className='flex items-center gap-2'>
-                            <User className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <User className='h-4 w-4 text-muted-foreground shrink-0' />
                             <div className='min-w-0'>
                               <p className='truncate'>
                                 {c.clienteNombre} {c.clienteApellidos}
@@ -786,7 +791,7 @@ export function AcometidaForm({
                         </TableCell>
                         <TableCell>
                           <div className='flex items-center gap-2'>
-                            <Building2 className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                            <Building2 className='h-4 w-4 text-muted-foreground shrink-0' />
                             <p className='truncate'>{c.empresa}</p>
                           </div>
                         </TableCell>

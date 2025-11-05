@@ -89,7 +89,7 @@ export default function CargoFacturableModalForm({
   tarifas,
   tiposMedidor,
   onSuccess
-}: CargoFacturableModalFormProps) {
+}: Readonly<CargoFacturableModalFormProps>) {
   const { theme } = useTheme();
   const form = useForm({
     defaultValues: {
@@ -167,14 +167,14 @@ export default function CargoFacturableModalForm({
             .trim()
             .toLowerCase()
             .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '');
+            .replaceAll(/[\u0300-\u036f]/g, '');
           const found = list.find(
             item =>
               item.nombre
                 .trim()
                 .toLowerCase()
                 .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '') === normalizedName
+                .replaceAll(/[\u0300-\u036f]/g, '') === normalizedName
           );
           return found?.id || 0;
         };
@@ -253,7 +253,7 @@ export default function CargoFacturableModalForm({
       onClose();
       onSuccess();
     } catch (error: any) {
-      toast.error('Error al guardar el cargo facturable', error as any);
+      toast.error('Error al guardar el cargo facturable', error);
     }
   };
 

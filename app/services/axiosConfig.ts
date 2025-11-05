@@ -83,7 +83,7 @@ axiosInstance.interceptors.response.use(
             'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
           );
           localStorage.removeItem('token');
-          window.location.href = '/session-expired';
+          globalThis.location.href = '/session-expired';
           return Promise.reject(error);
         }
 
@@ -106,7 +106,7 @@ axiosInstance.interceptors.response.use(
             'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
           );
           localStorage.removeItem('token');
-          window.location.href = '/session-expired';
+          globalThis.location.href = '/session-expired';
           return Promise.reject(refreshError);
         }
       }

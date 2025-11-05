@@ -104,9 +104,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
         esVisible: formData.visible
       };
 
-
       const result = await rolesPermisosService.crearMenu(menuPayload);
-
 
       if (result.error) {
         toast.error(result.error, {
@@ -121,7 +119,8 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
       }
     } catch (error) {
       toast.error('Error inesperado al crear el menú', {
-        description: error instanceof Error ? error.message : 'Error desconocido'
+        description:
+          error instanceof Error ? error.message : 'Error desconocido'
       });
     } finally {
       setIsLoading(false);
@@ -244,7 +243,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
                         onChange={e =>
                           setFormData({
                             ...formData,
-                            orden: parseInt(e.target.value) || 1
+                            orden: Number.parseInt(e.target.value) || 1
                           })
                         }
                         min={1}
@@ -351,7 +350,7 @@ const MenusTabComponent: React.FC<MenusTabComponentProps> = ({
                   onChange={e =>
                     setFormData({
                       ...formData,
-                      orden: parseInt(e.target.value) || 1
+                      orden: Number.parseInt(e.target.value) || 1
                     })
                   }
                   min={1}

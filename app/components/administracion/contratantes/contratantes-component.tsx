@@ -63,7 +63,7 @@ export default function ContratantesComponent({
   const filterOptions = useMemo((): FilterOptions => {
     const comunasNombres = [
       ...new Set(contratantesList.map(c => c.comuna).filter(Boolean))
-    ].sort();
+    ].sort((a, b) => a.localeCompare(b));
 
     return {
       comunas: comunasNombres
@@ -198,9 +198,9 @@ export default function ContratantesComponent({
                 size='sm'
                 disabled={!hasCreatePermission}
                 title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear contratantes'
-                    : ''
+                  hasCreatePermission
+                    ? ''
+                    : 'No tiene permisos para crear contratantes'
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />

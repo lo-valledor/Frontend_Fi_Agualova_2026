@@ -188,7 +188,7 @@ export default function MonitorNichos({
   return (
     <div className='w-full h-full flex flex-col'>
       {/* Header compacto para modal */}
-      <div className='flex-shrink-0 border-b border-border pb-4 mb-4 space-y-3'>
+      <div className='shrink-0 border-b border-border pb-4 mb-4 space-y-3'>
         {/* Primera fila: Badges y botón actualizar */}
         <div className='flex items-center justify-between gap-3 flex-wrap'>
           <div className='flex items-center gap-2 flex-wrap'>

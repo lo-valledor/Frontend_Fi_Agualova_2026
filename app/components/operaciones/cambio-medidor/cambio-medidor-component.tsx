@@ -313,7 +313,7 @@ export default function CambioMedidorComponent() {
         acometidaCodigo: detalleMedidorAntiguo.acometidaDetalle,
         usuario: user.username,
         fechaCierre: fechaPrimeraLectura, // Usamos la misma fecha para ambos campos
-        codigoContrato: codigoContrato ? parseInt(codigoContrato) : 0
+        codigoContrato: codigoContrato ? Number.parseInt(codigoContrato) : 0
       };
 
       const response = await api.post(
