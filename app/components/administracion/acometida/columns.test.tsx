@@ -1,0 +1,47 @@
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { columns } from './columns';
+import type { Acometida } from '~/types/administracion';
+import { DataTable } from '~/components/data-table/data-table';
+
+const mockOnEdit = vi.fn();
+
+const mockAcometidas: Acometida[] = [
+  {
+    acometidaId: 1,
+    codigo: 'ACO-001',
+    ubicacion: 'Ubicacion 1',
+    contratoId: 'CON-001',
+    empalmeDescripcion: 'Empalme 1',
+    nichoDescripcion: 'Nicho 1',
+    sectorDescripcion: 'Sector 1',
+    limitePotencia: 100,
+    numeroMedidor: 'MED-001'
+  }
+];
+
+describe('Acometida Columns', () => {
+  it('should call onEdit when the edit button is clicked', async () => {
+    const user = userEvent.setup();
+    const tableColumns = columns({ onEdit: mockOnEdit, canEdit: true });
+
+    render(
+      <DataTable
+        columns={tableColumns}
+        data={mockAcometidas}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        globalFilter={{
+          value: '',
+          onChange: () => {}
+        }}
+      />
+    );
+
+    const editButton = screen.getByRole('button', { name: /editar/i });
+    await user.click(editButton);
+
+    expect(mockOnEdit).toHaveBeenCalledWith(mockAcometidas[0]);
+  });
+});
