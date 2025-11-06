@@ -79,6 +79,7 @@ export default function MedidoresComponent({
     setFilters(newFilters);
   }, []);
 
+  // A
   const handleClearFilters = useCallback(() => {
     setFilters({
       marca: '',
