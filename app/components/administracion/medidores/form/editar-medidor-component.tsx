@@ -157,6 +157,9 @@ export default function EditarMedidorComponent({
   }, [medidor, marca, tipoMedidor, form]);
 
   const handleFormSubmit = async (data: MedidorFormData) => {
+    console.log('🔵 INICIO - handleFormSubmit ejecutándose');
+    console.log('Datos del formulario:', data);
+
     // Validaciones de campos requeridos
     if (!data.marcaCodigo) {
       toast.error('La marca es obligatoria');
@@ -235,7 +238,17 @@ export default function EditarMedidorComponent({
           : ''
       };
 
+      console.log('🟡 Datos a enviar al backend:', submitData);
+      console.log('🟡 Llamando a modificarMedidor...');
+
       const result = await administracionService.modificarMedidor(submitData);
+
+      // Debug: log para verificar qué se está recibiendo del backend
+      console.log('=== RESPUESTA DEL BACKEND (MODIFICAR MEDIDOR) ===');
+      console.log('Datos completos:', JSON.stringify(result, null, 2));
+      console.log('Tiene error:', !!result.error);
+      console.log('Data:', result.data);
+      console.log('==================================================');
 
       if (result.error) {
         toast.error(result.error || 'Error al modificar el medidor');
@@ -249,11 +262,22 @@ export default function EditarMedidorComponent({
         onSuccess(medidorId);
       }
     } catch (error: any) {
-      console.error('Error al modificar el medidor:', error);
+      console.error('=== ERROR AL MODIFICAR MEDIDOR ===');
+      console.error('Error completo:', error);
+      console.error('Mensaje:', error?.message);
+      console.error('Response:', error?.response?.data);
+      console.error('==================================');
+
+      // Determinar el mensaje de error apropiado
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        error?.message ||
+        'Error inesperado al modificar el medidor';
+
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
-
-      toast.error('Error al modificar el medidor');
     }
   };
 
