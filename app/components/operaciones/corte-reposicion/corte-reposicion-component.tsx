@@ -1,4 +1,5 @@
 import {
+  AlertTriangle,
   ArrowUpToLine,
   CheckCircle2,
   ChevronDown,
@@ -8,14 +9,13 @@ import {
   HelpCircle,
   ListChecks,
   Play,
-  Search,
-  AlertTriangle
+  Search
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
@@ -39,26 +39,26 @@ import {
   AlertDialogTitle
 } from '~/components/ui/alert-dialog';
 import api from '~/lib/api';
-import type {
-  ConsultarMantenedorRevisionCorte,
-  TotalesCorteReposicion
-} from '~/types/operaciones';
+import type { ConsultarMantenedorRevisionCorte } from '~/types/operaciones';
 
 import { columns } from './columns';
 
+interface RevisionStats {
+  codigo: string;
+  cantidad: number;
+}
 interface CorteReposicionComponentProps {
-  totalesData: TotalesCorteReposicion[];
   mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
 }
 
 export default function CorteReposicionComponent({
-  totalesData,
   mantenedorCorteData: initialMantenedorCorteData
 }: Readonly<CorteReposicionComponentProps>) {
   const [isRevisionOpen, setIsRevisionOpen] = useState(true);
   const [mantenedorCorteData, setMantenedorCorteData] = useState<
     ConsultarMantenedorRevisionCorte[]
   >(initialMantenedorCorteData);
+  const [revisionStats, setRevisionStats] = useState<RevisionStats[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   // Estados de loading para cada botón
@@ -79,10 +79,28 @@ export default function CorteReposicionComponent({
   const hasEditPermission = canEdit(route);
   const hasDeletePermission = canDelete(route);
 
-  // Obtener cantidad por código
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const statsRes = await api.get<RevisionStats[]>(
+          'consulta-registros-revision'
+        );
+        if (Array.isArray(statsRes.data)) {
+          setRevisionStats(statsRes.data);
+        }
+      } catch (error) {
+        console.error('Error fetching revision stats', error);
+      }
+    };
+    void fetchStats();
+  }, []);
+
+  // Obtener cantidad por código - calculado dinámicamente desde los datos actuales
   const getCantidadPorCodigo = (codigo: string): number => {
-    const item = totalesData.find(item => item.codigo === codigo);
-    return item ? item.cantidad : 0;
+    const stat = revisionStats.find(
+      item => String(item.codigo) === String(codigo)
+    );
+    return stat ? stat.cantidad : 0;
   };
 
   const handleExportarExcel = async () => {
@@ -159,12 +177,20 @@ export default function CorteReposicionComponent({
   const handleBuscar = async () => {
     setIsSearching(true);
     try {
-      const res = await api.get<ConsultarMantenedorRevisionCorte[]>(
-        'consulta-mantenedor-revision-corte'
-      );
-      if (Array.isArray(res.data)) {
-        setMantenedorCorteData(res.data);
-        toast.success(`Se encontraron ${res.data.length} registros`);
+      const [mantenedorRes, statsRes] = await Promise.all([
+        api.get<ConsultarMantenedorRevisionCorte[]>(
+          'consulta-mantenedor-revision-corte'
+        ),
+        api.get<RevisionStats[]>('consulta-registros-revision')
+      ]);
+
+      if (Array.isArray(mantenedorRes.data)) {
+        setMantenedorCorteData(mantenedorRes.data);
+        toast.success(`Se encontraron ${mantenedorRes.data.length} registros`);
+      }
+
+      if (Array.isArray(statsRes.data)) {
+        setRevisionStats(statsRes.data);
       }
     } catch (error) {
       toast.error(
@@ -512,8 +538,7 @@ export default function CorteReposicionComponent({
                     Mantenedor de Revisión de Corte
                   </h3>
                   <p className='text-sm text-muted-foreground'>
-                    Listado de registros de mantenimiento (
-                    {mantenedorCorteData.length} registros)
+                    Listado de registros de mantenimiento
                   </p>
                 </div>
               </div>

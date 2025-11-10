@@ -28,7 +28,7 @@ export async function clientLoader({}: Route.ClientActionArgs) {
 export default function CorteReposicion({
   loaderData
 }: Readonly<Route.ComponentProps>) {
-  const { totalesData, mantenedorCorteData } = loaderData;
+  const { mantenedorCorteData } = loaderData;
 
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
@@ -38,10 +38,7 @@ export default function CorteReposicion({
   return (
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
-      <CorteReposicionComponent
-        totalesData={totalesData}
-        mantenedorCorteData={mantenedorCorteData}
-      />
+      <CorteReposicionComponent mantenedorCorteData={mantenedorCorteData} />
     </div>
   );
 }

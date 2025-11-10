@@ -234,9 +234,9 @@ export default function EditarMedidor({
               </AlertTitle>
               <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
                 {medidorModificado?.id && (
-                  <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
+                  <div className='flex items-center justify-between bg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
                     <div>
-                      <p className='font-medium'>ID del Medidor:</p>
+                      <p className='font-medium'>Código del Medidor:</p>
                       <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
                         {medidorModificado.id}
                       </p>

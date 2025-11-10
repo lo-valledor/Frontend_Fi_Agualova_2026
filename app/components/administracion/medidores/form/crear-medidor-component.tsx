@@ -34,8 +34,7 @@ interface EstadoMedidor {
 }
 
 interface MedidorCreado {
-  id: string | number | null;
-  codigo?: string | number | null;
+  codigo: string | number | null;
   fecha: string;
 }
 
@@ -240,21 +239,17 @@ export default function CrearMedidorComponent({
         return;
       }
 
-      // Buscar el código/id del medidor en diferentes estructuras posibles
-      let medidorId: string | number | null = null;
+      // Extraer código del medidor de la respuesta del backend
       let medidorCodigo: string | number | null = null;
 
       if ((result.data as any)?.codigoMedidor) {
         medidorCodigo = (result.data as any).codigoMedidor;
       } else if ((result.data as any)?.codigo) {
         medidorCodigo = (result.data as any).codigo;
-      }
-      if (result.data?.id) {
-        medidorId = result.data.id;
+      } else if (result.data?.id) {
+        medidorCodigo = result.data.id;
       } else if (result.data && typeof result.data === 'number') {
-        medidorId = result.data;
-      } else if (result.data && typeof result.data === 'string') {
-        medidorId = result.data;
+        medidorCodigo = result.data;
       }
 
       // Preparar datos del medidor creado y mostrar modal
@@ -267,7 +262,6 @@ export default function CrearMedidorComponent({
       });
 
       setMedidorCreado({
-        id: medidorId,
         codigo: medidorCodigo,
         fecha: fechaActual
       });
@@ -568,7 +562,7 @@ export default function CrearMedidorComponent({
                 <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
                   <div className='space-y-3'>
                     {medidorCreado?.codigo && (
-                      <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
+                      <div className='flex items-center justify-between bg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
                         <div>
                           <p className='font-medium'>Código del Medidor:</p>
                           <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
@@ -589,23 +583,13 @@ export default function CrearMedidorComponent({
                       </div>
                     )}
 
-                    {medidorCreado?.id && (
-                      <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
-                        <div>
-                          <p className='font-medium'>ID del Medidor:</p>
-                          <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
-                            {medidorCreado.id}
-                          </p>
-                        </div>
-                        <Button
-                          size='sm'
-                          variant='outline'
-                          onClick={() => copiarCodigoMedidor(medidorCreado.id!)}
-                          className='gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/50'
-                        >
-                          <Copy className='h-4 w-4' />
-                          Copiar
-                        </Button>
+                    {!medidorCreado?.codigo && (
+                      <div className='bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-xl border border-yellow-200 dark:border-yellow-700'>
+                        <p className='text-sm text-yellow-800 dark:text-yellow-200'>
+                          ⚠️ No se pudo obtener el código del medidor. El medidor
+                          fue creado correctamente, pero verifica el listado de
+                          medidores para encontrarlo.
+                        </p>
                       </div>
                     )}
 
@@ -613,7 +597,7 @@ export default function CrearMedidorComponent({
                       <strong>Fecha de creación:</strong> {medidorCreado?.fecha}
                     </p>
                     <p className='mt-2 text-green-700 dark:text-green-300'>
-                      💡 <strong>Importante:</strong> Guarde este ID para
+                      💡 <strong>Importante:</strong> Guarde este código para
                       futuras referencias. Puede utilizarlo para buscar y
                       gestionar este medidor.
                     </p>
