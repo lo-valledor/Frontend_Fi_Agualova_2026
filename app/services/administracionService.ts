@@ -807,12 +807,31 @@ class AdministracionService {
     contratoData: CrearContratoProps
   ): Promise<AdministracionServiceResponse<any>> {
     try {
+      // 🐛 DEBUG: Logs del servicio
+      console.log('🔧 [administracionService.crearContrato]');
+      console.log('📍 URL:', '/contrato/crear');
+      console.log('📦 Payload:', JSON.stringify(contratoData, null, 2));
+      console.log('🔑 Campos enviados:', Object.keys(contratoData));
+
       const response = await api.post('/contrato/crear', contratoData);
+
+      console.log('✅ Respuesta exitosa:', response.data);
+
       return {
         data: response.data,
         error: null
       };
     } catch (error: any) {
+      // 🐛 DEBUG: Logs de error detallados
+      console.error('❌ [administracionService.crearContrato] ERROR');
+      console.error('📍 Status:', error.response?.status);
+      console.error('📍 Status Text:', error.response?.statusText);
+      console.error('📍 Response Data:', error.response?.data);
+      console.error('📍 Request URL:', error.config?.url);
+      console.error('📍 Request Method:', error.config?.method);
+      console.error('📍 Request Headers:', error.config?.headers);
+      console.error('📍 Error completo:', error);
+
       return {
         data: null,
         error:

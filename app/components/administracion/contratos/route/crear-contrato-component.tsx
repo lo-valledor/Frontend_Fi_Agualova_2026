@@ -623,6 +623,17 @@ export default function CrearContratoComponent({
         return;
       }
 
+      // 🐛 DEBUG: Mostrar JSON que se enviará
+      console.log('=== DEBUG: Crear Contrato ===');
+      console.log(
+        '📤 JSON enviado al servidor:',
+        JSON.stringify(submitData, null, 2)
+      );
+      console.log('📋 Datos del formulario:', formData);
+      console.log('👤 Entidades validadas:', entities);
+      console.log('🏢 Código contrato madre:', madreCodigoContrato);
+      console.log('============================');
+
       const result = await administracionService.crearContrato(submitData);
 
       if (result.error) {

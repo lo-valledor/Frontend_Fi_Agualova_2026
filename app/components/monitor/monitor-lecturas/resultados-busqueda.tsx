@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronUp,
   Eye,
+  FileUp,
   Gauge,
   Grid3X3,
   History,
@@ -134,6 +135,15 @@ const getMeterStatus = (claveHtml: string) => {
   return statusMap[claveHtml as keyof typeof statusMap] || statusMap.SINLEC;
 };
 
+// Helper to detect if a reading is imported but not validated
+const isImportedReading = (medidor: any): boolean => {
+  // A reading is considered "imported" if it has consumo but no fechaLectura or no clave
+  return (
+    (medidor.consumo && !medidor.fechaLectura) ||
+    (medidor.consumo && !medidor.clave)
+  );
+};
+
 // Calculate severity stats for a nicho (for the stats display)
 const calculateNichoStats = (nicho: NichoBusqueda) => {
   let total = 0;
@@ -142,11 +152,17 @@ const calculateNichoStats = (nicho: NichoBusqueda) => {
   let info = 0;
   let normal = 0;
   let sinlec = 0;
+  let imported = 0;
 
   for (const fila of nicho.filas) {
     for (const medidor of fila.medidores) {
       total++;
       const status = getMeterStatus(medidor.claveHtml);
+
+      // Check if it's an imported reading
+      if (isImportedReading(medidor)) {
+        imported++;
+      }
 
       if (status.severity === 4) critical++;
       else if (status.severity === 3) warning++;
@@ -156,7 +172,7 @@ const calculateNichoStats = (nicho: NichoBusqueda) => {
     }
   }
 
-  return { total, critical, warning, info, normal, sinlec };
+  return { total, critical, warning, info, normal, sinlec, imported };
 };
 
 // Calculate total stats across all nichos
@@ -170,10 +186,19 @@ const calculateTotalStats = (nichos: NichoBusqueda[]) => {
         warning: acc.warning + stats.warning,
         info: acc.info + stats.info,
         normal: acc.normal + stats.normal,
-        sinlec: acc.sinlec + stats.sinlec
+        sinlec: acc.sinlec + stats.sinlec,
+        imported: acc.imported + stats.imported
       };
     },
-    { total: 0, critical: 0, warning: 0, info: 0, normal: 0, sinlec: 0 }
+    {
+      total: 0,
+      critical: 0,
+      warning: 0,
+      info: 0,
+      normal: 0,
+      sinlec: 0,
+      imported: 0
+    }
   );
 };
 
@@ -212,6 +237,7 @@ const MeterCard = ({
   onRefresh: any;
 }) => {
   const status = getMeterStatus(medidor.claveHtml);
+  const isImported = isImportedReading(medidor);
 
   return (
     <motion.div
@@ -221,7 +247,11 @@ const MeterCard = ({
       whileHover={{ y: -2 }}
     >
       <Card
-        className={`overflow-hidden transition-all duration-200 hover:shadow-lg border-l-4 ${status.borderColor}`}
+        className={cn(
+          'overflow-hidden transition-all duration-200 hover:shadow-lg border-l-4',
+          status.borderColor,
+          isImported && 'bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50'
+        )}
       >
         <CardContent className='p-2'>
           <div className='flex justify-between items-start'>
@@ -329,13 +359,15 @@ const MeterRowDetailed = ({
   onRefresh: any;
 }) => {
   const status = getMeterStatus(medidor.claveHtml);
+  const isImported = isImportedReading(medidor);
 
   return (
     <div
       className={cn(
         'group grid items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl border hover:bg-muted/50 transition-all duration-200 border-l-4',
         'grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]',
-        status.borderColor
+        status.borderColor,
+        isImported && 'bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50'
       )}
     >
       {/* Status Indicator & Name/ID */}
@@ -1018,6 +1050,48 @@ export default function ResultadosBusqueda({
                                     }}
                                     transition={{ duration: 0.5, delay: 0.4 }}
                                     className='h-full bg-emerald-500 rounded-full'
+                                  />
+                                </div>
+                              </motion.div>
+
+                              {/* Lecturas Importadas */}
+                              <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.3, delay: 0.35 }}
+                                className='group bg-linear-to-r from-pink-50 to-transparent dark:from-pink-950/20 dark:to-transparent border-l-4 border-pink-400 rounded-lg p-3 sm:p-4 hover:shadow-md transition-all'
+                              >
+                                <div className='flex items-center justify-between gap-2'>
+                                  <div className='flex items-center gap-2 sm:gap-3 min-w-0 flex-1'>
+                                    <div className='p-1.5 sm:p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg shrink-0'>
+                                      <FileUp className='h-4 w-4 sm:h-5 sm:w-5 text-pink-500' />
+                                    </div>
+                                    <div className='min-w-0'>
+                                      <p className='font-semibold text-sm sm:text-base text-pink-700 dark:text-pink-400 truncate'>
+                                        Lecturas Importadas
+                                      </p>
+                                      <p className='text-[10px] sm:text-xs text-pink-600/70 dark:text-pink-400/70 line-clamp-1'>
+                                        Requieren autovalidación
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className='text-right shrink-0'>
+                                    <p className='text-xl sm:text-2xl md:text-3xl font-bold text-pink-600 dark:text-pink-400'>
+                                      <NumberFlow value={stats.imported} />
+                                    </p>
+                                    <p className='text-xs sm:text-sm text-pink-600/70 dark:text-pink-400/70'>
+                                      {percentage(stats.imported)}%
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className='mt-2 sm:mt-3 h-1.5 sm:h-2 bg-pink-100 dark:bg-pink-900/20 rounded-full overflow-hidden'>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{
+                                      width: `${percentage(stats.imported)}%`
+                                    }}
+                                    transition={{ duration: 0.5, delay: 0.45 }}
+                                    className='h-full bg-pink-500 rounded-full'
                                   />
                                 </div>
                               </motion.div>
