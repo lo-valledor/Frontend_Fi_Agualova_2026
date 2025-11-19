@@ -195,10 +195,7 @@ export function AcometidaForm({
       toast.error('Límite de potencia no válido');
       return null;
     }
-    if (!isEdit && (!contratoId || contratoId.length === 0)) {
-      toast.error('Debe seleccionar un contrato');
-      return null;
-    }
+    // El contrato es opcional para nuevas acometidas
 
     const contratoIdFinal = isEdit
       ? contratoId || acometida?.contratoId || ''
@@ -368,9 +365,9 @@ export function AcometidaForm({
                     name='contratoId'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className='text-sm font-medium'>
-                          Contrato *
-                        </FormLabel>
+                <FormLabel className='text-sm font-medium'>
+                          Contrato
+                </FormLabel>
                         <FormControl>
                           <div className='flex gap-2'>
                             <Input

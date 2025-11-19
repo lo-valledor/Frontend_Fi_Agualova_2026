@@ -1095,7 +1095,7 @@ export default function EditarContratoComponent({
                 <div>
                   <DialogTitle>Seleccionar Local</DialogTitle>
                   <DialogDescription>
-                    Selecciona un local de la lista
+                    Puedes seleccionar un local de la lista (opcional)
                   </DialogDescription>
                 </div>
               </div>
@@ -1392,18 +1392,16 @@ export default function EditarContratoComponent({
                   <Table style={{ width: '100%' }}>
                     <TableHeader className='sticky top-0 bg-background z-10 border-b'>
                       <TableRow>
+                        <TableHead style={{ width: 'auto', minWidth: '180px' }}>
+                          Nombre
+                        </TableHead>
+                        <TableHead style={{ width: 'auto', minWidth: '180px' }}>
+                          Apellido
+                        </TableHead>
                         <TableHead
                           style={{ width: '140px', minWidth: '140px' }}
                         >
                           RUT
-                        </TableHead>
-                        <TableHead style={{ width: 'auto', minWidth: '200px' }}>
-                          Nombre
-                        </TableHead>
-                        <TableHead
-                          style={{ width: '100px', minWidth: '100px' }}
-                        >
-                          Tipo
                         </TableHead>
                         <TableHead
                           className='text-center'
@@ -1461,32 +1459,16 @@ export default function EditarContratoComponent({
                             className='hover:bg-muted/50'
                           >
                             <TableCell
+                              className='font-medium h-[60px]'
+                              style={{ width: 'auto', minWidth: '180px' }}
+                            >
+                              {cliente.nombre || ''}
+                            </TableCell>
+                            <TableCell
                               className='font-medium font-mono text-sm h-[60px]'
                               style={{ width: '140px', minWidth: '140px' }}
                             >
                               {cliente.rut}
-                            </TableCell>
-                            <TableCell
-                              className='font-medium h-[60px]'
-                              style={{ width: 'auto', minWidth: '200px' }}
-                            >
-                              {cliente.esEmpresa
-                                ? cliente.nombre
-                                : `${cliente.nombre.trim()}`}
-                            </TableCell>
-                            <TableCell
-                              className='h-[60px]'
-                              style={{ width: '100px', minWidth: '100px' }}
-                            >
-                              <span
-                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                  cliente.esEmpresa
-                                    ? 'bg-secondary/10 text-secondary'
-                                    : 'bg-success/10 text-success'
-                                }`}
-                              >
-                                {cliente.esEmpresa ? 'Empresa' : 'Persona'}
-                              </span>
                             </TableCell>
                             <TableCell
                               className='text-center h-[60px]'

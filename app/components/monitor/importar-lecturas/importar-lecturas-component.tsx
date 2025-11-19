@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Upload,
   FileSpreadsheet,
@@ -39,7 +39,8 @@ import { ModernHeader } from '~/components/shared/modern-header';
     DialogDescription
   } from '~/components/ui/dialog';
   import { Input } from '~/components/ui/input';
-  import { Checkbox } from '~/components/ui/checkbox';
+import { Checkbox } from '~/components/ui/checkbox';
+import { useAuth } from '~/context/AuthContext';
 import type {
   EstadoProcesamiento,
   ProcesamientoResult,
@@ -78,6 +79,13 @@ export default function ImportarLecturasComponent() {
   const [forceReprocessOpen, setForceReprocessOpen] = useState(false);
   const [confirmPeriodInput, setConfirmPeriodInput] = useState('');
   const [ackRiskChecked, setAckRiskChecked] = useState(false);
+
+  // Solo administradores pueden permitir reprocesar período
+  const { user } = useAuth();
+  const isAdmin = useMemo(() => {
+    const role = (user?.role || '').toLowerCase();
+    return role === 'admin' || role === 'administrador';
+  }, [user]);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -675,14 +683,20 @@ export default function ImportarLecturasComponent() {
                 </p>
               )}
               {yaProcesado && estadoProcesamiento?.periodoActivo && (
-                <Button
-                  onClick={() => setForceReprocessOpen(true)}
-                  variant='outline'
-                  size='sm'
-                  className='w-full mt-2'
-                >
-                  Permitir reprocesar período
-                </Button>
+                isAdmin ? (
+                  <Button
+                    onClick={() => setForceReprocessOpen(true)}
+                    variant='outline'
+                    size='sm'
+                    className='w-full mt-2'
+                  >
+                    Permitir reprocesar período
+                  </Button>
+                ) : (
+                  <p className='text-xs text-center text-muted-foreground'>
+                    Reproceso permitido solo para administradores
+                  </p>
+                )
               )}
             </CardContent>
           </Card>
@@ -1005,11 +1019,16 @@ export default function ImportarLecturasComponent() {
                 </Button>
                 <Button
                   disabled={
+                    !isAdmin ||
                     !estadoProcesamiento?.periodoActivo ||
                     confirmPeriodInput !== estadoProcesamiento?.periodoActivo ||
                     !ackRiskChecked
                   }
                   onClick={() => {
+                    if (!isAdmin) {
+                      toast.error('Solo administradores pueden permitir el reprocesamiento');
+                      return;
+                    }
                     const periodo = estadoProcesamiento?.periodoActivo;
                     if (periodo) {
                       const key = `bt1bt2_processed_period:${periodo}`;

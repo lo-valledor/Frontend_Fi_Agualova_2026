@@ -51,7 +51,7 @@ import { Textarea } from '~/components/ui/textarea';
 import { administracionService, mantencionService } from '~/services';
 import type {
   ContratoFormData,
-  GetClientes,
+  GetClienteContrato,
   GetComunas,
   GetLocal,
   GetMadres,
@@ -70,7 +70,7 @@ export default function CrearContratoComponent({
   readonly locales: GetLocal[];
   readonly comunas: GetComunas[];
   readonly madres: GetMadres[];
-  readonly clientes: GetClientes[];
+  readonly clientes: GetClienteContrato[];
 }) {
   const navigate = useNavigate();
 
@@ -409,7 +409,6 @@ export default function CrearContratoComponent({
         field: formData.nombreCliente,
         message: 'El nombre del cliente es obligatorio'
       },
-      { field: formData.local, message: 'El local es obligatorio' },
       {
         field: formData.comunaEnvio,
         message: 'La comuna de envío es obligatoria'
@@ -441,12 +440,13 @@ export default function CrearContratoComponent({
       return null;
     }
 
-    const localSeleccionado = locales.find(
-      l => l.numeroLocal === formData.local
-    );
-    if (!localSeleccionado) {
+    // El local es opcional: solo validar si se ingresó alguno
+    const localSeleccionado = formData.local
+      ? locales.find(l => l.numeroLocal === formData.local)
+      : null;
+    if (formData.local && !localSeleccionado) {
       toast.error(
-        'El local seleccionado no es válido. Por favor, selecciona uno de la lista.'
+        'El local ingresado no existe en la lista. Selecciona uno válido o deja el campo vacío.'
       );
       return null;
     }
@@ -563,7 +563,7 @@ export default function CrearContratoComponent({
       tarifa: tarifaNum,
       propietario: propietarioSeleccionado.rut,
       cliente: clienteRut,
-      localId: formData.local,
+      localId: formData.local || '',
       fechaInicio: formatDateForSP(formData.fechaInicio),
       activo: formData.activo,
       direccion: safeTrim(formData.direccionEnvio),
@@ -574,7 +574,7 @@ export default function CrearContratoComponent({
       guardaCliente: '1',
       esMadre: formData.madre ? '1' : '0',
       madre: madreCodigoContrato,
-      lugar: formData.local,
+      lugar: formData.local || '',
       sinCorte: formData.liberadoCorte ? 1 : 0
     };
   };
@@ -846,9 +846,7 @@ export default function CrearContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='local'>
-                    Local <span className='text-red-500'>*</span>
-                  </Label>
+                  <Label htmlFor='local'>Local</Label>
                   <div className='flex gap-2'>
                     <Input
                       id='local'
@@ -1211,7 +1209,7 @@ export default function CrearContratoComponent({
                 <div>
                   <DialogTitle>Seleccionar Local</DialogTitle>
                   <DialogDescription>
-                    Selecciona un local de la lista
+                    Puedes seleccionar un local de la lista (opcional)
                   </DialogDescription>
                 </div>
               </div>
@@ -1523,21 +1521,15 @@ export default function CrearContratoComponent({
                       <TableRow>
                         <TableHead
                           className='text-xs sm:text-sm'
-                          style={{ width: '140px', minWidth: '140px' }}
-                        >
-                          RUT
-                        </TableHead>
-                        <TableHead
-                          className='text-xs sm:text-sm'
-                          style={{ width: 'auto', minWidth: '200px' }}
+                          style={{ width: 'auto', minWidth: '180px' }}
                         >
                           Nombre
                         </TableHead>
                         <TableHead
                           className='text-xs sm:text-sm'
-                          style={{ width: '100px', minWidth: '100px' }}
+                          style={{ width: '140px', minWidth: '140px' }}
                         >
-                          Tipo
+                          RUT
                         </TableHead>
                         <TableHead
                           className='text-center text-xs sm:text-sm'
@@ -1593,35 +1585,21 @@ export default function CrearContratoComponent({
                                 className='hover:bg-muted/50 transition-colors'
                               >
                                 <TableCell
+                                  className='text-xs sm:text-sm h-[60px]'
+                                  style={{ width: 'auto', minWidth: '180px' }}
+                                >
+                                  <div
+                                    className='truncate max-w-[200px]'
+                                    title={cliente.nombre}
+                                  >
+                                    {cliente.nombre || ''}
+                                  </div>
+                                </TableCell>
+                                <TableCell
                                   className='font-mono text-xs sm:text-sm font-medium h-[60px]'
                                   style={{ width: '140px', minWidth: '140px' }}
                                 >
                                   {cliente.rut}
-                                </TableCell>
-                                <TableCell
-                                  className='text-xs sm:text-sm h-[60px]'
-                                  style={{ width: 'auto', minWidth: '200px' }}
-                                >
-                                  <div
-                                    className='truncate max-w-[200px]'
-                                    title={getClienteDisplayName(cliente)}
-                                  >
-                                    {cliente.nombreCompleto}
-                                  </div>
-                                </TableCell>
-                                <TableCell
-                                  className='text-xs sm:text-sm h-[60px]'
-                                  style={{ width: '100px', minWidth: '100px' }}
-                                >
-                                  <span
-                                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                      cliente.esEmpresa
-                                        ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                                        : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                    }`}
-                                  >
-                                    {cliente.esEmpresa ? 'Empresa' : 'Persona'}
-                                  </span>
                                 </TableCell>
                                 <TableCell
                                   className='text-center h-[60px]'
