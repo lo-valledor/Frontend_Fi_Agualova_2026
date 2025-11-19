@@ -703,42 +703,33 @@ export default function RevisarCalculoFacturaComponent({
                 // Caso especial: No hay lecturas cerradas (404)
                 if (error === 'NO_LECTURAS_CERRADAS') {
                   return (
-                    <Alert className='border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20 dark:border-emerald-900'>
-                      <Info className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
-                      <AlertTitle className='text-emerald-800 dark:text-emerald-300 font-semibold'>
-                        Todas las lecturas cerradas se encuentran facturadas
+                    <Alert className='border-emerald-300 bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 dark:border-emerald-800 shadow-sm'>
+                      <CheckCircle className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                      <AlertTitle className='text-emerald-900 dark:text-emerald-100 font-bold text-lg'>
+                        ✓ Sistema al día - No hay lecturas pendientes de facturar
                       </AlertTitle>
-                      <AlertDescription className='text-emerald-700 dark:text-emerald-400 mt-2'>
-                        <p className='font-medium mb-2'>
-                          ✓ No hay lecturas pendientes por facturar en este
-                          momento.
-                        </p>
-                        <p className='text-sm mt-2'>
-                          Esto puede significar que:
-                        </p>
-                        <ul className='list-disc list-inside mt-2 space-y-1 ml-2 text-sm'>
-                          <li>
-                            Todas las lecturas cerradas del periodo ya han sido
-                            facturadas
-                          </li>
-                          <li>
-                            No existen lecturas en estado{' '}
-                            <strong>Cerradas</strong> para este ciclo y periodo
-                          </li>
-                          <li>
-                            El proceso de cálculo aún no ha sido ejecutado
-                          </li>
-                        </ul>
-                        <div className='mt-3 p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg border border-emerald-200 dark:border-emerald-800'>
-                          <p className='text-sm font-medium text-emerald-900 dark:text-emerald-100'>
-                            💡 ¿Necesitas procesar nuevas facturas?
+                      <AlertDescription className='text-emerald-800 dark:text-emerald-200 mt-3'>
+                        <div className='p-4 bg-white/60 dark:bg-emerald-950/40 rounded-lg border border-emerald-200 dark:border-emerald-800 mb-3'>
+                          <p className='font-semibold text-emerald-900 dark:text-emerald-100 flex items-center gap-2'>
+                            <CheckCircle className='h-4 w-4' />
+                            Estado actual
                           </p>
-                          <p className='text-xs text-emerald-700 dark:text-emerald-300 mt-1'>
-                            Asegúrate de tener lecturas cerradas y luego haz
-                            clic en{' '}
-                            <strong>"Preparar Cálculo"</strong> para iniciar el
-                            procesamiento de facturación.
+                          <p className='text-sm mt-2'>
+                            Todas las lecturas cerradas del periodo <strong>{periodoAbierto?.[0]?.mes?.toString().padStart(2, '0')}/{periodoAbierto?.[0]?.anio}</strong> ya han sido procesadas y facturadas correctamente.
                           </p>
+                        </div>
+                        
+                        <div className='p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800'>
+                          <p className='text-sm font-semibold text-blue-900 dark:text-blue-100 flex items-center gap-2 mb-2'>
+                            <Info className='h-4 w-4' />
+                            ¿Necesitas procesar nuevas facturas?
+                          </p>
+                          <ol className='list-decimal list-inside space-y-2 text-sm text-blue-800 dark:text-blue-200 ml-2'>
+                            <li>Ve a <strong>"Operaciones → Cierre de Lecturas"</strong></li>
+                            <li>Cierra las lecturas pendientes del periodo actual</li>
+                            <li>Regresa aquí y haz clic en <strong>"Preparar Cálculo"</strong></li>
+                            <li>Espera el procesamiento y luego <strong>"Ver Cálculo Facturas"</strong></li>
+                          </ol>
                         </div>
                       </AlertDescription>
                     </Alert>
