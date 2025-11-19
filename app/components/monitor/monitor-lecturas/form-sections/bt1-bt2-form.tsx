@@ -35,6 +35,11 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
 
   // Valores fijos del medidor
   const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
+  const digitoActiva = useMemo(() => {
+    const prevStr = (result.LM_ValorUltimaLectura ?? '').toString();
+    const prevDigits = prevStr.replace(/\D/g, '').length;
+    return Math.max(prevDigits || 0, result.ME_Digitos || 0);
+  }, [result.LM_ValorUltimaLectura, result.ME_Digitos]);
   const valorAnterior = useMemo(
     () => result.LM_ValorUltimaLectura,
     [result.LM_ValorUltimaLectura]
@@ -74,6 +79,17 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     },
     [digito]
   );
+  const validarDigitosActiva = useCallback(
+    (value: string) => {
+      if (!value || Number.isNaN(Number(value))) return false;
+      const valorNumerico = Number.parseInt(value);
+      const inputDigits = value.replace(/\D/g, '').length;
+      const digitosParaValidar = Math.max(digitoActiva, inputDigits);
+      const maxValue = Math.pow(10, digitosParaValidar) - 1;
+      return valorNumerico <= maxValue;
+    },
+    [digitoActiva]
+  );
 
   // Calcular el máximo valor permitido para mostrar al usuario
   const maxValuePermitido = useMemo(() => {
@@ -93,7 +109,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
 
       if (valorActual < valorAnterior) {
         tipo = 'menor';
-        switch (digito) {
+        switch (digitoActiva) {
           case 1:
             vlecturadigitos = valorActual;
             break;
@@ -135,7 +151,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
         vlecturadigitos
       };
     },
-    [digito, valorAnterior, constante]
+    [digitoActiva, valorAnterior, constante]
   );
 
   // Pre-cargar datos existentes si los hay (incluye datos importados)
@@ -187,10 +203,13 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
         toast.error('No se permiten valores negativos');
         return;
       }
-      // Validar número de dígitos
-      if (!validarDigitos(value)) {
+      // Validar número de dígitos (adaptativo según entrada y lectura previa)
+      if (!validarDigitosActiva(value)) {
+        const inputDigits = value.replace(/\D/g, '').length;
+        const digitosParaValidar = Math.max(digitoActiva, inputDigits);
+        const maxValueMsg = Math.pow(10, digitosParaValidar) - 1;
         toast.error(
-          `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`
+          `La lectura no puede exceder ${maxValueMsg.toLocaleString('es-CL')} (${digitosParaValidar} dígitos máximo)`
         );
         return;
       }
@@ -206,7 +225,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
         setIsValidated(false);
       }
     },
-    [calcularConsumo, validarDigitos, maxValuePermitido, digito]
+    [calcularConsumo, validarDigitosActiva, digitoActiva]
   );
 
   // Detectar consumos anómalos (muy altos o negativos con muchos 9s)
@@ -219,7 +238,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     const esPatronDe9s = countNines >= 4 && consumoStr.length >= 5;
 
     // Caso 2: Consumo negativo aparente (valor muy alto por rollover incorrecto)
-    const maxConsumoEsperado = Math.pow(10, digito) * constante;
+    const maxConsumoEsperado = Math.pow(10, digitoActiva) * constante;
     const esRolloverIncorrecto = consumoActual > maxConsumoEsperado * 0.8;
 
     // Caso 3: Detectar si el consumo es excesivamente alto comparado con histórico
@@ -243,7 +262,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
           ? '⚠️ El consumo calculado es anormalmente alto. Verifique que los valores de lectura anterior y actual sean correctos.'
           : '⚠️ El consumo calculado es significativamente mayor al histórico. Verifique los valores ingresados.'
     };
-  }, [consumoCalculado, result.LM_ConsumoMesAnterior, digito, constante]);
+  }, [consumoCalculado, result.LM_ConsumoMesAnterior, digitoActiva, constante]);
 
   // Validar la lectura
   const validarLectura = useCallback(() => {
@@ -253,9 +272,12 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     }
 
     // Validar dígitos una vez más antes de continuar
-    if (!validarDigitos(inputValue)) {
+    if (!validarDigitosActiva(inputValue)) {
+      const inputDigits = inputValue.replace(/\D/g, '').length;
+      const digitosParaValidar = Math.max(digitoActiva, inputDigits);
+      const maxValueMsg = Math.pow(10, digitosParaValidar) - 1;
       toast.error(
-        `La lectura no puede exceder ${maxValuePermitido.toLocaleString('es-CL')} (${digito} dígitos máximo)`
+        `La lectura no puede exceder ${maxValueMsg.toLocaleString('es-CL')} (${digitosParaValidar} dígitos máximo)`
       );
       return;
     }
@@ -279,9 +301,8 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
   }, [
     inputValue,
     tipoLectura,
-    validarDigitos,
-    maxValuePermitido,
-    digito,
+    validarDigitosActiva,
+    digitoActiva,
     detectarConsumoAnomalo
   ]);
 

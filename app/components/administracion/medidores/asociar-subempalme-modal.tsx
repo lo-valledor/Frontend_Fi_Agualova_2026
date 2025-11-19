@@ -29,7 +29,7 @@ interface AsociarSubempalmeModalProps {
   isOpen: boolean;
   onClose: () => void;
   medidor: GetMedidores | null;
-  onSuccess: () => void;
+  onSuccess: (codigo?: string) => void;
 }
 
 export function AsociarSubempalmeModal({
@@ -65,7 +65,10 @@ export function AsociarSubempalmeModal({
   };
 
   // Función para asociar subempalme al medidor
-  const handleAsociarSubempalme = async (subempalmeId: number) => {
+  const handleAsociarSubempalme = async (
+    subempalmeId: number,
+    subempalmeCodigo: string
+  ) => {
     if (!medidor) {
       alert('No hay medidor seleccionado');
       return;
@@ -82,7 +85,7 @@ export function AsociarSubempalmeModal({
 
       if (response.status === 200) {
         toast.success('Subempalme asociado correctamente');
-        onSuccess(); // Recargar la lista de medidores
+        onSuccess(subempalmeCodigo); // Entregar el código asociado
         onClose();
         setBusquedaSubempalme('');
       }
@@ -247,7 +250,12 @@ export function AsociarSubempalmeModal({
                       <TableCell className='text-center'>
                         <Button
                           size='sm'
-                          onClick={() => handleAsociarSubempalme(subempalme.id)}
+                          onClick={() =>
+                            handleAsociarSubempalme(
+                              subempalme.id,
+                              subempalme.codigo
+                            )
+                          }
                           disabled={isAsociando}
                           className='bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3'
                         >

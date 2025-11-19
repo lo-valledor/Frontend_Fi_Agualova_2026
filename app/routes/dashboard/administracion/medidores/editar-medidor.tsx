@@ -10,8 +10,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '~/components/ui/dialog';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-import { ArrowLeft, CheckCircle2, Copy, X } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 import { administracionService } from '~/services';
@@ -226,45 +225,6 @@ export default function EditarMedidor({
           </DialogHeader>
 
           <div className='space-y-6 pt-4'>
-            {/* Alert de información del medidor */}
-            <Alert className='border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20'>
-              <CheckCircle2 className='h-4 w-4 text-green-600 dark:text-green-400' />
-              <AlertTitle className='text-green-900 dark:text-green-100'>
-                Información del Medidor
-              </AlertTitle>
-              <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
-                {medidorModificado?.id && (
-                  <div className='flex items-center justify-between bg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
-                    <div>
-                      <p className='font-medium'>Código del Medidor:</p>
-                      <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
-                        {medidorModificado.id}
-                      </p>
-                    </div>
-                    <Button
-                      size='sm'
-                      variant='outline'
-                      onClick={() => copiarCodigoMedidor(medidorModificado.id!)}
-                      className='gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/50'
-                    >
-                      <Copy className='h-4 w-4' />
-                      Copiar
-                    </Button>
-                  </div>
-                )}
-                <div className='text-sm'>
-                  <p>
-                    <strong>Fecha de modificación:</strong>{' '}
-                    {medidorModificado?.fecha}
-                  </p>
-                  <p className='mt-2 text-green-700 dark:text-green-300'>
-                    ✅ <strong>Éxito:</strong> Todos los cambios han sido
-                    aplicados correctamente al medidor.
-                  </p>
-                </div>
-              </AlertDescription>
-            </Alert>
-
             {/* Botones de acción */}
             <div className='flex flex-col sm:flex-row gap-3 pt-4 border-t'>
               <Button

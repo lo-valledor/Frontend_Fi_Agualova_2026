@@ -249,6 +249,7 @@ export default function ContratantesComponent({
           isOpen={isDetailsOpen}
           onClose={() => setIsDetailsOpen(false)}
           contratante={detailedContratante}
+          comunas={comunas}
         />
       </div>
     </div>

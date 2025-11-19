@@ -7,7 +7,9 @@ import {
   Power,
   Save,
   Tag,
-  Type
+  Type,
+  Link2,
+  X
 } from 'lucide-react';
 import { z } from 'zod';
 
@@ -36,6 +38,8 @@ import type {
   GetMedidorByCodigo
 } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
+import type { GetMedidores } from '~/types/administracion';
+import { AsociarSubempalmeModal } from '../asociar-subempalme-modal';
 
 // Zod schema for form validation
 const medidorSchema = z.object({
@@ -77,6 +81,7 @@ export default function EditarMedidorComponent({
 }: EditarMedidorComponentProps) {
   const { theme } = useTheme();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAsociarModalOpen, setIsAsociarModalOpen] = useState(false);
 
   const form = useForm<MedidorFormData>({
     resolver: zodResolver(medidorSchema),
@@ -232,13 +237,33 @@ export default function EditarMedidorComponent({
         subempalmeCodigo: data.subempalmeCodigo || '',
         primeraLectura: data.primeraLectura || '0',
         fechaPrimeraLectura: data.fechaPrimeraLectura
-          ? convertirFechaAAAAMMDDToDDMMAA(data.fechaPrimeraLectura) +
-            ' ' +
-            (data.horaPrimeraLectura || '00:00')
+          ? convertirFechaAAAAMMDDToDDMMAA(data.fechaPrimeraLectura)
           : ''
       };
 
       console.log('🟡 Datos a enviar al backend:', submitData);
+
+      // ADICIÓN: Debug del JSON enviado a la API (en el mismo orden solicitado)
+      const payloadForLog = {
+        codigoMedidor: submitData.codigoMedidor,
+        marcaId: submitData.marcaId,
+        modelo: submitData.modelo,
+        serie: submitData.serie,
+        estadoId: submitData.estadoId,
+        fechaInicio: submitData.fechaInicio,
+        digitos: submitData.digitos,
+        multiplicar: submitData.multiplicar,
+        tipoId: submitData.tipoId,
+        subempalmeCodigo: submitData.subempalmeCodigo,
+        primeraLectura: submitData.primeraLectura,
+        fechaPrimeraLectura: submitData.fechaPrimeraLectura
+      };
+      console.log(
+        '🟠 Payload JSON (stringificado):',
+        JSON.stringify(payloadForLog, null, 2)
+      );
+      console.table(submitData);
+
       console.log('🟡 Llamando a modificarMedidor...');
 
       const result = await administracionService.modificarMedidor(submitData);
@@ -409,7 +434,7 @@ export default function EditarMedidorComponent({
                             .map(m => ({ value: m.codigo, label: m.nombre }))
                             .find(m => m.value === field.value)}
                           onChange={option =>
-                            field.onChange(option ? (option).value : '')
+                            field.onChange(option ? option.value : '')
                           }
                           placeholder='Seleccione una marca'
                           styles={selectStyles}
@@ -570,15 +595,44 @@ export default function EditarMedidorComponent({
                     <FormItem>
                       <FormLabel className='flex items-center gap-2'>
                         <Tag className='h-4 w-4' />
-                        Código Subempalme
+                        Acometida / Subempalme
                       </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder='Código del subempalme'
-                          {...field}
-                          className='h-11'
-                        />
-                      </FormControl>
+                      <div className='flex flex-col gap-2'>
+                        <FormControl>
+                          <Input
+                            placeholder='Sin subempalme asociado'
+                            value={field.value || ''}
+                            readOnly
+                            disabled
+                            className='h-11'
+                          />
+                        </FormControl>
+                        <div className='flex items-center gap-2'>
+                          <Button
+                            type='button'
+                            variant='outline'
+                            className='gap-2'
+                            onClick={() => setIsAsociarModalOpen(true)}
+                          >
+                            <Link2 className='h-4 w-4' />
+                            Asociar
+                          </Button>
+                          <Button
+                            type='button'
+                            variant='outline'
+                            className='gap-2'
+                            onClick={() => {
+                              field.onChange('');
+                              toast.success(
+                                'Acometida removida del medidor. Para guardar el cambio debe hacer clic en Guardar Cambios '
+                              );
+                            }}
+                          >
+                            <X className='h-4 w-4' />
+                            Remover
+                          </Button>
+                        </div>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -660,6 +714,48 @@ export default function EditarMedidorComponent({
             </div>
           </form>
         </Form>
+        {isAsociarModalOpen && (
+          <AsociarSubempalmeModal
+            isOpen={isAsociarModalOpen}
+            onClose={() => setIsAsociarModalOpen(false)}
+            medidor={{
+              codigo: Number(codigoMedidor),
+              marca: '',
+              tipo: '',
+              modelo: medidor.modelo || '',
+              serie: medidor.numeroSerie || '',
+              fechaInicio: medidor.fechaInicio || '',
+              digitos: medidor.digitos || 0,
+              multiplicar: medidor.constanteMultiplicar || 1,
+              ubicacion: '',
+              estado: medidor.estadoNombre || '',
+              codigoAcometida: medidor.codigoSubEmpalme || ''
+            } as GetMedidores}
+            onSuccess={async codigo => {
+              if (codigo) {
+                form.setValue('subempalmeCodigo', codigo, {
+                  shouldDirty: true,
+                  shouldValidate: true
+                });
+                await form.trigger('subempalmeCodigo');
+                toast.success('Acometida asociada al medidor');
+                setIsAsociarModalOpen(false);
+                return;
+              }
+              const res = await administracionService.getMedidoresByCodigo({
+                codigo: String(codigoMedidor)
+              });
+              const nuevoCodigo = res.data?.medidor?.[0]?.codigoAcometida || '';
+              form.setValue('subempalmeCodigo', nuevoCodigo, {
+                shouldDirty: true,
+                shouldValidate: true
+              });
+              await form.trigger('subempalmeCodigo');
+              toast.success('Acometida asociada al medidor');
+              setIsAsociarModalOpen(false);
+            }}
+          />
+        )}
       </div>
     </div>
   );

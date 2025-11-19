@@ -120,7 +120,7 @@ export function ConfirmationDialog({
               Seleccione un motivo
             </Label>
             <Select value={selectedClave} onValueChange={onClaveChange}>
-              <SelectTrigger className='h-8 text-xs'>
+              <SelectTrigger className='h-8 w-full text-xs'>
                 <SelectValue placeholder='Seleccione un motivo' />
               </SelectTrigger>
               <SelectContent>

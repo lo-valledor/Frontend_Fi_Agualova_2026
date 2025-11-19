@@ -1,4 +1,4 @@
-import { CalendarIcon, CalendarRange, Loader2 } from 'lucide-react';
+import { CalendarIcon, CalendarRange, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import React, { useState } from 'react';
@@ -151,19 +151,20 @@ export default function DialogAbrirPeriodo({
         </div>
         <DialogFooter className='flex-col sm:flex-row gap-2'>
           <Button
-            variant='ghost'
+            variant='outline'
             onClick={() => onOpenChange(false)}
             size='sm'
-            className='text-muted-foreground hover:text-muted-foreground hover:bg-muted order-2 sm:order-1'
+            className='w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md border-border/60 text-muted-foreground hover:bg-muted/60 transition-colors order-2 sm:order-1 gap-1'
           >
-            Cancelar
+            <X className='w-3 h-3 sm:w-4 sm:h-4' />
+            <span>Cancelar</span>
           </Button>
           <Button
             onClick={handleAbrirPeriodo}
             disabled={isLoading || !selectedMonth || !selectedYear}
             size='sm'
             variant='default'
-            className='gap-1order-1 sm:order-2'
+            className='w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md gap-1 order-1 sm:order-2 shadow-sm hover:shadow transition-all'
           >
             {isLoading ? (
               <>

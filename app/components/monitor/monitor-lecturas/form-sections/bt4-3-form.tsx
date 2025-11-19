@@ -44,6 +44,16 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
   // Valores fijos del medidor
   const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
+  const digitoReactiva = useMemo(() => {
+    const prevStr = (result.LMC_ValorUltimaLectEnergiaReactiva1 ?? '').toString();
+    const prevDigits = prevStr.replace(/\D/g, '').length;
+    return Math.max(prevDigits || 0, result.ME_Digitos || 0);
+  }, [result.LMC_ValorUltimaLectEnergiaReactiva1, result.ME_Digitos]);
+  const digitoActiva = useMemo(() => {
+    const prevStr = (result.LM_ValorUltimaLectura ?? '').toString();
+    const prevDigits = prevStr.replace(/\D/g, '').length;
+    return Math.max(prevDigits || 0, result.ME_Digitos || 0);
+  }, [result.LM_ValorUltimaLectura, result.ME_Digitos]);
   const valorActivaAnterior = useMemo(
     () => result.LM_ValorUltimaLectura,
     [result.LM_ValorUltimaLectura]
@@ -130,7 +140,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
 
       if (valorActual < valorActivaAnterior) {
         tipo = 'menor';
-        switch (digito) {
+        switch (digitoActiva) {
           case 1:
             vlecturadigitos = valorActual;
             break;
@@ -172,7 +182,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         vlecturadigitos
       };
     },
-    [digito, valorActivaAnterior, constante]
+    [digitoActiva, valorActivaAnterior, constante]
   );
 
   // Calcular consumo de energía reactiva (función estable)
@@ -230,7 +240,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         vlecturadigitos
       };
     },
-    [digito, valorReactivaAnterior, constante]
+    [digitoReactiva, valorReactivaAnterior, constante]
   );
 
   // Función para convertir fecha al formato YYYY-MM-DD para input type="date"
@@ -325,6 +335,28 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return valorNumerico <= maxValue;
     },
     [digito]
+  );
+  const validarDigitosReactiva = useCallback(
+    (value: string) => {
+      if (!value || Number.isNaN(Number(value))) return false;
+      const valorNumerico = Number.parseInt(value);
+      const inputDigits = value.replace(/\D/g, '').length;
+      const digitosParaValidar = Math.max(digitoReactiva, inputDigits);
+      const maxValue = Math.pow(10, digitosParaValidar) - 1;
+      return valorNumerico <= maxValue;
+    },
+    [digitoReactiva]
+  );
+  const validarDigitosActiva = useCallback(
+    (value: string) => {
+      if (!value || Number.isNaN(Number(value))) return false;
+      const valorNumerico = Number.parseInt(value);
+      const inputDigits = value.replace(/\D/g, '').length;
+      const digitosParaValidar = Math.max(digitoActiva, inputDigits);
+      const maxValue = Math.pow(10, digitosParaValidar) - 1;
+      return valorNumerico <= maxValue;
+    },
+    [digitoActiva]
   );
 
   // Detectar si el usuario probablemente olvidó una coma decimal
@@ -433,7 +465,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     const esPatronDe9s = countNines >= 4 && consumoStr.length >= 5;
 
     // Caso 2: Consumo negativo aparente (valor muy alto por rollover incorrecto)
-    const maxConsumoEsperado = Math.pow(10, digito) * constante;
+    const maxConsumoEsperado = Math.pow(10, digitoActiva) * constante;
     const esRolloverIncorrecto = consumoActual > maxConsumoEsperado * 0.8;
 
     // Caso 3: Detectar si el consumo es excesivamente alto comparado con histórico
@@ -455,7 +487,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           ? '⚠️ El consumo de energía activa calculado es anormalmente alto. Verifique que los valores de lectura anterior y actual sean correctos.'
           : '⚠️ El consumo de energía activa calculado es significativamente mayor al histórico. Verifique los valores ingresados.'
     };
-  }, [consumoActivaCalculado, consumoAnterior, digito, constante]);
+  }, [consumoActivaCalculado, consumoAnterior, digitoActiva, constante]);
 
   // Detectar consumos anómalos en energía reactiva (muy altos o negativos con muchos 9s)
   const detectarConsumoReactivaAnomalo = useCallback(() => {
@@ -496,12 +528,15 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
           ? '⚠️ El consumo de energía reactiva calculado es anormalmente alto. Verifique que los valores de lectura anterior y actual sean correctos.'
           : '⚠️ El consumo de energía reactiva calculado es significativamente mayor al histórico. Verifique los valores ingresados.'
     };
-  }, [consumoReactivaCalculado, consumoAnterior, digito, constante]);
+  }, [consumoReactivaCalculado, consumoAnterior, digitoReactiva, constante]);
 
   // Calcular el máximo valor permitido para mostrar al usuario
   const maxValuePermitido = useMemo(() => {
     return Math.pow(10, digito) - 1;
   }, [digito]);
+  const maxValuePermitidoReactiva = useMemo(() => {
+    return Math.pow(10, digitoReactiva) - 1;
+  }, [digitoReactiva]);
 
   // Actualizar el consumo cuando cambia el input de energía activa
   const handleActivaInputChange = useCallback(
@@ -525,10 +560,13 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         toast.error('No se permiten valores negativos en Energía Activa');
         return;
       }
-      // Validar número de dígitos
-      if (!validarDigitos(value)) {
+      // Validar número de dígitos (adaptativo según entrada y lectura previa)
+      if (!validarDigitosActiva(value)) {
+        const inputDigits = value.replace(/\D/g, '').length;
+        const digitosParaValidar = Math.max(digitoActiva, inputDigits);
+        const maxValueMsg = Math.pow(10, digitosParaValidar) - 1;
         toast.error(
-          `La lectura de Energía Activa no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`
+          `La lectura de Energía Activa no puede exceder ${maxValueMsg} (${digitosParaValidar} dígitos máximo)`
         );
         return;
       }
@@ -544,7 +582,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         setIsActivaValidated(false);
       }
     },
-    [calcularConsumoActiva, validarDigitos, maxValuePermitido, digito]
+    [calcularConsumoActiva, validarDigitosActiva, digitoActiva]
   );
 
   // Actualizar el consumo cuando cambia el input de energía reactiva
@@ -570,9 +608,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         return;
       }
       // Validar número de dígitos
-      if (!validarDigitos(value)) {
+      if (!validarDigitosReactiva(value)) {
+        const inputDigits = value.replace(/\D/g, '').length;
+        const digitosParaValidar = Math.max(digitoReactiva, inputDigits);
+        const maxValueMsg = Math.pow(10, digitosParaValidar) - 1;
         toast.error(
-          `La lectura de Energía Reactiva no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`
+          `La lectura de Energía Reactiva no puede exceder ${maxValueMsg} (${digitosParaValidar} dígitos máximo)`
         );
         return;
       }
@@ -588,7 +629,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         setIsReactivaValidated(false);
       }
     },
-    [calcularConsumoReactiva, validarDigitos, maxValuePermitido, digito]
+    [calcularConsumoReactiva, validarDigitosReactiva, maxValuePermitidoReactiva, digitoReactiva]
   );
 
   // Actualizar datos de demanda (solo para fecha y hora)
@@ -611,10 +652,13 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
       return;
     }
 
-    // Validar dígitos una vez más antes de continuar
-    if (!validarDigitos(inputActivaValue)) {
+    // Validar dígitos una vez más antes de continuar (adaptativo)
+    if (!validarDigitosActiva(inputActivaValue)) {
+      const inputDigits = inputActivaValue.replace(/\D/g, '').length;
+      const digitosParaValidar = Math.max(digitoActiva, inputDigits);
+      const maxValueMsg = Math.pow(10, digitosParaValidar) - 1;
       toast.error(
-        `La lectura de Energía Activa no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`
+        `La lectura de Energía Activa no puede exceder ${maxValueMsg} (${digitosParaValidar} dígitos máximo)`
       );
       return;
     }
@@ -638,9 +682,8 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   }, [
     inputActivaValue,
     tipoLecturaActiva,
-    validarDigitos,
-    maxValuePermitido,
-    digito,
+    validarDigitosActiva,
+    digitoActiva,
     detectarConsumoActivaAnomalo
   ]);
 
@@ -654,9 +697,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     }
 
     // Validar dígitos una vez más antes de continuar
-    if (!validarDigitos(inputReactivaValue)) {
+    if (!validarDigitosReactiva(inputReactivaValue)) {
+      const inputDigits = inputReactivaValue.replace(/\D/g, '').length;
+      const digitosParaValidar = Math.max(digitoReactiva, inputDigits);
+      const maxValueMsg = Math.pow(10, digitosParaValidar) - 1;
       toast.error(
-        `La lectura de Energía Reactiva no puede exceder ${maxValuePermitido} (${digito} dígitos máximo)`
+        `La lectura de Energía Reactiva no puede exceder ${maxValueMsg} (${digitosParaValidar} dígitos máximo)`
       );
       return;
     }
@@ -680,9 +726,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   }, [
     inputReactivaValue,
     tipoLecturaReactiva,
-    validarDigitos,
-    maxValuePermitido,
-    digito,
+    validarDigitosReactiva,
+    maxValuePermitidoReactiva,
+    digitoReactiva,
     detectarConsumoReactivaAnomalo
   ]);
 

@@ -1,4 +1,4 @@
-import { CalendarDaysIcon, Eraser, PlusCircleIcon } from 'lucide-react';
+import { CalendarDaysIcon, Eraser, PlusCircleIcon, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 import React, { useState } from 'react';
@@ -145,17 +145,18 @@ export default function DialogNuevoPeriodo({
               onClick={handleClearFilters}
               variant='outline'
               size='sm'
-              className='gap-1 w-full sm:w-auto order-3 sm:order-1'
+              className='gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md border-border/60 hover:bg-muted/60 order-3 sm:order-1'
             >
               <Eraser className='h-3 w-3' />
               <span className='text-xs sm:text-sm'>Limpiar</span>
             </Button>
             <Button
-              variant='ghost'
+              variant='outline'
               size='sm'
               onClick={handleClose}
-              className='w-full sm:w-auto text-muted-foreground hover:text-muted-foreground hover:bg-muted order-2'
+              className='gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md text-muted-foreground border-border/60 hover:bg-muted/60 order-2 sm:order-2'
             >
+              <X className='h-3 w-3' />
               <span className='text-xs sm:text-sm'>Cancelar</span>
             </Button>
             <Button
@@ -163,7 +164,7 @@ export default function DialogNuevoPeriodo({
               size='sm'
               onClick={handleOpenPeriodo}
               disabled={!selectedMonth || !selectedYear}
-              className='gap-1 w-full sm:w-autoorder-1 sm:order-3'
+              className='gap-1 w-full sm:w-auto h-9 text-xs sm:text-sm rounded-md order-1 sm:order-3 shadow-sm hover:shadow transition-all'
             >
               <PlusCircleIcon className='h-3 w-3' />
               <span className='text-xs sm:text-sm'>Continuar</span>

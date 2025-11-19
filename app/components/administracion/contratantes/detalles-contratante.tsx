@@ -25,12 +25,13 @@ import {
   DialogTitle
 } from '~/components/ui/dialog';
 import { Skeleton } from '~/components/ui/skeleton';
-import type { GetContratante } from '~/types/administracion';
+import type { GetContratante, GetComunas } from '~/types/administracion';
 
 interface ContratanteDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   contratante: GetContratante | null;
+  comunas: GetComunas[];
 }
 
 const InfoItem = ({
@@ -60,7 +61,8 @@ const InfoItem = ({
 export function ContratanteDetailsModal({
   isOpen,
   onClose,
-  contratante
+  contratante,
+  comunas
 }: Readonly<ContratanteDetailsModalProps>) {
   const [detailsData, setDetailsData] = useState<GetContratante | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +83,10 @@ export function ContratanteDetailsModal({
   const nombreCompleto = detailsData?.esEmpresa
     ? detailsData.nombre
     : `${detailsData?.nombre || ''} ${detailsData?.apellido || ''}`.trim();
+
+  const comunaNombre = detailsData?.comuna
+    ? comunas.find(c => c.codigo === detailsData.comuna)?.nombre || detailsData.comuna
+    : undefined;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -265,7 +271,7 @@ export function ContratanteDetailsModal({
                 />
                 <InfoItem
                   label='Comuna'
-                  value={detailsData.comuna}
+                  value={comunaNombre}
                   icon={
                     <div className='p-2 bg-background rounded-xl'>
                       <Building className='h-4 w-4' />
