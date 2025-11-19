@@ -74,7 +74,7 @@ axiosInstance.interceptors.response.use(
 
         if (isExpected401) {
           // Dejamos que el error sea manejado por la lógica del componente
-          throw new Error(error);
+          return Promise.reject(error);
         }
 
         // Si ya se intentó refrescar el token, no volver a intentarlo
@@ -115,7 +115,8 @@ axiosInstance.interceptors.response.use(
         // Excluimos rutas donde un 404 es una respuesta esperada
         const routesWithExpected404 = [
           '/datos-basicos-medidor',
-          '/calculo-prefactura-encabezado' // 404 esperado cuando no hay cálculos procesados
+          '/calculo-prefactura-encabezado', // 404 esperado cuando no hay cálculos procesados
+          '/calculo-prefactura-cargos' // 404 esperado cuando no hay cargos procesados
         ];
         const isExpected404 = routesWithExpected404.some(route =>
           originalRequest.url?.includes(route)
@@ -123,7 +124,8 @@ axiosInstance.interceptors.response.use(
 
         if (isExpected404) {
           // Dejamos que el error sea manejado por la lógica del componente
-          throw new Error(error);
+          // No mostramos ningún toast aquí
+          return Promise.reject(error);
         }
 
         // Para 404s inesperados, mostrar mensaje de error
@@ -140,7 +142,7 @@ axiosInstance.interceptors.response.use(
         toast.error(data?.message || 'Ha ocurrido un error inesperado.');
         break;
     }
-    throw new Error(error);
+    return Promise.reject(error);
   }
 );
 
