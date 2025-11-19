@@ -703,37 +703,43 @@ export default function RevisarCalculoFacturaComponent({
                 // Caso especial: No hay lecturas cerradas (404)
                 if (error === 'NO_LECTURAS_CERRADAS') {
                   return (
-                    <Alert className='border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900'>
-                      <Info className='h-5 w-5 text-blue-600 dark:text-blue-400' />
-                      <AlertTitle className='text-blue-800 dark:text-blue-300 font-semibold'>
-                        No hay lecturas cerradas encontradas para Aceptar
-                        Cálculos
+                    <Alert className='border-emerald-200 bg-emerald-50 dark:bg-emerald-950/20 dark:border-emerald-900'>
+                      <Info className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
+                      <AlertTitle className='text-emerald-800 dark:text-emerald-300 font-semibold'>
+                        Todas las lecturas cerradas se encuentran facturadas
                       </AlertTitle>
-                      <AlertDescription className='text-blue-700 dark:text-blue-400 mt-2'>
-                        Para poder revisar y aceptar cálculos de facturación,
-                        primero debe:
-                        <ul className='list-disc list-inside mt-2 space-y-1 ml-2'>
+                      <AlertDescription className='text-emerald-700 dark:text-emerald-400 mt-2'>
+                        <p className='font-medium mb-2'>
+                          ✓ No hay lecturas pendientes por facturar en este
+                          momento.
+                        </p>
+                        <p className='text-sm mt-2'>
+                          Esto puede significar que:
+                        </p>
+                        <ul className='list-disc list-inside mt-2 space-y-1 ml-2 text-sm'>
                           <li>
-                            Asegurarse de tener lecturas en estado{' '}
-                            <strong>Cerradas</strong>
+                            Todas las lecturas cerradas del periodo ya han sido
+                            facturadas
                           </li>
                           <li>
-                            Hacer clic en el botón{' '}
-                            <strong>"Preparar Cálculo Factura"</strong>
+                            No existen lecturas en estado{' '}
+                            <strong>Cerradas</strong> para este ciclo y periodo
                           </li>
                           <li>
-                            Esperar a que el proceso de cálculo se complete
-                          </li>
-                          <li>
-                            Finalmente, hacer clic en{' '}
-                            <strong>"Ver Cálculo Facturas"</strong>
+                            El proceso de cálculo aún no ha sido ejecutado
                           </li>
                         </ul>
-                        <p className='mt-3 text-sm'>
-                          Verifique que el ciclo y periodo seleccionados sean
-                          correctos y que las lecturas estén cerradas para este
-                          periodo.
-                        </p>
+                        <div className='mt-3 p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg border border-emerald-200 dark:border-emerald-800'>
+                          <p className='text-sm font-medium text-emerald-900 dark:text-emerald-100'>
+                            💡 ¿Necesitas procesar nuevas facturas?
+                          </p>
+                          <p className='text-xs text-emerald-700 dark:text-emerald-300 mt-1'>
+                            Asegúrate de tener lecturas cerradas y luego haz
+                            clic en{' '}
+                            <strong>"Preparar Cálculo"</strong> para iniciar el
+                            procesamiento de facturación.
+                          </p>
+                        </div>
                       </AlertDescription>
                     </Alert>
                   );
