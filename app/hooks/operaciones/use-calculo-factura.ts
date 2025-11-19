@@ -97,7 +97,14 @@ export function useCalculoFactura({
       // Si es un 404, es un caso esperado (no hay lecturas cerradas)
       if (err.response?.status === 404) {
         setError('NO_LECTURAS_CERRADAS'); // Código especial para identificar 404
-        // No mostrar toast de error para 404, solo para otros errores
+        toast.info(
+          'Todas las lecturas cerradas se encuentran facturadas o no hay lecturas pendientes por facturar',
+          {
+            duration: 5000,
+            description:
+              'Si necesitas procesar nuevas facturas, asegúrate de tener lecturas cerradas y ejecuta "Preparar Cálculo"'
+          }
+        );
       } else {
         const errorMessage =
           err.response?.data?.mensaje || err.message || 'Error desconocido';
