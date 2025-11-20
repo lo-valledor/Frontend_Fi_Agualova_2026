@@ -129,6 +129,15 @@ const getMeterStatus = (claveHtml: string) => {
       label: 'En Facturación',
       icon: <BarChart3 className='h-3.5 w-3.5' />,
       severity: 0
+    },
+    IMPORT: {
+      color: 'pink',
+      bgColor: 'bg-pink-500',
+      borderColor: 'border-pink-500',
+      textColor: 'text-pink-500',
+      label: 'Lecturas Importadas',
+      icon: <FileUp className='h-3.5 w-3.5' />,
+      severity: 0
     }
   };
 
@@ -993,10 +1002,15 @@ export default function ResultadosBusqueda({
                                   </div>
                                   <div className='text-right shrink-0'>
                                     <p className='text-xl sm:text-2xl md:text-3xl font-bold text-gray-600 dark:text-gray-400'>
-                                      <NumberFlow value={stats.sinlec} />
+                                      <NumberFlow
+                                        value={stats.sinlec - stats.imported}
+                                      />
                                     </p>
                                     <p className='text-xs sm:text-sm text-gray-600/70 dark:text-gray-400/70'>
-                                      {percentage(stats.sinlec)}%
+                                      {percentage(
+                                        stats.sinlec - stats.imported
+                                      )}
+                                      %
                                     </p>
                                   </div>
                                 </div>
@@ -1004,7 +1018,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${percentage(stats.sinlec)}%`
+                                      width: `${percentage(stats.sinlec - stats.imported)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.35 }}
                                     className='h-full bg-gray-500 rounded-full'
@@ -1071,7 +1085,7 @@ export default function ResultadosBusqueda({
                                         Lecturas Importadas
                                       </p>
                                       <p className='text-[10px] sm:text-xs text-pink-600/70 dark:text-pink-400/70 line-clamp-1'>
-                                        Requieren autovalidación
+                                        Requieren confirmación semiautomática
                                       </p>
                                     </div>
                                   </div>
@@ -1281,7 +1295,8 @@ export default function ResultadosBusqueda({
                                   'CLAREL',
                                   'CLACRI',
                                   'LECCER',
-                                  'LECIMP'
+                                  'LECIMP',
+                                  'IMPORT'
                                 ].map(claveHtml => {
                                   const status = getMeterStatus(claveHtml);
                                   return (
