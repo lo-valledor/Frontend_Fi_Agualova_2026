@@ -17,3 +17,13 @@ dist
 Dockerfile
 docker-compose.yml
 .dockerignore
+actions-runner/
+coverage/
+scripts/
+pnpm-store/
+*.tar
+*.zip
+*.tgz
+**/tmp/
+**/.cache/
+build/client/

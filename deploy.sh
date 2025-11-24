@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 # deploy.sh - Script para automatizar despliegues
 # Usa docker-compose.multi.yml para levantar ambos entornos simultáneamente
 
@@ -40,15 +42,28 @@ detect_compose() {
 }
 
 # Función para desplegar producción (proyecto aislado: enerlova_prod)
+run_compose_build() {
+    local project="$1";
+    local file="$2";
+    echo "🔧 Construyendo y levantando (${file}) para proyecto: ${project}";
+    if ! $COMPOSE_BIN -p "$project" -f "$file" up --build -d; then
+        echo "❌ Falló la construcción o arranque para '$project' usando '$file'." >&2
+        echo "💡 Posibles causas: falta de espacio en disco, permisos, red." >&2
+        echo "🛠️  Acciones sugeridas:" >&2
+        echo "   - docker system df" >&2
+        echo "   - docker system prune -af --volumes" >&2
+        echo "   - Eliminar imágenes antiguas: docker images | grep enerlova" >&2
+        echo "   - Reintentar con: $COMPOSE_BIN -p $project -f $file build --no-cache" >&2
+        exit 1
+    fi
+}
+
 deploy_prod() {
     echo "📦 Desplegando entorno de PRODUCCIÓN..."
     echo "🌐 Puerto: 8080"
     echo "🔗 API: http://192.168.1.139:8081/Enerlova"
-
-    # Usamos un nombre de proyecto distinto para que 'down' no afecte dev
     PROJECT=enerlova_prod
-    $COMPOSE_BIN -p "$PROJECT" -f docker-compose.prod.yml up --build -d
-
+    run_compose_build "$PROJECT" docker-compose.prod.yml
     echo "✅ Entorno de producción desplegado / actualizado"
     echo "🌍 Acceso: http://localhost:8080"
 }
@@ -59,10 +74,8 @@ deploy_dev() {
     echo "🌐 Puerto: 3000"
     echo "🔗 API: http://192.168.1.139:8082/Enerlova"
     echo "🎨 Tema: Colores naranjas con badge DEV"
-
     PROJECT=enerlova_dev
-    $COMPOSE_BIN -p "$PROJECT" -f docker-compose.dev.yml up --build -d
-
+    run_compose_build "$PROJECT" docker-compose.dev.yml
     echo "✅ Entorno de desarrollo desplegado / actualizado"
     echo "🌍 Acceso: http://localhost:3000"
 }
