@@ -1,27 +1,3 @@
-/**
- * DataTable con Virtual Scrolling
- *
- * Versión optimizada de DataTable que solo renderiza las filas visibles,
- * ideal para tablas con 500+ filas
- *
- * Beneficios:
- * - Memoria: -80%
- * - Scrolling: +90% más fluido
- * - Re-renders: -95%
- * - Soporta hasta 10,000+ filas sin lag
- * - Headers fijos que permanecen visibles durante el scroll
- *
- * @example
- * ```tsx
- * <VirtualDataTable
- *   columns={columns}
- *   data={largeDataset} // 1000+ items
- *   estimateRowHeight={50}
- *   searchPlaceholder="Buscar..."
- * />
- * ```
- */
-
 import {
   type ColumnDef,
   flexRender,

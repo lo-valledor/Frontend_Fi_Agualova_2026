@@ -293,7 +293,7 @@ export function DataTableNichos<TData, TValue>({
                           <TableHead
                             key={header.id}
                             className={cn(
-                              'text-center text-xs font-medium border-r border-border/20 last:border-r-0 whitespace-nowrap',
+                              'text-center text-xs font-medium border-r border-border/20 last:border-r-0 ',
                               // Altura y padding adaptativo para headers
                               screenSize === 'mobile' && 'h-10 py-2 px-1',
                               screenSize === 'tabletPortrait' &&
@@ -345,7 +345,7 @@ export function DataTableNichos<TData, TValue>({
                             <TableCell
                               key={cell.id}
                               className={cn(
-                                'border-r border-border/10 last:border-r-0 whitespace-nowrap text-xs',
+                                'border-r border-border/10 last:border-r-0  text-xs',
                                 // Padding adaptativo para mejor experiencia táctil
                                 screenSize === 'mobile' && 'py-2 px-1',
                                 screenSize === 'tabletPortrait' &&

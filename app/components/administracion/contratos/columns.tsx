@@ -151,9 +151,7 @@ export const columns = ({
         </div>
       );
     },
-    size: 140,
-    minSize: 120,
-    maxSize: 180
+    size: 80
   },
   {
     accessorKey: 'nombreCliente',
@@ -180,9 +178,7 @@ export const columns = ({
         </div>
       </div>
     ),
-    size: 350,
-    minSize: 240,
-    maxSize: 999
+    size: 250
   },
   {
     accessorKey: 'tipoContrato',
@@ -196,15 +192,13 @@ export const columns = ({
           className='text-xs px-1 sm:px-2'
           title={row.original.tipoContrato}
         >
-          <span className='truncate max-w-[80px] sm:max-w-none'>
+          <span className='truncate sm:max-w-none'>
             {row.original.tipoContrato}
           </span>
         </Badge>
       );
     },
-    size: 250,
-    minSize: 230,
-    maxSize: 290
+    size: 150
   },
   {
     accessorKey: 'tarifa',
@@ -218,15 +212,13 @@ export const columns = ({
           className='text-xs px-1 sm:px-2'
           title={row.original.tarifa}
         >
-          <span className='truncate max-w-[80px] sm:max-w-none'>
+          <span className='truncate max-w-[150px] sm:max-w-none'>
             {row.original.tarifa}
           </span>
         </Badge>
       );
     },
-    size: 100,
-    minSize: 100,
-    maxSize: 140
+    size: 150
   },
 
   {
@@ -238,7 +230,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-1 sm:gap-2 min-w-0'>
           <span
-            className='text-xs sm:text-sm truncate max-w-[120px] lg:max-w-none'
+            className='text-xs sm:text-sm truncate max-w-[150px]'
             title={row.original.local}
           >
             {row.original.local}
@@ -246,9 +238,7 @@ export const columns = ({
         </div>
       );
     },
-    size: 140,
-    minSize: 120,
-    maxSize: 180
+    size: 100
   },
   {
     accessorKey: 'fechaInicio',
@@ -258,7 +248,7 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className='flex items-center gap-1 sm:gap-2'>
-          <span className='text-xs sm:text-sm whitespace-nowrap'>
+          <span className='text-xs sm:text-sm '>
             {formatDateToSpanish(row.original.fechaInicio)}
           </span>
         </div>
@@ -276,9 +266,7 @@ export const columns = ({
       // Comparar timestamps
       return dateA.getTime() - dateB.getTime();
     },
-    size: 120,
-    minSize: 110,
-    maxSize: 140
+    size: 120
   },
   {
     accessorKey: 'activo',
@@ -288,9 +276,7 @@ export const columns = ({
     cell: ({ row }) => {
       return <EstadoBadge estado={row.original.activo} />;
     },
-    size: 100,
-    minSize: 80,
-    maxSize: 120
+    size: 80
   },
   {
     accessorKey: 'fechaTermino',
@@ -308,9 +294,7 @@ export const columns = ({
       }
       return (
         <div className='flex items-center gap-1 sm:gap-2'>
-          <span className='text-xs sm:text-sm whitespace-nowrap'>
-            {fechaTermino}
-          </span>
+          <span className='text-xs sm:text-sm '>{fechaTermino}</span>
         </div>
       );
     },
@@ -326,9 +310,7 @@ export const columns = ({
       // Comparar timestamps
       return dateA.getTime() - dateB.getTime();
     },
-    size: 120,
-    minSize: 110,
-    maxSize: 140
+    size: 120
   },
   {
     accessorKey: 'cicloFacturacion',
@@ -348,9 +330,7 @@ export const columns = ({
         </Badge>
       );
     },
-    size: 130,
-    minSize: 120,
-    maxSize: 160
+    size: 130
   },
   {
     accessorKey: 'potenciaContratada',
@@ -360,15 +340,13 @@ export const columns = ({
     cell: ({ row }) => {
       return (
         <div className='flex items-center gap-1 sm:gap-2'>
-          <span className='text-xs sm:text-sm font-semibold whitespace-nowrap'>
+          <span className='text-xs sm:text-sm font-semibold '>
             {row.original.potenciaContratada}
           </span>
         </div>
       );
     },
-    size: 110,
-    minSize: 100,
-    maxSize: 130
+    size: 110
   },
   {
     accessorKey: 'liberadoCorte',
@@ -392,9 +370,7 @@ export const columns = ({
         </Badge>
       );
     },
-    size: 120,
-    minSize: 100,
-    maxSize: 140
+    size: 120
   },
   {
     id: 'actions',
@@ -415,9 +391,7 @@ export const columns = ({
         </div>
       );
     },
-    size: 90,
-    minSize: 80,
-    maxSize: 100
+    size: 90
   }
 ];
 

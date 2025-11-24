@@ -304,7 +304,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
                           <TableHead
                             key={header.id}
                             className={cn(
-                              'text-center text-xs font-medium border-r border-border/20 last:border-r-0 whitespace-nowrap',
+                              'text-center text-xs font-medium border-r border-border/20 last:border-r-0 ',
                               screenSize === 'mobile' && 'h-10 py-2 px-1',
                               screenSize === 'tabletPortrait' &&
                                 'h-10 py-2 px-1.5',
@@ -371,7 +371,7 @@ export function DataTableNichosVirtualized<TData, TValue>({
                                 <TableCell
                                   key={cell.id}
                                   className={cn(
-                                    'border-r border-border/10 last:border-r-0 whitespace-nowrap text-xs',
+                                    'border-r border-border/10 last:border-r-0  text-xs',
                                     screenSize === 'mobile' && 'py-2 px-1',
                                     screenSize === 'tabletPortrait' &&
                                       'py-2 px-1.5',

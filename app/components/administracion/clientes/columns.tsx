@@ -43,8 +43,8 @@ export const columns = ({
         </div>
       );
     },
-    minSize: 200,
-    maxSize: 999
+    minSize: 250,
+    maxSize: 250
   },
   {
     accessorKey: 'esEmpresa',
@@ -135,7 +135,7 @@ export const columns = ({
     cell: ({ row }) => (
       <div className='flex items-center gap-2'>
         <span
-          className='font-mono text-sm whitespace-nowrap'
+          className='font-mono text-sm'
           title={row.getValue('telefono') || 'Sin teléfono'}
         >
           {row.getValue('telefono') || 'N/A'}

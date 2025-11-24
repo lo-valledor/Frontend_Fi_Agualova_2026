@@ -238,9 +238,7 @@ export const columns = ({
       const medidor = row.original;
       return (
         <div className='flex items-center gap-2'>
-          <span className='text-sm font-medium whitespace-nowrap'>
-            {medidor.fechaInicio}
-          </span>
+          <span className='text-sm font-medium '>{medidor.fechaInicio}</span>
         </div>
       );
     },

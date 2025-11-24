@@ -155,10 +155,7 @@ export default function CargoTipoContratoComponent({
               <div className='flex items-center gap-3 w-full sm:w-auto'>
                 {/* Filtro por Tipo de Contrato */}
                 <div className='flex items-center gap-2 flex-1 sm:flex-initial'>
-                  <Label
-                    htmlFor='tipo-contrato-filter'
-                    className='text-xs whitespace-nowrap'
-                  >
+                  <Label htmlFor='tipo-contrato-filter' className='text-xs '>
                     <Filter className='h-3 w-3 inline mr-1' />
                     Tipo de Contrato:
                   </Label>

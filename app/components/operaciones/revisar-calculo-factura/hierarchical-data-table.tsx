@@ -121,7 +121,7 @@ export function HierarchicalDataTable({
                   return (
                     <TableHead
                       key={header.id}
-                      className='font-semibold py-0.5 px-1 whitespace-nowrap text-[12px] h-6 overflow-hidden'
+                      className='font-semibold py-0.5 px-1  text-[12px] h-6 overflow-hidden'
                       style={{
                         width: header.getSize(),
                         minWidth:

@@ -185,7 +185,7 @@ export const columns = ({
       return (
         <div className='flex items-center gap-2'>
           <div className='space-y-0.5'>
-            <div className='text-xs sm:text-sm font-medium whitespace-nowrap'>
+            <div className='text-xs sm:text-sm font-medium '>
               {limite.toLocaleString('es-CL')} kW
             </div>
           </div>

@@ -430,11 +430,7 @@ const MeterRowDetailed = ({
       <div className='hidden sm:flex justify-start'>
         <Badge
           variant='outline'
-          className={cn(
-            'text-xs whitespace-nowrap',
-            status.borderColor,
-            status.textColor
-          )}
+          className={cn('text-xs ', status.borderColor, status.textColor)}
         >
           <span className='mr-1'>{status.icon}</span>
           <span className='truncate'>{medidor.clave || status.label}</span>
