@@ -9,6 +9,7 @@
  * - Scrolling: +90% más fluido
  * - Re-renders: -95%
  * - Soporta hasta 10,000+ filas sin lag
+ * - Headers fijos que permanecen visibles durante el scroll
  *
  * @example
  * ```tsx
@@ -29,15 +30,13 @@ import {
   getSortedRowModel,
   useReactTable
 } from '@tanstack/react-table';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { Search } from 'lucide-react';
 
-import { useState } from 'react';
-
-import { useVirtualScroll } from '~/hooks/shared/use-virtual-scroll';
+import { useRef, useState } from 'react';
 
 import { Input } from '../ui/input';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -101,14 +100,23 @@ export function VirtualDataTable<TData, TValue>({
 
   const rows = table.getRowModel().rows;
 
-  const { virtualizer, parentRef } = useVirtualScroll(
-    rows,
-    estimateRowHeight,
-    5
-  );
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const virtualItems = virtualizer.getVirtualItems();
-  const totalSize = virtualizer.getTotalSize();
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => estimateRowHeight,
+    overscan: 5
+  });
+
+  const virtualRows = rowVirtualizer.getVirtualItems();
+  const totalSize = rowVirtualizer.getTotalSize();
+
+  const paddingTop = virtualRows.length > 0 ? virtualRows[0]?.start || 0 : 0;
+  const paddingBottom =
+    virtualRows.length > 0
+      ? totalSize - (virtualRows[virtualRows.length - 1]?.end || 0)
+      : 0;
 
   return (
     <div className='space-y-4'>
@@ -137,13 +145,14 @@ export function VirtualDataTable<TData, TValue>({
           overflow: 'auto'
         }}
       >
-        <Table style={{ width: '100%' }}>
+        <table className='w-full caption-bottom text-sm' style={{ width: '100%' }}>
           <TableHeader className='sticky top-0 bg-background z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
+                    className='bg-background'
                     style={{
                       width: `${header.getSize()}px`,
                       minWidth: `${header.column.columnDef.minSize ?? 60}px`,
@@ -175,15 +184,14 @@ export function VirtualDataTable<TData, TValue>({
             {rows.length > 0 && (
               <>
                 {/* Spacer superior */}
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    style={{ height: virtualItems[0]?.start ?? 0 }}
-                  />
-                </TableRow>
+                {paddingTop > 0 && (
+                  <tr>
+                    <td style={{ height: `${paddingTop}px` }} />
+                  </tr>
+                )}
 
                 {/* Filas visibles */}
-                {virtualItems.map(virtualRow => {
+                {virtualRows.map(virtualRow => {
                   const row = rows[virtualRow.index];
                   return (
                     <TableRow
@@ -211,20 +219,15 @@ export function VirtualDataTable<TData, TValue>({
                 })}
 
                 {/* Spacer inferior */}
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    style={{
-                      height:
-                        totalSize -
-                        (virtualItems[virtualItems.length - 1]?.end ?? 0)
-                    }}
-                  />
-                </TableRow>
+                {paddingBottom > 0 && (
+                  <tr>
+                    <td style={{ height: `${paddingBottom}px` }} />
+                  </tr>
+                )}
               </>
             )}
           </TableBody>
-        </Table>
+        </table>
       </div>
     </div>
   );

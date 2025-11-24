@@ -98,14 +98,15 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className='space-y-2'>
-      <div className='rounded-md border'>
-        <Table className='text-sm'>
-          <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  return (
-                    <TableHead key={header.id} className='py-2'>
+      <div className='rounded-md border overflow-hidden'>
+        <div className='overflow-auto max-h-[600px]'>
+          <Table className='text-sm'>
+            <TableHeader className='sticky top-0 z-10 bg-background'>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className='border-b'>
+                  {headerGroup.headers.map(header => {
+                    return (
+                      <TableHead key={header.id} className='py-2 bg-background'>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -163,6 +164,7 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
       <DataTablePagination table={table} />
     </div>

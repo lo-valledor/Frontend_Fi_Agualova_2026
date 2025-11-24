@@ -120,7 +120,7 @@ export function DataTablePrecios<TData, TValue>({
       {/* Table */}
       <div className='rounded border border-border bg-card overflow-x-auto shadow'>
         <Table className='min-w-full text-xs align-middle'>
-          <TableHeader className='text-xs'>
+          <TableHeader className='text-xs sticky top-0 z-10 bg-background'>
             {/* Headers agrupados */}
             {columnGroups.length > 0 && (
               <TableRow className='border-b-0 h-8'>

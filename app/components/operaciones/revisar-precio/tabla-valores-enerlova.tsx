@@ -56,33 +56,34 @@ export default function TablaValoresEnerlova({
       .every(item => selectedRows.includes(item.codigo));
 
   return (
-    <div className='rounded-xl border border-border/60 overflow-hidden shadow-sm bg-background'>
-      <Table>
-        <TableHeader>
-          <TableRow className='bg-muted/40 hover:bg-muted/60'>
-            <TableHead className='text-xs text-center font-medium text-muted-foreground w-[50px]'>
+    <div className='rounded-xl border border-border/60 shadow-sm bg-background'>
+      <div className='overflow-auto max-h-[600px]'>
+        <Table>
+          <TableHeader className='sticky top-0 z-10 bg-muted/40'>
+            <TableRow className='bg-muted/40 hover:bg-muted/60 border-b'>
+            <TableHead className='text-xs text-center font-medium text-muted-foreground w-[50px] bg-muted/40'>
               <Checkbox
                 checked={allAvailableSelected}
                 onCheckedChange={handleSelectAll}
                 disabled={!isAuthorized}
               />
             </TableHead>
-            <TableHead className='text-xs text-center font-medium text-muted-foreground'>
+            <TableHead className='text-xs text-center font-medium text-muted-foreground bg-muted/40'>
               Código
             </TableHead>
-            <TableHead className='text-xs text-center font-medium text-muted-foreground'>
+            <TableHead className='text-xs text-center font-medium text-muted-foreground bg-muted/40'>
               Código Energía
             </TableHead>
-            <TableHead className='text-xs text-center font-medium text-muted-foreground'>
+            <TableHead className='text-xs text-center font-medium text-muted-foreground bg-muted/40'>
               Descripción
             </TableHead>
-            <TableHead className='text-xs text-center font-medium text-muted-foreground'>
+            <TableHead className='text-xs text-center font-medium text-muted-foreground bg-muted/40'>
               Valor
             </TableHead>
-            <TableHead className='text-xs text-center font-medium text-muted-foreground'>
+            <TableHead className='text-xs text-center font-medium text-muted-foreground bg-muted/40'>
               Estado
             </TableHead>
-            <TableHead className='text-xs text-center font-medium text-muted-foreground'>
+            <TableHead className='text-xs text-center font-medium text-muted-foreground bg-muted/40'>
               Modificar
             </TableHead>
           </TableRow>
@@ -177,6 +178,7 @@ export default function TablaValoresEnerlova({
           )}
         </TableBody>
       </Table>
+      </div>
     </div>
   );
 }

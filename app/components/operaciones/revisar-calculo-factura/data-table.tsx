@@ -30,17 +30,18 @@ export function DataTable<TData, TValue>({
   });
   return (
     <div className='w-fit max-w-full mx-auto overflow-x-auto'>
-      <div className='rounded-md border shadow-sm border-border/60'>
-        <Table className='table-auto'>
-          <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map(header => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className='px-3 py-2 whitespace-nowrap'
-                    >
+      <div className='rounded-md border shadow-sm border-border/60 overflow-hidden'>
+        <div className='overflow-auto max-h-[600px]'>
+          <Table className='table-auto'>
+            <TableHeader className='sticky top-0 z-10 bg-background'>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className='border-b'>
+                  {headerGroup.headers.map(header => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className='px-3 py-2 whitespace-nowrap bg-background'
+                      >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -83,6 +84,7 @@ export function DataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
     </div>
   );

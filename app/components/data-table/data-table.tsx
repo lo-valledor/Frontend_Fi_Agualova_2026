@@ -19,7 +19,6 @@ import { useState } from 'react';
 
 import { Input } from '~/components/ui/input';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -129,56 +128,58 @@ export function DataTable<TData, TValue>({
 
       {/* Compact Table */}
       <div className='rounded-md border'>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map(headerGroup => (
-              <TableRow key={headerGroup.id} className='hover:bg-transparent'>
-                {headerGroup.headers.map(header => (
-                  <TableHead
-                    key={header.id}
-                    className='h-10 px-3 text-xs font-medium'
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map(row => (
-                <TableRow
-                  key={row.id}
-                  className='border-b hover:bg-muted'
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id} className='h-10 px-3 py-1 text-sm'>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+        <div className='relative w-full overflow-auto max-h-[600px]'>
+          <table className='w-full caption-bottom text-sm'>
+            <TableHeader className='sticky top-0 z-10 bg-background'>
+              {table.getHeaderGroups().map(headerGroup => (
+                <TableRow key={headerGroup.id} className='hover:bg-transparent border-b'>
+                  {headerGroup.headers.map(header => (
+                    <TableHead
+                      key={header.id}
+                      className='h-10 px-3 text-xs font-medium bg-background'
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className='h-20 text-center text-sm text-muted-foreground'
-                >
-                  No se encontraron resultados.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map(row => (
+                  <TableRow
+                    key={row.id}
+                    className='border-b hover:bg-muted'
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map(cell => (
+                      <TableCell key={cell.id} className='h-10 px-3 py-1 text-sm'>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className='h-20 text-center text-sm text-muted-foreground'
+                  >
+                    No se encontraron resultados.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </table>
+        </div>
       </div>
 
       {/* Compact Pagination */}
