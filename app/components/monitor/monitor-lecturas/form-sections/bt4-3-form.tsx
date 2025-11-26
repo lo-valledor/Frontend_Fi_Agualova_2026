@@ -45,7 +45,9 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
   // Valores fijos del medidor
   const digito = useMemo(() => result.ME_Digitos, [result.ME_Digitos]);
   const digitoReactiva = useMemo(() => {
-    const prevStr = (result.LMC_ValorUltimaLectEnergiaReactiva1 ?? '').toString();
+    const prevStr = (
+      result.LMC_ValorUltimaLectEnergiaReactiva1 ?? ''
+    ).toString();
     const prevDigits = prevStr.replace(/\D/g, '').length;
     return Math.max(prevDigits || 0, result.ME_Digitos || 0);
   }, [result.LMC_ValorUltimaLectEnergiaReactiva1, result.ME_Digitos]);
@@ -324,18 +326,7 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     formatearFechaParaInput
   ]);
 
-  // Validar que la lectura no exceda el número de dígitos del medidor
-  const validarDigitos = useCallback(
-    (value: string) => {
-      if (!value || Number.isNaN(Number(value))) return false;
-
-      const valorNumerico = Number.parseInt(value);
-      const maxValue = Math.pow(10, digito) - 1; // 10^digitos - 1
-
-      return valorNumerico <= maxValue;
-    },
-    [digito]
-  );
+  // Validar que la lectura no exceda el número de dígitos del medidor (adaptativo)
   const validarDigitosReactiva = useCallback(
     (value: string) => {
       if (!value || Number.isNaN(Number(value))) return false;
@@ -629,7 +620,12 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
         setIsReactivaValidated(false);
       }
     },
-    [calcularConsumoReactiva, validarDigitosReactiva, maxValuePermitidoReactiva, digitoReactiva]
+    [
+      calcularConsumoReactiva,
+      validarDigitosReactiva,
+      maxValuePermitidoReactiva,
+      digitoReactiva
+    ]
   );
 
   // Actualizar datos de demanda (solo para fecha y hora)

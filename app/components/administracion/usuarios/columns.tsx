@@ -1,5 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Pencil, Shield, Trash2 } from 'lucide-react';
+import { Pencil, Shield, Trash2, UserCog } from 'lucide-react';
 
 import { EstadoBadge } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
@@ -10,6 +10,7 @@ interface TableColumnsProps {
   onEdit: (user: Usuarios) => void;
   onDelete: (user: Usuarios) => void;
   onViewPermissions: (user: Usuarios) => void;
+  onManageRoles: (user: Usuarios) => void;
   canEdit?: boolean;
 }
 
@@ -17,6 +18,7 @@ export const columns = ({
   onEdit,
   onDelete,
   onViewPermissions,
+  onManageRoles,
   canEdit = true
 }: TableColumnsProps): ColumnDef<Usuarios>[] => [
   {
@@ -149,6 +151,16 @@ export const columns = ({
       const user = row.original;
       return (
         <div className='flex items-center gap-2'>
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={() => onManageRoles(user)}
+            disabled={!canEdit}
+            title={!canEdit ? 'No tiene permisos para gestionar roles' : 'Gestionar roles'}
+            className='h-8 w-8 p-0'
+          >
+            <UserCog className='h-4 w-4 text-purple-600 dark:text-purple-400' />
+          </Button>
           <Button
             variant='ghost'
             size='sm'

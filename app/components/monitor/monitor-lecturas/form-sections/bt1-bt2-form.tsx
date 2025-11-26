@@ -67,18 +67,7 @@ export function BT1BT2Form({ result, onSuccess }: Readonly<BT1BT2FormProps>) {
     useState(false);
   const confirmed = useRef(false);
 
-  // Validar que la lectura no exceda el número de dígitos del medidor
-  const validarDigitos = useCallback(
-    (value: string) => {
-      if (!value || Number.isNaN(Number(value))) return false;
-
-      const valorNumerico = Number.parseInt(value);
-      const maxValue = Math.pow(10, digito) - 1; // 10^digitos - 1
-
-      return valorNumerico <= maxValue;
-    },
-    [digito]
-  );
+  // Validar que la lectura no exceda el número de dígitos del medidor (adaptativo)
   const validarDigitosActiva = useCallback(
     (value: string) => {
       if (!value || Number.isNaN(Number(value))) return false;

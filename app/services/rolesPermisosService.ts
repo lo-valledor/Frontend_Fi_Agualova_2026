@@ -720,7 +720,18 @@ class RolesPermisosService {
     rolesData: AsignarRolesUsuarioData
   ): Promise<RolesPermisosServiceResponse<Roles[]>> {
     try {
-      const response = await api.post(`${codigoUsuario}/roles`, rolesData);
+      // El API espera un array directo, no un objeto con propiedad roles
+      const rolesArray = rolesData.roles;
+
+      console.log('📤 API Request:', {
+        endpoint: `${codigoUsuario}/roles`,
+        method: 'POST',
+        body: rolesArray
+      });
+
+      const response = await api.post(`${codigoUsuario}/roles`, rolesArray);
+
+      console.log('📥 API Response:', response);
 
       // Si la respuesta es 204 (No Content), la operación fue exitosa
       if (response.status === 204) {
@@ -736,9 +747,16 @@ class RolesPermisosService {
         error: null
       };
     } catch (error: any) {
+      console.error('❌ API Error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
+
       return {
         data: null,
         error:
+          error.response?.data?.title ||
           error.response?.data?.message ||
           error.message ||
           'Error al asignar roles al usuario'
@@ -751,15 +769,30 @@ class RolesPermisosService {
     idRol: number
   ): Promise<RolesPermisosServiceResponse<boolean>> {
     try {
+      console.log('📤 API Request:', {
+        endpoint: `${codigoUsuario}/roles/${idRol}`,
+        method: 'DELETE'
+      });
+
       await api.delete(`${codigoUsuario}/roles/${idRol}`);
+
+      console.log('📥 API Response: Success');
+
       return {
         data: true,
         error: null
       };
     } catch (error: any) {
+      console.error('❌ API Error:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
+
       return {
         data: null,
         error:
+          error.response?.data?.title ||
           error.response?.data?.message ||
           error.message ||
           'Error al quitar el rol del usuario'

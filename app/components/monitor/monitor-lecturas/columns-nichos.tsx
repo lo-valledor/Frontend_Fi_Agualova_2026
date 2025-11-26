@@ -474,13 +474,13 @@ export const columnGroups = [
       'constante'
     ],
     className:
-      'bg-linear-to-r from-zinc-700 to-zinc-600 font-semibold shadow-sm'
+      'bg-linear-to-r from-zinc-700 to-zinc-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'consumo_anterior',
     title: 'Consumo Anterior',
     columns: ['anio_anterior', 'mes_anterior'],
-    className: 'bg-linear-to-r from-sky-700 to-sky-600 font-semibold shadow-sm'
+    className: 'bg-linear-to-r from-sky-700 to-sky-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'energia_activa',
@@ -490,7 +490,7 @@ export const columnGroups = [
       'energia_activa',
       'consumo_energia_activa'
     ],
-    className: 'bg-linear-to-r from-red-700 to-red-600 font-semibold shadow-sm'
+    className: 'bg-linear-to-r from-red-700 to-red-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'energia_reactiva',
@@ -501,14 +501,14 @@ export const columnGroups = [
       'consumo_energia_reactiva'
     ],
     className:
-      'bg-linear-to-r from-green-700 to-green-600 font-semibold shadow-sm'
+      'bg-linear-to-r from-green-700 to-green-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'demanda_punta',
     title: 'Demanda Punta 6.1 (kW)',
     columns: ['demanda_punta', 'fecha_demanda_punta', 'hora_demanda_punta'],
     className:
-      'bg-linear-to-r from-orange-700 to-orange-600 font-semibold shadow-sm'
+      'bg-linear-to-r from-orange-700 to-orange-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'demanda_suministrada',
@@ -519,13 +519,13 @@ export const columnGroups = [
       'hora_demanda_suministrada'
     ],
     className:
-      'bg-linear-to-r from-blue-700 to-blue-600 font-semibold shadow-sm'
+      'bg-linear-to-r from-blue-700 to-blue-600 text-white font-semibold shadow-sm'
   },
   {
     id: 'acciones',
     title: 'Acción',
     columns: ['acciones'],
     className:
-      'bg-linear-to-r from-purple-700 to-purple-600 font-semibold shadow-sm sticky right-0 z-20'
+      'bg-linear-to-r from-purple-700 to-purple-600 text-white font-semibold shadow-sm sticky right-0 z-20'
   }
 ];

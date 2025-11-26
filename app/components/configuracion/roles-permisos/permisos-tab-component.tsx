@@ -56,54 +56,73 @@ interface PermisoCheckboxGroupProps {
 
 const PermisoCheckboxGroup = React.memo<PermisoCheckboxGroupProps>(
   ({ permiso, rolId, menuId, onTogglePermiso, layout = 'table' }) => {
-    const handleChange =
-      (tipoPermiso: string) => (checked: boolean | 'indeterminate') => {
-        onTogglePermiso(rolId, menuId, tipoPermiso, !!checked);
-      };
+    const handleToggle = (tipoPermiso: string, currentValue: boolean) => {
+      onTogglePermiso(rolId, menuId, tipoPermiso, !currentValue);
+    };
 
     if (layout === 'mobile') {
       return (
         <div className='grid grid-cols-2 gap-3'>
           <div className='space-y-2'>
-            <div className='flex items-center gap-2'>
+            <div
+              onClick={() =>
+                handleToggle('puedeVer', permiso?.puedeVer || false)
+              }
+              className='flex items-center gap-2 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-950/20 p-2 rounded-lg transition-colors'
+            >
               <PermisoCheckbox
                 checked={permiso?.puedeVer || false}
-                onCheckedChange={handleChange('puedeVer')}
-                className='h-4 w-4 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600'
+                onCheckedChange={() => {}}
+                className='h-4 w-4 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 pointer-events-none'
               />
-              <span className='text-sm text-blue-600 dark:text-blue-400'>
+              <span className='text-sm text-blue-600 dark:text-blue-400 font-medium'>
                 Ver
               </span>
             </div>
-            <div className='flex items-center gap-2'>
+            <div
+              onClick={() =>
+                handleToggle('puedeCrear', permiso?.puedeCrear || false)
+              }
+              className='flex items-center gap-2 cursor-pointer hover:bg-emerald-50 dark:hover:bg-emerald-950/20 p-2 rounded-lg transition-colors'
+            >
               <PermisoCheckbox
                 checked={permiso?.puedeCrear || false}
-                onCheckedChange={handleChange('puedeCrear')}
-                className='h-4 w-4 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600'
+                onCheckedChange={() => {}}
+                className='h-4 w-4 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600 pointer-events-none'
               />
-              <span className='text-sm text-emerald-600 dark:text-emerald-400'>
+              <span className='text-sm text-emerald-600 dark:text-emerald-400 font-medium'>
                 Crear
               </span>
             </div>
           </div>
           <div className='space-y-2'>
-            <div className='flex items-center gap-2'>
+            <div
+              onClick={() =>
+                handleToggle('puedeEditar', permiso?.puedeEditar || false)
+              }
+              className='flex items-center gap-2 cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-950/20 p-2 rounded-lg transition-colors'
+            >
               <PermisoCheckbox
                 checked={permiso?.puedeEditar || false}
-                onCheckedChange={handleChange('puedeEditar')}
-                className='h-4 w-4 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600'
+                onCheckedChange={() => {}}
+                className='h-4 w-4 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600 pointer-events-none'
               />
-              <span className='text-sm text-amber-600 dark:text-amber-400'>
+              <span className='text-sm text-amber-600 dark:text-amber-400 font-medium'>
                 Editar
               </span>
             </div>
-            <div className='flex items-center gap-2'>
+            <div
+              onClick={() =>
+                handleToggle('puedeEliminar', permiso?.puedeEliminar || false)
+              }
+              className='flex items-center gap-2 cursor-pointer hover:bg-rose-50 dark:hover:bg-rose-950/20 p-2 rounded-lg transition-colors'
+            >
               <PermisoCheckbox
                 checked={permiso?.puedeEliminar || false}
-                onCheckedChange={handleChange('puedeEliminar')}
-                className='h-4 w-4 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600'
+                onCheckedChange={() => {}}
+                className='h-4 w-4 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600 pointer-events-none'
               />
-              <span className='text-sm text-rose-600 dark:text-rose-400'>
+              <span className='text-sm text-rose-600 dark:text-rose-400 font-medium'>
                 Eliminar
               </span>
             </div>
@@ -115,35 +134,77 @@ const PermisoCheckboxGroup = React.memo<PermisoCheckboxGroupProps>(
     return (
       <div className='grid grid-cols-4 gap-1'>
         {/* Ver */}
-        <div className='flex items-center justify-center'>
+        <div
+          onClick={() => handleToggle('puedeVer', permiso?.puedeVer || false)}
+          className={`flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all
+            ${
+              permiso?.puedeVer
+                ? 'bg-blue-100 dark:bg-blue-900/30 hover:bg-blue-200 dark:hover:bg-blue-900/50'
+                : 'hover:bg-blue-50 dark:hover:bg-blue-950/20'
+            }`}
+          title='Ver'
+        >
           <PermisoCheckbox
             checked={permiso?.puedeVer || false}
-            onCheckedChange={handleChange('puedeVer')}
-            className='h-4 w-4 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600'
+            onCheckedChange={() => {}}
+            className='h-5 w-5 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 pointer-events-none'
           />
         </div>
         {/* Crear */}
-        <div className='flex items-center justify-center'>
+        <div
+          onClick={() =>
+            handleToggle('puedeCrear', permiso?.puedeCrear || false)
+          }
+          className={`flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all
+            ${
+              permiso?.puedeCrear
+                ? 'bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50'
+                : 'hover:bg-emerald-50 dark:hover:bg-emerald-950/20'
+            }`}
+          title='Crear'
+        >
           <PermisoCheckbox
             checked={permiso?.puedeCrear || false}
-            onCheckedChange={handleChange('puedeCrear')}
-            className='h-4 w-4 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600'
+            onCheckedChange={() => {}}
+            className='h-5 w-5 data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600 pointer-events-none'
           />
         </div>
         {/* Editar */}
-        <div className='flex items-center justify-center'>
+        <div
+          onClick={() =>
+            handleToggle('puedeEditar', permiso?.puedeEditar || false)
+          }
+          className={`flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all
+            ${
+              permiso?.puedeEditar
+                ? 'bg-amber-100 dark:bg-amber-900/30 hover:bg-amber-200 dark:hover:bg-amber-900/50'
+                : 'hover:bg-amber-50 dark:hover:bg-amber-950/20'
+            }`}
+          title='Editar'
+        >
           <PermisoCheckbox
             checked={permiso?.puedeEditar || false}
-            onCheckedChange={handleChange('puedeEditar')}
-            className='h-4 w-4 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600'
+            onCheckedChange={() => {}}
+            className='h-5 w-5 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600 pointer-events-none'
           />
         </div>
         {/* Eliminar */}
-        <div className='flex items-center justify-center'>
+        <div
+          onClick={() =>
+            handleToggle('puedeEliminar', permiso?.puedeEliminar || false)
+          }
+          className={`flex items-center justify-center p-2 rounded-lg cursor-pointer transition-all
+            ${
+              permiso?.puedeEliminar
+                ? 'bg-rose-100 dark:bg-rose-900/30 hover:bg-rose-200 dark:hover:bg-rose-900/50'
+                : 'hover:bg-rose-50 dark:hover:bg-rose-950/20'
+            }`}
+          title='Eliminar'
+        >
           <PermisoCheckbox
             checked={permiso?.puedeEliminar || false}
-            onCheckedChange={handleChange('puedeEliminar')}
-            className='h-4 w-4 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600'
+            onCheckedChange={() => {}}
+            className='h-5 w-5 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600 pointer-events-none'
           />
         </div>
       </div>
@@ -242,6 +303,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   const [viewMode, setViewMode] = useState<'table' | 'mobile'>('table');
   const [compactView, setCompactView] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [bannerCollapsed, setBannerCollapsed] = useState(false);
 
   // Ref para el contenedor scrollable (virtualización)
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -306,8 +368,14 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
   const handleTogglePermiso = useCallback(
     (idRol: number, idMenu: number, tipoPermiso: string, valor: boolean) => {
       const key = `${idRol}-${idMenu}`;
+
+      // Obtener el permiso ORIGINAL de la BD (no los cambios pendientes)
+      const permisoOriginal = permisosMap.get(key);
+
+      // Obtener el permiso actual (puede incluir cambios pendientes)
       const permisoActual = getPermiso(idRol, idMenu);
 
+      // Crear el nuevo estado del permiso
       const nuevoPermiso: PermisoRolMenu = {
         idRol,
         idMenu,
@@ -321,11 +389,27 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
       setPendingChanges(prev => {
         const newMap = new Map(prev);
-        newMap.set(key, nuevoPermiso);
+
+        // Verificar si el nuevo permiso es IGUAL al original
+        const esIgualAlOriginal =
+          nuevoPermiso.puedeVer === (permisoOriginal?.puedeVer || false) &&
+          nuevoPermiso.puedeCrear === (permisoOriginal?.puedeCrear || false) &&
+          nuevoPermiso.puedeEditar === (permisoOriginal?.puedeEditar || false) &&
+          nuevoPermiso.puedeEliminar ===
+            (permisoOriginal?.puedeEliminar || false);
+
+        if (esIgualAlOriginal) {
+          // Si volvió al estado original, QUITAR de cambios pendientes
+          newMap.delete(key);
+        } else {
+          // Si es diferente al original, agregarlo a cambios pendientes
+          newMap.set(key, nuevoPermiso);
+        }
+
         return newMap;
       });
     },
-    [getPermiso]
+    [getPermiso, permisosMap]
   );
 
   // ✅ NUEVA FUNCIÓN: Guardar todos los cambios pendientes
@@ -379,6 +463,7 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
   const handleDiscardChanges = useCallback(() => {
     setPendingChanges(new Map());
+    setBannerCollapsed(false);
     toast.info('Cambios descartados');
   }, []);
 
@@ -414,47 +499,6 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
 
   return (
     <Card className='border-0 shadow-lg bg-background backdrop-blur-sm'>
-      {/* ✅ Banner de cambios pendientes */}
-      {pendingChanges.size > 0 && (
-        <div className='sticky top-0 z-30 bg-orange-500 dark:bg-orange-600 text-white px-4 py-3 shadow-lg'>
-          <div className='flex items-center justify-between gap-4'>
-            <div className='flex items-center gap-2'>
-              <Badge
-                variant='secondary'
-                className='bg-white/20 text-white border-white/30'
-              >
-                {pendingChanges.size}
-              </Badge>
-              <span className='font-medium'>
-                {pendingChanges.size === 1
-                  ? '1 cambio pendiente'
-                  : `${pendingChanges.size} cambios pendientes`}
-              </span>
-            </div>
-            <div className='flex gap-2'>
-              <Button
-                onClick={handleDiscardChanges}
-                disabled={isSaving}
-                variant='outline'
-                size='sm'
-                className='bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white'
-              >
-                <X className='h-4 w-4 mr-2' />
-                Descartar
-              </Button>
-              <Button
-                onClick={handleSaveChanges}
-                disabled={isSaving}
-                size='sm'
-                className='bg-white text-orange-600 hover:bg-white/90 font-semibold'
-              >
-                <Save className='h-4 w-4 mr-2' />
-                {isSaving ? 'Guardando...' : 'Guardar Cambios'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
       <CardHeader className='pb-4'>
         <div className='flex flex-col space-y-4'>
           {/* Header principal */}
@@ -584,6 +628,50 @@ const PermisosTabComponent: React.FC<PermisosTabComponentProps> = ({
       </CardHeader>
 
       <CardContent className='pt-0'>
+        {/* ✅ Botón flotante (FAB) para guardar cambios */}
+        {pendingChanges.size > 0 && (
+          <div className='fixed bottom-6 right-6 z-50 flex flex-col gap-2 items-end animate-in slide-in-from-bottom-5 duration-300'>
+            {/* Tooltip con contador */}
+            <div className='bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-3 py-1.5 rounded-lg text-sm font-medium shadow-lg animate-in fade-in zoom-in duration-200'>
+              {pendingChanges.size} cambio{pendingChanges.size !== 1 ? 's' : ''}{' '}
+              pendiente{pendingChanges.size !== 1 ? 's' : ''}
+            </div>
+
+            {/* Botones de acción */}
+            <div className='flex gap-2'>
+              <Button
+                onClick={handleDiscardChanges}
+                disabled={isSaving}
+                size='lg'
+                variant='outline'
+                className='h-14 w-14 rounded-full shadow-2xl border-2 hover:scale-110 transition-transform'
+                title='Descartar cambios'
+              >
+                <X className='h-6 w-6' />
+              </Button>
+              <Button
+                onClick={handleSaveChanges}
+                disabled={isSaving}
+                size='lg'
+                className='h-16 w-16 rounded-full shadow-2xl bg-gradient-to-br from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 hover:scale-110 transition-transform relative'
+                title='Guardar cambios'
+              >
+                {isSaving ? (
+                  <div className='animate-spin rounded-full h-6 w-6 border-4 border-white border-t-transparent' />
+                ) : (
+                  <>
+                    <Save className='h-6 w-6' />
+                    {/* Badge con contador */}
+                    <div className='absolute -top-1 -right-1 h-7 w-7 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold shadow-lg ring-2 ring-white dark:ring-slate-900'>
+                      {pendingChanges.size > 99 ? '99+' : pendingChanges.size}
+                    </div>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        )}
+
         {viewMode === 'mobile' ? (
           <MobileView
             filteredMenus={filteredMenus}

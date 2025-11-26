@@ -358,17 +358,32 @@ export default function MonitorNichos({
                       : 'Editar Medidor'}
                   </span>
                 </div>
-                <Badge
-                  variant='outline'
-                  className='bg-primary/10 text-primary border-primary/20 font-mono text-xs sm:text-sm'
-                >
-                  {selectedMedidor.ME_NSerie}
-                </Badge>
+                <div className='flex items-center gap-2 flex-wrap'>
+                  <Badge
+                    variant='outline'
+                    className='bg-primary/10 text-primary border-primary/20 font-mono text-xs sm:text-sm'
+                  >
+                    {selectedMedidor.ME_NSerie}
+                  </Badge>
+                  {selectedMedidor.ubicacion && (
+                    <Badge
+                      variant='outline'
+                      className='bg-secondary/50 text-secondary-foreground border-border text-xs sm:text-sm'
+                    >
+                      {selectedMedidor.ubicacion}
+                    </Badge>
+                  )}
+                </div>
               </DialogTitle>
               <DialogDescription className='text-muted-foreground text-sm'>
                 Complete la información para{' '}
                 {selectedMedidor.Estado === 4 ? 'reaperturar' : 'actualizar'} la
                 medición del medidor seleccionado
+                {selectedMedidor.local && (
+                  <span className='block mt-1 text-xs'>
+                    Local: <span className='font-semibold'>{selectedMedidor.local}</span>
+                  </span>
+                )}
               </DialogDescription>
             </DialogHeader>
 
