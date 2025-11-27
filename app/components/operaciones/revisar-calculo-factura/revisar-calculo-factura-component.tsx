@@ -23,7 +23,8 @@ import {
   SearchIcon,
   SettingsIcon,
   TrendingUp,
-  Info
+  Info,
+  Plus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
@@ -57,7 +58,7 @@ import {
 } from '~/types/operaciones';
 
 import { columns } from './columnsPrecalculo';
-import { HierarchicalDataTableVirtualized } from './hierarchical-data-table-virtualized';
+import { HierarchicalDataTable } from './hierarchical-data-table';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
@@ -573,7 +574,7 @@ export default function RevisarCalculoFacturaComponent({
                           <span className='hidden sm:inline'>
                             Ver Cálculo Facturas
                           </span>
-                          <span className='sm:hidden'>Ver</span>
+                          <span className='sm:hidden'>Ver Cálculo</span>
                         </>
                       )}
                     </Button>
@@ -906,13 +907,13 @@ export default function RevisarCalculoFacturaComponent({
                       }
                       className='bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md'
                       onClick={() => {
-                        toast.info('Acción Agregar');
+                        toast.info('Acción Aceptar Cálculo');
                         // TODO: implementar flujo de creación según requerimientos
                       }}
                     >
                       <span className='inline-flex items-center gap-2'>
                         <Plus className='h-4 w-4' />
-                        Agregar
+                        Aceptar Cálculo
                       </span>
                     </Button>
                   </div>

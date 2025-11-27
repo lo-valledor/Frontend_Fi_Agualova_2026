@@ -722,7 +722,7 @@ export default function CerrarLecturasComponent({
                           Selecciona los nichos a cerrar
                         </div>
                       </div>
-                      <DataTableVirtualized
+                      <DataTable
                         columns={columns}
                         data={nichosConLecturas}
                         onRowSelectionChange={setSelectedRows}
