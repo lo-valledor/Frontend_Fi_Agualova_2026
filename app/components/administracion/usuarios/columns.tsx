@@ -2,7 +2,6 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { Pencil, Shield, Trash2, UserCog } from 'lucide-react';
 
 import { EstadoBadge } from '~/components/data-table/table-helpers';
-import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import type { Usuarios } from '~/types/administracion';
 
@@ -75,52 +74,7 @@ export const columns = ({
       );
     }
   },
-  {
-    accessorKey: 'perfilId',
-    header: 'Perfil',
-    cell: ({ row }) => {
-      const perfilId = row.getValue('perfilId') as number;
-      const perfiles = {
-        1: {
-          name: 'Administrador',
-          color: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-        },
-        2: {
-          name: 'Lectura',
-          color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-        },
-        3: {
-          name: 'Supervisor Operativo',
-          color:
-            'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-        },
-        4: {
-          name: 'Administrativo Facturación',
-          color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-        },
-        7: {
-          name: 'Supervisor Facturación',
-          color:
-            'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-        },
-        8: {
-          name: 'Usuario Consulta',
-          color: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200'
-        },
-        10: {
-          name: 'Autorizador Límite Invierno',
-          color: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200'
-        }
-      };
-
-      const perfil = perfiles[perfilId as keyof typeof perfiles] || {
-        name: `Perfil ${perfilId}`,
-        color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-      };
-
-      return <Badge className={perfil.color}>{perfil.name}</Badge>;
-    }
-  },
+  
   {
     accessorKey: 'activo',
     header: 'Estado',

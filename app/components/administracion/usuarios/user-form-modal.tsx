@@ -6,7 +6,6 @@ import {
   EyeOff,
   Lock,
   Mail,
-  Shield,
   User,
   UserCircle
 } from 'lucide-react';
@@ -70,7 +69,7 @@ export function UserFormModal({
     nombreDeUsuario: '',
     contrasena: '',
     email: '',
-    perfilId: 1,
+    perfilId: 0,
     nombres: '',
     apellidos: '',
     departamento: 1,
@@ -111,7 +110,7 @@ export function UserFormModal({
         nombreDeUsuario: '',
         contrasena: '',
         email: '',
-        perfilId: 1,
+        perfilId: 0,
         nombres: '',
         apellidos: '',
         departamento: 1,
@@ -462,46 +461,12 @@ export function UserFormModal({
 
           <Separator />
 
-          {/* Sección: Configuración de Perfil */}
+          {/* Sección: Configuración */}
           <div className='space-y-4'>
             <div className='flex items-center gap-2 text-sm font-semibold text-muted-foreground'>
-              <Shield className='h-4 w-4' />
-              <span>Configuración de Perfil</span>
+              <Briefcase className='h-4 w-4' />
+              <span>Configuración</span>
             </div>
-
-            {/* Perfil (solo en modo creación) */}
-            {mode === 'add' && (
-              <div className='space-y-2'>
-                <Label htmlFor='perfilId' className='flex items-center gap-2'>
-                  <Shield className='h-3.5 w-3.5 text-muted-foreground' />
-                  Perfil de Usuario
-                </Label>
-                <Select
-                  value={formData.perfilId.toString()}
-                  onValueChange={value =>
-                    handleInputChange('perfilId', Number.parseInt(value))
-                  }
-                  disabled={isLoading}
-                >
-                  <SelectTrigger className='w-full transition-all'>
-                    <SelectValue placeholder='Selecciona un perfil' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='1'>Administrador</SelectItem>
-                    <SelectItem value='2'>Lectura</SelectItem>
-                    <SelectItem value='3'>Supervisor Operativo</SelectItem>
-                    <SelectItem value='4'>
-                      Administrativo Facturación
-                    </SelectItem>
-                    <SelectItem value='7'>Supervisor Facturación</SelectItem>
-                    <SelectItem value='8'>Usuario Consulta</SelectItem>
-                    <SelectItem value='10'>
-                      Autorizador Límite Invierno
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
 
             {/* Departamento */}
             <div className='space-y-2'>

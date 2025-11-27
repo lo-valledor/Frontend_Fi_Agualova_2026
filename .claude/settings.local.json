@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm lint:*)"
+      "Bash(timeout 120 pnpm typecheck:*)"
     ],
     "deny": [],
     "ask": [],
