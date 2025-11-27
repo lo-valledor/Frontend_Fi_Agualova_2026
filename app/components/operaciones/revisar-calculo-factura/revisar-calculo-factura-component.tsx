@@ -24,7 +24,7 @@ import {
   SettingsIcon,
   TrendingUp,
   Info,
-  Plus
+  Save
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
@@ -894,27 +894,23 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
 
                   {/* Acción inferior: Agregar */}
-                  <div className='sticky bottom-0 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border mt-4 p-3 flex items-center justify-end'>
+                  <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300'>
                     <Button
                       id='agregar-btn'
-                      variant='default'
-                      size='sm'
+                      onClick={() => {
+                        toast.info('Acción Aceptar Cálculo');
+                        // TODO: implementar flujo de creación según requerimientos
+                      }}
                       disabled={!hasPermission}
+                      size='lg'
+                      className='h-16 w-16 rounded-full shadow-2xl bg-linear-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 hover:scale-110 transition-transform relative'
                       title={
                         !hasPermission
                           ? 'No tiene permisos para agregar'
                           : 'Agregar nuevo registro'
                       }
-                      className='bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md'
-                      onClick={() => {
-                        toast.info('Acción Aceptar Cálculo');
-                        // TODO: implementar flujo de creación según requerimientos
-                      }}
                     >
-                      <span className='inline-flex items-center gap-2'>
-                        <Plus className='h-4 w-4' />
-                        Aceptar Cálculo
-                      </span>
+                      <Save className='h-6 w-6' />
                     </Button>
                   </div>
                 </div>
