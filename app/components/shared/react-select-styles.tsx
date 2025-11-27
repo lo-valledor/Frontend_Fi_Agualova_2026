@@ -6,46 +6,48 @@ interface OptionType {
   label: string;
 }
 
-// Tipamos explícitamente el retorno como StylesConfig
 export function getReactSelectStyles(
   theme: 'light' | 'dark' | string
 ): StylesConfig<OptionType, false, GroupBase<OptionType>> {
-  const isDark = theme === 'dark';
-
+  
+  // Nota: Con variables CSS nativas, no necesitamos tanta lógica JS para el tema,
+  // pero mantenemos la estructura por si acaso.
+  
   return {
     control: (provided, state) => ({
       ...provided,
-      backgroundColor: isDark ? 'hsl(var(--background))' : 'hsl(var(--background))',
-      borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
+      // Usamos var() directo porque tu CSS ya tiene el color completo (oklch)
+      backgroundColor: 'var(--background)', 
+      borderColor: state.isFocused ? 'var(--ring)' : 'var(--border)',
       borderRadius: 'calc(var(--radius) - 2px)',
       borderWidth: '1px',
-      boxShadow: state.isFocused ? '0 0 0 2px hsl(var(--ring) / 0.2)' : 'none',
+      boxShadow: state.isFocused ? '0 0 0 2px var(--ring)' : 'none', // Nota: Quitamos la opacidad manual para simplificar
       minHeight: '2.75rem',
       '&:hover': {
-        borderColor: 'hsl(var(--ring))',
+        borderColor: 'var(--ring)',
       },
     }),
     input: (provided) => ({
       ...provided,
-      color: 'hsl(var(--foreground))',
+      color: 'var(--foreground)',
       fontSize: '0.875rem',
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: 'hsl(var(--muted-foreground))',
+      color: 'var(--muted-foreground)',
       fontSize: '0.875rem',
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: 'hsl(var(--foreground))',
+      color: 'var(--foreground)',
       fontSize: '0.875rem',
     }),
     menu: (provided) => ({
       ...provided,
-      backgroundColor: isDark ? '#09090b' : '#ffffff',
-      border: '1px solid hsl(var(--border))',
+      backgroundColor: 'var(--popover)', // Usamos el color de popover de tu tema
+      border: '1px solid var(--border)',
       borderRadius: 'calc(var(--radius) - 2px)',
-      boxShadow: '0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1)',
+      boxShadow: 'var(--shadow-md)', // Usamos tu variable de sombra
       zIndex: 9999,
     }),
     menuList: (provided) => ({
@@ -55,61 +57,66 @@ export function getReactSelectStyles(
     option: (provided, state) => ({
       ...provided,
       backgroundColor: state.isSelected
-        ? 'hsl(var(--hover) / 0.5)'
+        ? 'var(--primary)' // Selección sólida
         : state.isFocused
-        ? 'hsl(var(--background) / 0.3)' // Hover más intenso
+        ? 'var(--accent)'  // Hover usa tu variable --accent (que es gris suave en light/dark)
         : 'transparent',
+      
       color: state.isSelected
-        ? 'hsl(var(--accent-foreground))'
-        : 'hsl(var(--popover-foreground))',
+        ? 'var(--primary-foreground)' // Texto blanco/contraste al seleccionar
+        : state.isFocused
+        ? 'var(--accent-foreground)'
+        : 'var(--foreground)',
+        
       fontSize: '0.875rem',
       padding: '0.5rem 0.75rem',
       borderRadius: 'calc(var(--radius) - 4px)',
       cursor: 'pointer',
       '&:active': {
-        backgroundColor: 'hsl(var(--accent) / 0.2)',
+        // Usamos accent directamente para active también
+        backgroundColor: 'var(--accent)', 
       },
     }),
     indicatorSeparator: (provided) => ({
       ...provided,
-      backgroundColor: 'hsl(var(--border))',
+      backgroundColor: 'var(--border)',
     }),
     clearIndicator: (provided) => ({
       ...provided,
-      color: 'hsl(var(--muted-foreground))',
+      color: 'var(--muted-foreground)',
       '&:hover': {
-        color: 'hsl(var(--foreground))',
+        color: 'var(--foreground)',
       },
     }),
     dropdownIndicator: (provided) => ({
       ...provided,
-      color: 'hsl(var(--muted-foreground))',
+      color: 'var(--muted-foreground)',
       '&:hover': {
-        color: 'hsl(var(--foreground))',
+        color: 'var(--foreground)',
       },
     }),
     multiValue: (provided) => ({
       ...provided,
-      backgroundColor: 'hsl(var(--accent))',
+      backgroundColor: 'var(--accent)',
       borderRadius: 'calc(var(--radius) - 4px)',
     }),
     multiValueLabel: (provided) => ({
       ...provided,
-      color: 'hsl(var(--accent-foreground))',
+      color: 'var(--accent-foreground)',
       fontSize: '0.75rem',
       padding: '0.125rem 0.25rem',
     }),
     multiValueRemove: (provided) => ({
       ...provided,
-      color: 'hsl(var(--accent-foreground))',
+      color: 'var(--accent-foreground)',
       '&:hover': {
-        backgroundColor: 'hsl(var(--destructive))',
-        color: 'hsl(var(--destructive-foreground))',
+        backgroundColor: 'var(--destructive)',
+        color: 'var(--destructive-foreground)', // Texto blanco en error
       },
     }),
     noOptionsMessage: (provided) => ({
       ...provided,
-      color: 'hsl(var(--muted-foreground))',
+      color: 'var(--muted-foreground)',
       fontSize: '0.875rem',
     }),
   };
