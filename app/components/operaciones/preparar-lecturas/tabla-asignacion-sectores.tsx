@@ -455,7 +455,8 @@ export default function TablaAsignacionSectores({
             title={
               hasPermission ? '' : 'No tiene permisos para preparar lecturas'
             }
-            className='gap-2 bg-linear-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 w-full sm:w-auto'
+            variant="default"
+            className='gap-2 w-full sm:w-auto'
             size='sm'
           >
             {isSubmitting ? (

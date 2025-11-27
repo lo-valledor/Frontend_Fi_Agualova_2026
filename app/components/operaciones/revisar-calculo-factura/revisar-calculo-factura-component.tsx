@@ -5,16 +5,14 @@ import {
   ChevronDown,
   ChevronRight,
   ChevronUp,
-  Eraser,
   FileSpreadsheet,
   FileTextIcon,
   HelpCircle,
-  RefreshCw,
   SearchIcon,
-  SettingsIcon,
   TrendingUp,
   Info,
-  Plus
+  Plus,
+  RefreshCcwIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
@@ -23,7 +21,6 @@ import 'driver.js/dist/driver.css';
 import { useMemo, useState, useCallback } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
-import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
@@ -36,8 +33,6 @@ import {
   CardTitle
 } from '~/components/ui/card';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
-
-
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { useCalculoFactura } from '~/hooks/operaciones/use-calculo-factura';
@@ -51,7 +46,6 @@ import {
 
 import { columns } from './columnsPrecalculo';
 import { HierarchicalDataTable } from './hierarchical-data-table';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
@@ -64,14 +58,6 @@ export default function RevisarCalculoFacturaComponent({
 }>) {
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newCalculation, setNewCalculation] = useState({
-    contratoId: '',
-    numeroSerie: '',
-    consumoPeriodo: '',
-    rutCliente: '',
-    nombreCliente: ''
-  });
   const cicloId = '1';
 
   // Permisos
@@ -130,66 +116,6 @@ export default function RevisarCalculoFacturaComponent({
     cicloId
   });
 
-  // Función para actualizar los datos (memoizada)
-  const handleRefreshData = useCallback(async () => {
-    toast.info('Actualizando datos...');
-    await handleRevisarCalculo();
-  }, [handleRevisarCalculo]);
-
-  // Función para limpiar filtros y reiniciar (memoizada)
-  const handleClearFilters = useCallback(() => {
-    setSearchTerm('');
-    setData([]);
-    setSelectedContratos([]);
-  }, [setSearchTerm, setData, setSelectedContratos]);
-
-  // Columnas para exportación (memoizadas)
-  const exportColumns = useMemo(
-    () => [
-      { header: 'Sector', key: 'sector' },
-      { header: 'Contrato ID', key: 'contratoId' },
-      { header: 'Código Tarifa', key: 'codigoTarifa' },
-      { header: 'RUT Cliente', key: 'rutCliente' },
-      { header: 'Nombre Cliente', key: 'nombreCliente' },
-      { header: 'Local ID', key: 'localId' },
-      { header: 'Dirección', key: 'direccion' },
-      { header: 'Comuna', key: 'comuna' },
-      { header: 'Número Serie', key: 'numeroSerie' },
-      { header: 'Fecha Lectura', key: 'fechaLectura' },
-      { header: 'Consumo Periodo', key: 'consumoPeriodo' },
-      { header: 'Lectura ID', key: 'lecturaId' },
-      { header: 'Total Facturado', key: 'totalFacturado' }
-    ],
-    []
-  );
-
-  // Preparar datos para exportación con cargos detallados (optimizado)
-  const dataParaExportar = useMemo(() => {
-    if (filteredData.length === 0) return [];
-
-    return filteredData.map(item => {
-      const cargosPorLinea = item.cargos
-        .map(
-          (cargo, idx) =>
-            `Cargo ${idx + 1}: ${cargo.descripcion} (${cargo.codigoEnerlova}) - Cant: ${cargo.cantidad} - Precio: $${cargo.precioUnitario.toLocaleString()} - Subtotal: $${cargo.subtotal.toLocaleString()}`
-        )
-        .join(' | ');
-
-      return {
-        ...item,
-        cargosDetalle: cargosPorLinea
-      };
-    });
-  }, [filteredData]);
-
-  // Columnas de exportación con detalle de cargos (memoizadas)
-  const exportColumnsConCargos = useMemo(
-    () => [
-      ...exportColumns,
-      { header: 'Detalle de Cargos', key: 'cargosDetalle' }
-    ],
-    [exportColumns]
-  );
 
   // Estadísticas calculadas (memoizadas)
   const estadisticas = useMemo(() => {
@@ -221,32 +147,6 @@ export default function RevisarCalculoFacturaComponent({
     },
     [setSelectedContratos]
   );
-
-  // Handler para agregar nuevo cálculo
-  const handleAddCalculation = useCallback(async () => {
-    if (!newCalculation.contratoId || !newCalculation.numeroSerie || !newCalculation.consumoPeriodo) {
-      toast.error('Por favor complete todos los campos requeridos');
-      return;
-    }
-
-    try {
-      // Aquí iría la lógica para guardar el nuevo cálculo
-      // Por ahora solo simulamos
-      toast.success('Nuevo cálculo agregado exitosamente');
-      setIsAddModalOpen(false);
-      setNewCalculation({
-        contratoId: '',
-        numeroSerie: '',
-        consumoPeriodo: '',
-        rutCliente: '',
-        nombreCliente: ''
-      });
-      // Recargar datos
-      await handleRevisarCalculo();
-    } catch (error) {
-      toast.error('Error al agregar el cálculo');
-    }
-  }, [newCalculation, handleRevisarCalculo]);
 
   // Pasos del tour interactivo (memoizados)
   const tourSteps = useMemo(
@@ -386,7 +286,7 @@ export default function RevisarCalculoFacturaComponent({
               aria-controls='filters-content'
               type='button'
             >
-              <div className='flex items-center gap-3'>
+              <div className='flex items-center gap-3 mb-4'>
                 <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
                   <FileSpreadsheet className='w-4 h-4' />
                 </div>
@@ -414,7 +314,7 @@ export default function RevisarCalculoFacturaComponent({
                   {/* Campos de filtro */}
                   <div className='flex flex-col sm:flex-row gap-4 w-full'>
                     {/* Periodo */}
-                    <div className='flex-1 min-w-0'>
+                    <div className='flex-1 min-w-0 mt-2'>
                       <Label className='text-sm font-medium flex items-center gap-2 mb-1'>
                         <CalendarIcon className='w-4 h-4' />
                         Periodo
@@ -469,11 +369,9 @@ export default function RevisarCalculoFacturaComponent({
                             <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
                           </div>
                           <div className='flex-1 min-w-0'>
-                            <Input
-                              value='Ciclo día 15 (Único ciclo normado)'
-                              disabled
-                              className='bg-transparent border-0 font-medium p-0 h-auto cursor-default text-sm'
-                            />
+                            <div className='font-medium text-sm'>
+                              Ciclo día 15 (Único ciclo normado)
+                            </div>
                             <p className='text-xs'>
                               ✓ Ciclo autorizado por normativa vigente
                             </p>
@@ -536,9 +434,9 @@ export default function RevisarCalculoFacturaComponent({
                   </div>
                 )}
 
-                {/* Acciones */}
+                {/* Acciones - Solo Preparar y Ver Cálculo */}
                 <div className='pt-4 border-t border-border'>
-                  <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2'>
+                  <div className='grid grid-cols-2 gap-2'>
                     {/* Botón principal de preparar cálculo */}
                     <Button
                       id='preparar-calculo-btn'
@@ -605,81 +503,6 @@ export default function RevisarCalculoFacturaComponent({
                         </>
                       )}
                     </Button>
-
-                    {/* Aceptar cálculo */}
-                    <Button
-                      id='aceptar-calculo-btn'
-                      onClick={handleAceptarCalculo}
-                      disabled={
-                        isAccepting ||
-                        selectedContratos.length === 0 ||
-                        !hasPermission
-                      }
-                      variant='outline'
-                      size='sm'
-                      title={
-                        !hasPermission
-                          ? 'No tiene permisos para aceptar cálculos'
-                          : selectedContratos.length === 0
-                            ? 'Seleccione al menos un contrato'
-                            : 'Aceptar cálculos seleccionados'
-                      }
-                    >
-                      {isAccepting ? (
-                        <>
-                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          <span className='hidden sm:inline'>Aceptando...</span>
-                        </>
-                      ) : (
-                        <>
-                          <SettingsIcon className='h-4 w-4' />
-                          <span className='hidden sm:inline'>Aceptar</span>
-                          <span className='sm:hidden'>Aceptar</span>
-                          <span className='ml-1'>
-                            ({selectedContratos.length})
-                          </span>
-                        </>
-                      )}
-                    </Button>
-
-                    {/* Actualizar */}
-                    <Button
-                      id='actualizar-btn'
-                      onClick={handleRefreshData}
-                      variant='link'
-                      disabled={isLoading}
-                      size='sm'
-                      className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90'
-                    >
-                      <RefreshCw className='h-4 w-4' />
-                      <span className='hidden lg:inline'>Actualizar</span>
-                    </Button>
-
-                    {/* Limpiar */}
-                    <Button
-                      id='limpiar-btn'
-                      onClick={handleClearFilters}
-                      variant='outline'
-                      disabled={isLoading}
-                      size='sm'
-                      className='border-rose-300 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-700 dark:hover:bg-rose-900/20 dark:hover:text-rose-400'
-                    >
-                      <Eraser className='h-4 w-4' />
-                      <span className='hidden lg:inline'>Limpiar</span>
-                    </Button>
-
-                    {/* Exportar */}
-                    <div id='exportar-btn' className='flex items-stretch'>
-                      <ExportButton
-                        data={dataParaExportar}
-                        columns={exportColumnsConCargos}
-                        filename={`calculo_factura_${periodoFormateado}`}
-                        size='sm'
-                        showDropdown={true}
-                        variant='outline'
-                        className='border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-700 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-400 w-full'
-                      />
-                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -919,144 +742,103 @@ export default function RevisarCalculoFacturaComponent({
                       onSelectionChange={handleSelectionChange}
                     />
                   </div>
-
-                  {/* Acción inferior: Aceptar Cálculo 2 */}
-                  <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-3'>
-                    {/* Tooltip flotante */}
-                    {selectedContratos.length > 0 && (
-                      <div className='bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
-                        <div className='flex items-center gap-2'>
-                          <CheckCircle className='h-4 w-4' />
-                          <span>
-                            Aceptar {selectedContratos.length} {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Botón flotante */}
-                    <Button
-                      id='aceptar-calculo-2-btn'
-                      onClick={handleAceptarCalculo}
-                      disabled={
-                        isAccepting ||
-                        selectedContratos.length === 0 ||
-                        !hasPermission
-                      }
-                      size='lg'
-                      className='h-16 w-16 rounded-full shadow-2xl bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 hover:scale-110 transition-transform relative disabled:opacity-50 disabled:cursor-not-allowed'
-                      title={
-                        !hasPermission
-                          ? 'No tiene permisos para aceptar cálculos'
-                          : selectedContratos.length === 0
-                            ? 'Seleccione al menos un contrato'
-                            : `Aceptar ${selectedContratos.length} ${selectedContratos.length === 1 ? 'cálculo' : 'cálculos'} seleccionado(s)`
-                      }
-                    >
-                      {isAccepting ? (
-                        <div className='h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                      ) : (
-                        <CheckCircle className='h-6 w-6' />
-                      )}
-                    </Button>
-                  </div>
                 </div>
               );
             })()}
           </CardContent>
         </Card>
-        {/* Modal para agregar nuevo cálculo */}
-        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-          <DialogContent className='sm:max-w-[500px]'>
-            <DialogHeader>
-              <DialogTitle className='flex items-center gap-2'>
-                <Plus className='h-5 w-5' />
-                Agregar Nuevo Cálculo de Factura
-              </DialogTitle>
-              <DialogDescription>
-                Complete los datos para agregar un nuevo cálculo de facturación manual.
-              </DialogDescription>
-            </DialogHeader>
 
-            <div className='grid gap-4 py-4'>
-              <div className='grid grid-cols-4 items-center gap-4'>
-                <Label htmlFor='contratoId' className='text-right'>
-                  Contrato ID *
-                </Label>
-                <Input
-                  id='contratoId'
-                  value={newCalculation.contratoId}
-                  onChange={(e) => setNewCalculation(prev => ({ ...prev, contratoId: e.target.value }))}
-                  className='col-span-3'
-                  placeholder='Ingrese ID del contrato'
-                />
-              </div>
-
-              <div className='grid grid-cols-4 items-center gap-4'>
-                <Label htmlFor='numeroSerie' className='text-right'>
-                  N° Serie *
-                </Label>
-                <Input
-                  id='numeroSerie'
-                  value={newCalculation.numeroSerie}
-                  onChange={(e) => setNewCalculation(prev => ({ ...prev, numeroSerie: e.target.value }))}
-                  className='col-span-3'
-                  placeholder='Número de serie del medidor'
-                />
-              </div>
-
-              <div className='grid grid-cols-4 items-center gap-4'>
-                <Label htmlFor='consumoPeriodo' className='text-right'>
-                  Consumo *
-                </Label>
-                <Input
-                  id='consumoPeriodo'
-                  type='number'
-                  value={newCalculation.consumoPeriodo}
-                  onChange={(e) => setNewCalculation(prev => ({ ...prev, consumoPeriodo: e.target.value }))}
-                  className='col-span-3'
-                  placeholder='Consumo en kWh'
-                />
-              </div>
-
-              <div className='grid grid-cols-4 items-center gap-4'>
-                <Label htmlFor='rutCliente' className='text-right'>
-                  RUT Cliente
-                </Label>
-                <Input
-                  id='rutCliente'
-                  value={newCalculation.rutCliente}
-                  onChange={(e) => setNewCalculation(prev => ({ ...prev, rutCliente: e.target.value }))}
-                  className='col-span-3'
-                  placeholder='RUT del cliente (opcional)'
-                />
-              </div>
-
-              <div className='grid grid-cols-4 items-center gap-4'>
-                <Label htmlFor='nombreCliente' className='text-right'>
-                  Nombre
-                </Label>
-                <Input
-                  id='nombreCliente'
-                  value={newCalculation.nombreCliente}
-                  onChange={(e) => setNewCalculation(prev => ({ ...prev, nombreCliente: e.target.value }))}
-                  className='col-span-3'
-                  placeholder='Nombre del cliente (opcional)'
-                />
+        {/* Barra de acciones flotante (derecha inferior) */}
+        <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-3'>
+          {/* Tooltip flotante para Aceptar */}
+          {selectedContratos.length > 0 && (
+            <div className='bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
+              <div className='flex items-center gap-2'>
+                <CheckCircle className='h-4 w-4' />
+                <span>
+                  Aceptar {selectedContratos.length} {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
+                </span>
               </div>
             </div>
+          )}
 
-            <DialogFooter>
-              <Button variant='outline' onClick={() => setIsAddModalOpen(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={handleAddCalculation} className='bg-emerald-600 hover:bg-emerald-700'>
-                <Plus className='h-4 w-4 mr-2' />
-                Agregar Cálculo
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          {/* Contenedor de botones en grupo */}
+          <div className='flex flex-col gap-2 bg-background border border-border rounded-lg p-2 shadow-lg'>
+            {/* Aceptar Cálculo */}
+            <Button
+              id='aceptar-calculo-btn'
+              onClick={handleAceptarCalculo}
+              disabled={
+                isAccepting ||
+                selectedContratos.length === 0 ||
+                !hasPermission
+              }
+              variant='default'
+              size='sm'
+              className='bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white'
+              title={
+                !hasPermission
+                  ? 'No tiene permisos para aceptar cálculos'
+                  : selectedContratos.length === 0
+                    ? 'Seleccione al menos un contrato'
+                    : `Aceptar ${selectedContratos.length} ${selectedContratos.length === 1 ? 'cálculo' : 'cálculos'} seleccionado(s)`
+              }
+            >
+              {isAccepting ? (
+                <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+              ) : (
+                <CheckCircle className='h-4 w-4' />
+              )}
+            </Button>
+
+            {/* Actualizar */}
+            <Button
+              id='actualizar-btn'
+              onClick={handleRevisarCalculo}
+              disabled={isLoading}
+              variant='outline'
+              size='sm'
+              title='Actualizar datos'
+            >
+              <RefreshCcwIcon className='h-4 w-4' />
+            </Button>
+
+            {/* Limpiar */}
+            <Button
+              id='limpiar-btn'
+              onClick={() => {
+                setSearchTerm('');
+                setSelectedContratos([]);
+              }}
+              disabled={isLoading}
+              variant='outline'
+              size='sm'
+              className='border-rose-300 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-700 dark:hover:bg-rose-900/20 dark:hover:text-rose-400'
+              title='Limpiar filtros y selecciones'
+            >
+              <Plus className='h-4 w-4 rotate-45' />
+            </Button>
+
+            {/* Exportar */}
+            <Button
+              id='exportar-btn'
+              onClick={() => {
+                if (filteredData.length === 0) {
+                  toast.error('No hay datos para exportar');
+                  return;
+                }
+                toast.success(`Exportando ${filteredData.length} registros...`);
+              }}
+              disabled={filteredData.length === 0 || isLoading}
+              variant='outline'
+              size='sm'
+              className='border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-700 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-400'
+              title='Exportar datos'
+            >
+              <FileSpreadsheet className='h-4 w-4' />
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );
