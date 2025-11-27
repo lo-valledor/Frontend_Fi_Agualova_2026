@@ -121,3 +121,110 @@ export function getReactSelectStyles(
     }),
   };
 }
+
+// Función alternativa que no usa el parámetro theme (para compatibilidad)
+export function getTailwindSelectStyles<T = any>(): StylesConfig<T, false> {
+  return {
+    control: (provided, state) => ({
+      ...provided,
+      backgroundColor: 'var(--background)',
+      borderColor: state.isFocused ? 'var(--ring)' : 'var(--border)',
+      borderRadius: 'calc(var(--radius) - 2px)',
+      borderWidth: '1px',
+      boxShadow: state.isFocused ? '0 0 0 2px var(--ring)' : 'none',
+      minHeight: '2.75rem',
+      '&:hover': {
+        borderColor: 'var(--ring)',
+      },
+    }),
+    input: (provided) => ({
+      ...provided,
+      color: 'var(--foreground)',
+      fontSize: '0.875rem',
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: 'var(--muted-foreground)',
+      fontSize: '0.875rem',
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: 'var(--foreground)',
+      fontSize: '0.875rem',
+    }),
+    menu: (provided) => ({
+      ...provided,
+      backgroundColor: 'var(--popover)',
+      border: '1px solid var(--border)',
+      borderRadius: 'calc(var(--radius) - 2px)',
+      boxShadow: 'var(--shadow-md)',
+      zIndex: 9999,
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      padding: '0.25rem',
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? 'var(--primary)'
+        : state.isFocused
+        ? 'var(--accent)'
+        : 'transparent',
+      color: state.isSelected
+        ? 'var(--primary-foreground)'
+        : state.isFocused
+        ? 'var(--accent-foreground)'
+        : 'var(--foreground)',
+      fontSize: '0.875rem',
+      padding: '0.5rem 0.75rem',
+      borderRadius: 'calc(var(--radius) - 4px)',
+      cursor: 'pointer',
+      '&:active': {
+        backgroundColor: 'var(--accent)',
+      },
+    }),
+    indicatorSeparator: (provided) => ({
+      ...provided,
+      backgroundColor: 'var(--border)',
+    }),
+    clearIndicator: (provided) => ({
+      ...provided,
+      color: 'var(--muted-foreground)',
+      '&:hover': {
+        color: 'var(--foreground)',
+      },
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: 'var(--muted-foreground)',
+      '&:hover': {
+        color: 'var(--foreground)',
+      },
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      backgroundColor: 'var(--accent)',
+      borderRadius: 'calc(var(--radius) - 4px)',
+    }),
+    multiValueLabel: (provided) => ({
+      ...provided,
+      color: 'var(--accent-foreground)',
+      fontSize: '0.75rem',
+      padding: '0.125rem 0.25rem',
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      color: 'var(--accent-foreground)',
+      '&:hover': {
+        backgroundColor: 'var(--destructive)',
+        color: 'var(--destructive-foreground)',
+      },
+    }),
+    noOptionsMessage: (provided) => ({
+      ...provided,
+      color: 'var(--muted-foreground)',
+      fontSize: '0.875rem',
+    }),
+  };
+}

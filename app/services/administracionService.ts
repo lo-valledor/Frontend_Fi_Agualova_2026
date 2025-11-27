@@ -1100,7 +1100,7 @@ class AdministracionService {
     data: ActualizarMedidorProps
   ): Promise<AdministracionServiceResponse<any>> {
     try {
-      const response = await api.put('medidorModificar', data);
+      const response = await api.patch('medidorModificar', data);
       return {
         data: response.data,
         error: null

@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCalculoFactura } from './use-calculo-factura';
 import { toast } from 'sonner';
@@ -17,7 +17,6 @@ vi.mock('~/lib/api', () => ({
   }
 }));
 
-import api from '~/lib/api';
 
 describe('useCalculoFactura', () => {
   beforeEach(() => {
