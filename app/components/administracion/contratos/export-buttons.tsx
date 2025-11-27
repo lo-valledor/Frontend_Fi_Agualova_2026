@@ -2,7 +2,7 @@ import {
   ExportAllButton,
   ExportFilteredButton
 } from '~/components/shared/export-button';
-import { useExportContratos } from '~/hooks/administracion/use-export-contratos-new';
+import { useExportContratos } from '~/hooks/administracion/use-export-contratos';
 import type { GetContratos } from '~/types/administracion';
 
 interface ExportButtonsProps {

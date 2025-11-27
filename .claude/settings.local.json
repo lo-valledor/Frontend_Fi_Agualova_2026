@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pnpm test:run:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: eliminar componentes y archivos no utilizados\n\n- Remover app/components/user-profile-example.tsx (componente ejemplo huérfano)\n- Remover app/components/shared/modern-header-refactor-guide.tsx (archivo vacío)\n- Remover app/hooks/administracion/use-export-contratos.ts (versión antigua)\n- Remover directorios vacíos: app/components/common/, app/config/\n- Refactorizar: renombrar use-export-contratos-new.ts a use-export-contratos.ts\n- Actualizar imports en export-buttons.tsx\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": [],

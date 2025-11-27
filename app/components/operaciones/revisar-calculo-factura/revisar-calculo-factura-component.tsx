@@ -885,11 +885,36 @@ export default function RevisarCalculoFacturaComponent({
 
                   {/* Tabla de datos */}
                   <div>
-                    <HierarchicalDataTableVirtualized
+                    <HierarchicalDataTable
                       columns={columns}
                       data={filteredData}
                       onSelectionChange={handleSelectionChange}
                     />
+                  </div>
+
+                  {/* Acción inferior: Agregar */}
+                  <div className='sticky bottom-0 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border mt-4 p-3 flex items-center justify-end'>
+                    <Button
+                      id='agregar-btn'
+                      variant='default'
+                      size='sm'
+                      disabled={!hasPermission}
+                      title={
+                        !hasPermission
+                          ? 'No tiene permisos para agregar'
+                          : 'Agregar nuevo registro'
+                      }
+                      className='bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md'
+                      onClick={() => {
+                        toast.info('Acción Agregar');
+                        // TODO: implementar flujo de creación según requerimientos
+                      }}
+                    >
+                      <span className='inline-flex items-center gap-2'>
+                        <Plus className='h-4 w-4' />
+                        Agregar
+                      </span>
+                    </Button>
                   </div>
                 </div>
               );
