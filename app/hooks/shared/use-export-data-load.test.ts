@@ -1,7 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useExportData, type ExportColumn } from './use-export-data';
-import { toast } from 'sonner';
 
 /**
  * Tests de Carga (Load Tests) para función de exportación

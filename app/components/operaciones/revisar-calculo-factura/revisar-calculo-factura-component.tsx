@@ -1,13 +1,3 @@
-/**
- * Componente principal para Revisión de Cálculo de Facturas (OPTIMIZADO)
- *
- * Optimizaciones implementadas:
- * - useCallback para funciones que se pasan como props
- * - useMemo para cálculos pesados
- * - Lazy loading de componentes pesados
- * - Virtualización de lista (preparado para React Window)
- * - Reducción de re-renders innecesarios
- */
 import {
   AlertCircleIcon,
   CalendarIcon,
@@ -24,7 +14,7 @@ import {
   SettingsIcon,
   TrendingUp,
   Info,
-  Save
+  Plus
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { driver } from 'driver.js';
@@ -46,6 +36,8 @@ import {
   CardTitle
 } from '~/components/ui/card';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
+
+
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { useCalculoFactura } from '~/hooks/operaciones/use-calculo-factura';
@@ -59,6 +51,7 @@ import {
 
 import { columns } from './columnsPrecalculo';
 import { HierarchicalDataTable } from './hierarchical-data-table';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 
 export default function RevisarCalculoFacturaComponent({
   periodoAbierto,
@@ -71,6 +64,14 @@ export default function RevisarCalculoFacturaComponent({
 }>) {
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [newCalculation, setNewCalculation] = useState({
+    contratoId: '',
+    numeroSerie: '',
+    consumoPeriodo: '',
+    rutCliente: '',
+    nombreCliente: ''
+  });
   const cicloId = '1';
 
   // Permisos
@@ -220,6 +221,32 @@ export default function RevisarCalculoFacturaComponent({
     },
     [setSelectedContratos]
   );
+
+  // Handler para agregar nuevo cálculo
+  const handleAddCalculation = useCallback(async () => {
+    if (!newCalculation.contratoId || !newCalculation.numeroSerie || !newCalculation.consumoPeriodo) {
+      toast.error('Por favor complete todos los campos requeridos');
+      return;
+    }
+
+    try {
+      // Aquí iría la lógica para guardar el nuevo cálculo
+      // Por ahora solo simulamos
+      toast.success('Nuevo cálculo agregado exitosamente');
+      setIsAddModalOpen(false);
+      setNewCalculation({
+        contratoId: '',
+        numeroSerie: '',
+        consumoPeriodo: '',
+        rutCliente: '',
+        nombreCliente: ''
+      });
+      // Recargar datos
+      await handleRevisarCalculo();
+    } catch (error) {
+      toast.error('Error al agregar el cálculo');
+    }
+  }, [newCalculation, handleRevisarCalculo]);
 
   // Pasos del tour interactivo (memoizados)
   const tourSteps = useMemo(
@@ -893,24 +920,44 @@ export default function RevisarCalculoFacturaComponent({
                     />
                   </div>
 
-                  {/* Acción inferior: Agregar */}
-                  <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300'>
+                  {/* Acción inferior: Aceptar Cálculo 2 */}
+                  <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-3'>
+                    {/* Tooltip flotante */}
+                    {selectedContratos.length > 0 && (
+                      <div className='bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
+                        <div className='flex items-center gap-2'>
+                          <CheckCircle className='h-4 w-4' />
+                          <span>
+                            Aceptar {selectedContratos.length} {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Botón flotante */}
                     <Button
-                      id='agregar-btn'
-                      onClick={() => {
-                        toast.info('Acción Aceptar Cálculo');
-                        // TODO: implementar flujo de creación según requerimientos
-                      }}
-                      disabled={!hasPermission}
+                      id='aceptar-calculo-2-btn'
+                      onClick={handleAceptarCalculo}
+                      disabled={
+                        isAccepting ||
+                        selectedContratos.length === 0 ||
+                        !hasPermission
+                      }
                       size='lg'
-                      className='h-16 w-16 rounded-full shadow-2xl bg-linear-to-br from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 hover:scale-110 transition-transform relative'
+                      className='h-16 w-16 rounded-full shadow-2xl bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 hover:scale-110 transition-transform relative disabled:opacity-50 disabled:cursor-not-allowed'
                       title={
                         !hasPermission
-                          ? 'No tiene permisos para agregar'
-                          : 'Agregar nuevo registro'
+                          ? 'No tiene permisos para aceptar cálculos'
+                          : selectedContratos.length === 0
+                            ? 'Seleccione al menos un contrato'
+                            : `Aceptar ${selectedContratos.length} ${selectedContratos.length === 1 ? 'cálculo' : 'cálculos'} seleccionado(s)`
                       }
                     >
-                      <Save className='h-6 w-6' />
+                      {isAccepting ? (
+                        <div className='h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                      ) : (
+                        <CheckCircle className='h-6 w-6' />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -918,6 +965,98 @@ export default function RevisarCalculoFacturaComponent({
             })()}
           </CardContent>
         </Card>
+        {/* Modal para agregar nuevo cálculo */}
+        <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+          <DialogContent className='sm:max-w-[500px]'>
+            <DialogHeader>
+              <DialogTitle className='flex items-center gap-2'>
+                <Plus className='h-5 w-5' />
+                Agregar Nuevo Cálculo de Factura
+              </DialogTitle>
+              <DialogDescription>
+                Complete los datos para agregar un nuevo cálculo de facturación manual.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className='grid gap-4 py-4'>
+              <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor='contratoId' className='text-right'>
+                  Contrato ID *
+                </Label>
+                <Input
+                  id='contratoId'
+                  value={newCalculation.contratoId}
+                  onChange={(e) => setNewCalculation(prev => ({ ...prev, contratoId: e.target.value }))}
+                  className='col-span-3'
+                  placeholder='Ingrese ID del contrato'
+                />
+              </div>
+
+              <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor='numeroSerie' className='text-right'>
+                  N° Serie *
+                </Label>
+                <Input
+                  id='numeroSerie'
+                  value={newCalculation.numeroSerie}
+                  onChange={(e) => setNewCalculation(prev => ({ ...prev, numeroSerie: e.target.value }))}
+                  className='col-span-3'
+                  placeholder='Número de serie del medidor'
+                />
+              </div>
+
+              <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor='consumoPeriodo' className='text-right'>
+                  Consumo *
+                </Label>
+                <Input
+                  id='consumoPeriodo'
+                  type='number'
+                  value={newCalculation.consumoPeriodo}
+                  onChange={(e) => setNewCalculation(prev => ({ ...prev, consumoPeriodo: e.target.value }))}
+                  className='col-span-3'
+                  placeholder='Consumo en kWh'
+                />
+              </div>
+
+              <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor='rutCliente' className='text-right'>
+                  RUT Cliente
+                </Label>
+                <Input
+                  id='rutCliente'
+                  value={newCalculation.rutCliente}
+                  onChange={(e) => setNewCalculation(prev => ({ ...prev, rutCliente: e.target.value }))}
+                  className='col-span-3'
+                  placeholder='RUT del cliente (opcional)'
+                />
+              </div>
+
+              <div className='grid grid-cols-4 items-center gap-4'>
+                <Label htmlFor='nombreCliente' className='text-right'>
+                  Nombre
+                </Label>
+                <Input
+                  id='nombreCliente'
+                  value={newCalculation.nombreCliente}
+                  onChange={(e) => setNewCalculation(prev => ({ ...prev, nombreCliente: e.target.value }))}
+                  className='col-span-3'
+                  placeholder='Nombre del cliente (opcional)'
+                />
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant='outline' onClick={() => setIsAddModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleAddCalculation} className='bg-emerald-600 hover:bg-emerald-700'>
+                <Plus className='h-4 w-4 mr-2' />
+                Agregar Cálculo
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

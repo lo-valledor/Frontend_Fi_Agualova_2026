@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  validatePassword,
-  validatePasswordStrength
+  validatePassword
 } from './password-validation';
 import { formatRut, isValidRutFormat, cleanRut } from './rut-utils';
 import { formatToDate } from './date-formatter';

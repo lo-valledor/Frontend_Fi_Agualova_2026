@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { validatePassword } from './password-validation';
 import { formatRut, isValidRutFormat, cleanRut } from './rut-utils';
 import { formatToDate } from './date-formatter';
@@ -255,7 +255,7 @@ describe('Stress Tests - Utilidades Críticas bajo Carga Extrema', () => {
       const passwordPromises = Array.from(
         { length: 500 },
         (_, i) =>
-          Promise.resolve(validatePassword(`TestPass${i}!@#`)) as Promise<boolean>
+          Promise.resolve(validatePassword(`TestPass${i}!@#`)) as unknown as Promise<boolean>
       );
 
       const rutPromises = Array.from(
