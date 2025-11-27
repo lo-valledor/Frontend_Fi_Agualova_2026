@@ -298,30 +298,12 @@ export function usePeriodoAbierto() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await operacionesService.getPeriodoAbierto();
-
-        if (result.error) {
-          setError(result.error);
-          setPeriodoAbierto([]);
-        } else if (result.data) {
-          setPeriodoAbierto(result.data);
-        } else {
-          setPeriodoAbierto([]);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-        setPeriodoAbierto([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    handleDataLoad(
+      () => operacionesService.getPeriodoAbierto(),
+      (data) => setPeriodoAbierto(data || []),
+      setError,
+      setLoading
+    );
   }, []);
 
   return {

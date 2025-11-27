@@ -19,7 +19,6 @@ import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { toast } from 'sonner';
 
-import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
 import { Button } from '~/components/ui/button';
 import {
@@ -40,6 +39,7 @@ import type {
 import type { Marca } from '~/types/mantencion';
 import type { GetMedidores } from '~/types/administracion';
 import { AsociarSubempalmeModal } from '../asociar-subempalme-modal';
+import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 
 // Zod schema for form validation
 const medidorSchema = z.object({
@@ -74,7 +74,6 @@ export default function EditarMedidorComponent({
   medidor,
   marca,
   tipoMedidor,
-  medidorDetalle,
   cantidadLecturas,
   codigoMedidor,
   onSuccess
@@ -324,37 +323,12 @@ export default function EditarMedidorComponent({
             </span>
           </div>
           <div>
-            <span className='text-blue-700 dark:text-blue-300'>Estado:</span>
-            <span className='ml-2 text-blue-900 dark:text-blue-100'>
-              {medidor.estadoNombre}
-            </span>
-          </div>
-          <div>
             <span className='text-blue-700 dark:text-blue-300'>Lecturas:</span>
             <span className='ml-2 text-blue-900 dark:text-blue-100'>
               {cantidadLecturas}
             </span>
           </div>
-          {medidorDetalle && (
-            <>
-              <div>
-                <span className='text-blue-700 dark:text-blue-300'>
-                  Subempalme ID:
-                </span>
-                <span className='ml-2 font-mono text-blue-900 dark:text-blue-100'>
-                  {medidorDetalle.subEmpalmeId || 'No asignado'}
-                </span>
-              </div>
-              <div>
-                <span className='text-blue-700 dark:text-blue-300'>
-                  Código Subempalme:
-                </span>
-                <span className='ml-2 font-mono text-blue-900 dark:text-blue-100'>
-                  {medidorDetalle.subempalmeCodigo || 'No asignado'}
-                </span>
-              </div>
-            </>
-          )}
+          
         </div>
       </div>
 

@@ -42,7 +42,13 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería tener una función verificarPrecios', () => {
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
+    vi.mocked(api.get).mockResolvedValue({
+      data: [],
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {} as any
+    });
 
     const { result } = renderHook(() =>
       useValidacionPrecios({
@@ -55,7 +61,13 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería tener estado para isLoading', () => {
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
+    vi.mocked(api.get).mockResolvedValue({
+      data: [],
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {} as any
+    });
 
     const { result } = renderHook(() =>
       useValidacionPrecios({
@@ -68,7 +80,13 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería retornar estructura correcta de resultado', () => {
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
+    vi.mocked(api.get).mockResolvedValue({
+      data: [],
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {} as any
+    });
 
     const { result } = renderHook(() =>
       useValidacionPrecios({
@@ -87,7 +105,13 @@ describe('useValidacionPrecios', () => {
   });
 
   it('debería tener error null inicialmente', () => {
-    vi.mocked(api.get).mockResolvedValue({ data: [] });
+    vi.mocked(api.get).mockResolvedValue({
+      data: [],
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {} as any
+    });
 
     const { result } = renderHook(() =>
       useValidacionPrecios({

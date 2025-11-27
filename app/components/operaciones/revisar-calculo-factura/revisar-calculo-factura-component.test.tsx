@@ -84,13 +84,13 @@ describe('RevisarCalculoFacturaComponent', () => {
       {
         mes: 1,
         anio: 2024,
-        estado: 'abierto'
+        descripcion: 'Enero 2024'
       }
     ],
     ciclosFacturacionActivos: [
       {
-        id: 1,
-        nombre: 'Ciclo día 15'
+        descripcion: 'Ciclo día 15',
+        diaFacturacion: '15'
       }
     ],
     estadoCierreLecturas: null
@@ -216,7 +216,7 @@ describe('RevisarCalculoFacturaComponent', () => {
     render(
       <RevisarCalculoFacturaComponent
         periodoAbierto={[]}
-        ciclosFacturacionActivos={mockProps.ciclosFacturacionActivos}
+        ciclosFacturacionActivos={[]}
         estadoCierreLecturas={null}
       />
     );
@@ -257,8 +257,15 @@ describe('RevisarCalculoFacturaComponent', () => {
           {...mockProps}
           estadoCierreLecturas={[
             {
-              cicloId: 1,
-              estadoCierre: 'cerrado'
+              sectorId: 1,
+              nichoDescripcion: 'Sector 1',
+              cantidadSinLectura: 0,
+              cantidadLecturasOK: 10,
+              cantidadClaveRoja: 0,
+              cantidadClaveNaranja: 0,
+              cantidadCorregidas: 0,
+              cantidadTotal: 10,
+              nichoId: 1
             }
           ]}
         />
