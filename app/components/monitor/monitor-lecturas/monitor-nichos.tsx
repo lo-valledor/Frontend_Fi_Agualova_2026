@@ -145,7 +145,7 @@ export default function MonitorNichos({
     // Configurar un temporizador para quitar el resaltado después de 3 segundos
     const timer = setTimeout(() => {
       setLastEditedId(null);
-    }, 3000);
+    }, 4200);
 
     setHighlightTimeout(timer);
 
@@ -381,7 +381,10 @@ export default function MonitorNichos({
                 medición del medidor seleccionado
                 {selectedMedidor.local && (
                   <span className='block mt-1 text-xs'>
-                    Local: <span className='font-semibold'>{selectedMedidor.local}</span>
+                    Local:{' '}
+                    <span className='font-semibold'>
+                      {selectedMedidor.local}
+                    </span>
                   </span>
                 )}
               </DialogDescription>

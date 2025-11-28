@@ -5,7 +5,7 @@
 Este proyecto maneja **dos entornos dockerizados**:
 
 ### 1. **UAT/Development** (Ambiente de Pruebas)
-- **Puerto**: 3000 (externo) → 80 (interno)
+- **Puerto**: 4200 (externo) → 80 (interno)
 - **Servidor**: nginx (estático, igual que producción)
 - **API**: `http://192.168.1.139:8082/Enerlova`
 - **Tema**: 🟠 **Naranja** con banner "ENTORNO DE DESARROLLO"
@@ -41,7 +41,7 @@ Este proyecto maneja **dos entornos dockerizados**:
 Desarrollo Local → UAT/Development (Docker) → Producción (Docker)
    (tu IDE)        (Pruebas/Testing)          (Usuarios)
    pnpm dev        docker-compose.dev         docker-compose.prod
-   localhost:5173  localhost:3000             localhost:8080
+   localhost:5173  localhost:4200             localhost:8080
 ```
 
 ---
@@ -50,7 +50,7 @@ Desarrollo Local → UAT/Development (Docker) → Producción (Docker)
 
 | Aspecto | UAT/Development | Production |
 |---------|-----------------|------------|
-| **Puerto Externo** | 3000 | 8080 |
+| **Puerto Externo** | 4200 | 8080 |
 | **Puerto Interno** | 80 | 80 |
 | **Servidor** | nginx | nginx |
 | **Archivos** | Estáticos (build) | Estáticos (build) |
@@ -78,7 +78,7 @@ docker-compose -f docker-compose.dev.yml logs -f
 docker-compose -f docker-compose.dev.yml down
 
 # Acceder
-http://localhost:3000
+http://localhost:4200
 ```
 
 ### Production
@@ -115,7 +115,7 @@ http://localhost:5173
 VITE_API_URL=http://192.168.1.139:8082/Enerlova
 VITE_APP_ENV=development
 NODE_ENV=development
-DEV_PORT=3000
+DEV_PORT=4200
 ```
 
 ### Archivo `.env` para Producción
@@ -183,11 +183,11 @@ FRONTEND_PORT=8080
 docker ps | grep enerlova-frontend-dev
 
 # Ver estado del servicio
-curl http://localhost:3000/health
+curl http://localhost:4200/health
 # Debe responder: "healthy - UAT environment"
 
 # Ver headers
-curl -I http://localhost:3000
+curl -I http://localhost:4200
 # Debe incluir: X-Environment: development
 ```
 
@@ -209,7 +209,7 @@ curl -I http://localhost:8080
 
 ## 🐛 Troubleshooting
 
-### Problema: "No carga la página en puerto 3000"
+### Problema: "No carga la página en puerto 4200"
 
 **Verificar que el contenedor está corriendo**:
 ```bash
@@ -248,8 +248,8 @@ cat /usr/share/nginx/html/index.html | grep -i "dev-environment"
 
 ```bash
 # Ver qué está usando el puerto
-netstat -ano | findstr :3000  # Windows
-lsof -i :3000                 # Linux/Mac
+netstat -ano | findstr :4200  # Windows
+lsof -i :4200                 # Linux/Mac
 
 # Cambiar puerto en .env
 DEV_PORT=3001
@@ -260,7 +260,7 @@ DEV_PORT=3001
 ## 📝 Notas Importantes
 
 1. **Ambos entornos usan nginx en puerto 80 internamente**
-   - UAT: `3000:80`
+   - UAT: `4200:80`
    - Prod: `8080:80`
 
 2. **Para cambios se requiere rebuild**
@@ -292,7 +292,7 @@ pnpm dev
 # Probar en UAT antes de producción
 git checkout develop
 docker-compose -f docker-compose.dev.yml up --build
-# Probar en http://localhost:3000
+# Probar en http://localhost:4200
 ```
 
 ### Deployment a Producción

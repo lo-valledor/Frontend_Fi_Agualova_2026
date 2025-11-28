@@ -27,7 +27,7 @@ function getRating(name: string, value: number): PerformanceRating {
     LCP: { good: 2500, poor: 4000 },
     FID: { good: 100, poor: 300 },
     CLS: { good: 0.1, poor: 0.25 },
-    FCP: { good: 1800, poor: 3000 },
+    FCP: { good: 1800, poor: 4200 },
     TTFB: { good: 800, poor: 1800 }
   };
 
@@ -101,7 +101,10 @@ export function initPerformanceMonitoring() {
         const metric: PerformanceMetric = {
           name: 'FID',
           value: (entry as any).processingStart - entry.startTime,
-          rating: getRating('FID', (entry as any).processingStart - entry.startTime),
+          rating: getRating(
+            'FID',
+            (entry as any).processingStart - entry.startTime
+          ),
           timestamp: Date.now()
         };
 

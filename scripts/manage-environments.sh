@@ -55,7 +55,7 @@ start_dev() {
     else
         log "Usando servidor de desarrollo con hot reload..."
         docker-compose -f docker-compose.dev.yml up -d
-        log "Entorno de desarrollo iniciado en http://localhost:3000"
+        log "Entorno de desarrollo iniciado en http://localhost:4200"
         log "Hot reload habilitado - los cambios se reflejarán automáticamente"
     fi
 }

@@ -66,7 +66,7 @@ docker-compose -f docker-compose.dev.yml up --build
 
 # Verificar
 □ El contenedor se construye sin errores
-□ La aplicación está en http://localhost:3000
+□ La aplicación está en http://localhost:4200
 □ Ves el banner naranja "ENTORNO DE DESARROLLO"
 □ Los colores son naranjas/cálidos
 □ Hot reload funciona (si aplica)
@@ -97,7 +97,7 @@ docker-compose -f docker-compose.dev.yml up -d
 docker-compose -f docker-compose.prod.yml up -d
 
 # Verificar
-□ Desarrollo (3000): Naranja con banner
+□ Desarrollo (4200): Naranja con banner
 □ Producción (8080): Azul sin banner
 □ Las diferencias son claramente visibles
 □ Ambos funcionan correctamente

@@ -177,9 +177,9 @@ docker-compose -f docker-compose.prod.yml up --build
 
 ```bash
 # Desarrollo
-open http://localhost:3000  # Mac
-xdg-open http://localhost:3000  # Linux
-start http://localhost:3000  # Windows
+open http://localhost:4200  # Mac
+xdg-open http://localhost:4200  # Linux
+start http://localhost:4200  # Windows
 
 # Producción
 open http://localhost:8080  # Mac
@@ -195,8 +195,8 @@ start http://localhost:8080  # Windows
 
 ```bash
 # Ver qué proceso usa el puerto
-lsof -i :3000  # Mac/Linux
-netstat -ano | findstr :3000  # Windows
+lsof -i :4200  # Mac/Linux
+netstat -ano | findstr :4200  # Windows
 
 # Matar proceso (Mac/Linux)
 kill -9 <PID>
@@ -206,7 +206,7 @@ taskkill /PID <PID> /F
 
 # O cambiar puerto en docker-compose.yml
 ports:
-  - '3001:3000'  # Usar 3001 en lugar de 3000
+  - '3001:4200'  # Usar 3001 en lugar de 4200
 ```
 
 ### Cambios No Se Reflejan
@@ -338,7 +338,7 @@ VITE_APP_ENV=production pnpm run build
 pnpm run start
 
 # 3. Verificar en navegador
-# → http://localhost:3000
+# → http://localhost:4200
 
 # 4. Si todo OK, deploy
 docker-compose -f docker-compose.prod.yml up --build

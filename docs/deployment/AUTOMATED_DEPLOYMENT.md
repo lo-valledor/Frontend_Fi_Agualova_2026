@@ -19,7 +19,7 @@ Esta guía documenta el proceso de despliegue automatizado para staging y produc
 | Entorno    | Rama      | Puerto | Docker Compose                 | Trigger                        |
 |------------|-----------|--------|--------------------------------|--------------------------------|
 | Production | `main`    | 8080   | `docker-compose.yml`           | Push a `main`                  |
-| Staging    | `develop` | 3000   | `docker-compose.staging.yml`   | Push a `develop` (auto-merge)  |
+| Staging    | `develop` | 4200   | `docker-compose.staging.yml`   | Push a `develop` (auto-merge)  |
 
 ### Diagrama de Flujo
 
@@ -46,7 +46,7 @@ Esta guía documenta el proceso de despliegue automatizado para staging y produc
          ▼                  ▼
 ┌─────────────────┐  ┌─────────────────┐
 │   Production    │  │    Staging      │
-│   Port 8080     │  │    Port 3000    │
+│   Port 8080     │  │    Port 4200    │
 │  (self-hosted)  │  │  (self-hosted)  │
 └─────────────────┘  └─────────────────┘
 ```
@@ -100,8 +100,8 @@ git push origin main
 1. Checkout del código (git pull automático)
 2. Crea archivo .env con STAGING_API_URL
 3. Limpia despliegue anterior de staging
-4. Construye y despliega en puerto 3000
-5. Verifica health check (puerto 3000)
+4. Construye y despliega en puerto 4200
+5. Verifica health check (puerto 4200)
 6. Limpia imágenes antiguas
 ```
 
@@ -143,7 +143,7 @@ build:
     VITE_API_URL: http://192.168.1.139:8082/Enerlova
     NODE_ENV: staging
 ports:
-  - '3000:80'
+  - '4200:80'
 ```
 
 ---
@@ -198,7 +198,7 @@ curl http://localhost:8080
 
 #### Staging:
 ```bash
-curl http://localhost:3000
+curl http://localhost:4200
 # O visita en el navegador
 ```
 
@@ -264,7 +264,7 @@ Error: bind: address already in use
 **Solución:**
 ```bash
 # Ver qué está usando el puerto
-netstat -tlnp | grep :3000  # o :8080 para production
+netstat -tlnp | grep :4200  # o :8080 para production
 
 # Detener el contenedor existente
 docker-compose -f docker-compose.staging.yml down
@@ -357,7 +357,7 @@ Después del despliegue:
 
 - [ ] CI/CD pipeline pasó (GitHub Actions)
 - [ ] Production responde en puerto 8080
-- [ ] Staging responde en puerto 3000
+- [ ] Staging responde en puerto 4200
 - [ ] No hay errores en los logs
 - [ ] Funcionalidad probada en ambos entornos
 

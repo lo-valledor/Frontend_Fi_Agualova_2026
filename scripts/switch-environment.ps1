@@ -97,7 +97,7 @@ switch ($Environment) {
             Clean-BuildCache
         }
         
-        Show-EnvironmentInfo -Env "PRODUCCIÓN" -Port "3000" -Color $ColorProd -Theme "Azul (Profesional)"
+        Show-EnvironmentInfo -Env "PRODUCCIÓN" -Port "4200" -Color $ColorProd -Theme "Azul (Profesional)"
         
         Write-Host "🔨 Construyendo aplicación..." -ForegroundColor $ColorProd
         $env:VITE_APP_ENV = "production"
@@ -119,7 +119,7 @@ switch ($Environment) {
             docker-compose -f docker-compose.dev.yml down -v
         }
         
-        Show-EnvironmentInfo -Env "DESARROLLO (Docker)" -Port "3000" -Color $ColorDev -Theme "Naranja (Cálido)"
+        Show-EnvironmentInfo -Env "DESARROLLO (Docker)" -Port "4200" -Color $ColorDev -Theme "Naranja (Cálido)"
         
         Write-Host "🐳 Construyendo y levantando contenedor..." -ForegroundColor $ColorDev
         Write-Host "   Verás un banner NARANJA en la parte superior" -ForegroundColor $ColorDev
@@ -159,7 +159,7 @@ switch ($Environment) {
         Write-Host "Esta opción inicia ambos entornos simultáneamente para comparación" -ForegroundColor $ColorInfo
         Write-Host ""
         Write-Host "Se abrirán dos contenedores Docker:" -ForegroundColor $ColorInfo
-        Write-Host "   1. DESARROLLO →  http://localhost:3000  (Naranja)" -ForegroundColor $ColorDev
+        Write-Host "   1. DESARROLLO →  http://localhost:4200  (Naranja)" -ForegroundColor $ColorDev
         Write-Host "   2. PRODUCCIÓN →  http://localhost:8080  (Azul)" -ForegroundColor $ColorProd
         Write-Host ""
         

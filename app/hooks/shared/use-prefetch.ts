@@ -2,19 +2,19 @@ import { useEffect } from 'react';
 
 /**
  * Hook para prefetching de rutas
- * 
+ *
  * Precarga rutas en background para navegación instantánea
  * Solo funciona en navegadores que soportan link prefetch
- * 
+ *
  * @param routePath - Ruta a precargar (ej: '/dashboard/contratos')
  * @param delay - Delay antes de precargar en ms (default: 2000)
  * @param enabled - Si el prefetch está habilitado (default: true)
- * 
+ *
  * @example
  * ```tsx
  * // En Dashboard, precargar rutas frecuentes
  * usePrefetch('/dashboard/administracion/contratos', 2000);
- * usePrefetch('/dashboard/monitor/lecturas', 3000);
+ * usePrefetch('/dashboard/monitor/lecturas', 4200);
  * ```
  */
 export function usePrefetch(
@@ -30,7 +30,7 @@ export function usePrefetch(
       const existingLink = document.querySelector(
         `link[rel="prefetch"][href="${routePath}"]`
       );
-      
+
       if (existingLink) return;
 
       // Crear link de prefetch
@@ -38,9 +38,8 @@ export function usePrefetch(
       link.rel = 'prefetch';
       link.href = routePath;
       link.as = 'document';
-      
-      document.head.appendChild(link);
 
+      document.head.appendChild(link);
     }, delay);
 
     return () => {
@@ -51,13 +50,13 @@ export function usePrefetch(
 
 /**
  * Hook para prefetching múltiple
- * 
+ *
  * Precarga múltiples rutas con delays escalonados
- * 
+ *
  * @param routes - Array de rutas a precargar
  * @param baseDelay - Delay base en ms (default: 2000)
  * @param increment - Incremento de delay entre rutas (default: 1000)
- * 
+ *
  * @example
  * ```tsx
  * usePrefetchMultiple([
@@ -79,22 +78,21 @@ export function usePrefetchMultiple(
     const timers: NodeJS.Timeout[] = [];
 
     routes.forEach((route, index) => {
-      const delay = baseDelay + (index * increment);
-      
+      const delay = baseDelay + index * increment;
+
       const timer = setTimeout(() => {
         const existingLink = document.querySelector(
           `link[rel="prefetch"][href="${route}"]`
         );
-        
+
         if (existingLink) return;
 
         const link = document.createElement('link');
         link.rel = 'prefetch';
         link.href = route;
         link.as = 'document';
-        
-        document.head.appendChild(link);
 
+        document.head.appendChild(link);
       }, delay);
 
       timers.push(timer);
@@ -108,12 +106,12 @@ export function usePrefetchMultiple(
 
 /**
  * Hook para prefetching condicional
- * 
+ *
  * Precarga rutas basado en condiciones (ej: rol del usuario)
- * 
+ *
  * @param routeMap - Mapa de condición -> rutas
  * @param delay - Delay antes de precargar
- * 
+ *
  * @example
  * ```tsx
  * usePrefetchConditional({
@@ -134,22 +132,21 @@ export function usePrefetchConditional(
       Object.entries(routeMap).forEach(([condition, routes]) => {
         // Evaluar condición (puedes personalizar esto)
         const shouldPrefetch = condition === 'isAll' || eval(condition);
-        
+
         if (shouldPrefetch) {
           routes.forEach(route => {
             const existingLink = document.querySelector(
               `link[rel="prefetch"][href="${route}"]`
             );
-            
+
             if (existingLink) return;
 
             const link = document.createElement('link');
             link.rel = 'prefetch';
             link.href = route;
             link.as = 'document';
-            
-            document.head.appendChild(link);
 
+            document.head.appendChild(link);
           });
         }
       });
@@ -163,16 +160,16 @@ export function usePrefetchConditional(
 
 /**
  * Hook para prefetching on hover
- * 
+ *
  * Precarga una ruta cuando el usuario hace hover sobre un elemento
- * 
+ *
  * @param routePath - Ruta a precargar
  * @returns Handlers para onMouseEnter
- * 
+ *
  * @example
  * ```tsx
  * const { onMouseEnter } = usePrefetchOnHover('/dashboard/contratos');
- * 
+ *
  * return (
  *   <Link to="/dashboard/contratos" onMouseEnter={onMouseEnter}>
  *     Contratos
@@ -187,16 +184,15 @@ export function usePrefetchOnHover(routePath: string) {
     const existingLink = document.querySelector(
       `link[rel="prefetch"][href="${routePath}"]`
     );
-    
+
     if (existingLink) return;
 
     const link = document.createElement('link');
     link.rel = 'prefetch';
     link.href = routePath;
     link.as = 'document';
-    
-    document.head.appendChild(link);
 
+    document.head.appendChild(link);
   };
 
   return {

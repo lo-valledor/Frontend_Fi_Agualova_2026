@@ -70,7 +70,7 @@ function Start-Development {
     else {
         Write-Log "Usando servidor de desarrollo con hot reload..."
         docker-compose -f docker-compose.dev.yml up -d
-        Write-Log "Entorno de desarrollo iniciado en http://localhost:3000"
+        Write-Log "Entorno de desarrollo iniciado en http://localhost:4200"
         Write-Log "Hot reload habilitado - los cambios se reflejarán automáticamente"
     }
 }

@@ -25,7 +25,7 @@ export function SiteHeader() {
   const { breadcrumbItems } = useBreadcrumbs();
   const { user } = useAuth();
 
-  // Detectar si es entorno UAT (puerto 3000) o Core
+  // Detectar si es entorno UAT (puerto 4200) o Core
   const isUAT =
     typeof window !== 'undefined' && globalThis.location.port !== '8080';
   const environment = isUAT ? 'Sistema UAT' : 'Sistema Core';

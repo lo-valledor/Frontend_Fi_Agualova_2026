@@ -14,9 +14,9 @@ show_help() {
     echo "ENTORNOS disponibles:"
     echo "  both     - Despliega ambos entornos simultáneamente (RECOMENDADO)"
     echo "             🔵 Producción: :8080 (colores azules, sin badge)"
-    echo "             🟠 Desarrollo: :3000 (colores naranjas, badge DEV)"
+    echo "             🟠 Desarrollo: :4200 (colores naranjas, badge DEV)"
     echo "  prod     - Despliega solo entorno de producción (puerto 8080)"
-    echo "  dev      - Despliega solo entorno de desarrollo (puerto 3000)"
+    echo "  dev      - Despliega solo entorno de desarrollo (puerto 4200)"
     echo "  stop     - Detiene todos los contenedores"
     echo "  clean    - Limpia contenedores e imágenes"
     echo "  status   - Muestra estado de los contenedores"
@@ -71,13 +71,13 @@ deploy_prod() {
 # Función para desplegar desarrollo (proyecto aislado: enerlova_dev)
 deploy_dev() {
     echo "🛠️  Desplegando entorno de DESARROLLO / UAT..."
-    echo "🌐 Puerto: 3000"
+    echo "🌐 Puerto: 4200"
     echo "🔗 API: http://192.168.1.139:8082/Enerlova"
     echo "🎨 Tema: Colores naranjas con badge DEV"
     PROJECT=enerlova_dev
     run_compose_build "$PROJECT" docker-compose.dev.yml
     echo "✅ Entorno de desarrollo desplegado / actualizado"
-    echo "🌍 Acceso: http://localhost:3000"
+    echo "🌍 Acceso: http://localhost:4200"
 }
 
 # Función para desplegar ambos entornos
@@ -90,7 +90,7 @@ deploy_both() {
     echo ""
     echo "✅ Ambos entornos activos"
     echo "🔵 PRODUCCIÓN: http://localhost:8080"
-    echo "🟠 DESARROLLO: http://localhost:3000"
+    echo "🟠 DESARROLLO: http://localhost:4200"
     echo ""
     echo "Si deseas ver logs:"
     echo "  $COMPOSE_BIN -p enerlova_prod logs -f"

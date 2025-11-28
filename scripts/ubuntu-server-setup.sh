@@ -171,7 +171,7 @@ configure_firewall() {
     sudo ufw allow 22/tcp
     sudo ufw allow 80/tcp
     sudo ufw allow 443/tcp
-    sudo ufw allow 3000/tcp  # Puerto de desarrollo
+    sudo ufw allow 4200/tcp  # Puerto de desarrollo
     sudo ufw allow 3001/tcp  # Puerto alternativo de desarrollo
     sudo ufw allow 8080/tcp  # Puerto de producción
 
@@ -260,7 +260,7 @@ start_dev() {
     else
         log "Usando servidor de desarrollo con hot reload..."
         docker-compose -f docker-compose.dev.yml up -d
-        log "Entorno de desarrollo iniciado en http://$SERVER_IP:3000"
+        log "Entorno de desarrollo iniciado en http://$SERVER_IP:4200"
         log "Hot reload habilitado - los cambios se reflejarán automáticamente"
     fi
 }
@@ -325,7 +325,7 @@ show_status() {
 
     # Puertos en uso
     echo -e "${CYAN}=== PUERTOS EN USO ===${NC}"
-    echo "Puerto 3000 (Desarrollo): $(netstat -tlnp 2>/dev/null | grep :3000 || echo 'No en uso')"
+    echo "Puerto 4200 (Desarrollo): $(netstat -tlnp 2>/dev/null | grep :4200 || echo 'No en uso')"
     echo "Puerto 3001 (Desarrollo Nginx): $(netstat -tlnp 2>/dev/null | grep :3001 || echo 'No en uso')"
     echo "Puerto 8080 (Producción): $(netstat -tlnp 2>/dev/null | grep :8080 || echo 'No en uso')"
     echo ""

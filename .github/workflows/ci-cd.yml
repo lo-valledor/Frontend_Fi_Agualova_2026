@@ -197,7 +197,7 @@ jobs:
           echo "🔍 Performing staging health check..."
           sleep 20
           # Ajusta el puerto según tu configuración de staging
-          if curl -f http://localhost:3000 > /dev/null 2>&1; then
+          if curl -f http://localhost:4200 > /dev/null 2>&1; then
             echo "✅ Staging deployment successful!"
           else
             echo "⚠️ Staging deployment check failed, but continuing..."

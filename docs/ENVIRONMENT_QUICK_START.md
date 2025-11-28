@@ -61,7 +61,7 @@ pnpm run start
 docker-compose -f docker-compose.dev.yml up --build
 ```
 
-**Acceso**: `http://localhost:3000`  
+**Acceso**: `http://localhost:4200`  
 **Resultado**: Tema naranja con banner
 
 ### 4️⃣ Docker Producción

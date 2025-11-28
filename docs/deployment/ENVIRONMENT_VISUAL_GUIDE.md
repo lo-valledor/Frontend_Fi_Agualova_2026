@@ -48,7 +48,7 @@
 | **Banner Superior**  | ❌ No            | ✅ Sí                   |
 | **Indicador Visual** | Ninguno          | "ENTORNO DE DESARROLLO" |
 | **Animaciones**      | Ninguna especial | Punto pulsante          |
-| **Puerto Docker**    | 8080             | 3000                    |
+| **Puerto Docker**    | 8080             | 4200                    |
 
 ## 🚀 Inicio Rápido
 
@@ -71,7 +71,7 @@ pnpm run start
 
 ```bash
 docker-compose -f docker-compose.dev.yml up --build
-# → http://localhost:3000 con tema NARANJA
+# → http://localhost:4200 con tema NARANJA
 ```
 
 ### Docker Producción

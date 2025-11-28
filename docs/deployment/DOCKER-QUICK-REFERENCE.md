@@ -9,7 +9,7 @@ Comandos más usados para trabajar con Docker en el proyecto Enerlova.
 ### Iniciar Entornos
 
 ```bash
-# UAT (puerto 3000, tema naranja)
+# UAT (puerto 4200, tema naranja)
 docker-compose -f docker-compose.dev.yml up -d --build
 
 # Producción (puerto 8080, tema azul)
@@ -144,7 +144,7 @@ docker port enerlova-frontend-dev
 
 | Entorno | URL | Tema | Banner |
 |---------|-----|------|--------|
-| **UAT** | http://localhost:3000 | 🟠 Naranja | ✅ Sí |
+| **UAT** | http://localhost:4200 | 🟠 Naranja | ✅ Sí |
 | **Prod** | http://localhost:8080 | 🔵 Azul | ❌ No |
 
 ---

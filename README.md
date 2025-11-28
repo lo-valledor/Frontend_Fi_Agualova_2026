@@ -280,7 +280,7 @@ docker-compose -f docker-compose.multi.yml up -d
 | Entorno        | Rama      | Puerto | API URL                            |
 | -------------- | --------- | ------ | ---------------------------------- |
 | **Producción** | `main`    | 8080   | http://192.168.1.139:8081/Enerlova |
-| **Desarrollo** | `develop` | 3000   | http://192.168.1.139:8082/Enerlova |
+| **Desarrollo** | `develop` | 4200   | http://192.168.1.139:8082/Enerlova |
 
 ### 🔧 Scripts de Despliegue
 

@@ -9,7 +9,7 @@ El entorno "development" es en realidad **UAT (User Acceptance Testing)**, NO es
 - ✅ Para probar antes de pasar a producción
 
 ## Problema Reportado
-El contenedor de UAT/Development no carga las páginas en el puerto 3000.
+El contenedor de UAT/Development no carga las páginas en el puerto 4200.
 
 ## Pasos de Diagnóstico
 
@@ -59,19 +59,19 @@ curl http://localhost/
 docker port enerlova-frontend-dev
 ```
 
-**Esperado**: `80/tcp -> 0.0.0.0:3000`
+**Esperado**: `80/tcp -> 0.0.0.0:4200`
 
 ### 5. Probar Acceso desde el Host
 
 ```bash
 # Windows
-curl http://localhost:3000
+curl http://localhost:4200
 
 # PowerShell
-Invoke-WebRequest http://localhost:3000
+Invoke-WebRequest http://localhost:4200
 
 # Navegador
-http://localhost:3000
+http://localhost:4200
 ```
 
 ### 6. Verificar Healthcheck
@@ -157,7 +157,7 @@ docker exec -it enerlova-frontend-dev nginx -t
 
 ## Errores Comunes y Soluciones
 
-### Error: "Connection refused" al acceder a localhost:3000
+### Error: "Connection refused" al acceder a localhost:4200
 
 **Causa**: El contenedor no está corriendo o el puerto no está mapeado
 
@@ -193,7 +193,7 @@ docker exec -it enerlova-frontend-dev ls -la /usr/share/nginx/html
 **Solución**:
 ```bash
 # Windows - verificar puerto en uso
-netstat -ano | findstr :3000
+netstat -ano | findstr :4200
 
 # Cambiar puerto si es necesario (.env)
 DEV_PORT=3001
@@ -223,7 +223,7 @@ docker-compose -f docker-compose.dev.yml build --build-arg VITE_APP_ENV=developm
 ### ✅ docker-compose.dev.yml
 ```yaml
 ports:
-  - "3000:80"  # ✅ Mapeo correcto: host:container
+  - "4200:80"  # ✅ Mapeo correcto: host:container
 build:
   target: development-nginx  # ✅ Target correcto
   args:
@@ -266,12 +266,12 @@ docker-compose -f docker-compose.dev.yml ps
 
 ### Test 4: Acceder a la Aplicación
 ```bash
-curl http://localhost:3000
+curl http://localhost:4200
 ```
 **Esperado**: HTML de la aplicación
 
 ### Test 5: Verificar Tema Naranja
-Abrir en navegador: `http://localhost:3000`
+Abrir en navegador: `http://localhost:4200`
 **Esperado**:
 - Banner naranja superior con "ENTORNO DE DESARROLLO"
 - UI en tonos naranjas
@@ -315,7 +315,7 @@ pnpm dev
 ```bash
 # Usar docker-compose.dev.yml
 docker-compose -f docker-compose.dev.yml up -d
-# Acceder en: http://localhost:3000
+# Acceder en: http://localhost:4200
 ```
 
 ### Para Desarrollo Local con Docker (opcional)
@@ -349,7 +349,7 @@ docker-compose -f docker-compose.dev.yml logs > docker-logs.txt
 
 1. ✅ Verificar que el contenedor está corriendo (`docker ps`)
 2. ✅ Verificar logs (`docker-compose logs -f`)
-3. ✅ Verificar puerto 3000 está libre
+3. ✅ Verificar puerto 4200 está libre
 4. ✅ Rebuild si es necesario
 5. ✅ Compartir logs si el problema persiste
 

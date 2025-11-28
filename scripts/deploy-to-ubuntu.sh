@@ -172,7 +172,7 @@ show_deployment_info() {
 
     if [ "$ENVIRONMENT" = "dev" ]; then
         echo -e "${GREEN}URLs de acceso:${NC}"
-        echo "  Desarrollo (Hot Reload): http://$SERVER_HOST:3000"
+        echo "  Desarrollo (Hot Reload): http://$SERVER_HOST:4200"
         echo "  Desarrollo (Nginx): http://$SERVER_HOST:3001"
     else
         echo -e "${GREEN}URL de acceso:${NC}"

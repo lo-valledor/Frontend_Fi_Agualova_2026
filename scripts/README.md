@@ -75,10 +75,10 @@ Script para usuarios de Linux y macOS.
 | Opción        | Descripción                           | Puerto      | Tema       |
 | ------------- | ------------------------------------- | ----------- | ---------- |
 | `dev`         | Desarrollo local con Vite             | 5173        | 🟠 Naranja |
-| `prod`        | Build de producción local             | 3000        | 🔵 Azul    |
-| `docker-dev`  | Contenedor Docker de desarrollo       | 3000        | 🟠 Naranja |
+| `prod`        | Build de producción local             | 4200        | 🔵 Azul    |
+| `docker-dev`  | Contenedor Docker de desarrollo       | 4200        | 🟠 Naranja |
 | `docker-prod` | Contenedor Docker de producción       | 8080        | 🔵 Azul    |
-| `compare`     | Ambos entornos Docker simultáneamente | 3000 + 8080 | Ambos      |
+| `compare`     | Ambos entornos Docker simultáneamente | 4200 + 8080 | Ambos      |
 
 ## 🚀 Ejemplos de Uso
 
@@ -116,7 +116,7 @@ Script para usuarios de Linux y macOS.
 
 Esto abrirá:
 
-- Desarrollo en `http://localhost:3000` (naranja)
+- Desarrollo en `http://localhost:4200` (naranja)
 - Producción en `http://localhost:8080` (azul)
 
 ### Limpiar Cache y Reiniciar

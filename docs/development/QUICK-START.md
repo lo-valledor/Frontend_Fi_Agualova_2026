@@ -12,7 +12,7 @@ Esta guía te muestra cómo levantar PRODUCCIÓN y DESARROLLO al mismo tiempo pa
 
 Esto levantará:
 - 🔵 **PRODUCCIÓN**: http://localhost:8080 (colores azules, sin badge)
-- 🟠 **DESARROLLO**: http://localhost:3000 (colores naranjas, badge "DEV")
+- 🟠 **DESARROLLO**: http://localhost:4200 (colores naranjas, badge "DEV")
 
 ### Opción 2: Docker Compose directo
 
@@ -32,9 +32,9 @@ docker-compose -f docker-compose.multi.yml up -d --build
 ✅ **API Backend**: http://192.168.1.139:8081/Enerlova
 ✅ **CSS Cargado**: `app.css`
 
-### DESARROLLO (Puerto 3000)
+### DESARROLLO (Puerto 4200)
 
-✅ **URL**: http://localhost:3000
+✅ **URL**: http://localhost:4200
 ✅ **Colores**: Naranjas/Cálidos
 ✅ **Badge DEV**: Visible en esquina inferior derecha
 ✅ **API Backend**: http://192.168.1.139:8082/Enerlova
@@ -95,7 +95,7 @@ docker ps --filter "name=enerlova-frontend"
 Deberías ver:
 ```
 enerlova-frontend-prod   Up X minutes   0.0.0.0:8080->80/tcp
-enerlova-frontend-dev    Up X minutes   0.0.0.0:3000->3000/tcp
+enerlova-frontend-dev    Up X minutes   0.0.0.0:4200->4200/tcp
 ```
 
 ### 2. Verifica los colores
@@ -107,7 +107,7 @@ Abre ambas URLs en pestañas diferentes:
 - Sin badge "DEV"
 - Presiona F12 → Network → busca `app.css`
 
-**Desarrollo (3000)**:
+**Desarrollo (4200)**:
 - Colores primarios naranjas
 - Badge "DEV" en esquina inferior derecha
 - Presiona F12 → Network → busca `app.dev.css`
@@ -133,7 +133,7 @@ docker exec enerlova-frontend-dev env | grep VITE_ENV_MODE
 ```bash
 # Verificar qué está usando el puerto
 netstat -ano | findstr :8080
-netstat -ano | findstr :3000
+netstat -ano | findstr :4200
 
 # Detener todos los contenedores de Enerlova
 docker stop enerlova-frontend-prod enerlova-frontend-dev
@@ -152,7 +152,7 @@ docker-compose -f docker-compose.multi.yml up -d
 
 ### Problema: No se ve el badge DEV
 
-1. Verifica que estés en http://localhost:3000 (NO 8080)
+1. Verifica que estés en http://localhost:4200 (NO 8080)
 2. Verifica la variable de entorno:
    ```bash
    docker exec enerlova-frontend-dev env | grep VITE_ENV_MODE
@@ -184,11 +184,11 @@ docker info
    ↓
 2. Probar en Docker Development
    ↓ ./deploy.sh dev
-   ↓ localhost:3000 - colores naranjas, badge DEV
+   ↓ localhost:4200 - colores naranjas, badge DEV
    ↓
 3. Comparar con Producción
    ↓ ./deploy.sh both
-   ↓ localhost:8080 (prod) vs localhost:3000 (dev)
+   ↓ localhost:8080 (prod) vs localhost:4200 (dev)
    ↓
 4. Deploy Final
    ↓ Solo producción en servidor
@@ -216,7 +216,7 @@ Abre ambos entornos en ventanas separadas del navegador:
 ```
 ┌─────────────────┬─────────────────┐
 │  PRODUCCIÓN     │   DESARROLLO    │
-│  :8080          │   :3000         │
+│  :8080          │   :4200         │
 │  🔵 Azul        │   🟠 Naranja    │
 │  Sin badge      │   Badge "DEV"   │
 └─────────────────┴─────────────────┘
@@ -244,11 +244,11 @@ Antes de considerar que todo está funcionando:
 
 - [ ] `docker ps` muestra ambos contenedores corriendo
 - [ ] http://localhost:8080 carga con colores azules
-- [ ] http://localhost:3000 carga con colores naranjas
-- [ ] Badge "DEV" visible solo en :3000
+- [ ] http://localhost:4200 carga con colores naranjas
+- [ ] Badge "DEV" visible solo en :4200
 - [ ] Badge "DEV" NO visible en :8080
 - [ ] F12 → Network muestra `app.css` en :8080
-- [ ] F12 → Network muestra `app.dev.css` en :3000
+- [ ] F12 → Network muestra `app.dev.css` en :4200
 - [ ] Ambos entornos conectan a sus respectivos backends
 
 ---

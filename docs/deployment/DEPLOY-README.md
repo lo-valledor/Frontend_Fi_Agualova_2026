@@ -7,9 +7,9 @@ Esta guía cubre el despliegue del frontend de Enerlova en diferentes entornos u
 | Entorno        | Rama      | Puerto | API URL                            | Método de Deploy        |
 | -------------- | --------- | ------ | ---------------------------------- | ----------------------- |
 | **Producción** | `main`    | 8080   | http://192.168.1.139:8081/Enerlova | CI/CD + Manual          |
-| **Staging**    | `develop` | 3000   | http://192.168.1.139:8082/Enerlova | CI/CD + Manual          |
+| **Staging**    | `develop` | 4200   | http://192.168.1.139:8082/Enerlova | CI/CD + Manual          |
 | **Local Dev**  | cualquier | 5173   | http://192.168.1.139:8081/Enerlova | Manual (pnpm dev)       |
-| **Docker Dev** | cualquier | 3000   | http://192.168.1.139:8082/Enerlova | Manual (docker-compose) |
+| **Docker Dev** | cualquier | 4200   | http://192.168.1.139:8082/Enerlova | Manual (docker-compose) |
 
 ## 🛠️ Uso Rápido
 
@@ -64,7 +64,7 @@ chmod +x deploy.sh
 docker-compose -f docker-compose.prod.yml up --build -d
 ```
 
-#### Desarrollo (Puerto 3000):
+#### Desarrollo (Puerto 4200):
 
 ```bash
 docker-compose -f docker-compose.develop.yml up --build -d
@@ -166,7 +166,7 @@ Los deploys requieren un runner self-hosted con:
 - ✅ Linux (Ubuntu recomendado)
 - ✅ Docker Engine
 - ✅ Docker Compose v2+
-- ✅ Puertos 8080 (prod) y 3000 (staging) disponibles
+- ✅ Puertos 8080 (prod) y 4200 (staging) disponibles
 
 **Setup del runner**:
 
@@ -196,7 +196,7 @@ Para documentación detallada de workflows, consulta:
 Una vez desplegados:
 
 - **Producción**: http://localhost:8080
-- **Desarrollo**: http://localhost:3000
+- **Desarrollo**: http://localhost:4200
 
 ## 🐛 Solución de Problemas
 
@@ -274,10 +274,10 @@ git push origin feature/nueva-funcionalidad
 
 ```bash
 # 1. Merge de PR aprobado a develop
-# → ✅ GitHub Actions despliega automáticamente a staging (puerto 3000)
+# → ✅ GitHub Actions despliega automáticamente a staging (puerto 4200)
 
 # 2. Verificar en staging
-curl http://staging-server:3000
+curl http://staging-server:4200
 ```
 
 ### Para Producción

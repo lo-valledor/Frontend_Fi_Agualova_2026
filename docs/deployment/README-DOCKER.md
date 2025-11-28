@@ -34,7 +34,7 @@ docker-compose -f docker-compose.dev.yml up -d --build
 docker-compose -f docker-compose.dev.yml logs -f
 
 # 3. Acceder en navegador
-http://localhost:3000
+http://localhost:4200
 ```
 
 **Deberías ver**:
@@ -77,7 +77,7 @@ http://localhost:8080
 
 | Característica | Valor |
 |---------------|-------|
-| Puerto | 3000 |
+| Puerto | 4200 |
 | Servidor | Vite Dev Server |
 | Colores Primarios | 🟠 Naranja/Cálidos |
 | Badge DEV | ✅ Sí (esquina inferior derecha) |
@@ -204,7 +204,7 @@ VITE_API_ENERLINK_URL=http://192.168.1.139:8082/api
 VITE_AI_API_URL=http://localhost:8001
 VITE_ENV_MODE=development
 NODE_ENV=development
-DEV_PORT=3000
+DEV_PORT=4200
 ```
 
 ### Para Producción
@@ -244,10 +244,10 @@ docker-compose -f docker-compose.dev.yml up -d
 
 ```bash
 # Windows
-netstat -ano | findstr :3000
+netstat -ano | findstr :4200
 
 # Linux/Mac
-lsof -i :3000
+lsof -i :4200
 
 # Cambiar puerto en .env
 DEV_PORT=3001
@@ -324,7 +324,7 @@ docker-compose -f docker-compose.dev.yml build 2>&1 | tee build.log
 - [ ] Variables de entorno configuradas (ver arriba)
 - [ ] `VITE_ENV_MODE=development`
 - [ ] Backend UAT disponible en :8082
-- [ ] Puerto 3000 libre
+- [ ] Puerto 4200 libre
 - [ ] Build Docker: `docker-compose -f docker-compose.dev.yml build`
 - [ ] Start: `docker-compose -f docker-compose.dev.yml up -d`
 - [ ] Healthcheck: `docker ps` muestra contenedor corriendo
@@ -357,7 +357,7 @@ docker-compose -f docker-compose.dev.yml build 2>&1 | tee build.log
    ↓ Hot reload, cambios rápidos
    ↓
 2. Probar en UAT
-   ↓ (docker-compose.dev - localhost:3000)
+   ↓ (docker-compose.dev - localhost:4200)
    ↓ Banner naranja, testing completo
    ↓
 3. Deploy a Producción

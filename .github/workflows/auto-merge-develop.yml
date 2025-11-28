@@ -3,7 +3,7 @@ name: 🔄 Auto Merge to Develop
 # Se ejecuta cuando hay un push a main que pasa el CI
 on:
   workflow_run:
-    workflows: ["🚀 CI/CD Pipeline"]
+    workflows: ['🚀 CI/CD Pipeline']
     types:
       - completed
     branches:
@@ -64,7 +64,7 @@ jobs:
           echo "- **To**: \`develop\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Strategy**: \`-X theirs\` (prefer incoming changes)" >> $GITHUB_STEP_SUMMARY
           echo "- **Status**: ✅ Merged successfully" >> $GITHUB_STEP_SUMMARY
-          echo "- **Next**: Staging deployment will trigger on port 3000" >> $GITHUB_STEP_SUMMARY
+          echo "- **Next**: Staging deployment will trigger on port 4200" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Recent commits merged:**" >> $GITHUB_STEP_SUMMARY
           git log --oneline -5 >> $GITHUB_STEP_SUMMARY

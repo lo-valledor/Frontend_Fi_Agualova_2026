@@ -57,7 +57,7 @@ Ejecuta en: `self-hosted` (solo en push a `develop`/`staging`)
 **Steps**:
 - Similar al deploy de producción pero con configuración de staging
 - Usa `STAGING_API_URL` secret
-- Puerto expuesto: `3000`
+- Puerto expuesto: `4200`
 - Soporta docker-compose.staging.yml o configuración por defecto
 
 ---
@@ -216,7 +216,7 @@ Los jobs de deploy requieren un runner self-hosted con:
 - ✅ Docker Compose (v2+)
 - ✅ Acceso de red al servidor de deploy
 - ✅ Permisos para ejecutar comandos Docker sin sudo
-- ✅ Puertos disponibles: `8080` (prod), `3000` (staging)
+- ✅ Puertos disponibles: `8080` (prod), `4200` (staging)
 
 #### Configuración del Runner
 ```bash
@@ -421,7 +421,7 @@ pnpm run test:ui
    ```bash
    # Verificar puertos
    sudo netstat -tlnp | grep :8080
-   sudo netstat -tlnp | grep :3000
+   sudo netstat -tlnp | grep :4200
 
    # Detener contenedor anterior si es necesario
    docker-compose down
@@ -446,7 +446,7 @@ cat docker-compose.yml | grep -A 5 ports
 
 # Probar acceso manual
 curl http://localhost:8080
-curl http://localhost:3000
+curl http://localhost:4200
 ```
 
 ---

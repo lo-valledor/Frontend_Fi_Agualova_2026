@@ -103,7 +103,7 @@ case $ENVIRONMENT in
             clean_build_cache
         fi
         
-        show_environment_info "PRODUCCIÓN" "3000" $COLOR_PROD "Azul (Profesional)"
+        show_environment_info "PRODUCCIÓN" "4200" $COLOR_PROD "Azul (Profesional)"
         
         echo -e "${COLOR_PROD}🔨 Construyendo aplicación...${COLOR_RESET}"
         export VITE_APP_ENV=production
@@ -125,7 +125,7 @@ case $ENVIRONMENT in
             docker-compose -f docker-compose.dev.yml down -v
         fi
         
-        show_environment_info "DESARROLLO (Docker)" "3000" $COLOR_DEV "Naranja (Cálido)"
+        show_environment_info "DESARROLLO (Docker)" "4200" $COLOR_DEV "Naranja (Cálido)"
         
         echo -e "${COLOR_DEV}🐳 Construyendo y levantando contenedor...${COLOR_RESET}"
         echo -e "${COLOR_DEV}   Verás un banner NARANJA en la parte superior${COLOR_RESET}"
@@ -165,7 +165,7 @@ case $ENVIRONMENT in
         echo -e "${COLOR_INFO}Esta opción inicia ambos entornos simultáneamente para comparación${COLOR_RESET}"
         echo ""
         echo -e "${COLOR_INFO}Se abrirán dos contenedores Docker:${COLOR_RESET}"
-        echo -e "   1. ${COLOR_DEV}DESARROLLO →  http://localhost:3000  (Naranja)${COLOR_RESET}"
+        echo -e "   1. ${COLOR_DEV}DESARROLLO →  http://localhost:4200  (Naranja)${COLOR_RESET}"
         echo -e "   2. ${COLOR_PROD}PRODUCCIÓN →  http://localhost:8080  (Azul)${COLOR_RESET}"
         echo ""
         

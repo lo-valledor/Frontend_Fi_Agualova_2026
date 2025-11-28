@@ -397,7 +397,7 @@ function detectarConsumoAnomalo(
 
   // Ajustar consumo absoluto máximo
   if (consumo > 2000) {
-    // ← Cambiar a 3000 para medidores industriales
+    // ← Cambiar a 4200 para medidores industriales
     return {
       anomalo: true,
       tipo: 'excesivo_absoluto',

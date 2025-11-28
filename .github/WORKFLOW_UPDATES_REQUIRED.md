@@ -99,7 +99,7 @@ jobs:
           echo "✅ Successfully synced main → develop"
           echo "🎯 Staging environment will be updated automatically"
           echo "📍 Branch: develop"
-          echo "🌐 Port: 3000"
+          echo "🌐 Port: 4200"
 
       - name: 📝 Create summary
         run: |
@@ -180,7 +180,7 @@ Busca la sección `deploy-staging` (aproximadamente línea 167-205) y reempláza
           echo "🔍 Performing staging health check..."
           sleep 20
           # Ajusta el puerto según tu configuración de staging
-          if curl -f http://localhost:3000 > /dev/null 2>&1; then
+          if curl -f http://localhost:4200 > /dev/null 2>&1; then
             echo "✅ Staging deployment successful!"
           else
             echo "⚠️ Staging deployment check failed, but continuing..."
@@ -190,7 +190,7 @@ Busca la sección `deploy-staging` (aproximadamente línea 167-205) y reempláza
 #### ✅ Sección Nueva (AGREGAR)
 
 ```yaml
-  # 🚀 Job de Despliegue a Staging (puerto 3000)
+  # 🚀 Job de Despliegue a Staging (puerto 4200)
   deploy-staging:
     name: 🧪 Deploy to Staging
     needs: ci
@@ -209,7 +209,7 @@ Busca la sección `deploy-staging` (aproximadamente línea 167-205) y reempláza
         run: |
           echo "VITE_API_URL=${{ secrets.STAGING_API_URL }}" > .env
           echo "NODE_ENV=staging" >> .env
-          echo "STAGING_PORT=3000" >> .env
+          echo "STAGING_PORT=4200" >> .env
 
       # Limpiar despliegue anterior de staging
       - name: 🧹 Clean previous staging deployment
@@ -218,25 +218,25 @@ Busca la sección `deploy-staging` (aproximadamente línea 167-205) y reempláza
           docker-compose -f docker-compose.staging.yml down --volumes --remove-orphans || true
           docker system prune -f || true
 
-      # Construir y desplegar staging (puerto 3000)
+      # Construir y desplegar staging (puerto 4200)
       - name: 🚀 Build and deploy to staging
         run: |
           echo "🧪 Building and deploying to staging environment..."
-          echo "📍 Using port 3000 for staging"
+          echo "📍 Using port 4200 for staging"
           docker-compose -f docker-compose.staging.yml up -d --build --force-recreate
 
       # Verificar que staging está funcionando
       - name: 🔍 Staging health check
         run: |
           echo "🔍 Performing staging health check..."
-          echo "⏳ Waiting for staging service to start on port 3000..."
+          echo "⏳ Waiting for staging service to start on port 4200..."
 
           # Esperar y hacer múltiples intentos
           for i in {1..12}; do
             echo "🔄 Attempt $i/12..."
-            if curl -f http://localhost:3000 > /dev/null 2>&1; then
-              echo "✅ Staging deployment successful! Service is responding on port 3000"
-              echo "🌐 Staging URL: http://localhost:3000"
+            if curl -f http://localhost:4200 > /dev/null 2>&1; then
+              echo "✅ Staging deployment successful! Service is responding on port 4200"
+              echo "🌐 Staging URL: http://localhost:4200"
               break
             else
               echo "⏳ Service not ready yet, waiting 10 seconds..."
@@ -250,8 +250,8 @@ Busca la sección `deploy-staging` (aproximadamente línea 167-205) y reempláza
               docker-compose -f docker-compose.staging.yml ps
               echo "📋 Checking container logs..."
               docker-compose -f docker-compose.staging.yml logs --tail=50
-              echo "🔧 Checking if port 3000 is in use..."
-              netstat -tlnp | grep :3000 || echo "Port 3000 not in use"
+              echo "🔧 Checking if port 4200 is in use..."
+              netstat -tlnp | grep :4200 || echo "Port 4200 not in use"
               echo "⚠️ Continuing anyway, manual verification may be needed..."
             fi
           done
@@ -327,8 +327,8 @@ Después de aplicar ambos cambios:
    # Production (puerto 8080)
    curl http://localhost:8080
 
-   # Staging (puerto 3000)
-   curl http://localhost:3000
+   # Staging (puerto 4200)
+   curl http://localhost:4200
    ```
 
 ---
@@ -345,7 +345,7 @@ Después de aplicar ambos cambios:
    └─► Auto-Sync Main → Develop
        └─► CI/CD Pipeline (develop)
            ├─ Build + Test
-           └─ Deploy to Staging (port 3000)
+           └─ Deploy to Staging (port 4200)
 ```
 
 ---
@@ -368,7 +368,7 @@ GitHub requiere permisos especiales (`workflows` scope) para que las GitHub Apps
 **SÍ**, edita el archivo `docker-compose.staging.yml`:
 ```yaml
 ports:
-  - "${STAGING_PORT:-3001}:80"  # Cambia 3000 a 3001
+  - "${STAGING_PORT:-3001}:80"  # Cambia 4200 a 3001
 ```
 
 Y actualiza el health check en `ci-cd.yml`:

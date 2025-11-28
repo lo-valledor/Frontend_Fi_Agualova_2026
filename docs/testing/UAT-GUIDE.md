@@ -8,9 +8,9 @@ Tu sistema de diferenciación de entornos está **completamente configurado** y 
 
 ## 🎨 Diferenciación Visual
 
-### UAT/Development (Puerto 3000)
+### UAT/Development (Puerto 4200)
 
-Cuando accedas a `http://localhost:3000` verás:
+Cuando accedas a `http://localhost:4200` verás:
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -66,7 +66,7 @@ Cuando accedas a `http://localhost:8080` verás:
 docker-compose -f docker-compose.dev.yml up -d --build
 ```
 
-**Acceder**: `http://localhost:3000`
+**Acceder**: `http://localhost:4200`
 
 **Deberías ver**:
 - Banner naranja en la parte superior
@@ -225,7 +225,7 @@ body.dev-environment {
 Cuando inicies el entorno UAT, verifica:
 
 - [ ] El contenedor está corriendo (`docker ps`)
-- [ ] Puedes acceder a `http://localhost:3000`
+- [ ] Puedes acceder a `http://localhost:4200`
 - [ ] Ves el banner naranja en la parte superior
 - [ ] El banner dice "ENTORNO DE DESARROLLO"
 - [ ] Hay un punto naranja pulsante
@@ -248,7 +248,7 @@ Cuando inicies producción, verifica:
 
 | Aspecto | UAT (Dev) | Producción |
 |---------|-----------|------------|
-| **Puerto** | 3000 | 8080 |
+| **Puerto** | 4200 | 8080 |
 | **Banner** | ✅ Sí | ❌ No |
 | **Color** | 🟠 Naranja | 🔵 Azul |
 | **CSS** | app.css + app.dev.css | app.css |

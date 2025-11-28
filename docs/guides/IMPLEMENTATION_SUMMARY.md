@@ -166,14 +166,14 @@ pnpm run dev
 ```bash
 VITE_APP_ENV=production pnpm run build
 pnpm run start
-# → http://localhost:3000 (Azul)
+# → http://localhost:4200 (Azul)
 ```
 
 #### Docker Desarrollo
 
 ```bash
 docker-compose -f docker-compose.dev.yml up --build
-# → http://localhost:3000 (Naranja)
+# → http://localhost:4200 (Naranja)
 ```
 
 #### Docker Producción

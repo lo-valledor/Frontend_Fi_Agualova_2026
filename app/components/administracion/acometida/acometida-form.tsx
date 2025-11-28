@@ -207,8 +207,7 @@ export function AcometidaForm({
   const handleError = (error: any) => {
     if (error.response?.status === 400) {
       const errorMessage =
-        error.response?.data?.message ||
-        'Datos inválidos enviados al servidor';
+        error.response?.data?.message || 'Datos inválidos enviados al servidor';
       toast.error(`Error de validación: ${errorMessage}`);
     } else if (error.response?.status === 500) {
       toast.error('Error interno del servidor');
@@ -223,7 +222,8 @@ export function AcometidaForm({
       const validated = validateFormData(data);
       if (!validated) return;
 
-      const { empalmeId, nichoId, codigo, limitePotencia, contratoIdFinal } = validated;
+      const { empalmeId, nichoId, codigo, limitePotencia, contratoIdFinal } =
+        validated;
 
       if (isEdit && acometida) {
         const submitData: ActualizarAcometidaProps = {
@@ -272,7 +272,7 @@ export function AcometidaForm({
     if (contrato) {
       toast.success('Contrato seleccionado correctamente', {
         description: `${contrato.clienteNombre} ${contrato.clienteApellidos} - ${contrato.empresa}`,
-        duration: 3000
+        duration: 4200
       });
     }
   };
@@ -365,9 +365,9 @@ export function AcometidaForm({
                     name='contratoId'
                     render={({ field }) => (
                       <FormItem>
-                <FormLabel className='text-sm font-medium'>
+                        <FormLabel className='text-sm font-medium'>
                           Contrato
-                </FormLabel>
+                        </FormLabel>
                         <FormControl>
                           <div className='flex gap-2'>
                             <Input

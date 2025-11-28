@@ -226,7 +226,7 @@ export function usePrefetchRoute(routePath: string, delay = 2000) {
 export default function Dashboard() {
   // Prefetch rutas comunes después de 2 segundos
   usePrefetchRoute('/dashboard/administracion/contratos', 2000);
-  usePrefetchRoute('/dashboard/monitor/lecturas', 3000);
+  usePrefetchRoute('/dashboard/monitor/lecturas', 4200);
   usePrefetchRoute('/dashboard/operaciones/precios-cargo', 4000);
 
   return <DashboardComponent />;

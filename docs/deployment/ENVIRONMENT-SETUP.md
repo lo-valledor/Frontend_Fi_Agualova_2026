@@ -114,7 +114,7 @@ services:
         VITE_AI_API_URL: http://localhost:8001
         VITE_ENV_MODE: development
     ports:
-      - "3000:3000"
+      - "4200:4200"
 
   frontend-prod:
     build:
