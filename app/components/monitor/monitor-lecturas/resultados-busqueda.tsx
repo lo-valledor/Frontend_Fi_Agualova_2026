@@ -36,6 +36,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger
 } from '~/components/ui/collapsible';
+import { EmptyState } from '~/components/ui/empty-state';
 import {
   Dialog,
   DialogContent,
@@ -60,156 +61,17 @@ import {
 } from '~/components/ui/tooltip';
 import { useApiWithLoadingBar } from '~/lib/api';
 import { cn } from '~/lib/utils';
-// Assuming you have this utility for conditional classes
 import type { Fila, Medidor, NichoBusqueda } from '~/types/monitor';
 import { formatToYYYYMMDD } from '~/utils/date-formatter';
-
-// Status helpers with enhanced information
-const getMeterStatus = (claveHtml: string) => {
-  const statusMap = {
-    SINLEC: {
-      color: 'gray',
-      bgColor: 'bg-gray-500',
-      borderColor: 'border-gray-500',
-      textColor: 'text-gray-500',
-      label: 'Sin Lectura',
-      icon: <History className='h-3.5 w-3.5' />,
-      severity: 1
-    },
-    SINCLA: {
-      color: 'emerald',
-      bgColor: 'bg-emerald-500',
-      borderColor: 'border-emerald-500',
-      textColor: 'text-emerald-500',
-      label: 'Lectura Normal',
-      icon: <Grid3X3 className='h-3.5 w-3.5' />,
-      severity: 0
-    },
-    CLAINF: {
-      color: 'yellow',
-      bgColor: 'bg-yellow-500',
-      borderColor: 'border-yellow-500',
-      textColor: 'text-yellow-500',
-      label: 'Clave Informativa',
-      icon: <AlertCircle className='h-3.5 w-3.5' />,
-      severity: 2
-    },
-    CLAREL: {
-      color: 'orange',
-      bgColor: 'bg-orange-500',
-      borderColor: 'border-orange-500',
-      textColor: 'text-orange-500',
-      label: 'Clave Relevante',
-      icon: <AlertTriangle className='h-3.5 w-3.5' />,
-      severity: 3
-    },
-    CLACRI: {
-      color: 'red',
-      bgColor: 'bg-red-500',
-      borderColor: 'border-red-500',
-      textColor: 'text-red-500',
-      label: 'Clave Crítica',
-      icon: <AlertCircle className='h-3.5 w-3.5' />,
-      severity: 4
-    },
-    LECCER: {
-      color: 'blue',
-      bgColor: 'bg-blue-500',
-      borderColor: 'border-blue-500',
-      textColor: 'text-blue-500',
-      label: 'Lectura Cerrada',
-      icon: <MapPin className='h-3.5 w-3.5' />,
-      severity: 0
-    },
-    LECIMP: {
-      color: 'purple',
-      bgColor: 'bg-purple-500',
-      borderColor: 'border-purple-500',
-      textColor: 'text-purple-500',
-      label: 'En Facturación',
-      icon: <BarChart3 className='h-3.5 w-3.5' />,
-      severity: 0
-    },
-    IMPORT: {
-      color: 'pink',
-      bgColor: 'bg-pink-500',
-      borderColor: 'border-pink-500',
-      textColor: 'text-pink-500',
-      label: 'Lecturas Importadas',
-      icon: <FileUp className='h-3.5 w-3.5' />,
-      severity: 0
-    }
-  };
-
-  return statusMap[claveHtml as keyof typeof statusMap] || statusMap.SINLEC;
-};
-
-// Helper to detect if a reading is imported but not validated
-const isImportedReading = (medidor: any): boolean => {
-  // A reading is considered "imported" if it has consumo but no fechaLectura or no clave
-  return (
-    (medidor.consumo && !medidor.fechaLectura) ||
-    (medidor.consumo && !medidor.clave)
-  );
-};
-
-// Calculate severity stats for a nicho (for the stats display)
-const calculateNichoStats = (nicho: NichoBusqueda) => {
-  let total = 0;
-  let critical = 0;
-  let warning = 0;
-  let info = 0;
-  let normal = 0;
-  let sinlec = 0;
-  let imported = 0;
-
-  for (const fila of nicho.filas) {
-    for (const medidor of fila.medidores) {
-      total++;
-      const status = getMeterStatus(medidor.claveHtml);
-
-      // Check if it's an imported reading
-      if (isImportedReading(medidor)) {
-        imported++;
-      }
-
-      if (status.severity === 4) critical++;
-      else if (status.severity === 3) warning++;
-      else if (status.severity === 2) info++;
-      else if (status.severity === 1) sinlec++;
-      else normal++;
-    }
-  }
-
-  return { total, critical, warning, info, normal, sinlec, imported };
-};
-
-// Calculate total stats across all nichos
-const calculateTotalStats = (nichos: NichoBusqueda[]) => {
-  return nichos.reduce(
-    (acc, nicho) => {
-      const stats = calculateNichoStats(nicho);
-      return {
-        total: acc.total + stats.total,
-        critical: acc.critical + stats.critical,
-        warning: acc.warning + stats.warning,
-        info: acc.info + stats.info,
-        normal: acc.normal + stats.normal,
-        sinlec: acc.sinlec + stats.sinlec,
-        imported: acc.imported + stats.imported
-      };
-    },
-    {
-      total: 0,
-      critical: 0,
-      warning: 0,
-      info: 0,
-      normal: 0,
-      sinlec: 0,
-      imported: 0
-    }
-  );
-};
+import {
+  calculateNichoStats,
+  calculatePercentage,
+  calculateTotalStats
+} from '~/utils/monitor/monitor-calculations';
+import {
+  getMeterStatus,
+  isImportedReading
+} from '~/utils/monitor/monitor-status';
 
 // Component for status circle indicator with subtle pulse animation
 const StatusIndicator = ({
@@ -492,11 +354,11 @@ interface ResultsState {
 export default function ResultadosBusqueda({
   sector,
   periodo,
-  stfechaini,
-  stfechafin,
-  tipoclave,
-  medidor,
-  clave,
+  stfechaini: startDate,
+  stfechafin: endDate,
+  tipoclave: keyType,
+  medidor: meterSerial,
+  clave: claveId,
   triggerSearch
 }: Readonly<{
   sector: string;
@@ -522,53 +384,61 @@ export default function ResultadosBusqueda({
   const api = useApiWithLoadingBar();
   const { canCreate } = useAuth();
 
-  // ✅ REFACTOR: Extraer validación de campos
+  // Validation with early returns
   const validateSearchFields = (): boolean => {
     if (!sector) {
       toast.error('Sector no seleccionado');
       return false;
     }
+
     if (!periodo) {
       toast.error('Periodo no seleccionado');
       return false;
     }
-    if (!stfechaini) {
+
+    if (!startDate || startDate.trim() === '') {
       toast.error('Fecha de inicio no seleccionada');
       return false;
     }
-    if (!stfechafin) {
+
+    if (!endDate || endDate.trim() === '') {
       toast.error('Fecha de fin no seleccionada');
       return false;
     }
+
     return true;
   };
 
-  // ✅ REFACTOR: Extraer construcción de parámetros
+  // Build search parameters with proper variable names
   const buildSearchParams = () => {
     const params = new URLSearchParams({
       sector,
       periodo,
-      stfechaini: formatToYYYYMMDD(stfechaini),
-      stfechafin: formatToYYYYMMDD(stfechafin)
+      stfechaini: formatToYYYYMMDD(startDate),
+      stfechafin: formatToYYYYMMDD(endDate)
     });
 
-    if (tipoclave) params.append('tipoclave', tipoclave);
-    if (medidor) params.append('medidor', medidor);
-    if (clave) params.append('clave', clave);
+    if (keyType) params.append('tipoclave', keyType);
+    if (meterSerial) params.append('medidor', meterSerial);
+    if (claveId) params.append('clave', claveId);
 
     return params;
   };
 
-  // ✅ REFACTOR: Extraer procesamiento de respuesta
-  const processSearchResponse = (response: any) => {
-    // Asegurarse de que la respuesta tenga la estructura esperada
+  // Process search response with comprehensive edge case handling
+  const processSearchResponse = (response: any): NichoBusqueda[] => {
+    // Early return for null/undefined response
+    if (!response) return [];
+
+    // Ensure response has expected structure
     const responseData =
       response.data && typeof response.data === 'object'
         ? response.data
         : { nichos: [] };
 
-    // Extraer los nichos de la respuesta con validación de tipo
+    // Extract nichos array with type validation
     let rawNichos: any[] = [];
+
     if (
       'data' in responseData &&
       responseData.data &&
@@ -581,10 +451,13 @@ export default function ResultadosBusqueda({
       rawNichos = responseData.nichos;
     }
 
-    // Aseguramos que cada nicho tenga la propiedad 'nombre'
+    // Early return for empty nichos
+    if (!rawNichos || rawNichos.length === 0) return [];
+
+    // Map and validate each nicho structure
     return rawNichos.map((nicho: any, index: number) => ({
-      nombre: nicho.nombre || `Nicho ${index + 1}`,
-      filas: Array.isArray(nicho.filas) ? nicho.filas : []
+      nombre: nicho?.nombre || `Nicho ${index + 1}`,
+      filas: Array.isArray(nicho?.filas) ? nicho.filas : []
     }));
   };
 
@@ -604,11 +477,10 @@ export default function ResultadosBusqueda({
     return newExpandedState;
   };
 
-  // Search function (refactored)
+  // Search with improved edge case handling and early returns
   const searchResults = async () => {
-    if (!validateSearchFields()) {
-      return;
-    }
+    // Early return if validation fails
+    if (!validateSearchFields()) return;
 
     setIsSearching(true);
     setSearchError(null);
@@ -621,8 +493,8 @@ export default function ResultadosBusqueda({
 
       setResults({ nichos });
 
-      // Verificar si el índice actual sigue siendo válido
-      if (selectedNichoIndex >= nichos.length && nichos.length > 0) {
+      // Validate and reset nicho index if needed
+      if (nichos.length > 0 && selectedNichoIndex >= nichos.length) {
         setSelectedNichoIndex(0);
       }
 
@@ -631,24 +503,23 @@ export default function ResultadosBusqueda({
       setExpandedFilas(newExpandedState);
     } catch (error) {
       console.error('Error al buscar lecturas:', error);
-      setSearchError(null); // Cambiado para coincidir con el tipo esperado
-      toast.error('Error al buscar lecturas');
+      setSearchError(null);
+      toast.error('Error al buscar lecturas. Por favor, intente nuevamente.');
     } finally {
       setIsSearching(false);
     }
   };
 
   const handleRefresh = useCallback(() => {
-    if (sector && periodo && stfechaini && stfechafin) {
-      // Incrementar el contador de refrescar para desencadenar la recarga
-      setRefreshCounter(prev => prev + 1);
-
-      // Después de que se completa la búsqueda, restauramos el estado expandido
-      // Esto se maneja automáticamente si preservamos el objeto de estado
-    } else {
+    // Early return if required fields are missing
+    if (!sector || !periodo || !startDate || !endDate) {
       toast.info('Seleccione Sector, Periodo y Fechas para refrescar.');
+      return;
     }
-  }, [sector, periodo, stfechaini, stfechafin]);
+
+    // Increment refresh counter to trigger reload
+    setRefreshCounter(prev => prev + 1);
+  }, [sector, periodo, startDate, endDate]);
 
   useEffect(() => {
     if (triggerSearch > 0) {
@@ -800,10 +671,6 @@ export default function ResultadosBusqueda({
 
                     {(() => {
                       const stats = calculateTotalStats(results.nichos);
-                      const percentage = (value: number) =>
-                        stats.total > 0
-                          ? ((value / stats.total) * 100).toFixed(1)
-                          : '0.0';
 
                       return (
                         <div className='space-y-4 sm:space-y-6 py-2 sm:py-4'>
@@ -874,7 +741,11 @@ export default function ResultadosBusqueda({
                                       <NumberFlow value={stats.critical} />
                                     </p>
                                     <p className='text-xs sm:text-sm text-red-600/70 dark:text-red-400/70'>
-                                      {percentage(stats.critical)}%
+                                      {calculatePercentage(
+                                        stats.critical,
+                                        stats.total
+                                      )}
+                                      %
                                     </p>
                                   </div>
                                 </div>
@@ -883,7 +754,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${percentage(stats.critical)}%`
+                                      width: `${calculatePercentage(stats.critical, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.2 }}
                                     className='h-full bg-red-500 rounded-full'
@@ -917,7 +788,11 @@ export default function ResultadosBusqueda({
                                       <NumberFlow value={stats.warning} />
                                     </p>
                                     <p className='text-xs sm:text-sm text-orange-600/70 dark:text-orange-400/70'>
-                                      {percentage(stats.warning)}%
+                                      {calculatePercentage(
+                                        stats.warning,
+                                        stats.total
+                                      )}
+                                      %
                                     </p>
                                   </div>
                                 </div>
@@ -925,7 +800,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${percentage(stats.warning)}%`
+                                      width: `${calculatePercentage(stats.warning, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.25 }}
                                     className='h-full bg-orange-500 rounded-full'
@@ -959,7 +834,11 @@ export default function ResultadosBusqueda({
                                       <NumberFlow value={stats.info} />
                                     </p>
                                     <p className='text-xs sm:text-sm text-yellow-600/70 dark:text-yellow-400/70'>
-                                      {percentage(stats.info)}%
+                                      {calculatePercentage(
+                                        stats.info,
+                                        stats.total
+                                      )}
+                                      %
                                     </p>
                                   </div>
                                 </div>
@@ -967,7 +846,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${percentage(stats.info)}%`
+                                      width: `${calculatePercentage(stats.info, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.3 }}
                                     className='h-full bg-yellow-500 rounded-full'
@@ -1003,8 +882,9 @@ export default function ResultadosBusqueda({
                                       />
                                     </p>
                                     <p className='text-xs sm:text-sm text-gray-600/70 dark:text-gray-400/70'>
-                                      {percentage(
-                                        stats.sinlec - stats.imported
+                                      {calculatePercentage(
+                                        stats.sinlec - stats.imported,
+                                        stats.total
                                       )}
                                       %
                                     </p>
@@ -1014,7 +894,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${percentage(stats.sinlec - stats.imported)}%`
+                                      width: `${calculatePercentage(stats.sinlec - stats.imported, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.35 }}
                                     className='h-full bg-gray-500 rounded-full'
@@ -1048,7 +928,11 @@ export default function ResultadosBusqueda({
                                       <NumberFlow value={stats.normal} />
                                     </p>
                                     <p className='text-xs sm:text-sm text-emerald-600/70 dark:text-emerald-400/70'>
-                                      {percentage(stats.normal)}%
+                                      {calculatePercentage(
+                                        stats.normal,
+                                        stats.total
+                                      )}
+                                      %
                                     </p>
                                   </div>
                                 </div>
@@ -1056,7 +940,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${percentage(stats.normal)}%`
+                                      width: `${calculatePercentage(stats.normal, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.4 }}
                                     className='h-full bg-emerald-500 rounded-full'
@@ -1090,7 +974,11 @@ export default function ResultadosBusqueda({
                                       <NumberFlow value={stats.imported} />
                                     </p>
                                     <p className='text-xs sm:text-sm text-pink-600/70 dark:text-pink-400/70'>
-                                      {percentage(stats.imported)}%
+                                      {calculatePercentage(
+                                        stats.imported,
+                                        stats.total
+                                      )}
+                                      %
                                     </p>
                                   </div>
                                 </div>
@@ -1098,7 +986,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${percentage(stats.imported)}%`
+                                      width: `${calculatePercentage(stats.imported, stats.total)}%`
                                     }}
                                     transition={{ duration: 0.5, delay: 0.45 }}
                                     className='h-full bg-pink-500 rounded-full'
@@ -1568,15 +1456,17 @@ export default function ResultadosBusqueda({
 
       {/* No Results State */}
       {results.nichos.length === 0 && !isSearching && !searchError && (
-        <div className='flex flex-col items-center justify-center py-12 text-center'>
-          <AlertCircle className='h-12 w-12 text-muted-foreground mb-4' />
-          <p className='text-muted-foreground'>
-            No se encontraron resultados para los criterios seleccionados.
-          </p>
-          <p className='text-sm text-muted-foreground mt-1'>
-            Intente ajustar los filtros o el rango de fechas.
-          </p>
-        </div>
+        <EmptyState
+          icon={<AlertCircle className='w-16 h-16' />}
+          title='No se encontraron resultados'
+          description='No hay lecturas para los filtros y rango de fechas seleccionados'
+          suggestions={[
+            'Verifica que el período tenga lecturas registradas',
+            'Intenta expandir el rango de fechas',
+            'Prueba seleccionando otro sector o clave',
+            'Revisa que los filtros aplicados sean correctos'
+          ]}
+        />
       )}
     </div>
   );

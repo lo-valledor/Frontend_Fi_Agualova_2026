@@ -40,6 +40,7 @@ import {
   getDefaultDates,
   validateSearchParams
 } from '~/hooks/use-monitor';
+import { useMonitorKeyboardShortcuts } from '~/hooks/use-keyboard-shortcuts';
 import { cn } from '~/lib/utils';
 import { type Clave, type Periodo, type Sector } from '~/types/monitor';
 import { driver } from 'driver.js';
@@ -64,33 +65,39 @@ const MonitorLecturasComponent = ({
     { label: 'Monitor de Lecturas' }
   ];
 
-  // Estados del formulario de filtros
+  // Form filter states with descriptive names
   const [selectedSector, setSelectedSector] = useState<Sector | null>(null);
   const [selectedPeriodo, setSelectedPeriodo] = useState<Periodo | null>(null);
   const [selectedClave, setSelectedClave] = useState<Clave | null>(null);
-  const [medidor, setMedidor] = useState<string>('');
-  const [selectedEstado, setSelectedEstado] = useState<number>(0);
+  const [meterSerial, setMeterSerial] = useState<string>('');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<number>(0);
   const [fechaInicio, setFechaInicio] = useState<string>('');
   const [fechaFin, setFechaFin] = useState<string>('');
 
-  // Estados de UI
-  const [shouldSearch, setShouldSearch] = useState(false);
+  // UI states
+  const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchTrigger, setSearchTrigger] = useState(0);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  // Establecer valores por defecto del período y fechas usando funciones utilitarias
+  // Initialize default period and dates with early returns
   useEffect(() => {
-    if (periodos && periodos.length > 0 && !selectedPeriodo) {
-      const periodoActivo = findActivePeriod(periodos);
+    // Early return if no periods available
+    if (!periodos || periodos.length === 0) return;
 
-      if (periodoActivo) {
-        setSelectedPeriodo(periodoActivo);
-        const defaultDates = getDefaultDates(periodoActivo);
-        setFechaInicio(defaultDates.fechaInicio);
-        if (!fechaFin) {
-          setFechaFin(defaultDates.fechaFin);
-        }
-      }
+    // Early return if period already selected
+    if (selectedPeriodo) return;
+
+    const periodoActivo = findActivePeriod(periodos);
+
+    // Early return if no active period found
+    if (!periodoActivo) return;
+
+    setSelectedPeriodo(periodoActivo);
+    const defaultDates = getDefaultDates(periodoActivo);
+    setFechaInicio(defaultDates.fechaInicio);
+
+    if (!fechaFin) {
+      setFechaFin(defaultDates.fechaFin);
     }
   }, [periodos, selectedPeriodo, fechaFin]);
 
@@ -101,17 +108,17 @@ const MonitorLecturasComponent = ({
     }
   }, [selectedPeriodo]);
 
-  // Limpiar filtros y resetear estado usando funciones utilitarias
+  // Clear filters and reset state
   const handleLimpiezaFiltros = () => {
-    setShouldSearch(false);
+    setIsSearchActive(false);
     setSearchTrigger(0);
     setSelectedSector(null);
 
     const periodoActivo = findActivePeriod(periodos);
     setSelectedPeriodo(periodoActivo);
     setSelectedClave(null);
-    setMedidor('');
-    setSelectedEstado(0);
+    setMeterSerial('');
+    setSelectedStatusFilter(0);
 
     const defaultDates = getDefaultDates(periodoActivo);
     setFechaInicio(defaultDates.fechaInicio);
@@ -119,21 +126,40 @@ const MonitorLecturasComponent = ({
     setIsFiltersOpen(true);
   };
 
-  // Ejecutar búsqueda con validaciones usando función utilitaria
+  // Execute search with validation and early return
   const handleSearch = () => {
     const validation = validateSearchParams(selectedSector, selectedPeriodo);
 
+    // Early return if validation fails
     if (!validation.isValid) {
       toast.error(validation.error);
       return;
     }
 
-    setShouldSearch(true);
+    setIsSearchActive(true);
     setSearchTrigger(prev => prev + 1);
-    setIsFiltersOpen(false); // Colapsar filtros después de buscar
+    setIsFiltersOpen(false); // Collapse filters after search
   };
 
-  // Manejo de errores
+  // Keyboard shortcuts for accessibility (after function declarations)
+  useMonitorKeyboardShortcuts({
+    onSearch: () => {
+      // Open filters and focus meter input
+      if (!isFiltersOpen) {
+        setIsFiltersOpen(true);
+      }
+
+      // Focus input after React renders
+      setTimeout(() => {
+        const input = document.getElementById('meter-serial-input');
+        input?.focus();
+      }, 100);
+    },
+    onRefresh: handleSearch,
+    onEscape: () => setIsFiltersOpen(false)
+  });
+
+  // Early return for error state
   if (error) {
     return (
       <div className='container mx-auto p-6'>
@@ -408,7 +434,9 @@ const MonitorLecturasComponent = ({
                     )}
                   </Button>
 
-                  {(selectedClave || medidor || selectedEstado > 0) && (
+                  {(selectedClave ||
+                    meterSerial ||
+                    selectedStatusFilter > 0) && (
                     <Button
                       variant='ghost'
                       size='sm'
@@ -429,7 +457,7 @@ const MonitorLecturasComponent = ({
                 >
                   <Search className='w-4 h-4 mr-2' />
                   <span className='text-sm sm:text-base'>
-                    {shouldSearch ? 'Buscar Nuevamente' : 'Iniciar Monitoreo'}
+                    {isSearchActive ? 'Buscar Nuevamente' : 'Iniciar Monitoreo'}
                   </span>
                 </Button>
               </div>
@@ -489,9 +517,9 @@ const MonitorLecturasComponent = ({
                           Estado
                         </Label>
                         <Select
-                          value={selectedEstado?.toString()}
+                          value={selectedStatusFilter?.toString()}
                           onValueChange={value =>
-                            setSelectedEstado(Number(value))
+                            setSelectedStatusFilter(Number(value))
                           }
                         >
                           <SelectTrigger className='w-full bg-background border-border'>
@@ -527,11 +555,13 @@ const MonitorLecturasComponent = ({
                           Número de Serie
                         </Label>
                         <Input
+                          id='meter-serial-input'
                           type='text'
                           placeholder='Buscar medidor específico...'
-                          value={medidor}
-                          onChange={e => setMedidor(e.target.value)}
+                          value={meterSerial}
+                          onChange={e => setMeterSerial(e.target.value)}
                           className='w-full bg-background border-border'
+                          aria-label='Número de serie del medidor'
                         />
                       </div>
                     </div>
@@ -543,7 +573,7 @@ const MonitorLecturasComponent = ({
         </motion.div>
 
         {/* Results Section */}
-        {shouldSearch && (
+        {isSearchActive && (
           <Suspense
             fallback={
               <Card className='border-0 shadow-lg bg-card/80 backdrop-blur-sm'>
@@ -558,8 +588,8 @@ const MonitorLecturasComponent = ({
               periodo={selectedPeriodo?.IdPeriodo || ''}
               stfechaini={fechaInicio}
               stfechafin={fechaFin}
-              tipoclave={selectedEstado.toString()}
-              medidor={medidor}
+              tipoclave={selectedStatusFilter.toString()}
+              medidor={meterSerial}
               clave={selectedClave?.IdClave.toString() || ''}
               triggerSearch={searchTrigger}
             />

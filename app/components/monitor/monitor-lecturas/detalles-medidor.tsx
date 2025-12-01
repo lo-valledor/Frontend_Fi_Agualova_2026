@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { useEffect, useState } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { LoadingCard } from '~/components/ui/loading-card';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import api from '~/lib/api';
 import type {
@@ -19,6 +20,24 @@ import ClavesLectura from './detalles-medidor/claves-lectura';
 import InformacionLectura from './detalles-medidor/informacion-lectura';
 // Componentes de presentación
 import InformacionMedidor from './detalles-medidor/informacion-medidor';
+
+// Types for better structure
+type EtapaNumber = 1 | 2 | 3 | 4;
+type EtapaData = EtapaUno[] | EtapaDos[] | EtapaTres[] | EtapaCuatro[];
+type EtapaSetters = {
+  1: React.Dispatch<React.SetStateAction<EtapaUno[]>>;
+  2: React.Dispatch<React.SetStateAction<EtapaDos[]>>;
+  3: React.Dispatch<React.SetStateAction<EtapaTres[]>>;
+  4: React.Dispatch<React.SetStateAction<EtapaCuatro[]>>;
+};
+
+// Error messages for each stage
+const ETAPA_ERROR_MESSAGES: Record<EtapaNumber, string> = {
+  1: 'No hay información del medidor disponible',
+  2: 'No hay datos de lectura registrados',
+  3: 'No hay claves de lectura ingresadas aún',
+  4: 'No hay análisis de consumo disponible'
+};
 
 export default function DetallesMedidor({
   lecturaId,
@@ -35,16 +54,45 @@ export default function DetallesMedidor({
   const [etapa3Data, setEtapa3Data] = useState<EtapaTres[]>([]);
   const [etapa4Data, setEtapa4Data] = useState<EtapaCuatro[]>([]);
 
-  const fetchAllEtapas = async () => {
+  // Helper function to set etapa data based on stage number
+  const setEtapaData = (etapa: EtapaNumber, data: EtapaData): void => {
+    const setters: EtapaSetters = {
+      1: setEtapa1Data,
+      2: setEtapa2Data,
+      3: setEtapa3Data,
+      4: setEtapa4Data
+    };
+
+    setters[etapa](data as never);
+  };
+
+  // Helper function to get error message for a stage
+  const getEtapaErrorMessage = (
+    etapa: EtapaNumber,
+    errorResponse?: any
+  ): string => {
+    // Check for 404 status
+    if (errorResponse?.response?.status === 404) {
+      return (
+        ETAPA_ERROR_MESSAGES[etapa] ||
+        errorResponse.response.data ||
+        `No hay datos disponibles para la etapa ${etapa}`
+      );
+    }
+
+    return `Error al cargar datos de la etapa ${etapa}`;
+  };
+
+  const fetchAllEtapas = async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
     setEtapaErrors({});
 
     try {
-      // Crear un array de promesas para todas las etapas
-      const etapas = [1, 2, 3, 4];
+      // Fetch all stages concurrently
+      const stageNumbers: EtapaNumber[] = [1, 2, 3, 4];
       const results = await Promise.allSettled(
-        etapas.map(etapa => {
+        stageNumbers.map(etapa => {
           const params = new URLSearchParams({
             idLec: lecturaId.toString(),
             etapa: etapa.toString()
@@ -53,78 +101,29 @@ export default function DetallesMedidor({
         })
       );
 
-      // Procesar los resultados de cada etapa
+      // Process results and collect errors
       const newEtapaErrors: Record<number, string> = {};
 
       results.forEach((result, index) => {
-        const etapa = index + 1;
+        const etapa = (index + 1) as EtapaNumber;
 
         if (result.status === 'fulfilled') {
-          // La etapa se completó correctamente
-          switch (etapa) {
-            case 1:
-              setEtapa1Data(result.value.data as EtapaUno[]);
-              break;
-            case 2:
-              setEtapa2Data(result.value.data as EtapaDos[]);
-              break;
-            case 3:
-              setEtapa3Data(result.value.data as EtapaTres[]);
-              break;
-            case 4:
-              setEtapa4Data(result.value.data as EtapaCuatro[]);
-              break;
-          }
+          // Success - set the data with proper type assertion
+          setEtapaData(etapa, result.value.data as EtapaData);
         } else {
-          // La etapa falló
-          //console.warn(`Error en etapa ${etapa}:`, result.reason);
-
-          // Si es un error 404, establecer un mensaje específico
-          if (result.reason?.response?.status === 404) {
-            // Mensajes específicos para cada etapa
-            const etapaMessages = {
-              1: 'No hay información del medidor disponible',
-              2: 'No hay datos de lectura registrados',
-              3: 'No hay claves de lectura ingresadas aún',
-              4: 'No hay análisis de consumo disponible'
-            };
-
-            newEtapaErrors[etapa] =
-              etapaMessages[etapa as keyof typeof etapaMessages] ||
-              result.reason.response.data ||
-              `No hay datos disponibles para la etapa ${etapa}`;
-          } else {
-            newEtapaErrors[etapa] =
-              `Error al cargar datos de la etapa ${etapa}`;
-          }
-
-          // Inicializar con array vacío para evitar errores
-          switch (etapa) {
-            case 1:
-              setEtapa1Data([]);
-              break;
-            case 2:
-              setEtapa2Data([]);
-              break;
-            case 3:
-              setEtapa3Data([]);
-              break;
-            case 4:
-              setEtapa4Data([]);
-              break;
-          }
+          // Failure - collect error and set empty data
+          newEtapaErrors[etapa] = getEtapaErrorMessage(etapa, result.reason);
+          setEtapaData(etapa, []);
         }
       });
 
       setEtapaErrors(newEtapaErrors);
 
-      // Si todas las etapas fallaron, establecer un error general
-      if (Object.keys(newEtapaErrors).length === 4) {
-        // Error silencioso - el UI ya muestra el estado de error apropiadamente
+      // If all stages failed, set general error
+      if (Object.keys(newEtapaErrors).length === stageNumbers.length) {
         setError('No se pudieron cargar los datos del medidor');
       }
     } catch (error) {
-      // Error silencioso - el estado de error se muestra en la UI
       console.error('Error al obtener los datos del medidor:', error);
       setError('Error al obtener los datos del medidor');
     } finally {
@@ -132,23 +131,26 @@ export default function DetallesMedidor({
     }
   };
 
-  const handleAceptarLectura = async () => {
+  const handleAceptarLectura = async (): Promise<void> => {
     try {
       const response = await api.post('/aceptar-lectura-medidor', {
         idLectura: lecturaId
       });
-      if (response.status === 200) {
-        toast.success('Lectura aceptada correctamente');
-        fetchAllEtapas();
-        // Llamar al callback onSuccess si existe
-        if (onSuccess) {
-          onSuccess();
-        }
-      } else {
+
+      // Early return for unsuccessful response
+      if (response.status !== 200) {
         toast.error('No se pudo aceptar la lectura con clave crítica');
+        return;
+      }
+
+      toast.success('Lectura aceptada correctamente');
+      await fetchAllEtapas();
+
+      // Call success callback if provided
+      if (onSuccess) {
+        onSuccess();
       }
     } catch (_error) {
-      //console.error('Error al aceptar la lectura:', error); // eslint-disable-line no-console
       toast.error('No se pudo aceptar la lectura con clave crítica');
     }
   };
@@ -159,17 +161,19 @@ export default function DetallesMedidor({
     }
   }, [lecturaId]);
 
+  // Early return for loading state
   if (isLoading) {
     return (
       <div className='w-full flex justify-center items-center p-8'>
-        <div className='text-center space-y-3'>
-          <div className='w-8 h-8 border-2 border-blue-200 dark:border-blue-800  rounded-full animate-spin mx-auto'></div>
-          <p className='text-sm font-medium'>Cargando datos del medidor...</p>
-        </div>
+        <LoadingCard
+          message='Cargando información del medidor'
+          stage='Obteniendo datos de las 4 etapas...'
+        />
       </div>
     );
   }
 
+  // Early return for error state
   if (error) {
     return (
       <Alert variant='destructive' className='my-4'>

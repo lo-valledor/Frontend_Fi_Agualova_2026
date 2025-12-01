@@ -243,3 +243,69 @@ export interface ProcesamientoResult {
   periodo: string;
   detalles: DetalleProcesamientoItem[];
 }
+
+// ============================================
+// Enhanced Types for Refactored Components
+// ============================================
+
+/**
+ * Validation result type for consistent validation responses
+ */
+export interface ValidationResult {
+  isValid: boolean;
+  error: string | null;
+  value?: unknown;
+}
+
+/**
+ * Statistics aggregation type
+ */
+export interface StatsData {
+  total: number;
+  critical: number;
+  warning: number;
+  info: number;
+  normal: number;
+  sinlec: number;
+  imported: number;
+}
+
+/**
+ * Meter status types for type-safe status handling
+ */
+export type MeterStatusType =
+  | 'SINLEC' // Sin Lectura
+  | 'SINCLA' // Lectura Normal
+  | 'CLAINF' // Clave Informativa
+  | 'CLAREL' // Clave Relevante
+  | 'CLACRI' // Clave Crítica
+  | 'LECCER' // Lectura Cerrada
+  | 'LECIMP' // En Facturación
+  | 'IMPORT'; // Lecturas Importadas
+
+/**
+ * Meter status information interface
+ * Note: icon field should be set at runtime as React.ReactElement
+ */
+export interface MeterStatusInfo {
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  textColor: string;
+  label: string;
+  icon: unknown; // Will be React.ReactElement at runtime
+  severity: 0 | 1 | 2 | 3 | 4;
+}
+
+/**
+ * Search parameters type
+ */
+export interface SearchParams {
+  sector: string;
+  periodo: string;
+  startDate: string;
+  endDate: string;
+  keyType?: string;
+  meterSerial?: string;
+  claveId?: string;
+}

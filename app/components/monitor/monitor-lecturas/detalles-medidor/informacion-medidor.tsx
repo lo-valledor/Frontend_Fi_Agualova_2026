@@ -29,14 +29,45 @@ interface InformacionMedidorProps {
   lecturaId: number;
 }
 
+// Info field component for DRY principle
+interface InfoFieldProps {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number | null | undefined;
+  colorClass?: string;
+  children?: React.ReactNode;
+}
+
+const InfoField = ({
+  icon,
+  label,
+  value,
+  colorClass = 'bg-background dark:bg-background border-sky-500 focus-within:bg-ring',
+  children
+}: InfoFieldProps) => (
+  <div
+    className={`p-3 rounded-xl border border-border transition-colors ${colorClass}`}
+  >
+    <div className='flex items-center gap-2 mb-1.5'>
+      {icon}
+      <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
+        {label}
+      </span>
+    </div>
+    {children || (
+      <p className='font-mono text-sm font-semibold text-foreground truncate'>
+        {value || '-'}
+      </p>
+    )}
+  </div>
+);
+
 export default function InformacionMedidor({
   data,
   error,
   lecturaId
 }: InformacionMedidorProps) {
-  const colorClasses = {
-    sky: 'bg-background dark:bg-background border-sky-500 focus-within:bg-ring'
-  };
+  const meterData = data[0]; // Simplify access to first element
 
   return (
     <Card className='border-0 shadow-none bg-transparent'>
@@ -49,6 +80,7 @@ export default function InformacionMedidor({
         </CardTitle>
       </CardHeader>
       <CardContent className='px-0 space-y-3'>
+        {/* Early return for error state */}
         {error ? (
           <div className='flex items-start gap-2 text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-950/20 px-3 py-2 rounded-xl border border-red-200 dark:border-red-800'>
             <AlertCircle className='h-3 w-3 mt-0.5 shrink-0' />
@@ -57,50 +89,38 @@ export default function InformacionMedidor({
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3'>
             {/* Medidor */}
-            <div
-              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
-            >
-              <div className='flex items-center gap-2 mb-1.5'>
-                <IdCard className='h-3 w-3 ' />
-                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                  Medidor
-                </span>
-              </div>
-              <p className='font-mono text-sm font-semibold text-foreground truncate'>
-                {data[0]?.ME_NSerie || '-'}
-              </p>
-            </div>
+            <InfoField
+              icon={<IdCard className='h-3 w-3 ' />}
+              label='Medidor'
+              value={meterData?.ME_NSerie}
+            />
 
             {/* Tipo */}
-            <div
-              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
-            >
-              <div className='flex items-center gap-2 mb-1.5'>
+            <InfoField
+              icon={
                 <Zap className='h-3 w-3 text-emerald-600 dark:text-emerald-400' />
-                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                  Tipo
-                </span>
-              </div>
-              <p className='text-sm font-semibold text-foreground truncate'>
-                {data[0]?.TM_Descripcion || '-'}
-              </p>
-            </div>
-
-            {/* Tarifa */}
-            <div
-              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
+              }
+              label='Tipo'
+              value={meterData?.TM_Descripcion}
             >
-              <div className='flex items-center gap-2 mb-1.5'>
+              <p className='text-sm font-semibold text-foreground truncate'>
+                {meterData?.TM_Descripcion || '-'}
+              </p>
+            </InfoField>
+
+            {/* Tarifa with conditional dialog */}
+            <InfoField
+              icon={
                 <Key className='h-3 w-3 text-amber-600 dark:text-amber-400' />
-                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                  Tarifa
-                </span>
-              </div>
+              }
+              label='Tarifa'
+              value={meterData?.TF_Codigo}
+            >
               <div className='flex items-center justify-between gap-2'>
                 <p className='text-sm font-semibold text-foreground truncate'>
-                  {data[0]?.TF_Codigo || '-'}
+                  {meterData?.TF_Codigo || '-'}
                 </p>
-                {data?.[0]?.TF_Codigo === 'BT-4.3' && (
+                {meterData?.TF_Codigo === 'BT-4.3' && (
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
@@ -138,37 +158,29 @@ export default function InformacionMedidor({
                   </Dialog>
                 )}
               </div>
-            </div>
+            </InfoField>
 
             {/* Constante */}
-            <div
-              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
-            >
-              <div className='flex items-center gap-2 mb-1.5'>
+            <InfoField
+              icon={
                 <Gauge className='h-3 w-3 text-purple-600 dark:text-purple-400' />
-                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                  Constante
-                </span>
-              </div>
-              <p className='font-mono text-sm font-semibold text-foreground truncate'>
-                {data[0]?.ME_ConstanteMultiplicar || '-'}
-              </p>
-            </div>
+              }
+              label='Constante'
+              value={meterData?.ME_ConstanteMultiplicar}
+            />
 
             {/* Subempalme */}
-            <div
-              className={`p-3 rounded-xl border border-border transition-colors ${colorClasses.sky}`}
-            >
-              <div className='flex items-center gap-2 mb-1.5'>
+            <InfoField
+              icon={
                 <PlugIcon className='h-3 w-3 text-orange-600 dark:text-orange-400' />
-                <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                  Subempalme
-                </span>
-              </div>
+              }
+              label='Subempalme'
+              value={meterData?.SE_Codigo}
+            >
               <p className='text-sm font-semibold text-foreground truncate'>
-                {data[0]?.SE_Codigo || '-'}
+                {meterData?.SE_Codigo || '-'}
               </p>
-            </div>
+            </InfoField>
           </div>
         )}
       </CardContent>

@@ -161,8 +161,12 @@ export default function EditarMedidorComponent({
   }, [medidor, marca, tipoMedidor, form]);
 
   const handleFormSubmit = async (data: MedidorFormData) => {
+    console.log('🔍 DEBUG: Iniciando handleFormSubmit');
+    console.log('📝 DEBUG: Datos del formulario recibidos:', data);
+
     // Validaciones de campos requeridos
     if (!data.marcaCodigo) {
+      console.log('❌ DEBUG: Validación fallida - marca vacía');
       toast.error('La marca es obligatoria');
       return;
     }
@@ -197,14 +201,18 @@ export default function EditarMedidorComponent({
       return;
     }
 
+    console.log('✅ DEBUG: Validaciones pasadas, preparando envío');
     setIsSubmitting(true);
     try {
       // Intentar diferentes campos para encontrar la marca
       const marcaEncontrada = marca.find(
         m => m.codigo === data.marcaCodigo || m.nombre === data.marcaCodigo
       );
+      console.log('🏷️ DEBUG: Marca encontrada:', marcaEncontrada);
+      console.log('🏷️ DEBUG: data.marcaCodigo:', data.marcaCodigo);
       // El backend espera el código de la marca, no el ID
       const marcaId = marcaEncontrada?.codigo ?? data.marcaCodigo;
+      console.log('🏷️ DEBUG: marcaId final:', marcaId);
 
       // Función para convertir fecha de yyyy-MM-dd a dd-MM-yyyy
       const convertirFechaAAAAMMDDToDDMMAA = (fecha: string): string => {
@@ -236,6 +244,7 @@ export default function EditarMedidorComponent({
           ? convertirFechaAAAAMMDDToDDMMAA(data.fechaPrimeraLectura)
           : ''
       };
+      console.log('📦 DEBUG: submitData preparado:', submitData);
       // ADICIÓN: Debug del JSON enviado a la API (en el mismo orden solicitado)
       const payloadForLog = {
         codigoMedidor: submitData.codigoMedidor,
@@ -251,14 +260,24 @@ export default function EditarMedidorComponent({
         primeraLectura: submitData.primeraLectura,
         fechaPrimeraLectura: submitData.fechaPrimeraLectura
       };
+      console.log(
+        '📤 DEBUG: Payload que se enviará a la API:',
+        JSON.stringify(payloadForLog, null, 2)
+      );
+      console.log(
+        '🌐 DEBUG: Llamando a administracionService.modificarMedidor...'
+      );
       const result = await administracionService.modificarMedidor(submitData);
+      console.log('📥 DEBUG: Respuesta recibida del backend:', result);
 
       // Debug: log para verificar qué se está recibiendo del backend
       if (result.error) {
+        console.log('❌ DEBUG: Error retornado por el backend:', result.error);
         toast.error(result.error || 'Error al modificar el medidor');
         return;
       }
 
+      console.log('✅ DEBUG: Modificación exitosa');
       // Notificar éxito al componente padre
       toast.success('Medidor modificado exitosamente');
       if (onSuccess) {
@@ -266,6 +285,11 @@ export default function EditarMedidorComponent({
         onSuccess(medidorId);
       }
     } catch (error: any) {
+      console.log('💥 DEBUG: Error capturado en catch:', error);
+      console.log('💥 DEBUG: error.response:', error?.response);
+      console.log('💥 DEBUG: error.response.data:', error?.response?.data);
+      console.log('💥 DEBUG: error.message:', error?.message);
+
       // Determinar el mensaje de error apropiado
       const errorMessage =
         error?.response?.data?.message ||
@@ -273,6 +297,7 @@ export default function EditarMedidorComponent({
         error?.message ||
         'Error inesperado al modificar el medidor';
 
+      console.log('💥 DEBUG: Mensaje de error final:', errorMessage);
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -302,7 +327,6 @@ export default function EditarMedidorComponent({
               {cantidadLecturas}
             </span>
           </div>
-          
         </div>
       </div>
 
@@ -666,19 +690,21 @@ export default function EditarMedidorComponent({
           <AsociarSubempalmeModal
             isOpen={isAsociarModalOpen}
             onClose={() => setIsAsociarModalOpen(false)}
-            medidor={{
-              codigo: Number(codigoMedidor),
-              marca: '',
-              tipo: '',
-              modelo: medidor.modelo || '',
-              serie: medidor.numeroSerie || '',
-              fechaInicio: medidor.fechaInicio || '',
-              digitos: medidor.digitos || 0,
-              multiplicar: medidor.constanteMultiplicar || 1,
-              ubicacion: '',
-              estado: medidor.estadoNombre || '',
-              codigoAcometida: medidor.codigoSubEmpalme || ''
-            } as GetMedidores}
+            medidor={
+              {
+                codigo: Number(codigoMedidor),
+                marca: '',
+                tipo: '',
+                modelo: medidor.modelo || '',
+                serie: medidor.numeroSerie || '',
+                fechaInicio: medidor.fechaInicio || '',
+                digitos: medidor.digitos || 0,
+                multiplicar: medidor.constanteMultiplicar || 1,
+                ubicacion: '',
+                estado: medidor.estadoNombre || '',
+                codigoAcometida: medidor.codigoSubEmpalme || ''
+              } as GetMedidores
+            }
             onSuccess={async codigo => {
               if (codigo) {
                 form.setValue('subempalmeCodigo', codigo, {
