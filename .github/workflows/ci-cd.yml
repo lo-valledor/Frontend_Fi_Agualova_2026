@@ -3,23 +3,21 @@ name: 🚀 CI/CD Pipeline
 on:
   # Ejecutar en pull requests a cualquier rama
   pull_request:
-    branches: ['*']
+    branches: ["*"]
 
   # Ejecutar en push a ramas principales
   push:
     branches:
       - main
       - master
-      - develop
-      - staging
 
   # Permitir ejecución manual
   workflow_dispatch:
 
 env:
   # Configuración de Node.js y pnpm
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9"
 
 jobs:
   # 🔍 Job de Integración Continua
@@ -171,42 +169,3 @@ jobs:
         run: |
           echo "🧹 Cleaning old Docker images..."
           docker image prune -f || true
-
-  # 🚀 Job de Despliegue a Staging (opcional)
-  deploy-staging:
-    name: 🧪 Deploy to Staging
-    needs: ci
-    runs-on: self-hosted
-    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/staging'
-
-    steps:
-      # Checkout del código
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-
-      # Crear archivo .env para staging
-      - name: 🔧 Create staging environment file
-        run: |
-          echo "VITE_API_URL=${{ secrets.STAGING_API_URL }}" > .env
-          echo "NODE_ENV=staging" >> .env
-
-      # Desplegar a staging (usando un puerto diferente o configuración específica)
-      - name: 🚀 Deploy to staging
-        run: |
-          echo "🧪 Deploying to staging environment..."
-          # Aquí puedes usar un docker-compose específico para staging
-          # o modificar la configuración según tus necesidades
-          docker-compose -f docker-compose.staging.yml up -d --build --force-recreate || \
-          docker-compose up -d --build --force-recreate
-
-      # Health check para staging
-      - name: 🔍 Staging health check
-        run: |
-          echo "🔍 Performing staging health check..."
-          sleep 20
-          # Ajusta el puerto según tu configuración de staging
-          if curl -f http://localhost:4200 > /dev/null 2>&1; then
-            echo "✅ Staging deployment successful!"
-          else
-            echo "⚠️ Staging deployment check failed, but continuing..."
-          fi
