@@ -47,7 +47,9 @@ export interface UseCalculoFacturaResult {
  * Aplica SOLID: SRP (solo obtiene datos), DRY (usa utilities para combinación y ciclo)
  *
  * @param periodoFormateado - Período en formato MMYYYY
+ * @param periodoFormateado.periodoFormateado
  * @param cicloId - ID del ciclo de facturación
+ * @param periodoFormateado.cicloId
  * @returns Datos de prefacturas, estado de carga y funciones de filtrado
  *
  * @example

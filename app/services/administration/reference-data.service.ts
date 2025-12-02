@@ -34,6 +34,7 @@ export interface ReferenceDataBundle {
 class ReferenceDataService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -45,13 +46,10 @@ class ReferenceDataService extends BaseApiService {
    * @returns Respuesta con lista de giros
    */
   async getGiros(): Promise<ServiceResponse<GetGiros[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('giro/buscar');
-        return this.processResponseArray<GetGiros>(response);
-      },
-      'Error al obtener giros'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('giro/buscar');
+      return this.processResponseArray<GetGiros>(response);
+    }, 'Error al obtener giros');
   }
 
   /**
@@ -60,13 +58,10 @@ class ReferenceDataService extends BaseApiService {
    * @returns Respuesta con lista de comunas
    */
   async getComunas(): Promise<ServiceResponse<GetComunas[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('comuna/por-region');
-        return this.processResponseArray<GetComunas>(response);
-      },
-      'Error al obtener comunas'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('comuna/por-region');
+      return this.processResponseArray<GetComunas>(response);
+    }, 'Error al obtener comunas');
   }
 
   /**
@@ -75,13 +70,10 @@ class ReferenceDataService extends BaseApiService {
    * @returns Respuesta con lista de marcas
    */
   async getMarcas(): Promise<ServiceResponse<Array<{ [key: string]: any }>>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('marca/buscar');
-        return this.processResponseArray<{ [key: string]: any }>(response);
-      },
-      'Error al obtener marcas'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('marca/buscar');
+      return this.processResponseArray<{ [key: string]: any }>(response);
+    }, 'Error al obtener marcas');
   }
 
   /**
@@ -89,14 +81,13 @@ class ReferenceDataService extends BaseApiService {
    *
    * @returns Respuesta con lista de condiciones
    */
-  async getCondiciones(): Promise<ServiceResponse<Array<{ [key: string]: any }>>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('CondicionesContrato/buscar');
-        return this.processResponseArray<{ [key: string]: any }>(response);
-      },
-      'Error al obtener condiciones de contrato'
-    );
+  async getCondiciones(): Promise<
+    ServiceResponse<Array<{ [key: string]: any }>>
+  > {
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('CondicionesContrato/buscar');
+      return this.processResponseArray<{ [key: string]: any }>(response);
+    }, 'Error al obtener condiciones de contrato');
   }
 
   /**
@@ -104,14 +95,13 @@ class ReferenceDataService extends BaseApiService {
    *
    * @returns Respuesta con lista de tipos de cargo
    */
-  async getCargosTipo(): Promise<ServiceResponse<Array<{ [key: string]: any }>>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('CargoTipoContrato/buscar');
-        return this.processResponseArray<{ [key: string]: any }>(response);
-      },
-      'Error al obtener tipos de cargo'
-    );
+  async getCargosTipo(): Promise<
+    ServiceResponse<Array<{ [key: string]: any }>>
+  > {
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('CargoTipoContrato/buscar');
+      return this.processResponseArray<{ [key: string]: any }>(response);
+    }, 'Error al obtener tipos de cargo');
   }
 
   /**
@@ -119,14 +109,13 @@ class ReferenceDataService extends BaseApiService {
    *
    * @returns Respuesta con lista de cargos facturables
    */
-  async getCargosFacturables(): Promise<ServiceResponse<Array<{ [key: string]: any }>>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('CargoFacturable/buscar');
-        return this.processResponseArray<{ [key: string]: any }>(response);
-      },
-      'Error al obtener cargos facturables'
-    );
+  async getCargosFacturables(): Promise<
+    ServiceResponse<Array<{ [key: string]: any }>>
+  > {
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('CargoFacturable/buscar');
+      return this.processResponseArray<{ [key: string]: any }>(response);
+    }, 'Error al obtener cargos facturables');
   }
 
   /**
@@ -138,29 +127,31 @@ class ReferenceDataService extends BaseApiService {
    * @returns Respuesta con todos los datos de referencia
    */
   async getAll(): Promise<ServiceResponse<ReferenceDataBundle>> {
-    return this.executeDataOperation(
-      async () => {
-        const [resGiros, resComunas, resMarcas, resCondiciones, resCargosTipo, resCargosFacturables] =
-          await this.executeParallelOperations([
-            () => this.httpClient.get('giro/buscar'),
-            () => this.httpClient.get('comuna/por-region'),
-            () => this.httpClient.get('marca/buscar'),
-            () => this.httpClient.get('CondicionesContrato/buscar'),
-            () => this.httpClient.get('CargoTipoContrato/buscar'),
-            () => this.httpClient.get('CargoFacturable/buscar')
-          ]);
+    return this.executeDataOperation(async () => {
+      const results = (await this.executeParallelOperations([
+        () => this.httpClient.get('giro/buscar'),
+        () => this.httpClient.get('comuna/por-region'),
+        () => this.httpClient.get('marca/buscar'),
+        () => this.httpClient.get('CondicionesContrato/buscar'),
+        () => this.httpClient.get('CargoTipoContrato/buscar'),
+        () => this.httpClient.get('CargoFacturable/buscar')
+      ])) as [any, any, any, any, any, any];
 
-        return {
-          giros: this.processResponseArray<GetGiros>(resGiros[0]),
-          comunas: this.processResponseArray<GetComunas>(resComunas[1]),
-          marcas: this.processResponseArray<{ [key: string]: any }>(resMarcas[2]),
-          condiciones: this.processResponseArray<{ [key: string]: any }>(resCondiciones[3]),
-          cargosTipo: this.processResponseArray<{ [key: string]: any }>(resCargosTipo[4]),
-          cargosFacturables: this.processResponseArray<{ [key: string]: any }>(resCargosFacturables[5])
-        };
-      },
-      'Error al obtener datos de referencia'
-    );
+      return {
+        giros: this.processResponseArray<GetGiros>(results[0]),
+        comunas: this.processResponseArray<GetComunas>(results[1]),
+        marcas: this.processResponseArray<{ [key: string]: any }>(results[2]),
+        condiciones: this.processResponseArray<{ [key: string]: any }>(
+          results[3]
+        ),
+        cargosTipo: this.processResponseArray<{ [key: string]: any }>(
+          results[4]
+        ),
+        cargosFacturables: this.processResponseArray<{ [key: string]: any }>(
+          results[5]
+        )
+      };
+    }, 'Error al obtener datos de referencia');
   }
 }
 

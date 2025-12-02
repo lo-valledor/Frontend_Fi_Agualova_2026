@@ -1,6 +1,6 @@
 import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
-import { debugApi, logApiError, API_TEMPLATES } from '~/utils/api-debug';
+import { debugApi, API_TEMPLATES } from '~/utils/api-debug';
 
 /**
  * Interface para los permisos de un rol sobre un menú
@@ -67,8 +67,17 @@ export interface RoleMenuRelation {
  */
 export class PermisosService extends BaseApiService {
   /**
+   * Constructor
+   * @param httpClient Axios HTTP client instance
+   */
+  constructor(httpClient?: any) {
+    super(httpClient);
+  }
+
+  /**
    * Obtiene los permisos de un usuario específico
    * @param codigoUsuario Código del usuario
+   * @returns Respuesta con permisos del usuario
    */
   async getUsuarioPermisos(
     codigoUsuario: string
@@ -80,26 +89,24 @@ export class PermisosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(
-          `ObtenerPermisoUsuario/${codigoUsuario}`
-        );
-        return this.processResponseArray<UserPermissions>(response);
-      },
-      `Error al obtener permisos del usuario ${codigoUsuario}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `ObtenerPermisoUsuario/${codigoUsuario}`
+      );
+      return this.processResponseArray<UserPermissions>(response);
+    }, `Error al obtener permisos del usuario ${codigoUsuario}`);
   }
 
   /**
    * Obtiene la relación específica entre un rol y un menú
    * @param idRol ID del rol
    * @param idMenu ID del menú
+   * @returns Respuesta con datos de la relación o null si no existe
    */
   async getRelacionRolMenu(
     idRol: number,
     idMenu: number
-  ): Promise<ServiceResponse<RoleMenuRelation | null>> {
+  ): Promise<ServiceResponse<RoleMenuRelation>> {
     if (!idRol || !idMenu) {
       return this.handleError(
         new Error('IDs inválidos'),
@@ -107,20 +114,20 @@ export class PermisosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(
-          `ObtenerRelacion/${idRol}/${idMenu}`
-        );
-        return this.processResponseSingle<RoleMenuRelation>(response);
-      },
-      `Error al obtener relación rol ${idRol} - menú ${idMenu}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `ObtenerRelacion/${idRol}/${idMenu}`
+      );
+      return this.processResponseSingle<RoleMenuRelation>(response);
+    }, `Error al obtener relación rol ${idRol} - menú ${idMenu}`) as Promise<
+      ServiceResponse<RoleMenuRelation>
+    >;
   }
 
   /**
    * Asigna permisos a un rol sobre un menú (formato legado)
    * @param request Datos de los permisos a asignar
+   * @returns Respuesta con datos de la relación creada/actualizada
    */
   async assignPermissions(
     request: AssignPermissionsRequest
@@ -132,39 +139,36 @@ export class PermisosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.post(
-          'AsignarPermisos',
-          request
-        );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.post('AsignarPermisos', request);
 
-        // Respuesta 204 significa éxito sin contenido
-        if (response.status === 204) {
-          return {
-            idRelacion: 0,
-            idRol: request.idRol,
-            idMenu: request.idMenu,
-            nombreRol: '',
-            nombreMenu: '',
-            permisos: {
-              lectura: request.permisos.lectura || false,
-              escritura: request.permisos.escritura || false,
-              edicion: request.permisos.edicion || false,
-              eliminacion: request.permisos.eliminacion || false
-            }
-          } as RoleMenuRelation;
-        }
+      // Respuesta 204 significa éxito sin contenido
+      if (response.status === 204) {
+        return {
+          idRelacion: 0,
+          idRol: request.idRol,
+          idMenu: request.idMenu,
+          nombreRol: '',
+          nombreMenu: '',
+          permisos: {
+            lectura: request.permisos.lectura || false,
+            escritura: request.permisos.escritura || false,
+            edicion: request.permisos.edicion || false,
+            eliminacion: request.permisos.eliminacion || false
+          }
+        } as RoleMenuRelation;
+      }
 
-        return this.processResponseSingle<RoleMenuRelation>(response);
-      },
-      'Error al asignar permisos'
-    );
+      return this.processResponseSingle<RoleMenuRelation>(response);
+    }, 'Error al asignar permisos') as Promise<
+      ServiceResponse<RoleMenuRelation>
+    >;
   }
 
   /**
    * Asigna permisos a un rol sobre un menú (formato directo del API)
    * @param request Datos de los permisos a asignar
+   * @returns Respuesta con datos de la relación creada/actualizada
    */
   async assignPermissionDirect(
     request: AssignPermissionDirectRequest
@@ -187,47 +191,47 @@ export class PermisosService extends BaseApiService {
       fechaAsignacion: fechaActual
     };
 
-    return this.executeDataOperation(
-      async () => {
+    return this.executeDataOperation(async () => {
+      debugApi({
+        endpoint,
+        method: 'POST',
+        payload: dataToSend,
+        expectedTemplate: API_TEMPLATES.permisoRolMenu
+      });
+
+      const response = await this.httpClient.post(endpoint, dataToSend);
+
+      // Respuesta 204 significa éxito sin contenido
+      if (response.status === 204) {
         debugApi({
           endpoint,
           method: 'POST',
-          payload: dataToSend,
-          expectedTemplate: API_TEMPLATES.permisoRolMenu
+          response: { status: 204, message: 'Success - No Content' }
         });
 
-        const response = await this.httpClient.post(endpoint, dataToSend);
+        return dataToSend;
+      }
 
-        // Respuesta 204 significa éxito sin contenido
-        if (response.status === 204) {
-          debugApi({
-            endpoint,
-            method: 'POST',
-            response: { status: 204, message: 'Success - No Content' }
-          });
+      const responseData =
+        this.processResponseSingle<AssignPermissionDirectRequest>(response);
 
-          return dataToSend;
-        }
+      debugApi({
+        endpoint,
+        method: 'POST',
+        response: responseData
+      });
 
-        const responseData =
-          this.processResponseSingle<AssignPermissionDirectRequest>(response);
-
-        debugApi({
-          endpoint,
-          method: 'POST',
-          response: responseData
-        });
-
-        return responseData;
-      },
-      'Error al asignar permiso'
-    );
+      return responseData;
+    }, 'Error al asignar permiso') as Promise<
+      ServiceResponse<AssignPermissionDirectRequest>
+    >;
   }
 
   /**
    * Elimina la relación entre un rol y un menú (y sus permisos asociados)
    * @param idRol ID del rol
    * @param idMenu ID del menú
+   * @returns Respuesta con confirmación de éxito
    */
   async deleteRelacionRolMenu(
     idRol: number,
@@ -240,13 +244,10 @@ export class PermisosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        await this.httpClient.delete(`EliminarRelacio/${idRol}/${idMenu}`);
-        return true;
-      },
-      `Error al eliminar relación rol ${idRol} - menú ${idMenu}`
-    );
+    return this.executeDataOperation(async () => {
+      await this.httpClient.delete(`EliminarRelacio/${idRol}/${idMenu}`);
+      return true;
+    }, `Error al eliminar relación rol ${idRol} - menú ${idMenu}`);
   }
 }
 

@@ -35,13 +35,13 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
-import { administracionService } from '~/services';
 import type {
   GetClientesByRut,
   GetComunas,
   GetGiros
 } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
+import { administracionService } from '~/services/administracionService';
 
 const createClienteSchema = (existingClients: string[], currentRut?: string) =>
   z.object({

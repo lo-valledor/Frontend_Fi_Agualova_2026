@@ -5,6 +5,7 @@
 Se completó la **decomposición del monolítico `administracionService.ts`** (1195 líneas) en **7 servicios especializados**, cada uno extendiendo `BaseApiService` y aplicando patios SOLID.
 
 **Servicios Creados:**
+
 1. `ClientesService` - Operaciones con clientes
 2. `ContratosService` - Operaciones con contratos
 3. `MedidoresService` - Operaciones con medidores
@@ -39,12 +40,14 @@ app/services/administration/
 ### 1. ClientesService (clientes.service.ts)
 
 **Responsabilidades:**
+
 - Obtener todos los clientes
 - Búsqueda por RUT
 - Obtener datos con combos (clientes + comunas)
 - Búsqueda genérica
 
 **Métodos Principales:**
+
 ```typescript
 async getAll(): Promise<ServiceResponse<GetClienteContrato[]>>
 async searchByRut(rut: string): Promise<ServiceResponse<GetClienteContrato | null>>
@@ -53,6 +56,7 @@ async search(): Promise<ServiceResponse<GetClienteContrato[]>>
 ```
 
 **Tipos:**
+
 - `GetClientesDataResponse` - Incluye clientes y comunas disponibles
 
 ---
@@ -60,11 +64,13 @@ async search(): Promise<ServiceResponse<GetClienteContrato[]>>
 ### 2. ContratosService (contratos.service.ts)
 
 **Responsabilidades:**
+
 - CRUD completo de contratos
 - Búsqueda por código
 - Operaciones disponibles
 
 **Métodos Principales:**
+
 ```typescript
 async getAll(): Promise<ServiceResponse<GetContratos[]>>
 async getByCodigo(codigo: string): Promise<ServiceResponse<GetContratos | null>>
@@ -75,6 +81,7 @@ async getAvailable(): Promise<ServiceResponse<GetContratos[]>>
 ```
 
 **Tipos:**
+
 - `CreateContratoRequest` - Extiende `CrearContratoProps`
 - `UpdateContratoRequest` - Extiende `ModificarContratoProps`
 
@@ -83,11 +90,13 @@ async getAvailable(): Promise<ServiceResponse<GetContratos[]>>
 ### 3. MedidoresService (medidores.service.ts)
 
 **Responsabilidades:**
+
 - CRUD de medidores
 - Búsqueda por contrato
 - Búsqueda por acometida
 
 **Métodos Principales:**
+
 ```typescript
 async getAll(): Promise<ServiceResponse<Medidor[]>>
 async getById(id: string | number): Promise<ServiceResponse<Medidor | null>>
@@ -103,10 +112,12 @@ async getByAcometida(acometidaId: string | number): Promise<ServiceResponse<Medi
 ### 4. AcometidaService (acometida.service.ts)
 
 **Responsabilidades:**
+
 - CRUD de acometidas
 - Búsqueda relacional (cliente, contrato)
 
 **Métodos Principales:**
+
 ```typescript
 async getAll(): Promise<ServiceResponse<Acometida[]>>
 async getById(id: string | number): Promise<ServiceResponse<Acometida | null>>
@@ -122,10 +133,12 @@ async getByContrato(contratoId: string | number): Promise<ServiceResponse<Acomet
 ### 5. ReferenceDataService (reference-data.service.ts)
 
 **Responsabilidades:**
+
 - Obtener catálogos de referencia
 - Carga paralela para optimizar performance
 
 **Métodos Principales:**
+
 ```typescript
 async getGiros(): Promise<ServiceResponse<GetGiros[]>>
 async getComunas(): Promise<ServiceResponse<GetComunas[]>>
@@ -143,11 +156,13 @@ async getAll(): Promise<ServiceResponse<ReferenceDataBundle>>
 ### 6. UsuariosService (usuarios.service.ts)
 
 **Responsabilidades:**
+
 - CRUD de usuarios
 - Búsqueda por rol
 - Búsqueda por empresa
 
 **Métodos Principales:**
+
 ```typescript
 async getAll(): Promise<ServiceResponse<Usuarios[]>>
 async getById(id: string | number): Promise<ServiceResponse<Usuarios | null>>
@@ -163,6 +178,7 @@ async getByEmpresa(empresaId: string | number): Promise<ServiceResponse<Usuarios
 ### 7. PropietariosService & ContratantesService (owners-contractors.service.ts)
 
 **Responsabilidades:**
+
 - CRUD de propietarios
 - CRUD de contratantes
 - Búsqueda relacional por cliente
@@ -170,6 +186,7 @@ async getByEmpresa(empresaId: string | number): Promise<ServiceResponse<Usuarios
 **Métodos Principales:**
 
 **PropietariosService:**
+
 ```typescript
 async getAll(): Promise<ServiceResponse<GetPropietario[]>>
 async getById(id: string | number): Promise<ServiceResponse<GetPropietario | null>>
@@ -180,6 +197,7 @@ async getByCliente(clienteId: string | number): Promise<ServiceResponse<GetPropi
 ```
 
 **ContratantesService:**
+
 ```typescript
 async getAll(): Promise<ServiceResponse<GetContratante[]>>
 async getById(id: string | number): Promise<ServiceResponse<GetContratante | null>>
@@ -194,24 +212,29 @@ async getByCliente(clienteId: string | number): Promise<ServiceResponse<GetContr
 ## Aplicación de Principios SOLID
 
 ### Single Responsibility Principle (SRP)
+
 - ✅ Cada servicio maneja **UN dominio de negocio**
 - ClientesService solo clientes, ContratosService solo contratos, etc.
 - Código **fácil de mantener y testear**
 
 ### Open/Closed Principle (OCP)
+
 - ✅ Servicios extenden `BaseApiService` (abiertos para extensión)
 - Nuevos métodos pueden agregarse sin modificar la base
 - Compatibilidad hacia atrás garantizada
 
 ### Liskov Substitution Principle (LSP)
+
 - ✅ Todos los servicios implementan el mismo contrato (`BaseApiService`)
 - Pueden reemplazarse entre sí sin efectos inesperados
 
 ### Interface Segregation Principle (ISP)
+
 - ✅ `HttpClient` interface minimalista (solo métodos necesarios)
 - Tipos de solicitud/respuesta específicos por servicio
 
 ### Dependency Injection (DI)
+
 - ✅ Constructor acepta `httpClient` inyectable
 - Facilita testing con mocks
 
@@ -220,6 +243,7 @@ async getByCliente(clienteId: string | number): Promise<ServiceResponse<GetContr
 ## Patrones de Código
 
 ### Early Returns (Reducir Nesting)
+
 ```typescript
 async searchByRut(rut: string): Promise<ServiceResponse<GetClienteContrato | null>> {
   // Early return - validación sin if/else anidados
@@ -229,13 +253,14 @@ async searchByRut(rut: string): Promise<ServiceResponse<GetClienteContrato | nul
       'El RUT debe ser proporcionado'
     );
   }
-  
+
   // Operación principal
   return this.executeDataOperation(...);
 }
 ```
 
 ### Type Safety
+
 ```typescript
 // TypeScript estricto - tipos definidos claramente
 export interface CreateContratoRequest extends CrearContratoProps {
@@ -249,9 +274,10 @@ export type ContratoOperationResponse = {
 ```
 
 ### Operaciones Paralelas
+
 ```typescript
 // ReferenceDataService.getAll() - 6 peticiones en paralelo
-const [resGiros, resComunas, resMarcas, ...] = 
+const [resGiros, resComunas, resMarcas, ...] =
   await this.executeParallelOperations([
     () => this.httpClient.get('giro/buscar'),
     () => this.httpClient.get('comuna/por-region'),
@@ -260,6 +286,7 @@ const [resGiros, resComunas, resMarcas, ...] =
 ```
 
 ### Métodos Reutilizables
+
 ```typescript
 // Método para procesar arrays de respuesta
 return this.processResponseArray<GetClientes>(response);
@@ -276,6 +303,7 @@ return this.handleError(error, 'Mensaje usuario-friendly');
 ## Exportaciones Centralizadas
 
 **app/services/administration/index.ts:**
+
 ```typescript
 // Exportaciones individuales
 export { clientesService } from './clientes.service';
@@ -286,7 +314,7 @@ export { contratosService } from './contratos.service';
 export const administrationServices = {
   clientes: clientesService,
   contratos: contratosService,
-  medidores: medidoresService,
+  medidores: medidoresService
   // ... más servicios
 };
 
@@ -295,6 +323,7 @@ export { administrationServices as administracionService } from './administratio
 ```
 
 **app/services/index.ts:**
+
 ```typescript
 // Mantiene compatibilidad con código existente
 export { administrationServices as administracionService } from './administration';
@@ -305,16 +334,19 @@ export { administrationServices as administracionService } from './administratio
 ## Validación y Testing
 
 ### ✅ TypeScript Strict
+
 - Cero errores de compilación
 - Build exitoso `npm run build`
 - Tipos genéricos para máxima flexibilidad
 
 ### ✅ Validación de Parámetros
+
 - Todas las operaciones validan entrada
 - Early returns para casos inválidos
 - Mensajes de error descriptivos
 
 ### ✅ Backward Compatibility
+
 - Código existente sigue funcionando
 - Alias `administracionService` apunta a nuevos servicios
 - Transición gradual posible
@@ -324,6 +356,7 @@ export { administrationServices as administracionService } from './administratio
 ## Uso en Componentes
 
 ### Antes (Monolítico)
+
 ```typescript
 import { administracionService } from '~/services';
 
@@ -332,6 +365,7 @@ const contratos = await administracionService.getContratos();
 ```
 
 ### Después (Especializado)
+
 ```typescript
 import { clientesService, contratosService } from '~/services';
 
@@ -348,14 +382,14 @@ const clientes = await administrationServices.clientes.getAll();
 
 ## Métricas
 
-| Métrica | PHASE 1 | PHASE 2 | Total |
-|---------|---------|---------|-------|
-| Archivos de servicio | 2 | +7 | 9 |
-| Líneas de código | 290+240 | ~2,400 | ~2,930 |
-| Principios SOLID | ✅ | ✅ | ✅ |
-| TypeScript errors | 0 | 0 | 0 |
-| Build status | ✅ | ✅ | ✅ |
-| Métodos por servicio | N/A | 5-7 | ~45 |
+| Métrica              | PHASE 1 | PHASE 2 | Total  |
+| -------------------- | ------- | ------- | ------ |
+| Archivos de servicio | 2       | +7      | 9      |
+| Líneas de código     | 290+240 | ~2,400  | ~2,930 |
+| Principios SOLID     | ✅      | ✅      | ✅     |
+| TypeScript errors    | 0       | 0       | 0      |
+| Build status         | ✅      | ✅      | ✅     |
+| Métodos por servicio | N/A     | 5-7     | ~45    |
 
 ---
 
@@ -373,6 +407,7 @@ const clientes = await administrationServices.clientes.getAll();
 ## Conclusiones
 
 **PHASE 2 completada exitosamente.** Los servicios de administración ahora:
+
 - ✅ Siguen principios SOLID
 - ✅ Son fáciles de testear
 - ✅ Tienen responsabilidad única

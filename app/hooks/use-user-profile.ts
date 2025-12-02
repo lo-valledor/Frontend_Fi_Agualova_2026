@@ -1,9 +1,22 @@
+/**
+ * User Profile Hook
+ *
+ * Provides a hook for loading and updating user profile data.
+ * Includes error handling and fallback mechanisms for offline or API unavailability scenarios.
+ *
+ * The hook attempts to fetch user data from the API, but gracefully falls back
+ * to creating mock data from the authentication token if the API is unavailable.
+ */
+
 import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
 import api from '~/lib/api';
 import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 
+/**
+ * Return type for useUserProfile hook
+ */
 interface UseUserProfileReturn {
   userData: Usuarios | null;
   isLoading: boolean;
@@ -12,73 +25,162 @@ interface UseUserProfileReturn {
   refreshProfile: () => Promise<void>;
 }
 
+/**
+ * Creates mock user data from authenticated user token
+ *
+ * Used as fallback when API is unavailable or user is not found in database.
+ *
+ * @param user - Authenticated user from token
+ * @param user.id
+ * @param user.username
+ * @param user.profileId
+ * @param user.fullName
+ * @returns Mock user data
+ */
+function createMockUserData(user: {
+  id: string;
+  username: string;
+  profileId: string;
+  fullName: string;
+}): Usuarios {
+  const nameParts = user.fullName.split(' ');
+  const nombres = nameParts[0] || '';
+  const apellidos = nameParts.slice(1).join(' ') || '';
+
+  return {
+    idUsuario: Number.parseInt(user.id),
+    nombreDeUsuario: user.username,
+    perfilId: Number.parseInt(user.profileId),
+    nombres,
+    apellidos,
+    departamento: 1, // Default value
+    activo: true,
+    fechaCreacion: new Date().toISOString(),
+    email: null,
+    roles: []
+  };
+}
+
+/**
+ * Hook for loading and updating user profile
+ *
+ * Fetches detailed user profile information from the API and provides
+ * functions to update and refresh the profile. Includes graceful fallback
+ * to token-based data if API is unavailable.
+ *
+ * Features:
+ * - Automatic loading on mount
+ * - Fallback to token data if API fails
+ * - Profile update with optimistic updates
+ * - Manual refresh capability
+ *
+ * @returns {UseUserProfileReturn} Hook state and profile operations
+ *
+ * @example
+ * ```tsx
+ * const {
+ *   userData,
+ *   isLoading,
+ *   error,
+ *   updateProfile,
+ *   refreshProfile
+ * } = useUserProfile();
+ *
+ * if (isLoading) return <Loading />;
+ * if (error) return <Error message={error.message} />;
+ * if (!userData) return null;
+ *
+ * return (
+ *   <ProfileForm
+ *     userData={userData}
+ *     onSubmit={updateProfile}
+ *   />
+ * );
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Update user profile
+ * const { updateProfile } = useUserProfile();
+ *
+ * const handleSubmit = async (formData) => {
+ *   try {
+ *     await updateProfile({
+ *       nombreDeUsuario: formData.username,
+ *       nombres: formData.firstName,
+ *       apellidos: formData.lastName,
+ *       departamento: formData.department,
+ *       activo: true
+ *     });
+ *     toast.success('Profile updated successfully');
+ *   } catch (error) {
+ *     toast.error('Failed to update profile');
+ *   }
+ * };
+ * ```
+ */
 export function useUserProfile(): UseUserProfileReturn {
   const { user } = useAuth();
   const [userData, setUserData] = useState<Usuarios | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Función para obtener información detallada del usuario
-  const fetchUserProfile = useCallback(async () => {
-    if (!user) return;
+  /**
+   * Fetches user profile from API or creates fallback from token
+   */
+  const fetchUserProfile = useCallback(async (): Promise<void> => {
+    // Early return if no authenticated user
+    if (!user) {
+      return;
+    }
 
     try {
       setIsLoading(true);
       setError(null);
 
-      // Intentar obtener datos del usuario desde la API
-      // Usar el endpoint de listar usuarios y filtrar por ID
-      try {
-        const response = await api.get('/listar');
-        const usuarios = response.data as Usuarios[];
+      // Fetch user list and find current user
+      const response = await api.get('/listar');
+      const usuarios = response.data as Usuarios[];
 
-        // Buscar el usuario por ID
-        const usuarioEncontrado = usuarios.find(
-          u => u.idUsuario === Number.parseInt(user.id)
-        );
+      const usuarioEncontrado = usuarios.find(
+        u => u.idUsuario === Number.parseInt(user.id)
+      );
 
-        if (usuarioEncontrado) {
-          setUserData(usuarioEncontrado);
-        } else {
-          // Si no se encuentra, crear datos simulados basados en el token
-          console.warn(
-            'Usuario no encontrado en la lista, usando datos del token'
-          );
-          throw new Error('Usuario no encontrado');
-        }
-      } catch (_apiError) {
-        // Fallback: crear datos simulados basados en el token
+      if (usuarioEncontrado) {
+        setUserData(usuarioEncontrado);
+      } else {
+        // User not found in database, create mock data
         console.warn(
-          'No se pudo obtener datos del usuario desde la API, usando datos del token',
-          _apiError
+          'Usuario no encontrado en la lista, usando datos del token'
         );
-
-        const mockUserData: Usuarios = {
-          idUsuario: Number.parseInt(user.id),
-          nombreDeUsuario: user.username,
-          perfilId: Number.parseInt(user.profileId),
-          nombres: user.fullName.split(' ')[0] || '',
-          apellidos: user.fullName.split(' ').slice(1).join(' ') || '',
-          departamento: 1, // Valor por defecto
-          activo: true,
-          fechaCreacion: new Date().toISOString(),
-          email: null,
-          roles: []
-        };
-
-        setUserData(mockUserData);
+        throw new Error('Usuario no encontrado');
       }
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Error desconocido');
-      setError(error);
+    } catch (apiError) {
+      // Fallback: create mock data from token
+      console.warn(
+        'No se pudo obtener datos del usuario desde la API, usando datos del token',
+        apiError
+      );
+
+      const mockUserData = createMockUserData(user);
+      setUserData(mockUserData);
     } finally {
       setIsLoading(false);
     }
   }, [user]);
 
-  // Función para actualizar el perfil
+  /**
+   * Updates user profile
+   *
+   * Attempts to update via API, falls back to local update only if API fails.
+   * Throws error on failure for the caller to handle.
+   *
+   * @param data - Profile data to update
+   * @throws Error if update fails
+   */
   const updateProfile = useCallback(
-    async (data: ActualizarUsuarioProps) => {
+    async (data: ActualizarUsuarioProps): Promise<void> => {
+      // Early return if no user data loaded
       if (!userData) {
         throw new Error('No hay datos de usuario disponibles');
       }
@@ -87,37 +189,17 @@ export function useUserProfile(): UseUserProfileReturn {
         setIsLoading(true);
         setError(null);
 
-        // Intentar actualizar en la API
-        try {
-          const response = await api.put(
-            `/actualizar/${userData.idUsuario}`,
-            data
-          );
+        // Attempt API update
+        const response = await api.put(
+          `/actualizar/${userData.idUsuario}`,
+          data
+        );
 
-          // Actualizar datos locales con la respuesta
-          if (response.data) {
-            setUserData(response.data as Usuarios);
-          } else {
-            // Si no hay respuesta, actualizar localmente
-            setUserData(prev =>
-              prev
-                ? {
-                    ...prev,
-                    nombreDeUsuario: data.nombreDeUsuario,
-                    nombres: data.nombres,
-                    apellidos: data.apellidos,
-                    departamento: data.departamento,
-                    activo: data.activo
-                  }
-                : null
-            );
-          }
-        } catch (_apiError) {
-          // Fallback: actualizar solo localmente
-          console.warn(
-            'No se pudo actualizar en la API, actualizando solo localmente',
-            _apiError
-          );
+        // Update with API response if available
+        if (response.data) {
+          setUserData(response.data as Usuarios);
+        } else {
+          // Fallback: update locally
           setUserData(prev =>
             prev
               ? {
@@ -131,11 +213,31 @@ export function useUserProfile(): UseUserProfileReturn {
               : null
           );
         }
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Error desconocido');
-        setError(error);
-        throw error;
+      } catch (apiError) {
+        // Fallback: update locally only
+        console.warn(
+          'No se pudo actualizar en la API, actualizando solo localmente',
+          apiError
+        );
+
+        setUserData(prev =>
+          prev
+            ? {
+                ...prev,
+                nombreDeUsuario: data.nombreDeUsuario,
+                nombres: data.nombres,
+                apellidos: data.apellidos,
+                departamento: data.departamento,
+                activo: data.activo
+              }
+            : null
+        );
+
+        // Still throw error for caller to handle
+        const profileError =
+          apiError instanceof Error ? apiError : new Error('Error desconocido');
+        setError(profileError);
+        throw profileError;
       } finally {
         setIsLoading(false);
       }
@@ -143,12 +245,14 @@ export function useUserProfile(): UseUserProfileReturn {
     [userData]
   );
 
-  // Función para refrescar el perfil
-  const refreshProfile = useCallback(async () => {
+  /**
+   * Refreshes user profile from API
+   */
+  const refreshProfile = useCallback(async (): Promise<void> => {
     await fetchUserProfile();
   }, [fetchUserProfile]);
 
-  // Cargar datos del usuario al montar el componente
+  // Load profile on mount
   useEffect(() => {
     fetchUserProfile();
   }, [fetchUserProfile]);

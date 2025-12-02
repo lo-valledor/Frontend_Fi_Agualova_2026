@@ -6,15 +6,48 @@
  */
 
 // ============================================================================
+// IMPORTAR SERVICIOS
+// ============================================================================
+
+import { clientesService } from './clientes.service';
+import { contratosService } from './contratos.service';
+import { medidoresService } from './medidores.service';
+import { acometidaService } from './acometida.service';
+import { referenceDataService } from './reference-data.service';
+import { usuariosService } from './usuarios.service';
+import {
+  propietariosService,
+  contratantesService
+} from './owners-contractors.service';
+
+// ============================================================================
 // SERVICIOS ESPECIALIZADOS
 // ============================================================================
 
-export { clientesService, type GetClientesDataResponse } from './clientes.service';
-export { contratosService, type ContratoOperationResponse } from './contratos.service';
-export { medidoresService, type MedidorOperationResponse } from './medidores.service';
-export { acometidaService, type AcometidaOperationResponse } from './acometida.service';
-export { referenceDataService, type ReferenceDataBundle } from './reference-data.service';
-export { usuariosService, type UsuarioOperationResponse } from './usuarios.service';
+export {
+  clientesService,
+  type GetClientesDataResponse
+} from './clientes.service';
+export {
+  contratosService,
+  type ContratoOperationResponse
+} from './contratos.service';
+export {
+  medidoresService,
+  type MedidorOperationResponse
+} from './medidores.service';
+export {
+  acometidaService,
+  type AcometidaOperationResponse
+} from './acometida.service';
+export {
+  referenceDataService,
+  type ReferenceDataBundle
+} from './reference-data.service';
+export {
+  usuariosService,
+  type UsuarioOperationResponse
+} from './usuarios.service';
 export {
   propietariosService,
   contratantesService,
@@ -60,13 +93,24 @@ export type * from './types';
  * const medidores = await administrationServices.medidores.getAll();
  * ```
  */
+export {
+  clientesService as clientes,
+  contratosService as contratos,
+  medidoresService as medidores,
+  acometidaService as acometidas,
+  referenceDataService as referenceData,
+  usuariosService as usuarios,
+  propietariosService as propietarios,
+  contratantesService as contratantes
+};
+
 export const administrationServices = {
-  clientes: require('./clientes.service').clientesService,
-  contratos: require('./contratos.service').contratosService,
-  medidores: require('./medidores.service').medidoresService,
-  acometidas: require('./acometida.service').acometidaService,
-  referenceData: require('./reference-data.service').referenceDataService,
-  usuarios: require('./usuarios.service').usuariosService,
-  propietarios: require('./owners-contractors.service').propietariosService,
-  contratantes: require('./owners-contractors.service').contratantesService
+  clientes: clientesService,
+  contratos: contratosService,
+  medidores: medidoresService,
+  acometidas: acometidaService,
+  referenceData: referenceDataService,
+  usuarios: usuariosService,
+  propietarios: propietariosService,
+  contratantes: contratantesService
 };

@@ -1,3 +1,20 @@
+/**
+ * Administration Module Hooks
+ *
+ * Provides hooks for managing administration data including:
+ * - Acometidas (service connections)
+ * - Clientes (clients)
+ * - Contratos (contracts)
+ * - Medidores (meters)
+ * - Usuarios (users)
+ * - Cargo tipo contrato (contract type charges)
+ * - Condiciones contrato (contract conditions)
+ * - Cargo facturable (billable charges)
+ *
+ * All hooks use the generic handleDataLoad utility to avoid code duplication
+ * and ensure consistent error handling across the module.
+ */
+
 import { useEffect, useState } from 'react';
 
 import api from '~/lib/api';
@@ -32,7 +49,35 @@ import type {
   Tarifas,
   TiposContrato
 } from '~/types/mantencion';
+import { handleDataLoad } from './utils/data-loader';
 
+/**
+ * Hook for loading acometidas (service connections) data
+ *
+ * Provides complete data for managing acometidas including:
+ * - Acometidas list
+ * - Available empalmes (connections)
+ * - Available nichos (niches)
+ * - Available sectores (sectors)
+ * - Available contracts
+ *
+ * @returns {Object} Hook state and actions
+ * @returns {Object|null} data - Acometidas data object or null
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ * @returns {Function} refreshData - Function to refresh data
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error, refreshData } = useAcometidasData();
+ *
+ * if (loading) return <Loading />;
+ * if (error) return <Error message={error} />;
+ * if (!data) return null;
+ *
+ * return <AcometidasTable data={data.acometidas} />;
+ * ```
+ */
 export function useAcometidasData() {
   const [data, setData] = useState<{
     acometidas: Acometida[];
@@ -45,49 +90,21 @@ export function useAcometidasData() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getAcometidasData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data as any);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getAcometidasData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
-  const refreshData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const result = await administracionService.getAcometidasData();
-
-      if (result.error) {
-        setError(result.error);
-      } else if (result.data) {
-        setData(result.data);
-      } else {
-        setError('No se pudieron cargar los datos');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-    } finally {
-      setLoading(false);
-    }
+  const refreshData = async (): Promise<void> => {
+    await handleDataLoad(
+      () => administracionService.getAcometidasData(),
+      setData,
+      setError,
+      setLoading
+    );
   };
 
   return {
@@ -98,6 +115,29 @@ export function useAcometidasData() {
   };
 }
 
+/**
+ * Hook for loading clientes (clients) data
+ *
+ * Provides complete data for managing clients including:
+ * - Clientes list
+ * - Available giros (business types)
+ * - Available comunas (communes)
+ *
+ * @returns {Object} Hook state
+ * @returns {Object|null} data - Clientes data object or null
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error } = useClientesData();
+ *
+ * if (loading) return <Loading />;
+ * if (error) return <Error message={error} />;
+ *
+ * return <ClientesForm clientes={data?.clientes} giros={data?.giros} />;
+ * ```
+ */
 export function useClientesData() {
   const [data, setData] = useState<{
     clientes: GetClientes[];
@@ -108,28 +148,12 @@ export function useClientesData() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getClientesData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getClientesData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -139,6 +163,35 @@ export function useClientesData() {
   };
 }
 
+/**
+ * Hook for loading contratos (contracts) data
+ *
+ * Provides complete data for managing contracts including:
+ * - Contratos list
+ * - Available regiones (regions)
+ * - Contratos clientes (client contracts)
+ * - Limite invierno (winter limits)
+ * - Fecha actual (current date)
+ * - Tipos de contrato (contract types)
+ * - Tarifas (rates)
+ *
+ * @returns {Object} Hook state
+ * @returns {Object|null} data - Contratos data object or null
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error } = useContratosData();
+ *
+ * return (
+ *   <ContratosForm
+ *     contratos={data?.contratos}
+ *     tiposContrato={data?.tipoContrato}
+ *   />
+ * );
+ * ```
+ */
 export function useContratosData() {
   const [data, setData] = useState<{
     contratos: GetContratos[];
@@ -153,28 +206,12 @@ export function useContratosData() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getContratosData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data as any);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getContratosData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -184,6 +221,30 @@ export function useContratosData() {
   };
 }
 
+/**
+ * Hook for loading medidores (meters) data
+ *
+ * Provides complete data for managing meters including:
+ * - Medidores list
+ * - Available marcas (brands)
+ *
+ * @returns {Object} Hook state
+ * @returns {Object|null} data - Medidores data object or null
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error } = useMedidoresData();
+ *
+ * return (
+ *   <MedidoresTable
+ *     medidores={data?.medidores}
+ *     marcas={data?.marcas}
+ *   />
+ * );
+ * ```
+ */
 export function useMedidoresData() {
   const [data, setData] = useState<{
     medidores: GetMedidores[];
@@ -193,28 +254,12 @@ export function useMedidoresData() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getMedidoresData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getMedidoresData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -224,34 +269,33 @@ export function useMedidoresData() {
   };
 }
 
+/**
+ * Hook for loading usuarios (users) list
+ *
+ * @returns {Object} Hook state
+ * @returns {Usuarios[]} data - Array of users
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error } = useUsuarios();
+ *
+ * return <UsersTable users={data} />;
+ * ```
+ */
 export function useUsuarios() {
   const [data, setData] = useState<Usuarios[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getUsuarios();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getUsuarios(),
+      (result) => setData(result || []),
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -261,34 +305,33 @@ export function useUsuarios() {
   };
 }
 
+/**
+ * Hook for loading cargo tipo contrato (contract type charges)
+ *
+ * @returns {Object} Hook state
+ * @returns {GetCargoTipoContrato[]} data - Array of contract type charges
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error } = useCargoTipoContrato();
+ *
+ * return <CargoTipoContratoTable cargos={data} />;
+ * ```
+ */
 export function useCargoTipoContrato() {
   const [data, setData] = useState<GetCargoTipoContrato[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getCargoTipoContrato();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getCargoTipoContrato(),
+      (result) => setData(result || []),
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -298,6 +341,30 @@ export function useCargoTipoContrato() {
   };
 }
 
+/**
+ * Hook for loading condiciones contrato (contract conditions)
+ *
+ * Provides complete data for managing contract conditions including:
+ * - Condiciones contrato list
+ * - Available conceptos (concepts)
+ *
+ * @returns {Object} Hook state
+ * @returns {Object|null} data - Condiciones contrato data object or null
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error } = useCondicionesContrato();
+ *
+ * return (
+ *   <CondicionesContratoForm
+ *     condiciones={data?.condicionesContrato}
+ *     conceptos={data?.conceptos}
+ *   />
+ * );
+ * ```
+ */
 export function useCondicionesContrato() {
   const [data, setData] = useState<{
     condicionesContrato: GetCondicionesContrato[];
@@ -307,28 +374,12 @@ export function useCondicionesContrato() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getCondicionesContratoData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getCondicionesContratoData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -338,6 +389,32 @@ export function useCondicionesContrato() {
   };
 }
 
+/**
+ * Hook for loading cargo facturable (billable charges) data
+ *
+ * Provides complete data for managing billable charges including:
+ * - Cargos list
+ * - Available conceptos (concepts)
+ * - Available tarifas (rates)
+ * - Available tipos de medidor (meter types)
+ *
+ * @returns {Object} Hook state
+ * @returns {Object|null} data - Cargo facturable data object or null
+ * @returns {boolean} loading - Loading state
+ * @returns {string|null} error - Error message or null
+ *
+ * @example
+ * ```tsx
+ * const { data, loading, error } = useCargoFacturable();
+ *
+ * return (
+ *   <CargoFacturableForm
+ *     cargos={data?.cargos}
+ *     conceptos={data?.conceptos}
+ *   />
+ * );
+ * ```
+ */
 export function useCargoFacturable() {
   const [data, setData] = useState<{
     cargos: BuscarCargoFacturable[];
@@ -349,28 +426,12 @@ export function useCargoFacturable() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const result = await administracionService.getCargoFacturableData();
-
-        if (result.error) {
-          setError(result.error);
-        } else if (result.data) {
-          setData(result.data);
-        } else {
-          setError('No se pudieron cargar los datos');
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
+    handleDataLoad(
+      () => administracionService.getCargoFacturableData(),
+      setData,
+      setError,
+      setLoading
+    );
   }, []);
 
   return {
@@ -380,19 +441,65 @@ export function useCargoFacturable() {
   };
 }
 
+/**
+ * Loading state for user operations
+ */
+interface LoadingState {
+  createUsuario: { isLoading: boolean };
+  updateUsuario: { isLoading: boolean };
+  deleteUsuario: { isLoading: boolean };
+  fetchUsuarios: { isLoading: boolean };
+}
+
+/**
+ * Hook for user CRUD operations
+ *
+ * Provides functions for creating, updating, deleting, and fetching users.
+ * Each operation maintains its own loading state for granular UI control.
+ *
+ * @returns {Object} Hook state and operations
+ * @returns {Function} createUsuario - Create new user
+ * @returns {Function} updateUsuario - Update existing user
+ * @returns {Function} deleteUsuario - Delete user by ID
+ * @returns {Function} fetchUsuarios - Fetch all users
+ * @returns {Function} getUsuarioById - Get user by ID
+ * @returns {LoadingState} loadingState - Loading states for each operation
+ *
+ * @example
+ * ```tsx
+ * const { createUsuario, loadingState } = useAdministracion();
+ *
+ * const handleSubmit = async (data) => {
+ *   try {
+ *     const result = await createUsuario(data);
+ *     console.log('User created:', result);
+ *   } catch (error) {
+ *     console.error('Error creating user:', error);
+ *   }
+ * };
+ * ```
+ */
 export function useAdministracion() {
-  const [loadingState, setLoadingState] = useState({
+  const [loadingState, setLoadingState] = useState<LoadingState>({
     createUsuario: { isLoading: false },
     updateUsuario: { isLoading: false },
     deleteUsuario: { isLoading: false },
     fetchUsuarios: { isLoading: false }
   });
 
-  const createUsuario = async (userData: any) => {
+  /**
+   * Creates a new user
+   *
+   * @param userData - User data to create
+   * @returns Created user data
+   * @throws Error if creation fails
+   */
+  const createUsuario = async (userData: Partial<Usuarios>): Promise<unknown> => {
     setLoadingState(prev => ({
       ...prev,
       createUsuario: { isLoading: true }
     }));
+
     try {
       const response = await api.post('/registrar', userData);
       return response.data;
@@ -404,11 +511,23 @@ export function useAdministracion() {
     }
   };
 
-  const updateUsuario = async (idUsuario: number, userData: any) => {
+  /**
+   * Updates an existing user
+   *
+   * @param idUsuario - User ID to update
+   * @param userData - Updated user data
+   * @returns Updated user data
+   * @throws Error if update fails
+   */
+  const updateUsuario = async (
+    idUsuario: number,
+    userData: Partial<Usuarios>
+  ): Promise<unknown> => {
     setLoadingState(prev => ({
       ...prev,
       updateUsuario: { isLoading: true }
     }));
+
     try {
       const response = await api.put(`/actualizar/${idUsuario}`, userData);
       return response.data;
@@ -420,11 +539,19 @@ export function useAdministracion() {
     }
   };
 
-  const deleteUsuario = async (idUsuario: number) => {
+  /**
+   * Deletes a user by ID
+   *
+   * @param idUsuario - User ID to delete
+   * @returns Deletion result
+   * @throws Error if deletion fails
+   */
+  const deleteUsuario = async (idUsuario: number): Promise<unknown> => {
     setLoadingState(prev => ({
       ...prev,
       deleteUsuario: { isLoading: true }
     }));
+
     try {
       const response = await api.delete(`/eliminar/${idUsuario}`);
       return response.data;
@@ -436,11 +563,18 @@ export function useAdministracion() {
     }
   };
 
-  const fetchUsuarios = async () => {
+  /**
+   * Fetches all users
+   *
+   * @returns Array of users
+   * @throws Error if fetch fails
+   */
+  const fetchUsuarios = async (): Promise<unknown> => {
     setLoadingState(prev => ({
       ...prev,
       fetchUsuarios: { isLoading: true }
     }));
+
     try {
       const response = await api.get('/listar');
       return response.data;
@@ -452,6 +586,13 @@ export function useAdministracion() {
     }
   };
 
+  /**
+   * Gets a user by ID
+   *
+   * @param idUsuario - User ID to fetch
+   * @returns User data
+   * @throws Error if fetch fails
+   */
   const getUsuarioById = async (idUsuario: number): Promise<Usuarios> => {
     try {
       const response = await api.get(`/obtener/${idUsuario}`);
@@ -472,8 +613,28 @@ export function useAdministracion() {
   };
 }
 
+/**
+ * Hook for client operations
+ *
+ * @returns {Object} Client operations
+ * @returns {Function} getClienteByRut - Get client by RUT number
+ *
+ * @example
+ * ```tsx
+ * const { getClienteByRut } = useClientes();
+ *
+ * const cliente = await getClienteByRut('12345678-9');
+ * ```
+ */
 export function useClientes() {
-  const getClienteByRut = async (rut: string) => {
+  /**
+   * Gets a client by RUT number
+   *
+   * @param rut - Client RUT number
+   * @returns Client data
+   * @throws Error if fetch fails
+   */
+  const getClienteByRut = async (rut: string): Promise<GetClienteById> => {
     const response = await api.get(`/cliente/${rut}`);
     return response.data as GetClienteById;
   };

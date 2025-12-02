@@ -3,7 +3,7 @@
  * Verifica obtención y filtrado de datos de prefactura
  */
 
-import { renderHook } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCalculoFactura } from './use-calculo-factura';
 import { toast } from 'sonner';
@@ -137,7 +137,9 @@ describe('useCalculoFactura', () => {
     );
 
     const mockData = [{ contratoId: 1 }] as any;
-    result.current.setData(mockData);
+    act(() => {
+      result.current.setData(mockData);
+    });
 
     expect(result.current.data).toEqual(mockData);
   });

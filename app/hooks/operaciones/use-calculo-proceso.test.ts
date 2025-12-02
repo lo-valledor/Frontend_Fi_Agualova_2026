@@ -3,7 +3,7 @@
  * Verifica lanzamiento y aceptación de cálculos
  */
 
-import { renderHook } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCalculoProceso } from './use-calculo-proceso';
 import { toast } from 'sonner';
@@ -102,7 +102,9 @@ describe('useCalculoProceso', () => {
     expect(result.current.selectedContratos).toEqual([]);
 
     // El setter actualiza el estado
-    result.current.setSelectedContratos([123, 456]);
+    act(() => {
+      result.current.setSelectedContratos([123, 456]);
+    });
 
     // Después de actualizar, debe haber nuevos contratos
     expect(result.current.selectedContratos).toEqual([123, 456]);

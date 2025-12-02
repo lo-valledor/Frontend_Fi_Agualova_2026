@@ -2,7 +2,8 @@ import React from 'react';
 import CrearTipoContratoComponent from '~/components/administracion/cargo-tipo-contrato/form/crear-tipo-contrato-component';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { administracionService, mantencionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
+import { mantencionService } from '~/services/mantencionService';
 
 export function meta() {
   return [

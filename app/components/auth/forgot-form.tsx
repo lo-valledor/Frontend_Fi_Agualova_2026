@@ -1,4 +1,14 @@
-import { AlertCircleIcon, ArrowLeft, CheckCircle2, Info, Loader2, Mail, Moon, Send, Sun } from 'lucide-react';
+import {
+  AlertCircleIcon,
+  ArrowLeft,
+  CheckCircle2,
+  Info,
+  Loader2,
+  Mail,
+  Moon,
+  Send,
+  Sun
+} from 'lucide-react';
 
 import type React from 'react';
 import { useState } from 'react';

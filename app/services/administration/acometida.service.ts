@@ -36,6 +36,7 @@ export interface AcometidaOperationResponse {
 class AcometidaService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -47,13 +48,10 @@ class AcometidaService extends BaseApiService {
    * @returns Respuesta con lista de acometidas
    */
   async getAll(): Promise<ServiceResponse<Acometida[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('Acometida/buscar');
-        return this.processResponseArray<Acometida>(response);
-      },
-      'Error al obtener acometidas'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('Acometida/buscar');
+      return this.processResponseArray<Acometida>(response);
+    }, 'Error al obtener acometidas');
   }
 
   /**
@@ -62,7 +60,9 @@ class AcometidaService extends BaseApiService {
    * @param id - ID de la acometida
    * @returns Respuesta con datos de la acometida
    */
-  async getById(id: string | number): Promise<ServiceResponse<Acometida | null>> {
+  async getById(
+    id: string | number
+  ): Promise<ServiceResponse<Acometida | null>> {
     if (!id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -70,13 +70,10 @@ class AcometidaService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`Acometida/${id}`);
-        return this.processResponseSingle<Acometida>(response);
-      },
-      `Error al obtener acometida ${id}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`Acometida/${id}`);
+      return this.processResponseSingle<Acometida>(response);
+    }, `Error al obtener acometida ${id}`);
   }
 
   /**
@@ -85,7 +82,9 @@ class AcometidaService extends BaseApiService {
    * @param data - Datos de la nueva acometida
    * @returns Respuesta con acometida creada
    */
-  async create(data: CreateAcometidaRequest): Promise<ServiceResponse<Acometida | null>> {
+  async create(
+    data: CreateAcometidaRequest
+  ): Promise<ServiceResponse<Acometida | null>> {
     if (!data || Object.keys(data).length === 0) {
       return this.handleError(
         new Error('Datos vacíos'),
@@ -93,13 +92,10 @@ class AcometidaService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.post('Acometida', data);
-        return this.processResponseSingle<Acometida>(response);
-      },
-      'Error al crear acometida'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.post('Acometida', data);
+      return this.processResponseSingle<Acometida>(response);
+    }, 'Error al crear acometida');
   }
 
   /**
@@ -108,7 +104,9 @@ class AcometidaService extends BaseApiService {
    * @param data - Datos a actualizar (incluye ID)
    * @returns Respuesta con acometida actualizada
    */
-  async update(data: UpdateAcometidaRequest): Promise<ServiceResponse<Acometida | null>> {
+  async update(
+    data: UpdateAcometidaRequest
+  ): Promise<ServiceResponse<Acometida | null>> {
     if (!data?.id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -116,14 +114,11 @@ class AcometidaService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const { id, ...updateData } = data;
-        const response = await this.httpClient.put(`Acometida/${id}`, updateData);
-        return this.processResponseSingle<Acometida>(response);
-      },
-      `Error al actualizar acometida ${data.id}`
-    );
+    return this.executeDataOperation(async () => {
+      const { id, ...updateData } = data;
+      const response = await this.httpClient.put(`Acometida/${id}`, updateData);
+      return this.processResponseSingle<Acometida>(response);
+    }, `Error al actualizar acometida ${data.id}`);
   }
 
   /**
@@ -140,12 +135,11 @@ class AcometidaService extends BaseApiService {
       );
     }
 
-    return this.executeOperation(
-      async () => {
-        await this.httpClient.delete(`Acometida/${id}`);
-      },
-      `Error al eliminar acometida ${id}`
-    );
+    return this.executeOperation(async () => {
+      await this.httpClient.delete(`acometida/${id}`);
+    }, `Acometida ${id} eliminada exitosamente`) as Promise<
+      ServiceResponse<null>
+    >;
   }
 
   /**
@@ -154,7 +148,9 @@ class AcometidaService extends BaseApiService {
    * @param clienteId - ID del cliente
    * @returns Respuesta con acometidas del cliente
    */
-  async getByCliente(clienteId: string | number): Promise<ServiceResponse<Acometida[]>> {
+  async getByCliente(
+    clienteId: string | number
+  ): Promise<ServiceResponse<Acometida[]>> {
     if (!clienteId) {
       return this.handleError(
         new Error('ID de cliente inválido'),
@@ -162,13 +158,12 @@ class AcometidaService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`Acometida/cliente/${clienteId}`);
-        return this.processResponseArray<Acometida>(response);
-      },
-      `Error al obtener acometidas del cliente ${clienteId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `Acometida/cliente/${clienteId}`
+      );
+      return this.processResponseArray<Acometida>(response);
+    }, `Error al obtener acometidas del cliente ${clienteId}`);
   }
 
   /**
@@ -177,7 +172,9 @@ class AcometidaService extends BaseApiService {
    * @param contratoId - ID del contrato
    * @returns Respuesta con acometidas del contrato
    */
-  async getByContrato(contratoId: string | number): Promise<ServiceResponse<Acometida[]>> {
+  async getByContrato(
+    contratoId: string | number
+  ): Promise<ServiceResponse<Acometida[]>> {
     if (!contratoId) {
       return this.handleError(
         new Error('ID de contrato inválido'),
@@ -185,13 +182,12 @@ class AcometidaService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`Acometida/contrato/${contratoId}`);
-        return this.processResponseArray<Acometida>(response);
-      },
-      `Error al obtener acometidas del contrato ${contratoId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `Acometida/contrato/${contratoId}`
+      );
+      return this.processResponseArray<Acometida>(response);
+    }, `Error al obtener acometidas del contrato ${contratoId}`);
   }
 }
 

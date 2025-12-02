@@ -30,7 +30,7 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { administracionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
 import type {
   ActualizarMedidorProps,
   GetCombosTiposMedidor,

@@ -1,77 +1,148 @@
+/**
+ * Keyboard Shortcuts Hook
+ *
+ * Provides hooks for managing keyboard shortcuts in the application.
+ * Uses keyboard-helpers utilities for consistent shortcut matching and validation.
+ *
+ * Includes early returns for disabled state and proper event handling to prevent
+ * conflicts with user input in forms.
+ */
+
 import { useEffect } from 'react';
 
-interface KeyboardShortcut {
-  key: string;
-  ctrlKey?: boolean;
-  shiftKey?: boolean;
-  altKey?: boolean;
-  callback: () => void;
-  description?: string;
-}
+import {
+  findMatchingShortcut,
+  isUserTyping,
+  shouldAllowShortcutWhileTyping,
+  type KeyboardShortcut
+} from './utils/keyboard-helpers';
 
+/**
+ * Options for keyboard shortcuts hook
+ */
 interface UseKeyboardShortcutsOptions {
   shortcuts: KeyboardShortcut[];
   enabled?: boolean;
 }
 
+/**
+ * Hook for managing keyboard shortcuts
+ *
+ * Registers keyboard shortcuts that can be triggered globally in the application.
+ * Automatically handles:
+ * - Enabling/disabling shortcuts
+ * - Preventing shortcuts when user is typing (unless Ctrl/Alt is pressed)
+ * - Preventing default behavior and event propagation
+ * - Cleanup on unmount
+ *
+ * @param options - Configuration object
+ * @param options.shortcuts - Array of keyboard shortcuts to register
+ * @param options.enabled - Whether shortcuts are enabled (default: true)
+ *
+ * @example
+ * ```tsx
+ * useKeyboardShortcuts({
+ *   shortcuts: [
+ *     {
+ *       key: 's',
+ *       ctrlKey: true,
+ *       callback: () => handleSave(),
+ *       description: 'Save document'
+ *     },
+ *     {
+ *       key: 'Escape',
+ *       callback: () => handleClose(),
+ *       description: 'Close dialog'
+ *     }
+ *   ],
+ *   enabled: !isFormSubmitting
+ * });
+ * ```
+ */
 export function useKeyboardShortcuts({
   shortcuts,
   enabled = true
-}: UseKeyboardShortcutsOptions) {
+}: UseKeyboardShortcutsOptions): void {
   useEffect(() => {
-    if (!enabled) return;
+    // Early return if shortcuts are disabled
+    if (!enabled) {
+      return;
+    }
 
-    const handleKeyPress = (event: KeyboardEvent) => {
-      // Don't trigger if user is typing in an input/textarea (except for shortcuts targeting inputs)
-      const target = event.target as HTMLElement;
-      const isTyping =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable;
+    const handleKeyPress = (event: KeyboardEvent): void => {
+      // Check if user is typing in an input field
+      const typing = isUserTyping(event);
 
       // Find matching shortcut
-      const matchingShortcut = shortcuts.find(shortcut => {
-        const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
-        const ctrlMatch = !!shortcut.ctrlKey === event.ctrlKey;
-        const shiftMatch = !!shortcut.shiftKey === event.shiftKey;
-        const altMatch = !!shortcut.altKey === event.altKey;
+      const matchingShortcut = findMatchingShortcut(event, shortcuts);
 
-        return keyMatch && ctrlMatch && shiftMatch && altMatch;
-      });
-
-      if (matchingShortcut) {
-        // If typing, only allow ctrl/alt shortcuts
-        if (isTyping && !event.ctrlKey && !event.altKey) {
-          return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-        matchingShortcut.callback();
+      // Early return if no matching shortcut
+      if (!matchingShortcut) {
+        return;
       }
+
+      // If typing, only allow ctrl/alt shortcuts
+      if (typing && !shouldAllowShortcutWhileTyping(event, matchingShortcut)) {
+        return;
+      }
+
+      // Prevent default behavior and execute callback
+      event.preventDefault();
+      event.stopPropagation();
+      matchingShortcut.callback();
     };
 
+    // Register event listener with capture phase
     document.addEventListener('keydown', handleKeyPress, true);
 
-    return () => {
+    // Cleanup on unmount or when dependencies change
+    return (): void => {
       document.removeEventListener('keydown', handleKeyPress, true);
     };
   }, [shortcuts, enabled]);
 }
 
-// Helper hook for common monitor shortcuts
-export function useMonitorKeyboardShortcuts(callbacks: {
+/**
+ * Callbacks for monitor keyboard shortcuts
+ */
+interface MonitorKeyboardCallbacks {
   onSearch?: () => void;
   onRefresh?: () => void;
   onEscape?: () => void;
-}) {
+}
+
+/**
+ * Hook for common monitor keyboard shortcuts
+ *
+ * Provides pre-configured shortcuts commonly used in monitor views:
+ * - Ctrl+F: Focus search input
+ * - Ctrl+R: Refresh results
+ * - Escape: Close dialogs
+ *
+ * @param callbacks - Object containing callback functions for each shortcut
+ * @param callbacks.onSearch - Called when Ctrl+F is pressed
+ * @param callbacks.onRefresh - Called when Ctrl+R is pressed
+ * @param callbacks.onEscape - Called when Escape is pressed
+ *
+ * @example
+ * ```tsx
+ * useMonitorKeyboardShortcuts({
+ *   onSearch: () => searchInputRef.current?.focus(),
+ *   onRefresh: () => refetchData(),
+ *   onEscape: () => setDialogOpen(false)
+ * });
+ * ```
+ */
+export function useMonitorKeyboardShortcuts(
+  callbacks: MonitorKeyboardCallbacks
+): void {
   useKeyboardShortcuts({
     shortcuts: [
       {
         key: 'f',
         ctrlKey: true,
         callback: () => callbacks.onSearch?.(),
-        description: 'Enfocar búsqueda'
+        description: 'Enfocar busqueda'
       },
       {
         key: 'r',
@@ -82,7 +153,7 @@ export function useMonitorKeyboardShortcuts(callbacks: {
       {
         key: 'Escape',
         callback: () => callbacks.onEscape?.(),
-        description: 'Cerrar diálogos'
+        description: 'Cerrar dialogos'
       }
     ]
   });

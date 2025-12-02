@@ -44,7 +44,6 @@ import {
   TableRow
 } from '~/components/ui/table';
 import { Textarea } from '~/components/ui/textarea';
-import { administracionService, mantencionService } from '~/services';
 import type {
   ContratoFormData,
   GetClienteContrato,
@@ -55,6 +54,8 @@ import type {
   GetPropietario
 } from '~/types/administracion';
 import type { Tarifas, TiposContrato } from '~/types/mantencion';
+import { mantencionService } from '~/services/mantencionService';
+import { administracionService } from '~/services/administracionService';
 
 export default function EditarContratoComponent({
   contrato,

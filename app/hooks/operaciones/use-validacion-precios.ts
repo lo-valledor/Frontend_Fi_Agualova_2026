@@ -34,6 +34,9 @@ interface UseValidacionPreciosProps {
  */
 export interface ValidacionPreciosResult extends PriceValidationResult {
   preciosConfirmados: boolean;
+  preciosConfirmadosCount: number;
+  preciosPendientesCount: number;
+  totalPrecios: number;
   isLoading: boolean;
   error: string | null;
   verificarPrecios: () => Promise<void>;
@@ -46,7 +49,9 @@ export interface ValidacionPreciosResult extends PriceValidationResult {
  * Aplica SOLID: SRP (solo valida precios), DRY (usa utilities compartidas)
  *
  * @param periodoFormateado - Período en formato MMYYYY
+ * @param periodoFormateado.periodoFormateado
  * @param cicloId - ID del ciclo de facturación
+ * @param periodoFormateado.cicloId
  * @returns Estado de validación y función para verificar precios
  *
  * @example
@@ -90,7 +95,9 @@ export function useValidacionPrecios({
 
       // Obtener precios de ambas tablas en paralelo
       const [responsePreciosUno, responsePreciosDos] = await Promise.all([
-        api.get<RevisarPrecioUno[]>(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
+        api.get<RevisarPrecioUno[]>(
+          `/ConsultarPreciosUno?mes=${mes}&año=${anio}`
+        ),
         api.get<RevisarPrecioDos[]>(
           `/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`
         )
@@ -113,6 +120,7 @@ export function useValidacionPrecios({
 
   /**
    * Actualiza el estado con los resultados de validación
+   * @param resultado
    */
   const actualizarEstadoPrecios = (resultado: PriceValidationResult): void => {
     setTotalValidos(resultado.totalValidos);
@@ -128,6 +136,9 @@ export function useValidacionPrecios({
 
   return {
     preciosConfirmados,
+    preciosConfirmadosCount: totalConfirmados,
+    preciosPendientesCount: totalPendientes,
+    totalPrecios: totalValidos,
     isLoading,
     error,
     totalValidos,

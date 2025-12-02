@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { AxiosError } from 'axios';
 
 import axiosInstance from './axiosConfig';
 
@@ -34,21 +35,24 @@ class AuthenticationError extends Error {
 
 /**
  * Extrae el mensaje de error de una respuesta de axios
+ * @param error
+ * @param defaultMessage
  */
 function extractErrorMessage(error: unknown, defaultMessage: string): string {
   if (error instanceof AxiosError) {
+    const axiosError = error as AxiosError;
     if (
-      typeof error.response?.data === 'object' &&
-      error.response?.data !== null
+      typeof axiosError.response?.data === 'object' &&
+      axiosError.response?.data !== null
     ) {
-      const data = error.response.data as Record<string, unknown>;
+      const data = axiosError.response.data as Record<string, unknown>;
       if (typeof data.message === 'string') {
         return data.message;
       }
     }
 
-    if (typeof error.response?.data === 'string') {
-      return error.response.data;
+    if (typeof axiosError.response?.data === 'string') {
+      return axiosError.response.data;
     }
   }
 
@@ -57,6 +61,7 @@ function extractErrorMessage(error: unknown, defaultMessage: string): string {
 
 /**
  * Valida que la respuesta contenga un token válido
+ * @param response
  * @throws AuthenticationError si no hay token
  */
 function validateTokenResponse(
@@ -72,6 +77,7 @@ function validateTokenResponse(
 
 /**
  * Guarda el token en almacenamiento local
+ * @param token
  */
 function persistToken(token: string): void {
   localStorage.setItem('token', token);
@@ -86,6 +92,7 @@ function clearStoredToken(): void {
 
 /**
  * Maneja errores específicos de autenticación por código de estado
+ * @param error
  */
 function handleAuthenticationError(error: unknown): never {
   if (!(error instanceof AxiosError)) {
@@ -95,7 +102,8 @@ function handleAuthenticationError(error: unknown): never {
     );
   }
 
-  const statusCode = error.response?.status;
+  const axiosError = error as AxiosError;
+  const statusCode = axiosError.response?.status;
 
   switch (statusCode) {
     case 401:
@@ -200,11 +208,12 @@ class AuthService {
       console.error('Error al refrescar token:', error);
 
       const message = extractErrorMessage(error, 'Error al refrescar el token');
+      const statusCode =
+        error instanceof AxiosError
+          ? (error as AxiosError).response?.status
+          : undefined;
 
-      throw new AuthenticationError(
-        error instanceof AxiosError ? error.response?.status : undefined,
-        message
-      );
+      throw new AuthenticationError(statusCode, message);
     }
   }
 
@@ -230,6 +239,16 @@ class AuthService {
   }
 
   /**
+   * Alias para requestPasswordRecovery (para compatibilidad)
+   *
+   * @param email - Email del usuario
+   * @throws Error si la solicitud falla
+   */
+  async forgotPassword(email: string): Promise<void> {
+    return this.requestPasswordRecovery(email);
+  }
+
+  /**
    * Restablece la contraseña usando un token de recuperación
    *
    * @param resetToken - Token de recuperación
@@ -249,7 +268,8 @@ class AuthService {
         throw new Error('Error al restablecer la contraseña');
       }
 
-      const statusCode = error.response?.status;
+      const axiosError = error as AxiosError;
+      const statusCode = axiosError.response?.status;
       let errorMessage = 'Error al restablecer la contraseña';
 
       switch (statusCode) {

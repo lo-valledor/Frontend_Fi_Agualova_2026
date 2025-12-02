@@ -1,118 +1,76 @@
+/**
+ * Debug Information Hook
+ *
+ * Provides a hook for gathering comprehensive debug information about the browser
+ * environment, including browser detection, private mode detection, proxy detection,
+ * and network interception detection.
+ *
+ * Uses debug-detectors utilities to avoid code duplication and maintain consistent
+ * detection logic across the application.
+ */
+
 import { useEffect, useState } from 'react';
 
-interface DebugInfo {
-  userAgent: string;
-  url: string;
-  sessionStorageSupported: boolean;
-  hasToken: boolean;
-  tokenPreview?: string;
-  timestamp: string;
-  browserName: string;
-  isPrivateMode?: boolean;
-  proxyDetected?: boolean;
-  networkInterception?: string[];
-}
+import {
+  gatherDebugInfo,
+  type DebugDetectionResult
+} from './utils/debug-detectors';
 
-export const useDebugInfo = () => {
-  const [debugInfo, setDebugInfo] = useState<DebugInfo | null>(null);
-
-  const getBrowserName = (userAgent: string): string => {
-    if (userAgent.includes('Chrome') && !userAgent.includes('Edg'))
-      return 'Chrome';
-    if (userAgent.includes('Firefox')) return 'Firefox';
-    if (userAgent.includes('Safari') && !userAgent.includes('Chrome'))
-      return 'Safari';
-    if (userAgent.includes('Edg')) return 'Edge';
-    if (userAgent.includes('Opera') || userAgent.includes('OPR'))
-      return 'Opera';
-    return 'Unknown';
-  };
-
-  const detectPrivateMode = async (): Promise<boolean> => {
-    try {
-      // Método para detectar modo privado/incógnito
-      if ('storage' in navigator && 'estimate' in navigator.storage) {
-        const estimate = await navigator.storage.estimate();
-        return (estimate.quota || 0) < 120000000; // Menos de 120MB generalmente indica modo privado
-      }
-      return false;
-    } catch {
-      return false;
-    }
-  };
-
-  const detectProxyOrInterception = (): {
-    detected: boolean;
-    evidence: string[];
-  } => {
-    const evidence: string[] = [];
-
-    // Verificar si hay scripts externos sospechosos
-    const scripts = Array.from(document.querySelectorAll('script')).map(
-      s => s.src
-    );
-    const suspiciousScripts = scripts.filter(
-      src =>
-        src.includes('main.js') ||
-        src.includes('fiddler') ||
-        src.includes('charles') ||
-        src.includes('proxy') ||
-        src.includes('debug')
-    );
-
-    if (suspiciousScripts.length > 0) {
-      evidence.push(`Scripts sospechosos: ${suspiciousScripts.join(', ')}`);
-    }
-
-    // Verificar si XMLHttpRequest ha sido modificado
-    if (
-      globalThis.XMLHttpRequest.toString().includes('native code') === false
-    ) {
-      evidence.push('XMLHttpRequest modificado (posible proxy)');
-    }
-
-    // Verificar headers personalizados en fetch
-    const originalFetch = globalThis.fetch;
-    if (originalFetch.toString().includes('native code') === false) {
-      evidence.push('fetch() modificado (posible interceptor)');
-    }
-
-    return {
-      detected: evidence.length > 0,
-      evidence
-    };
-  };
+/**
+ * Hook for gathering debug information
+ *
+ * Collects comprehensive debug information on mount including:
+ * - User agent string
+ * - Current URL
+ * - Session storage support
+ * - Authentication token presence
+ * - Browser name detection
+ * - Private/incognito mode detection
+ * - Proxy detection
+ * - Network interception detection
+ *
+ * This hook automatically runs once on mount and warns if proxy or network
+ * interception is detected, as these can cause authorization header issues.
+ *
+ * @returns {DebugDetectionResult|null} Complete debug information or null if not loaded
+ *
+ * @example
+ * ```tsx
+ * const debugInfo = useDebugInfo();
+ *
+ * if (debugInfo?.proxyDetected) {
+ *   console.warn('Proxy detected:', debugInfo.networkInterception);
+ * }
+ *
+ * return (
+ *   <DebugPanel
+ *     browser={debugInfo?.browserName}
+ *     isPrivate={debugInfo?.isPrivateMode}
+ *   />
+ * );
+ * ```
+ */
+export const useDebugInfo = (): DebugDetectionResult | null => {
+  const [debugInfo, setDebugInfo] = useState<DebugDetectionResult | null>(null);
 
   useEffect(() => {
-    const gatherDebugInfo = async () => {
-      const userAgent = navigator.userAgent;
-      const token = localStorage.getItem('token');
-      const isPrivate = await detectPrivateMode();
-      const proxyInfo = detectProxyOrInterception();
-
-      const info: DebugInfo = {
-        userAgent,
-        url: globalThis.location.href,
-        sessionStorageSupported: typeof Storage !== 'undefined',
-        hasToken: !!token,
-        tokenPreview: token ? `${token.substring(0, 20)}...` : undefined,
-        timestamp: new Date().toISOString(),
-        browserName: getBrowserName(userAgent),
-        isPrivateMode: isPrivate,
-        proxyDetected: proxyInfo.detected,
-        networkInterception: proxyInfo.evidence
-      };
-
+    const loadDebugInfo = async (): Promise<void> => {
+      const info = await gatherDebugInfo();
       setDebugInfo(info);
 
-      if (proxyInfo.detected) {
+      // Warn if proxy or network interception is detected
+      if (info.proxyDetected) {
         console.warn(
-          '  Esto puede causar problemas con las headers de autorización'
+          'Deteccion de proxy/interceptor de red:',
+          info.networkInterception
+        );
+        console.warn(
+          'Esto puede causar problemas con las headers de autorizacion'
         );
       }
     };
 
-    gatherDebugInfo();
+    loadDebugInfo();
   }, []);
 
   return debugInfo;

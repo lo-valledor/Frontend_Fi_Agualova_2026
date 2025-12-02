@@ -3,7 +3,7 @@ import type { Route } from './+types/propietarios';
 import ContractHydrateFallback from '~/components/administracion/contratos/contract-hydrate-fallback';
 import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
 import { useRouteError } from 'react-router';
-import { administracionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PropietariosComponent from '~/components/administracion/propietarios/propietarios-component';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import EditarContratoComponent from '~/components/administracion/contratos/route/editar-contrato-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import { administracionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
 
 export function meta() {
   return [

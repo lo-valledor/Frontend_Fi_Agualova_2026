@@ -15,12 +15,19 @@ export interface AssignUserRolesRequest {
  */
 export class UsuarioRolesService extends BaseApiService {
   /**
+   * Constructor
+   * @param httpClient Axios HTTP client instance
+   */
+  constructor(httpClient?: any) {
+    super(httpClient);
+  }
+
+  /**
    * Obtiene los roles asignados a un usuario
    * @param codigoUsuario Código del usuario
+   * @returns Respuesta con lista de roles del usuario
    */
-  async getByUsuario(
-    codigoUsuario: string
-  ): Promise<ServiceResponse<Roles[]>> {
+  async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
     if (!codigoUsuario?.trim()) {
       return this.handleError(
         new Error('Código inválido'),
@@ -28,15 +35,10 @@ export class UsuarioRolesService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(
-          `${codigoUsuario}/roles`
-        );
-        return this.processResponseArray<Roles>(response);
-      },
-      `Error al obtener roles del usuario ${codigoUsuario}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`${codigoUsuario}/roles`);
+      return this.processResponseArray<Roles>(response);
+    }, `Error al obtener roles del usuario ${codigoUsuario}`);
   }
 
   /**
@@ -44,6 +46,7 @@ export class UsuarioRolesService extends BaseApiService {
    * El API espera un array directo de IDs de roles, no un objeto con propiedad roles
    * @param codigoUsuario Código del usuario
    * @param request Datos de roles a asignar
+   * @returns Respuesta con lista de roles asignados
    */
   async assignToUsuario(
     codigoUsuario: string,
@@ -65,38 +68,33 @@ export class UsuarioRolesService extends BaseApiService {
 
     const endpoint = `${codigoUsuario}/roles`;
 
-    return this.executeDataOperation(
-      async () => {
-        console.log('📤 API Request:', {
-          endpoint,
-          method: 'POST',
-          body: request.roles
-        });
+    return this.executeDataOperation(async () => {
+      console.log('📤 API Request:', {
+        endpoint,
+        method: 'POST',
+        body: request.roles
+      });
 
-        // El API espera un array directo, no un objeto con propiedad roles
-        const response = await this.httpClient.post(
-          endpoint,
-          request.roles
-        );
+      // El API espera un array directo, no un objeto con propiedad roles
+      const response = await this.httpClient.post(endpoint, request.roles);
 
-        console.log('📥 API Response:', response);
+      console.log('📥 API Response:', response);
 
-        // Respuesta 204 significa éxito sin contenido
-        if (response.status === 204) {
-          // Devolvemos un array vacío ya que no tenemos datos específicos
-          return [];
-        }
+      // Respuesta 204 significa éxito sin contenido
+      if (response.status === 204) {
+        // Devolvemos un array vacío ya que no tenemos datos específicos
+        return [];
+      }
 
-        return this.processResponseArray<Roles>(response);
-      },
-      `Error al asignar roles al usuario ${codigoUsuario}`
-    );
+      return this.processResponseArray<Roles>(response);
+    }, `Error al asignar roles al usuario ${codigoUsuario}`);
   }
 
   /**
    * Quita un rol específico de un usuario
    * @param codigoUsuario Código del usuario
    * @param idRol ID del rol a quitar
+   * @returns Respuesta con confirmación de éxito
    */
   async removeFromUsuario(
     codigoUsuario: string,
@@ -118,21 +116,18 @@ export class UsuarioRolesService extends BaseApiService {
 
     const endpoint = `${codigoUsuario}/roles/${idRol}`;
 
-    return this.executeDataOperation(
-      async () => {
-        console.log('📤 API Request:', {
-          endpoint,
-          method: 'DELETE'
-        });
+    return this.executeDataOperation(async () => {
+      console.log('📤 API Request:', {
+        endpoint,
+        method: 'DELETE'
+      });
 
-        await this.httpClient.delete(endpoint);
+      await this.httpClient.delete(endpoint);
 
-        console.log('📥 API Response: Success');
+      console.log('📥 API Response: Success');
 
-        return true;
-      },
-      `Error al quitar el rol ${idRol} del usuario ${codigoUsuario}`
-    );
+      return true;
+    }, `Error al quitar el rol ${idRol} del usuario ${codigoUsuario}`);
   }
 }
 

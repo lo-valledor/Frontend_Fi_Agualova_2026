@@ -31,8 +31,11 @@ interface UseCalculoProcesoProps {
  * Aplica SOLID: SRP (separa lanzar cálculo de aceptar), DRY (utilities compartidas)
  *
  * @param periodoFormateado - Período en formato MMYYYY
+ * @param periodoFormateado.periodoFormateado
  * @param cicloId - ID del ciclo de facturación
+ * @param periodoFormateado.cicloId
  * @param onCalculoAceptado - Callback ejecutado cuando se aceptan cálculos
+ * @param periodoFormateado.onCalculoAceptado
  * @returns Estados y funciones para procesos de cálculo
  *
  * @example

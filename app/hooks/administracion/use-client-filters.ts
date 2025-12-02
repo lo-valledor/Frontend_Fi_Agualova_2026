@@ -7,7 +7,7 @@ import {
   filterByString,
   filterByPresence
 } from './utils/filter-utilities';
-import { calculateFilterStats, type FilterStats } from './utils/stats-calculator';
+import { calculateFilterStats } from './utils/stats-calculator';
 
 /**
  * Filtros para clientes
@@ -60,8 +60,8 @@ export function useClientFilters(
   const filterOptions = useMemo((): ClientFilterOptions => {
     return {
       tiposCliente: ['Persona', 'Empresa'],
-      comunas: extractUniqueOptions(clients, (c) => c.comuna),
-      codigosComuna: extractUniqueOptions(clients, (c) => c.codigoComuna)
+      comunas: extractUniqueOptions(clients, c => c.comuna),
+      codigosComuna: extractUniqueOptions(clients, c => c.codigoComuna)
     };
   }, [clients]);
 
@@ -70,7 +70,7 @@ export function useClientFilters(
    * Cada filtro es una responsabilidad separada
    */
   const filteredClients = useMemo(() => {
-    return clients.filter((client) => {
+    return clients.filter(client => {
       // Filtro booleano: tipo de cliente
       if (!filterByBoolean(client.esEmpresa, filters.esEmpresa)) {
         return false;

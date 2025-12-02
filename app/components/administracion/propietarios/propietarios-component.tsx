@@ -9,7 +9,7 @@ import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
-import { administracionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
 import type {
   GetContratante,
   GetPropietario,
@@ -163,13 +163,16 @@ export default function PropietariosComponent({
   /**
    * Abre el modal de detalles del propietario
    */
-  const handleDetailsPropietario = useCallback((propietario: GetPropietario) => {
-    setDetailedPropietario(propietario);
-    setModalsState(prev => ({
-      ...prev,
-      details: { isOpen: true }
-    }));
-  }, []);
+  const handleDetailsPropietario = useCallback(
+    (propietario: GetPropietario) => {
+      setDetailedPropietario(propietario);
+      setModalsState(prev => ({
+        ...prev,
+        details: { isOpen: true }
+      }));
+    },
+    []
+  );
 
   /**
    * Sincroniza propietarios con locales

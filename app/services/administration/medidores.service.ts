@@ -44,6 +44,7 @@ export interface MedidorOperationResponse {
 class MedidoresService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -55,13 +56,10 @@ class MedidoresService extends BaseApiService {
    * @returns Respuesta con lista de medidores
    */
   async getAll(): Promise<ServiceResponse<Medidor[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('medidor/buscar');
-        return this.processResponseArray<Medidor>(response);
-      },
-      'Error al obtener medidores'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('medidor/buscar');
+      return this.processResponseArray<Medidor>(response);
+    }, 'Error al obtener medidores');
   }
 
   /**
@@ -78,13 +76,10 @@ class MedidoresService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`medidor/${id}`);
-        return this.processResponseSingle<Medidor>(response);
-      },
-      `Error al obtener medidor ${id}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`medidor/${id}`);
+      return this.processResponseSingle<Medidor>(response);
+    }, `Error al obtener medidor ${id}`);
   }
 
   /**
@@ -93,7 +88,9 @@ class MedidoresService extends BaseApiService {
    * @param data - Datos del nuevo medidor
    * @returns Respuesta con medidor creado
    */
-  async create(data: CreateMedidorRequest): Promise<ServiceResponse<Medidor | null>> {
+  async create(
+    data: CreateMedidorRequest
+  ): Promise<ServiceResponse<Medidor | null>> {
     if (!data || Object.keys(data).length === 0) {
       return this.handleError(
         new Error('Datos vacíos'),
@@ -101,13 +98,10 @@ class MedidoresService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.post('medidor', data);
-        return this.processResponseSingle<Medidor>(response);
-      },
-      'Error al crear medidor'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.post('medidor', data);
+      return this.processResponseSingle<Medidor>(response);
+    }, 'Error al crear medidor');
   }
 
   /**
@@ -116,7 +110,9 @@ class MedidoresService extends BaseApiService {
    * @param data - Datos a actualizar (incluye ID)
    * @returns Respuesta con medidor actualizado
    */
-  async update(data: UpdateMedidorRequest): Promise<ServiceResponse<Medidor | null>> {
+  async update(
+    data: UpdateMedidorRequest
+  ): Promise<ServiceResponse<Medidor | null>> {
     if (!data?.id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -124,14 +120,11 @@ class MedidoresService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const { id, ...updateData } = data;
-        const response = await this.httpClient.put(`medidor/${id}`, updateData);
-        return this.processResponseSingle<Medidor>(response);
-      },
-      `Error al actualizar medidor ${data.id}`
-    );
+    return this.executeDataOperation(async () => {
+      const { id, ...updateData } = data;
+      const response = await this.httpClient.put(`medidor/${id}`, updateData);
+      return this.processResponseSingle<Medidor>(response);
+    }, `Error al actualizar medidor ${data.id}`);
   }
 
   /**
@@ -148,12 +141,11 @@ class MedidoresService extends BaseApiService {
       );
     }
 
-    return this.executeOperation(
-      async () => {
-        await this.httpClient.delete(`medidor/${id}`);
-      },
-      `Error al eliminar medidor ${id}`
-    );
+    return this.executeOperation(async () => {
+      await this.httpClient.delete(`medidor/${id}`);
+    }, `Medidor ${id} eliminado exitosamente`) as Promise<
+      ServiceResponse<null>
+    >;
   }
 
   /**
@@ -162,7 +154,9 @@ class MedidoresService extends BaseApiService {
    * @param contratoId - ID del contrato
    * @returns Respuesta con medidores del contrato
    */
-  async getByContrato(contratoId: string | number): Promise<ServiceResponse<Medidor[]>> {
+  async getByContrato(
+    contratoId: string | number
+  ): Promise<ServiceResponse<Medidor[]>> {
     if (!contratoId) {
       return this.handleError(
         new Error('ID de contrato inválido'),
@@ -170,13 +164,12 @@ class MedidoresService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`medidor/contrato/${contratoId}`);
-        return this.processResponseArray<Medidor>(response);
-      },
-      `Error al obtener medidores del contrato ${contratoId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `medidor/contrato/${contratoId}`
+      );
+      return this.processResponseArray<Medidor>(response);
+    }, `Error al obtener medidores del contrato ${contratoId}`);
   }
 
   /**
@@ -185,7 +178,9 @@ class MedidoresService extends BaseApiService {
    * @param acometidaId - ID de la acometida
    * @returns Respuesta con medidores de la acometida
    */
-  async getByAcometida(acometidaId: string | number): Promise<ServiceResponse<Medidor[]>> {
+  async getByAcometida(
+    acometidaId: string | number
+  ): Promise<ServiceResponse<Medidor[]>> {
     if (!acometidaId) {
       return this.handleError(
         new Error('ID de acometida inválido'),
@@ -193,13 +188,12 @@ class MedidoresService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`medidor/acometida/${acometidaId}`);
-        return this.processResponseArray<Medidor>(response);
-      },
-      `Error al obtener medidores de la acometida ${acometidaId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `medidor/acometida/${acometidaId}`
+      );
+      return this.processResponseArray<Medidor>(response);
+    }, `Error al obtener medidores de la acometida ${acometidaId}`);
   }
 }
 

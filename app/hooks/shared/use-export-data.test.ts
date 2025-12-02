@@ -176,7 +176,7 @@ describe('useExportData', () => {
 
     it('debería aplicar formatter personalizado a las columnas', async () => {
       const columnsWithFormatter: ExportColumn[] = [
-        { key: 'id', header: 'ID', formatter: (val) => `#${val}` },
+        { key: 'id', header: 'ID', formatter: val => `#${val}` },
         { key: 'name', header: 'Nombre' }
       ];
 
@@ -324,7 +324,7 @@ describe('useExportData', () => {
       });
 
       expect(toast.error).toHaveBeenCalledWith('Error al exportar los datos', {
-        description: 'Inténtalo de nuevo en unos momentos'
+        description: 'Mock error'
       });
     });
   });
@@ -401,7 +401,9 @@ describe('useExportData', () => {
       expect(toast.success).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          description: expect.stringMatching(/mi-reporte_\d{4}-\d{2}-\d{2}\.csv/)
+          description: expect.stringMatching(
+            /mi-reporte_\d{4}-\d{2}-\d{2}\.csv/
+          )
         })
       );
     });
@@ -421,7 +423,9 @@ describe('useExportData', () => {
       expect(toast.success).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
-          description: expect.stringMatching(/mi-reporte_\d{4}-\d{2}-\d{2}\.xlsx/)
+          description: expect.stringMatching(
+            /mi-reporte_\d{4}-\d{2}-\d{2}\.xlsx/
+          )
         })
       );
     });

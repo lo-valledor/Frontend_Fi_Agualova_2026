@@ -37,9 +37,9 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import { administracionService } from '~/services';
 import type { GetComunas, GetGiros } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
+import { administracionService } from '~/services/administracionService';
 
 const createContratanteSchema = (existingContratantes: string[]) =>
   z.object({

@@ -53,6 +53,7 @@ export interface UsuarioOperationResponse {
 class UsuariosService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -64,13 +65,10 @@ class UsuariosService extends BaseApiService {
    * @returns Respuesta con lista de usuarios
    */
   async getAll(): Promise<ServiceResponse<Usuarios[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('usuario/buscar');
-        return this.processResponseArray<Usuarios>(response);
-      },
-      'Error al obtener usuarios'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('usuario/buscar');
+      return this.processResponseArray<Usuarios>(response);
+    }, 'Error al obtener usuarios');
   }
 
   /**
@@ -79,7 +77,9 @@ class UsuariosService extends BaseApiService {
    * @param id - ID del usuario
    * @returns Respuesta con datos del usuario
    */
-  async getById(id: string | number): Promise<ServiceResponse<Usuarios | null>> {
+  async getById(
+    id: string | number
+  ): Promise<ServiceResponse<Usuarios | null>> {
     if (!id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -87,13 +87,10 @@ class UsuariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`usuario/${id}`);
-        return this.processResponseSingle<Usuarios>(response);
-      },
-      `Error al obtener usuario ${id}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`usuario/${id}`);
+      return this.processResponseSingle<Usuarios>(response);
+    }, `Error al obtener usuario ${id}`);
   }
 
   /**
@@ -102,7 +99,9 @@ class UsuariosService extends BaseApiService {
    * @param data - Datos del nuevo usuario
    * @returns Respuesta con usuario creado
    */
-  async create(data: CreateUsuarioRequest): Promise<ServiceResponse<Usuarios | null>> {
+  async create(
+    data: CreateUsuarioRequest
+  ): Promise<ServiceResponse<Usuarios | null>> {
     if (!data || Object.keys(data).length === 0) {
       return this.handleError(
         new Error('Datos vacíos'),
@@ -110,13 +109,10 @@ class UsuariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.post('usuario', data);
-        return this.processResponseSingle<Usuarios>(response);
-      },
-      'Error al crear usuario'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.post('usuario', data);
+      return this.processResponseSingle<Usuarios>(response);
+    }, 'Error al crear usuario');
   }
 
   /**
@@ -125,7 +121,9 @@ class UsuariosService extends BaseApiService {
    * @param data - Datos a actualizar (incluye ID)
    * @returns Respuesta con usuario actualizado
    */
-  async update(data: UpdateUsuarioRequest): Promise<ServiceResponse<Usuarios | null>> {
+  async update(
+    data: UpdateUsuarioRequest
+  ): Promise<ServiceResponse<Usuarios | null>> {
     if (!data?.id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -133,14 +131,11 @@ class UsuariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const { id, ...updateData } = data;
-        const response = await this.httpClient.put(`usuario/${id}`, updateData);
-        return this.processResponseSingle<Usuarios>(response);
-      },
-      `Error al actualizar usuario ${data.id}`
-    );
+    return this.executeDataOperation(async () => {
+      const { id, ...updateData } = data;
+      const response = await this.httpClient.put(`usuario/${id}`, updateData);
+      return this.processResponseSingle<Usuarios>(response);
+    }, `Error al actualizar usuario ${data.id}`);
   }
 
   /**
@@ -157,12 +152,11 @@ class UsuariosService extends BaseApiService {
       );
     }
 
-    return this.executeOperation(
-      async () => {
-        await this.httpClient.delete(`usuario/${id}`);
-      },
-      `Error al eliminar usuario ${id}`
-    );
+    return this.executeOperation(async () => {
+      await this.httpClient.delete(`usuario/${id}`);
+    }, `Usuario ${id} eliminado exitosamente`) as Promise<
+      ServiceResponse<null>
+    >;
   }
 
   /**
@@ -179,13 +173,10 @@ class UsuariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`usuario/rol/${rolId}`);
-        return this.processResponseArray<Usuarios>(response);
-      },
-      `Error al obtener usuarios del rol ${rolId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`usuario/rol/${rolId}`);
+      return this.processResponseArray<Usuarios>(response);
+    }, `Error al obtener usuarios del rol ${rolId}`);
   }
 
   /**
@@ -194,7 +185,9 @@ class UsuariosService extends BaseApiService {
    * @param empresaId - ID de la empresa/cliente
    * @returns Respuesta con usuarios de la empresa
    */
-  async getByEmpresa(empresaId: string | number): Promise<ServiceResponse<Usuarios[]>> {
+  async getByEmpresa(
+    empresaId: string | number
+  ): Promise<ServiceResponse<Usuarios[]>> {
     if (!empresaId) {
       return this.handleError(
         new Error('ID de empresa inválido'),
@@ -202,13 +195,12 @@ class UsuariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`usuario/empresa/${empresaId}`);
-        return this.processResponseArray<Usuarios>(response);
-      },
-      `Error al obtener usuarios de la empresa ${empresaId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `usuario/empresa/${empresaId}`
+      );
+      return this.processResponseArray<Usuarios>(response);
+    }, `Error al obtener usuarios de la empresa ${empresaId}`);
   }
 }
 

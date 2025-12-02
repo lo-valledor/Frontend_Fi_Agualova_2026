@@ -3,6 +3,11 @@
  * Centraliza todas las exportaciones de la carpeta roles-permisos
  */
 
+import { menusService } from './menus.service';
+import { permisosService } from './permisos.service';
+import { rolesService } from './roles.service';
+import { usuarioRolesService } from './usuario-roles.service';
+
 // Servicios
 export { rolesService, RolesService } from './roles.service';
 export type { CreateRoleRequest, UpdateRoleRequest } from './roles.service';
@@ -19,7 +24,10 @@ export type {
   RoleMenuRelation
 } from './permisos.service';
 
-export { usuarioRolesService, UsuarioRolesService } from './usuario-roles.service';
+export {
+  usuarioRolesService,
+  UsuarioRolesService
+} from './usuario-roles.service';
 export type { AssignUserRolesRequest } from './usuario-roles.service';
 
 // Tipos compartidos

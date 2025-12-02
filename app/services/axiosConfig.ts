@@ -151,6 +151,7 @@ function handleNetworkError(): void {
 
 /**
  * Maneja error 400 (Bad Request)
+ * @param errorData
  */
 function handleBadRequestError(errorData: unknown): void {
   const message = extractErrorMessage(
@@ -176,6 +177,7 @@ function handleServerError(): void {
 
 /**
  * Maneja error 404 (Not Found)
+ * @param errorData
  */
 function handleNotFoundError(errorData: unknown): void {
   const message = extractErrorMessage(errorData, 'Recurso no encontrado.');
@@ -184,6 +186,7 @@ function handleNotFoundError(errorData: unknown): void {
 
 /**
  * Maneja error genérico
+ * @param errorData
  */
 function handleGenericError(errorData: unknown): void {
   const message = extractErrorMessage(
@@ -213,6 +216,8 @@ async function attemptTokenRefresh(): Promise<string> {
 
 /**
  * Maneja error 401 (Unauthorized) con refresh automático de token
+ * @param error
+ * @param originalRequest
  */
 async function handleUnauthorizedError(
   error: AxiosError,
@@ -247,6 +252,7 @@ async function handleUnauthorizedError(
 
 /**
  * Maneja respuestas de error HTTP según el código de estado
+ * @param error
  */
 async function handleErrorResponse(error: AxiosError): Promise<void> {
   if (!error.response) {

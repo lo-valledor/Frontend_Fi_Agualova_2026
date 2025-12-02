@@ -3,9 +3,9 @@ import type { Route } from './+types/contratantes';
 import ContractHydrateFallback from '~/components/administracion/contratos/contract-hydrate-fallback';
 import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
 import { useRouteError } from 'react-router';
-import { administracionService } from '~/services';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import ContratantesComponent from '~/components/administracion/contratantes/contratantes-component';
+import { administracionService } from '~/services/administracionService';
 
 export function meta(_args: Route.MetaArgs) {
   return [

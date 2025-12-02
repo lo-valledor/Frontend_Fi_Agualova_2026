@@ -8,7 +8,7 @@ import {
 } from './utils/csv-excel-utils';
 import { formatDateForExport } from './utils/export-formatters';
 
-export type ExportFormat = 'csv' | 'xlsx';
+export type ExportFormat = 'csv' | 'xlsx' | 'pdf';
 
 export interface ExportOptions {
   format: ExportFormat;
@@ -80,18 +80,21 @@ export function useExportData<T extends Record<string, any>>() {
 
       // Dispatch to appropriate exporter
       switch (options.format) {
-        case 'csv':
+        case 'csv': {
           const csvContent = convertToCSV(data, columns, includeHeaders);
           downloadCSVFile(csvContent, baseFilename);
           break;
+        }
 
-        case 'xlsx':
+        case 'xlsx': {
           await downloadExcelFile(data, columns, baseFilename, includeHeaders);
           break;
+        }
 
-        default:
+        default: {
           const defaultCsv = convertToCSV(data, columns, includeHeaders);
           downloadCSVFile(defaultCsv, baseFilename);
+        }
       }
 
       toast.success(`✅ ${data.length} registros exportados exitosamente`, {
@@ -99,7 +102,8 @@ export function useExportData<T extends Record<string, any>>() {
         duration: 4000
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error desconocido';
       toast.error('Error al exportar los datos', {
         description: errorMessage
       });

@@ -18,14 +18,10 @@ import type {
 // ============================================================================
 
 /** Solicitud para crear nuevo contrato */
-export interface CreateContratoRequest extends CrearContratoProps {
-  // Extiende CrearContratoProps del tipo base
-}
+export type CreateContratoRequest = CrearContratoProps;
 
 /** Solicitud para actualizar contrato */
-export interface UpdateContratoRequest extends ModificarContratoProps {
-  // Extiende ModificarContratoProps del tipo base (incluye 'codigo')
-}
+export type UpdateContratoRequest = ModificarContratoProps;
 
 /** Respuesta de operación con contrato */
 export interface ContratoOperationResponse {
@@ -43,6 +39,7 @@ export interface ContratoOperationResponse {
 class ContratosService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -54,13 +51,10 @@ class ContratosService extends BaseApiService {
    * @returns Respuesta con lista de contratos
    */
   async getAll(): Promise<ServiceResponse<GetContratos[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('contrato/buscar');
-        return this.processResponseArray<GetContratos>(response);
-      },
-      'Error al obtener contratos'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('contrato/buscar');
+      return this.processResponseArray<GetContratos>(response);
+    }, 'Error al obtener contratos');
   }
 
   /**
@@ -69,7 +63,9 @@ class ContratosService extends BaseApiService {
    * @param codigo - Código del contrato
    * @returns Respuesta con datos del contrato
    */
-  async getByCodigo(codigo: string): Promise<ServiceResponse<GetContratos | null>> {
+  async getByCodigo(
+    codigo: string
+  ): Promise<ServiceResponse<GetContratos | null>> {
     if (!codigo) {
       return this.handleError(
         new Error('Código inválido'),
@@ -77,13 +73,10 @@ class ContratosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`contrato/${codigo}`);
-        return this.processResponseSingle<GetContratos>(response);
-      },
-      `Error al obtener contrato ${codigo}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`contrato/${codigo}`);
+      return this.processResponseSingle<GetContratos>(response);
+    }, `Error al obtener contrato ${codigo}`);
   }
 
   /**
@@ -92,7 +85,9 @@ class ContratosService extends BaseApiService {
    * @param data - Datos del nuevo contrato
    * @returns Respuesta con contrato creado
    */
-  async create(data: CreateContratoRequest): Promise<ServiceResponse<GetContratos | null>> {
+  async create(
+    data: CreateContratoRequest
+  ): Promise<ServiceResponse<GetContratos | null>> {
     if (!data || Object.keys(data).length === 0) {
       return this.handleError(
         new Error('Datos vacíos'),
@@ -100,13 +95,10 @@ class ContratosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.post('contrato', data);
-        return this.processResponseSingle<GetContratos>(response);
-      },
-      'Error al crear contrato'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.post('contrato', data);
+      return this.processResponseSingle<GetContratos>(response);
+    }, 'Error al crear contrato');
   }
 
   /**
@@ -115,7 +107,9 @@ class ContratosService extends BaseApiService {
    * @param data - Datos a actualizar (incluye código)
    * @returns Respuesta con contrato actualizado
    */
-  async update(data: UpdateContratoRequest): Promise<ServiceResponse<GetContratos | null>> {
+  async update(
+    data: UpdateContratoRequest
+  ): Promise<ServiceResponse<GetContratos | null>> {
     if (!data?.codigo) {
       return this.handleError(
         new Error('Código inválido'),
@@ -123,14 +117,14 @@ class ContratosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const { codigo, ...updateData } = data;
-        const response = await this.httpClient.put(`contrato/${codigo}`, updateData);
-        return this.processResponseSingle<GetContratos>(response);
-      },
-      `Error al actualizar contrato ${data.codigo}`
-    );
+    return this.executeDataOperation(async () => {
+      const { codigo, ...updateData } = data;
+      const response = await this.httpClient.put(
+        `contrato/${codigo}`,
+        updateData
+      );
+      return this.processResponseSingle<GetContratos>(response);
+    }, `Error al actualizar contrato ${data.codigo}`);
   }
 
   /**
@@ -147,12 +141,11 @@ class ContratosService extends BaseApiService {
       );
     }
 
-    return this.executeOperation(
-      async () => {
-        await this.httpClient.delete(`contrato/${codigo}`);
-      },
-      `Error al eliminar contrato ${codigo}`
-    );
+    return this.executeOperation(async () => {
+      await this.httpClient.delete(`contrato/${codigo}`);
+    }, `Contrato ${codigo} eliminado exitosamente`) as Promise<
+      ServiceResponse<null>
+    >;
   }
 
   /**
@@ -161,13 +154,10 @@ class ContratosService extends BaseApiService {
    * @returns Respuesta con contratos disponibles
    */
   async getAvailable(): Promise<ServiceResponse<GetContratos[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('contrato/disponibles');
-        return this.processResponseArray<GetContratos>(response);
-      },
-      'Error al obtener contratos disponibles'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('contrato/disponibles');
+      return this.processResponseArray<GetContratos>(response);
+    }, 'Error al obtener contratos disponibles');
   }
 }
 

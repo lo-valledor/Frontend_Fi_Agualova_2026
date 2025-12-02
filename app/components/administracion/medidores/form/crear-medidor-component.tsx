@@ -24,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select';
-import { administracionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
 import type { MedidorFormData } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
 
@@ -586,9 +586,9 @@ export default function CrearMedidorComponent({
                     {!medidorCreado?.codigo && (
                       <div className='bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-xl border border-yellow-200 dark:border-yellow-700'>
                         <p className='text-sm text-yellow-800 dark:text-yellow-200'>
-                          ⚠️ No se pudo obtener el código del medidor. El medidor
-                          fue creado correctamente, pero verifica el listado de
-                          medidores para encontrarlo.
+                          ⚠️ No se pudo obtener el código del medidor. El
+                          medidor fue creado correctamente, pero verifica el
+                          listado de medidores para encontrarlo.
                         </p>
                       </div>
                     )}

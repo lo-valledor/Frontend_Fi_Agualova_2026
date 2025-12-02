@@ -52,11 +52,40 @@ export {
 // Compatibilidad hacia atrás - administracionService ahora es un alias
 export { administrationServices as administracionService } from './administration';
 
-// Servicios de operaciones
-export { operacionesService } from './operacionesService';
+// Servicios de operaciones (REFACTORIZADOS)
+export {
+  periodosService,
+  pricingService,
+  preparationService,
+  billingCalculationService,
+  operacionesServices
+} from './operations';
 
-// Servicios de mantención
-export { mantencionService } from './mantencionService';
+// Compatibilidad hacia atrás - operacionesService ahora es un alias
+export { operacionesServices as operacionesService } from './operations';
+
+// Servicios de reportes (REFACTORIZADOS)
+export {
+  summaryReportService,
+  billingReportService,
+  contractDetailsReportService,
+  reportesServices
+} from './reportes';
+
+// Compatibilidad hacia atrás - reportesService ahora es un alias
+export { reportesServices as reportesService } from './reportes';
+
+// Servicios de mantención (REFACTORIZADOS)
+export {
+  referenceDataMantencionService,
+  conceptsService,
+  classificationsService,
+  nichosService,
+  mantencionServices
+} from './mantencion';
+
+// Compatibilidad hacia atrás - mantencionService ahora es un alias
+export { mantencionServices as mantencionService } from './mantencion';
 
 // Servicios de roles y permisos (REFACTORIZADOS)
 export {
@@ -70,8 +99,16 @@ export {
 // Compatibilidad hacia atrás - rolesPermisosService ahora es un alias
 export { rolesPermisosServices as rolesPermisosService } from './roles-permisos';
 
-// Servicios de reportes
-export { reportesService } from './reportesService';
+// Servicios de inserción automática (REFACTORIZADOS)
+export {
+  validationService,
+  consumptionCalculationService,
+  autoInsertionService,
+  autoInsertionServices
+} from './auto-insertion';
+
+// Compatibilidad hacia atrás - insercionAutomaticaService ahora es un alias
+export { autoInsertionServices as insercionAutomaticaService } from './auto-insertion';
 
 // ============================================================================
 // EXPORTACIONES DE TIPOS
@@ -100,13 +137,10 @@ export type {
   EntityListResponse,
   SearchByRutRequest,
   SearchByIdRequest,
-  ValidationResult,
   ValidationError
 } from './administration/types';
 
 export type { OperacionesServiceResponse } from './operacionesService';
-
-export type { MantencionServiceResponse } from './mantencionService';
 
 export type {
   CreateRoleRequest,
@@ -121,3 +155,15 @@ export type {
   AssignUserRolesRequest
 } from './roles-permisos';
 
+export type {
+  ValidationResult,
+  AnomalyDetection,
+  ConsumptionCalculationResult,
+  ReadingForInsertion,
+  AutoInsertionResult,
+  MeterAnalysisResult,
+  MeterValidationRequest,
+  ConsumptionValidationRequest,
+  InsertionBatchRequest,
+  InsertionStatistics
+} from './auto-insertion';

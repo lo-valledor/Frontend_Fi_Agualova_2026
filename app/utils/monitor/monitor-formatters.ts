@@ -5,37 +5,15 @@
 
 /**
  * Safely format a date with fallback for invalid dates
+ *
+ * @deprecated Use formatSafeDate from ~/utils/date-formatter instead
+ * This is a re-export for backward compatibility
+ *
  * @param date - Date string or null
- * @param formatString - Date format (not used currently, for future enhancement)
  * @param fallback - Fallback text for null/invalid dates
  * @returns Formatted date string or fallback
  */
-export function formatSafeDate(
-  date: string | null | undefined,
-  formatString?: string,
-  fallback = 'Sin registro'
-): string {
-  if (!date || date.trim() === '') {
-    return fallback;
-  }
-
-  try {
-    const dateObj = new Date(date);
-
-    if (Number.isNaN(dateObj.getTime())) {
-      return fallback;
-    }
-
-    // Use locale-aware formatting
-    return dateObj.toLocaleString('es-CL', {
-      dateStyle: 'short',
-      timeStyle: 'short',
-      hour12: false
-    });
-  } catch {
-    return fallback;
-  }
-}
+export { formatSafeDate } from '~/utils/date-formatter';
 
 /**
  * Format meter reading value with appropriate decimals

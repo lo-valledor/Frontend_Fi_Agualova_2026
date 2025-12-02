@@ -85,6 +85,7 @@ export type ContratanteOperationResponse = {
 class PropietariosService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -96,13 +97,10 @@ class PropietariosService extends BaseApiService {
    * @returns Respuesta con lista de propietarios
    */
   async getAll(): Promise<ServiceResponse<GetPropietario[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('propietario/buscar');
-        return this.processResponseArray<GetPropietario>(response);
-      },
-      'Error al obtener propietarios'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('propietario/buscar');
+      return this.processResponseArray<GetPropietario>(response);
+    }, 'Error al obtener propietarios');
   }
 
   /**
@@ -111,7 +109,9 @@ class PropietariosService extends BaseApiService {
    * @param id - ID del propietario
    * @returns Respuesta con datos del propietario
    */
-  async getById(id: string | number): Promise<ServiceResponse<GetPropietario | null>> {
+  async getById(
+    id: string | number
+  ): Promise<ServiceResponse<GetPropietario | null>> {
     if (!id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -119,13 +119,10 @@ class PropietariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`propietario/${id}`);
-        return this.processResponseSingle<GetPropietario>(response);
-      },
-      `Error al obtener propietario ${id}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`propietario/${id}`);
+      return this.processResponseSingle<GetPropietario>(response);
+    }, `Error al obtener propietario ${id}`);
   }
 
   /**
@@ -134,7 +131,9 @@ class PropietariosService extends BaseApiService {
    * @param data - Datos del nuevo propietario
    * @returns Respuesta con propietario creado
    */
-  async create(data: CreatePropietarioRequest): Promise<ServiceResponse<GetPropietario | null>> {
+  async create(
+    data: CreatePropietarioRequest
+  ): Promise<ServiceResponse<GetPropietario | null>> {
     if (!data || Object.keys(data).length === 0) {
       return this.handleError(
         new Error('Datos vacíos'),
@@ -142,13 +141,10 @@ class PropietariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.post('propietario', data);
-        return this.processResponseSingle<GetPropietario>(response);
-      },
-      'Error al crear propietario'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.post('propietario', data);
+      return this.processResponseSingle<GetPropietario>(response);
+    }, 'Error al crear propietario');
   }
 
   /**
@@ -157,7 +153,9 @@ class PropietariosService extends BaseApiService {
    * @param data - Datos a actualizar (incluye ID)
    * @returns Respuesta con propietario actualizado
    */
-  async update(data: UpdatePropietarioRequest): Promise<ServiceResponse<GetPropietario | null>> {
+  async update(
+    data: UpdatePropietarioRequest
+  ): Promise<ServiceResponse<GetPropietario | null>> {
     if (!data?.id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -165,14 +163,14 @@ class PropietariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const { id, ...updateData } = data;
-        const response = await this.httpClient.put(`propietario/${id}`, updateData);
-        return this.processResponseSingle<GetPropietario>(response);
-      },
-      `Error al actualizar propietario ${data.id}`
-    );
+    return this.executeDataOperation(async () => {
+      const { id, ...updateData } = data;
+      const response = await this.httpClient.put(
+        `propietario/${id}`,
+        updateData
+      );
+      return this.processResponseSingle<GetPropietario>(response);
+    }, `Error al actualizar propietario ${data.id}`);
   }
 
   /**
@@ -181,7 +179,7 @@ class PropietariosService extends BaseApiService {
    * @param id - ID del propietario a eliminar
    * @returns Respuesta de éxito/error
    */
-  async delete(id: string | number): Promise<ServiceResponse<null>> {
+  async delete(id: string | number): Promise<ServiceResponse<string>> {
     if (!id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -189,12 +187,9 @@ class PropietariosService extends BaseApiService {
       );
     }
 
-    return this.executeOperation(
-      async () => {
-        await this.httpClient.delete(`propietario/${id}`);
-      },
-      `Error al eliminar propietario ${id}`
-    );
+    return this.executeOperation<string>(async () => {
+      await this.httpClient.delete(`propietario/${id}`);
+    }, `Propietario ${id} eliminado exitosamente`);
   }
 
   /**
@@ -203,7 +198,9 @@ class PropietariosService extends BaseApiService {
    * @param clienteId - ID del cliente
    * @returns Respuesta con propietarios del cliente
    */
-  async getByCliente(clienteId: string | number): Promise<ServiceResponse<GetPropietario[]>> {
+  async getByCliente(
+    clienteId: string | number
+  ): Promise<ServiceResponse<GetPropietario[]>> {
     if (!clienteId) {
       return this.handleError(
         new Error('ID de cliente inválido'),
@@ -211,13 +208,12 @@ class PropietariosService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`propietario/cliente/${clienteId}`);
-        return this.processResponseArray<GetPropietario>(response);
-      },
-      `Error al obtener propietarios del cliente ${clienteId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `propietario/cliente/${clienteId}`
+      );
+      return this.processResponseArray<GetPropietario>(response);
+    }, `Error al obtener propietarios del cliente ${clienteId}`);
   }
 }
 
@@ -231,6 +227,7 @@ class PropietariosService extends BaseApiService {
 class ContratantesService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -242,13 +239,10 @@ class ContratantesService extends BaseApiService {
    * @returns Respuesta con lista de contratantes
    */
   async getAll(): Promise<ServiceResponse<GetContratante[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('contratante/buscar');
-        return this.processResponseArray<GetContratante>(response);
-      },
-      'Error al obtener contratantes'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('contratante/buscar');
+      return this.processResponseArray<GetContratante>(response);
+    }, 'Error al obtener contratantes');
   }
 
   /**
@@ -257,7 +251,9 @@ class ContratantesService extends BaseApiService {
    * @param id - ID del contratante
    * @returns Respuesta con datos del contratante
    */
-  async getById(id: string | number): Promise<ServiceResponse<GetContratante | null>> {
+  async getById(
+    id: string | number
+  ): Promise<ServiceResponse<GetContratante | null>> {
     if (!id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -265,13 +261,10 @@ class ContratantesService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`contratante/${id}`);
-        return this.processResponseSingle<GetContratante>(response);
-      },
-      `Error al obtener contratante ${id}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`contratante/${id}`);
+      return this.processResponseSingle<GetContratante>(response);
+    }, `Error al obtener contratante ${id}`);
   }
 
   /**
@@ -280,7 +273,9 @@ class ContratantesService extends BaseApiService {
    * @param data - Datos del nuevo contratante
    * @returns Respuesta con contratante creado
    */
-  async create(data: CreateContratanteRequest): Promise<ServiceResponse<GetContratante | null>> {
+  async create(
+    data: CreateContratanteRequest
+  ): Promise<ServiceResponse<GetContratante | null>> {
     if (!data || Object.keys(data).length === 0) {
       return this.handleError(
         new Error('Datos vacíos'),
@@ -288,13 +283,10 @@ class ContratantesService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.post('contratante', data);
-        return this.processResponseSingle<GetContratante>(response);
-      },
-      'Error al crear contratante'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.post('contratante', data);
+      return this.processResponseSingle<GetContratante>(response);
+    }, 'Error al crear contratante');
   }
 
   /**
@@ -303,7 +295,9 @@ class ContratantesService extends BaseApiService {
    * @param data - Datos a actualizar (incluye ID)
    * @returns Respuesta con contratante actualizado
    */
-  async update(data: UpdateContratanteRequest): Promise<ServiceResponse<GetContratante | null>> {
+  async update(
+    data: UpdateContratanteRequest
+  ): Promise<ServiceResponse<GetContratante | null>> {
     if (!data?.id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -311,14 +305,14 @@ class ContratantesService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const { id, ...updateData } = data;
-        const response = await this.httpClient.put(`contratante/${id}`, updateData);
-        return this.processResponseSingle<GetContratante>(response);
-      },
-      `Error al actualizar contratante ${data.id}`
-    );
+    return this.executeDataOperation(async () => {
+      const { id, ...updateData } = data;
+      const response = await this.httpClient.put(
+        `contratante/${id}`,
+        updateData
+      );
+      return this.processResponseSingle<GetContratante>(response);
+    }, `Error al actualizar contratante ${data.id}`);
   }
 
   /**
@@ -327,7 +321,7 @@ class ContratantesService extends BaseApiService {
    * @param id - ID del contratante a eliminar
    * @returns Respuesta de éxito/error
    */
-  async delete(id: string | number): Promise<ServiceResponse<null>> {
+  async delete(id: string | number): Promise<ServiceResponse<string>> {
     if (!id) {
       return this.handleError(
         new Error('ID inválido'),
@@ -335,12 +329,9 @@ class ContratantesService extends BaseApiService {
       );
     }
 
-    return this.executeOperation(
-      async () => {
-        await this.httpClient.delete(`contratante/${id}`);
-      },
-      `Error al eliminar contratante ${id}`
-    );
+    return this.executeOperation<string>(async () => {
+      await this.httpClient.delete(`contratante/${id}`);
+    }, `Contratante ${id} eliminado exitosamente`);
   }
 
   /**
@@ -349,7 +340,9 @@ class ContratantesService extends BaseApiService {
    * @param clienteId - ID del cliente
    * @returns Respuesta con contratantes del cliente
    */
-  async getByCliente(clienteId: string | number): Promise<ServiceResponse<GetContratante[]>> {
+  async getByCliente(
+    clienteId: string | number
+  ): Promise<ServiceResponse<GetContratante[]>> {
     if (!clienteId) {
       return this.handleError(
         new Error('ID de cliente inválido'),
@@ -357,13 +350,12 @@ class ContratantesService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`contratante/cliente/${clienteId}`);
-        return this.processResponseArray<GetContratante>(response);
-      },
-      `Error al obtener contratantes del cliente ${clienteId}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(
+        `contratante/cliente/${clienteId}`
+      );
+      return this.processResponseArray<GetContratante>(response);
+    }, `Error al obtener contratantes del cliente ${clienteId}`);
   }
 }
 

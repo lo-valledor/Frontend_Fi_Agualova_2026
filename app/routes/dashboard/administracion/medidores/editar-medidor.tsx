@@ -13,7 +13,7 @@ import {
 import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
-import { administracionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
 import api from '~/lib/api';
 
 export function meta() {

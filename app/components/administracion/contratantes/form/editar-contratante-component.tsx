@@ -13,7 +13,7 @@ import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
 import api from '~/lib/api';
-import { administracionService } from '~/services';
+import { administracionService } from '~/services/administracionService';
 import type {
   GetContratante,
   GetComunas,

@@ -29,6 +29,7 @@ export interface GetClientesDataResponse {
 class ClientesService extends BaseApiService {
   /**
    * Constructor
+   * @param httpClient Axios HTTP client instance
    */
   constructor(httpClient = api) {
     super(httpClient);
@@ -40,13 +41,10 @@ class ClientesService extends BaseApiService {
    * @returns Respuesta con lista de clientes
    */
   async getAll(): Promise<ServiceResponse<GetClienteContrato[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('ClienteBuscar');
-        return this.processResponseArray<GetClienteContrato>(response);
-      },
-      'Error al obtener clientes'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('ClienteBuscar');
+      return this.processResponseArray<GetClienteContrato>(response);
+    }, 'Error al obtener clientes');
   }
 
   /**
@@ -57,20 +55,17 @@ class ClientesService extends BaseApiService {
    * @returns Respuesta con clientes y comunas
    */
   async getDataWithCombos(): Promise<ServiceResponse<GetClientesDataResponse>> {
-    return this.executeDataOperation(
-      async () => {
-        const [resClientes, resComunas] = await this.executeParallelOperations([
-          () => this.httpClient.get('ClienteBuscar'),
-          () => this.httpClient.get('comuna/por-region')
-        ]);
+    return this.executeDataOperation(async () => {
+      const results = (await this.executeParallelOperations([
+        () => this.httpClient.get('ClienteBuscar'),
+        () => this.httpClient.get('comuna/por-region')
+      ])) as [any, any];
 
-        return {
-          clientes: this.processResponseArray<GetClienteContrato>(resClientes[0]),
-          comunas: this.processResponseArray<GetComunas>(resComunas[1])
-        };
-      },
-      'Error al obtener datos de clientes'
-    );
+      return {
+        clientes: this.processResponseArray<GetClienteContrato>(results[0]),
+        comunas: this.processResponseArray<GetComunas>(results[1])
+      };
+    }, 'Error al obtener datos de clientes');
   }
 
   /**
@@ -79,7 +74,9 @@ class ClientesService extends BaseApiService {
    * @param rut - RUT del cliente (con o sin formato)
    * @returns Respuesta con datos del cliente encontrado
    */
-  async searchByRut(rut: string): Promise<ServiceResponse<GetClienteContrato | null>> {
+  async searchByRut(
+    rut: string
+  ): Promise<ServiceResponse<GetClienteContrato | null>> {
     if (!rut || typeof rut !== 'string' || rut.trim().length === 0) {
       return this.handleError(
         new Error('RUT inválido'),
@@ -87,13 +84,10 @@ class ClientesService extends BaseApiService {
       );
     }
 
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get(`cliente/rut/${rut}`);
-        return this.processResponseSingle<GetClienteContrato>(response);
-      },
-      `Error al buscar cliente con RUT ${rut}`
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get(`cliente/rut/${rut}`);
+      return this.processResponseSingle<GetClienteContrato>(response);
+    }, `Error al buscar cliente con RUT ${rut}`);
   }
 
   /**
@@ -102,13 +96,10 @@ class ClientesService extends BaseApiService {
    * @returns Respuesta con lista de clientes
    */
   async search(): Promise<ServiceResponse<GetClienteContrato[]>> {
-    return this.executeDataOperation(
-      async () => {
-        const response = await this.httpClient.get('cliente/buscar');
-        return this.processResponseArray<GetClienteContrato>(response);
-      },
-      'Error al buscar clientes'
-    );
+    return this.executeDataOperation(async () => {
+      const response = await this.httpClient.get('cliente/buscar');
+      return this.processResponseArray<GetClienteContrato>(response);
+    }, 'Error al buscar clientes');
   }
 }
 

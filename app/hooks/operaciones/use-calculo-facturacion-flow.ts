@@ -88,8 +88,11 @@ function inicializarFlowSteps(): FlowStep[] {
  * Aplica SOLID: SRP (solo orquesta el flujo), DRY (usa utilities compartidas)
  *
  * @param periodoFormateado - Período en formato MMYYYY
+ * @param periodoFormateado.periodoFormateado
  * @param cicloId - ID del ciclo de facturación
+ * @param periodoFormateado.cicloId
  * @param onFlowCompleted - Callback cuando se completa el flujo
+ * @param periodoFormateado.onFlowCompleted
  * @returns Estados, datos y funciones para ejecutar el flujo
  *
  * @example
@@ -360,6 +363,7 @@ export function useCalculoFacturacionFlow({
 
   /**
    * Ejecuta los pasos del flujo secuencialmente
+   * @param paso
    */
   const ejecutarPasosSiguientes = async (paso: number): Promise<boolean> => {
     switch (paso) {
