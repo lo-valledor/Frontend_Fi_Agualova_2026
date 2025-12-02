@@ -1,0 +1,134 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                  ENERLOVA FRONTEND - CI/CD WORKFLOW                        ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CI/CD CON GITHUB ACTIONS + SELF-HOSTED RUNNER (Arquitectura Recomendada)   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+    Git Push a 'main' branch
+        ↓
+    [GitHub Actions Trigger]
+        ↓
+    ┌─────────────────────────────────────────┐
+    │ 🧪 Continuous Integration (GitHub)      │
+    │ ├─ Setup Node.js 20                      │
+    │ ├─ Install pnpm                          │
+    │ ├─ Type checking (TypeScript)            │
+    │ ├─ ESLint                                │
+    │ ├─ Run tests                             │
+    │ └─ Build project                         │
+    └─────────────────────────────────────────┘
+                     ↓
+                  (Success?)
+                     ↓
+    ┌─────────────────────────────────────────┐
+    │ 🚀 Deploy to Production                  │
+    │ (runs-on: self-hosted @ 192.168.1.139) │
+    │ ├─ Build Docker image (local)            │
+    │ ├─ Stop previous container               │
+    │ ├─ Run new container                     │
+    │ ├─ Health check (15 intentos)            │
+    │ └─ Cleanup                               │
+    └─────────────────────────────────────────┘
+                     ↓
+                  (Success!)
+                     ↓
+    ✓ Aplicación desplegada en
+      http://192.168.1.139:8080
+
+    ⚠️  Ventajas de esta arquitectura:
+    ✓ No requiere SSH keys en el servidor
+    ✓ Todo configurado en GitHub Secrets
+    ✓ Runner solo ejecuta comandos locales (docker build/run)
+    ✓ Más simple y seguro
+
+    Puertos:
+    ✓ Contenedor (nginx) escucha en puerto 80
+    ✓ Host expone puerto 8080
+    ✓ Acceso: http://192.168.1.139:8080
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                           CONFIGURACIÓN REQUERIDA                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+PASO 1: GitHub Secrets (para CI/CD)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Settings → Secrets and variables → Actions
+
+Agregar:
+├─ VITE_API_URL=http://192.168.1.139:8081/Enerlova
+└─ STAGING_API_URL=http://192.168.1.139:8081/Enerlova-staging (opcional)
+
+⚠️  NO se necesitan SSH keys - El runner ejecuta todo localmente
+
+
+PASO 2: Instalar GitHub Actions Runner en el Servidor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+En 192.168.1.139:
+
+$ mkdir -p /home/tecnologia/github-runner
+$ cd /home/tecnologia/github-runner
+$ wget https://github.com/actions/runner/releases/download/v2.318.0/actions-runner-linux-x64-2.318.0.tar.gz
+$ tar xzf actions-runner-linux-x64-2.318.0.tar.gz
+$ ./config.sh --url https://github.com/tu-usuario/tu-repo --token TU_TOKEN
+$ ./svc.sh install
+$ ./svc.sh start
+
+
+PASO 3: Verificar que el Runner está Conectado
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+En GitHub → Settings → Actions → Runners
+
+Deberías ver el runner registrado como "self-hosted" en línea (verde)
+
+El workflow se dispara automáticamente al hacer push a main:
+  - Build Docker image en el servidor
+  - Run new container
+  - Health check
+  - Deploy completado ✓
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                              DOCKER COMMANDS                              ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+Ver logs:
+$ docker logs enerlova-frontend-prod
+$ docker logs -f enerlova-frontend-prod  (seguir)
+
+Ver contenedores:
+$ docker ps -a
+
+Detener:
+$ docker stop enerlova-frontend-prod
+
+Iniciar:
+$ docker start enerlova-frontend-prod
+
+Remover:
+$ docker rm enerlova-frontend-prod
+
+Stats:
+$ docker stats enerlova-frontend-prod
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                          TROUBLESHOOTING                                  ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+❌ "Port 80 already in use"
+→ $ sudo lsof -i :80
+→ Kill process o usar puerto diferente
+
+❌ "Connection refused"
+→ $ docker logs enerlova-frontend-prod
+→ Verificar variables de entorno
+
+❌ "Health check failed"
+→ Esperar más tiempo (algunos servidores son lentos)
+→ Ver logs del contenedor
+
+❌ "Runner no conecta"
+→ Ver logs: tail -f /home/tecnologia/github-runner/_diag/Runner_*.log
+→ Verificar token de GitHub
+
+═══════════════════════════════════════════════════════════════════════════════

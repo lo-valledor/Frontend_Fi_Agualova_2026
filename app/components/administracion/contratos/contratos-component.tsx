@@ -10,7 +10,14 @@ import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
-import type { GetContratos } from '~/types/administracion';
+import type { ContratoModalState, GetContratos } from '~/types/administracion';
+import {
+  createInitialContratoModalState,
+  getContratoCreateUrl,
+  getContratoEditUrl,
+  getContratoPermissions,
+  isValidContratoForOperation
+} from '~/utils/administracion';
 
 import { columns } from './columns';
 import { ContractDetailsModal } from './contract-details-modal';
@@ -22,17 +29,31 @@ import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { ExportButtons } from './export-buttons';
 import { FilterSummary } from './filter-summary';
 
+const CONTRATOS_ROUTE = '/dashboard/administracion/contratos';
+
+/**
+ * Componente principal para la gestión de contratos
+ * Implementa estado unificado de modales y manejo de errores centralizado
+ * @param root0
+ * @param root0.contratos
+ */
 export default function ContratosComponent({
   contratos
 }: {
   readonly contratos: GetContratos[];
 }) {
+  // Estado de datos
   const [contracts, setContracts] = useState<GetContratos[]>(contratos);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedContract, setSelectedContract] = useState<GetContratos | null>(
     null
   );
+
+  // Estado unificado de modales
+  const [modalsState, setModalsState] = useState<ContratoModalState>(
+    createInitialContratoModalState()
+  );
+
+  // Estado de filtros
   const [filters, setFilters] = useState<ContractFilters>({
     tipoContrato: 'all',
     cicloFacturacion: 'all',
@@ -44,21 +65,32 @@ export default function ContratosComponent({
     activo: 'all'
   });
 
-  // Permisos
+  // Dependencias
+  const navigate = useNavigate();
   const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/administracion/contratos';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
+
+  // Permisos del usuario actual
+  const permissions = getContratoPermissions(
+    canCreate,
+    canEdit,
+    CONTRATOS_ROUTE
+  );
 
   const { filteredContracts, filterStats, filterOptions } = useContractFilters(
     contracts,
     filters
   );
 
+  /**
+   * Actualiza los filtros aplicados
+   */
   const handleFiltersChange = useCallback((newFilters: ContractFilters) => {
     setFilters(newFilters);
   }, []);
 
+  /**
+   * Limpia todos los filtros aplicados
+   */
   const handleClearFilters = useCallback(() => {
     setFilters({
       tipoContrato: 'all',
@@ -72,36 +104,72 @@ export default function ContratosComponent({
     });
   }, []);
 
-  const router = useNavigate();
+  /**
+   * Navega a la página de crear contrato
+   */
+  const handleAddContract = useCallback(() => {
+    navigate(getContratoCreateUrl());
+  }, [navigate]);
 
+  /**
+   * Navega a la página de editar contrato
+   */
   const handleEditContract = useCallback(
     (contract: GetContratos) => {
-      router(`/dashboard/administracion/contratos/${contract.codigoContrato}`);
+      navigate(getContratoEditUrl(contract.codigoContrato));
     },
-    [router]
+    [navigate]
   );
 
+  /**
+   * Abre el diálogo de confirmación de eliminación
+   */
   const handleDeleteContract = useCallback((contract: GetContratos) => {
     setSelectedContract(contract);
-    setIsDeleteDialogOpen(true);
+    setModalsState(prev => ({
+      ...prev,
+      delete: { isOpen: true }
+    }));
   }, []);
 
+  /**
+   * Abre el modal de detalles del contrato
+   */
   const handleViewDetails = useCallback((contract: GetContratos) => {
     setSelectedContract(contract);
-    setIsDetailsModalOpen(true);
+    setModalsState(prev => ({
+      ...prev,
+      details: { isOpen: true }
+    }));
   }, []);
 
+  /**
+   * Confirma y ejecuta la eliminación del contrato
+   * Implementa early returns y validación centralizada
+   */
   const handleConfirmDelete = useCallback(() => {
-    if (selectedContract) {
-      setContracts(prev =>
-        prev.filter(
-          contract =>
-            contract.codigoContrato !== selectedContract.codigoContrato
-        )
-      );
-      setSelectedContract(null);
+    // Early return: validar que exista contrato seleccionado
+    if (!isValidContratoForOperation(selectedContract)) {
+      setModalsState(prev => ({
+        ...prev,
+        delete: { isOpen: false }
+      }));
+      return;
     }
-    setIsDeleteDialogOpen(false);
+
+    // Eliminar contrato de la lista
+    setContracts(prev =>
+      prev.filter(
+        contract => contract.codigoContrato !== selectedContract.codigoContrato
+      )
+    );
+    setSelectedContract(null);
+
+    // Cerrar diálogo
+    setModalsState(prev => ({
+      ...prev,
+      delete: { isOpen: false }
+    }));
   }, [selectedContract]);
 
   const columnsData = useMemo(
@@ -110,20 +178,20 @@ export default function ContratosComponent({
         onEdit: handleEditContract,
         onDelete: handleDeleteContract,
         onViewDetails: handleViewDetails,
-        canEdit: hasEditPermission
+        canEdit: permissions.hasEditPermission
       }),
     [
       handleEditContract,
       handleDeleteContract,
       handleViewDetails,
-      hasEditPermission
+      permissions.hasEditPermission
     ]
   );
 
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
-        {/* Header */}
+        {/* Header con acciones */}
         <ModernHeader
           title='Contratos'
           description='Gestiona los contratos del sistema'
@@ -135,14 +203,12 @@ export default function ContratosComponent({
                 isFiltered={filterStats.isFiltered}
               />
               <Button
-                onClick={() =>
-                  router('/dashboard/administracion/contratos/crear')
-                }
+                onClick={handleAddContract}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
+                disabled={!permissions.hasCreatePermission}
                 title={
-                  !hasCreatePermission
+                  !permissions.hasCreatePermission
                     ? 'No tiene permisos para crear contratos'
                     : ''
                 }
@@ -208,16 +274,28 @@ export default function ContratosComponent({
           </CardContent>
         </Card>
 
+        {/* Diálogo de confirmación de eliminación */}
         <DeleteConfirmationDialog
-          isOpen={isDeleteDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
+          isOpen={modalsState.delete.isOpen}
+          onClose={() =>
+            setModalsState(prev => ({
+              ...prev,
+              delete: { isOpen: false }
+            }))
+          }
           onConfirm={handleConfirmDelete}
           contract={selectedContract}
         />
 
+        {/* Modal de detalles del contrato */}
         <ContractDetailsModal
-          isOpen={isDetailsModalOpen}
-          onClose={() => setIsDetailsModalOpen(false)}
+          isOpen={modalsState.details.isOpen}
+          onClose={() =>
+            setModalsState(prev => ({
+              ...prev,
+              details: { isOpen: false }
+            }))
+          }
           contract={selectedContract}
         />
       </div>

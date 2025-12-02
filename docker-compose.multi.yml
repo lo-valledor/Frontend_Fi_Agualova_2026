@@ -10,7 +10,6 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: http://192.168.1.139:8081/Enerlova
-        VITE_API_ENERLINK_URL: http://192.168.1.139:8081/api
         VITE_ENV_MODE: production
     ports:
       - "8080:80"
@@ -30,7 +29,6 @@ services:
       target: development-nginx
       args:
         VITE_API_URL: http://192.168.1.139:8082/Enerlova
-        VITE_API_ENERLINK_URL: http://192.168.1.139:8082/api
         VITE_ENV_MODE: development
         NODE_ENV: development
     ports:

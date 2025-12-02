@@ -7,12 +7,10 @@ import type { GetPropietario } from '~/types/administracion';
 
 interface PropietariosColumnsProps {
   onDetails: (propietario: GetPropietario) => void;
-  detailingPropietarioRut: string | null;
 }
 
 export const columns = ({
-  onDetails,
-  detailingPropietarioRut
+  onDetails
 }: PropietariosColumnsProps): ColumnDef<GetPropietario>[] => [
   {
     accessorKey: 'rut',
@@ -146,7 +144,6 @@ export const columns = ({
             showView={true}
             showEdit={false}
             showDelete={false}
-            loadingView={detailingPropietarioRut === row.original.rut}
           />
         </div>
       );

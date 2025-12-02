@@ -713,3 +713,164 @@ export interface MedidorFormData {
   primeraLectura: string;
   fechaPrimeraLectura: string;
 }
+
+// Tipos específicos para Usuarios Component
+
+export type UsuarioModalMode = 'add' | 'edit';
+
+/**
+ * Estado unificado para todos los modales en el componente de usuarios
+ * Reduce la cantidad de useState necesarios y mejora la mantenibilidad
+ */
+export interface UsuarioModalState {
+  userForm: {
+    isOpen: boolean;
+    mode: UsuarioModalMode;
+  };
+  deleteDialog: {
+    isOpen: boolean;
+  };
+  permissions: {
+    isOpen: boolean;
+  };
+  roles: {
+    isOpen: boolean;
+  };
+}
+
+/**
+ * Información de permisos del usuario autenticado para la gestión de usuarios
+ */
+export interface UsuarioPermissions {
+  hasCreatePermission: boolean;
+  hasEditPermission: boolean;
+}
+
+/**
+ * Información de error normalizada para manejo consistente
+ */
+export interface UsuarioErrorInfo {
+  message: string;
+  isNetworkError: boolean;
+}
+
+// Tipos específicos para Clientes Component
+
+/**
+ * Estado unificado para los modales del componente de clientes
+ */
+export interface ClienteModalState {
+  details: {
+    isOpen: boolean;
+  };
+}
+
+/**
+ * Información de permisos para el módulo de clientes
+ */
+export interface ClientePermissions {
+  hasCreatePermission: boolean;
+  hasEditPermission: boolean;
+}
+
+/**
+ * Información de carga de detalles de cliente
+ */
+export interface ClienteLoadingState {
+  isLoading: boolean;
+  rutLoading: string | null;
+}
+
+/**
+ * Información de error normalizada para clientes
+ */
+export interface ClienteErrorInfo {
+  message: string;
+  isNetworkError: boolean;
+}
+
+// Tipos específicos para Medidores Component
+
+/**
+ * Estado unificado para los modales del componente de medidores
+ */
+export interface MedidorModalState {
+  delete: {
+    isOpen: boolean;
+  };
+  asociarSubempalme: {
+    isOpen: boolean;
+  };
+}
+
+/**
+ * Información de permisos para el módulo de medidores
+ */
+export interface MedidorPermissions {
+  hasCreatePermission: boolean;
+  hasEditPermission: boolean;
+}
+
+/**
+ * Información de error normalizada para medidores
+ */
+export interface MedidorErrorInfo {
+  message: string;
+  isNetworkError: boolean;
+}
+
+// Tipos específicos para Contratos Component
+
+/**
+ * Estado unificado para los modales del componente de contratos
+ */
+export interface ContratoModalState {
+  delete: {
+    isOpen: boolean;
+  };
+  details: {
+    isOpen: boolean;
+  };
+}
+
+/**
+ * Información de permisos para el módulo de contratos
+ */
+export interface ContratoPermissions {
+  hasCreatePermission: boolean;
+  hasEditPermission: boolean;
+}
+
+/**
+ * Información de error normalizada para contratos
+ */
+export interface ContratoErrorInfo {
+  message: string;
+  isNetworkError: boolean;
+}
+
+// Tipos específicos para Propietarios Component
+
+/**
+ * Estado unificado para los modales del componente de propietarios
+ */
+export interface PropietarioModalState {
+  details: {
+    isOpen: boolean;
+  };
+}
+
+/**
+ * Información de permisos para el módulo de propietarios
+ */
+export interface PropietarioPermissions {
+  hasEditPermission: boolean;
+}
+
+/**
+ * Información de error normalizada para propietarios
+ */
+export interface PropietarioErrorInfo {
+  message: string;
+  isNetworkError: boolean;
+}

@@ -1,7 +1,7 @@
 import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
-import React, { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
@@ -10,7 +10,17 @@ import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { administracionService } from '~/services';
-import type { GetContratante, GetPropietario } from '~/types/administracion';
+import type {
+  GetContratante,
+  GetPropietario,
+  PropietarioModalState
+} from '~/types/administracion';
+import {
+  createInitialPropietarioModalState,
+  extractPropietarioErrorMessage,
+  getPropietarioPermissions,
+  getSyncStatusMessage
+} from '~/utils/administracion';
 
 import { columns } from './columns';
 import { PropietarioDetailsModal } from './detalles-propietario';
@@ -29,15 +39,31 @@ interface FilterOptions {
   comunas: string[];
 }
 
+const PROPIETARIOS_ROUTE = '/dashboard/administracion/propietarios';
+
+/**
+ * Componente principal para la gestión de propietarios
+ * Implementa estado unificado de modales y manejo de errores centralizado
+ * @param root0
+ * @param root0.propietarios
+ */
 export default function PropietariosComponent({
   propietarios
 }: Readonly<PropietariosComponentProps>) {
+  // Estado de datos
   const [propietariosList] = useState<GetPropietario[]>(propietarios);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [detailedPropietario, setDetailedPropietario] =
     useState<GetPropietario | null>(null);
-  const [detailingPropietarioRut] = useState<string | null>(null);
+
+  // Estado unificado de modales
+  const [modalsState, setModalsState] = useState<PropietarioModalState>(
+    createInitialPropietarioModalState()
+  );
+
+  // Estado de sincronización
   const [isSyncing, setIsSyncing] = useState(false);
+
+  // Estado de filtros
   const [filters, setFilters] = useState<PropietarioFilters>({
     comuna: 'all',
     tieneTelefono: 'all',
@@ -45,10 +71,11 @@ export default function PropietariosComponent({
     tieneEmail: 'all'
   });
 
-  // Permisos
+  // Dependencias
   const { canEdit } = useAuth();
-  const route = '/dashboard/administracion/propietarios';
-  const hasEditPermission = canEdit(route);
+
+  // Permisos del usuario actual
+  const permissions = getPropietarioPermissions(canEdit, PROPIETARIOS_ROUTE);
 
   // Filter options from data
   const filterOptions = useMemo((): FilterOptions => {
@@ -133,52 +160,79 @@ export default function PropietariosComponent({
     { header: 'Email', key: 'email' }
   ];
 
-  const handleDetailsPropietario = (propietario: GetPropietario) => {
+  /**
+   * Abre el modal de detalles del propietario
+   */
+  const handleDetailsPropietario = useCallback((propietario: GetPropietario) => {
     setDetailedPropietario(propietario);
-    setIsDetailsOpen(true);
-  };
+    setModalsState(prev => ({
+      ...prev,
+      details: { isOpen: true }
+    }));
+  }, []);
 
-  const handleSyncPropietarios = async () => {
+  /**
+   * Sincroniza propietarios con locales
+   * Implementa manejo de errores centralizado
+   */
+  const handleSyncPropietarios = useCallback(async () => {
+    // Early return: validar que el usuario tenga permisos
+    if (!permissions.hasEditPermission) {
+      toast.error('No tiene permisos para sincronizar propietarios');
+      return;
+    }
+
     setIsSyncing(true);
     try {
       const result = await administracionService.sincronizarPropietarios();
 
+      // Early return: validar respuesta con error
       if (result.error) {
         toast.error(result.error);
         return;
       }
 
+      // Mostrar éxito y recargar
       if (result.data) {
         toast.success(
           `${result.data.mensaje} (${result.data.registrosAfectados} registros afectados)`
         );
-        // Optionally reload the page or refresh data
         globalThis.location.reload();
       }
     } catch (error) {
-      toast.error('Error al sincronizar propietarios', error as any);
+      const errorInfo = extractPropietarioErrorMessage(
+        error,
+        'Error al sincronizar propietarios'
+      );
+      toast.error(errorInfo.message);
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [permissions.hasEditPermission]);
 
-  const handleFiltersChange = (newFilters: PropietarioFilters) => {
+  /**
+   * Actualiza los filtros aplicados
+   */
+  const handleFiltersChange = useCallback((newFilters: PropietarioFilters) => {
     setFilters(newFilters);
-  };
+  }, []);
 
-  const handleClearFilters = () => {
+  /**
+   * Limpia todos los filtros aplicados
+   */
+  const handleClearFilters = useCallback(() => {
     setFilters({
       comuna: 'all',
       tieneTelefono: 'all',
       tieneCelular: 'all',
       tieneEmail: 'all'
     });
-  };
+  }, []);
 
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
-        {/* Header */}
+        {/* Header con acciones */}
         <ModernHeader
           title='Propietarios'
           description='Gestiona los propietarios del sistema'
@@ -194,15 +248,17 @@ export default function PropietariosComponent({
                 onClick={handleSyncPropietarios}
                 className='bg-emerald-600 hover:bg-emerald-700'
                 size='sm'
-                disabled={isSyncing || !hasEditPermission}
+                disabled={isSyncing || !permissions.hasEditPermission}
                 title={
-                  !hasEditPermission ? 'No tiene permisos para sincronizar' : ''
+                  !permissions.hasEditPermission
+                    ? 'No tiene permisos para sincronizar'
+                    : ''
                 }
               >
                 <RefreshCw
                   className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
                 />
-                {isSyncing ? 'Sincronizando...' : 'Sincronizar con Locales'}
+                {getSyncStatusMessage(isSyncing)}
               </Button>
             </div>
           }
@@ -224,13 +280,12 @@ export default function PropietariosComponent({
           isFiltered={filterStats.isFiltered}
         />
 
-        {/* Table */}
+        {/* Tabla */}
         <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
             <VirtualDataTable
               columns={columns({
-                onDetails: handleDetailsPropietario,
-                detailingPropietarioRut
+                onDetails: handleDetailsPropietario
               })}
               data={filteredPropietarios}
               searchPlaceholder='Buscar por RUT, nombre o email...'
@@ -240,10 +295,15 @@ export default function PropietariosComponent({
           </CardContent>
         </Card>
 
-        {/* Modal de Detalles */}
+        {/* Modal de detalles del propietario */}
         <PropietarioDetailsModal
-          isOpen={isDetailsOpen}
-          onClose={() => setIsDetailsOpen(false)}
+          isOpen={modalsState.details.isOpen}
+          onClose={() =>
+            setModalsState(prev => ({
+              ...prev,
+              details: { isOpen: false }
+            }))
+          }
           propietario={detailedPropietario}
         />
       </div>

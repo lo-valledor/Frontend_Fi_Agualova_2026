@@ -43,6 +43,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 250,
     minSize: 250,
     maxSize: 250
   },
@@ -69,6 +70,7 @@ export const columns = ({
         </span>
       </Badge>
     ),
+    size: 100,
     minSize: 80,
     maxSize: 120
   },
@@ -87,6 +89,7 @@ export const columns = ({
         </span>
       </div>
     ),
+    size: 160,
     minSize: 120,
     maxSize: 200
   },
@@ -105,6 +108,7 @@ export const columns = ({
         </span>
       </div>
     ),
+    size: 120,
     minSize: 100,
     maxSize: 140
   },
@@ -124,6 +128,7 @@ export const columns = ({
         </span>
       </div>
     ),
+    size: 125,
     minSize: 110,
     maxSize: 140
   },
@@ -142,6 +147,7 @@ export const columns = ({
         </span>
       </div>
     ),
+    size: 120,
     minSize: 110,
     maxSize: 130
   },
@@ -160,6 +166,7 @@ export const columns = ({
         </span>
       </div>
     ),
+    size: 150,
     minSize: 130,
     maxSize: 170
   },
@@ -184,6 +191,7 @@ export const columns = ({
         </div>
       );
     },
+    size: 90,
     minSize: 80,
     maxSize: 100,
     enableSorting: false

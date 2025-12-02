@@ -2,7 +2,6 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCallback, useState } from 'react';
-
 import { useNavigate } from 'react-router';
 
 import { useAuth } from '~/context/AuthContext';
@@ -19,11 +18,24 @@ import {
 import { useExportClientes } from '~/hooks/administracion/use-export-clientes';
 import { useClientes } from '~/hooks/use-administracion';
 import type {
+  ClienteModalState,
+  ClienteLoadingState,
   GetClientes,
   GetClientesByRut,
   GetComunas,
   GetGiros
 } from '~/types/administracion';
+import {
+  createInitialClienteModalState,
+  createInitialLoadingState,
+  extractClienteErrorMessage,
+  getClientePermissions,
+  getClienteEditUrl,
+  normalizeClienteDetallado,
+  isValidDetailedCliente,
+  CLIENTES_CREAR_ROUTE,
+  CLIENTES_ROUTE
+} from '~/utils/administracion';
 
 import { ClientFiltersComponent } from './client-filters';
 import { columns } from './columns';
@@ -31,21 +43,30 @@ import { ClienteDetailsModal } from './detalles-cliente';
 import { FilterSummary } from './filter-summary';
 
 interface ClientesComponentProps {
-  clientes: GetClientes[];
-  giros: GetGiros[];
-  comunas: GetComunas[];
+  readonly clientes: GetClientes[];
+  readonly giros: GetGiros[];
+  readonly comunas: GetComunas[];
 }
 
 export default function ClientesComponent({
   clientes
-}: Readonly<ClientesComponentProps>) {
+}: ClientesComponentProps) {
+  // Estado de datos
   const [clients] = useState<GetClientes[]>(clientes);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [detailedCliente, setDetailedCliente] = useState<GetClientesByRut>();
-  const [editingClienteRut] = useState<string | null>(null);
-  const [detailingClienteRut, setDetailingClienteRut] = useState<string | null>(
-    null
+  const [detailedCliente, setDetailedCliente] =
+    useState<GetClientesByRut | null>(null);
+
+  // Estado unificado de modales
+  const [modalsState, setModalsState] = useState<ClienteModalState>(
+    createInitialClienteModalState()
   );
+
+  // Estado de carga
+  const [loadingState, setLoadingState] = useState<ClienteLoadingState>(
+    createInitialLoadingState()
+  );
+
+  // Estado de filtros
   const [filters, setFilters] = useState<ClientFilters>({
     esEmpresa: 'all',
     comuna: 'all',
@@ -55,14 +76,13 @@ export default function ClientesComponent({
     tieneEmail: 'all'
   });
 
-  const router = useNavigate();
+  // Dependencias
+  const navigate = useNavigate();
   const { getClienteByRut } = useClientes();
-
-  // Permisos
   const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/administracion/clientes';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
+
+  // Permisos del usuario actual
+  const permissions = getClientePermissions(canCreate, canEdit, CLIENTES_ROUTE);
 
   const { filteredClients, filterStats, filterOptions } = useClientFilters(
     clients,
@@ -70,45 +90,85 @@ export default function ClientesComponent({
   );
   const { clientColumns } = useExportClientes();
 
+  /**
+   * Navega a la página de crear cliente
+   */
   const handleAddCliente = useCallback(() => {
-    router('/dashboard/administracion/clientes/crear');
-  }, [router]);
+    navigate(CLIENTES_CREAR_ROUTE);
+  }, [navigate]);
 
+  /**
+   * Navega a la página de editar cliente
+   */
   const handleEditCliente = useCallback(
     (cliente: GetClientes) => {
-      router(`/dashboard/administracion/clientes/${cliente.rut}`);
+      navigate(getClienteEditUrl(cliente.rut));
     },
-    [router]
+    [navigate]
   );
 
+  /**
+   * Carga y muestra los detalles de un cliente
+   * Elimina IIFE anidado por un useCallback adecuado
+   * Implementa early returns para validaciones
+   */
   const handleDetailsCliente = useCallback(
-    (cliente: GetClientes) => {
-      (async () => {
-        try {
-          setDetailingClienteRut(cliente.rut);
-          const clienteDetallado = await getClienteByRut(cliente.rut);
-          // Convertir GetClienteById a GetClientesByRut mapeando email a correo
-          const clienteConvertido: GetClientesByRut = {
-            ...(clienteDetallado as unknown as GetClientesByRut),
-            correo: clienteDetallado.email
-          };
-          setDetailedCliente(clienteConvertido);
-          setIsDetailsOpen(true);
-        } catch (error) {
-          toast.error('Error al cargar los detalles del cliente', error as any);
-          setIsDetailsOpen(false);
-        } finally {
-          setDetailingClienteRut(null);
+    async (cliente: GetClientes) => {
+      // Early return: validar cliente
+      if (!cliente?.rut) {
+        toast.error('Cliente inválido');
+        return;
+      }
+
+      // Comenzar carga
+      setLoadingState({
+        isLoading: true,
+        rutLoading: cliente.rut
+      });
+
+      try {
+        const clienteDetallado = await getClienteByRut(cliente.rut);
+        console.log(clienteDetallado);
+        // Early return: validar respuesta
+        if (!isValidDetailedCliente(clienteDetallado)) {
+          toast.error('Los detalles del cliente no son válidos');
+          return;
         }
-      })();
+
+        // Normalizar y mostrar
+        const clienteNormalizado = normalizeClienteDetallado(clienteDetallado);
+        setDetailedCliente(clienteNormalizado);
+        setModalsState(prev => ({
+          ...prev,
+          details: { isOpen: true }
+        }));
+      } catch (error) {
+        const errorInfo = extractClienteErrorMessage(
+          error,
+          'Error al cargar los detalles del cliente'
+        );
+        toast.error(errorInfo.message);
+      } finally {
+        // Finalizar carga
+        setLoadingState({
+          isLoading: false,
+          rutLoading: null
+        });
+      }
     },
     [getClienteByRut]
   );
 
+  /**
+   * Actualiza los filtros aplicados
+   */
   const handleFiltersChange = useCallback((newFilters: ClientFilters) => {
     setFilters(newFilters);
   }, []);
 
+  /**
+   * Limpia todos los filtros aplicados
+   */
   const handleClearFilters = useCallback(() => {
     setFilters({
       esEmpresa: 'all',
@@ -123,7 +183,7 @@ export default function ClientesComponent({
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
-        {/* Header */}
+        {/* Header con acciones */}
         <ModernHeader
           title='Clientes'
           description='Gestiona los clientes del sistema'
@@ -139,11 +199,11 @@ export default function ClientesComponent({
                 onClick={handleAddCliente}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
+                disabled={!permissions.hasCreatePermission}
                 title={
-                  hasCreatePermission
-                    ? ''
-                    : 'No tiene permisos para crear clientes'
+                  !permissions.hasCreatePermission
+                    ? 'No tiene permisos para crear clientes'
+                    : ''
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -153,7 +213,7 @@ export default function ClientesComponent({
           }
         />
 
-        {/* Filters */}
+        {/* Componente de filtros */}
         <ClientFiltersComponent
           filters={filters}
           onFiltersChange={handleFiltersChange}
@@ -161,7 +221,7 @@ export default function ClientesComponent({
           filterOptions={filterOptions}
         />
 
-        {/* Filter Summary */}
+        {/* Resumen de filtros aplicados */}
         <FilterSummary
           totalClients={clients.length}
           filteredClients={filteredClients.length}
@@ -169,7 +229,7 @@ export default function ClientesComponent({
           isFiltered={filterStats.isFiltered}
         />
 
-        {/* Table */}
+        {/* Tabla de clientes */}
         <Card className='border border-border shadow-sm'>
           <CardContent className='p-4'>
             <div className='overflow-x-auto'>
@@ -177,9 +237,9 @@ export default function ClientesComponent({
                 columns={columns({
                   onDetails: handleDetailsCliente,
                   onEdit: handleEditCliente,
-                  editingClienteRut,
-                  detailingClienteRut,
-                  canEdit: hasEditPermission
+                  editingClienteRut: null,
+                  detailingClienteRut: loadingState.rutLoading,
+                  canEdit: permissions.hasEditPermission
                 })}
                 data={filteredClients}
                 searchPlaceholder='Buscar por RUT, nombre o email...'
@@ -190,11 +250,16 @@ export default function ClientesComponent({
           </CardContent>
         </Card>
 
-        {/* Modal de Detalles */}
+        {/* Modal de detalles de cliente */}
         <ClienteDetailsModal
-          isOpen={isDetailsOpen}
-          onClose={() => setIsDetailsOpen(false)}
-          cliente={detailedCliente ?? null}
+          isOpen={modalsState.details.isOpen}
+          onClose={() =>
+            setModalsState(prev => ({
+              ...prev,
+              details: { isOpen: false }
+            }))
+          }
+          cliente={detailedCliente}
         />
       </div>
     </div>

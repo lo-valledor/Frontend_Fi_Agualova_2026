@@ -12,6 +12,7 @@ import type { GetMedidores } from '~/types/administracion';
 interface MedidoresColumnsProps {
   onEdit: (medidor: GetMedidores) => void;
   onAsociarSubempalme: (medidor: GetMedidores) => void;
+  onDelete: (medidor: GetMedidores) => void;
   canEdit?: boolean;
 }
 

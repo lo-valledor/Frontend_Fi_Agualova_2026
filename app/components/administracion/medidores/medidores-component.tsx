@@ -2,18 +2,29 @@ import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 
 import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ExportButton } from '~/components/shared/export-button';
+import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useExportMedidores } from '~/hooks/administracion/use-export-medidores';
 import { useMedidorFilters } from '~/hooks/administracion/use-medidor-filters';
 import api from '~/lib/api';
-import type { GetMedidores } from '~/types/administracion';
+import type { GetMedidores, MedidorModalState } from '~/types/administracion';
 import type { Marca } from '~/types/mantencion';
+import {
+  createInitialMedidorModalState,
+  extractMedidorErrorMessage,
+  getMedidorEditUrl,
+  getMedidorPermissions,
+  isValidMedidorForOperation,
+  MEDIDORES_CREAR_ROUTE,
+  MEDIDORES_ROUTE
+} from '~/utils/administracion';
 
 import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
 import { columns } from './columns';
@@ -23,22 +34,25 @@ import {
   type MedidorFilters,
   MedidorFiltersComponent
 } from './medidor-filters';
-import { ModernHeader } from '~/components/shared/modern-header';
-import { useNavigate } from 'react-router';
+
+interface MedidoresComponentProps {
+  readonly medidores: GetMedidores[];
+  readonly marcas: Marca[];
+}
 
 export default function MedidoresComponent({
   medidores: initialMedidores
-}: Readonly<{
-  medidores: GetMedidores[];
-  marcas: Marca[];
-}>) {
+}: MedidoresComponentProps) {
+  // Estado de datos
   const [medidores, setMedidores] = useState<GetMedidores[]>(initialMedidores);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isAsociarModalOpen, setIsAsociarModalOpen] = useState(false);
-  const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(
-    null
+  const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(null);
+
+  // Estado unificado de modales
+  const [modalsState, setModalsState] = useState<MedidorModalState>(
+    createInitialMedidorModalState()
   );
-  const [, setIsLoading] = useState(false);
+
+  // Estado de carga (sin estado muerto)
   const [isFetching, setIsFetching] = useState(false);
 
   // Estados para filtros
@@ -63,14 +77,16 @@ export default function MedidoresComponent({
     filters
   );
 
+  // Dependencias
   const navigate = useNavigate();
-
-  // Permisos
   const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/administracion/medidores';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
+  // Permisos del usuario actual
+  const permissions = getMedidorPermissions(canCreate, canEdit, MEDIDORES_ROUTE);
+
+  /**
+   * Sincronizar medidores cuando los datos del loader cambian
+   */
   useEffect(() => {
     setMedidores(initialMedidores);
   }, [initialMedidores]);
@@ -110,38 +126,78 @@ export default function MedidoresComponent({
     }
   }, []);
 
+  /**
+   * Navega a la página de crear medidor
+   */
   const handleAdd = useCallback(() => {
-    navigate('/dashboard/administracion/medidores/crear');
+    navigate(MEDIDORES_CREAR_ROUTE);
   }, [navigate]);
 
+  /**
+   * Navega a la página de editar medidor
+   */
   const handleEdit = useCallback(
     (medidor: GetMedidores) => {
-      navigate(`/dashboard/administracion/medidores/${medidor.codigo}`);
+      navigate(getMedidorEditUrl(medidor.codigo));
     },
     [navigate]
   );
 
+  /**
+   * Abre el modal para asociar subempalme a un medidor
+   */
   const handleAsociarSubempalme = useCallback((medidor: GetMedidores) => {
     setSelectedMedidor(medidor);
-    setIsAsociarModalOpen(true);
+    setModalsState((prev) => ({
+      ...prev,
+      asociarSubempalme: { isOpen: true }
+    }));
   }, []);
 
-  const handleConfirmDelete = async () => {
-    if (!selectedMedidor) return;
+  /**
+   * Abre el diálogo de confirmación de eliminación
+   */
+  const handleDeleteMedidor = useCallback((medidor: GetMedidores) => {
+    setSelectedMedidor(medidor);
+    setModalsState((prev) => ({
+      ...prev,
+      delete: { isOpen: true }
+    }));
+  }, []);
 
-    setIsLoading(true);
+  /**
+   * Confirma y ejecuta la eliminación del medidor
+   * Implementa early returns y manejo de errores centralizado
+   */
+  const handleConfirmDelete = useCallback(async () => {
+    // Early return: validar que exista medidor seleccionado
+    if (!isValidMedidorForOperation(selectedMedidor)) {
+      setModalsState((prev) => ({
+        ...prev,
+        delete: { isOpen: false }
+      }));
+      return;
+    }
+
     try {
       await api.delete(`/MedidorEliminar/${selectedMedidor.codigo}`);
       toast.success('Medidor eliminado exitosamente');
       await refetchMedidores();
-      setIsDeleteDialogOpen(false);
       setSelectedMedidor(null);
     } catch (error) {
-      toast.error('Error al eliminar el medidor.', error as any);
+      const errorInfo = extractMedidorErrorMessage(
+        error,
+        'Error al eliminar el medidor'
+      );
+      toast.error(errorInfo.message);
     } finally {
-      setIsLoading(false);
+      // Cerrar diálogo sin importar el resultado
+      setModalsState((prev) => ({
+        ...prev,
+        delete: { isOpen: false }
+      }));
     }
-  };
+  }, [selectedMedidor, refetchMedidores]);
 
   if (isFetching && medidores.length === 0) {
     return (
@@ -158,7 +214,7 @@ export default function MedidoresComponent({
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-3 space-y-4'>
-        {/* Header */}
+        {/* Header con acciones */}
         <ModernHeader
           title='Medidores'
           description='Gestiona los medidores del sistema'
@@ -167,18 +223,18 @@ export default function MedidoresComponent({
               <ExportButton
                 data={filteredMedidores}
                 columns={medidorColumns}
-                filename='clientes'
+                filename='medidores'
                 size='sm'
               />
               <Button
                 onClick={handleAdd}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
+                disabled={!permissions.hasCreatePermission}
                 title={
-                  hasCreatePermission
-                    ? ''
-                    : 'No tiene permisos para crear medidores'
+                  !permissions.hasCreatePermission
+                    ? 'No tiene permisos para crear medidores'
+                    : ''
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />
@@ -217,7 +273,8 @@ export default function MedidoresComponent({
                 columns={columns({
                   onEdit: handleEdit,
                   onAsociarSubempalme: handleAsociarSubempalme,
-                  canEdit: hasEditPermission
+                  onDelete: handleDeleteMedidor,
+                  canEdit: permissions.hasEditPermission
                 })}
                 data={filteredMedidores}
                 searchPlaceholder='Buscar por número de serie, local o acometida...'
@@ -228,23 +285,31 @@ export default function MedidoresComponent({
           </CardContent>
         </Card>
 
-        {isDeleteDialogOpen && (
-          <DeleteConfirmationDialog
-            isOpen={isDeleteDialogOpen}
-            onClose={() => setIsDeleteDialogOpen(false)}
-            onConfirm={handleConfirmDelete}
-            medidor={selectedMedidor}
-          />
-        )}
+        {/* Diálogo de confirmación de eliminación */}
+        <DeleteConfirmationDialog
+          isOpen={modalsState.delete.isOpen}
+          onClose={() =>
+            setModalsState((prev) => ({
+              ...prev,
+              delete: { isOpen: false }
+            }))
+          }
+          onConfirm={handleConfirmDelete}
+          medidor={selectedMedidor}
+        />
 
-        {isAsociarModalOpen && (
-          <AsociarSubempalmeModal
-            isOpen={isAsociarModalOpen}
-            onClose={() => setIsAsociarModalOpen(false)}
-            medidor={selectedMedidor}
-            onSuccess={refetchMedidores}
-          />
-        )}
+        {/* Modal para asociar subempalme */}
+        <AsociarSubempalmeModal
+          isOpen={modalsState.asociarSubempalme.isOpen}
+          onClose={() =>
+            setModalsState((prev) => ({
+              ...prev,
+              asociarSubempalme: { isOpen: false }
+            }))
+          }
+          medidor={selectedMedidor}
+          onSuccess={refetchMedidores}
+        />
       </div>
     </div>
   );

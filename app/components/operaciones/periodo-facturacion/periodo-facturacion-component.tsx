@@ -53,16 +53,30 @@ export default function AbrirPeriodoFacturacion({
     { label: 'Período Facturación' }
   ];
 
-  //Se ejecuta cuando se crea o cierra un periodo
+  // Se ejecuta cuando se crea o cierra un periodo
   const fetchPeriodos = async () => {
-    const res = await api.get('/consulta-periodo');
-    setPeriodosData(res.data as Periodos[]);
+    try {
+      const res = await api.get('/consulta-periodo');
+
+      // Early return si no hay datos
+      if (!res.data || !Array.isArray(res.data)) {
+        setPeriodosData([]);
+        return;
+      }
+
+      setPeriodosData(res.data as Periodos[]);
+    } catch (error) {
+      console.error('Error al obtener periodos:', error);
+      setPeriodosData([]);
+    }
   };
 
+  // Encontrar período abierto
   const periodoAbierto = useMemo(() => {
-    return periodosData.find(periodo => periodo.epf_descripcion === 'Abierto');
+    return periodosData.find(p => p.epf_descripcion === 'Abierto');
   }, [periodosData]);
 
+  // Early return para error state
   if (error) {
     return (
       <div className='min-h-screen bg-background'>

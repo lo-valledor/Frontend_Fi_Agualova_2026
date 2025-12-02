@@ -11,7 +11,6 @@ Se utilizan las siguientes variables de entorno para controlar el comportamiento
 - `VITE_ENV_MODE`: Define el modo del entorno (`development` o `production`)
 - `NODE_ENV`: Variable estándar de Node.js
 - `VITE_API_URL`: URL del backend principal
-- `VITE_API_ENERLINK_URL`: URL del API Enerlink
 - `VITE_AI_API_URL`: URL del servicio de IA
 
 ### Archivos CSS por Entorno
@@ -39,8 +38,6 @@ Crea o usa el archivo `.env.development`:
 
 ```env
 VITE_API_URL=http://192.168.1.139:8082/Enerlova
-VITE_API_ENERLINK_URL=http://192.168.1.139:8082/api
-VITE_AI_API_URL=http://localhost:8001
 VITE_ENV_MODE=development
 ```
 
@@ -55,8 +52,6 @@ Crea o usa el archivo `.env.production`:
 
 ```env
 VITE_API_URL=https://api.enerlova.com/Enerlova
-VITE_API_ENERLINK_URL=https://api.enerlova.com/api
-VITE_AI_API_URL=https://ai-api.enerlova.com
 VITE_ENV_MODE=production
 ```
 

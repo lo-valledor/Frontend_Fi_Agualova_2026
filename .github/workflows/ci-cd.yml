@@ -106,24 +106,33 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      # Crear archivo .env para Docker Compose
-      - name: 🔧 Create environment file
+      # Construir imagen Docker
+      - name: 🏗️ Build Docker image
         run: |
-          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > .env
-          echo "NODE_ENV=production" >> .env
+          echo "🏗️ Building Docker image..."
+          docker build -t enerlova-frontend:latest \
+            --build-arg VITE_API_URL="${{ secrets.VITE_API_URL }}" \
+            --build-arg VITE_ENV_MODE=production .
 
-      # Limpiar despliegue anterior
-      - name: 🧹 Clean previous deployment
+      # Detener contenedor anterior
+      - name: 🛑 Stop previous container
         run: |
-          echo "🧹 Cleaning up previous deployment..."
-          docker-compose down --volumes --remove-orphans || true
-          docker system prune -f || true
+          echo "🛑 Stopping previous container..."
+          docker stop enerlova-frontend-prod || true
+          docker rm enerlova-frontend-prod || true
 
-      # Construir y desplegar nueva versión
-      - name: 🏗️ Build and deploy
+      # Ejecutar nuevo contenedor
+      - name: 🚀 Run new container
         run: |
-          echo "🚀 Building and deploying new version..."
-          docker-compose up -d --build --force-recreate
+          echo "🚀 Starting new container..."
+          docker run -d \
+            --name enerlova-frontend-prod \
+            --restart unless-stopped \
+            -p 8080:80 \
+            --log-driver json-file \
+            --log-opt max-size=10m \
+            --log-opt max-file=3 \
+            enerlova-frontend:latest
 
       # Verificar que el despliegue fue exitoso
       - name: 🔍 Health check
@@ -136,24 +145,23 @@ jobs:
             echo "🔄 Attempt $i/15..."
             if curl -f http://localhost:8080 > /dev/null 2>&1; then
               echo "✅ Deployment successful! Service is responding on port 8080"
-              echo "🌐 Application URL: http://localhost:8080"
+              echo "🌐 Application URL: http://192.168.1.139:8080"
               break
             else
-              echo "⏳ Service not ready yet, waiting 15 seconds..."
-              sleep 15
+              echo "⏳ Service not ready yet, waiting 5 seconds..."
+              sleep 5
             fi
-            
+
             # Si es el último intento y falló
             if [ $i -eq 15 ]; then
               echo "❌ Deployment failed - service not responding after 15 attempts"
               echo "🔍 Checking Docker container status..."
-              docker-compose ps
-              echo "📋 Checking container logs..."
-              docker-compose logs --tail=50
-              echo "🔧 Checking if port 8080 is in use..."
-              netstat -tlnp | grep :8080 || echo "Port 8080 not in use"
-              echo "🐳 Checking Docker containers..."
               docker ps -a
+              echo "📋 Checking container logs..."
+              docker logs --tail=50 enerlova-frontend-prod || echo "Container not found"
+              echo "🧹 Cleaning up failed container..."
+              docker stop enerlova-frontend-prod || true
+              docker rm enerlova-frontend-prod || true
               exit 1
             fi
           done

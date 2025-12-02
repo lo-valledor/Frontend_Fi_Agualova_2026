@@ -200,8 +200,6 @@ Crea un archivo `.env` en la raíz del proyecto:
 ### Para UAT/Development
 ```bash
 VITE_API_URL=http://192.168.1.139:8082/Enerlova
-VITE_API_ENERLINK_URL=http://192.168.1.139:8082/api
-VITE_AI_API_URL=http://localhost:8001
 VITE_ENV_MODE=development
 NODE_ENV=development
 DEV_PORT=4200
@@ -210,8 +208,6 @@ DEV_PORT=4200
 ### Para Producción
 ```bash
 VITE_API_URL=https://api.enerlova.com/Enerlova
-VITE_API_ENERLINK_URL=https://api.enerlova.com/api
-VITE_AI_API_URL=https://ai-api.enerlova.com
 VITE_ENV_MODE=production
 NODE_ENV=production
 FRONTEND_PORT=8080

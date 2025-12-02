@@ -55,6 +55,14 @@ import { columnsEnel } from './columns-enel';
 import { columnsEnerlova } from './columns-enerlova';
 import { DataTableVirtualized } from './data-table-virtualized';
 import DialogModificarPrecio from './dialog-modificar-precio';
+import {
+  handleValidationHTTPError,
+  handleGeneralValidationError
+} from '~/utils/operaciones/revisar-precio-helpers';
+import {
+  processConfirmations,
+  filterPendingConfirmations
+} from '~/utils/operaciones/confirmation-helpers';
 
 interface RevisarPrecioComponentProps {
   dataPeriodoAbierto: PeriodoAbierto[];
@@ -122,80 +130,47 @@ export default function RevisarPrecioComponent({
   };
 
   const validarUsuario = async () => {
+    // Early return para contraseña vacía
+    if (!contrasena) {
+      toast.error('Debe ingresar una contraseña');
+      return;
+    }
+
     try {
-      const data = {
-        contrasena: contrasena
-      };
-
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      };
-
       const response = await api.post<ValidacionUsuarioResponse>(
         '/validar-usuario-modificacion',
-        data,
-        config
+        { contrasena },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
       );
 
-      if (response.data) {
-        toast.success('Usuario validado correctamente');
-        setIsAuthorized(true);
-        setUserData(response.data as ValidacionUsuarioResponse);
-      } else {
+      // Early return si no hay datos
+      if (!response.data) {
         toast.error('Respuesta inválida del servidor');
+        return;
       }
+
+      // Success
+      toast.success('Usuario validado correctamente');
+      setIsAuthorized(true);
+      setUserData(response.data as ValidacionUsuarioResponse);
     } catch (error: any) {
-      // Manejo específico de errores de validación vs errores de sesión
-      if (error.response?.status === 401) {
-        // Verificar si es un error de contraseña incorrecta vs sesión expirada
-        const errorMessage =
-          error.response.data?.mensaje || error.response.data?.message || '';
-
-        if (
-          errorMessage.toLowerCase().includes('contraseña') ||
-          errorMessage.toLowerCase().includes('password') ||
-          errorMessage.toLowerCase().includes('clave') ||
-          errorMessage.toLowerCase().includes('credenciales')
-        ) {
-          // Error de contraseña incorrecta - NO cerrar sesión
-          toast.error('Credenciales de usuario incorrectas');
-        } else {
-          // Error de sesión expirada
-          toast.error('Contraseña incorrecta');
-        }
+      // Manejo de errores HTTP específicos (401, 400, 403)
+      if (handleValidationHTTPError(error, toast)) {
         return;
       }
 
-      if (error.response?.status === 400) {
-        toast.error('Credenciales de usuario incorrectas');
-        return;
-      }
-
-      if (error.response?.status === 403) {
-        toast.error('No tienes permisos para realizar esta acción.');
-        return;
-      }
-
-      if (error.response) {
-        const errorMessage =
-          error.response.data?.mensaje ||
-          error.response.data?.message ||
-          'Error en la validación';
-        toast.error(`Error ${error.response.status}: ${errorMessage}`);
-      } else if (error.request) {
-        toast.error(
-          'No se recibió respuesta del servidor. Verifica tu conexión.'
-        );
-      } else {
-        toast.error(`Error: ${error.message}`);
-      }
+      // Manejo de errores generales
+      handleGeneralValidationError(error, toast);
     }
   };
 
   const confirmarCambios = async () => {
+    // Early returns para validaciones
     if (!userData) {
       toast.error('No se pudo obtener información del usuario');
       return;
@@ -209,132 +184,63 @@ export default function RevisarPrecioComponent({
     try {
       setIsConfirming(true);
 
-      // Confirmaciones de la tabla Enel
-      const confirmacionesEnel = dataConsultarPreciosUno.filter(
-        item =>
-          selectedEnelRows.includes(item.codigo) &&
-          item.indice !== '' &&
-          item.confirmacion !== 'Confirmado'
+      // Filtrar registros pendientes
+      const confirmacionesEnel = filterPendingConfirmations(
+        dataConsultarPreciosUno,
+        selectedEnelRows,
+        'codigo'
       );
 
-      // Confirmaciones de la tabla Enerlova
-      const confirmacionesEnerlova = dataConsultarPreciosDos.filter(
-        item =>
-          selectedEnerlovaRows.includes(item.codigo) &&
-          item.indice !== '' &&
-          item.confirmacion !== 'Confirmado'
+      const confirmacionesEnerlova = filterPendingConfirmations(
+        dataConsultarPreciosDos,
+        selectedEnerlovaRows,
+        'codigo'
       );
-
-      // Procesar todas las confirmaciones
-      let confirmacionesExitosas = 0;
-      let confirmacionesFallidas = 0;
 
       // Procesar confirmaciones Enel
-      for (const item of confirmacionesEnel) {
-        try {
-          const response = await api.post(
-            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
-          );
+      const resultEnel = await processConfirmations(
+        confirmacionesEnel,
+        userData.nombreCompleto,
+        toast
+      );
 
-          if (response.status === 200) {
-            confirmacionesExitosas++;
-          } else {
-            confirmacionesFallidas++;
-          }
-        } catch (error: any) {
-          // Manejo específico de errores de autorización
-          if (error.response?.status === 401) {
-            const errorMessage =
-              error.response.data?.mensaje ||
-              error.response.data?.message ||
-              '';
-
-            if (
-              errorMessage.toLowerCase().includes('contraseña') ||
-              errorMessage.toLowerCase().includes('password') ||
-              errorMessage.toLowerCase().includes('clave') ||
-              errorMessage.toLowerCase().includes('credenciales') ||
-              errorMessage.toLowerCase().includes('autorización') ||
-              errorMessage.toLowerCase().includes('permisos')
-            ) {
-              // Error de autorización específico - continuar con otros registros
-            } else {
-              // Error de sesión expirada - detener proceso
-              toast.error(
-                'Sesión expirada durante el proceso. Reinicia la página.'
-              );
-              setIsConfirming(false);
-              return;
-            }
-          }
-
-          confirmacionesFallidas++;
-        }
+      // Early return si debemos detener (sesión expirada)
+      if (resultEnel.shouldStop) {
+        setIsConfirming(false);
+        return;
       }
 
       // Procesar confirmaciones Enerlova
-      for (const item of confirmacionesEnerlova) {
-        try {
-          const response = await api.post(
-            `/ConfirmarPrecio?indice=${item.indice}&usuario=${userData.nombreCompleto}`
-          );
+      const resultEnerlova = await processConfirmations(
+        confirmacionesEnerlova,
+        userData.nombreCompleto,
+        toast
+      );
 
-          if (response.status === 200) {
-            confirmacionesExitosas++;
-          } else {
-            confirmacionesFallidas++;
-          }
-        } catch (error: any) {
-          // Manejo específico de errores de autorización
-          if (error.response?.status === 401) {
-            const errorMessage =
-              error.response.data?.mensaje ||
-              error.response.data?.message ||
-              '';
-
-            if (
-              errorMessage.toLowerCase().includes('contraseña') ||
-              errorMessage.toLowerCase().includes('password') ||
-              errorMessage.toLowerCase().includes('clave') ||
-              errorMessage.toLowerCase().includes('credenciales') ||
-              errorMessage.toLowerCase().includes('autorización') ||
-              errorMessage.toLowerCase().includes('permisos')
-            ) {
-              // Error de autorización específico - continuar con otros registros
-            } else {
-              // Error de sesión expirada - detener proceso
-              toast.error(
-                'Sesión expirada durante el proceso. Reinicia la página.'
-              );
-              setIsConfirming(false);
-              return;
-            }
-          }
-
-          confirmacionesFallidas++;
-        }
+      // Early return si debemos detener
+      if (resultEnerlova.shouldStop) {
+        setIsConfirming(false);
+        return;
       }
 
-      // Actualizar datos después de confirmar
-      if (confirmacionesExitosas > 0) {
-        // Limpiar selecciones
+      // Calcular totales
+      const totalExitosas = resultEnel.exitosas + resultEnerlova.exitosas;
+      const totalFallidas = resultEnel.fallidas + resultEnerlova.fallidas;
+
+      // Actualizar UI si hubo confirmaciones exitosas
+      if (totalExitosas > 0) {
         setSelectedEnelRows([]);
         setSelectedEnerlovaRows([]);
-
-        // Recargar precios para mostrar los cambios
         await onRecargarPrecios();
-
         toast.success(
-          `Se han confirmado ${confirmacionesExitosas} registros correctamente`
+          `Se han confirmado ${totalExitosas} registros correctamente`
         );
-      } else if (confirmacionesExitosas === 0 && confirmacionesFallidas === 0) {
+      } else if (totalExitosas === 0 && totalFallidas === 0) {
         toast.info('No había registros pendientes para confirmar');
       }
 
-      if (confirmacionesFallidas > 0) {
-        toast.error(
-          `No se pudieron confirmar ${confirmacionesFallidas} registros`
-        );
+      if (totalFallidas > 0) {
+        toast.error(`No se pudieron confirmar ${totalFallidas} registros`);
       }
     } catch (error) {
       console.error('Error al confirmar cambios:', error);

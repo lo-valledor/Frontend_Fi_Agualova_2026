@@ -133,6 +133,9 @@ export function getMeterStatus(
 /**
  * Check if a reading is imported but not validated
  * @param medidor - Meter object with reading data
+ * @param medidor.consumo
+ * @param medidor.fechaLectura
+ * @param medidor.clave
  * @returns True if the reading appears to be imported
  */
 export function isImportedReading(medidor: {

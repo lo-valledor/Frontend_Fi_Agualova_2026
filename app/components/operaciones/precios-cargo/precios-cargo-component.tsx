@@ -40,6 +40,14 @@ import type {
 import { columns as columnsEnel } from './columns-enel';
 import { columns } from './columns-enerlova';
 import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
+import {
+  MONTHS,
+  getCurrentMonth,
+  getCurrentYear,
+  getYearsRange,
+  getMonthLabel,
+  validatePeriod
+} from '~/utils/operaciones';
 
 interface PreciosCargoComponentProps {
   tablaEnel: PreciosCargoEnel[];
@@ -48,31 +56,6 @@ interface PreciosCargoComponentProps {
   initialAnio: string;
   error: string | null;
 }
-
-const currentDate = new Date();
-const currentMonth = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-const currentYear = currentDate.getFullYear().toString();
-
-const months = [
-  { value: '01', label: 'Enero' },
-  { value: '02', label: 'Febrero' },
-  { value: '03', label: 'Marzo' },
-  { value: '04', label: 'Abril' },
-  { value: '05', label: 'Mayo' },
-  { value: '06', label: 'Junio' },
-  { value: '07', label: 'Julio' },
-  { value: '08', label: 'Agosto' },
-  { value: '09', label: 'Septiembre' },
-  { value: '10', label: 'Octubre' },
-  { value: '11', label: 'Noviembre' },
-  { value: '12', label: 'Diciembre' }
-];
-
-const years = [
-  { value: '2025', label: '2025' },
-  { value: '2026', label: '2026' },
-  { value: '2027', label: '2027' }
-];
 
 export default function PreciosCargoComponent({
   tablaEnel: initialTablaEnel,
@@ -107,24 +90,38 @@ export default function PreciosCargoComponent({
         const response = await api.get(
           'http://192.168.1.139:8081/Enerlova/ConsultarPeriodoAbierto'
         );
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          setPeriodoAbierto(response.data[0]);
-          // Opcional: actualizar filtros al periodo abierto si no han sido modificados
-          setMes(response.data[0].mes.toString().padStart(2, '0'));
-          setAnio(response.data[0].anio.toString());
+
+        // Early return si no hay datos
+        if (!Array.isArray(response.data) || response.data.length === 0) {
+          return;
         }
+
+        const periodo = response.data[0];
+        setPeriodoAbierto(periodo);
+
+        // Actualizar filtros al periodo abierto
+        setMes(periodo.mes.toString().padStart(2, '0'));
+        setAnio(periodo.anio.toString());
       } catch (error) {
         console.error('Error al obtener el periodo abierto:', error);
       }
     }
+
     fetchPeriodoAbierto();
   }, []);
 
-  // Manejo de búsqueda
+  // Manejo de búsqueda con validación
   const handleSearch = async () => {
+    // Validar período antes de buscar
+    const validation = validatePeriod(mes, anio);
+    if (!validation.isValid) {
+      toast.error(validation.error);
+      return;
+    }
+
     try {
       setIsLoading(true);
-      setIsFiltersOpen(false); // Cerrar filtros después de buscar
+      setIsFiltersOpen(false);
 
       const params = new URLSearchParams({
         mes,
@@ -143,8 +140,8 @@ export default function PreciosCargoComponent({
 
   // Limpiar filtros
   const handleClearFilters = () => {
-    setMes(currentMonth);
-    setAnio(currentYear);
+    setMes(getCurrentMonth());
+    setAnio(getCurrentYear());
     toast.success('Filtros reiniciados');
   };
 
@@ -343,7 +340,7 @@ export default function PreciosCargoComponent({
                 <Badge variant='outline' className='text-sm'>
                   {periodoAbierto
                     ? periodoAbierto.descripcion
-                    : `${months.find(m => m.value === mes)?.label} ${anio}`}
+                    : `${getMonthLabel(mes)} ${anio}`}
                 </Badge>
               </div>
             </div>
@@ -359,7 +356,7 @@ export default function PreciosCargoComponent({
                         <SelectValue placeholder='Selecciona un mes' />
                       </SelectTrigger>
                       <SelectContent className='w-full'>
-                        {months.map(month => (
+                        {MONTHS.map(month => (
                           <SelectItem key={month.value} value={month.value}>
                             {month.label}
                           </SelectItem>
@@ -376,7 +373,7 @@ export default function PreciosCargoComponent({
                         <SelectValue placeholder='Selecciona un año' />
                       </SelectTrigger>
                       <SelectContent className='w-full'>
-                        {years.map(year => (
+                        {getYearsRange().map(year => (
                           <SelectItem key={year.value} value={year.value}>
                             {year.label}
                           </SelectItem>
@@ -465,7 +462,7 @@ export default function PreciosCargoComponent({
                     </div>
                   </div>
                   <Badge variant='outline' className='text-sm'>
-                    {months.find(m => m.value === mes)?.label} {anio}
+                    {getMonthLabel(mes)} {anio}
                   </Badge>
                 </div>
                 <div

@@ -67,7 +67,8 @@ export function VirtualDataTable<TData, TValue>({
         );
       });
     },
-    columnResizeMode: 'onChange',
+    // Cambiar a 'onEnd' para evitar cambios de ancho durante la virtualización
+    columnResizeMode: 'onEnd',
     defaultColumn: {
       minSize: 60,
       maxSize: 999
@@ -121,7 +122,10 @@ export function VirtualDataTable<TData, TValue>({
           overflow: 'auto'
         }}
       >
-        <table className='w-full caption-bottom text-sm' style={{ width: '100%' }}>
+        <table
+          className='w-full caption-bottom text-sm'
+          style={{ width: '100%' }}
+        >
           <TableHeader className='sticky top-0 bg-background z-10'>
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
