@@ -1,10 +1,16 @@
 import { useEffect } from 'react';
+import {
+  createDelayedPrefetchLink,
+  createStaggeredPrefetchLinks,
+  createConditionalPrefetchLinks,
+  createHoverPrefetchHandler
+} from './utils/prefetch-helpers';
 
 /**
- * Hook para prefetching de rutas
+ * Hook para prefetching de una ruta con delay
  *
- * Precarga rutas en background para navegación instantánea
- * Solo funciona en navegadores que soportan link prefetch
+ * Precarga una ruta en background para navegación instantánea.
+ * Solo funciona en navegadores que soportan link prefetch.
  *
  * @param routePath - Ruta a precargar (ej: '/dashboard/contratos')
  * @param delay - Delay antes de precargar en ms (default: 2000)
@@ -21,37 +27,20 @@ export function usePrefetch(
   routePath: string,
   delay: number = 2000,
   enabled: boolean = true
-) {
+): void {
   useEffect(() => {
-    if (!enabled || typeof window === 'undefined') return;
+    if (!enabled) return;
 
-    const timer = setTimeout(() => {
-      // Verificar si ya existe un link de prefetch para esta ruta
-      const existingLink = document.querySelector(
-        `link[rel="prefetch"][href="${routePath}"]`
-      );
-
-      if (existingLink) return;
-
-      // Crear link de prefetch
-      const link = document.createElement('link');
-      link.rel = 'prefetch';
-      link.href = routePath;
-      link.as = 'document';
-
-      document.head.appendChild(link);
-    }, delay);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    const cleanup = createDelayedPrefetchLink(routePath, delay);
+    return cleanup;
   }, [routePath, delay, enabled]);
 }
 
 /**
- * Hook para prefetching múltiple
+ * Hook para prefetching de múltiples rutas con delays escalonados
  *
- * Precarga múltiples rutas con delays escalonados
+ * Precarga múltiples rutas con incrementos de tiempo para evitar
+ * sobrecargar la conexión de red.
  *
  * @param routes - Array de rutas a precargar
  * @param baseDelay - Delay base en ms (default: 2000)
@@ -71,46 +60,21 @@ export function usePrefetchMultiple(
   routes: string[],
   baseDelay: number = 2000,
   increment: number = 1000
-) {
+): void {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const timers: NodeJS.Timeout[] = [];
-
-    routes.forEach((route, index) => {
-      const delay = baseDelay + index * increment;
-
-      const timer = setTimeout(() => {
-        const existingLink = document.querySelector(
-          `link[rel="prefetch"][href="${route}"]`
-        );
-
-        if (existingLink) return;
-
-        const link = document.createElement('link');
-        link.rel = 'prefetch';
-        link.href = route;
-        link.as = 'document';
-
-        document.head.appendChild(link);
-      }, delay);
-
-      timers.push(timer);
-    });
-
-    return () => {
-      timers.forEach(timer => clearTimeout(timer));
-    };
+    const cleanup = createStaggeredPrefetchLinks(routes, baseDelay, increment);
+    return cleanup;
   }, [routes, baseDelay, increment]);
 }
 
 /**
- * Hook para prefetching condicional
+ * Hook para prefetching condicional basado en condiciones
  *
- * Precarga rutas basado en condiciones (ej: rol del usuario)
+ * Precarga rutas solo si se cumplen ciertas condiciones (ej: rol del usuario).
+ * Útil para prefetching específico según permisos o características.
  *
  * @param routeMap - Mapa de condición -> rutas
- * @param delay - Delay antes de precargar
+ * @param delay - Delay antes de precargar (default: 2000)
  *
  * @example
  * ```tsx
@@ -124,47 +88,21 @@ export function usePrefetchMultiple(
 export function usePrefetchConditional(
   routeMap: Record<string, string[]>,
   delay: number = 2000
-) {
+): void {
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const timer = setTimeout(() => {
-      Object.entries(routeMap).forEach(([condition, routes]) => {
-        // Evaluar condición (puedes personalizar esto)
-        const shouldPrefetch = condition === 'isAll' || eval(condition);
-
-        if (shouldPrefetch) {
-          routes.forEach(route => {
-            const existingLink = document.querySelector(
-              `link[rel="prefetch"][href="${route}"]`
-            );
-
-            if (existingLink) return;
-
-            const link = document.createElement('link');
-            link.rel = 'prefetch';
-            link.href = route;
-            link.as = 'document';
-
-            document.head.appendChild(link);
-          });
-        }
-      });
-    }, delay);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    const cleanup = createConditionalPrefetchLinks(routeMap);
+    return cleanup;
   }, [routeMap, delay]);
 }
 
 /**
  * Hook para prefetching on hover
  *
- * Precarga una ruta cuando el usuario hace hover sobre un elemento
+ * Precarga una ruta cuando el usuario mueve el mouse sobre un elemento.
+ * Útil para prefetch de rutas en navegación solo cuando el usuario interactúa.
  *
  * @param routePath - Ruta a precargar
- * @returns Handlers para onMouseEnter
+ * @returns Objeto con handlers para eventos del mouse
  *
  * @example
  * ```tsx
@@ -177,23 +115,8 @@ export function usePrefetchConditional(
  * );
  * ```
  */
-export function usePrefetchOnHover(routePath: string) {
-  const handleMouseEnter = () => {
-    if (typeof window === 'undefined') return;
-
-    const existingLink = document.querySelector(
-      `link[rel="prefetch"][href="${routePath}"]`
-    );
-
-    if (existingLink) return;
-
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
-    link.href = routePath;
-    link.as = 'document';
-
-    document.head.appendChild(link);
-  };
+export function usePrefetchOnHover(routePath: string): { onMouseEnter: () => void } {
+  const handleMouseEnter = createHoverPrefetchHandler(routePath);
 
   return {
     onMouseEnter: handleMouseEnter

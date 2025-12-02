@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-// Lazy load xlsx - solo se carga cuando se exporta a Excel
-// import * as XLSX from 'xlsx';
+import {
+  convertToCSV,
+  downloadCSVFile,
+  downloadExcelFile,
+  validateExportData
+} from './utils/csv-excel-utils';
+import { formatDateForExport } from './utils/export-formatters';
 
 export type ExportFormat = 'csv' | 'xlsx';
 
@@ -17,153 +22,47 @@ export interface ExportColumn {
   formatter?: (value: any) => string;
 }
 
+/**
+ * Hook para exportar datos a CSV o Excel
+ *
+ * Proporciona funciones para exportar datos tabulares a CSV (con BOM UTF-8)
+ * o Excel (XLSX con lazy loading). Incluye formatters comunes como fechas.
+ *
+ * @template T - Tipo de datos a exportar
+ * @returns Objeto con estado de exportación y funciones
+ *
+ * @example
+ * ```tsx
+ * const { isExporting, exportData, formatDateForExport } = useExportData();
+ *
+ * const columns: ExportColumn[] = [
+ *   { key: 'id', header: 'ID' },
+ *   { key: 'date', header: 'Fecha', formatter: formatDateForExport },
+ *   { key: 'amount', header: 'Monto' }
+ * ];
+ *
+ * const handleExport = async () => {
+ *   await exportData(records, columns, { format: 'xlsx', filename: 'ventas' });
+ * };
+ * ```
+ */
 export function useExportData<T extends Record<string, any>>() {
   const [isExporting, setIsExporting] = useState(false);
 
-  // Función para formatear fecha para exportación
-  const formatDateForExport = (date: string | null | undefined): string => {
-    if (!date) return '';
-    try {
-      const dateObj = new Date(date);
-      // Verificar si la fecha es válida
-      if (Number.isNaN(dateObj.getTime())) {
-        return '';
-      }
-      return dateObj.toLocaleDateString('es-CL');
-    } catch {
-      return '';
-    }
-  };
-
-  // Función para convertir datos a CSV
-  const convertToCSV = (
-    data: T[],
-    columns: ExportColumn[],
-    includeHeaders: boolean = true
-  ): string => {
-    const csvContent = [];
-
-    if (includeHeaders) {
-      csvContent.push(columns.map(col => col.header).join(','));
-    }
-
-    data.forEach(item => {
-      const row = columns.map(col => {
-        const value = item[col.key];
-        const formattedValue = col.formatter ? col.formatter(value) : value;
-        return `"${formattedValue || ''}"`;
-      });
-      csvContent.push(row.join(','));
-    });
-
-    return csvContent.join('\n');
-  };
-
-  // Función para descargar archivo CSV
-  const downloadCSV = (
-    data: T[],
-    columns: ExportColumn[],
-    filename: string = 'export',
-    includeHeaders: boolean = true
-  ) => {
-    const csvContent = convertToCSV(data, columns, includeHeaders);
-    const blob = new Blob(['\uFEFF' + csvContent], {
-      type: 'text/csv;charset=utf-8;'
-    });
-    const link = document.createElement('a');
-
-    if (link.download !== undefined) {
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute(
-        'download',
-        `${filename}_${new Date().toISOString().split('T')[0]}.csv`
-      );
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  // Función para descargar archivo Excel usando la librería xlsx (lazy loaded)
-  const downloadExcel = async (
-    data: T[],
-    columns: ExportColumn[],
-    filename: string = 'export',
-    includeHeaders: boolean = true
-  ) => {
-    // Lazy load xlsx solo cuando se necesita
-    const XLSX = await import('xlsx');
-
-    // Preparar los datos para Excel
-    const excelData = data.map(item => {
-      const row: Record<string, any> = {};
-      columns.forEach(col => {
-        const value = item[col.key];
-        row[col.header] = col.formatter ? col.formatter(value) : value;
-      });
-      return row;
-    });
-
-    // Crear workbook y worksheet
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(excelData, {
-      header: columns.map(col => col.header),
-      skipHeader: !includeHeaders
-    });
-
-    // Configurar ancho de columnas automático
-    const columnWidths = columns.map(col => {
-      const maxLength = Math.max(
-        col.header.length,
-        ...data.map(item => {
-          const value = item[col.key];
-          const formattedValue = col.formatter ? col.formatter(value) : value;
-          return String(formattedValue || '').length;
-        })
-      );
-      return { wch: Math.min(maxLength + 2, 50) }; // Máximo 50 caracteres
-    });
-    worksheet['!cols'] = columnWidths;
-
-    // Agregar worksheet al workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
-
-    // Generar archivo y descargarlo
-    const excelBuffer = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array'
-    });
-
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    });
-
-    const link = document.createElement('a');
-    if (link.download !== undefined) {
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute(
-        'download',
-        `${filename}_${new Date().toISOString().split('T')[0]}.xlsx`
-      );
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
-    }
-  };
-
-  // Función principal de exportación
+  /**
+   * Exporta datos en el formato especificado
+   *
+   * @param data - Registros a exportar
+   * @param columns - Definición de columnas con formatters opcionales
+   * @param options - Opciones de exportación (formato, nombre de archivo, headers)
+   */
   const exportData = async (
     data: T[],
     columns: ExportColumn[],
     options: ExportOptions
-  ) => {
-    if (!data || data.length === 0) {
+  ): Promise<void> => {
+    // Early return: validate data
+    if (!validateExportData(data)) {
       toast.error('No hay datos para exportar');
       return;
     }
@@ -176,18 +75,23 @@ export function useExportData<T extends Record<string, any>>() {
 
       toast.info(`Preparando exportación de ${data.length} registros...`);
 
-      // Simular un pequeño delay para mostrar el estado de carga
+      // Brief delay to show loading state
       await new Promise(resolve => setTimeout(resolve, 500));
 
+      // Dispatch to appropriate exporter
       switch (options.format) {
         case 'csv':
-          downloadCSV(data, columns, baseFilename, includeHeaders);
+          const csvContent = convertToCSV(data, columns, includeHeaders);
+          downloadCSVFile(csvContent, baseFilename);
           break;
+
         case 'xlsx':
-          await downloadExcel(data, columns, baseFilename, includeHeaders);
+          await downloadExcelFile(data, columns, baseFilename, includeHeaders);
           break;
+
         default:
-          downloadCSV(data, columns, baseFilename, includeHeaders);
+          const defaultCsv = convertToCSV(data, columns, includeHeaders);
+          downloadCSVFile(defaultCsv, baseFilename);
       }
 
       toast.success(`✅ ${data.length} registros exportados exitosamente`, {
@@ -195,9 +99,9 @@ export function useExportData<T extends Record<string, any>>() {
         duration: 4000
       });
     } catch (error) {
-      console.error('Error durante la exportación:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       toast.error('Error al exportar los datos', {
-        description: 'Inténtalo de nuevo en unos momentos'
+        description: errorMessage
       });
     } finally {
       setIsExporting(false);
