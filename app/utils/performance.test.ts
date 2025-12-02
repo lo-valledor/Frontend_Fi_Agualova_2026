@@ -158,21 +158,25 @@ describe('Performance Tests - Utilidades Críticas', () => {
         (_, i) => `TestPass${i}!@#Secure${i}`
       );
 
-      // Primera ejecución
-      const start1 = performance.now();
-      passwords.forEach(pwd => validatePassword(pwd));
-      const duration1 = performance.now() - start1;
+      // Múltiples ejecuciones para obtener promedio
+      const runs = [1, 2, 3];
+      const durations: number[] = [];
 
-      // Segunda ejecución - debería tener rendimiento similar
-      const start2 = performance.now();
-      passwords.forEach(pwd => validatePassword(pwd));
-      const duration2 = performance.now() - start2;
+      for (let i = 0; i < runs.length; i++) {
+        const start = performance.now();
+        passwords.forEach(pwd => validatePassword(pwd));
+        const duration = performance.now() - start;
+        durations.push(duration);
+      }
 
-      // La segunda ejecución no debe ser significativamente más lenta
-      // Tolerancia: 50% más lento es aceptable
-      expect(duration2).toBeLessThan(duration1 * 1.5);
+      // El promedio de las últimas ejecuciones no debe ser significativamente mayor que la primera
+      // Tolerancia: 30% más lento es aceptable (variaciones normales de CI/CD)
+      const avg1 = durations[0];
+      const avgLater = (durations[1] + durations[2]) / 2;
+      expect(avgLater).toBeLessThan(avg1 * 1.3);
+
       console.log(
-        `✓ Memory consistency: 1st run ${duration1.toFixed(2)}ms, 2nd run ${duration2.toFixed(2)}ms`
+        `✓ Memory consistency: Run 1 ${durations[0].toFixed(2)}ms, Avg(2,3) ${avgLater.toFixed(2)}ms`
       );
     });
   });
