@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  validatePassword
-} from './password-validation';
+import { validatePassword } from './password-validation';
 import { formatRut, isValidRutFormat, cleanRut } from './rut-utils';
 import { formatToDate } from './date-formatter';
 
@@ -84,10 +82,7 @@ describe('Performance Tests - Utilidades Críticas', () => {
 
   describe('RUT Validation Performance', () => {
     it('should validate 5000 RUTs in < 1000ms', () => {
-      const ruts = Array.from(
-        { length: 5000 },
-        (_, i) => `${1000000 + i}-K`
-      );
+      const ruts = Array.from({ length: 5000 }, (_, i) => `${1000000 + i}-K`);
 
       const start = performance.now();
       ruts.forEach(rut => isValidRutFormat(rut));
@@ -100,10 +95,7 @@ describe('Performance Tests - Utilidades Críticas', () => {
     });
 
     it('should format 10000 RUTs in < 2000ms', () => {
-      const ruts = Array.from(
-        { length: 10000 },
-        (_, i) => `${1000000 + i}K`
-      );
+      const ruts = Array.from({ length: 10000 }, (_, i) => `${1000000 + i}K`);
 
       const start = performance.now();
       ruts.forEach(rut => formatRut(rut));
@@ -174,7 +166,7 @@ describe('Performance Tests - Utilidades Críticas', () => {
       // Tolerancia: 80% más lento es aceptable (variaciones normales de CI/CD y JIT warmup)
       const avgAll = durations.reduce((a, b) => a + b, 0) / durations.length;
       const avgLater = (durations[2] + durations[3] + durations[4]) / 3;
-      
+
       expect(avgLater).toBeLessThan(avgAll * 1.8);
 
       console.log(
