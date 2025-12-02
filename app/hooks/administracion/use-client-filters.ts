@@ -1,7 +1,17 @@
 import { useMemo } from 'react';
 
 import type { GetClientes } from '~/types/administracion';
+import {
+  extractUniqueOptions,
+  filterByBoolean,
+  filterByString,
+  filterByPresence
+} from './utils/filter-utilities';
+import { calculateFilterStats, type FilterStats } from './utils/stats-calculator';
 
+/**
+ * Filtros para clientes
+ */
 export interface ClientFilters {
   esEmpresa: string;
   comuna: string;
@@ -11,89 +21,80 @@ export interface ClientFilters {
   tieneEmail: string;
 }
 
-export interface FilterOptions {
+/**
+ * Opciones disponibles para filtros de clientes
+ */
+export interface ClientFilterOptions {
   tiposCliente: string[];
   comunas: string[];
   codigosComuna: string[];
 }
 
+/**
+ * Alias para mantener compatibilidad con componentes existentes
+ */
+export type FilterOptions = ClientFilterOptions;
+
+/**
+ * Hook para filtrar clientes
+ * Aplica SOLID: SRP (cada criterio es independiente)
+ *
+ * @param clients - Array de clientes a filtrar
+ * @param filters - Filtros a aplicar
+ * @returns Clientes filtrados, estadísticas y opciones
+ *
+ * @example
+ * const { filteredClients, filterStats, filterOptions } = useClientFilters(
+ *   clients,
+ *   { esEmpresa: 'true', comuna: 'Santiago' }
+ * );
+ */
 export function useClientFilters(
   clients: GetClientes[],
   filters: ClientFilters
 ) {
-  // Extraer opciones únicas de los clientes
-  const filterOptions = useMemo((): FilterOptions => {
-    const tiposCliente = ['Persona', 'Empresa'];
-    const comunas = [
-      ...new Set(clients.map(c => c.comuna).filter(Boolean))
-    ].sort();
-    const codigosComuna = [
-      ...new Set(clients.map(c => c.codigoComuna).filter(Boolean))
-    ].sort();
-
+  /**
+   * Extrae opciones únicas de los clientes
+   * Tipos de cliente son estáticos
+   */
+  const filterOptions = useMemo((): ClientFilterOptions => {
     return {
-      tiposCliente,
-      comunas,
-      codigosComuna
+      tiposCliente: ['Persona', 'Empresa'],
+      comunas: extractUniqueOptions(clients, (c) => c.comuna),
+      codigosComuna: extractUniqueOptions(clients, (c) => c.codigoComuna)
     };
   }, [clients]);
 
+  /**
+   * Aplica filtros con early returns
+   * Cada filtro es una responsabilidad separada
+   */
   const filteredClients = useMemo(() => {
-    return clients.filter(client => {
-      // Filtro por tipo de cliente (Persona/Empresa)
-      if (
-        filters.esEmpresa &&
-        filters.esEmpresa !== 'all' &&
-        client.esEmpresa.toString() !== filters.esEmpresa
-      ) {
+    return clients.filter((client) => {
+      // Filtro booleano: tipo de cliente
+      if (!filterByBoolean(client.esEmpresa, filters.esEmpresa)) {
         return false;
       }
 
-      // Filtro por comuna
-      if (
-        filters.comuna &&
-        filters.comuna !== 'all' &&
-        client.comuna !== filters.comuna
-      ) {
+      // Filtros de string: comuna, código
+      if (!filterByString(client.comuna, filters.comuna)) {
         return false;
       }
 
-      // Filtro por código de comuna
-      if (
-        filters.codigoComuna &&
-        filters.codigoComuna !== 'all' &&
-        client.codigoComuna !== filters.codigoComuna
-      ) {
+      if (!filterByString(client.codigoComuna, filters.codigoComuna)) {
         return false;
       }
 
-      // Filtro por contacto
-      if (
-        filters.tieneContacto &&
-        filters.tieneContacto !== 'all' &&
-        ((filters.tieneContacto === 'true' && !client.contacto) ||
-          (filters.tieneContacto === 'false' && client.contacto))
-      ) {
+      // Filtros de presencia: contacto, teléfono, email
+      if (!filterByPresence(Boolean(client.contacto), filters.tieneContacto)) {
         return false;
       }
 
-      // Filtro por teléfono
-      if (
-        filters.tieneTelefono &&
-        filters.tieneTelefono !== 'all' &&
-        ((filters.tieneTelefono === 'true' && !client.telefono) ||
-          (filters.tieneTelefono === 'false' && client.telefono))
-      ) {
+      if (!filterByPresence(Boolean(client.telefono), filters.tieneTelefono)) {
         return false;
       }
 
-      // Filtro por email
-      if (
-        filters.tieneEmail &&
-        filters.tieneEmail !== 'all' &&
-        ((filters.tieneEmail === 'true' && !client.email) ||
-          (filters.tieneEmail === 'false' && client.email))
-      ) {
+      if (!filterByPresence(Boolean(client.email), filters.tieneEmail)) {
         return false;
       }
 
@@ -101,20 +102,13 @@ export function useClientFilters(
     });
   }, [clients, filters]);
 
-  const filterStats = useMemo(() => {
-    const total = clients.length;
-    const filtered = filteredClients.length;
-    const activeFilters = Object.values(filters).filter(
-      value => value !== '' && value !== 'all'
-    ).length;
-
-    return {
-      total,
-      filtered,
-      activeFilters,
-      isFiltered: activeFilters > 0
-    };
-  }, [clients.length, filteredClients.length, filters]);
+  /**
+   * Calcula estadísticas de filtros
+   */
+  const filterStats = useMemo(
+    () => calculateFilterStats(clients, filteredClients, filters),
+    [clients.length, filteredClients.length, filters]
+  );
 
   return {
     filteredClients,

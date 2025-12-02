@@ -1,65 +1,62 @@
-import type { ExportColumn } from '~/hooks/shared/use-export-data';
 import { useExportData } from '~/hooks/shared/use-export-data';
 import type { GetMedidores } from '~/types/administracion';
+import { ExportColumnBuilder, getExportConfig } from './utils/export-utilities';
 
+/**
+ * Hook para exportar medidores a CSV o XLSX
+ * Utiliza builder pattern para definir columnas de forma fluida
+ *
+ * @returns {Object} Hook con función de exportación y columnas
+ *
+ * @example
+ * const { exportMedidores, isExporting } = useExportMedidores();
+ *
+ * // Exportar datos
+ * await exportMedidores(medidores, 'xlsx', 'medidores-2024');
+ */
 export function useExportMedidores() {
   const { isExporting, exportData } = useExportData<GetMedidores>();
 
-  // Definir las columnas para exportación de medidores
-  const medidorColumns: ExportColumn[] = [
-    {
-      key: 'numeroMedidor',
-      header: 'Número Medidor'
-    },
-    {
-      key: 'marca',
-      header: 'Marca'
-    },
-    {
-      key: 'modelo',
-      header: 'Modelo'
-    },
-    {
-      key: 'tipoMedidor',
-      header: 'Tipo Medidor'
-    },
-    {
-      key: 'fechaInstalacion',
-      header: 'Fecha Instalación',
-      formatter: (value: string) => {
-        if (!value) return '';
-        return new Date(value).toLocaleDateString('es-CL');
-      }
-    },
-    {
-      key: 'estado',
-      header: 'Estado'
-    },
-    {
-      key: 'ubicacion',
-      header: 'Ubicación'
-    },
-    {
-      key: 'lecturaInicial',
-      header: 'Lectura Inicial'
-    },
-    {
-      key: 'observaciones',
-      header: 'Observaciones'
-    }
-  ];
+  /**
+   * Columnas de exportación usando builder pattern
+   * Reduce boilerplate y mejora legibilidad
+   */
+  const medidorColumns = new ExportColumnBuilder()
+    .addString('numeroMedidor', 'Número Medidor')
+    .addString('marca', 'Marca')
+    .addString('modelo', 'Modelo')
+    .addString('tipoMedidor', 'Tipo Medidor')
+    .addDate('fechaInstalacion', 'Fecha Instalación')
+    .addString('estado', 'Estado')
+    .addString('ubicacion', 'Ubicación')
+    .addString('lecturaInicial', 'Lectura Inicial')
+    .addString('observaciones', 'Observaciones')
+    .build();
 
-  // Función para exportar medidores
+  /**
+   * Exporta medidores a archivo
+   * Aplicar early return para validaciones futuras
+   *
+   * @param data - Array de medidores a exportar
+   * @param format - Formato de exportación ('xlsx' o 'csv')
+   * @param filename - Nombre del archivo (sin extensión)
+   *
+   * @example
+   * await exportMedidores(medidores, 'xlsx', 'mis-medidores');
+   */
   const exportMedidores = async (
     data: GetMedidores[],
     format: 'csv' | 'xlsx' = 'xlsx',
     filename: string = 'medidores'
-  ) => {
-    await exportData(data, medidorColumns, {
-      format,
-      filename,
-      includeHeaders: true
-    });
+  ): Promise<void> => {
+    // Early return si no hay datos
+    if (!data || data.length === 0) {
+      return;
+    }
+
+    const config = getExportConfig({ format, filename });
+
+    await exportData(data, medidorColumns, config);
   };
 
   return {

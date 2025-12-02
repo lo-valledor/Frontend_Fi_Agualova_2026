@@ -2,151 +2,139 @@ import { useMemo } from 'react';
 
 import type { AcometidaFilters } from '~/components/administracion/acometida/acometida-filters';
 import type { Acometida } from '~/types/administracion';
+import {
+  extractUniqueOptions,
+  filterByString,
+  filterByPresence,
+  filterByNumberRange
+} from './utils/filter-utilities';
+import { calculateFilterStats } from './utils/stats-calculator';
 
+/**
+ * Opciones disponibles para filtros de acometidas
+ * Extraídas dinámicamente de los datos
+ */
 export interface FilterOptions {
   empalmes: string[];
   nichos: string[];
   sectores: string[];
 }
 
+/**
+ * Hook para filtrar acometidas con múltiples criterios
+ * Aplica SOLID: SRP (cada filtro es responsable de su lógica)
+ *
+ * @param acometidas - Array de acometidas a filtrar
+ * @param filters - Objeto con los filtros a aplicar
+ * @returns Acometidas filtradas, estadísticas y opciones
+ *
+ * @example
+ * const { filteredAcometidas, filterStats, filterOptions } = useAcometidaFilters(
+ *   acometidas,
+ *   { empalmeDescripcion: 'SEC1', limitePotenciaMin: '10' }
+ * );
+ */
 export function useAcometidaFilters(
   acometidas: Acometida[],
   filters: AcometidaFilters
 ) {
-  // Extraer opciones únicas de las acometidas
+  /**
+   * Extrae opciones únicas para cada categoría
+   * Memoizado para evitar recálculos innecesarios
+   */
   const filterOptions = useMemo((): FilterOptions => {
-    const empalmes = [
-      ...new Set(acometidas.map(a => a.empalmeDescripcion).filter(Boolean))
-    ].sort();
-    const nichos = [
-      ...new Set(acometidas.map(a => a.nichoDescripcion).filter(Boolean))
-    ].sort();
-    const sectores = [
-      ...new Set(acometidas.map(a => a.sectorDescripcion).filter(Boolean))
-    ].sort();
-
     return {
-      empalmes,
-      nichos,
-      sectores
+      empalmes: extractUniqueOptions(acometidas, (a) => a.empalmeDescripcion),
+      nichos: extractUniqueOptions(acometidas, (a) => a.nichoDescripcion),
+      sectores: extractUniqueOptions(acometidas, (a) => a.sectorDescripcion)
     };
   }, [acometidas]);
 
+  /**
+   * Aplica todos los filtros con early returns para eficiencia
+   * Cada filtro es una responsabilidad separada
+   */
   const filteredAcometidas = useMemo(() => {
-    return acometidas.filter(acometida => {
-      // Filtro por empalme
+    return acometidas.filter((acometida) => {
+      // Filtros de string: empalme, nicho, sector
       if (
-        filters.empalmeDescripcion &&
-        filters.empalmeDescripcion !== 'all' &&
-        acometida.empalmeDescripcion !== filters.empalmeDescripcion
+        !filterByString(
+          acometida.empalmeDescripcion,
+          filters.empalmeDescripcion
+        )
       ) {
         return false;
       }
 
-      // Filtro por nicho
+      if (!filterByString(acometida.nichoDescripcion, filters.nichoDescripcion)) {
+        return false;
+      }
+
       if (
-        filters.nichoDescripcion &&
-        filters.nichoDescripcion !== 'all' &&
-        acometida.nichoDescripcion !== filters.nichoDescripcion
+        !filterByString(
+          acometida.sectorDescripcion,
+          filters.sectorDescripcion
+        )
       ) {
         return false;
       }
 
-      // Filtro por sector
+      // Filtro de rango numérico para límite de potencia
       if (
-        filters.sectorDescripcion &&
-        filters.sectorDescripcion !== 'all' &&
-        acometida.sectorDescripcion !== filters.sectorDescripcion
+        !filterByNumberRange(
+          acometida.limitePotencia,
+          filters.limitePotenciaMin,
+          filters.limitePotenciaMax
+        )
       ) {
         return false;
       }
 
-      // Filtro por rango de límite de potencia
-      if (filters.limitePotenciaMin || filters.limitePotenciaMax) {
-        const limitePotencia = acometida.limitePotencia;
-
-        // Si no tiene límite de potencia y se está filtrando por potencia, excluir
-        if (limitePotencia === null || limitePotencia === undefined) {
-          return false;
-        }
-
-        if (
-          filters.limitePotenciaMin &&
-          limitePotencia < parseFloat(filters.limitePotenciaMin)
-        ) {
-          return false;
-        }
-
-        if (
-          filters.limitePotenciaMax &&
-          limitePotencia > parseFloat(filters.limitePotenciaMax)
-        ) {
-          return false;
-        }
-      }
-
-      // Filtro por tiene ubicación
-      if (filters.tieneUbicacion && filters.tieneUbicacion !== 'all') {
-        const tieneUbicacion = Boolean(
-          acometida.ubicacion && acometida.ubicacion.trim() !== ''
-        );
-        if (filters.tieneUbicacion === 'true' && !tieneUbicacion) {
-          return false;
-        }
-        if (filters.tieneUbicacion === 'false' && tieneUbicacion) {
-          return false;
-        }
-      }
-
-      // Filtro por tiene medidor
-      if (filters.tieneMedidor && filters.tieneMedidor !== 'all') {
-        const tieneMedidor = Boolean(
-          acometida.numeroMedidor && acometida.numeroMedidor.trim() !== ''
-        );
-        if (filters.tieneMedidor === 'true' && !tieneMedidor) {
-          return false;
-        }
-        if (filters.tieneMedidor === 'false' && tieneMedidor) {
-          return false;
-        }
-      }
-
-      // Filtro por tiene límite de potencia
+      // Filtros de presencia: ubicación, medidor, límite de potencia
       if (
-        filters.tieneLimitePotencia &&
-        filters.tieneLimitePotencia !== 'all'
+        !filterByPresence(
+          Boolean(acometida.ubicacion?.trim()),
+          filters.tieneUbicacion
+        )
       ) {
-        const tieneLimitePotencia = Boolean(
-          acometida.limitePotencia !== null &&
-            acometida.limitePotencia !== undefined &&
-            acometida.limitePotencia > 0
-        );
-        if (filters.tieneLimitePotencia === 'true' && !tieneLimitePotencia) {
-          return false;
-        }
-        if (filters.tieneLimitePotencia === 'false' && tieneLimitePotencia) {
-          return false;
-        }
+        return false;
+      }
+
+      if (
+        !filterByPresence(
+          Boolean(acometida.numeroMedidor?.trim()),
+          filters.tieneMedidor
+        )
+      ) {
+        return false;
+      }
+
+      if (
+        !filterByPresence(
+          Boolean(
+            acometida.limitePotencia !== null &&
+              acometida.limitePotencia !== undefined &&
+              acometida.limitePotencia > 0
+          ),
+          filters.tieneLimitePotencia
+        )
+      ) {
+        return false;
       }
 
       return true;
     });
   }, [acometidas, filters]);
 
-  const filterStats = useMemo(() => {
-    const total = acometidas.length;
-    const filtered = filteredAcometidas.length;
-    const activeFilters = Object.values(filters).filter(
-      value => value !== '' && value !== 'all'
-    ).length;
-
-    return {
-      total,
-      filtered,
-      activeFilters,
-      isFiltered: activeFilters > 0
-    };
-  }, [acometidas.length, filteredAcometidas.length, filters]);
+  /**
+   * Calcula estadísticas de los filtros aplicados
+   * Extraído a función separada para responsabilidad única
+   */
+  const filterStats = useMemo(
+    () =>
+      calculateFilterStats(acometidas, filteredAcometidas, filters),
+    [acometidas.length, filteredAcometidas.length, filters]
+  );
 
   return {
     filteredAcometidas,
