@@ -1,13 +1,30 @@
+/**
+ * Hook para ejecutar un flujo multi-paso de cálculo de facturación
+ * Orquesta 5 pasos secuenciales: lanzar, obtener ID, verificar, consultar datos
+ *
+ * @module operaciones/use-calculo-facturacion-flow
+ */
+
 import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import { operacionesService } from '~/services/operacionesService';
 import type {
+  CalculoPrefacturaCargoResponse,
   CalculoPrefacturaCompleto,
   CalculoPrefacturaDetalle
 } from '~/types/operaciones';
+import {
+  convertirCicloParaAPI,
+  validarCicloYPeriodo
+} from './utils/cycle-utilities';
+import { combinarPrefactura } from './utils/data-combiner';
+import { extraerErrorMessage } from './utils/error-handler';
 
+/**
+ * Estado de un paso en el flujo
+ */
 export interface FlowStep {
   id: number;
   name: string;
@@ -18,33 +35,20 @@ export interface FlowStep {
   timestamp?: string;
 }
 
+/**
+ * Props del hook de flujo de facturación
+ */
 interface UseCalculoFacturacionFlowProps {
   periodoFormateado: string;
   cicloId: string;
   onFlowCompleted?: () => void;
 }
 
-export function useCalculoFacturacionFlow({
-  periodoFormateado,
-  cicloId,
-  onFlowCompleted
-}: UseCalculoFacturacionFlowProps) {
-  // Estados del flujo
-  const [currentStep, setCurrentStep] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [procesoId, setProcesoId] = useState<string | null>(null);
-
-  // Datos del flujo
-  const [encabezadoData, setEncabezadoData] = useState<
-    CalculoPrefacturaDetalle[]
-  >([]);
-  const [datosCompletos, setDatosCompletos] = useState<
-    CalculoPrefacturaCompleto[]
-  >([]);
-
-  // Debug y logging
-  const [debugMode, setDebugMode] = useState(false);
-  const [flowSteps, setFlowSteps] = useState<FlowStep[]>([
+/**
+ * Inicializa el array de pasos del flujo
+ */
+function inicializarFlowSteps(): FlowStep[] {
+  return [
     {
       id: 1,
       name: 'Lanzar Cálculo',
@@ -75,8 +79,58 @@ export function useCalculoFacturacionFlow({
       description: 'Obtener los cargos detallados de prefactura',
       status: 'pending'
     }
-  ]);
+  ];
+}
 
+/**
+ * Hook para ejecutar flujo de cálculo de facturación
+ *
+ * Aplica SOLID: SRP (solo orquesta el flujo), DRY (usa utilities compartidas)
+ *
+ * @param periodoFormateado - Período en formato MMYYYY
+ * @param cicloId - ID del ciclo de facturación
+ * @param onFlowCompleted - Callback cuando se completa el flujo
+ * @returns Estados, datos y funciones para ejecutar el flujo
+ *
+ * @example
+ * const {
+ *   currentStep,
+ *   isRunning,
+ *   datosCompletos,
+ *   ejecutarFlujoCompleto
+ * } = useCalculoFacturacionFlow({
+ *   periodoFormateado: '012024',
+ *   cicloId: '1',
+ *   onFlowCompleted: () => refetch()
+ * });
+ */
+export function useCalculoFacturacionFlow({
+  periodoFormateado,
+  cicloId,
+  onFlowCompleted
+}: UseCalculoFacturacionFlowProps) {
+  // Estados del flujo
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [procesoId, setProcesoId] = useState<string | null>(null);
+
+  // Datos del flujo
+  const [encabezadoData, setEncabezadoData] = useState<
+    CalculoPrefacturaDetalle[]
+  >([]);
+  const [datosCompletos, setDatosCompletos] = useState<
+    CalculoPrefacturaCompleto[]
+  >([]);
+
+  // Debug y logging
+  const [debugMode, setDebugMode] = useState(false);
+  const [flowSteps, setFlowSteps] = useState<FlowStep[]>(
+    inicializarFlowSteps()
+  );
+
+  /**
+   * Actualiza el estado de un paso en el flujo
+   */
   const logStep = useCallback(
     (
       stepId: number,
@@ -98,21 +152,17 @@ export function useCalculoFacturacionFlow({
         )
       );
     },
-    [debugMode]
+    []
   );
 
-  const obtenerCicloParaAPI = (ciclo: string): string => {
-    if (ciclo === '1' || ciclo === '2') return ciclo;
-    if (ciclo.includes('15')) return '1';
-    return ciclo;
-  };
-
-  // Paso 1: Lanzar cálculo de facturación
+  /**
+   * Paso 1: Lanza el cálculo de facturación en el backend
+   */
   const ejecutarPaso1 = async (): Promise<boolean> => {
     logStep(1, 'loading');
 
     try {
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
+      const cicloParaAPI = convertirCicloParaAPI(cicloId);
       const response = await operacionesService.lanzarCalculoFacturacion(
         Number.parseInt(cicloParaAPI),
         periodoFormateado
@@ -128,49 +178,42 @@ export function useCalculoFacturacionFlow({
       toast.success('Paso 1: Cálculo lanzado exitosamente');
       return true;
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : 'Error desconocido';
-      logStep(1, 'error', null, errorMsg);
-      toast.error(`Error en Paso 1: ${errorMsg}`);
+      const { message } = extraerErrorMessage(error);
+      logStep(1, 'error', null, message);
+      toast.error(`Error en Paso 1: ${message}`);
       return false;
     }
   };
 
-  // Paso 2: Obtener identificador del proceso
+  /**
+   * Paso 2: Obtiene el identificador del proceso
+   */
   const ejecutarPaso2 = async (): Promise<boolean> => {
     logStep(2, 'loading');
 
     try {
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
+      const cicloParaAPI = convertirCicloParaAPI(cicloId);
       const response = await operacionesService.obtenerIdentificadorProceso(
         cicloParaAPI,
         periodoFormateado,
         1
       );
 
+      // Early return si hay error o no hay datos
       if (response.error || !response.data || response.data.length === 0) {
-        logStep(
-          2,
-          'error',
-          response.data,
-          response.error || 'No se encontró identificador del proceso'
-        );
-        toast.error(
-          `Error en Paso 2: ${response.error || 'No se encontró identificador'}`
-        );
+        const errorMsg =
+          response.error || 'No se encontró identificador del proceso';
+        logStep(2, 'error', response.data, errorMsg);
+        toast.error(`Error en Paso 2: ${errorMsg}`);
         return false;
       }
 
       const identificador = response.data[0];
 
-      // Verificar que el identificador tenga la estructura esperada
+      // Validar estructura de respuesta
       if (!identificador?.procesoId) {
-        logStep(
-          2,
-          'error',
-          response.data,
-          `La respuesta no contiene un procesoId válido. Estructura recibida: ${JSON.stringify(identificador)}`
-        );
+        const errorMsg = `La respuesta no contiene un procesoId válido. Estructura recibida: ${JSON.stringify(identificador)}`;
+        logStep(2, 'error', response.data, errorMsg);
         toast.error('Error en Paso 2: Respuesta inválida del servidor');
         return false;
       }
@@ -180,16 +223,18 @@ export function useCalculoFacturacionFlow({
       toast.success(`Paso 2: Proceso ID obtenido: ${identificador.procesoId}`);
       return true;
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : 'Error desconocido';
-      logStep(2, 'error', null, errorMsg);
-      toast.error(`Error en Paso 2: ${errorMsg}`);
+      const { message } = extraerErrorMessage(error);
+      logStep(2, 'error', null, message);
+      toast.error(`Error en Paso 2: ${message}`);
       return false;
     }
   };
 
-  // Paso 3: Verificar estado del proceso
+  /**
+   * Paso 3: Verifica el estado del proceso
+   */
   const ejecutarPaso3 = async (): Promise<boolean> => {
+    // Early return si no hay procesoId
     if (!procesoId) {
       logStep(3, 'error', null, 'No hay proceso ID disponible');
       return false;
@@ -202,15 +247,10 @@ export function useCalculoFacturacionFlow({
         await operacionesService.verificarEstadoProceso(procesoId);
 
       if (response.error || !response.data) {
-        logStep(
-          3,
-          'error',
-          null,
-          response.error || 'No se pudo verificar el estado'
-        );
-        toast.error(
-          `Error en Paso 3: ${response.error || 'Error al verificar estado'}`
-        );
+        const errorMsg =
+          response.error || 'No se pudo verificar el estado';
+        logStep(3, 'error', null, errorMsg);
+        toast.error(`Error en Paso 3: ${errorMsg}`);
         return false;
       }
 
@@ -219,41 +259,39 @@ export function useCalculoFacturacionFlow({
 
       if (estado.codigoEstado === 1) {
         toast.success(`Paso 3: ${estado.mensaje}`);
-        return true;
       } else {
         toast.warning(
           `Paso 3: ${estado.mensaje} (Código: ${estado.codigoEstado})`
         );
-        return true; // Continuamos aunque el código no sea 1
       }
+
+      return true;
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : 'Error desconocido';
-      logStep(3, 'error', null, errorMsg);
-      toast.error(`Error en Paso 3: ${errorMsg}`);
+      const { message } = extraerErrorMessage(error);
+      logStep(3, 'error', null, message);
+      toast.error(`Error en Paso 3: ${message}`);
       return false;
     }
   };
 
-  // Paso 4: Consultar encabezado de prefactura
+  /**
+   * Paso 4: Consulta los encabezados de prefactura
+   */
   const ejecutarPaso4 = async (): Promise<boolean> => {
     logStep(4, 'loading');
 
     try {
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
-      const response = await operacionesService.consultarEncabezadoPrefactura(
-        cicloParaAPI,
-        periodoFormateado
-      );
+      const cicloParaAPI = convertirCicloParaAPI(cicloId);
+      const response =
+        await operacionesService.consultarEncabezadoPrefactura(
+          cicloParaAPI,
+          periodoFormateado
+        );
 
       if (response.error || !response.data) {
-        logStep(
-          4,
-          'error',
-          null,
-          response.error || 'No se encontraron datos de encabezado'
-        );
-        toast.error(`Error en Paso 4: ${response.error || 'No hay datos'}`);
+        const errorMsg = response.error || 'No se encontraron datos de encabezado';
+        logStep(4, 'error', null, errorMsg);
+        toast.error(`Error en Paso 4: ${errorMsg}`);
         return false;
       }
 
@@ -265,49 +303,38 @@ export function useCalculoFacturacionFlow({
       toast.success(`Paso 4: ${response.data.length} encabezados obtenidos`);
       return true;
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : 'Error desconocido';
-      logStep(4, 'error', null, errorMsg);
-      toast.error(`Error en Paso 4: ${errorMsg}`);
+      const { message } = extraerErrorMessage(error);
+      logStep(4, 'error', null, message);
+      toast.error(`Error en Paso 4: ${message}`);
       return false;
     }
   };
 
-  // Paso 5: Consultar cargos de prefactura y combinar datos
+  /**
+   * Paso 5: Consulta los cargos y combina con encabezados
+   */
   const ejecutarPaso5 = async (): Promise<boolean> => {
     logStep(5, 'loading');
 
     try {
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
-      const response = await operacionesService.consultarCargosPrefactura(
-        cicloParaAPI,
-        periodoFormateado
-      );
+      const cicloParaAPI = convertirCicloParaAPI(cicloId);
+      const response =
+        await operacionesService.consultarCargosPrefactura(
+          cicloParaAPI,
+          periodoFormateado
+        );
 
       if (response.error || !response.data) {
-        logStep(5, 'error', null, response.error || 'No se encontraron cargos');
-        toast.error(`Error en Paso 5: ${response.error || 'No hay cargos'}`);
+        const errorMsg = response.error || 'No se encontraron cargos';
+        logStep(5, 'error', null, errorMsg);
+        toast.error(`Error en Paso 5: ${errorMsg}`);
         return false;
       }
 
-      // Combinar encabezados con cargos
-      const datosCombinados: CalculoPrefacturaCompleto[] = encabezadoData.map(
-        encabezado => {
-          const cargosContrato = response.data?.find(
-            c => c.contratoId === encabezado.contratoId
-          );
-          const totalFacturado =
-            cargosContrato?.cargos.reduce(
-              (sum, cargo) => sum + cargo.subtotal,
-              0
-            ) || 0;
-
-          return {
-            ...encabezado,
-            cargos: cargosContrato?.cargos || [],
-            totalFacturado
-          };
-        }
+      // Combinar datos
+      const datosCombinados = combinarPrefactura(
+        encabezadoData,
+        response.data as CalculoPrefacturaCargoResponse[]
       );
 
       setDatosCompletos(datosCombinados);
@@ -324,15 +351,16 @@ export function useCalculoFacturacionFlow({
       );
       return true;
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : 'Error desconocido';
-      logStep(5, 'error', null, errorMsg);
-      toast.error(`Error en Paso 5: ${errorMsg}`);
+      const { message } = extraerErrorMessage(error);
+      logStep(5, 'error', null, message);
+      toast.error(`Error en Paso 5: ${message}`);
       return false;
     }
   };
 
-  // Ejecutar flujo paso a paso
+  /**
+   * Ejecuta los pasos del flujo secuencialmente
+   */
   const ejecutarPasosSiguientes = async (paso: number): Promise<boolean> => {
     switch (paso) {
       case 2:
@@ -342,6 +370,7 @@ export function useCalculoFacturacionFlow({
           return ejecutarPasosSiguientes(3);
         }
         return false;
+
       case 3:
         if (await ejecutarPaso3()) {
           setCurrentStep(4);
@@ -349,6 +378,7 @@ export function useCalculoFacturacionFlow({
           return ejecutarPasosSiguientes(4);
         }
         return false;
+
       case 4:
         if (await ejecutarPaso4()) {
           setCurrentStep(5);
@@ -356,6 +386,7 @@ export function useCalculoFacturacionFlow({
           return ejecutarPasosSiguientes(5);
         }
         return false;
+
       case 5:
         if (await ejecutarPaso5()) {
           setCurrentStep(6);
@@ -364,14 +395,18 @@ export function useCalculoFacturacionFlow({
           return true;
         }
         return false;
+
       default:
         return false;
     }
   };
 
-  // Ejecutar flujo completo
-  const ejecutarFlujoCompleto = async () => {
-    if (!periodoFormateado || !cicloId) {
+  /**
+   * Ejecuta el flujo completo desde el principio
+   */
+  const ejecutarFlujoCompleto = async (): Promise<void> => {
+    // Early return si faltan parámetros
+    if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
       toast.error('Periodo y ciclo son requeridos');
       return;
     }
@@ -386,14 +421,16 @@ export function useCalculoFacturacionFlow({
         await ejecutarPasosSiguientes(2);
       }
     } catch (error) {
-      toast.error('Error inesperado en el flujo', error as any);
+      toast.error(`Error inesperado en el flujo: ${extraerErrorMessage(error).message}`);
     } finally {
       setIsRunning(false);
     }
   };
 
-  // Limpiar estado del flujo
-  const limpiarFlujo = () => {
+  /**
+   * Limpia el estado del flujo
+   */
+  const limpiarFlujo = (): void => {
     setCurrentStep(0);
     setProcesoId(null);
     setEncabezadoData([]);
@@ -409,7 +446,7 @@ export function useCalculoFacturacionFlow({
     );
   };
 
-  // Reset cuando cambia el ciclo
+  // Limpiar flujo cuando cambia el ciclo
   useEffect(() => {
     limpiarFlujo();
   }, [cicloId]);

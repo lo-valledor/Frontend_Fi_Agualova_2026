@@ -1,3 +1,10 @@
+/**
+ * Hook para obtener y gestionar datos de cálculos de prefactura
+ * Obtiene encabezados y cargos de prefactura, luego los combina
+ *
+ * @module operaciones/use-calculo-factura
+ */
+
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
@@ -8,16 +15,58 @@ import type {
   CalculoPrefacturaCompleto,
   CalculoPrefacturaDetalle
 } from '~/types/operaciones';
+import { convertirCicloParaAPI } from './utils/cycle-utilities';
+import { combinarPrefactura } from './utils/data-combiner';
+import { extraerErrorMessage, es404 } from './utils/error-handler';
 
+/**
+ * Props del hook de cálculo de factura
+ */
 interface UseCalculoFacturaProps {
   periodoFormateado: string;
   cicloId: string;
 }
 
+/**
+ * Resultado del hook de cálculo de factura
+ */
+export interface UseCalculoFacturaResult {
+  data: CalculoPrefacturaCompleto[];
+  filteredData: CalculoPrefacturaCompleto[];
+  isLoading: boolean;
+  error: string | null;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  handleRevisarCalculo: () => Promise<void>;
+  setData: (data: CalculoPrefacturaCompleto[]) => void;
+}
+
+/**
+ * Hook para obtener y filtrar datos de cálculos de factura
+ *
+ * Aplica SOLID: SRP (solo obtiene datos), DRY (usa utilities para combinación y ciclo)
+ *
+ * @param periodoFormateado - Período en formato MMYYYY
+ * @param cicloId - ID del ciclo de facturación
+ * @returns Datos de prefacturas, estado de carga y funciones de filtrado
+ *
+ * @example
+ * const {
+ *   data,
+ *   filteredData,
+ *   isLoading,
+ *   searchTerm,
+ *   setSearchTerm,
+ *   handleRevisarCalculo
+ * } = useCalculoFactura({
+ *   periodoFormateado: '012024',
+ *   cicloId: '1'
+ * });
+ */
 export function useCalculoFactura({
   periodoFormateado,
   cicloId
-}: UseCalculoFacturaProps) {
+}: UseCalculoFacturaProps): UseCalculoFacturaResult {
   const [data, setData] = useState<CalculoPrefacturaCompleto[]>([]);
   const [filteredData, setFilteredData] = useState<CalculoPrefacturaCompleto[]>(
     []
@@ -26,31 +75,32 @@ export function useCalculoFactura({
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const obtenerCicloParaAPI = (ciclo: string): string => {
-    if (ciclo === '1' || ciclo === '2') return ciclo;
-    if (ciclo.includes('15')) return '1';
-    return ciclo;
-  };
-
-  const handleRevisarCalculo = async () => {
-    if (!periodoFormateado) {
-      toast.error('No hay un periodo abierto disponible');
-      return;
-    }
-    if (!cicloId) {
-      toast.error('Debe seleccionar un ciclo de facturación');
+  /**
+   * Obtiene y procesa los datos de prefactura
+   * Realiza dos llamadas API y combina los resultados
+   */
+  const handleRevisarCalculo = async (): Promise<void> => {
+    // Early return si faltan parámetros
+    if (!periodoFormateado || !cicloId) {
+      toast.error(
+        !periodoFormateado
+          ? 'No hay un periodo abierto disponible'
+          : 'Debe seleccionar un ciclo de facturación'
+      );
       return;
     }
 
     setIsLoading(true);
     setError(null);
+
     try {
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
+      const cicloParaAPI = convertirCicloParaAPI(cicloId);
       const requestParams = {
         cicloId: cicloParaAPI,
         periodo: periodoFormateado
       };
 
+      // Obtener encabezados
       const encabezadoResponse = await api.get(
         '/calculo-prefactura-encabezado',
         { params: requestParams }
@@ -58,6 +108,7 @@ export function useCalculoFactura({
 
       const encabezados = encabezadoResponse.data as CalculoPrefacturaDetalle[];
 
+      // Early return si no hay encabezados
       if (!Array.isArray(encabezados) || encabezados.length === 0) {
         setData([]);
         toast.info(
@@ -66,6 +117,7 @@ export function useCalculoFactura({
         return;
       }
 
+      // Obtener cargos
       const cargosResponse = await api.get('/calculo-prefactura-cargos', {
         params: requestParams
       });
@@ -73,30 +125,15 @@ export function useCalculoFactura({
       const cargosData =
         cargosResponse.data as CalculoPrefacturaCargoResponse[];
 
-      const datosCombinados: CalculoPrefacturaCompleto[] = encabezados.map(
-        encabezado => {
-          const cargosContrato = cargosData.find(
-            c => c.contratoId === encabezado.contratoId
-          );
-          const totalFacturado =
-            cargosContrato?.cargos.reduce(
-              (sum, cargo) => sum + cargo.subtotal,
-              0
-            ) || 0;
-          return {
-            ...encabezado,
-            cargos: cargosContrato?.cargos || [],
-            totalFacturado
-          };
-        }
-      );
+      // Combinar datos
+      const datosCombinados = combinarPrefactura(encabezados, cargosData);
 
       setData(datosCombinados);
       toast.success(`Se encontraron ${datosCombinados.length} registros`);
-    } catch (err: any) {
-      // Si es un 404, es un caso esperado (no hay lecturas cerradas)
-      if (err.response?.status === 404) {
-        setError('NO_LECTURAS_CERRADAS'); // Código especial para identificar 404
+    } catch (err) {
+      // Caso especial: 404 significa que no hay lecturas cerradas
+      if (es404(err)) {
+        setError('NO_LECTURAS_CERRADAS');
         toast.success(
           '✓ No hay lecturas pendientes de facturar',
           {
@@ -107,17 +144,21 @@ export function useCalculoFactura({
           }
         );
       } else {
-        const errorMessage =
-          err.response?.data?.mensaje || err.message || 'Error desconocido';
-        setError(errorMessage);
-        toast.error(`Error: ${errorMessage}`);
+        const { message } = extraerErrorMessage(err);
+        setError(message);
+        toast.error(`Error: ${message}`);
       }
+
       setData([]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  /**
+   * Filtra datos según el término de búsqueda
+   * Busca en todos los campos del objeto
+   */
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter(item => {
@@ -136,6 +177,6 @@ export function useCalculoFactura({
     searchTerm,
     setSearchTerm,
     handleRevisarCalculo,
-    setData // Export to allow clearing data
+    setData
   };
 }

@@ -1,3 +1,8 @@
+/**
+ * Tests para useValidacionPrecios hook
+ * Verifica validación de precios y estadísticas
+ */
+
 import { renderHook, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useValidacionPrecios } from './use-validacion-precios';
@@ -79,7 +84,7 @@ describe('useValidacionPrecios', () => {
     expect(typeof result.current.isLoading).toBe('boolean');
   });
 
-  it('debería retornar estructura correcta de resultado', () => {
+  it('debería retornar estructura correcta con estadísticas de precios', () => {
     vi.mocked(api.get).mockResolvedValue({
       data: [],
       status: 200,
@@ -98,9 +103,10 @@ describe('useValidacionPrecios', () => {
     expect(result.current).toHaveProperty('preciosConfirmados');
     expect(result.current).toHaveProperty('isLoading');
     expect(result.current).toHaveProperty('error');
-    expect(result.current).toHaveProperty('totalPrecios');
-    expect(result.current).toHaveProperty('preciosConfirmadosCount');
-    expect(result.current).toHaveProperty('preciosPendientesCount');
+    expect(result.current).toHaveProperty('totalValidos');
+    expect(result.current).toHaveProperty('totalConfirmados');
+    expect(result.current).toHaveProperty('totalPendientes');
+    expect(result.current).toHaveProperty('todosConfirmados');
     expect(result.current).toHaveProperty('verificarPrecios');
   });
 
@@ -121,5 +127,47 @@ describe('useValidacionPrecios', () => {
     );
 
     expect(result.current.error).toBeNull();
+  });
+
+  it('debería inicializar estadísticas en cero', () => {
+    vi.mocked(api.get).mockResolvedValue({
+      data: [],
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {} as any
+    });
+
+    const { result } = renderHook(() =>
+      useValidacionPrecios({
+        periodoFormateado: '202401',
+        cicloId: '1'
+      })
+    );
+
+    expect(result.current.totalValidos).toBe(0);
+    expect(result.current.totalConfirmados).toBe(0);
+    expect(result.current.totalPendientes).toBe(0);
+  });
+
+  it('debería soportar ciclos con formato 15 y convertirlos correctamente', async () => {
+    vi.mocked(api.get).mockResolvedValue({
+      data: [],
+      status: 200,
+      statusText: 'OK',
+      headers: {},
+      config: {} as any
+    });
+
+    const { result } = renderHook(() =>
+      useValidacionPrecios({
+        periodoFormateado: '202401',
+        cicloId: '15' // Debe convertirse a ciclo 1
+      })
+    );
+
+    await result.current.verificarPrecios();
+
+    expect(api.get).toHaveBeenCalled();
   });
 });

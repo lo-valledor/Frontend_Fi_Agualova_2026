@@ -1,23 +1,63 @@
+/**
+ * Hook para validar que todos los precios estén confirmados antes de facturar
+ * Obtiene precios de dos tablas y verifica su estado de confirmación
+ *
+ * @module operaciones/use-validacion-precios
+ */
+
 import { useEffect, useState } from 'react';
 
 import api from '~/lib/api';
 import type { RevisarPrecioDos, RevisarPrecioUno } from '~/types/operaciones';
+import {
+  convertirCicloParaAPI,
+  extraerMesYAnio,
+  obtenerDiaDelCiclo,
+  validarCicloYPeriodo
+} from './utils/cycle-utilities';
+import { extraerErrorMessage } from './utils/error-handler';
+import {
+  validarPreciosConfirmados,
+  type PriceValidationResult
+} from './utils/price-validator';
 
+/**
+ * Props del hook de validación de precios
+ */
 interface UseValidacionPreciosProps {
   periodoFormateado: string;
   cicloId: string;
 }
 
-interface ValidacionPreciosResult {
+/**
+ * Resultado del hook de validación de precios
+ */
+export interface ValidacionPreciosResult extends PriceValidationResult {
   preciosConfirmados: boolean;
   isLoading: boolean;
   error: string | null;
-  totalPrecios: number;
-  preciosConfirmadosCount: number;
-  preciosPendientesCount: number;
   verificarPrecios: () => Promise<void>;
 }
 
+/**
+ * Hook para validar precios de facturación
+ * Obtiene precios de dos tablas ENEL y verifica si están confirmados
+ *
+ * Aplica SOLID: SRP (solo valida precios), DRY (usa utilities compartidas)
+ *
+ * @param periodoFormateado - Período en formato MMYYYY
+ * @param cicloId - ID del ciclo de facturación
+ * @returns Estado de validación y función para verificar precios
+ *
+ * @example
+ * const { preciosConfirmados, isLoading, verificarPrecios } = useValidacionPrecios({
+ *   periodoFormateado: '012024',
+ *   cicloId: '1'
+ * });
+ *
+ * // Verificar precios manualmente
+ * await verificarPrecios();
+ */
 export function useValidacionPrecios({
   periodoFormateado,
   cicloId
@@ -25,18 +65,17 @@ export function useValidacionPrecios({
   const [preciosConfirmados, setPreciosConfirmados] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [totalPrecios, setTotalPrecios] = useState(0);
-  const [preciosConfirmadosCount, setPreciosConfirmadosCount] = useState(0);
-  const [preciosPendientesCount, setPreciosPendientesCount] = useState(0);
+  const [totalValidos, setTotalValidos] = useState(0);
+  const [totalConfirmados, setTotalConfirmados] = useState(0);
+  const [totalPendientes, setTotalPendientes] = useState(0);
 
-  const obtenerCicloParaAPI = (ciclo: string): string => {
-    if (ciclo === '1' || ciclo === '2') return ciclo;
-    if (ciclo.includes('15')) return '1';
-    return ciclo;
-  };
-
-  const verificarPrecios = async () => {
-    if (!periodoFormateado || !cicloId) {
+  /**
+   * Verifica precios consultando dos endpoints
+   * Filtra solo precios con índice válido y cuenta confirmados
+   */
+  const verificarPrecios = async (): Promise<void> => {
+    // Early return si faltan parámetros
+    if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
       setPreciosConfirmados(false);
       return;
     }
@@ -45,58 +84,41 @@ export function useValidacionPrecios({
     setError(null);
 
     try {
-      const cicloParaAPI = obtenerCicloParaAPI(cicloId);
-      const mes = periodoFormateado.substring(0, 2);
-      const anio = periodoFormateado.substring(2);
+      const cicloParaAPI = convertirCicloParaAPI(cicloId);
+      const { mes, anio } = extraerMesYAnio(periodoFormateado);
+      const dia = obtenerDiaDelCiclo(cicloParaAPI);
 
-      // Obtener precios ENEL (tabla uno)
+      // Obtener precios de ambas tablas en paralelo
       const [responsePreciosUno, responsePreciosDos] = await Promise.all([
         api.get<RevisarPrecioUno[]>(`/ConsultarPreciosUno?mes=${mes}&año=${anio}`),
         api.get<RevisarPrecioDos[]>(
-          `/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${cicloParaAPI === '1' ? '15' : '30'}`
+          `/ConsultarPreciosDos?mes=${mes}&año=${anio}&dia=${dia}`
         )
       ]);
 
       const preciosUno = (responsePreciosUno.data as RevisarPrecioUno[]) || [];
       const preciosDos = (responsePreciosDos.data as RevisarPrecioDos[]) || [];
 
-      // Filtrar solo precios con índice válido (los que deben ser confirmados)
-      const preciosUnoValidos = preciosUno.filter(
-        p => p.indice && p.indice !== '' && p.indice !== '0'
-      );
-      const preciosDosValidos = preciosDos.filter(
-        p => p.indice && p.indice !== '' && p.indice !== '0'
-      );
-
-      // Contar confirmados
-      const preciosUnoConfirmados = preciosUnoValidos.filter(
-        p => p.confirmacion === 'Confirmado'
-      ).length;
-      const preciosDosConfirmados = preciosDosValidos.filter(
-        p => p.confirmacion === 'Confirmado'
-      ).length;
-
-      const totalValidos = preciosUnoValidos.length + preciosDosValidos.length;
-      const totalConfirmados = preciosUnoConfirmados + preciosDosConfirmados;
-      const totalPendientes = totalValidos - totalConfirmados;
-
-      setTotalPrecios(totalValidos);
-      setPreciosConfirmadosCount(totalConfirmados);
-      setPreciosPendientesCount(totalPendientes);
-
-      // Solo si TODOS los precios válidos están confirmados
-      const todosConfirmados = totalValidos > 0 && totalPendientes === 0;
-      setPreciosConfirmados(todosConfirmados);
-    } catch (err: any) {
-      const errorMessage =
-        err.response?.data?.mensaje ||
-        err.message ||
-        'Error al verificar precios';
-      setError(errorMessage);
+      // Validar precios
+      const resultado = validarPreciosConfirmados(preciosUno, preciosDos);
+      actualizarEstadoPrecios(resultado);
+    } catch (err) {
+      const { message } = extraerErrorMessage(err);
+      setError(message);
       setPreciosConfirmados(false);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  /**
+   * Actualiza el estado con los resultados de validación
+   */
+  const actualizarEstadoPrecios = (resultado: PriceValidationResult): void => {
+    setTotalValidos(resultado.totalValidos);
+    setTotalConfirmados(resultado.totalConfirmados);
+    setTotalPendientes(resultado.totalPendientes);
+    setPreciosConfirmados(resultado.todosConfirmados);
   };
 
   // Verificar automáticamente cuando cambian los parámetros
@@ -108,10 +130,10 @@ export function useValidacionPrecios({
     preciosConfirmados,
     isLoading,
     error,
-    totalPrecios,
-    preciosConfirmadosCount,
-    preciosPendientesCount,
+    totalValidos,
+    totalConfirmados,
+    totalPendientes,
+    todosConfirmados: preciosConfirmados,
     verificarPrecios
   };
 }
-

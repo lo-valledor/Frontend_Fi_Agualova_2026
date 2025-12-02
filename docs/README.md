@@ -2,6 +2,24 @@
 
 Bienvenido a la documentación del frontend de Enerlova. Esta documentación está organizada por categorías para facilitar la navegación.
 
+## 🆕 Últimas Actualizaciones
+
+### ✨ [Refactorización de Servicios - FASE 1](../REFACTORIZACIÓN_COMPLETADA.md)
+
+**Estado**: ✅ Completado | Principios SOLID aplicados | TypeScript Strict
+
+- [**REFACTORIZACIÓN_SERVICIOS.md**](./REFACTORIZACIÓN_SERVICIOS.md) - Guía técnica completa de la refactorización
+- [**GUÍA_USO_SERVICIOS.md**](./GUÍA_USO_SERVICIOS.md) - Ejemplos prácticos y patrones
+- [**REFACTORIZACIÓN_STATUS.md**](./REFACTORIZACIÓN_STATUS.md) - Status detallado de implementación
+
+Incluye:
+
+- ✅ Core module extensible (api-response, api-processing, base-service)
+- ✅ axiosConfig.ts refactorizado (early returns, funciones responsables)
+- ✅ authService.ts refactorizado (clase con validación de tipos)
+- ✅ 1000+ líneas de documentación
+- ✅ Ejemplos de uso y testing
+
 ## 📂 Estructura de Documentación
 
 ### 🏗️ [Arquitectura](./architecture/)

@@ -1,149 +1,318 @@
-import axios from 'axios';
+import axios, { type AxiosError, type AxiosInstance } from 'axios';
 import { toast } from 'sonner';
 
+// ============================================================================
+// TIPOS
+// ============================================================================
+
+/** Configuración de Axios */
+interface AxiosConfig {
+  readonly baseURL: string;
+  readonly withCredentials: boolean;
+  readonly timeout: number;
+}
+
+/** Rutas donde ciertos errores HTTP son respuestas esperadas */
+interface ExpectedErrorRoutes {
+  readonly status: number;
+  readonly routes: readonly string[];
+}
+
+// ============================================================================
+// CONSTANTES
+// ============================================================================
+
 const API_URL = import.meta.env.VITE_API_URL;
+const REQUEST_TIMEOUT_MS = 15000;
 
-// Crear una instancia separada para refresh token para evitar interceptor circular
-const refreshAxiosInstance = axios.create({
+const AXIOS_CONFIG: AxiosConfig = {
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 15000
-});
+  timeout: REQUEST_TIMEOUT_MS
+};
 
-const axiosInstance = axios.create({
-  baseURL: API_URL,
-  withCredentials: true,
-  timeout: 15000 // 15 segundos de timeout
-});
+/** Rutas donde los errores son respuestas esperadas del negocio */
+const EXPECTED_ERROR_ROUTES: readonly ExpectedErrorRoutes[] = [
+  {
+    status: 401,
+    routes: [
+      '/login',
+      '/refresh-token',
+      'validar-usuario-modificacion',
+      'cambiar-contrasena'
+    ] as const
+  },
+  {
+    status: 404,
+    routes: [
+      '/datos-basicos-medidor',
+      '/calculo-prefactura-encabezado',
+      '/calculo-prefactura-cargos'
+    ] as const
+  }
+];
 
-// Interceptor de request para agregar el token automáticamente
+// ============================================================================
+// INSTANCIAS
+// ============================================================================
+
+/** Instancia separada para refresh token - evita loop infinito en interceptores */
+const refreshAxiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
+
+/** Instancia principal con interceptores configurados */
+const axiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
+
+// ============================================================================
+// FUNCIONES PRIVADAS
+// ============================================================================
+
+/**
+ * Obtiene el token del almacenamiento local
+ * @returns Token o null si no existe
+ */
+function getStoredToken(): string | null {
+  return localStorage.getItem('token');
+}
+
+/**
+ * Guarda el token en almacenamiento local
+ * @param token - Token a guardar
+ */
+function saveToken(token: string): void {
+  localStorage.setItem('token', token);
+}
+
+/**
+ * Elimina el token del almacenamiento
+ */
+function clearToken(): void {
+  localStorage.removeItem('token');
+}
+
+/**
+ * Redirige a la página de sesión expirada
+ */
+function redirectToSessionExpired(): void {
+  clearToken();
+  globalThis.location.href = '/session-expired';
+}
+
+/**
+ * Determina si una ruta espera cierto error HTTP como respuesta válida
+ * @param requestUrl - URL de la solicitud
+ * @param statusCode - Código HTTP
+ * @returns true si el error es esperado para esta ruta
+ */
+function isExpectedError(
+  requestUrl: string | undefined,
+  statusCode: number
+): boolean {
+  if (!requestUrl) return false;
+
+  const expectedRoute = EXPECTED_ERROR_ROUTES.find(
+    route => route.status === statusCode
+  );
+
+  return (
+    expectedRoute?.routes.some(route => requestUrl.includes(route)) ?? false
+  );
+}
+
+/**
+ * Extrae el mensaje de error de la respuesta del servidor
+ * @param errorData - Datos de error de la respuesta
+ * @param defaultMessage - Mensaje por defecto si no hay mensaje disponible
+ * @returns Mensaje de error a mostrar
+ */
+function extractErrorMessage(
+  errorData: unknown,
+  defaultMessage: string
+): string {
+  if (typeof errorData === 'object' && errorData !== null) {
+    const data = errorData as Record<string, unknown>;
+    if (typeof data.message === 'string') {
+      return data.message;
+    }
+  }
+
+  if (typeof errorData === 'string') {
+    return errorData;
+  }
+
+  return defaultMessage;
+}
+
+/**
+ * Maneja errores de solicitud (sin respuesta del servidor)
+ */
+function handleNetworkError(): void {
+  toast.error('Error de red. Por favor, verifica tu conexión.');
+}
+
+/**
+ * Maneja error 400 (Bad Request)
+ */
+function handleBadRequestError(errorData: unknown): void {
+  const message = extractErrorMessage(
+    errorData,
+    'Error en la solicitud. Verifica los datos.'
+  );
+  toast.error(message);
+}
+
+/**
+ * Maneja error 403 (Forbidden)
+ */
+function handleForbiddenError(): void {
+  toast.error('No tienes permiso para realizar esta acción.');
+}
+
+/**
+ * Maneja error 500 (Internal Server Error)
+ */
+function handleServerError(): void {
+  toast.error('Error del servidor. Por favor, intenta más tarde.');
+}
+
+/**
+ * Maneja error 404 (Not Found)
+ */
+function handleNotFoundError(errorData: unknown): void {
+  const message = extractErrorMessage(errorData, 'Recurso no encontrado.');
+  toast.error(message);
+}
+
+/**
+ * Maneja error genérico
+ */
+function handleGenericError(errorData: unknown): void {
+  const message = extractErrorMessage(
+    errorData,
+    'Ha ocurrido un error inesperado.'
+  );
+  toast.error(message);
+}
+
+/**
+ * Intenta refrescar el token de autenticación
+ * @returns Nuevo token
+ * @throws Error si el refresh falla
+ */
+async function attemptTokenRefresh(): Promise<string> {
+  const response = await refreshAxiosInstance.post<{ token: string }>(
+    '/refresh-token'
+  );
+
+  const newToken = response.data?.token;
+  if (!newToken) {
+    throw new Error('No se recibió token válido del servidor');
+  }
+
+  return newToken;
+}
+
+/**
+ * Maneja error 401 (Unauthorized) con refresh automático de token
+ */
+async function handleUnauthorizedError(
+  error: AxiosError,
+  originalRequest: any
+): Promise<void> {
+  const isExpectedUnauthorized = isExpectedError(originalRequest.url, 401);
+
+  if (isExpectedUnauthorized) {
+    return Promise.reject(error);
+  }
+
+  // Early return si ya se intentó refrescar
+  if (originalRequest._retry) {
+    toast.error('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+    redirectToSessionExpired();
+    throw error;
+  }
+
+  originalRequest._retry = true;
+
+  try {
+    const newToken = await attemptTokenRefresh();
+    saveToken(newToken);
+    originalRequest.headers.Authorization = `Bearer ${newToken}`;
+    return axiosInstance(originalRequest);
+  } catch {
+    toast.error('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
+    redirectToSessionExpired();
+    throw error;
+  }
+}
+
+/**
+ * Maneja respuestas de error HTTP según el código de estado
+ */
+async function handleErrorResponse(error: AxiosError): Promise<void> {
+  if (!error.response) {
+    handleNetworkError();
+    throw error;
+  }
+
+  const { status, data } = error.response;
+
+  switch (status) {
+    case 400:
+      handleBadRequestError(data);
+      break;
+
+    case 401:
+      await handleUnauthorizedError(error, error.config);
+      return;
+
+    case 403:
+      handleForbiddenError();
+      break;
+
+    case 404:
+      if (!isExpectedError(error.config?.url, 404)) {
+        handleNotFoundError(data);
+      }
+      break;
+
+    case 500:
+      handleServerError();
+      break;
+
+    default:
+      handleGenericError(data);
+      break;
+  }
+
+  throw error;
+}
+
+// ============================================================================
+// INTERCEPTORES
+// ============================================================================
+
+/**
+ * Interceptor de request: Agrega token de autenticación automáticamente
+ */
 axiosInstance.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('token');
+    const token = getStoredToken();
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
-// Interceptor de response para manejar errores
+/**
+ * Interceptor de response: Maneja errores y refresh de token
+ */
 axiosInstance.interceptors.response.use(
   response => response,
-  async error => {
-    const originalRequest = error.config;
-
-    // Si no hay respuesta del servidor, es un error de red o timeout
-    if (!error.response) {
-      toast.error('Error de red. Por favor, verifica tu conexión.');
-      throw new Error(error);
-    }
-
-    const { status, data } = error.response;
-
-    // Manejo de errores específicos por código de estado
-    switch (status) {
-      case 400: {
-        const errorMessage400 =
-          data?.message ||
-          (typeof data === 'string'
-            ? data
-            : 'Error en la solicitud. Verifica los datos.');
-        toast.error(errorMessage400);
-        break;
-      }
-
-      case 403:
-        toast.error('No tienes permiso para realizar esta acción.');
-        break;
-
-      case 401: {
-        // Excluimos rutas donde un 401 es una respuesta esperada
-        const routesWithExpected401 = [
-          '/login',
-          '/refresh-token',
-          'validar-usuario-modificacion',
-          'cambiar-contrasena'
-        ];
-        const isExpected401 = routesWithExpected401.some(route =>
-          originalRequest.url?.includes(route)
-        );
-
-        if (isExpected401) {
-          // Dejamos que el error sea manejado por la lógica del componente
-          return Promise.reject(error);
-        }
-
-        // Si ya se intentó refrescar el token, no volver a intentarlo
-        if (originalRequest._retry) {
-          toast.error(
-            'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
-          );
-          localStorage.removeItem('token');
-          globalThis.location.href = '/session-expired';
-          throw new Error(error);
-        }
-
-        originalRequest._retry = true;
-
-        try {
-          // Usar la instancia separada para evitar interceptor circular
-          const response = await refreshAxiosInstance.post('/refresh-token');
-          const newToken = response.data.token;
-
-          if (newToken) {
-            localStorage.setItem('token', newToken);
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            return axiosInstance(originalRequest);
-          } else {
-            throw new Error('No se recibió token válido');
-          }
-        } catch (refreshError) {
-          toast.error(
-            'Tu sesión ha expirado. Por favor, inicia sesión de nuevo.'
-          );
-          localStorage.removeItem('token');
-          globalThis.location.href = '/session-expired';
-          throw refreshError;
-        }
-      }
-
-      case 404: {
-        // Excluimos rutas donde un 404 es una respuesta esperada
-        const routesWithExpected404 = [
-          '/datos-basicos-medidor',
-          '/calculo-prefactura-encabezado', // 404 esperado cuando no hay cálculos procesados
-          '/calculo-prefactura-cargos' // 404 esperado cuando no hay cargos procesados
-        ];
-        const isExpected404 = routesWithExpected404.some(route =>
-          originalRequest.url?.includes(route)
-        );
-
-        if (isExpected404) {
-          // Dejamos que el error sea manejado por la lógica del componente
-          // No mostramos ningún toast aquí
-          return Promise.reject(error);
-        }
-
-        // Para 404s inesperados, mostrar mensaje de error
-        toast.error(data?.message || 'Recurso no encontrado.');
-        break;
-      }
-
-      case 500:
-        toast.error('Error del servidor. Por favor, intenta más tarde.');
-        break;
-
-      default:
-        // Para otros errores, mostrar un mensaje genérico
-        toast.error(data?.message || 'Ha ocurrido un error inesperado.');
-        break;
-    }
-    return Promise.reject(error);
-  }
+  (error: AxiosError) => handleErrorResponse(error)
 );
 
 export default axiosInstance;

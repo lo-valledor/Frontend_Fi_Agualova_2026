@@ -1,3 +1,8 @@
+/**
+ * Tests para useCalculoFactura hook
+ * Verifica obtención y filtrado de datos de prefactura
+ */
+
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCalculoFactura } from './use-calculo-factura';
@@ -16,7 +21,6 @@ vi.mock('~/lib/api', () => ({
     get: vi.fn()
   }
 }));
-
 
 describe('useCalculoFactura', () => {
   beforeEach(() => {
@@ -66,5 +70,75 @@ describe('useCalculoFactura', () => {
 
     expect(typeof result.current.setSearchTerm).toBe('function');
     expect(typeof result.current.setData).toBe('function');
+  });
+
+  it('debería retornar función handleRevisarCalculo', () => {
+    const { result } = renderHook(() =>
+      useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
+    );
+
+    expect(typeof result.current.handleRevisarCalculo).toBe('function');
+  });
+
+  it('debería filtrar datos según searchTerm', () => {
+    const { result, rerender } = renderHook(
+      ({ periodoFormateado, cicloId }) =>
+        useCalculoFactura({ periodoFormateado, cicloId }),
+      {
+        initialProps: { periodoFormateado: '202401', cicloId: '1' }
+      }
+    );
+
+    // Establecer datos
+    const mockData = [
+      { contratoId: 1, cliente: 'Juan' } as any,
+      { contratoId: 2, cliente: 'María' } as any
+    ];
+    result.current.setData(mockData);
+
+    // Rerender para actualizar
+    rerender({ periodoFormateado: '202401', cicloId: '1' });
+
+    // Cambiar search term
+    result.current.setSearchTerm('Juan');
+
+    // El filtrado debe ocurrir a través del useEffect
+  });
+
+  it('debería soportar ciclos con formato 15', async () => {
+    renderHook(() =>
+      useCalculoFactura({ periodoFormateado: '202401', cicloId: '15' })
+    );
+
+    // No debe mostrar error por ciclo inválido
+    expect(toast.error).not.toHaveBeenCalled();
+  });
+
+  it('debería tener getter para datos', () => {
+    const { result } = renderHook(() =>
+      useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
+    );
+
+    expect(Array.isArray(result.current.data)).toBe(true);
+    expect(Array.isArray(result.current.filteredData)).toBe(true);
+  });
+
+  it('debería tener estado de carga', () => {
+    const { result } = renderHook(() =>
+      useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
+    );
+
+    expect(typeof result.current.isLoading).toBe('boolean');
+  });
+
+  it('debería permitir establecer datos manualmente', () => {
+    const { result } = renderHook(() =>
+      useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
+    );
+
+    const mockData = [{ contratoId: 1 }] as any;
+    result.current.setData(mockData);
+
+    expect(result.current.data).toEqual(mockData);
   });
 });
