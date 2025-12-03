@@ -31,9 +31,7 @@ export default function AntiguoMedidorForm({
             <Gauge className='h-3 w-3 sm:h-4 sm:w-4' />
           </div>
           <span className='font-semibold  text-sm sm:text-base truncate'>
-            <span className='hidden sm:inline'>
-              Búsqueda de Medidor Antiguo
-            </span>
+            <span className='hidden sm:inline'>Buscar Medidor Antiguo</span>
             <span className='sm:hidden'>Medidor Antiguo</span>
           </span>
         </div>

@@ -180,10 +180,8 @@ export default function CrearContratoComponent({
         duration: 2000
       });
     } catch (error) {
-      toast.error(
-        'Error al copiar. Intente seleccionar manualmente el ID.',
-        error as any
-      );
+      console.error('Error al copiar:', error);
+      toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
     }
   };
 
@@ -382,6 +380,27 @@ export default function CrearContratoComponent({
     value: string | number | boolean
   ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Funciones para deseleccionar
+  const handleClearPropietario = () => {
+    setFormData(prev => ({ ...prev, nombrePropietario: '' }));
+  };
+
+  const handleClearCliente = () => {
+    setFormData(prev => ({ ...prev, nombreCliente: '' }));
+  };
+
+  const handleClearLocal = () => {
+    setFormData(prev => ({ ...prev, local: '' }));
+  };
+
+  const handleClearComuna = () => {
+    setFormData(prev => ({ ...prev, comunaEnvio: '' }));
+  };
+
+  const handleClearMadre = () => {
+    setFormData(prev => ({ ...prev, madre: '' }));
   };
 
   // Helper para mostrar el nombre de la comuna en el input
@@ -815,9 +834,22 @@ export default function CrearContratoComponent({
                       size='sm'
                       onClick={() => setModalPropietario(true)}
                       className='shrink-0'
+                      title='Seleccionar propietario'
                     >
                       <User className='h-4 w-4' />
                     </Button>
+                    {formData.nombrePropietario && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearPropietario}
+                        className='shrink-0'
+                        title='Deseleccionar propietario'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -843,9 +875,22 @@ export default function CrearContratoComponent({
                       size='sm'
                       onClick={() => setModalCliente(true)}
                       className='shrink-0'
+                      title='Seleccionar cliente'
                     >
                       <User className='h-4 w-4' />
                     </Button>
+                    {formData.nombreCliente && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearCliente}
+                        className='shrink-0'
+                        title='Deseleccionar cliente'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -875,9 +920,22 @@ export default function CrearContratoComponent({
                       size='sm'
                       onClick={() => setModalLocal(true)}
                       className='shrink-0'
+                      title='Seleccionar local'
                     >
                       <Building2 className='h-4 w-4' />
                     </Button>
+                    {formData.local && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearLocal}
+                        className='shrink-0'
+                        title='Deseleccionar local'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -903,9 +961,22 @@ export default function CrearContratoComponent({
                       size='sm'
                       onClick={() => setModalComuna(true)}
                       className='shrink-0'
+                      title='Seleccionar comuna'
                     >
                       <MapPin className='h-4 w-4' />
                     </Button>
+                    {formData.comunaEnvio && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearComuna}
+                        className='shrink-0'
+                        title='Deseleccionar comuna'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1055,9 +1126,22 @@ export default function CrearContratoComponent({
                     size='sm'
                     onClick={() => setModalMadres(true)}
                     className='shrink-0'
+                    title='Seleccionar contrato madre'
                   >
                     <Network className='h-4 w-4' />
                   </Button>
+                  {formData.madre && (
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={handleClearMadre}
+                      className='shrink-0'
+                      title='Deseleccionar contrato madre'
+                    >
+                      <X className='h-4 w-4' />
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1805,35 +1889,48 @@ export default function CrearContratoComponent({
                 <AlertTitle className='text-green-900 dark:text-green-100'>
                   Información del Contrato
                 </AlertTitle>
-                <AlertDescription className='text-green-800 dark:text-green-200 space-y-2'>
+                <AlertDescription className='text-green-800 dark:text-green-200 space-y-4 mt-3'>
                   {contratoCreado?.id && (
-                    <div className='flex items-center justify-betweenbg-background p-3 rounded-xl border border-green-200 dark:border-green-700'>
-                      <div>
-                        <p className='font-medium'>ID del Contrato:</p>
-                        <p className='font-mono text-lg font-bold text-green-700 dark:text-green-300'>
-                          {contratoCreado.id}
-                        </p>
+                    <div className='bg-white dark:bg-slate-900 p-4 rounded-lg border border-green-200 dark:border-green-700/50 shadow-sm'>
+                      <div className='flex items-center justify-between gap-4'>
+                        <div className='flex-1'>
+                          <p className='text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide mb-2'>
+                            ID del Contrato
+                          </p>
+                          <div className='flex items-center gap-2'>
+                            <code className='flex-1 text-lg font-mono font-bold text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/40 px-3 py-2 rounded-md break-all'>
+                              {contratoCreado.id}
+                            </code>
+                          </div>
+                        </div>
+                        <Button
+                          size='sm'
+                          variant='default'
+                          onClick={async () => {
+                            await copiarCodigoContrato(contratoCreado.id!);
+                          }}
+                          className='shrink-0 bg-green-600 hover:bg-green-700 text-white gap-2 h-auto py-2 px-3'
+                        >
+                          <Copy className='h-4 w-4' />
+                          <span className='text-xs font-semibold'>Copiar</span>
+                        </Button>
                       </div>
-                      <Button
-                        size='sm'
-                        variant='outline'
-                        onClick={() => copiarCodigoContrato(contratoCreado.id!)}
-                        className='gap-2 border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:bg-green-900/50'
-                      >
-                        <Copy className='h-4 w-4' />
-                        Copiar
-                      </Button>
                     </div>
                   )}
-                  <div className='text-sm'>
-                    <p>
-                      <strong>Fecha de creación:</strong>{' '}
+                  <div className='bg-white dark:bg-slate-900 p-3 rounded-lg border border-green-100 dark:border-green-900/50'>
+                    <p className='text-sm font-medium text-green-900 dark:text-green-100 mb-1'>
+                      📅 Fecha de creación
+                    </p>
+                    <p className='text-sm text-green-700 dark:text-green-300 font-mono'>
                       {contratoCreado?.fecha}
                     </p>
-                    <p className='mt-2 text-green-700 dark:text-green-300'>
-                      💡 <strong>Importante:</strong> Guarde este ID para
-                      futuras referencias. Puede utilizarlo para buscar y
-                      gestionar este contrato.
+                  </div>
+                  <div className='flex gap-3 p-3 bg-green-100 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700/50'>
+                    <span className='text-lg flex-shrink-0'>💡</span>
+                    <p className='text-sm text-green-700 dark:text-green-300'>
+                      <strong>Importante:</strong> Guarde este ID para futuras
+                      referencias. Puede utilizarlo para buscar y gestionar este
+                      contrato.
                     </p>
                   </div>
                 </AlertDescription>

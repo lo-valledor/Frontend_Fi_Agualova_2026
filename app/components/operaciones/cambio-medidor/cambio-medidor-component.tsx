@@ -409,9 +409,7 @@ export default function CambioMedidorComponent() {
                     <Gauge className='h-5 w-5' />
                   </div>
                   <div>
-                    <CardTitle className='text-lg'>
-                      Paso 1: Medidor Antiguo
-                    </CardTitle>
+                    <CardTitle className='text-lg'>Paso 1:</CardTitle>
                     <CardDescription className=''>
                       Busque el medidor que será reemplazado
                     </CardDescription>
@@ -450,9 +448,7 @@ export default function CambioMedidorComponent() {
                     <Gauge className='h-5 w-5 text-primary' />
                   </div>
                   <div>
-                    <CardTitle className='text-lg'>
-                      Paso 2: Detalles del Medidor Antiguo
-                    </CardTitle>
+                    <CardTitle className='text-lg'>Paso 2:</CardTitle>
                     <CardDescription className=''>
                       Revise la información del medidor a reemplazar
                     </CardDescription>
@@ -494,9 +490,7 @@ export default function CambioMedidorComponent() {
                     <Gauge className='h-5 w-5 text-primary' />
                   </div>
                   <div>
-                    <CardTitle className='text-lg'>
-                      Paso 3: Medidor Nuevo
-                    </CardTitle>
+                    <CardTitle className='text-lg'>Paso 3:</CardTitle>
                     <CardDescription className=''>
                       Configure el nuevo medidor a instalar
                     </CardDescription>

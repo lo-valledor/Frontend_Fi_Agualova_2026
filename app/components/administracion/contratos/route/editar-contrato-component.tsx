@@ -5,7 +5,8 @@ import {
   Network,
   Save,
   Search,
-  User
+  User,
+  X
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -481,6 +482,27 @@ export default function EditarContratoComponent({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Funciones para deseleccionar
+  const handleClearPropietario = () => {
+    setFormData(prev => ({ ...prev, nombrePropietario: '' }));
+  };
+
+  const handleClearCliente = () => {
+    setFormData(prev => ({ ...prev, nombreCliente: '' }));
+  };
+
+  const handleClearLocal = () => {
+    setFormData(prev => ({ ...prev, local: '' }));
+  };
+
+  const handleClearComuna = () => {
+    setFormData(prev => ({ ...prev, comunaEnvio: '' }));
+  };
+
+  const handleClearMadre = () => {
+    setFormData(prev => ({ ...prev, madre: '' }));
+  };
+
   // Helper para mostrar el nombre de la comuna en el input
   const getComunaDisplayName = () => {
     const comuna = comunas.find(c => c.codigo === formData.comunaEnvio);
@@ -706,9 +728,22 @@ export default function EditarContratoComponent({
                       size='sm'
                       onClick={() => setModalPropietario(true)}
                       className='shrink-0'
+                      title='Seleccionar propietario'
                     >
                       <User className='h-4 w-4' />
                     </Button>
+                    {formData.nombrePropietario && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearPropietario}
+                        className='shrink-0'
+                        title='Deseleccionar propietario'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -732,9 +767,22 @@ export default function EditarContratoComponent({
                       size='sm'
                       onClick={() => setModalCliente(true)}
                       className='shrink-0'
+                      title='Seleccionar cliente'
                     >
                       <User className='h-4 w-4' />
                     </Button>
+                    {formData.nombreCliente && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearCliente}
+                        className='shrink-0'
+                        title='Deseleccionar cliente'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -763,9 +811,22 @@ export default function EditarContratoComponent({
                       size='sm'
                       onClick={() => setModalLocal(true)}
                       className='shrink-0'
+                      title='Seleccionar local'
                     >
                       <Building2 className='h-4 w-4' />
                     </Button>
+                    {formData.local && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearLocal}
+                        className='shrink-0'
+                        title='Deseleccionar local'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -789,9 +850,22 @@ export default function EditarContratoComponent({
                       size='sm'
                       onClick={() => setModalComuna(true)}
                       className='shrink-0'
+                      title='Seleccionar comuna'
                     >
                       <MapPin className='h-4 w-4' />
                     </Button>
+                    {formData.comunaEnvio && (
+                      <Button
+                        type='button'
+                        variant='outline'
+                        size='sm'
+                        onClick={handleClearComuna}
+                        className='shrink-0'
+                        title='Deseleccionar comuna'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -937,9 +1011,22 @@ export default function EditarContratoComponent({
                     size='sm'
                     onClick={() => setModalMadres(true)}
                     className='shrink-0'
+                    title='Seleccionar contrato madre'
                   >
                     <Network className='h-4 w-4' />
                   </Button>
+                  {formData.madre && (
+                    <Button
+                      type='button'
+                      variant='outline'
+                      size='sm'
+                      onClick={handleClearMadre}
+                      className='shrink-0'
+                      title='Deseleccionar contrato madre'
+                    >
+                      <X className='h-4 w-4' />
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
