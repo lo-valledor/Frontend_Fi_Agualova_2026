@@ -3,7 +3,7 @@ name: 🚀 CI/CD Pipeline
 on:
   # Ejecutar en pull requests a cualquier rama
   pull_request:
-    branches: ["*"]
+    branches: ['*']
 
   # Ejecutar en push a ramas principales
   push:
@@ -16,8 +16,8 @@ on:
 
 env:
   # Configuración de Node.js y pnpm
-  NODE_VERSION: "20"
-  PNPM_VERSION: "9"
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
 
 jobs:
   # 🔍 Job de Integración Continua
@@ -77,6 +77,12 @@ jobs:
       # Tests unitarios
       - name: 🧪 Run tests
         run: pnpm run test:run
+
+      # Security audit de dependencias
+      - name: 🔐 Security Audit
+        run: |
+          echo "🔍 Running security audit..."
+          pnpm audit --audit-level=moderate || echo "⚠️ Vulnerabilities found, please review"
 
       # Build del proyecto
       - name: 🏗️ Build project
