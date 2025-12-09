@@ -134,7 +134,7 @@ jobs:
   deploy:
     name: 🚀 Deploy to Kubernetes
     needs: build-and-push-docker # Ahora depende del job de build de la imagen
-    runs-on: ubuntu-latest # Puede ser un runner de GitHub si tiene acceso a tu K8s API
+    runs-on: self-hosted # Puede ser un runner de GitHub si tiene acceso a tu K8s API
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     steps:
