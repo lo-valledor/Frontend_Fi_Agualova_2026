@@ -1,4 +1,4 @@
-name: 🚀 CI/CD Pipeline
+name: 🚀 CI/CD Frontend to Kubernetes
 
 on:
   # Ejecutar en pull requests a cualquier rama
@@ -18,31 +18,30 @@ env:
   # Configuración de Node.js y pnpm
   NODE_VERSION: '20'
   PNPM_VERSION: '9'
+  IMAGE_NAME: lovalledor/enerlova-frontend # <--- ¡Tu usuario de Docker Hub!
+  IMAGE_TAG: ${{ github.sha }} # <--- Usar el SHA del commit para la tag de la imagen
+  # KUBERNETES_NAMESPACE: apps # Definido directamente en el script kubectl
 
 jobs:
-  # 🔍 Job de Integración Continua
+  # 🔍 Job de Integración Continua (sin cambios mayores, se mantiene)
   ci:
     name: 🧪 Continuous Integration
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout del código
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      # Configurar Node.js
       - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      # Instalar pnpm
       - name: 📦 Install pnpm
         uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
 
-      # Configurar cache de pnpm
       - name: 💾 Get pnpm store directory
         shell: bash
         run: |
@@ -56,15 +55,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
-      # Instalar dependencias
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # Verificación de tipos TypeScript
       - name: 🔍 Type checking
         run: pnpm run typecheck
 
-      # Linting (si existe script de lint)
       - name: 🧹 ESLint
         run: |
           if grep -q '"lint"' package.json; then
@@ -74,104 +70,104 @@ jobs:
             npx eslint . --ext .ts,.tsx,.js,.jsx --max-warnings 0 || echo "⚠️ ESLint not configured or failed"
           fi
 
-      # Tests unitarios
       - name: 🧪 Run tests
         run: pnpm run test:run
 
-      # Security audit de dependencias
       - name: 🔐 Security Audit
         run: |
           echo "🔍 Running security audit..."
           pnpm audit --audit-level=moderate || echo "⚠️ Vulnerabilities found, please review"
 
-      # Build del proyecto
-      - name: 🏗️ Build project
+      # El build del proyecto debe reflejar la URL de la API en Kubernetes
+      # No uses VITE_API_URL en el CI build si el deploy lo hace en otra fase.
+      # Lo definiremos en el job 'build-and-push-docker' para el Dockerfile.
+      - name: 🏗️ Build project (Frontend)
         run: pnpm run build
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
-      # Subir artefactos de build (opcional)
       - name: 📤 Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-files
-          path: build/
+          path: build/ # Asegúrate de que esta es la ruta de los archivos estáticos de tu React
           retention-days: 1
 
-    # 🚀 Job de Despliegue Continuo (solo para rama principal)
-  deploy:
-    name: 🚀 Deploy to Production
-    needs: ci
-    runs-on: self-hosted
+  # 🚀 Job de Construcción y Push de Imagen Docker (NUEVO)
+  build-and-push-docker:
+    name: 🏗️ Build & Push Docker Image
+    needs: ci # Depende del job de CI
+    runs-on: ubuntu-latest # Se puede usar un runner de GitHub, no necesita ser self-hosted
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
     steps:
-      # Checkout del código
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      # Construir imagen Docker
-      - name: 🏗️ Build Docker image
+      # Descargar los artefactos del build del job 'ci'
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: build/ # Donde se descargan los archivos estáticos
+
+      - name: 🏗️ Show downloaded files
+        run: ls -la build/ # Para verificar que los archivos están ahí
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }} # <--- Configura este SECRET en GitHub
+          password: ${{ secrets.DOCKER_PASSWORD }} # <--- Configura este SECRET en GitHub
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: . # Tu Dockerfile debe estar en la raíz de tu repo de frontend
+          file: Dockerfile # O Dockerfile.prod, según cuál uses para K8s
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          build-args: |
+            VITE_API_URL=http://192.168.1.139:32011/Enerlova # <--- URL REAL del backend en K8s (NodePort)
+            VITE_APP_ENV=production
+          # Necesitas una Dockerfile que copie los archivos de 'build/'
+
+  # 🚀 Job de Despliegue Continuo a Kubernetes (REEMPLAZA tu deploy anterior)
+  deploy:
+    name: 🚀 Deploy to Kubernetes
+    needs: build-and-push-docker # Ahora depende del job de build de la imagen
+    runs-on: ubuntu-latest # Puede ser un runner de GitHub si tiene acceso a tu K8s API
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # 🔐 Configurar acceso a Kubernetes con Kubeconfig
+      - name: Set up Kubeconfig
         run: |
-          echo "🏗️ Building Docker image..."
-          docker build -t enerlova-frontend:latest \
-            --build-arg VITE_API_URL="${{ secrets.VITE_API_URL }}" \
-            --build-arg VITE_ENV_MODE=production .
+          mkdir -p ~/.kube
+          # El SECRET KUBE_CONFIG_BASE64 contiene tu kubeconfig codificado en base64
+          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+          # Opcional: Si tu kubeconfig tiene múltiples contextos, selecciona el predeterminado
+          # kubectl config use-context default-context
 
-      # Detener contenedor anterior
-      - name: 🛑 Stop previous container
+      # 🔄 Actualizar el Deployment en Kubernetes
+      - name: Update Frontend Deployment
         run: |
-          echo "🛑 Stopping previous container..."
-          docker stop enerlova-frontend-prod || true
-          docker rm enerlova-frontend-prod || true
+          echo "🔄 Updating Kubernetes Deployment..."
+          # Usamos kubectl set image para actualizar la imagen del contenedor 'enerlova-frontend'
+          # dentro del Deployment 'enerlova-frontend' en el namespace 'apps'.
+          kubectl set image deployment/enerlova-frontend \
+            enerlova-frontend=${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            -n apps
 
-      # Ejecutar nuevo contenedor
-      - name: 🚀 Run new container
-        run: |
-          echo "🚀 Starting new container..."
-          docker run -d \
-            --name enerlova-frontend-prod \
-            --restart unless-stopped \
-            -p 8080:80 \
-            --log-driver json-file \
-            --log-opt max-size=10m \
-            --log-opt max-file=3 \
-            enerlova-frontend:latest
+          echo "⏳ Waiting for Deployment rollout to complete..."
+          kubectl rollout status deployment/enerlova-frontend -n apps
 
-      # Verificar que el despliegue fue exitoso
-      - name: 🔍 Health check
-        run: |
-          echo "🔍 Performing health check..."
-          echo "⏳ Waiting for service to start..."
+          echo "✅ Deployment successful!"
+          echo "🌐 Application URL: http://192.168.1.139:32010"
 
-          # Esperar y hacer múltiples intentos
-          for i in {1..15}; do
-            echo "🔄 Attempt $i/15..."
-            if curl -f http://localhost:8080 > /dev/null 2>&1; then
-              echo "✅ Deployment successful! Service is responding on port 8080"
-              echo "🌐 Application URL: http://192.168.1.139:8080"
-              break
-            else
-              echo "⏳ Service not ready yet, waiting 5 seconds..."
-              sleep 5
-            fi
-
-            # Si es el último intento y falló
-            if [ $i -eq 15 ]; then
-              echo "❌ Deployment failed - service not responding after 15 attempts"
-              echo "🔍 Checking Docker container status..."
-              docker ps -a
-              echo "📋 Checking container logs..."
-              docker logs --tail=50 enerlova-frontend-prod || echo "Container not found"
-              echo "🧹 Cleaning up failed container..."
-              docker stop enerlova-frontend-prod || true
-              docker rm enerlova-frontend-prod || true
-              exit 1
-            fi
-          done
-
-      # Limpiar imágenes Docker antiguas
-      - name: 🧹 Clean old Docker images
-        run: |
-          echo "🧹 Cleaning old Docker images..."
-          docker image prune -f || true
+      # 🧹 Limpiar kubeconfig (buena práctica de seguridad)
+      - name: Clean up Kubeconfig
+        if: always()
+        run: rm -rf ~/.kube
