@@ -150,11 +150,11 @@ configure_environment() {
     if [ "$ENVIRONMENT" = "dev" ]; then
         # Configuración para desarrollo
         ssh $SERVER_HOST "cd /opt/enerlova && echo 'NODE_ENV=development' > .env"
-        ssh $SERVER_HOST "cd /opt/enerlova && echo 'VITE_API_URL=https://enerlovauat.mmlovalledor.cl/Enerlova' >> .env"
+        ssh $SERVER_HOST "cd /opt/enerlova && echo 'VITE_API_URL=http://192.168.1.139:8081/Enerlova' >> .env"
     else
         # Configuración para producción
         ssh $SERVER_HOST "cd /opt/enerlova && echo 'NODE_ENV=production' > .env"
-        ssh $SERVER_HOST "cd /opt/enerlova && echo 'VITE_API_URL=https://enerlovauat.mmlovalledor.cl/Enerlova' >> .env"
+        ssh $SERVER_HOST "cd /opt/enerlova && echo 'VITE_API_URL=http://192.168.1.139:8081/Enerlova' >> .env"
     fi
 
     log "Variables de entorno configuradas."

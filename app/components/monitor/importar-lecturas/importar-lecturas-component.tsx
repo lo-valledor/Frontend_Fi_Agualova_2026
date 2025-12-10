@@ -328,8 +328,7 @@ export default function ImportarLecturasComponent() {
 
       const token = localStorage.getItem('token');
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl =
-        ENERLINK_API_URL || 'https://enerlovauat.mmlovalledor.cl/api';
+      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/api';
       const url = `${baseUrl}/upload`;
 
       const response = await fetch(url, {
@@ -365,7 +364,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'https://enerlovauat.mmlovalledor.cl/api';
+      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
       const url = `${baseUrl}/estado-procesamiento`;
 
       const response = await fetch(url, {
@@ -396,7 +395,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'https://enerlovauat.mmlovalledor.cl/api';
+      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
       const url = `${baseUrl}/registros-pendientes`;
 
       const response = await fetch(url, {
@@ -437,8 +436,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl =
-        ENERLINK_API_URL || 'https://enerlovauat.mmlovalledor.cl/Enerlova';
+      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/Enerlova';
       const url = `${baseUrl}/procesar-bt1-bt2`;
 
       const response = await fetch(url, {
@@ -483,8 +481,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl =
-        VITE_API_URL || 'https://enerlovauat.mmlovalledor.cl/Enerlova';
+      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/Enerlova';
 
       // Usar período actual si está disponible; de lo contrario, fallback a 102025
       const periodoActual = estadoProcesamiento?.periodoActivo || '102025';
