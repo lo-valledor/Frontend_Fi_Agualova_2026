@@ -1,4 +1,4 @@
-name: 🚀 CI/CD Frontend to Kubernetes
+name: 🚀 CI/CD Frontend
 
 on:
   # Ejecutar en pull requests a cualquier rama
@@ -18,12 +18,18 @@ env:
   # Configuración de Node.js y pnpm
   NODE_VERSION: '20'
   PNPM_VERSION: '9'
-  IMAGE_NAME: lovalledor/enerlova-frontend # <--- ¡Tu usuario de Docker Hub!
-  IMAGE_TAG: ${{ github.sha }} # <--- Usar el SHA del commit para la tag de la imagen
-  # KUBERNETES_NAMESPACE: apps # Definido directamente en el script kubectl
+  IMAGE_NAME: lovalledor/enerlova-frontend
+  IMAGE_TAG: ${{ github.sha }}
+
+  # ============================================
+  # 🔧 CONFIGURACIÓN DE DESPLIEGUE
+  # ============================================
+  # Cambiar a 'kubernetes' cuando esté listo el entorno de DevOps
+  DEPLOY_TARGET: 'docker' # Opciones: 'docker' | 'kubernetes'
+  # ============================================
 
 jobs:
-  # 🔍 Job de Integración Continua (sin cambios mayores, se mantiene)
+  # 🔍 Job de Integración Continua
   ci:
     name: 🧪 Continuous Integration
     runs-on: ubuntu-latest
@@ -78,9 +84,6 @@ jobs:
           echo "🔍 Running security audit..."
           pnpm audit --audit-level=moderate || echo "⚠️ Vulnerabilities found, please review"
 
-      # El build del proyecto debe reflejar la URL de la API en Kubernetes
-      # No uses VITE_API_URL en el CI build si el deploy lo hace en otra fase.
-      # Lo definiremos en el job 'build-and-push-docker' para el Dockerfile.
       - name: 🏗️ Build project (Frontend)
         run: pnpm run build
 
@@ -88,75 +91,126 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-files
-          path: build/ # Asegúrate de que esta es la ruta de los archivos estáticos de tu React
+          path: build/
           retention-days: 1
 
-  # 🚀 Job de Construcción y Push de Imagen Docker (NUEVO)
-  build-and-push-docker:
-    name: 🏗️ Build & Push Docker Image
-    needs: ci # Depende del job de CI
-    runs-on: ubuntu-latest # Se puede usar un runner de GitHub, no necesita ser self-hosted
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+  # ============================================
+  # 🐳 DESPLIEGUE CON DOCKER COMPOSE
+  # ============================================
+  deploy-docker:
+    name: 🐳 Deploy to Docker
+    needs: ci
+    runs-on: self-hosted
+    if: |
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      vars.DEPLOY_TARGET != 'kubernetes'
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      # Descargar los artefactos del build del job 'ci'
+      - name: 🐳 Deploy with Docker Compose
+        run: |
+          echo "🚀 Desplegando con Docker Compose..."
+          echo "📦 Entorno: Producción"
+
+          # Detener contenedores anteriores si existen
+          docker compose -p enerlova_prod -f docker-compose.prod.yml down --remove-orphans || true
+
+          # Construir y levantar el nuevo contenedor
+          docker compose -p enerlova_prod -f docker-compose.prod.yml up --build -d
+
+          echo "✅ Despliegue completado!"
+          echo "🌐 URL: http://localhost:8080"
+
+      - name: 🔍 Verify deployment
+        run: |
+          echo "⏳ Esperando que el contenedor esté listo..."
+          sleep 10
+
+          # Verificar que el contenedor está corriendo
+          if docker ps | grep -q enerlova-frontend-prod; then
+            echo "✅ Contenedor running"
+            docker ps --filter "name=enerlova-frontend-prod" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+          else
+            echo "❌ Error: Contenedor no está corriendo"
+            docker logs enerlova-frontend-prod 2>&1 || true
+            exit 1
+          fi
+
+      - name: 🧹 Cleanup old images
+        run: |
+          echo "🧹 Limpiando imágenes antiguas..."
+          docker image prune -f
+        continue-on-error: true
+
+  # ============================================
+  # ☸️ DESPLIEGUE CON KUBERNETES (STAND-BY)
+  # ============================================
+  # Para activar Kubernetes:
+  # 1. Cambiar DEPLOY_TARGET a 'kubernetes' arriba
+  # 2. O crear una variable de repositorio DEPLOY_TARGET = 'kubernetes'
+  # 3. Configurar los secrets: DOCKER_USERNAME, DOCKER_PASSWORD, KUBE_CONFIG_BASE64
+
+  build-and-push-docker:
+    name: 🏗️ Build & Push Docker Image (K8s)
+    needs: ci
+    runs-on: ubuntu-latest
+    if: |
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      vars.DEPLOY_TARGET == 'kubernetes'
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
       - name: 📥 Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-files
-          path: build/ # Donde se descargan los archivos estáticos
+          path: build/
 
       - name: 🏗️ Show downloaded files
-        run: ls -la build/ # Para verificar que los archivos están ahí
+        run: ls -la build/
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }} # <--- Configura este SECRET en GitHub
-          password: ${{ secrets.DOCKER_PASSWORD }} # <--- Configura este SECRET en GitHub
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: . # Tu Dockerfile debe estar en la raíz de tu repo de frontend
-          file: Dockerfile # O Dockerfile.prod, según cuál uses para K8s
+          context: .
+          file: Dockerfile
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           build-args: |
             VITE_API_URL=http://192.168.1.139:32011/Enerlova
             VITE_APP_ENV=production
-          # Necesitas una Dockerfile que copie los archivos de 'build/'
 
-  # 🚀 Job de Despliegue Continuo a Kubernetes (REEMPLAZA tu deploy anterior)
-  deploy:
-    name: 🚀 Deploy to Kubernetes
-    needs: build-and-push-docker # Ahora depende del job de build de la imagen
-    runs-on: self-hosted # Puede ser un runner de GitHub si tiene acceso a tu K8s API
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+  deploy-kubernetes:
+    name: ☸️ Deploy to Kubernetes
+    needs: build-and-push-docker
+    runs-on: self-hosted
+    if: |
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      vars.DEPLOY_TARGET == 'kubernetes'
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      # 🔐 Configurar acceso a Kubernetes con Kubeconfig
       - name: Set up Kubeconfig
         run: |
           mkdir -p ~/.kube
-          # El SECRET KUBE_CONFIG_BASE64 contiene tu kubeconfig codificado en base64
           echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > ~/.kube/config
           chmod 600 ~/.kube/config
-          # Opcional: Si tu kubeconfig tiene múltiples contextos, selecciona el predeterminado
-          # kubectl config use-context default-context
 
-      # 🔄 Actualizar el Deployment en Kubernetes
       - name: Update Frontend Deployment
         run: |
           echo "🔄 Updating Kubernetes Deployment..."
-          # Usamos kubectl set image para actualizar la imagen del contenedor 'enerlova-frontend'
-          # dentro del Deployment 'enerlova-frontend' en el namespace 'apps'.
           kubectl set image deployment/enerlova-frontend \
             enerlova-frontend=${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
             -n apps
@@ -167,7 +221,6 @@ jobs:
           echo "✅ Deployment successful!"
           echo "🌐 Application URL: http://192.168.1.139:32010"
 
-      # 🧹 Limpiar kubeconfig (buena práctica de seguridad)
       - name: Clean up Kubeconfig
         if: always()
         run: rm -rf ~/.kube
