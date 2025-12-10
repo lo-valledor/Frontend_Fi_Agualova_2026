@@ -1,7 +1,7 @@
 # deploy.ps1 - Script de despliegue para Windows PowerShell
 
 param(
-    [Parameter(Position=0)]
+    [Parameter(Position = 0)]
     [ValidateSet("prod", "dev", "both", "stop", "clean", "status", "help")]
     [string]$Environment = "help"
 )
@@ -28,7 +28,7 @@ function Show-Help {
 function Deploy-Production {
     Write-Host "📦 Desplegando entorno de PRODUCCIÓN..." -ForegroundColor Green
     Write-Host "🌐 Puerto: 8080" -ForegroundColor Yellow
-    Write-Host "🔗 API: http://192.168.1.139:8081/Enerlova" -ForegroundColor Yellow
+    Write-Host "🔗 API: https://enerlovauat.mmlovalledor.cl/Enerlova" -ForegroundColor Yellow
 
     & docker-compose -f docker-compose.prod.yml down
     & docker-compose -f docker-compose.prod.yml up --build -d
@@ -36,7 +36,8 @@ function Deploy-Production {
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ Entorno de producción desplegado exitosamente" -ForegroundColor Green
         Write-Host "🌍 Acceso: http://localhost:8080" -ForegroundColor Cyan
-    } else {
+    }
+    else {
         Write-Host "❌ Error en el despliegue de producción" -ForegroundColor Red
     }
 }
@@ -44,7 +45,7 @@ function Deploy-Production {
 function Deploy-Development {
     Write-Host "🛠️  Desplegando entorno de DESARROLLO..." -ForegroundColor Blue
     Write-Host "🌐 Puerto: 4200" -ForegroundColor Yellow
-    Write-Host "🔗 API: http://192.168.1.139:8082/Enerlova" -ForegroundColor Yellow
+    Write-Host "🔗 API: https://enerlovauat.mmlovalledor.cl/Enerlova" -ForegroundColor Yellow
 
     & docker-compose -f docker-compose.develop.yml down
     & docker-compose -f docker-compose.develop.yml up --build -d
@@ -52,7 +53,8 @@ function Deploy-Development {
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ Entorno de desarrollo desplegado exitosamente" -ForegroundColor Green
         Write-Host "🌍 Acceso: http://localhost:4200" -ForegroundColor Cyan
-    } else {
+    }
+    else {
         Write-Host "❌ Error en el despliegue de desarrollo" -ForegroundColor Red
     }
 }

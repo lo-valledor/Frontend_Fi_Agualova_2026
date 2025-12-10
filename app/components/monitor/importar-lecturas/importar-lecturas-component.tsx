@@ -15,30 +15,30 @@ import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ModernHeader } from '~/components/shared/modern-header';
-  import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
-  import { Button } from '~/components/ui/button';
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
-  } from '~/components/ui/card';
-  import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
-  import { Badge } from '~/components/ui/badge';
-  import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger
-  } from '~/components/ui/collapsible';
-  import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription
-  } from '~/components/ui/dialog';
-  import { Input } from '~/components/ui/input';
+import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
+import { Button } from '~/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Badge } from '~/components/ui/badge';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
+} from '~/components/ui/collapsible';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '~/components/ui/dialog';
+import { Input } from '~/components/ui/input';
 import { Checkbox } from '~/components/ui/checkbox';
 import { useAuth } from '~/context/AuthContext';
 import type {
@@ -328,7 +328,8 @@ export default function ImportarLecturasComponent() {
 
       const token = localStorage.getItem('token');
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/api';
+      const baseUrl =
+        ENERLINK_API_URL || 'https://enerlovauat.mmlovalledor.cl/api';
       const url = `${baseUrl}/upload`;
 
       const response = await fetch(url, {
@@ -364,7 +365,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
+      const baseUrl = VITE_API_URL || 'https://enerlovauat.mmlovalledor.cl/api';
       const url = `${baseUrl}/estado-procesamiento`;
 
       const response = await fetch(url, {
@@ -395,7 +396,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
+      const baseUrl = VITE_API_URL || 'https://enerlovauat.mmlovalledor.cl/api';
       const url = `${baseUrl}/registros-pendientes`;
 
       const response = await fetch(url, {
@@ -428,9 +429,7 @@ export default function ImportarLecturasComponent() {
     if (periodoActual) {
       const key = `bt1bt2_processed_period:${periodoActual}`;
       if (localStorage.getItem(key) === 'true') {
-        toast.error(
-          `Ya se procesó BT1-BT2 para el período ${periodoActual}.`
-        );
+        toast.error(`Ya se procesó BT1-BT2 para el período ${periodoActual}.`);
         return;
       }
     }
@@ -438,7 +437,8 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/Enerlova';
+      const baseUrl =
+        ENERLINK_API_URL || 'https://enerlovauat.mmlovalledor.cl/Enerlova';
       const url = `${baseUrl}/procesar-bt1-bt2`;
 
       const response = await fetch(url, {
@@ -483,7 +483,8 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/Enerlova';
+      const baseUrl =
+        VITE_API_URL || 'https://enerlovauat.mmlovalledor.cl/Enerlova';
 
       // Usar período actual si está disponible; de lo contrario, fallback a 102025
       const periodoActual = estadoProcesamiento?.periodoActivo || '102025';
@@ -682,8 +683,9 @@ export default function ImportarLecturasComponent() {
                   Este período ya fue procesado
                 </p>
               )}
-              {yaProcesado && estadoProcesamiento?.periodoActivo && (
-                isAdmin ? (
+              {yaProcesado &&
+                estadoProcesamiento?.periodoActivo &&
+                (isAdmin ? (
                   <Button
                     onClick={() => setForceReprocessOpen(true)}
                     variant='outline'
@@ -696,8 +698,7 @@ export default function ImportarLecturasComponent() {
                   <p className='text-xs text-center text-muted-foreground'>
                     Reproceso permitido solo para administradores
                   </p>
-                )
-              )}
+                ))}
             </CardContent>
           </Card>
         </div>
@@ -976,13 +977,14 @@ export default function ImportarLecturasComponent() {
             <DialogHeader>
               <DialogTitle>Forzar reprocesamiento</DialogTitle>
               <DialogDescription>
-                Esta acción permitirá procesar BT1-BT2 nuevamente para el período actual.
-                Úsalo solo si estás seguro de que es necesario.
+                Esta acción permitirá procesar BT1-BT2 nuevamente para el
+                período actual. Úsalo solo si estás seguro de que es necesario.
               </DialogDescription>
             </DialogHeader>
             <div className='space-y-3'>
               <div className='text-sm text-muted-foreground'>
-                Período activo: <code className='font-mono'>
+                Período activo:{' '}
+                <code className='font-mono'>
                   {estadoProcesamiento?.periodoActivo || 'N/D'}
                 </code>
               </div>
@@ -999,10 +1001,15 @@ export default function ImportarLecturasComponent() {
               <div className='flex items-center gap-2'>
                 <Checkbox
                   checked={ackRiskChecked}
-                  onCheckedChange={checked => setAckRiskChecked(Boolean(checked))}
+                  onCheckedChange={checked =>
+                    setAckRiskChecked(Boolean(checked))
+                  }
                   id='ack-risk'
                 />
-                <label htmlFor='ack-risk' className='text-xs text-muted-foreground'>
+                <label
+                  htmlFor='ack-risk'
+                  className='text-xs text-muted-foreground'
+                >
                   Entiendo el riesgo de reprocesar lecturas en el mismo período.
                 </label>
               </div>
@@ -1026,7 +1033,9 @@ export default function ImportarLecturasComponent() {
                   }
                   onClick={() => {
                     if (!isAdmin) {
-                      toast.error('Solo administradores pueden permitir el reprocesamiento');
+                      toast.error(
+                        'Solo administradores pueden permitir el reprocesamiento'
+                      );
                       return;
                     }
                     const periodo = estadoProcesamiento?.periodoActivo;
@@ -1034,7 +1043,9 @@ export default function ImportarLecturasComponent() {
                       const key = `bt1bt2_processed_period:${periodo}`;
                       localStorage.removeItem(key);
                       setYaProcesado(false);
-                      toast.success('Se habilitó el reprocesamiento para este período');
+                      toast.success(
+                        'Se habilitó el reprocesamiento para este período'
+                      );
                     }
                     setForceReprocessOpen(false);
                     setConfirmPeriodInput('');

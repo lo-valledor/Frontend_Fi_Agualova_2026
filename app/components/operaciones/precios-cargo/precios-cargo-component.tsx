@@ -88,7 +88,7 @@ export default function PreciosCargoComponent({
     async function fetchPeriodoAbierto() {
       try {
         const response = await api.get(
-          'http://192.168.1.139:8081/Enerlova/ConsultarPeriodoAbierto'
+          'https://enerlovauat.mmlovalledor.cl/Enerlova/ConsultarPeriodoAbierto'
         );
 
         // Early return si no hay datos
