@@ -3,15 +3,15 @@
 # Actions: IGNORE, WARN, FAIL
 
 # Security headers already configured in nginx.conf
-10038	IGNORE	(Content-Security-Policy Header Missing - Already configured in nginx.conf)
-10021	IGNORE	(X-Content-Type-Options Header Missing - Already configured in nginx.conf)
-10020	IGNORE	(X-Frame-Options Header Missing - Already configured in nginx.conf)
+10038	IGNORE	Content-Security-Policy Header Missing - Already configured in nginx.conf
+10021	IGNORE	X-Content-Type-Options Header Missing - Already configured in nginx.conf
+10020	IGNORE	X-Frame-Options Header Missing - Already configured in nginx.conf
 
 # Development/test environment specific
-10096	IGNORE	(Timestamp Disclosure - Unix - Not a security issue)
-10027	IGNORE	(Information Disclosure - Suspicious Comments - Development comments)
+10096	IGNORE	Timestamp Disclosure - Unix - Not a security issue
+10027	IGNORE	Information Disclosure - Suspicious Comments - Development comments
 
 # SPA-specific behaviors
-10015	IGNORE	(Incomplete or No Cache-control Header - Intentional for SPA)
-10000   IGNORE    (No Content Security Policy Header - Intentional for SPA)
-10022   IGNORE    (No X-XSS-Protection Header - Intentional for SPA)    
+10015	IGNORE	Incomplete or No Cache-control Header - Intentional for SPA
+10000	IGNORE	No Content Security Policy Header - Intentional for SPA
+10022	IGNORE	No X-XSS-Protection Header - Intentional for SPA

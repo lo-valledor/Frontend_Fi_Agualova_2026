@@ -129,14 +129,46 @@ export default function SectorFormModal({
   const handleSubmit = async (data: SectorFormValues) => {
     setIsLoading(true);
     try {
+      // Buscar el ID de la zona seleccionada
+      const zonaSeleccionada = zonas.find(z => z.nombre === data.zona);
+      const zonaId = zonaSeleccionada?.id;
+
+      // Preparar el payload según lo que espera la API
+      const apiPayload = {
+        nombre: data.nombre,
+        zonaId: zonaId, // La API espera zonaId, no zona (nombre)
+        estado: data.estado
+      };
+
+      // DEBUG
+      console.log('=== DEBUG: Sector Submit ===');
+      console.log('Mode:', mode);
+      console.log('Sector ID:', sector?.id);
+      console.log('Form Data (raw):', data);
+      console.log('Zona seleccionada:', zonaSeleccionada);
+      console.log('API Payload:', apiPayload);
+      console.log('📋 JSON para Swagger:');
+      console.log(JSON.stringify(apiPayload, null, 2));
+      console.log('============================');
+
       if (mode === 'add') {
-        await api.post('/crearSector', data);
+        const response = await api.post('/crearSector', apiPayload);
+        console.log('CREATE Response:', response);
       } else if (mode === 'edit' && sector) {
-        await api.put(`/modificarSector/${sector.id}`, data);
+        const response = await api.put(
+          `/modificarSector/${sector.id}`,
+          apiPayload
+        );
+        console.log('UPDATE Response:', response);
       }
       onSuccess();
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error('=== DEBUG: Error en Submit ===');
+      console.error('Error completo:', error);
+      console.error('Error response:', error.response);
+      console.error('Error response data:', error.response?.data);
+      console.error('==============================');
+
       toast.error(
         mode === 'add'
           ? 'Error al crear el sector'
