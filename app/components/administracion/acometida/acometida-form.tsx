@@ -280,7 +280,7 @@ export function AcometidaForm({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-4xl max-h-[95vh] min-h-[80vh] overflow-y-auto'>
+        <DialogContent className='min-w-[70vw] max-h-[95vh] min-h-[80vh] overflow-y-auto'>
           <DialogHeader className='space-y-2'>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-sky-100 dark:bg-sky-900/30 rounded-xl'>
@@ -691,7 +691,7 @@ export function AcometidaForm({
 
       {/* Modal de Selección de Contratos */}
       <Dialog open={modalContratos} onOpenChange={setModalContratos}>
-        <DialogContent className='w-[95vw] sm:w-[90vw] lg:w-[80vw] xl:w-[70vw] max-w-6xl max-h-[80vh] overflow-hidden'>
+        <DialogContent className='min-w-[95vw] max-h-[95vh] overflow-hidden'>
           <DialogHeader>
             <div className='flex items-center gap-3'>
               <div className='p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl'>

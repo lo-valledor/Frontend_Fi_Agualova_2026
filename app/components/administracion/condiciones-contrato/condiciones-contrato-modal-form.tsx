@@ -81,11 +81,42 @@ export default function CondicionesContratoModalForm({
   // Resetear formulario cuando se abre el modal
   useEffect(() => {
     if (isOpen) {
+      // DEBUG: Ver qué datos vienen del backend
+      console.log('=== DEBUG: Cargando datos en formulario ===');
+      console.log('condicionContrato completo:', condicionContrato);
+      console.log(
+        'factorPorcentual (raw):',
+        condicionContrato?.factorPorcentual,
+        typeof condicionContrato?.factorPorcentual
+      );
+      console.log(
+        'valorFijo (raw):',
+        condicionContrato?.valorFijo,
+        typeof condicionContrato?.valorFijo
+      );
+
       // Determinar si usa porcentaje basado en los datos existentes
       const usaPorcentaje = !!condicionContrato?.factorPorcentual;
-      const valor = usaPorcentaje
-        ? Number.parseFloat(condicionContrato?.factorPorcentual || '0')
-        : condicionContrato?.valorFijo || 0;
+
+      // Parsear el valor según el tipo
+      let valor = 0;
+      if (usaPorcentaje && condicionContrato?.factorPorcentual) {
+        // Si es string con coma, reemplazar por punto
+        const factorStr = String(condicionContrato.factorPorcentual).replace(
+          ',',
+          '.'
+        );
+        // El backend guarda como decimal (0.05), mostramos como porcentaje (5)
+        valor = parseFloat(factorStr) * 100;
+      } else if (condicionContrato?.valorFijo) {
+        valor =
+          typeof condicionContrato.valorFijo === 'string'
+            ? parseFloat(String(condicionContrato.valorFijo).replace(',', '.'))
+            : condicionContrato.valorFijo;
+      }
+
+      console.log('usaPorcentaje calculado:', usaPorcentaje);
+      console.log('valor calculado (para mostrar):', valor);
 
       // Encontrar el conceptoId basado en el nombre del concepto
       const conceptoEncontrado = conceptos.find(
@@ -93,25 +124,67 @@ export default function CondicionesContratoModalForm({
       );
       const conceptoId = conceptoEncontrado?.id || 0;
 
-      form.reset({
+      const formValues = {
         descripcion: condicionContrato?.nombre || '',
         conceptoId: conceptoId,
         usaPorcentaje: usaPorcentaje,
         valor: valor,
         estado: condicionContrato?.estado ?? true
-      });
+      };
+
+      console.log('Form values a establecer:', formValues);
+      console.log('===========================================');
+
+      form.reset(formValues);
     }
   }, [isOpen, condicionContrato, form, conceptos]);
 
   const onSubmit = async (data: CondicionContratoFormValues) => {
     try {
+      // Calcular el valor a enviar a la API
+      // Si usa porcentaje: el usuario ingresa 5 (para 5%), lo convertimos a 0.05
+      // Si es valor fijo: se envía tal cual
+      const valorParaAPI = data.usaPorcentaje ? data.valor / 100 : data.valor;
+
+      // Mapear los datos del formulario al formato esperado por la API
+      const apiPayload = {
+        codigo: condicionContrato?.id || 0, // Para edición, usar el código existente
+        nombre: data.descripcion, // La API espera "nombre", no "descripcion"
+        conceptoId: data.conceptoId,
+        usaPorcentaje: data.usaPorcentaje,
+        valor: valorParaAPI,
+        estado: data.estado
+      };
+
+      // DEBUG: Mostrar datos que se envían
+      console.log('=== DEBUG: Condición Contrato Submit ===');
+      console.log('Mode:', mode);
+      console.log('Condición ID:', condicionContrato?.id);
+      console.log('Form Data (raw):', data);
+      console.log('API Payload:', apiPayload);
+      console.log(
+        'Endpoint:',
+        mode === 'add'
+          ? 'condicion-contrato/condicionContrato-crear'
+          : `/condicion-contrato/condicionContrato-modificar/${condicionContrato?.id}`
+      );
+      // JSON para copiar y pegar en Swagger
+      console.log('📋 JSON para Swagger (copia esto):');
+      console.log(JSON.stringify(apiPayload, null, 2));
+      console.log('========================================');
+
       if (mode === 'add') {
-        await api.post('condicion-contrato/condicionContrato-crear', data);
-      } else {
-        await api.put(
-          `/condicion-contrato/condicionContrato-modificar/${condicionContrato?.id}`,
-          data
+        const response = await api.post(
+          'condicion-contrato/condicionContrato-crear',
+          apiPayload
         );
+        console.log('CREATE Response:', response);
+      } else {
+        const response = await api.put(
+          `/condicion-contrato/condicionContrato-modificar/${condicionContrato?.id}`,
+          apiPayload
+        );
+        console.log('UPDATE Response:', response);
       }
       toast.success(
         mode === 'add'
@@ -120,8 +193,18 @@ export default function CondicionesContratoModalForm({
       );
       onSuccess();
       onClose();
-    } catch (error) {
-      toast.error('Error al guardar la condición de contrato', error as any);
+    } catch (error: any) {
+      console.error('=== DEBUG: Error en Submit ===');
+      console.error('Error completo:', error);
+      console.error('Error response:', error.response);
+      console.error('Error response data:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('==============================');
+
+      const errorMessage =
+        error.response?.data?.message ||
+        'Error al guardar la condición de contrato';
+      toast.error(errorMessage);
     }
   };
 
@@ -219,20 +302,43 @@ export default function CondicionesContratoModalForm({
                   <FormItem>
                     <FormLabel>
                       {form.watch('usaPorcentaje')
-                        ? 'Factor Porcentual'
-                        : 'Valor Fijo'}
+                        ? 'Porcentaje (%)'
+                        : 'Valor Fijo ($)'}
                     </FormLabel>
                     <FormControl>
                       <div className='relative'>
                         <Input
                           {...field}
                           type='number'
-                          step={form.watch('usaPorcentaje') ? '0.01' : '1'}
-                          placeholder={
-                            form.watch('usaPorcentaje') ? '0.00' : '0'
-                          }
+                          step='any'
+                          placeholder={form.watch('usaPorcentaje') ? '5' : '0'}
                           className='pl-8'
-                          onChange={e => field.onChange(Number(e.target.value))}
+                          value={field.value}
+                          onChange={e => {
+                            // Manejar tanto coma como punto como separador decimal
+                            const rawValue = e.target.value;
+                            const normalizedValue = rawValue.replace(',', '.');
+                            const numericValue = parseFloat(normalizedValue);
+
+                            // DEBUG
+                            console.log('Input valor:', {
+                              rawValue,
+                              normalizedValue,
+                              numericValue
+                            });
+
+                            if (!isNaN(numericValue)) {
+                              field.onChange(numericValue);
+                            } else if (
+                              rawValue === '' ||
+                              rawValue === '0' ||
+                              rawValue === '-'
+                            ) {
+                              field.onChange(
+                                rawValue === '-' ? field.value : 0
+                              );
+                            }
+                          }}
                         />
                         {form.watch('usaPorcentaje') ? (
                           <Percent className='absolute left-2 top-2.5 h-4 w-4 text-gray-500' />
@@ -243,7 +349,7 @@ export default function CondicionesContratoModalForm({
                     </FormControl>
                     <FormDescription>
                       {form.watch('usaPorcentaje')
-                        ? 'Ingrese el factor porcentual (ej: 0.15 para 15%)'
+                        ? 'Ingrese el porcentaje (ej: 5 para 5%, -5 para descuento de 5%)'
                         : 'Ingrese el valor fijo en pesos'}
                     </FormDescription>
                     <FormMessage />
