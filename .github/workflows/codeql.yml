@@ -1,0 +1,35 @@
+name: '🔍 CodeQL Security Analysis'
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+  schedule:
+    - cron: '30 1 * * 0' # Semanal
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write # Necesario para subir las alertas a la pestaña "Security"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Inicializa CodeQL
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          # Define el lenguaje de tu proyecto (javascript, python, go, java, csharp, etc.)
+          languages: javascript-typescript
+
+      # Si tu proyecto requiere build (Java/C#), aquí iría el paso de build.
+      # Para JS/TS/Python no hace falta build explícito para CodeQL.
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3

@@ -35,96 +35,121 @@ export default defineConfig(({ mode }) => ({
     tailwindcss(),
     reactRouter(),
     tsconfigPaths(),
-    
+
     // Bundle analyzer - solo en build
-    mode === 'analyze' && visualizer({
-      open: true,
-      filename: 'dist/stats.html',
-      gzipSize: true,
-      brotliSize: true,
-    }),
-    
+    mode === 'analyze' &&
+      visualizer({
+        open: true,
+        filename: 'dist/stats.html',
+        gzipSize: true,
+        brotliSize: true
+      }),
+
     // Compresión gzip y brotli para producción
-    mode === 'production' && viteCompression({
-      algorithm: 'gzip',
-      ext: '.gz',
-    }),
-    mode === 'production' && viteCompression({
-      algorithm: 'brotliCompress',
-      ext: '.br',
-    }),
+    mode === 'production' &&
+      viteCompression({
+        algorithm: 'gzip',
+        ext: '.gz'
+      }),
+    mode === 'production' &&
+      viteCompression({
+        algorithm: 'brotliCompress',
+        ext: '.br'
+      })
   ].filter(Boolean),
 
   // Optimizaciones de build
   build: {
     // Aumentar el límite de advertencia de chunk size
     chunkSizeWarningLimit: 1000,
-    
+
     // Optimización de rollup
     rollupOptions: {
       output: {
         // Separar vendor chunks - función para evitar conflictos con SSR
-        manualChunks: (id) => {
+        manualChunks: id => {
           // Solo aplicar code splitting en el cliente, no en SSR
           if (id.includes('node_modules')) {
             // React core
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+            if (
+              id.includes('react') ||
+              id.includes('react-dom') ||
+              id.includes('react-router')
+            ) {
               return 'react-vendor';
             }
-            
+
             // UI libraries
             if (id.includes('@radix-ui')) {
               return 'ui-vendor';
             }
-            
+
             // Form libraries
-            if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform/resolvers')) {
+            if (
+              id.includes('react-hook-form') ||
+              id.includes('zod') ||
+              id.includes('@hookform/resolvers')
+            ) {
               return 'form-vendor';
             }
-            
+
             // Table library
             if (id.includes('@tanstack/react-table')) {
               return 'table-vendor';
             }
-            
+
             // Chart library
             if (id.includes('recharts')) {
               return 'chart-vendor';
             }
-            
+
             // Icons
-            if (id.includes('lucide-react') || id.includes('@tabler/icons-react')) {
+            if (
+              id.includes('lucide-react') ||
+              id.includes('@tabler/icons-react')
+            ) {
               return 'icons-vendor';
             }
-            
+
             // Utilities
-            if (id.includes('axios') || id.includes('date-fns') || id.includes('clsx') || id.includes('tailwind-merge')) {
+            if (
+              id.includes('axios') ||
+              id.includes('date-fns') ||
+              id.includes('clsx') ||
+              id.includes('tailwind-merge')
+            ) {
               return 'utils-vendor';
             }
           }
-        },
-      },
+        }
+      }
     },
-    
+
     // Source maps solo en desarrollo
     sourcemap: mode !== 'production',
-    
+
     // Minificación
     minify: 'esbuild',
-    
+
     // Target para navegadores modernos
-    target: 'esnext',
+    target: 'esnext'
   },
 
   // Optimizaciones de servidor de desarrollo
   server: {
     // Pre-bundling optimizado
     warmup: {
-      clientFiles: [
-        './app/root.tsx',
-        './app/routes/**/*.tsx',
-      ],
+      clientFiles: ['./app/root.tsx', './app/routes/**/*.tsx']
     },
+    // Proxy para evitar problemas de CORS y SSL en desarrollo
+    proxy: {
+      '/api': {
+        target: 'http://192.168.1.139:8081',
+        changeOrigin: true,
+        secure: false,
+        rewrite: path => path.replace(/^\/api/, '/Enerlova')
+      }
+    }
   },
 
   // Optimizaciones de dependencias
@@ -136,7 +161,7 @@ export default defineConfig(({ mode }) => ({
       '@radix-ui/react-dialog',
       '@radix-ui/react-dropdown-menu',
       'react-hook-form',
-      'zod',
-    ],
-  },
+      'zod'
+    ]
+  }
 }));

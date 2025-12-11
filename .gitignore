@@ -7,7 +7,7 @@
 /build/
 GEMINI.md
 /coverage/
-
+/scripts/
 .env
 
 # Performance analysis

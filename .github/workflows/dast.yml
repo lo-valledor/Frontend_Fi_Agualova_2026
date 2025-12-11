@@ -101,7 +101,7 @@ jobs:
           fi
 
       # --- AQUÍ EMPIEZA LA MAGIA DE ZAP ---
-      
+
       - name: 🔍 OWASP ZAP Automation Scan
         uses: zaproxy/action-automation-scan@v0.3.0
         with:
@@ -111,7 +111,7 @@ jobs:
         env:
           # Mapeamos los secretos de GitHub a las variables que usa zap.yaml
           ZAP_USER: ${{ secrets.ZAP_USER }}
-          ZAP_PASS: ${{ secrets.ZAP_PASSWORD }} 
+          ZAP_PASS: ${{ secrets.ZAP_PASSWORD }}
 
       # Fix de permisos para que GitHub Actions pueda leer el reporte generado por Docker
       - name: 🔧 Fix Report Permissions
@@ -130,5 +130,5 @@ jobs:
         with:
           name: zap-security-report
           # Debe coincidir con 'reportFile' definido en zap.yaml
-          path: zap-report.html 
+          path: zap-report.html
           retention-days: 30

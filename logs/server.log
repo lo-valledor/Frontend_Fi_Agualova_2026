@@ -1,0 +1,16 @@
+
+> res@ start C:\Users\gbourguett\Documents\DESARROLLOS-LO-VALLEDOR\enerlova\res
+> react-router-serve ./build/server/index.js "--host" "0.0.0.0"
+
+Error: Cannot find module 'C:\Users\gbourguett\Documents\DESARROLLOS-LO-VALLEDOR\enerlova\res\build\server\index.js' imported from C:\Users\gbourguett\Documents\DESARROLLOS-LO-VALLEDOR\enerlova\res\node_modules\.pnpm\@react-router+serve@7.10.1__c0e0ea46e185898dc3ded908329584a5\node_modules\@react-router\serve\dist\cli.js
+    at finalizeResolution (node:internal/modules/esm/resolve:275:11)
+    at moduleResolve (node:internal/modules/esm/resolve:860:10)
+    at defaultResolve (node:internal/modules/esm/resolve:984:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:780:12)
+    at ModuleLoader.#cachedDefaultResolve (node:internal/modules/esm/loader:704:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:687:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:305:38)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:643:36)
+    at TracingChannel.tracePromise (node:diagnostics_channel:344:14)
+    at ModuleLoader.import (node:internal/modules/esm/loader:642:21)
+ ELIFECYCLE  Command failed with exit code 1.

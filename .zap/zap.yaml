@@ -2,9 +2,9 @@ env:
   contexts:
     - name: "MiContextoWeb"
       urls:
-        - "http://172.17.0.1:3000" # URL base para Docker
+        - "http://host.docker.internal:3000" # URL base para Docker
       includePaths:
-        - "http://172.17.0.1:3000.*"
+        - "http://host.docker.internal:3000.*"
       excludePaths:
         - ".*logout.*"
         - ".*robots\\.txt.*"
@@ -13,10 +13,10 @@ env:
       authentication:
         method: "json" # Cambiar a "form" si es un submit clásico
         parameters:
-          loginPageUrl: "http://172.17.0.1:3000/login"
+          loginPageUrl: "http://host.docker.internal:3000/login"
           # La estructura del JSON que tu API espera. 
           # {%username%} y {%password%} son variables que inyectaremos.
-          loginRequestData: '{"email":"{%username%}","password":"{%password%"}'
+          loginRequestData: '{"usuario":"{%username%}","contrasena":"{%password%}"}'
         verification:
           method: "response"
           # IMPORTANTE: Algo que solo salga en el HTML/Respuesta cuando entraste
