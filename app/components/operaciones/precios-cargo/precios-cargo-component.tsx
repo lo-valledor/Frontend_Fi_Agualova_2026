@@ -87,9 +87,7 @@ export default function PreciosCargoComponent({
   useEffect(() => {
     async function fetchPeriodoAbierto() {
       try {
-        const response = await api.get(
-          'http://192.168.1.139:8081/Enerlova/ConsultarPeriodoAbierto'
-        );
+        const response = await api.get('/ConsultarPeriodoAbierto');
 
         // Early return si no hay datos
         if (!Array.isArray(response.data) || response.data.length === 0) {
