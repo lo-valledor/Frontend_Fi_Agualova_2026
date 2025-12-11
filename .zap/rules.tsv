@@ -13,3 +13,5 @@
 
 # SPA-specific behaviors
 10015	IGNORE	(Incomplete or No Cache-control Header - Intentional for SPA)
+10000   IGNORE    (No Content Security Policy Header - Intentional for SPA)
+10022   IGNORE    (No X-XSS-Protection Header - Intentional for SPA)    
