@@ -100,7 +100,7 @@ jobs:
   deploy-test:
     name: 🧪 Build & Deploy to Test
     needs: ci
-    runs-on: self-hosted
+    runs-on: [self-hosted, frontend-runner]
     if: |
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
       vars.DEPLOY_TARGET != 'kubernetes'
@@ -147,7 +147,7 @@ jobs:
     # No depende estrictamente de 'deploy-test' en términos de ejecución técnica,
     # pero lógicamente es el paso siguiente.
     needs: ci
-    runs-on: self-hosted
+    runs-on: [self-hosted, enerlova-runner]
     # Solo ejecutar si se dispara manualmente (workflow_dispatch)
     if: |
       github.event_name == 'workflow_dispatch' &&
