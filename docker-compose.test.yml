@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # Apunta al backend de TEST (7001)
-        VITE_API_URL: http://192.168.1.139:7001/Enerlova
+        # Apunta al backend de TEST (enerlovauat.mmlovalledor.cl)
+        VITE_API_URL: https://enerlovauat.mmlovalledor.cl/Enerlova
         VITE_APP_ENV: production # Usamos build de prod pero config de test
     ports:
       - "6001:80"

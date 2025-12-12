@@ -112,7 +112,7 @@ jobs:
       - name: 🐳 Deploy Test Environment
         run: |
           echo "🚀 Desplegando a entorno de TEST..."
-          echo "📦 Puerto Frontend: 6001 | Backend: 7001"
+          echo "📦 Puerto Frontend: 6001 | Backend: enerlovauat.mmlovalledor.cl"
 
           # Detener contenedores anteriores si existen
           docker compose -p enerlova_test -f docker-compose.test.yml down --remove-orphans || true
@@ -160,7 +160,7 @@ jobs:
       - name: 🐳 Deploy Production Environment
         run: |
           echo "🚀 Desplegando a entorno de PRODUCCIÓN..."
-          echo "📦 Puerto Frontend: 32010 | Backend: 32011"
+          echo "📦 Puerto Frontend: 32010 | Backend: enerlova.mmlovalledor.cl"
 
           # Detener contenedores anteriores
           docker compose -p enerlova_prod -f docker-compose.prod.yml down --remove-orphans || true
