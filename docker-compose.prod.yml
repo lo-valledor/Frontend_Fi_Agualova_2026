@@ -7,10 +7,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: https://enerlovauat.mmlovalledor.cl/Enerlova
+        VITE_API_URL: http://192.168.1.139:32011/Enerlova
         VITE_APP_ENV: production
     ports:
-      - "8080:80"
+      - "32010:80"
     container_name: enerlova-frontend-prod
     restart: unless-stopped
     environment:

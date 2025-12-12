@@ -95,10 +95,10 @@ jobs:
           retention-days: 1
 
   # ============================================
-  # 🐳 DESPLIEGUE CON DOCKER COMPOSE
+  # 🐳 DESPLIEGUE FASE 1: TEST (AUTOMÁTICO)
   # ============================================
-  deploy-docker:
-    name: 🐳 Deploy to Docker
+  deploy-test:
+    name: 🧪 Build & Deploy to Test
     needs: ci
     runs-on: self-hosted
     if: |
@@ -109,39 +109,82 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐳 Deploy with Docker Compose
+      - name: 🐳 Deploy Test Environment
         run: |
-          echo "🚀 Desplegando con Docker Compose..."
-          echo "📦 Entorno: Producción"
+          echo "🚀 Desplegando a entorno de TEST..."
+          echo "📦 Puerto Frontend: 6001 | Backend: 7001"
 
           # Detener contenedores anteriores si existen
+          docker compose -p enerlova_test -f docker-compose.test.yml down --remove-orphans || true
+
+          # Construir y levantar
+          docker compose -p enerlova_test -f docker-compose.test.yml up --build -d
+
+          echo "✅ Despliegue de TEST completado!"
+          echo "🌐 URL: http://localhost:6001"
+
+      - name: 🔍 Verify Test Deployment
+        run: |
+          echo "⏳ Verificando salud del contenedor de test..."
+          sleep 10
+          if docker ps | grep -q enerlova-frontend-test; then
+            echo "✅ Contenedor Test Running"
+          else
+            echo "❌ Error: Contenedor Test falló al iniciar"
+            docker logs enerlova-frontend-test 2>&1 || true
+            exit 1
+          fi
+
+      - name: 🧹 Cleanup
+        run: docker image prune -f
+        continue-on-error: true
+
+  # ============================================
+  # 🐳 DESPLIEGUE FASE 2: PRODUCCIÓN (MANUAL)
+  # ============================================
+  deploy-prod:
+    name: 🚀 Approve & Deploy to Prod
+    # No depende estrictamente de 'deploy-test' en términos de ejecución técnica,
+    # pero lógicamente es el paso siguiente.
+    needs: ci
+    runs-on: self-hosted
+    # Solo ejecutar si se dispara manualmente (workflow_dispatch)
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      vars.DEPLOY_TARGET != 'kubernetes'
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐳 Deploy Production Environment
+        run: |
+          echo "🚀 Desplegando a entorno de PRODUCCIÓN..."
+          echo "📦 Puerto Frontend: 32010 | Backend: 32011"
+
+          # Detener contenedores anteriores
           docker compose -p enerlova_prod -f docker-compose.prod.yml down --remove-orphans || true
 
-          # Construir y levantar el nuevo contenedor
+          # Construir y levantar
           docker compose -p enerlova_prod -f docker-compose.prod.yml up --build -d
 
-          echo "✅ Despliegue completado!"
-          echo "🌐 URL: http://localhost:8080"
+          echo "✅ Despliegue de PRODUCCIÓN completado!"
+          echo "🌐 URL: http://localhost:32010"
 
-      - name: 🔍 Verify deployment
+      - name: 🔍 Verify Prod Deployment
         run: |
-          echo "⏳ Esperando que el contenedor esté listo..."
+          echo "⏳ Verificando salud del contenedor de producción..."
           sleep 10
-
-          # Verificar que el contenedor está corriendo
           if docker ps | grep -q enerlova-frontend-prod; then
-            echo "✅ Contenedor running"
-            docker ps --filter "name=enerlova-frontend-prod" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+            echo "✅ Contenedor Prod Running"
           else
-            echo "❌ Error: Contenedor no está corriendo"
+            echo "❌ Error: Contenedor Prod falló al iniciar"
             docker logs enerlova-frontend-prod 2>&1 || true
             exit 1
           fi
 
-      - name: 🧹 Cleanup old images
-        run: |
-          echo "🧹 Limpiando imágenes antiguas..."
-          docker image prune -f
+      - name: 🧹 Cleanup
+        run: docker image prune -f
         continue-on-error: true
 
   # ============================================

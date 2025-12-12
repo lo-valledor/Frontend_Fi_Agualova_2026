@@ -1,0 +1,25 @@
+# docker-compose.test.yml - Entorno de Pruebas (Automático)
+version: "3.8"
+
+services:
+  frontend-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Apunta al backend de TEST (7001)
+        VITE_API_URL: http://192.168.1.139:7001/Enerlova
+        VITE_APP_ENV: production # Usamos build de prod pero config de test
+    ports:
+      - "6001:80"
+    container_name: enerlova-frontend-test
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - VITE_APP_ENV=production
+    networks:
+      - enerlova-network
+
+networks:
+  enerlova-network:
+    driver: bridge
