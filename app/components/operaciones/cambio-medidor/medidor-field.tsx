@@ -10,6 +10,9 @@ interface MedidorFieldProps {
   colorScheme?: 'amber' | 'blue' | 'green' | 'purple';
   readOnly?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  placeholder?: string;
+  children?: React.ReactNode;
 }
 
 const colorVariants = {
@@ -37,7 +40,10 @@ export default function MedidorField({
   value,
   colorScheme = 'amber',
   readOnly = true,
-  onChange
+  onChange,
+  required = false,
+  placeholder = '',
+  children
 }: Readonly<MedidorFieldProps>) {
   const colors = colorVariants[colorScheme];
 
@@ -48,13 +54,17 @@ export default function MedidorField({
         className={`text-xs sm:text-sm ${colors.label} font-medium`}
       >
         {label}
+        {children}
       </Label>
       <Input
         id={id}
-        placeholder=''
+        placeholder={placeholder}
         value={value}
         readOnly={readOnly}
         onChange={onChange}
+        required={required}
+        type={!readOnly && required ? 'number' : 'text'}
+        min={!readOnly && required ? '0' : undefined}
         className={`h-8 sm:h-9 text-sm sm:text-base ${colors.input}`}
       />
     </div>

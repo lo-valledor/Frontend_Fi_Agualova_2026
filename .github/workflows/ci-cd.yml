@@ -112,7 +112,7 @@ jobs:
       - name: 🐳 Deploy Test Environment
         run: |
           echo "🚀 Desplegando a entorno de TEST..."
-          echo "📦 Puerto Frontend: 6001 | Backend: enerlovauat.mmlovalledor.cl"
+          echo "📦 Puerto Frontend: 32010 | Backend: enerlovauat.mmlovalledor.cl:32011"
 
           # Detener contenedores anteriores si existen
           docker compose -p enerlova_test -f docker-compose.test.yml down --remove-orphans || true
@@ -121,7 +121,7 @@ jobs:
           docker compose -p enerlova_test -f docker-compose.test.yml up --build -d
 
           echo "✅ Despliegue de TEST completado!"
-          echo "🌐 URL: http://localhost:6001"
+          echo "🌐 URL: http://localhost:32010"
 
       - name: 🔍 Verify Test Deployment
         run: |
@@ -160,7 +160,7 @@ jobs:
       - name: 🐳 Deploy Production Environment
         run: |
           echo "🚀 Desplegando a entorno de PRODUCCIÓN..."
-          echo "📦 Puerto Frontend: 32010 | Backend: enerlova.mmlovalledor.cl"
+          echo "📦 Puerto Frontend: 32010 | Backend: enerlova.mmlovalledor.cl:32011"
 
           # Detener contenedores anteriores
           docker compose -p enerlova_prod -f docker-compose.prod.yml down --remove-orphans || true

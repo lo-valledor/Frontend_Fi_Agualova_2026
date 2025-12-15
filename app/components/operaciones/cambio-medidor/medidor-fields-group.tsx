@@ -91,7 +91,11 @@ export default function MedidorFieldsGroup({
               ? e => onLecturaActualChange(e.target.value)
               : undefined
           }
-        />
+          required={!!onLecturaActualChange}
+          placeholder='Ingrese la lectura actual'
+        >
+          <span className='text-red-500 ml-1'>*</span>
+        </MedidorField>
       </div>
     </div>
   );

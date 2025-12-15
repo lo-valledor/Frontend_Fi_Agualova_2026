@@ -7,11 +7,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # Apunta al backend de TEST (enerlovauat.mmlovalledor.cl)
-        VITE_API_URL: https://enerlovauat.mmlovalledor.cl/Enerlova
-        VITE_APP_ENV: production # Usamos build de prod pero config de test
+        VITE_API_URL: https://enerlovauat.mmlovalledor.cl:32011/Enerlova
+        VITE_APP_ENV: production 
     ports:
-      - "6001:80"
+      - "32010:80"
     container_name: enerlova-frontend-test
     restart: unless-stopped
     environment:

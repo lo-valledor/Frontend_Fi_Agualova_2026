@@ -27,7 +27,7 @@ export function SiteHeader() {
 
   // Detectar si es entorno UAT (puerto 4200) o Core
   const isUAT =
-    typeof window !== 'undefined' && globalThis.location.port !== '8080';
+    typeof window !== 'undefined' && globalThis.location.port !== '32010';
   const environment = isUAT ? 'Sistema UAT' : 'Sistema Core';
 
   return (
