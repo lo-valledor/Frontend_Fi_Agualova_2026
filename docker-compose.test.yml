@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_API_URL: https://enerlovauat.mmlovalledor.cl:32011/Enerlova
-        VITE_APP_ENV: production 
+        VITE_APP_ENV: uat # Config de UAT
     ports:
       - "32010:80"
     container_name: enerlova-frontend-test

@@ -114,6 +114,13 @@ jobs:
           echo "🚀 Desplegando a entorno de TEST..."
           echo "📦 Puerto Frontend: 32010 | Backend: enerlovauat.mmlovalledor.cl:32011"
 
+          # Limpiar cualquier proceso ocupando el puerto 32010
+          echo "🧹 Verificando puerto 32010..."
+          if docker ps -q --filter "publish=32010" | grep -q .; then
+            echo "⚠️ Encontrado contenedor bloqueando puerto 32010. Deteniendo..."
+            docker ps -q --filter "publish=32010" | xargs -r docker rm -f
+          fi
+
           # Detener contenedores anteriores si existen
           docker compose -p enerlova_test -f docker-compose.test.yml down --remove-orphans || true
 

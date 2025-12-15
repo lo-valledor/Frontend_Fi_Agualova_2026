@@ -25,9 +25,8 @@ export function SiteHeader() {
   const { breadcrumbItems } = useBreadcrumbs();
   const { user } = useAuth();
 
-  // Detectar si es entorno UAT (puerto 4200) o Core
-  const isUAT =
-    typeof window !== 'undefined' && globalThis.location.port !== '32010';
+  // Detectar si es entorno UAT o Core basado en variables de entorno
+  const isUAT = import.meta.env.VITE_APP_ENV === 'uat';
   const environment = isUAT ? 'Sistema UAT' : 'Sistema Core';
 
   return (
