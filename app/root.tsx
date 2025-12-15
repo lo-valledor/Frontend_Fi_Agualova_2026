@@ -13,13 +13,12 @@ import {
 } from 'react-router';
 
 import './app.css';
-// Importar estilos de desarrollo/UAT si estamos en ese entorno
 const isDevOrUAT =
   import.meta.env.VITE_APP_ENV === 'development' ||
   import.meta.env.VITE_APP_ENV === 'uat' ||
   import.meta.env.DEV;
 if (isDevOrUAT) {
-  import('./app.dev.css');
+  import('./app.uat.css');
 }
 
 import { ThemeProvider } from './components/theme-provider';

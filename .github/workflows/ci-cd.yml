@@ -169,6 +169,13 @@ jobs:
           echo "🚀 Desplegando a entorno de PRODUCCIÓN..."
           echo "📦 Puerto Frontend: 32010 | Backend: enerlova.mmlovalledor.cl:32011"
 
+          # Limpiar cualquier proceso ocupando el puerto 32010
+          echo "🧹 Verificando puerto 32010..."
+          if docker ps -q --filter "publish=32010" | grep -q .; then
+            echo "⚠️ Encontrado contenedor bloqueando puerto 32010. Deteniendo..."
+            docker ps -q --filter "publish=32010" | xargs -r docker rm -f
+          fi
+
           # Detener contenedores anteriores
           docker compose -p enerlova_prod -f docker-compose.prod.yml down --remove-orphans || true
 
