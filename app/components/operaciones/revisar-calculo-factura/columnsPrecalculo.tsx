@@ -243,7 +243,9 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       const consumo = row.getValue('consumoPeriodo');
       return (
         <div className='text-right'>
-          <span className='text-[12px]'>{parseInt(consumo as string)}</span>
+          <span className='text-[12px]'>
+            ${((consumo as number) || 0).toLocaleString('es-CL')}
+          </span>
         </div>
       );
     },
