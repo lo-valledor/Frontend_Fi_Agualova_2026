@@ -88,7 +88,7 @@ export function HierarchicalDataTable({
       {/* Cantidad - alineada con consumo */}
       <TableCell className='text-[12px] text-right py-0 px-0.5'>
         <span className='text-slate-700 dark:text-slate-300'>
-          {cargo.cantidad?.toLocaleString('es-CL')}
+          {cargo.cantidad}
         </span>
       </TableCell>
 

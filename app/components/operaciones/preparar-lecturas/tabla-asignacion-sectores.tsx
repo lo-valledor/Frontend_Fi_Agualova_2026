@@ -3,7 +3,6 @@ import {
   CheckCircle2,
   FileTextIcon,
   Info,
-  Loader2,
   PlayIcon,
   ServerIcon,
   UsersIcon
@@ -39,8 +38,7 @@ import {
   type TablaAsignacionSectoresProps
 } from '~/types/operaciones';
 
-interface TablaAsignacionSectoresWithDescriptionProps
-  extends TablaAsignacionSectoresProps {
+interface TablaAsignacionSectoresWithDescriptionProps extends TablaAsignacionSectoresProps {
   sectores: ConsultarSectores[];
   periodo?: string;
   cicloFacturable?: string;
@@ -419,30 +417,26 @@ export default function TablaAsignacionSectores({
 
   return (
     <div className='space-y-4'>
-      {/* Contador de selección y botón de acción */}
-      {selectedNichos.length > 0 && (
-        <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-background border border-border'>
-          <div className='flex items-center gap-2 sm:gap-3'>
-            <div className='w-8 h-8 sm:w-10 sm:h-10 bg-emerald-100 dark:bg-emerald-800/50 rounded-xl flex items-center justify-center shrink-0'>
-              <CheckCircle2 className='w-4 h-4 sm:w-5 sm:h-5 text-emerald-600 dark:text-emerald-400' />
-            </div>
-            <div>
-              <p className='font-medium text-emerald-800 dark:text-emerald-200 text-sm sm:text-base'>
-                <span className='hidden sm:inline'>
-                  {selectedNichos.length} nichos seleccionados
-                </span>
-                <span className='sm:hidden'>
-                  {selectedNichos.length} seleccionados
-                </span>
-              </p>
-              <p className='text-xs sm:text-sm text-emerald-600 dark:text-emerald-400'>
-                <span className='hidden sm:inline'>
-                  Listos para preparar lecturas
-                </span>
-                <span className='sm:hidden'>Listos</span>
-              </p>
+      {/* Barra de acciones flotante (derecha inferior) */}
+      <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-3'>
+        {/* Tooltip flotante para Aceptar */}
+        {selectedNichos.length > 0 && (
+          <div className='bg-zinc-800 dark:bg-zinc-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
+            <div className='flex items-center gap-2'>
+              <CheckCircle2 className='h-4 w-4' />
+              <span>
+                {selectedNichos.length}{' '}
+                {selectedNichos.length === 1
+                  ? 'nicho seleccionado'
+                  : 'nichos seleccionados'}
+              </span>
             </div>
           </div>
+        )}
+
+        {/* Contenedor de botones en grupo */}
+        <div className='flex flex-col gap-2 bg-background border border-border rounded-lg p-2 shadow-lg'>
+          {/* Preparar Lecturas */}
           <Button
             onClick={prepararLecturas}
             disabled={
@@ -452,27 +446,25 @@ export default function TablaAsignacionSectores({
               !cicloFacturable ||
               !hasPermission
             }
-            title={
-              hasPermission ? '' : 'No tiene permisos para preparar lecturas'
-            }
-            variant="default"
-            className='gap-2 w-full sm:w-auto'
+            variant='default'
             size='sm'
+            className='bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white'
+            title={
+              !hasPermission
+                ? 'No tiene permisos para preparar lecturas'
+                : selectedNichos.length === 0
+                  ? 'Seleccione al menos un nicho'
+                  : `Preparar lecturas para ${selectedNichos.length} nicho(s)`
+            }
           >
             {isSubmitting ? (
-              <Loader2 className='h-4 w-4 animate-spin' />
+              <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
             ) : (
               <PlayIcon className='h-4 w-4' />
             )}
-            <span className='hidden sm:inline'>
-              {isSubmitting ? 'Procesando...' : 'Preparar Lecturas'}
-            </span>
-            <span className='sm:hidden'>
-              {isSubmitting ? 'Procesando...' : 'Preparar'}
-            </span>
           </Button>
         </div>
-      )}
+      </div>
 
       {/* Resultados del envío */}
       {submitResults.messages.length > 0 && (

@@ -19,6 +19,16 @@ services:
     networks:
       - enerlova-network
 
+    # Limitar recursos para evitar consumo excesivo
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
+
 networks:
   enerlova-network:
     driver: bridge

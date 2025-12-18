@@ -1,17 +1,17 @@
 FROM node:22-alpine AS development-dependencies-env
-RUN corepack enable
+RUN npm install -g pnpm
 COPY . /app
 WORKDIR /app
 RUN pnpm install --frozen-lockfile
 
 FROM node:22-alpine AS production-dependencies-env
-RUN corepack enable
+RUN npm install -g pnpm
 COPY ./package.json pnpm-lock.yaml /app/
 WORKDIR /app
 RUN pnpm install --frozen-lockfile --prod
 
 FROM node:22-alpine AS build-env
-RUN corepack enable
+RUN npm install -g pnpm
 COPY . /app/
 COPY --from=development-dependencies-env /app/node_modules /app/node_modules
 WORKDIR /app
@@ -19,8 +19,10 @@ WORKDIR /app
 # Agregar las variables de entorno para el build
 ARG VITE_API_URL
 ARG VITE_ENV_MODE=production
+ARG VITE_APP_ENV=production
 ENV VITE_API_URL=$VITE_API_URL
 ENV VITE_ENV_MODE=$VITE_ENV_MODE
+ENV VITE_APP_ENV=$VITE_APP_ENV
 
 RUN pnpm run build
 

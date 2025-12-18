@@ -226,6 +226,13 @@ export default function EditarContratoComponent({
     return mappedData;
   };
 
+  const [selectedRutPropietario, setSelectedRutPropietario] = useState(
+    contrato.rutPropietario || ''
+  );
+  const [selectedRutCliente, setSelectedRutCliente] = useState(
+    contrato.rutCliente || ''
+  );
+
   const [formData, setFormData] = useState<ContratoFormData>(() =>
     mapContratoToFormData(contrato)
   );
@@ -395,6 +402,7 @@ export default function EditarContratoComponent({
     const prop = propietarios.find(p => p.rut === propietarioRut);
     if (prop) {
       setFormData(prev => ({ ...prev, nombrePropietario: prop.nombre }));
+      setSelectedRutPropietario(prop.rut);
     }
     setModalPropietario(false);
     setBusquedaPropietario('');
@@ -407,6 +415,7 @@ export default function EditarContratoComponent({
         ? cliente.nombre
         : `${cliente.nombre.trim()}`;
       setFormData(prev => ({ ...prev, nombreCliente: nombreCompleto }));
+      setSelectedRutCliente(cliente.rut);
     }
     setModalCliente(false);
     setBusquedaCliente('');
@@ -423,6 +432,8 @@ export default function EditarContratoComponent({
 
   // Helper para obtener el RUT del propietario basándose en el nombre
   const getPropietarioRut = () => {
+    if (selectedRutPropietario) return selectedRutPropietario;
+
     const propietario = propietarios.find(
       p => p.nombre.trim() === formData.nombrePropietario.trim()
     );
@@ -436,6 +447,8 @@ export default function EditarContratoComponent({
 
   // Helper para obtener el RUT del cliente basándose en el nombre
   const getClienteRut = () => {
+    if (selectedRutCliente) return selectedRutCliente;
+
     // Si hay clientes disponibles, buscar por nombre
     if (_clientes && _clientes.length > 0) {
       const cliente = _clientes.find(
@@ -485,10 +498,12 @@ export default function EditarContratoComponent({
   // Funciones para deseleccionar
   const handleClearPropietario = () => {
     setFormData(prev => ({ ...prev, nombrePropietario: '' }));
+    setSelectedRutPropietario('');
   };
 
   const handleClearCliente = () => {
     setFormData(prev => ({ ...prev, nombreCliente: '' }));
+    setSelectedRutCliente('');
   };
 
   const handleClearLocal = () => {

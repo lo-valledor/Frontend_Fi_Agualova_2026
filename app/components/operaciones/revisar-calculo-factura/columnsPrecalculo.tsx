@@ -133,10 +133,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     cell: ({ row }) => {
       const nombre = row.getValue('nombreCliente');
       return (
-        <span
-          className='text-[12px] truncate block'
-          title={nombre as string}
-        >
+        <span className='text-[12px] truncate block' title={nombre as string}>
           {nombre as string}
         </span>
       );
@@ -188,10 +185,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
     cell: ({ row }) => {
       const comuna = row.getValue('comuna');
       return (
-        <span
-          className='text-[12px] truncate block'
-          title={comuna as string}
-        >
+        <span className='text-[12px] truncate block' title={comuna as string}>
           {comuna as string}
         </span>
       );
@@ -250,7 +244,7 @@ export const columns: ColumnDef<CalculoPrefacturaCompleto>[] = [
       return (
         <div className='text-right'>
           <span className='text-[12px]'>
-            {((consumo as number) || 0).toLocaleString('es-CL') || '0'}
+            ${((consumo as number) || 0).toLocaleString('es-CL')}
           </span>
         </div>
       );

@@ -328,11 +328,6 @@ export default function PrepararLecturasComponent({
                 <CardTitle className='text-base font-medium'>
                   Asignación de Sectores
                 </CardTitle>
-                <CardDescription className='text-sm'>
-                  {asignacionSectores.length > 0
-                    ? `${asignacionSectores.length} sectores encontrados`
-                    : 'No hay sectores asignados'}
-                </CardDescription>
               </div>
             </div>
           </CardHeader>

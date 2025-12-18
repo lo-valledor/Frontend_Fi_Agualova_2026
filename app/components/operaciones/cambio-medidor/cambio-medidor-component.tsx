@@ -196,7 +196,10 @@ export default function CambioMedidorComponent() {
           numeroMedidor: data.numero_serie,
           tipo: data.tipo_medidor,
           modelo: data.modelo,
-          lecturaActual: data.lectura_actual?.toString() || '',
+          lecturaActual:
+            data.lectura_actual && data.lectura_actual !== 0
+              ? data.lectura_actual.toString()
+              : '',
           medidorId: data.medidor_id
         });
 
@@ -280,6 +283,14 @@ export default function CambioMedidorComponent() {
       // Validaciones
       if (!detalleMedidorAntiguo.medidorId) {
         toast.error('Debe buscar y seleccionar un medidor antiguo');
+        return;
+      }
+
+      if (
+        !detalleMedidorAntiguo.lecturaActual ||
+        detalleMedidorAntiguo.lecturaActual.trim() === ''
+      ) {
+        toast.error('Debe ingresar la lectura actual del medidor antiguo');
         return;
       }
 

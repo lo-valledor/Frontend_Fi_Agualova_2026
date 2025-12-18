@@ -144,7 +144,7 @@ export default defineConfig(({ mode }) => ({
     // Proxy para evitar problemas de CORS y SSL en desarrollo
     proxy: {
       '/api': {
-        target: 'http://192.168.1.139:8081',
+        target: 'http://192.168.1.139:32011',
         changeOrigin: true,
         secure: false,
         rewrite: path => path.replace(/^\/api/, '/Enerlova')

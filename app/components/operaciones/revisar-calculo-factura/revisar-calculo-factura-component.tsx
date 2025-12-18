@@ -116,7 +116,6 @@ export default function RevisarCalculoFacturaComponent({
     cicloId
   });
 
-
   // Estadísticas calculadas (memoizadas)
   const estadisticas = useMemo(() => {
     if (filteredData.length === 0) {
@@ -557,7 +556,8 @@ export default function RevisarCalculoFacturaComponent({
                     <Alert className='border-emerald-300 bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 dark:border-emerald-800 shadow-sm'>
                       <CheckCircle className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
                       <AlertTitle className='text-emerald-900 dark:text-emerald-100 font-bold text-lg'>
-                        ✓ Sistema al día - No hay lecturas pendientes de facturar
+                        ✓ Sistema al día - No hay lecturas pendientes de
+                        facturar
                       </AlertTitle>
                       <AlertDescription className='text-emerald-800 dark:text-emerald-200 mt-3'>
                         <div className='p-4 bg-white/60 dark:bg-emerald-950/40 rounded-lg border border-emerald-200 dark:border-emerald-800 mb-3'>
@@ -566,20 +566,40 @@ export default function RevisarCalculoFacturaComponent({
                             Estado actual
                           </p>
                           <p className='text-sm mt-2'>
-                            Todas las lecturas cerradas del periodo <strong>{periodoAbierto?.[0]?.mes?.toString().padStart(2, '0')}/{periodoAbierto?.[0]?.anio}</strong> ya han sido procesadas y facturadas correctamente.
+                            Todas las lecturas cerradas del periodo{' '}
+                            <strong>
+                              {periodoAbierto?.[0]?.mes
+                                ?.toString()
+                                .padStart(2, '0')}
+                              /{periodoAbierto?.[0]?.anio}
+                            </strong>{' '}
+                            ya han sido procesadas y facturadas correctamente.
                           </p>
                         </div>
-                        
+
                         <div className='p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800'>
                           <p className='text-sm font-semibold text-blue-900 dark:text-blue-100 flex items-center gap-2 mb-2'>
                             <Info className='h-4 w-4' />
                             ¿Necesitas procesar nuevas facturas?
                           </p>
                           <ol className='list-decimal list-inside space-y-2 text-sm text-blue-800 dark:text-blue-200 ml-2'>
-                            <li>Ve a <strong>"Operaciones → Cierre de Lecturas"</strong></li>
-                            <li>Cierra las lecturas pendientes del periodo actual</li>
-                            <li>Regresa aquí y haz clic en <strong>"Preparar Cálculo"</strong></li>
-                            <li>Espera el procesamiento y luego <strong>"Ver Cálculo Facturas"</strong></li>
+                            <li>
+                              Ve a{' '}
+                              <strong>
+                                "Operaciones → Cierre de Lecturas"
+                              </strong>
+                            </li>
+                            <li>
+                              Cierra las lecturas pendientes del periodo actual
+                            </li>
+                            <li>
+                              Regresa aquí y haz clic en{' '}
+                              <strong>"Preparar Cálculo"</strong>
+                            </li>
+                            <li>
+                              Espera el procesamiento y luego{' '}
+                              <strong>"Ver Cálculo Facturas"</strong>
+                            </li>
                           </ol>
                         </div>
                       </AlertDescription>
@@ -752,11 +772,12 @@ export default function RevisarCalculoFacturaComponent({
         <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-3'>
           {/* Tooltip flotante para Aceptar */}
           {selectedContratos.length > 0 && (
-            <div className='bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
+            <div className='bg-zinc-800 dark:bg-zinc-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
               <div className='flex items-center gap-2'>
                 <CheckCircle className='h-4 w-4' />
                 <span>
-                  Aceptar {selectedContratos.length} {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
+                  Aceptar {selectedContratos.length}{' '}
+                  {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
                 </span>
               </div>
             </div>
@@ -769,9 +790,7 @@ export default function RevisarCalculoFacturaComponent({
               id='aceptar-calculo-btn'
               onClick={handleAceptarCalculo}
               disabled={
-                isAccepting ||
-                selectedContratos.length === 0 ||
-                !hasPermission
+                isAccepting || selectedContratos.length === 0 || !hasPermission
               }
               variant='default'
               size='sm'

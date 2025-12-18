@@ -7,11 +7,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # Apunta al backend de TEST (enerlovauat.mmlovalledor.cl)
         VITE_API_URL: https://enerlovauat.mmlovalledor.cl/Enerlova
-        VITE_APP_ENV: production # Usamos build de prod pero config de test
+        VITE_APP_ENV: uat # Config de UAT
     ports:
-      - "6001:80"
+      - "32010:80"
     container_name: enerlova-frontend-test
     restart: unless-stopped
     environment:
@@ -19,6 +18,16 @@ services:
       - VITE_APP_ENV=production
     networks:
       - enerlova-network
+
+    # Limitar recursos
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 128M
 
 networks:
   enerlova-network:
