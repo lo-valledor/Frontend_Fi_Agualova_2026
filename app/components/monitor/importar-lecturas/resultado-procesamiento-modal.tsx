@@ -162,9 +162,9 @@ export function ResultadoProcesamientoModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='max-w-[95vw] w-full max-h-[90vh] flex flex-col'>
+      <DialogContent className='min-w-[95vw] w-full max-h-[90vh] flex flex-col'>
         <DialogHeader>
-          <div className='flex items-center justify-between'>
+          <div className='flex items-center justify-between p-2'>
             <div>
               <DialogTitle className='text-xl'>
                 Resultado del Procesamiento
@@ -174,10 +174,10 @@ export function ResultadoProcesamientoModal({
               </DialogDescription>
             </div>
             <Button
-              variant='outline'
+              variant='default'
               size='sm'
               onClick={exportarAExcel}
-              className='flex items-center gap-2'
+              className='flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600'
             >
               <Download className='h-4 w-4' />
               Exportar a Excel
@@ -255,7 +255,7 @@ export function ResultadoProcesamientoModal({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {resultado.detalles.map((detalle) => (
+                    {resultado.detalles.map(detalle => (
                       <TableRow key={detalle.numeroSerie}>
                         <TableCell className='font-mono text-xs'>
                           {detalle.numeroSerie}
