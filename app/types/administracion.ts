@@ -499,7 +499,7 @@ export interface ActualizarMedidorProps {
   digitos: number;
   multiplicar: number;
   tipoId: number;
-  subempalmeCodigo: string;
+  subempalmeCodigo: string | null;
   primeraLectura: string;
   fechaPrimeraLectura: string;
 }

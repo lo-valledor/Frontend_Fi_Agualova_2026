@@ -238,7 +238,7 @@ export default function EditarMedidorComponent({
         digitos: data.digitos,
         multiplicar: data.multiplicar,
         tipoId: data.tipoId,
-        subempalmeCodigo: data.subempalmeCodigo || '',
+        subempalmeCodigo: data.subempalmeCodigo || null,
         primeraLectura: data.primeraLectura || '0',
         fechaPrimeraLectura: data.fechaPrimeraLectura
           ? convertirFechaAAAAMMDDToDDMMAA(data.fechaPrimeraLectura)

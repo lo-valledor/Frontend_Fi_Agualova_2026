@@ -58,6 +58,7 @@ export default function RevisarCalculoFacturaComponent({
 }>) {
   // Estados de UI
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
   const cicloId = '1';
 
   // Permisos
@@ -226,6 +227,7 @@ export default function RevisarCalculoFacturaComponent({
 
   // Función para iniciar el tour (memoizada)
   const startTour = useCallback(() => {
+    setIsMenuOpen(true);
     const driverjs = driver({
       showProgress: true,
       progressText: 'Paso {{current}} de {{total}}',
@@ -768,23 +770,46 @@ export default function RevisarCalculoFacturaComponent({
           </CardContent>
         </Card>
 
-        {/* Barra de acciones flotante (derecha inferior) */}
-        <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-3'>
-          {/* Tooltip flotante para Aceptar */}
-          {selectedContratos.length > 0 && (
-            <div className='bg-zinc-800 dark:bg-zinc-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
-              <div className='flex items-center gap-2'>
-                <CheckCircle className='h-4 w-4' />
-                <span>
-                  Aceptar {selectedContratos.length}{' '}
-                  {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
-                </span>
-              </div>
-            </div>
-          )}
+        {/* Barra de acciones flotante (drawer desde la derecha) */}
+        <div className='fixed top-1/3 right-0 z-50 flex items-start gap-0'>
+          {/* Botón de control del menú (siempre visible en el borde) */}
+          <Button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            variant='primary'
+            size='icon'
+            className='h-20 w-10 rounded-l-full rounded-r-none shadow-lg hover:bg-primary/40 border-r-0'
+            title={
+              isMenuOpen
+                ? 'Ocultar menú de acciones'
+                : 'Mostrar menú de acciones'
+            }
+          >
+            {isMenuOpen ? (
+              <ChevronRight className='h-5 w-5' />
+            ) : (
+              <ChevronDown className='h-5 w-5 -rotate-90' />
+            )}
+          </Button>
 
-          {/* Contenedor de botones en grupo */}
-          <div className='flex flex-col gap-2 bg-background border border-border rounded-lg p-2 shadow-lg'>
+          {/* Contenedor del menú que se desliza */}
+          <div
+            className={`flex flex-col gap-2 bg-background/95 backdrop-blur-sm border border-border rounded-l-lg p-2 shadow-xl transition-transform duration-300 ease-in-out ${
+              isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
+            {/* Tooltip flotante para Aceptar */}
+            {selectedContratos.length > 0 && isMenuOpen && (
+              <div className='absolute -left-48 top-0 bg-zinc-800 dark:bg-zinc-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
+                <div className='flex items-center gap-2'>
+                  <CheckCircle className='h-4 w-4' />
+                  <span>
+                    Aceptar {selectedContratos.length}{' '}
+                    {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Aceptar Cálculo */}
             <Button
               id='aceptar-calculo-btn'
