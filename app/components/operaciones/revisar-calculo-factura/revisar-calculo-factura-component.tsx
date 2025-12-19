@@ -775,7 +775,7 @@ export default function RevisarCalculoFacturaComponent({
           {/* Botón de control del menú (siempre visible en el borde) */}
           <Button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            variant='primary'
+            variant='default'
             size='icon'
             className='h-20 w-10 rounded-l-full rounded-r-none shadow-lg hover:bg-primary/40 border-r-0'
             title={
