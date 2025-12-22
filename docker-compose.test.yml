@@ -26,9 +26,6 @@ services:
       
       # Servicio
       - "traefik.http.services.enerlova-frontend-test.loadbalancer.server.port=80"
-      
-      # Middlewares
-      - "traefik.http.routers.enerlova-frontend-test.middlewares=security-headers@file,compression@file"
     deploy:
       resources:
         limits:
