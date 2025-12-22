@@ -12,20 +12,10 @@ services:
     environment:
       - NODE_ENV=production
       - VITE_APP_ENV=test
+    ports:
+      - "32010:80"
     networks:
-      - proxy
       - enerlova-test
-    labels:
-      # Habilitar Traefik
-      - "traefik.enable=true"
-      
-      # Router para frontend
-      - "traefik.http.routers.enerlova-frontend-test.rule=Host(`enerlovauat.mmlovalledor.cl`)"
-      - "traefik.http.routers.enerlova-frontend-test.entrypoints=websecure"
-      - "traefik.http.routers.enerlova-frontend-test.tls=true"
-      
-      # Servicio
-      - "traefik.http.services.enerlova-frontend-test.loadbalancer.server.port=80"
     deploy:
       resources:
         limits:
@@ -38,5 +28,3 @@ services:
 networks:
   enerlova-test:
     driver: bridge
-  proxy:
-    external: true
