@@ -1663,7 +1663,143 @@ docker stats
 
 ---
 
+## 16. Implementación en Servidor Saturno (TEST/UAT)
+
+### Contexto
+
+**Saturno** es el servidor de **TEST/UAT** de Enerlova. A diferencia del servidor genérico documentado en las fases anteriores, Saturno tiene requisitos específicos para el ambiente de pruebas.
+
+| Aspecto | Configuración |
+|---------|---------------|
+| **Servidor** | Saturno (TEST/UAT) |
+| **Dominio** | https://enerlovauat.mmlovalledor.cl |
+| **Frontend** | Puerto 32010 |
+| **Backend** | Puerto 32011 (ruta `/Enerlova`) |
+| **Reverse Proxy** | Traefik v3 |
+| **SSL** | Certificados auto-firmados |
+
+> [!IMPORTANT]
+> **Producción NO usa Traefik:** El servidor de producción mantiene **Nginx** porque tiene otros sistemas que no pueden modificarse. Esta implementación de Traefik aplica **ÚNICAMENTE al ambiente TEST/UAT**.
+
+### Migración de Nginx a Traefik en TEST
+
+Nginx fue desinstalado del servidor Saturno y reemplazado por Traefik. La guía completa de migración se encuentra en:
+
+📄 **[MIGRACION_NGINX_TRAEFIK_TEST.md](MIGRACION_NGINX_TRAEFIK_TEST.md)**
+
+Esta guía incluye:
+- ✅ Mapeo completo de directivas Nginx → Traefik
+- ✅ Configuración de headers de seguridad
+- ✅ Configuración de certificados auto-firmados
+- ✅ Docker Compose con labels de Traefik
+- ✅ Troubleshooting común
+
+### Archivos de Configuración
+
+Los archivos de configuración para Saturno están disponibles en el repositorio:
+
+```
+📁 res/
+├── traefik-test.yml              # Configuración estática de Traefik
+├── traefik-config-test.yml       # Configuración dinámica (middlewares, TLS)
+└── docker-compose.traefik-test.yml  # Docker Compose completo
+```
+
+### Despliegue en Saturno
+
+> [!NOTE]
+> **Despliegue Automatizado:** El despliegue en Saturno se realiza **automáticamente vía GitHub Actions**, no mediante comandos manuales.
+
+#### Proceso de Despliegue
+
+1. **Desarrollador hace push a rama `test`:**
+   ```bash
+   git push origin test
+   ```
+
+2. **GitHub Actions se ejecuta automáticamente:**
+   - Construye la imagen Docker
+   - Se conecta a Saturno vía SSH
+   - Ejecuta `docker compose up -d --build`
+
+3. **Traefik detecta el nuevo contenedor** y actualiza las rutas automáticamente
+
+4. **Aplicación disponible** en https://enerlovauat.mmlovalledor.cl
+
+#### Monitorear Despliegue
+
+```bash
+# Conectar a Saturno
+ssh usuario@saturno
+
+# Ver contenedores corriendo
+docker ps
+
+# Ver logs de aplicación
+docker logs -f enerlova-frontend-test
+
+# Ver dashboard de Traefik
+# Acceder a http://IP_SATURNO:8080
+```
+
+### Verificación Rápida
+
+```bash
+# Frontend
+curl -k https://enerlovauat.mmlovalledor.cl
+
+# Backend
+curl -k https://enerlovauat.mmlovalledor.cl/Enerlova/health
+
+# Dashboard de Traefik
+# Acceder a: http://IP_SATURNO:8080
+```
+
+### Diferencias con Servidor Genérico
+
+| Aspecto | Servidor Genérico | Saturno (TEST) |
+|---------|-------------------|----------------|
+| **Propósito** | Desarrollo/Demo | TEST/UAT Empresa |
+| **Dashboard Traefik** | Con autenticación | Sin autenticación (insecure:true) |
+| **Logs** | INFO | DEBUG |
+| **SSL** | Let's Encrypt | Auto-firmado |
+| **Dominio** | IP pública | enerlovauat.mmlovalledor.cl |
+
+### Comandos Específicos Saturno
+
+```bash
+# Ver estado de Traefik
+docker ps | grep traefik-test
+
+# Ver logs de Traefik
+docker logs -f traefik-test
+
+# Ver rutas activas
+curl -s http://localhost:8080/api/http/routers | jq
+
+# Reiniciar solo Traefik
+docker restart traefik-test
+
+# Ver métricas Prometheus
+curl http://localhost:8080/metrics
+```
+
+### Monitoreo
+
+Traefik en Saturno expone métricas de Prometheus en el puerto 8080. Para integrar con el stack de monitoreo existente:
+
+```yaml
+# Agregar a prometheus.yml
+scrape_configs:
+  - job_name: 'traefik-test'
+    static_configs:
+      - targets: ['traefik-test:8080']
+```
+
+---
+
 ## Notas Finales
+
 
 Esta infraestructura proporciona una base sólida para desarrollo y despliegue continuo. Los componentes están diseñados para ser modulares y escalables según las necesidades del proyecto.
 

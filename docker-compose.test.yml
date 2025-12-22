@@ -1,25 +1,34 @@
-# docker-compose.test.yml - Entorno de Pruebas (Automático)
-version: "3.8"
-
 services:
-  frontend-test:
+  frontend:
+    image: enerlova-frontend:test
+    container_name: enerlova-frontend-test
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
       args:
         VITE_API_URL: https://enerlovauat.mmlovalledor.cl/Enerlova
-        VITE_APP_ENV: uat # Config de UAT
-    ports:
-      - "32010:80"
-    container_name: enerlova-frontend-test
-    restart: unless-stopped
+        VITE_APP_ENV: test
     environment:
       - NODE_ENV=production
-      - VITE_APP_ENV=production
+      - VITE_APP_ENV=test
     networks:
-      - enerlova-network
-
-    # Limitar recursos
+      - proxy
+      - enerlova-test
+    labels:
+      # Habilitar Traefik
+      - "traefik.enable=true"
+      
+      # Router para frontend
+      - "traefik.http.routers.enerlova-frontend-test.rule=Host(`enerlovauat.mmlovalledor.cl`)"
+      - "traefik.http.routers.enerlova-frontend-test.entrypoints=websecure"
+      - "traefik.http.routers.enerlova-frontend-test.tls=true"
+      
+      # Servicio
+      - "traefik.http.services.enerlova-frontend-test.loadbalancer.server.port=80"
+      
+      # Middlewares
+      - "traefik.http.routers.enerlova-frontend-test.middlewares=security-headers@file,compression@file"
     deploy:
       resources:
         limits:
@@ -30,5 +39,7 @@ services:
           memory: 128M
 
 networks:
-  enerlova-network:
+  enerlova-test:
     driver: bridge
+  proxy:
+    external: true
