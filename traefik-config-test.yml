@@ -1,6 +1,23 @@
 # traefik-config-test.yml - Configuración dinámica para TEST/UAT
 
 http:
+  # Routers
+  routers:
+    backend-api:
+      rule: 'Host(`enerlovauat.mmlovalledor.cl`) && PathPrefix(`/Enerlova`)'
+      service: backend-api-service
+      entryPoints:
+        - websecure
+      tls: true
+      priority: 100
+
+  # Services
+  services:
+    backend-api-service:
+      loadBalancer:
+        servers:
+          - url: 'http://192.168.1.139:32011'
+
   middlewares:
     # Headers de seguridad (migrados desde nginx.conf)
     security-headers:
