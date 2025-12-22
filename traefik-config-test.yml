@@ -16,7 +16,7 @@ http:
     backend-api-service:
       loadBalancer:
         servers:
-          - url: 'http://192.168.1.139:32011'
+          - url: 'http://enerlova-api:8080'
 
   middlewares:
     # Headers de seguridad (migrados desde nginx.conf)
