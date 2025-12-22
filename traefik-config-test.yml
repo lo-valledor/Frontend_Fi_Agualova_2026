@@ -1,0 +1,46 @@
+# traefik-config-test.yml - Configuración dinámica para TEST/UAT
+
+http:
+  middlewares:
+    # Headers de seguridad (migrados desde nginx.conf)
+    security-headers:
+      headers:
+        contentSecurityPolicy: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*; frame-ancestors 'none';"
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        contentTypeNosniff: true
+        frameDeny: true
+        browserXssFilter: true
+        referrerPolicy: 'strict-origin-when-cross-origin'
+        permissionsPolicy: 'geolocation=(), microphone=(), camera=()'
+        customResponseHeaders:
+          X-Environment: 'TEST-UAT'
+
+    # Compresión (migrada desde nginx.conf gzip)
+    compression:
+      compress: {}
+
+    # Rate limiting (opcional para TEST, más permisivo que producción)
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50
+
+# Opciones de TLS
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+
+  # Certificados auto-firmados para TEST
+  # Descomentar y configurar cuando se generen los certificados
+  # certificates:
+  #   - certFile: /certs/enerlovauat.crt
+  #     keyFile: /certs/enerlovauat.key

@@ -128,5 +128,3 @@ sudo systemctl reload nginx
 ```
 
 -----
-
-Hacer backup de sicop
