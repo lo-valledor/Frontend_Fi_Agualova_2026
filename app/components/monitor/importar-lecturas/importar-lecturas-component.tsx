@@ -589,27 +589,24 @@ export default function ImportarLecturasComponent() {
                   </div>
 
                   <div
-                    className={`text-center p-4 rounded-radius border ${
-                      estadoProcesamiento.registrosPendientes > 0
+                    className={`text-center p-4 rounded-radius border ${estadoProcesamiento.registrosPendientes > 0
                         ? 'bg-muted/50 border-border'
                         : 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200/50 dark:border-emerald-800/50'
-                    }`}
+                      }`}
                   >
                     <div
-                      className={`text-2xl font-bold mb-1 ${
-                        estadoProcesamiento.registrosPendientes > 0
+                      className={`text-2xl font-bold mb-1 ${estadoProcesamiento.registrosPendientes > 0
                           ? 'text-foreground'
                           : 'text-emerald-700 dark:text-emerald-400'
-                      }`}
+                        }`}
                     >
                       {estadoProcesamiento.registrosPendientes}
                     </div>
                     <div
-                      className={`text-xs font-medium ${
-                        estadoProcesamiento.registrosPendientes > 0
+                      className={`text-xs font-medium ${estadoProcesamiento.registrosPendientes > 0
                           ? 'text-muted-foreground'
                           : 'text-emerald-600 dark:text-emerald-500'
-                      }`}
+                        }`}
                     >
                       Pendientes
                     </div>
@@ -805,160 +802,156 @@ export default function ImportarLecturasComponent() {
           )}
 
           {/* Alerta de sectores pendientes de preparación */}
-          {validacionLecturas && !validacionLecturas.sinPendientes && (
-            <Card className='border-red-200 dark:border-red-800 bg-linear-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/20 shadow-lg'>
-              <CardContent className='pt-6'>
-                <div className='space-y-4'>
-                  {/* Header con icono y título */}
-                  <div className='flex items-start gap-4'>
-                    <div className='relative shrink-0'>
-                      <div className='absolute inset-0 bg-red-500 dark:bg-red-600 rounded-full blur-xl opacity-30 animate-pulse' />
-                      <div className='relative p-3 bg-red-100 dark:bg-red-900/50 rounded-full'>
-                        <AlertCircle className='h-7 w-7 text-red-600 dark:text-red-400' />
-                      </div>
-                    </div>
-                    <div className='flex-1 min-w-0'>
-                      <h3 className='text-lg font-bold text-red-900 dark:text-red-100 mb-1 flex items-center gap-2'>
-                        🚫 Restricción Activa
-                      </h3>
-                      <p className='text-sm font-medium text-red-800 dark:text-red-200'>
-                        {validacionLecturas.mensaje}
-                      </p>
-                    </div>
-                    <Button
-                      onClick={fetchValidacionLecturasPendientes}
-                      disabled={loadingValidacion}
-                      variant='outline'
-                      size='sm'
-                      className='shrink-0 border-red-300 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30'
-                    >
-                      <RefreshCw
-                        className={`h-3.5 w-3.5 mr-1.5 ${loadingValidacion ? 'animate-spin' : ''}`}
-                      />
-                      Actualizar
-                    </Button>
-                  </div>
-
-                  {/* Stats Cards */}
-                  <div className='grid grid-cols-2 gap-3'>
-                    <div className='p-4 bg-white dark:bg-background/50 rounded-lg border border-red-200 dark:border-red-800 shadow-sm'>
-                      <div className='flex items-center gap-2 mb-1'>
-                        <div className='h-2 w-2 rounded-full bg-orange-500 animate-pulse' />
-                        <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                          Período
-                        </span>
-                      </div>
-                      <p className='text-2xl font-bold text-foreground'>
-                        {validacionLecturas.periodo}
-                      </p>
-                    </div>
-                    <div className='p-4 bg-white dark:bg-background/50 rounded-lg border border-red-200 dark:border-red-800 shadow-sm'>
-                      <div className='flex items-center gap-2 mb-1'>
-                        <div className='h-2 w-2 rounded-full bg-red-500 animate-pulse' />
-                        <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'>
-                          Pendientes
-                        </span>
-                      </div>
-                      <p className='text-2xl font-bold text-red-600 dark:text-red-400'>
-                        {validacionLecturas.totalPendientes}
-                        <span className='text-sm font-normal text-muted-foreground ml-2'>
-                          medidores
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Collapsible Detalles */}
-                  <Collapsible
-                    open={showDetallesPendientes}
-                    onOpenChange={setShowDetallesPendientes}
-                  >
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        variant='outline'
-                        size='sm'
-                        className='w-full justify-between border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30'
-                      >
-                        <span className='flex items-center gap-2 text-sm font-medium'>
-                          <FileSpreadsheet className='h-4 w-4' />
-                          Detalles por Sector y Nicho
-                          <Badge variant='secondary' className='ml-1'>
-                            {validacionLecturas.detalles.length}
-                          </Badge>
-                        </span>
-                        <ChevronDown
-                          className={`h-4 w-4 transition-transform duration-200 ${showDetallesPendientes ? 'rotate-180' : ''}`}
-                        />
-                      </Button>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <div className='mt-3 p-3 bg-white/80 dark:bg-background/30 rounded-lg border border-red-200 dark:border-red-800 max-h-64 overflow-y-auto'>
-                        <div className='space-y-2'>
-                          {validacionLecturas.detalles.map((detalle, idx) => (
-                            <div
-                              key={idx}
-                              className='group p-3 bg-linear-to-r from-white to-red-50/50 dark:from-background dark:to-red-950/20 rounded-lg border border-red-100 dark:border-red-900 hover:shadow-md transition-all duration-200'
-                            >
-                              <div className='flex items-center justify-between gap-3'>
-                                <div className='flex-1 min-w-0'>
-                                  <div className='flex items-center gap-2 mb-1'>
-                                    <div className='h-1.5 w-1.5 rounded-full bg-red-500' />
-                                    <p className='font-semibold text-foreground text-sm truncate'>
-                                      {detalle.sector}
-                                    </p>
-                                  </div>
-                                  <p className='text-xs text-muted-foreground pl-3.5 flex items-center gap-1.5'>
-                                    <span className='opacity-50'>📍</span>
-                                    Nicho: {detalle.nicho}
-                                  </p>
-                                </div>
-                                <Badge
-                                  variant='destructive'
-                                  className='shrink-0 shadow-sm'
-                                >
-                                  <span className='font-bold'>
-                                    {detalle.cantidad}
-                                  </span>
-                                  <span className='ml-1 opacity-90 text-[10px]'>
-                                    {detalle.cantidad === 1
-                                      ? 'pendiente'
-                                      : 'pendientes'}
-                                  </span>
-                                </Badge>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
-
-                  {/* Warning Box */}
-                  <div className='relative overflow-hidden p-4 bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm'>
-                    <div className='absolute top-0 right-0 w-32 h-32 bg-amber-300/10 dark:bg-amber-700/10 rounded-full -mr-16 -mt-16' />
-                    <div className='relative flex gap-3'>
-                      <div className='shrink-0'>
-                        <div className='p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg'>
-                          <AlertCircle className='h-5 w-5 text-amber-600 dark:text-amber-400' />
-                        </div>
-                      </div>
-                      <div>
-                        <p className='text-sm font-bold text-amber-900 dark:text-amber-100 mb-1'>
-                          ⚠️ Acción Requerida
-                        </p>
-                        <p className='text-xs text-amber-800 dark:text-amber-200 leading-relaxed'>
-                          No podrás cargar archivos Excel ni procesar lecturas
-                          hasta que todos los medidores estén asignados para el
-                          registro de lectura. Por favor, completa la
-                          preparación de todos los sectores.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* {validacionLecturas && !validacionLecturas.sinPendientes && ( */}
+          {/*   <Card className='border-red-200 dark:border-red-800 bg-linear-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/20 shadow-lg'> */}
+          {/*     <CardContent className='pt-6'> */}
+          {/*       <div className='space-y-4'> */}
+          {/*         <div className='flex items-start gap-4'> */}
+          {/*           <div className='relative shrink-0'> */}
+          {/*             <div className='absolute inset-0 bg-red-500 dark:bg-red-600 rounded-full blur-xl opacity-30 animate-pulse' /> */}
+          {/*             <div className='relative p-3 bg-red-100 dark:bg-red-900/50 rounded-full'> */}
+          {/*               <AlertCircle className='h-7 w-7 text-red-600 dark:text-red-400' /> */}
+          {/*             </div> */}
+          {/*           </div> */}
+          {/*           <div className='flex-1 min-w-0'> */}
+          {/*             <h3 className='text-lg font-bold text-red-900 dark:text-red-100 mb-1 flex items-center gap-2'> */}
+          {/*               🚫 Restricción Activa */}
+          {/*             </h3> */}
+          {/*             <p className='text-sm font-medium text-red-800 dark:text-red-200'> */}
+          {/*               {validacionLecturas.mensaje} */}
+          {/*             </p> */}
+          {/*           </div> */}
+          {/*           <Button */}
+          {/*             onClick={fetchValidacionLecturasPendientes} */}
+          {/*             disabled={loadingValidacion} */}
+          {/*             variant='outline' */}
+          {/*             size='sm' */}
+          {/*             className='shrink-0 border-red-300 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-900/30' */}
+          {/*           > */}
+          {/*             <RefreshCw */}
+          {/*               className={`h-3.5 w-3.5 mr-1.5 ${loadingValidacion ? 'animate-spin' : ''}`} */}
+          {/*             /> */}
+          {/*             Actualizar */}
+          {/*           </Button> */}
+          {/*         </div> */}
+          {/**/}
+          {/*         <div className='grid grid-cols-2 gap-3'> */}
+          {/*           <div className='p-4 bg-white dark:bg-background/50 rounded-lg border border-red-200 dark:border-red-800 shadow-sm'> */}
+          {/*             <div className='flex items-center gap-2 mb-1'> */}
+          {/*               <div className='h-2 w-2 rounded-full bg-orange-500 animate-pulse' /> */}
+          {/*               <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'> */}
+          {/*                 Período */}
+          {/*               </span> */}
+          {/*             </div> */}
+          {/*             <p className='text-2xl font-bold text-foreground'> */}
+          {/*               {validacionLecturas.periodo} */}
+          {/*             </p> */}
+          {/*           </div> */}
+          {/*           <div className='p-4 bg-white dark:bg-background/50 rounded-lg border border-red-200 dark:border-red-800 shadow-sm'> */}
+          {/*             <div className='flex items-center gap-2 mb-1'> */}
+          {/*               <div className='h-2 w-2 rounded-full bg-red-500 animate-pulse' /> */}
+          {/*               <span className='text-xs font-medium text-muted-foreground uppercase tracking-wide'> */}
+          {/*                 Pendientes */}
+          {/*               </span> */}
+          {/*             </div> */}
+          {/*             <p className='text-2xl font-bold text-red-600 dark:text-red-400'> */}
+          {/*               {validacionLecturas.totalPendientes} */}
+          {/*               <span className='text-sm font-normal text-muted-foreground ml-2'> */}
+          {/*                 medidores */}
+          {/*               </span> */}
+          {/*             </p> */}
+          {/*           </div> */}
+          {/*         </div> */}
+          {/**/}
+          {/*         <Collapsible */}
+          {/*           open={showDetallesPendientes} */}
+          {/*           onOpenChange={setShowDetallesPendientes} */}
+          {/*         > */}
+          {/*           <CollapsibleTrigger asChild> */}
+          {/*             <Button */}
+          {/*               variant='outline' */}
+          {/*               size='sm' */}
+          {/*               className='w-full justify-between border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/30' */}
+          {/*             > */}
+          {/*               <span className='flex items-center gap-2 text-sm font-medium'> */}
+          {/*                 <FileSpreadsheet className='h-4 w-4' /> */}
+          {/*                 Detalles por Sector y Nicho */}
+          {/*                 <Badge variant='secondary' className='ml-1'> */}
+          {/*                   {validacionLecturas.detalles.length} */}
+          {/*                 </Badge> */}
+          {/*               </span> */}
+          {/*               <ChevronDown */}
+          {/*                 className={`h-4 w-4 transition-transform duration-200 ${showDetallesPendientes ? 'rotate-180' : ''}`} */}
+          {/*               /> */}
+          {/*             </Button> */}
+          {/*           </CollapsibleTrigger> */}
+          {/*           <CollapsibleContent> */}
+          {/*             <div className='mt-3 p-3 bg-white/80 dark:bg-background/30 rounded-lg border border-red-200 dark:border-red-800 max-h-64 overflow-y-auto'> */}
+          {/*               <div className='space-y-2'> */}
+          {/*                 {validacionLecturas.detalles.map((detalle, idx) => ( */}
+          {/*                   <div */}
+          {/*                     key={idx} */}
+          {/*                     className='group p-3 bg-linear-to-r from-white to-red-50/50 dark:from-background dark:to-red-950/20 rounded-lg border border-red-100 dark:border-red-900 hover:shadow-md transition-all duration-200' */}
+          {/*                   > */}
+          {/*                     <div className='flex items-center justify-between gap-3'> */}
+          {/*                       <div className='flex-1 min-w-0'> */}
+          {/*                         <div className='flex items-center gap-2 mb-1'> */}
+          {/*                           <div className='h-1.5 w-1.5 rounded-full bg-red-500' /> */}
+          {/*                           <p className='font-semibold text-foreground text-sm truncate'> */}
+          {/*                             {detalle.sector} */}
+          {/*                           </p> */}
+          {/*                         </div> */}
+          {/*                         <p className='text-xs text-muted-foreground pl-3.5 flex items-center gap-1.5'> */}
+          {/*                           <span className='opacity-50'>📍</span> */}
+          {/*                           Nicho: {detalle.nicho} */}
+          {/*                         </p> */}
+          {/*                       </div> */}
+          {/*                       <Badge */}
+          {/*                         variant='destructive' */}
+          {/*                         className='shrink-0 shadow-sm' */}
+          {/*                       > */}
+          {/*                         <span className='font-bold'> */}
+          {/*                           {detalle.cantidad} */}
+          {/*                         </span> */}
+          {/*                         <span className='ml-1 opacity-90 text-[10px]'> */}
+          {/*                           {detalle.cantidad === 1 */}
+          {/*                             ? 'pendiente' */}
+          {/*                             : 'pendientes'} */}
+          {/*                         </span> */}
+          {/*                       </Badge> */}
+          {/*                     </div> */}
+          {/*                   </div> */}
+          {/*                 ))} */}
+          {/*               </div> */}
+          {/*             </div> */}
+          {/*           </CollapsibleContent> */}
+          {/*         </Collapsible> */}
+          {/**/}
+          {/*         <div className='relative overflow-hidden p-4 bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm'> */}
+          {/*           <div className='absolute top-0 right-0 w-32 h-32 bg-amber-300/10 dark:bg-amber-700/10 rounded-full -mr-16 -mt-16' /> */}
+          {/*           <div className='relative flex gap-3'> */}
+          {/*             <div className='shrink-0'> */}
+          {/*               <div className='p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg'> */}
+          {/*                 <AlertCircle className='h-5 w-5 text-amber-600 dark:text-amber-400' /> */}
+          {/*               </div> */}
+          {/*             </div> */}
+          {/*             <div> */}
+          {/*               <p className='text-sm font-bold text-amber-900 dark:text-amber-100 mb-1'> */}
+          {/*                 ⚠️ Acción Requerida */}
+          {/*               </p> */}
+          {/*               <p className='text-xs text-amber-800 dark:text-amber-200 leading-relaxed'> */}
+          {/*                 No podrás cargar archivos Excel ni procesar lecturas */}
+          {/*                 hasta que todos los medidores estén asignados para el */}
+          {/*                 registro de lectura. Por favor, completa la */}
+          {/*                 preparación de todos los sectores. */}
+          {/*               </p> */}
+          {/*             </div> */}
+          {/*           </div> */}
+          {/*         </div> */}
+          {/*       </div> */}
+          {/*     </CardContent> */}
+          {/*   </Card> */}
+          {/* )} */}
         </div>
 
         {/* Modal de resultado del procesamiento */}
@@ -1161,32 +1154,28 @@ export default function ImportarLecturasComponent() {
                     ? handleDrop
                     : undefined
                 }
-                className={`relative border-2 border-dashed rounded-radius p-12 transition-all duration-300 ${
-                  validacionLecturas?.sinPendientes === false
+                className={`relative border-2 border-dashed rounded-radius p-12 transition-all duration-300 ${validacionLecturas?.sinPendientes === false
                     ? 'border-muted bg-muted/20 opacity-60 cursor-not-allowed'
                     : isDragging
                       ? 'border-primary bg-primary/5 scale-[1.02]'
                       : 'border-border hover:border-primary hover:bg-accent/50'
-                }`}
+                  }`}
               >
                 <div className='flex flex-col items-center gap-6 text-center'>
                   <div
                     className={`relative transition-all duration-300 ${isDragging ? 'scale-110' : ''}`}
                   >
                     <div
-                      className={`absolute inset-0 rounded-full blur-xl opacity-30 ${
-                        isDragging ? 'bg-primary' : 'bg-muted'
-                      }`}
+                      className={`absolute inset-0 rounded-full blur-xl opacity-30 ${isDragging ? 'bg-primary' : 'bg-muted'
+                        }`}
                     />
                     <div
-                      className={`relative p-5  ${
-                        isDragging ? 'bg-primary/10' : 'bg-muted'
-                      }`}
+                      className={`relative p-5  ${isDragging ? 'bg-primary/10' : 'bg-muted'
+                        }`}
                     >
                       <Upload
-                        className={`h-10 w-10 ${
-                          isDragging ? 'text-primary' : 'text-muted-foreground'
-                        }`}
+                        className={`h-10 w-10 ${isDragging ? 'text-primary' : 'text-muted-foreground'
+                          }`}
                       />
                     </div>
                   </div>

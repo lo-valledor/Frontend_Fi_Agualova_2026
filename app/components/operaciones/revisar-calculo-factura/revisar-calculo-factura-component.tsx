@@ -771,7 +771,8 @@ export default function RevisarCalculoFacturaComponent({
         </Card>
 
         {/* Barra de acciones flotante (drawer desde la derecha) */}
-        <div className='fixed top-1/3 right-0 z-50 flex items-start gap-0'>
+        <div className={`fixed top-1/3 right-0 z-50 flex items-start transition-transform 
+                         duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-[calc(100%-2.5rem)]'}`}>
           {/* Botón de control del menú (siempre visible en el borde) */}
           <Button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -793,9 +794,7 @@ export default function RevisarCalculoFacturaComponent({
 
           {/* Contenedor del menú que se desliza */}
           <div
-            className={`flex flex-col gap-2 bg-background/95 backdrop-blur-sm border border-border rounded-l-lg p-2 shadow-xl transition-transform duration-300 ease-in-out ${
-              isMenuOpen ? 'translate-x-0' : 'translate-x-full'
-            }`}
+            className="flex flex-col gap-2 bg-background/95 backdrop-blur-sm border border-border rounded-l-lg p-2 shadow-xl"
           >
             {/* Tooltip flotante para Aceptar */}
             {selectedContratos.length > 0 && isMenuOpen && (
@@ -884,6 +883,6 @@ export default function RevisarCalculoFacturaComponent({
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

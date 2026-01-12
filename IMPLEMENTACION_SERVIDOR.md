@@ -1675,34 +1675,118 @@ docker stats
 | **Dominio** | https://enerlovauat.mmlovalledor.cl |
 | **Frontend** | Puerto 32010 |
 | **Backend** | Puerto 32011 (ruta `/Enerlova`) |
-| **Reverse Proxy** | Traefik v3 |
-| **SSL** | Certificados auto-firmados |
+| **Reverse Proxy** | Nginx (dentro del contenedor frontend) |
+| **SSL** | Gestionado externamente |
 
-> [!IMPORTANT]
-> **Producción NO usa Traefik:** El servidor de producción mantiene **Nginx** porque tiene otros sistemas que no pueden modificarse. Esta implementación de Traefik aplica **ÚNICAMENTE al ambiente TEST/UAT**.
+> [!NOTE]
+> **Configuración de Proxy:** En Saturno, el frontend incluye **Nginx internamente** que hace proxy a los endpoints `/Enerlova` hacia el backend externo. No se usa un reverse proxy separado como Traefik.
 
-### Migración de Nginx a Traefik en TEST
-
-Nginx fue desinstalado del servidor Saturno y reemplazado por Traefik. La guía completa de migración se encuentra en:
-
-📄 **[MIGRACION_NGINX_TRAEFIK_TEST.md](MIGRACION_NGINX_TRAEFIK_TEST.md)**
-
-Esta guía incluye:
-- ✅ Mapeo completo de directivas Nginx → Traefik
-- ✅ Configuración de headers de seguridad
-- ✅ Configuración de certificados auto-firmados
-- ✅ Docker Compose con labels de Traefik
-- ✅ Troubleshooting común
-
-### Archivos de Configuración
-
-Los archivos de configuración para Saturno están disponibles en el repositorio:
+### Arquitectura de Saturno (TEST)
 
 ```
-📁 res/
-├── traefik-test.yml              # Configuración estática de Traefik
-├── traefik-config-test.yml       # Configuración dinámica (middlewares, TLS)
-└── docker-compose.traefik-test.yml  # Docker Compose completo
+Internet (HTTPS)
+       ↓
+enerlovauat.mmlovalledor.cl
+       ↓
+[Contenedor Frontend - enerlova-frontend-test]
+       ├── Nginx (puerto 80)
+       │   ├── / → SPA (React/Vite)
+       │   └── /Enerlova → proxy_pass http://enerlova-api:8080
+       │
+       └── Redes: enerlova-test + proxy
+              ↓
+[Contenedor Backend - enerlova-api]
+       └── .NET API (puerto 8080)
+           └── Red: proxy
+```
+
+### Configuración de Nginx en Frontend
+
+El contenedor del frontend incluye Nginx con la siguiente configuración:
+
+```nginx
+# nginx.conf - Dentro del contenedor frontend
+
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Compresión
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml;
+
+    # Headers de seguridad
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # Proxy al backend (API)
+    location /Enerlova {
+        proxy_pass http://enerlova-api:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Frontend SPA
+    location / {
+        try_files $uri $uri/ /index.html;
+        add_header Cache-Control "no-cache";
+    }
+
+    # Caché para assets
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, no-transform";
+    }
+
+    error_page 404 /index.html;
+}
+```
+
+### Docker Compose - TEST
+
+```yaml
+# docker-compose.test.yml
+
+services:
+  frontend:
+    image: enerlova-frontend:test
+    container_name: enerlova-frontend-test
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: https://enerlovauat.mmlovalledor.cl/Enerlova
+        VITE_APP_ENV: test
+    environment:
+      - NODE_ENV=production
+      - VITE_APP_ENV=test
+    ports:
+      - "32010:80"  # Expuesto directamente
+    networks:
+      - enerlova-test
+      - proxy  # Para comunicarse con backend
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+networks:
+  enerlova-test:
+    driver: bridge
+  proxy:
+    external: true  # Red compartida con backend
 ```
 
 ### Despliegue en Saturno
@@ -1718,11 +1802,11 @@ Los archivos de configuración para Saturno están disponibles en el repositorio
    ```
 
 2. **GitHub Actions se ejecuta automáticamente:**
-   - Construye la imagen Docker
+   - Construye la imagen Docker del frontend (con Nginx incluido)
    - Se conecta a Saturno vía SSH
-   - Ejecuta `docker compose up -d --build`
+   - Ejecuta `docker compose -f docker-compose.test.yml up -d --build`
 
-3. **Traefik detecta el nuevo contenedor** y actualiza las rutas automáticamente
+3. **Nginx dentro del frontend** hace proxy a `/Enerlova` hacia el backend
 
 4. **Aplicación disponible** en https://enerlovauat.mmlovalledor.cl
 
@@ -1733,60 +1817,117 @@ Los archivos de configuración para Saturno están disponibles en el repositorio
 ssh usuario@saturno
 
 # Ver contenedores corriendo
-docker ps
+docker ps | grep enerlova
 
-# Ver logs de aplicación
+# Ver logs de frontend
 docker logs -f enerlova-frontend-test
 
-# Ver dashboard de Traefik
-# Acceder a http://IP_SATURNO:8080
+# Ver logs de backend
+docker logs -f enerlova-api
+
+# Verificar comunicación frontend → backend
+docker exec enerlova-frontend-test curl -I http://enerlova-api:8080/swagger
 ```
 
 ### Verificación Rápida
 
 ```bash
 # Frontend
-curl -k https://enerlovauat.mmlovalledor.cl
+curl -I http://enerlovauat.mmlovalledor.cl:32010
 
-# Backend
-curl -k https://enerlovauat.mmlovalledor.cl/Enerlova/health
+# Backend via proxy desde frontend
+curl -I http://enerlovauat.mmlovalledor.cl:32010/Enerlova/swagger
 
-# Dashboard de Traefik
-# Acceder a: http://IP_SATURNO:8080
+# Con SSL (si está configurado externamente)
+curl -k -I https://enerlovauat.mmlovalledor.cl
+curl -k -I https://enerlovauat.mmlovalledor.cl/Enerlova/swagger
 ```
 
-### Diferencias con Servidor Genérico
+### Requisitos de Red
+
+Para que Nginx en el frontend pueda hacer proxy al backend:
+
+1. **Red compartida:** Ambos contenedores deben estar en la red `proxy`
+   ```bash
+   # Verificar
+   docker network inspect proxy
+   ```
+
+2. **Resolución de nombres:** El backend debe ser accesible como `enerlova-api`
+   ```bash
+   # Probar desde el frontend
+   docker exec enerlova-frontend-test ping enerlova-api
+   docker exec enerlova-frontend-test curl http://enerlova-api:8080/swagger
+   ```
+
+3. **Puerto interno del backend:** Nginx usa el puerto **interno** del backend (8080), no el expuesto (32011)
+
+### Diferencias con Configuración Genérica
 
 | Aspecto | Servidor Genérico | Saturno (TEST) |
 |---------|-------------------|----------------|
-| **Propósito** | Desarrollo/Demo | TEST/UAT Empresa |
-| **Dashboard Traefik** | Con autenticación | Sin autenticación (insecure:true) |
-| **Logs** | INFO | DEBUG |
-| **SSL** | Let's Encrypt | Auto-firmado |
-| **Dominio** | IP pública | enerlovauat.mmlovalledor.cl |
+| **Propósito** | Desarrollo/Demo con Traefik | TEST/UAT Empresa |
+| **Reverse Proxy** | Traefik separado | Nginx dentro del frontend |
+| **Puerto Frontend** | Labels Traefik | Expuesto directamente (32010) |
+| **Proxy Backend** | Traefik router | Nginx `proxy_pass` |
+| **SSL** | Traefik TLS | Gestionado externamente |
+| **Dashboard** | Traefik Dashboard | No aplica |
 
-### Comandos Específicos Saturno
+### Comandos Útiles Saturno
 
 ```bash
-# Ver estado de Traefik
-docker ps | grep traefik-test
+# Ver estado de contenedores
+docker ps --filter "name=enerlova"
 
-# Ver logs de Traefik
-docker logs -f traefik-test
+# Reiniciar frontend (Nginx)
+docker restart enerlova-frontend-test
 
-# Ver rutas activas
-curl -s http://localhost:8080/api/http/routers | jq
+# Ver configuración de Nginx dentro del contenedor
+docker exec enerlova-frontend-test cat /etc/nginx/nginx.conf
 
-# Reiniciar solo Traefik
-docker restart traefik-test
+# Verificar logs de Nginx
+docker exec enerlova-frontend-test tail -f /var/log/nginx/access.log
+docker exec enerlova-frontend-test tail -f /var/log/nginx/error.log
 
-# Ver métricas Prometheus
-curl http://localhost:8080/metrics
+# Probar conectividad frontend → backend
+docker exec enerlova-frontend-test curl -X POST \
+  http://enerlova-api:8080/Enerlova/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"test","password":"test"}'
 ```
 
-### Monitoreo
+### Troubleshooting
 
-Traefik en Saturno expone métricas de Prometheus en el puerto 8080. Para integrar con el stack de monitoreo existente:
+#### Error 405 en /Enerlova
+
+**Causa:** Nginx no está haciendo proxy correctamente.
+
+**Solución:**
+```bash
+# Verificar configuración de Nginx
+docker exec enerlova-frontend-test cat /etc/nginx/nginx.conf | grep -A 10 "location /Enerlova"
+
+# Verificar que backend es alcanzable
+docker exec enerlova-frontend-test wget -O- http://enerlova-api:8080/swagger/index.html
+```
+
+#### Backend no responde
+
+**Causa:** Contenedores no están en la misma red.
+
+**Solución:**
+```bash
+# Verificar redes
+docker inspect enerlova-frontend-test | grep -A 10 Networks
+docker inspect enerlova-api | grep -A 10 Networks
+
+# Agregar a red proxy si falta
+docker network connect proxy enerlova-frontend-test
+docker network connect proxy enerlova-api
+```
+
+---
+
 
 ```yaml
 # Agregar a prometheus.yml

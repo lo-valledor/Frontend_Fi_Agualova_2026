@@ -60,14 +60,14 @@ export function BT43Form({ result, onSuccess }: BT43FormProps) {
     () => result.LM_ValorUltimaLectura,
     [result.LM_ValorUltimaLectura]
   );
-  const valorReactivaAnterior = useMemo(
-    () => Number.parseInt(result.LMC_ValorUltimaLectEnergiaReactiva1),
-    [result.LMC_ValorUltimaLectEnergiaReactiva1]
-  );
-  const consumoAnterior = useMemo(
-    () => Number.parseInt(result.LM_ConsumoMesAnterior),
-    [result.LM_ConsumoMesAnterior]
-  );
+  const valorReactivaAnterior = useMemo(() => {
+    const valor = Number.parseInt(result.LMC_ValorUltimaLectEnergiaReactiva1);
+    return Number.isNaN(valor) ? 0 : valor;
+  }, [result.LMC_ValorUltimaLectEnergiaReactiva1]);
+  const consumoAnterior = useMemo(() => {
+    const valor = Number.parseInt(result.LM_ConsumoMesAnterior);
+    return Number.isNaN(valor) ? 0 : valor;
+  }, [result.LM_ConsumoMesAnterior]);
   const constante = useMemo(
     () => result.ME_ConstanteMultiplicar,
     [result.ME_ConstanteMultiplicar]
