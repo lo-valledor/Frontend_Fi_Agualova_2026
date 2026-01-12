@@ -95,66 +95,55 @@ jobs:
           retention-days: 1
 
   # ============================================
-  # 🐳 DESPLIEGUE FASE 1: TEST (AUTOMÁTICO)
+  # 🐳 DESPLIEGUE FASE 1: DESARROLLO (AUTOMÁTICO)
   # ============================================
-  deploy-test:
-    name: 🧪 Build & Deploy to Test
+  deploy-dev:
+    name: 🧪 Build & Deploy to Development
     needs: ci
-    runs-on: [self-hosted, frontend-runner]
+    runs-on: ubuntu-latest
     if: |
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
+      github.event_name == 'push' &&
       vars.DEPLOY_TARGET != 'kubernetes'
 
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐳 Deploy Test Environment
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: build/
+
+      - name: 🏗️ Build Docker image (Development)
         run: |
-          echo "🚀 Desplegando a entorno de TEST..."
-          echo "📦 Puerto Frontend: 32010 | Backend: enerlovauat.mmlovalledor.cl:32011"
+          echo "🚀 Construyendo imagen Docker para DESARROLLO..."
+          docker build -t enerlova-frontend:dev -f Dockerfile .
 
-          # Limpiar cualquier proceso ocupando el puerto 32010
-          echo "🧹 Verificando puerto 32010..."
-          if docker ps -q --filter "publish=32010" | grep -q .; then
-            echo "⚠️ Encontrado contenedor bloqueando puerto 32010. Deteniendo..."
-            docker ps -q --filter "publish=32010" | xargs -r docker rm -f
-          fi
+      - name: 📋 Show image info
+        run: docker images | grep enerlova-frontend
 
-          # Detener contenedores anteriores si existen
-          docker compose -p enerlova_test -f docker-compose.test.yml down --remove-orphans || true
-
-          # Construir y levantar
-          docker compose -p enerlova_test -f docker-compose.test.yml up --build -d
-
-          echo "✅ Despliegue de TEST completado!"
-          echo "🌐 URL: http://localhost:32010"
-
-      - name: 🔍 Verify Test Deployment
+      - name: 📊 Build Summary
         run: |
-          echo "⏳ Verificando salud del contenedor de test..."
-          sleep 10
-          if docker ps | grep -q enerlova-frontend-test; then
-            echo "✅ Contenedor Test Running"
-          else
-            echo "❌ Error: Contenedor Test falló al iniciar"
-            docker logs enerlova-frontend-test 2>&1 || true
-            exit 1
-          fi
-
-      - name: 🧹 Cleanup
-        run: docker image prune -f
-        continue-on-error: true
+          echo "## 🧪 Development Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Build completado exitosamente" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Detalles:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Imagen**: \`enerlova-frontend:dev\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rama**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> 💡 La imagen está lista para ser desplegada en el servidor de desarrollo." >> $GITHUB_STEP_SUMMARY
 
   # ============================================
   # 🐳 DESPLIEGUE FASE 2: PRODUCCIÓN (MANUAL)
   # ============================================
   deploy-prod:
-    name: 🚀 Approve & Deploy to Prod
-    # No depende estrictamente de 'deploy-test' en términos de ejecución técnica,
-    # pero lógicamente es el paso siguiente.
+    name: 🚀 Deploy to Production
     needs: ci
-    runs-on: [self-hosted, enerlova-runner]
+    runs-on: ubuntu-latest
     # Solo ejecutar si se dispara manualmente (workflow_dispatch)
     if: |
       github.event_name == 'workflow_dispatch' &&
@@ -164,42 +153,35 @@ jobs:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐳 Deploy Production Environment
+      - name: 📥 Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: build/
+
+      - name: 🏗️ Build Docker image (Production)
         run: |
-          echo "🚀 Desplegando a entorno de PRODUCCIÓN..."
-          echo "📦 Puerto Frontend: 32010 | Backend: enerlova.mmlovalledor.cl:32011"
+          echo "🚀 Construyendo imagen Docker para PRODUCCIÓN..."
+          docker build -t enerlova-frontend:prod \
+            --build-arg VITE_APP_ENV=production \
+            -f Dockerfile .
 
-          # Limpiar cualquier proceso ocupando el puerto 32010
-          echo "🧹 Verificando puerto 32010..."
-          if docker ps -q --filter "publish=32010" | grep -q .; then
-            echo "⚠️ Encontrado contenedor bloqueando puerto 32010. Deteniendo..."
-            docker ps -q --filter "publish=32010" | xargs -r docker rm -f
-          fi
+      - name: 📋 Show image info
+        run: docker images | grep enerlova-frontend
 
-          # Detener contenedores anteriores
-          docker compose -p enerlova_prod -f docker-compose.prod.yml down --remove-orphans || true
-
-          # Construir y levantar
-          docker compose -p enerlova_prod -f docker-compose.prod.yml up --build -d
-
-          echo "✅ Despliegue de PRODUCCIÓN completado!"
-          echo "🌐 URL: http://localhost:32010"
-
-      - name: 🔍 Verify Prod Deployment
+      - name: 📊 Production Build Summary
         run: |
-          echo "⏳ Verificando salud del contenedor de producción..."
-          sleep 10
-          if docker ps | grep -q enerlova-frontend-prod; then
-            echo "✅ Contenedor Prod Running"
-          else
-            echo "❌ Error: Contenedor Prod falló al iniciar"
-            docker logs enerlova-frontend-prod 2>&1 || true
-            exit 1
-          fi
-
-      - name: 🧹 Cleanup
-        run: docker image prune -f
-        continue-on-error: true
+          echo "## 🚀 Production Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Build de PRODUCCIÓN completado exitosamente" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Detalles:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Imagen**: \`enerlova-frontend:prod\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rama**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Ejecutado por**: \`${{ github.actor }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> ⚠️ ATENCIÓN: Esta es una versión de PRODUCCIÓN. Verifica antes de desplegar." >> $GITHUB_STEP_SUMMARY
 
   # ============================================
   # ☸️ DESPLIEGUE CON KUBERNETES (STAND-BY)
@@ -250,7 +232,7 @@ jobs:
   deploy-kubernetes:
     name: ☸️ Deploy to Kubernetes
     needs: build-and-push-docker
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: |
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') &&
       vars.DEPLOY_TARGET == 'kubernetes'
