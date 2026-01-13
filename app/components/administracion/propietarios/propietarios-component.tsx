@@ -1,7 +1,7 @@
 import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
@@ -212,6 +212,22 @@ export default function PropietariosComponent({
       setIsSyncing(false);
     }
   }, [permissions.hasEditPermission]);
+
+  /**
+   * Auto-sincroniza propietarios con locales al entrar al módulo.
+   * Se ejecuta una sola vez por sesión para evitar múltiples sincronizaciones.
+   */
+  useEffect(() => {
+    if (!permissions.hasEditPermission) return;
+
+    const alreadySynced =
+      sessionStorage.getItem('propietariosSyncDone') === 'true';
+    if (!alreadySynced) {
+      // Marcar antes de iniciar para evitar reentradas en caso de reload
+      sessionStorage.setItem('propietariosSyncDone', 'true');
+      void handleSyncPropietarios();
+    }
+  }, [permissions.hasEditPermission, handleSyncPropietarios]);
 
   /**
    * Actualiza los filtros aplicados

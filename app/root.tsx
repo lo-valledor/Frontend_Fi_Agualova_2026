@@ -13,11 +13,10 @@ import {
 } from 'react-router';
 
 import './app.css';
-const isDevOrUAT =
-  import.meta.env.VITE_APP_ENV === 'development' ||
-  import.meta.env.VITE_APP_ENV === 'uat' ||
-  import.meta.env.DEV;
-if (isDevOrUAT) {
+const isUAT =
+  typeof window !== 'undefined' &&
+  window.location.hostname !== 'enerlova.mmlovalledor.cl';
+if (isUAT) {
   import('./app.uat.css');
 }
 

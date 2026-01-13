@@ -25,8 +25,8 @@ export function SiteHeader() {
   const { breadcrumbItems } = useBreadcrumbs();
   const { user } = useAuth();
 
-  // Detectar si es entorno UAT o Core basado en variables de entorno
-  const isUAT = import.meta.env.VITE_APP_ENV === 'uat';
+  // Detectar si es entorno UAT o Core basado en el dominio
+  const isUAT = window.location.hostname !== 'enerlova.mmlovalledor.cl';
   const environment = isUAT ? 'Sistema UAT' : 'Sistema Core';
 
   return (
