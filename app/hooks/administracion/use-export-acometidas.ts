@@ -22,17 +22,14 @@ export function useExportAcometidas() {
    * Reduce boilerplate y mejora legibilidad
    */
   const acometidaColumns = new ExportColumnBuilder()
-    .addString('numeroAcometida', 'Número Acometida')
-    .addString('cliente', 'Cliente')
-    .addString('direccion', 'Dirección')
-    .addString('comuna', 'Comuna')
-    .addString('tipoAcometida', 'Tipo Acometida')
-    .addDate('fechaInstalacion', 'Fecha Instalación')
-    .addString('estado', 'Estado')
-    .addString('diametro', 'Diámetro')
-    .addString('material', 'Material')
-    .addString('presion', 'Presión')
-    .addString('observaciones', 'Observaciones')
+    .addString('codigo', 'Código')
+    .addString('ubicacion', 'Ubicación')
+    .addString('contratoId', 'Contrato')
+    .addString('sectorDescripcion', 'Sector')
+    .addString('empalmeDescripcion', 'Empalme')
+    .addString('nichoDescripcion', 'Nicho')
+    .addString('limitePotencia', 'Límite Potencia (kW)')
+    .addString('numeroMedidor', 'Medidor Asignado')
     .build();
 
   /**

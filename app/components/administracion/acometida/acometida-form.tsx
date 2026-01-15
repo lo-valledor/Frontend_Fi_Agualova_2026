@@ -359,7 +359,7 @@ export function AcometidaForm({
                 </h3>
 
                 {/* Campo de contrato mejorado */}
-                {!isEdit || contratoActualDisponible ? (
+                <div className='space-y-2'>
                   <FormField
                     control={form.control}
                     name='contratoId'
@@ -375,6 +375,7 @@ export function AcometidaForm({
                               className='h-12 text-base flex-1'
                               value={field.value}
                               onChange={field.onChange}
+                              readOnly={isEdit && !contratoActualDisponible && form.getValues('contratoId') === acometida?.contratoId}
                             />
                             <Button
                               type='button'
@@ -395,55 +396,25 @@ export function AcometidaForm({
                       </FormItem>
                     )}
                   />
-                ) : (
-                  /* Mostrar información de que el contrato no está disponible */
-                  <div className='p-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl border border-amber-200 dark:border-amber-800'>
-                    <div className='flex items-start gap-3'>
-                      <div className='p-1.5 bg-amber-100 dark:bg-amber-900/30 rounded-md'>
-                        <svg
-                          className='h-4 w-4 text-amber-600 dark:text-amber-400'
-                          viewBox='0 0 20 20'
-                          fill='currentColor'
-                        >
-                          <path
-                            fillRule='evenodd'
-                            d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
-                            clipRule='evenodd'
-                          />
+                  
+                  {isEdit && !contratoActualDisponible && form.watch('contratoId') === acometida?.contratoId && (
+                    <div className='p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800 flex items-start gap-2'>
+                      <div className='p-1 bg-amber-100 dark:bg-amber-900/30 rounded-full mt-0.5'>
+                        <svg className='h-3 w-3 text-amber-600 dark:text-amber-400' viewBox='0 0 20 20' fill='currentColor'>
+                          <path fillRule='evenodd' d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z' clipRule='evenodd' />
                         </svg>
                       </div>
                       <div className='flex-1'>
-                        <div className='flex items-center gap-2 mb-2'>
-                          <h4 className='text-sm font-medium text-amber-800 dark:text-amber-200'>
-                            Contrato asociado:
-                          </h4>
-                          <Badge
-                            variant='outline'
-                            className='font-mono text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-600'
-                          >
-                            {acometida?.contratoId}
-                          </Badge>
-                        </div>
-                        {/* <p className="text-xs text-amber-700 dark:text-amber-300 mb-3">
-                          Este contrato no está disponible en la lista de contratos para acometidas.
-                          Esto puede indicar que el contrato no tiene acometida asociada o no está activo para este propósito.
-                        </p> */}
-                        <div className='flex items-center gap-2'>
-                          <Button
-                            type='button'
-                            size='sm'
-                            variant='outline'
-                            onClick={() => setModalContratos(true)}
-                            className='h-7 gap-1.5 text-xs border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/20'
-                          >
-                            <List className='h-3 w-3' />
-                            Cambiar por contrato disponible
-                          </Button>
-                        </div>
+                        <p className='text-xs font-medium text-amber-800 dark:text-amber-200'>
+                          Contrato actual no visible en lista de disponibles
+                        </p>
+                        <p className='text-[11px] text-amber-700 dark:text-amber-300 mt-0.5'>
+                          El contrato "{acometida?.contratoId}" está asignado actualmente. Si lo cambia, no podrá volver a seleccionarlo desde la lista.
+                        </p>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Información del contrato seleccionado - buscar por ID */}
                 {(() => {

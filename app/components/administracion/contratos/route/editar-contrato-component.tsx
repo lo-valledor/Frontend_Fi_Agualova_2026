@@ -209,7 +209,7 @@ export default function EditarContratoComponent({
       tarifa: contratoData.tarifa || '',
       nombrePropietario: contratoData.nombrePropietario || '',
       nombreCliente: contratoData.nombreCliente || '',
-      local: contratoData.localId || '',
+      local: contratoData.lugarEntrega || contratoData.codigoLocal || '',
       fechaInicio: fechaInicioConvertida,
       activo: contratoData.activoTexto === 'Si',
       fechaTermino: fechaTerminoConvertida,
@@ -810,7 +810,14 @@ export default function EditarContratoComponent({
               </h3>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
-                  <Label htmlFor='local'>Local</Label>
+                  <div className='flex items-center gap-2'>
+                    <Label htmlFor='local'>Local</Label>
+                    {contrato.lugarEntrega && (
+                      <span className='text-xs font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded'>
+                        Actual: {contrato.lugarEntrega}
+                      </span>
+                    )}
+                  </div>
                   <div className='flex gap-2'>
                     <Input
                       id='local'
