@@ -22,15 +22,17 @@ export function useExportMedidores() {
    * Reduce boilerplate y mejora legibilidad
    */
   const medidorColumns = new ExportColumnBuilder()
-    .addString('numeroMedidor', 'Número Medidor')
+    .addString('codigo', 'Código')
+    .addString('serie', 'Número de Serie')
     .addString('marca', 'Marca')
+    .addString('tipo', 'Tipo')
     .addString('modelo', 'Modelo')
-    .addString('tipoMedidor', 'Tipo Medidor')
-    .addDate('fechaInstalacion', 'Fecha Instalación')
-    .addString('estado', 'Estado')
+    .addDate('fechaInicio', 'Fecha Inicio')
+    .addString('digitos', 'Dígitos')
+    .addString('multiplicar', 'Multiplicador')
     .addString('ubicacion', 'Ubicación')
-    .addString('lecturaInicial', 'Lectura Inicial')
-    .addString('observaciones', 'Observaciones')
+    .addString('estado', 'Estado')
+    .addString('codigoAcometida', 'Código Acometida')
     .build();
 
   /**

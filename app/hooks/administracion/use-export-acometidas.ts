@@ -22,6 +22,7 @@ export function useExportAcometidas() {
    * Reduce boilerplate y mejora legibilidad
    */
   const acometidaColumns = new ExportColumnBuilder()
+    .addString('acometidaId', 'ID')
     .addString('codigo', 'Código')
     .addString('ubicacion', 'Ubicación')
     .addString('contratoId', 'Contrato')
