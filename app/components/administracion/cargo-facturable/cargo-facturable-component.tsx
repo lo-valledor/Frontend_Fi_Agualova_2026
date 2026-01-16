@@ -126,6 +126,7 @@ export default function CargoFacturableComponent({
   };
 
   const cargoColumns = [
+    { key: 'id', header: 'ID' },
     { key: 'cuenta', header: 'Cuenta' },
     { key: 'codigoEnerlova', header: 'Código' },
     { key: 'descripcion', header: 'Descripción' },
@@ -134,7 +135,8 @@ export default function CargoFacturableComponent({
     { key: 'periodicoEventual', header: 'Frecuencia' },
     { key: 'concepto', header: 'Concepto' },
     { key: 'tarifa', header: 'Tarifa' },
-    { key: 'tipoMedidor', header: 'Tipo Medidor' }
+    { key: 'tipoMedidor', header: 'Tipo Medidor' },
+    { key: 'mostrarValorCero', header: 'Mostrar Valor Cero' }
   ];
 
   return (
