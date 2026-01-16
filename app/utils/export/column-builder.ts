@@ -42,17 +42,29 @@ export class ExportColumnBuilder {
    * @param locale - Locale for date formatting (default: 'es-CL')
    * @returns Builder instance for chaining
    */
-  addDate(
-    key: string,
-    header: string,
-    locale: string = 'es-CL'
-  ): this {
+  addDate(key: string, header: string, locale: string = 'es-CL'): this {
     this.columns.push({
       key,
       header,
       formatter: (value: string | null | undefined) => {
         if (!value) return '';
-        return new Date(value).toLocaleDateString(locale);
+
+        // Si la fecha ya está en formato DD-MM o DD-MM-YYYY, devolverla tal cual
+        if (/^\d{2}-\d{2}(-\d{4})?$/.test(value)) {
+          return value;
+        }
+
+        // Si es una fecha ISO u otro formato, intentar parsearla
+        try {
+          const date = new Date(value);
+          if (!isNaN(date.getTime())) {
+            return date.toLocaleDateString(locale);
+          }
+        } catch {
+          // Si falla el parseo, devolver el valor original
+        }
+
+        return value;
       }
     });
     return this;
@@ -118,11 +130,7 @@ export class ExportColumnBuilder {
    * .addNested('cliente.nombre', 'Cliente', item => item.cliente?.nombre)
    * ```
    */
-  addNested(
-    key: string,
-    header: string,
-    extractor: (item: any) => any
-  ): this {
+  addNested(key: string, header: string, extractor: (item: any) => any): this {
     this.columns.push({
       key,
       header,
@@ -165,9 +173,7 @@ export const DEFAULT_EXPORT_CONFIG: ExportConfig = {
  * // Returns { format: 'xlsx', filename: 'medidores', includeHeaders: true }
  * ```
  */
-export function getExportConfig(
-  partial?: Partial<ExportConfig>
-): ExportConfig {
+export function getExportConfig(partial?: Partial<ExportConfig>): ExportConfig {
   return {
     ...DEFAULT_EXPORT_CONFIG,
     ...partial
