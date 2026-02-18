@@ -1,6 +1,7 @@
 import NumberFlow, { continuous } from '@number-flow/react';
 import {
   Activity,
+  ArrowRight,
   Building,
   CheckCircle,
   FileText,
@@ -10,8 +11,10 @@ import {
   Settings,
   Snowflake,
   User,
-  Users
+  Users,
+  Zap
 } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Label, Pie, PieChart } from 'recharts';
 
 import React, { useEffect, useState } from 'react';
@@ -21,11 +24,9 @@ import { Link } from 'react-router';
 import { usePrefetchMultiple } from '~/hooks/shared/use-prefetch';
 
 import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
@@ -43,53 +44,52 @@ import type {
   ValidarSectoresPendientes
 } from '~/types/operaciones';
 
-// Datos de atajos rápidos
 const quickActions = [
   {
-    title: 'Monitor de Lecturas',
-    description: 'Visualizar y gestionar lecturas de medidores',
+    title: 'Monitor Lecturas',
+    description: 'Visualizar lecturas de medidores',
     icon: Activity,
-    color: 'bg-blue-500',
+    accent: 'border-chart-1 text-chart-1',
     href: '/dashboard/monitor/monitor-lecturas'
   },
   {
     title: 'Nuevo Contrato',
-    description: 'Registrar un nuevo contrato de servicio',
+    description: 'Registrar contrato de servicio',
     icon: FileText,
-    color: 'bg-green-500',
+    accent: 'border-chart-2 text-chart-2',
     href: '/dashboard/administracion/contratos/crear'
   },
   {
     title: 'Periodo Facturación',
-    description: 'Gestionar periodos de facturación',
+    description: 'Gestionar periodos activos',
     icon: Settings,
-    color: 'bg-purple-500',
+    accent: 'border-chart-3 text-chart-3',
     href: '/dashboard/operaciones/periodo-facturacion'
   },
   {
     title: 'Agregar Cliente',
-    description: 'Registrar un nuevo cliente en el sistema',
+    description: 'Registrar nuevo cliente',
     icon: Users,
-    color: 'bg-orange-500',
+    accent: 'border-energy text-energy',
     href: '/dashboard/administracion/clientes/crear'
   },
   {
     title: 'Registrar Medidor',
-    description: 'Añadir nuevo medidor al inventario',
+    description: 'Añadir medidor al inventario',
     icon: Package,
-    color: 'bg-teal-500',
+    accent: 'border-chart-4 text-chart-4',
     href: '/dashboard/administracion/medidores/crear'
   },
   {
     title: 'Preparar Lecturas',
-    description: 'Configurar lecturas para el periodo',
+    description: 'Configurar lecturas del periodo',
     icon: PlusCircle,
-    color: 'bg-indigo-500',
+    accent: 'border-chart-5 text-chart-5',
     href: '/dashboard/operaciones/preparar-lecturas'
   }
 ];
 
-// Helper functions para procesar datos de analytics (reduce complejidad cognitiva)
+/** Procesa contratos agrupados por tipo */
 const procesarContratosPorTipo = (data: any[]): { [key: string]: number } => {
   const contratosPorTipo: { [key: string]: number } = {};
   if (!Array.isArray(data)) return contratosPorTipo;
@@ -101,6 +101,7 @@ const procesarContratosPorTipo = (data: any[]): { [key: string]: number } => {
   return contratosPorTipo;
 };
 
+/** Procesa clientes separando empresas de personas */
 const procesarClientesPorTipo = (
   data: any[]
 ): { empresa: number; persona: number } => {
@@ -119,6 +120,7 @@ const procesarClientesPorTipo = (
   return { empresa: empresas, persona: personas };
 };
 
+/** Procesa medidores agrupados por tipo y estado */
 const procesarMedidores = (
   data: any[]
 ): {
@@ -143,6 +145,7 @@ const procesarMedidores = (
   return { porTipo: medidoresPorTipo, porEstado: medidoresPorEstado };
 };
 
+/** Procesa acometidas agrupadas por sector */
 const procesarAcometidasPorSector = (
   response: any
 ): { [key: string]: number } => {
@@ -169,7 +172,7 @@ const procesarAcometidasPorSector = (
   return acometidasPorSector;
 };
 
-// Componente helper para renderizar el centro del gráfico donut
+/** Renderiza el centro del gráfico donut */
 const renderDonutLabel =
   (value: number, label: string = 'Total') =>
   ({ viewBox }: any) => {
@@ -184,14 +187,14 @@ const renderDonutLabel =
           <tspan
             x={viewBox.cx}
             y={viewBox.cy}
-            className='fill-foreground text-2xl font-bold'
+            className='fill-foreground text-2xl font-black'
           >
             {value.toLocaleString()}
           </tspan>
           <tspan
             x={viewBox.cx}
-            y={(viewBox.cy || 0) + 20}
-            className='fill-muted-foreground text-sm'
+            y={(viewBox.cy || 0) + 18}
+            className='fill-muted-foreground text-[0.6rem] font-bold uppercase tracking-widest'
           >
             {label}
           </tspan>
@@ -200,8 +203,58 @@ const renderDonutLabel =
     }
   };
 
-// Componente de Análisis de Administración
-const AdminAnalyticsComponent = () => {
+/** Easing mecánico consistente con sidebar */
+const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
+
+/** Skeleton de carga industrial */
+const LoadingSkeleton = ({ rows = 3 }: { rows?: number }) => (
+  <div className='flex items-center justify-center h-[200px] sm:h-[220px]'>
+    <div className='space-y-3 w-full'>
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className='flex justify-between items-center'>
+          <div className='h-2.5 bg-muted animate-pulse rounded-sm w-20 sm:w-24' />
+          <div className='h-4 bg-muted animate-pulse rounded-sm w-10 sm:w-14' />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+/** Card wrapper industrial para analytics */
+const AnalyticsCard = ({
+  icon: Icon,
+  title,
+  children,
+  delay = 0
+}: {
+  icon: React.ElementType;
+  title: string;
+  children: React.ReactNode;
+  delay?: number;
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 12 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay, ease: mechanicalEase }}
+  >
+    <Card className='flex flex-col overflow-hidden'>
+      <CardHeader className='pb-2 sm:pb-3'>
+        <div className='flex items-center gap-2.5'>
+          <div className='flex h-6 w-6 items-center justify-center rounded bg-accent text-accent-foreground'>
+            <Icon className='h-3.5 w-3.5' />
+          </div>
+          <CardTitle className='text-xs font-bold tracking-wide uppercase'>
+            {title}
+          </CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className='flex-1 pb-3'>{children}</CardContent>
+    </Card>
+  </motion.div>
+);
+
+/** Componente de analytics de administración */
+const AdminAnalyticsComponent = React.memo(() => {
   const [analyticsData, setAnalyticsData] = useState({
     contratosPorTipo: {} as { [key: string]: number },
     clientesPorTipo: { empresa: 0, persona: 0 },
@@ -249,20 +302,6 @@ const AdminAnalyticsComponent = () => {
     fetchAnalyticsData();
   }, []);
 
-  const getColorForIndex = (index: number) => {
-    const colors = [
-      'bg-blue-500',
-      'bg-green-500',
-      'bg-purple-500',
-      'bg-orange-500',
-      'bg-teal-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-yellow-500'
-    ];
-    return colors[index % colors.length];
-  };
-
   const getBadgeVariant = (
     estado: string
   ): 'default' | 'destructive' | 'secondary' | 'outline' => {
@@ -282,7 +321,6 @@ const AdminAnalyticsComponent = () => {
     }
   };
 
-  // Configuraciones de chart simplificadas
   const contratosChartConfig = {
     cantidad: { label: 'Cantidad' }
   } satisfies ChartConfig;
@@ -295,7 +333,6 @@ const AdminAnalyticsComponent = () => {
     cantidad: { label: 'Cantidad' }
   } satisfies ChartConfig;
 
-  // Preparar datos para gráficos de donut
   const chartContratosData = Object.entries(analyticsData.contratosPorTipo)
     .sort(([, a], [, b]) => b - a)
     .map(([tipo, cantidad], index) => ({
@@ -334,348 +371,267 @@ const AdminAnalyticsComponent = () => {
     analyticsData.clientesPorTipo.persona;
 
   return (
-    <div className='grid gap-4 sm:grid-cols-1 lg:grid-cols-2'>
+    <div className='grid gap-3 sm:grid-cols-1 lg:grid-cols-2'>
       {/* Contratos por Tipo */}
-      <Card className='flex flex-col'>
-        <CardHeader className='items-center pb-2 sm:pb-0'>
-          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
-            <FileText className='h-4 w-4 sm:h-5 sm:w-5 text-blue-500' />
-            Contratos por Tipo
-          </CardTitle>
-          <CardDescription className='text-xs sm:text-sm text-center'>
-            Distribución de contratos según su tipo de servicio
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='flex-1 pb-0'>
-          {analyticsData.loading ? (
-            <div className='flex items-center justify-center h-[200px] sm:h-[250px]'>
-              <div className='space-y-3 w-full'>
-                {[1, 2, 3].map(i => (
-                  <div key={i} className='flex justify-between items-center'>
-                    <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-20 sm:w-24'></div>
-                    <div className='h-4 sm:h-6 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
-              {/* Gráfico Donut */}
-              <ChartContainer
-                config={contratosChartConfig}
-                className='mx-auto aspect-square max-h-[150px] sm:max-h-[200px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
-              >
-                <PieChart>
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                  <Pie
-                    data={chartContratosData}
-                    dataKey='cantidad'
-                    nameKey='tipo'
-                    innerRadius={50}
-                    strokeWidth={2}
-                  >
-                    <Label content={renderDonutLabel(totalContratos)} />
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
+      <AnalyticsCard icon={FileText} title='Contratos por Tipo' delay={0.1}>
+        {analyticsData.loading ? (
+          <LoadingSkeleton />
+        ) : (
+          <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
+            <ChartContainer
+              config={contratosChartConfig}
+              className='mx-auto aspect-square max-h-[150px] sm:max-h-[190px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
+            >
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={chartContratosData}
+                  dataKey='cantidad'
+                  nameKey='tipo'
+                  innerRadius={50}
+                  strokeWidth={2}
+                >
+                  <Label content={renderDonutLabel(totalContratos)} />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
 
-              {/* Lista de datos */}
-              <div className='space-y-1 sm:space-y-2 flex-1 min-w-0 w-full sm:w-auto'>
-                {chartContratosData.slice(0, 4).map(item => (
-                  <div
-                    key={item.tipo}
-                    className='flex justify-between items-center p-2 sm:p-0'
-                  >
-                    <div className='flex items-center gap-2 min-w-0'>
-                      <div
-                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0'
-                        style={{ backgroundColor: item.fill }}
-                      ></div>
-                      <span className='text-xs sm:text-sm font-medium truncate'>
-                        {item.tipo}
-                      </span>
-                    </div>
-                    <div className='text-sm sm:text-lg font-bold shrink-0'>
-                      <NumberFlow
-                        value={item.cantidad}
-                        plugins={[continuous]}
-                        className='tabular-nums'
-                      />
-                    </div>
+            <div className='space-y-1.5 flex-1 min-w-0 w-full sm:w-auto'>
+              {chartContratosData.slice(0, 4).map(item => (
+                <div
+                  key={item.tipo}
+                  className='flex justify-between items-center py-1 px-2 rounded-sm hover:bg-accent/40 transition-colors'
+                >
+                  <div className='flex items-center gap-2 min-w-0'>
+                    <div
+                      className='w-2 h-2 rounded-sm shrink-0'
+                      style={{ backgroundColor: item.fill }}
+                    />
+                    <span className='text-xs font-medium truncate'>
+                      {item.tipo}
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <span className='text-sm font-bold font-mono tabular-nums shrink-0'>
+                    <NumberFlow
+                      value={item.cantidad}
+                      plugins={[continuous]}
+                    />
+                  </span>
+                </div>
+              ))}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
+      </AnalyticsCard>
 
       {/* Clientes por Tipo */}
-      <Card className='flex flex-col'>
-        <CardHeader className='items-center pb-2 sm:pb-0'>
-          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
-            <Users className='h-4 w-4 sm:h-5 sm:w-5 text-green-500' />
-            Clientes por Tipo
-          </CardTitle>
-          <CardDescription className='text-xs sm:text-sm text-center'>
-            Clasificación entre empresas y personas naturales
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='flex-1 pb-0'>
-          {analyticsData.loading ? (
-            <div className='flex items-center justify-center h-[200px] sm:h-[250px]'>
-              <div className='space-y-3 sm:space-y-4 w-full'>
-                {[1, 2].map(i => (
-                  <div key={i} className='flex justify-between items-center'>
-                    <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-16 sm:w-20'></div>
-                    <div className='h-4 sm:h-6 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
-              {/* Gráfico Donut */}
-              <ChartContainer
-                config={clientesChartConfig}
-                className='mx-auto aspect-square max-h-[150px] sm:max-h-[200px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
-              >
-                <PieChart>
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                  <Pie
-                    data={chartClientesData}
-                    dataKey='cantidad'
-                    nameKey='tipo'
-                    innerRadius={50}
-                    strokeWidth={2}
-                  >
-                    <Label content={renderDonutLabel(totalClientes)} />
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
+      <AnalyticsCard icon={Users} title='Clientes por Tipo' delay={0.15}>
+        {analyticsData.loading ? (
+          <LoadingSkeleton rows={2} />
+        ) : (
+          <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
+            <ChartContainer
+              config={clientesChartConfig}
+              className='mx-auto aspect-square max-h-[150px] sm:max-h-[190px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
+            >
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={chartClientesData}
+                  dataKey='cantidad'
+                  nameKey='tipo'
+                  innerRadius={50}
+                  strokeWidth={2}
+                >
+                  <Label content={renderDonutLabel(totalClientes)} />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
 
-              {/* Lista de datos */}
-              <div className='space-y-3 sm:space-y-4 flex-1 w-full sm:w-auto'>
-                {chartClientesData.map(item => (
-                  <div
-                    key={item.tipo}
-                    className='flex justify-between items-center p-2 sm:p-0'
-                  >
-                    <div className='flex items-center gap-2'>
-                      {item.tipo === 'empresas' ? (
-                        <Building className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500' />
-                      ) : (
-                        <User className='h-3 w-3 sm:h-4 sm:w-4 text-orange-500' />
-                      )}
-                      <span className='text-xs sm:text-sm font-medium'>
-                        {item.tipo === 'empresas' ? 'Empresas' : 'Personas'}
-                      </span>
-                    </div>
-                    <div className='text-sm sm:text-lg font-bold'>
-                      <NumberFlow
-                        value={item.cantidad}
-                        plugins={[continuous]}
-                        className='tabular-nums'
-                      />
-                    </div>
+            <div className='space-y-2 flex-1 w-full sm:w-auto'>
+              {chartClientesData.map(item => (
+                <div
+                  key={item.tipo}
+                  className='flex justify-between items-center py-1.5 px-2 rounded-sm hover:bg-accent/40 transition-colors'
+                >
+                  <div className='flex items-center gap-2'>
+                    {item.tipo === 'empresas' ? (
+                      <Building className='h-3.5 w-3.5 text-chart-1' />
+                    ) : (
+                      <User className='h-3.5 w-3.5 text-chart-2' />
+                    )}
+                    <span className='text-xs font-medium'>
+                      {item.tipo === 'empresas' ? 'Empresas' : 'Personas'}
+                    </span>
                   </div>
-                ))}
-              </div>
+                  <span className='text-sm font-bold font-mono tabular-nums'>
+                    <NumberFlow
+                      value={item.cantidad}
+                      plugins={[continuous]}
+                    />
+                  </span>
+                </div>
+              ))}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
+      </AnalyticsCard>
 
       {/* Medidores por Tipo y Estado */}
-      <Card>
-        <CardHeader className='pb-3 sm:pb-6'>
-          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
-            <Activity className='h-4 w-4 sm:h-5 sm:w-5 text-purple-500' />
-            Medidores por Tipo y Estado
-          </CardTitle>
-          <CardDescription className='text-xs sm:text-sm'>
-            Distribución de medidores según tipo y estado operativo
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {analyticsData.loading ? (
-            <div className='space-y-3 sm:space-y-4'>
-              <div className='space-y-2'>
-                <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-16 sm:w-20'></div>
-                <div className='space-y-1'>
-                  {[1, 2].map(i => (
-                    <div key={i} className='flex justify-between'>
-                      <div className='h-2 sm:h-3 bg-muted animate-pulse rounded w-12 sm:w-16'></div>
-                      <div className='h-2 sm:h-3 bg-muted animate-pulse rounded w-6 sm:w-8'></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className='space-y-3 sm:space-y-4'>
-              {/* Por Tipo */}
-              <div>
-                <h4 className='text-xs sm:text-sm font-semibold mb-2 flex items-center gap-1'>
-                  <Settings className='h-3 w-3' />
+      <AnalyticsCard icon={Activity} title='Medidores' delay={0.2}>
+        {analyticsData.loading ? (
+          <LoadingSkeleton rows={4} />
+        ) : (
+          <div className='space-y-4'>
+            {/* Por Tipo */}
+            <div>
+              <div className='flex items-center gap-1.5 mb-2'>
+                <Settings className='h-3 w-3 text-muted-foreground' />
+                <span className='text-[0.65rem] font-bold tracking-wider uppercase text-muted-foreground'>
                   Por Tipo
-                </h4>
-                <div className='space-y-1 sm:space-y-2'>
-                  {Object.entries(analyticsData.medidoresPorTipo)
-                    .sort(([, a], [, b]) => b - a)
-                    .slice(0, 3)
-                    .map(([tipo, cantidad], index) => (
-                      <div
-                        key={tipo}
-                        className='flex justify-between items-center text-xs sm:text-sm p-1 sm:p-0'
-                      >
-                        <div className='flex items-center gap-2 min-w-0'>
-                          <div
-                            className={`w-2 h-2 rounded-full ${getColorForIndex(index)}`}
-                          ></div>
-                          <span className='truncate'>{tipo}</span>
-                        </div>
+                </span>
+              </div>
+              <div className='space-y-1'>
+                {Object.entries(analyticsData.medidoresPorTipo)
+                  .sort(([, a], [, b]) => b - a)
+                  .slice(0, 3)
+                  .map(([tipo, cantidad], index) => (
+                    <div
+                      key={tipo}
+                      className='flex justify-between items-center text-xs py-1 px-2 rounded-sm hover:bg-accent/40 transition-colors'
+                    >
+                      <div className='flex items-center gap-2 min-w-0'>
+                        <div
+                          className='w-2 h-2 rounded-sm'
+                          style={{
+                            backgroundColor: `var(--chart-${(index % 5) + 1})`
+                          }}
+                        />
+                        <span className='truncate'>{tipo}</span>
+                      </div>
+                      <span className='font-bold font-mono tabular-nums shrink-0'>
                         <NumberFlow
                           value={cantidad}
                           plugins={[continuous]}
-                          className='tabular-nums font-medium shrink-0'
                         />
-                      </div>
-                    ))}
-                </div>
-              </div>
-
-              {/* Por Estado */}
-              <div>
-                <h4 className='text-xs sm:text-sm font-semibold mb-2 flex items-center gap-1'>
-                  <CheckCircle className='h-3 w-3' />
-                  Por Estado
-                </h4>
-                <div className='space-y-1 sm:space-y-2'>
-                  {Object.entries(analyticsData.medidoresPorEstado)
-                    .sort(([, a], [, b]) => b - a)
-                    .map(([estado, cantidad]) => (
-                      <div
-                        key={estado}
-                        className='flex justify-between items-center text-xs sm:text-sm p-1 sm:p-0'
-                      >
-                        <Badge
-                          variant={getBadgeVariant(estado)}
-                          className='text-xs px-1 sm:px-2'
-                        >
-                          <span className='truncate max-w-20 sm:max-w-none'>
-                            {estado}
-                          </span>
-                        </Badge>
-                        <NumberFlow
-                          value={cantidad}
-                          plugins={[continuous]}
-                          className='tabular-nums font-medium shrink-0'
-                        />
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Acometidas por Sector */}
-      <Card className='flex flex-col'>
-        <CardHeader className='items-center pb-2 sm:pb-0'>
-          <CardTitle className='flex items-center gap-2 text-sm sm:text-base'>
-            <Power className='h-4 w-4 sm:h-5 sm:w-5 text-orange-500' />
-            Acometidas por Sector
-          </CardTitle>
-          <CardDescription className='text-xs sm:text-sm text-center'>
-            Distribución geográfica de puntos de suministro
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='flex-1 pb-0'>
-          {analyticsData.loading ? (
-            <div className='flex items-center justify-center h-[200px] sm:h-[250px]'>
-              <div className='space-y-3 w-full'>
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className='flex justify-between items-center'>
-                    <div className='h-3 sm:h-4 bg-muted animate-pulse rounded w-20 sm:w-28'></div>
-                    <div className='h-4 sm:h-6 bg-muted animate-pulse rounded w-8 sm:w-12'></div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
-              {/* Gráfico Donut */}
-              <ChartContainer
-                config={acometidasChartConfig}
-                className='mx-auto aspect-square max-h-[150px] sm:max-h-[200px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
-              >
-                <PieChart>
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                  <Pie
-                    data={chartAcometidasData}
-                    dataKey='cantidad'
-                    nameKey='sector'
-                    innerRadius={50}
-                    strokeWidth={2}
-                  >
-                    <Label
-                      content={renderDonutLabel(
-                        Object.values(analyticsData.acometidasPorSector).reduce(
-                          (acc, curr) => acc + curr,
-                          0
-                        )
-                      )}
-                    />
-                  </Pie>
-                </PieChart>
-              </ChartContainer>
-
-              {/* Lista de datos */}
-              <div className='space-y-1 sm:space-y-2 flex-1 min-w-0 w-full sm:w-auto'>
-                {chartAcometidasData.slice(0, 5).map(item => (
-                  <div
-                    key={item.sector}
-                    className='flex justify-between items-center p-2 sm:p-0'
-                  >
-                    <div className='flex items-center gap-2 min-w-0'>
-                      <div
-                        className='w-2 h-2 sm:w-3 sm:h-3 rounded-full shrink-0'
-                        style={{ backgroundColor: item.fill }}
-                      ></div>
-                      <span className='text-xs sm:text-sm font-medium truncate'>
-                        {item.sector}
                       </span>
                     </div>
-                    <div className='text-sm sm:text-lg font-bold shrink-0'>
-                      <NumberFlow
-                        value={item.cantidad}
-                        plugins={[continuous]}
-                        className='tabular-nums'
-                      />
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
+
+            <div className='industrial-divider' />
+
+            {/* Por Estado */}
+            <div>
+              <div className='flex items-center gap-1.5 mb-2'>
+                <CheckCircle className='h-3 w-3 text-muted-foreground' />
+                <span className='text-[0.65rem] font-bold tracking-wider uppercase text-muted-foreground'>
+                  Por Estado
+                </span>
+              </div>
+              <div className='space-y-1'>
+                {Object.entries(analyticsData.medidoresPorEstado)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([estado, cantidad]) => (
+                    <div
+                      key={estado}
+                      className='flex justify-between items-center text-xs py-1 px-2 rounded-sm hover:bg-accent/40 transition-colors'
+                    >
+                      <Badge
+                        variant={getBadgeVariant(estado)}
+                        className='text-[0.6rem] px-1.5 py-0 h-5 font-bold tracking-wide'
+                      >
+                        <span className='truncate max-w-20 sm:max-w-none'>
+                          {estado}
+                        </span>
+                      </Badge>
+                      <span className='font-bold font-mono tabular-nums shrink-0'>
+                        <NumberFlow
+                          value={cantidad}
+                          plugins={[continuous]}
+                        />
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </AnalyticsCard>
+
+      {/* Acometidas por Sector */}
+      <AnalyticsCard icon={Power} title='Acometidas por Sector' delay={0.25}>
+        {analyticsData.loading ? (
+          <LoadingSkeleton rows={4} />
+        ) : (
+          <div className='flex flex-col sm:flex-row items-center gap-3 sm:gap-4'>
+            <ChartContainer
+              config={acometidasChartConfig}
+              className='mx-auto aspect-square max-h-[150px] sm:max-h-[190px] min-h-[120px] sm:min-h-[150px] w-full sm:w-auto'
+            >
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={chartAcometidasData}
+                  dataKey='cantidad'
+                  nameKey='sector'
+                  innerRadius={50}
+                  strokeWidth={2}
+                >
+                  <Label
+                    content={renderDonutLabel(
+                      Object.values(analyticsData.acometidasPorSector).reduce(
+                        (acc, curr) => acc + curr,
+                        0
+                      )
+                    )}
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
+
+            <div className='space-y-1.5 flex-1 min-w-0 w-full sm:w-auto'>
+              {chartAcometidasData.slice(0, 5).map(item => (
+                <div
+                  key={item.sector}
+                  className='flex justify-between items-center py-1 px-2 rounded-sm hover:bg-accent/40 transition-colors'
+                >
+                  <div className='flex items-center gap-2 min-w-0'>
+                    <div
+                      className='w-2 h-2 rounded-sm shrink-0'
+                      style={{ backgroundColor: item.fill }}
+                    />
+                    <span className='text-xs font-medium truncate'>
+                      {item.sector}
+                    </span>
+                  </div>
+                  <span className='text-sm font-bold font-mono tabular-nums shrink-0'>
+                    <NumberFlow
+                      value={item.cantidad}
+                      plugins={[continuous]}
+                    />
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </AnalyticsCard>
     </div>
   );
-};
+});
 
-// Helper para renderizar el período actual (evita ternarios anidados)
+/** Renderiza el período actual formateado */
 const renderPeriodoActual = (
   loading: boolean,
   periodoActual: { mes: number; anio: number; estado: string }
@@ -692,7 +648,7 @@ const renderPeriodoActual = (
     );
   }
 
-  return <span className='text-sm sm:text-base text-red-500'>Sin período</span>;
+  return <span className='text-sm text-destructive'>Sin período</span>;
 };
 
 export default function DashboardComponent({
@@ -706,7 +662,6 @@ export default function DashboardComponent({
   corte: TotalesCorteReposicion;
   limiteInvierno: GetLimiteInvierno;
 }>) {
-  // Prefetch de rutas más frecuentes para navegación instantánea
   usePrefetchMultiple(
     [
       '/dashboard/administracion/contratos',
@@ -733,7 +688,6 @@ export default function DashboardComponent({
     loading: true
   });
 
-  // Estados para mostrar los números desde 0
   const [displayData, setDisplayData] = useState({
     lecturasPendientes: 0,
     totalesCorte: {
@@ -746,7 +700,6 @@ export default function DashboardComponent({
     limiteInvierno: 0
   });
 
-  // Actualizar reloj cada segundo
   useEffect(() => {
     const timer = setInterval(() => {
       setDashboardData(prev => ({ ...prev, fechaHora: new Date() }));
@@ -758,7 +711,6 @@ export default function DashboardComponent({
   useEffect(() => {
     const processDashboardData = () => {
       try {
-        // Procesar período actual
         let periodoActual = { mes: 0, anio: 0, estado: 'Sin período abierto' };
         if (
           periodoAbierto &&
@@ -773,7 +725,6 @@ export default function DashboardComponent({
           };
         }
 
-        // Procesar lecturas pendientes
         let lecturasPendientesCount = 0;
         if (
           lecturasPendientes &&
@@ -784,7 +735,6 @@ export default function DashboardComponent({
           lecturasPendientesCount = lecturasPendientes.totalPendientes || 0;
         }
 
-        // Procesar totales de corte
         const totalesCorte = {
           pendiente: 0,
           liberado: 0,
@@ -815,7 +765,6 @@ export default function DashboardComponent({
           }
         }
 
-        // Actualizar los datos reales
         setDashboardData(prev => ({
           ...prev,
           periodoActual,
@@ -824,7 +773,6 @@ export default function DashboardComponent({
           loading: false
         }));
 
-        // Pequeño delay para que se vea el estado de carga, luego animar desde 0
         setTimeout(() => {
           setDisplayData({
             lecturasPendientes: lecturasPendientesCount,
@@ -841,210 +789,266 @@ export default function DashboardComponent({
     processDashboardData();
   }, [periodoAbierto, lecturasPendientes, corte, limiteInvierno]);
 
+  /** Stat card data */
+  const statCards = [
+    {
+      label: 'Período Actual',
+      icon: FileText,
+      accentClass: 'border-t-energy',
+      content: (
+        <div className='text-2xl sm:text-3xl font-black font-mono tracking-tight'>
+          {renderPeriodoActual(
+            dashboardData.loading,
+            dashboardData.periodoActual
+          )}
+        </div>
+      ),
+      sub: (
+        <div className='flex items-center gap-1.5 mt-1'>
+          {dashboardData.periodoActual.mes > 0 && !dashboardData.loading && (
+            <div className='energy-dot-sm' />
+          )}
+          <span className='text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold'>
+            {dashboardData.periodoActual.estado}
+          </span>
+        </div>
+      )
+    },
+    {
+      label: 'Sectores Pendientes',
+      icon: Activity,
+      accentClass: 'border-t-chart-1',
+      content: (
+        <div className='text-2xl sm:text-3xl font-black font-mono tracking-tight'>
+          {dashboardData.loading ? (
+            <span className='animate-pulse text-muted-foreground'>---</span>
+          ) : (
+            <NumberFlow
+              value={displayData.lecturasPendientes}
+              format={{
+                useGrouping: true,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }}
+              transformTiming={{
+                duration: 1200,
+                easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+              }}
+              plugins={[continuous]}
+              className='tabular-nums'
+            />
+          )}
+        </div>
+      ),
+      sub: (
+        <span className='text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold mt-1'>
+          Lecturas por procesar
+        </span>
+      )
+    },
+    {
+      label: 'Límite Invierno',
+      icon: Snowflake,
+      accentClass: 'border-t-chart-4',
+      content: (
+        <div className='text-2xl sm:text-3xl font-black font-mono tracking-tight'>
+          {dashboardData.loading ? (
+            <span className='animate-pulse text-muted-foreground'>---</span>
+          ) : (
+            <>
+              <NumberFlow
+                value={displayData.limiteInvierno}
+                format={{
+                  useGrouping: true,
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0
+                }}
+                transformTiming={{
+                  duration: 1500,
+                  easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+                }}
+                plugins={[continuous]}
+                className='tabular-nums'
+              />
+              <span className='text-base font-light text-muted-foreground ml-1'>
+                kWh
+              </span>
+            </>
+          )}
+        </div>
+      ),
+      sub: (
+        <span className='text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold mt-1'>
+          Sobrecargo invierno
+        </span>
+      )
+    },
+    {
+      label: 'Cortes Totales',
+      icon: Power,
+      accentClass: 'border-t-destructive',
+      content: (
+        <div className='text-2xl sm:text-3xl font-black font-mono tracking-tight'>
+          {dashboardData.loading ? (
+            <span className='animate-pulse text-muted-foreground'>---</span>
+          ) : (
+            <NumberFlow
+              value={displayData.totalesCorte.total}
+              format={{
+                useGrouping: true,
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }}
+              transformTiming={{
+                duration: 1800,
+                easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+              }}
+              plugins={[continuous]}
+              className='tabular-nums'
+            />
+          )}
+        </div>
+      ),
+      sub: (
+        <div className='flex items-center gap-2 mt-1.5'>
+          <span className='text-[0.6rem] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-sm bg-destructive/10 text-destructive border border-destructive/20'>
+            {displayData.totalesCorte.cortado} cortados
+          </span>
+          <span className='text-[0.6rem] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-sm bg-chart-2/10 text-chart-2 border border-chart-2/20'>
+            {displayData.totalesCorte.liberado} liberados
+          </span>
+        </div>
+      )
+    }
+  ];
+
   return (
-    <div className='flex flex-col gap-3 sm:gap-4 py-3 sm:py-4 lg:gap-6 lg:py-6'>
-      {/* Contenido Principal */}
-      <div className='flex flex-1 flex-col gap-3 sm:gap-4 p-2 sm:p-4 pt-0'>
-        {/* Estadísticas Principales */}
-        <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-          {/* Período Actual */}
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-xs sm:text-sm font-medium'>
-                Período Actual
-              </CardTitle>
-              <FileText className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-lg sm:text-2xl font-bold font-mono'>
-                {renderPeriodoActual(
-                  dashboardData.loading,
-                  dashboardData.periodoActual
-                )}
-              </div>
-              <p className='text-xs text-muted-foreground'>
-                {dashboardData.periodoActual.estado}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Lecturas Pendientes */}
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-xs sm:text-sm font-medium'>
-                Sectores Pendientes
-              </CardTitle>
-              <Activity className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-lg sm:text-2xl font-bold font-mono'>
-                {dashboardData.loading ? (
-                  <span className='animate-pulse text-muted-foreground'>
-                    ---
-                  </span>
-                ) : (
-                  <NumberFlow
-                    value={displayData.lecturasPendientes}
-                    format={{
-                      useGrouping: true,
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0
-                    }}
-                    transformTiming={{
-                      duration: 1200,
-                      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
-                    }}
-                    plugins={[continuous]}
-                    className='tabular-nums'
-                  />
-                )}
-              </div>
-              <p className='text-xs text-muted-foreground'>
-                Sectores con lecturas por procesar
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Límite de Invierno */}
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-xs sm:text-sm font-medium'>
-                Límite de Invierno
-              </CardTitle>
-              <Snowflake className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-lg sm:text-2xl font-bold font-mono'>
-                {dashboardData.loading ? (
-                  <span className='animate-pulse text-muted-foreground'>
-                    ---
-                  </span>
-                ) : (
-                  <>
-                    <NumberFlow
-                      value={displayData.limiteInvierno}
-                      format={{
-                        useGrouping: true,
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
-                      }}
-                      transformTiming={{
-                        duration: 1500,
-                        easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
-                      }}
-                      plugins={[continuous]}
-                      className='tabular-nums'
-                    />
-                    <span className='text-base sm:text-xl font-normal text-muted-foreground'>
-                      {' '}
-                      kWh
-                    </span>
-                  </>
-                )}
-              </div>
-              <p className='text-xs text-muted-foreground'>
-                Límite para sobrecargo de invierno
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Totales Corte */}
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-xs sm:text-sm font-medium'>
-                Cortes Totales
-              </CardTitle>
-              <Power className='h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-lg sm:text-2xl font-bold font-mono'>
-                {dashboardData.loading ? (
-                  <span className='animate-pulse text-muted-foreground'>
-                    ---
-                  </span>
-                ) : (
-                  <NumberFlow
-                    value={displayData.totalesCorte.total}
-                    format={{
-                      useGrouping: true,
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0
-                    }}
-                    transformTiming={{
-                      duration: 1800,
-                      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
-                    }}
-                    plugins={[continuous]}
-                    className='tabular-nums'
-                  />
-                )}
-              </div>
-              <div className='flex flex-col sm:flex-row gap-1 sm:gap-2 mt-1'>
-                <span className='text-xs px-2 py-1 bg-red-100 text-red-700 rounded dark:bg-red-900/30 dark:text-red-300 text-center'>
-                  {displayData.totalesCorte.cortado} cortados
-                </span>
-                <span className='text-xs px-2 py-1 bg-green-100 text-green-700 rounded dark:bg-green-900/30 dark:text-green-300 text-center'>
-                  {displayData.totalesCorte.liberado} liberados
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Atajos Rápidos */}
-        <Card>
-          <CardHeader className='pb-3 sm:pb-6'>
-            <CardTitle className='text-base sm:text-lg'>
-              Atajos Rápidos
-            </CardTitle>
-            <CardDescription className='text-xs sm:text-sm'>
-              Accede rápidamente a las funciones más utilizadas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className='grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-              {quickActions.map(action => (
-                <Button
-                  key={action.href}
-                  variant='outline'
-                  className='h-auto flex-col items-start gap-2 p-3 sm:p-4 text-left hover:bg-muted/50'
-                  asChild
-                >
-                  <Link to={action.href}>
-                    <div className={`rounded-xl p-2 ${action.color}`}>
-                      <action.icon className='h-3 w-3 sm:h-4 sm:w-4' />
-                    </div>
-                    <div>
-                      <div className='font-semibold text-xs sm:text-sm'>
-                        {action.title}
-                      </div>
-                      <div className='text-xs text-muted-foreground'>
-                        {action.description}
-                      </div>
-                    </div>
-                  </Link>
-                </Button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Panel de Control de Administración */}
-        <div className='space-y-3 sm:space-y-4'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <h2 className='text-base sm:text-lg font-semibold'>
-                Panel de Control de Administración
-              </h2>
-              <p className='text-xs sm:text-sm text-muted-foreground'>
-                Análisis detallado de contratos, clientes, medidores y
-                acometidas
-              </p>
-            </div>
+    <div className='flex flex-col gap-4 sm:gap-5 p-3 sm:p-5 lg:p-6'>
+      {/* ── Header del Dashboard ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: mechanicalEase }}
+        className='flex items-center justify-between'
+      >
+        <div className='flex items-center gap-3'>
+          <div className='flex h-8 w-8 items-center justify-center rounded-md bg-primary'>
+            <Zap className='h-4 w-4 text-primary-foreground' />
           </div>
-          <AdminAnalyticsComponent />
+          <div>
+            <h1 className='text-sm sm:text-base font-black tracking-tight uppercase'>
+              Panel de Control
+            </h1>
+            <p className='text-[0.65rem] text-muted-foreground font-bold tracking-wider uppercase'>
+              Resumen operacional
+            </p>
+          </div>
         </div>
+      </motion.div>
+
+      {/* ── Stat Cards ── */}
+      <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-4'>
+        <AnimatePresence>
+          {statCards.map((card, index) => (
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.25,
+                delay: index * 0.06,
+                ease: mechanicalEase
+              }}
+            >
+              <Card
+                className={`border-t-2 ${card.accentClass} overflow-hidden`}
+              >
+                <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-1.5 pt-3 px-4'>
+                  <span className='text-[0.65rem] font-bold tracking-wider uppercase text-muted-foreground'>
+                    {card.label}
+                  </span>
+                  <div className='flex h-6 w-6 items-center justify-center rounded bg-accent text-accent-foreground'>
+                    <card.icon className='h-3.5 w-3.5' />
+                  </div>
+                </CardHeader>
+                <CardContent className='px-4 pb-3'>
+                  {card.content}
+                  {card.sub}
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
+
+      {/* ── Quick Actions ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.3, ease: mechanicalEase }}
+      >
+        <div className='flex items-center gap-2.5 mb-3'>
+          <div className='flex h-6 w-6 items-center justify-center rounded bg-accent text-accent-foreground'>
+            <Zap className='h-3.5 w-3.5' />
+          </div>
+          <span className='text-xs font-bold tracking-wide uppercase'>
+            Accesos Rápidos
+          </span>
+        </div>
+        <div className='grid gap-2 sm:grid-cols-2 lg:grid-cols-3'>
+          {quickActions.map((action, index) => (
+            <motion.div
+              key={action.href}
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                duration: 0.2,
+                delay: 0.35 + index * 0.04,
+                ease: mechanicalEase
+              }}
+            >
+              <Link
+                to={action.href}
+                className={`group flex items-center gap-3 p-3 rounded-md border-l-2 ${action.accent} bg-card hover:bg-accent/40 transition-all duration-150 border border-l-2 border-border`}
+              >
+                <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded bg-accent/80 text-accent-foreground transition-colors group-hover:bg-accent'>
+                  <action.icon className='h-4 w-4' />
+                </div>
+                <div className='flex-1 min-w-0'>
+                  <div className='text-xs font-bold tracking-tight truncate'>
+                    {action.title}
+                  </div>
+                  <div className='text-[0.65rem] text-muted-foreground truncate'>
+                    {action.description}
+                  </div>
+                </div>
+                <ArrowRight className='h-3 w-3 text-muted-foreground opacity-0 -translate-x-1 transition-all duration-150 group-hover:opacity-100 group-hover:translate-x-0 shrink-0' />
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Divider ── */}
+      <div className='industrial-divider' />
+
+      {/* ── Analytics Panel ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.5, ease: mechanicalEase }}
+        className='space-y-3'
+      >
+        <div className='flex items-center gap-2.5'>
+          <div className='flex h-6 w-6 items-center justify-center rounded bg-accent text-accent-foreground'>
+            <Settings className='h-3.5 w-3.5' />
+          </div>
+          <span className='text-xs font-bold tracking-wide uppercase'>
+            Panel de Administración
+          </span>
+        </div>
+        <AdminAnalyticsComponent />
+      </motion.div>
     </div>
   );
 }

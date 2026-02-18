@@ -8,7 +8,7 @@ import {
   Users,
   Wrench
 } from 'lucide-react';
-import { AnimatePresence, motion, type Variants } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 
 import * as React from 'react';
 import { Link, useLocation } from 'react-router';
@@ -36,30 +36,6 @@ import {
 } from '~/components/ui/sidebar';
 
 import { SearchForm } from './search-form';
-
-const itemVariants = {
-  hidden: {
-    opacity: 0,
-    x: -20,
-    transition: { duration: 0.2 }
-  },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.3, ease: 'easeOut' }
-  }
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
-    }
-  }
-};
 
 // This is sample data.
 const data = {
@@ -229,17 +205,6 @@ const data = {
         }
       ]
     },
-    /* {
-      title: 'Análisis',
-      url: '#',
-      icon: Activity,
-      items: [
-        {
-          title: 'Análisis de Actividad',
-          url: '/dashboard/activity-analytics',
-        },
-      ],
-    }, */
     {
       title: 'Reportes',
       url: '#',
@@ -253,14 +218,10 @@ const data = {
           title: 'Resumen Facturación',
           url: '/dashboard/reportes/resumen-facturacion'
         }
-        /* {
-          title: 'Ver Facturas',
-          url: '/dashboard/reportes/ver-facturas',
-        }, */
       ]
     },
     {
-      title: 'Configuración	',
+      title: 'Configuración',
       url: '#',
       icon: Settings2,
       items: [
@@ -280,10 +241,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { canView } = useAuth();
   const { periodoAbierto } = usePeriodoAbierto();
 
-  // Determinar si hay periodo abierto
   const hasPeriodoAbierto = periodoAbierto.length > 0;
 
-  // Función para filtrar elementos basada en búsqueda y permisos
   const filteredNavMain = React.useMemo(() => {
     const searchLower = debouncedSearch.toLowerCase();
 
@@ -291,17 +250,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       .map(section => {
         const filteredItems = section.items
           .map(item => {
-            // Verificar permisos primero - si no tiene permiso de ver, no mostrar
             if (!canView(item.url)) {
               return null;
             }
 
-            // Si es Operaciones y no hay período abierto, marcar como deshabilitado (excepto "Periodo Facturación")
             const isOperacionesItem = section.title === 'Operaciones';
             const isPeriodoFacturacionItem =
               isOperacionesItem && item.title === 'Periodo Facturación';
             const isDisabled =
-              isOperacionesItem && !hasPeriodoAbierto && !isPeriodoFacturacionItem;
+              isOperacionesItem &&
+              !hasPeriodoAbierto &&
+              !isPeriodoFacturacionItem;
 
             return {
               ...item,
@@ -310,19 +269,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           })
           .filter(item => item !== null)
           .filter(item => {
-            // Si hay búsqueda, aplicar filtro de búsqueda
             if (debouncedSearch.trim()) {
               return (
                 item.title.toLowerCase().includes(searchLower) ||
                 section.title.toLowerCase().includes(searchLower)
               );
             }
-
-            // Si no hay búsqueda, mostrar todo lo que tenga permisos
             return true;
           });
 
-        // Si no hay items con permisos, no mostrar la sección
         if (filteredItems.length === 0) {
           return null;
         }
@@ -335,205 +290,194 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       .filter(section => section !== null) as typeof data.navMain;
   }, [debouncedSearch, canView, hasPeriodoAbierto]);
 
-  // Función para verificar si una ruta está activa
   const isActiveRoute = (url: string) => {
     return location.pathname === url;
   };
 
   return (
     <Sidebar {...props}>
-      {/* Header mejorado con gradiente */}
-      <SidebarHeader className='border-b border-primary'>
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+      {/* ── Branded Header ── */}
+      <SidebarHeader className='border-b border-sidebar-border px-4 py-3'>
+        <div className='flex items-center gap-3'>
+          <div className='flex h-8 w-8 items-center justify-center rounded-md'>
+            <img src='/logo-enerlova.png' alt='Logo' width={32} height={32} />
+          </div>
+          <div className='flex flex-col'>
+            <span className='text-sm font-black tracking-tight leading-none'>
+              ENERLOVA
+            </span>
+          </div>
+        </div>
+        <div className='mt-3'>
           <SearchForm onSearchChange={setSearchTerm} searchTerm={searchTerm} />
-        </motion.div>
+        </div>
       </SidebarHeader>
 
-      <SidebarContent className='gap-1 px-2 sm:px-3 py-2 sm:py-3'>
-        <AnimatePresence>
+      {/* ── Navigation ── */}
+      <SidebarContent className='px-2 py-2 gap-0'>
+        <AnimatePresence mode='wait'>
           {filteredNavMain.length > 0 ? (
             <motion.div
-              variants={containerVariants}
-              initial='hidden'
-              animate='visible'
-              className='space-y-1 sm:space-y-2'
+              key='nav-list'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className='space-y-0.5'
             >
-              {filteredNavMain.map((item, index) => {
-                // Verificar si alguno de los items del submenú coincide con la ruta actual
+              {filteredNavMain.map((item, sectionIndex) => {
                 const isActive = item.items?.some(
                   subItem => location.pathname === subItem.url
                 );
-
                 return (
                   <motion.div
                     key={item.title}
-                    variants={itemVariants as Variants}
-                    initial='hidden'
-                    animate='visible'
-                    transition={{ delay: index * 0.1 }}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.2,
+                      delay: sectionIndex * 0.04,
+                      ease: [0.25, 0.1, 0.25, 1]
+                    }}
                   >
                     <Collapsible
                       title={item.title}
                       defaultOpen={isActive}
                       className='group/collapsible'
                     >
-                      <SidebarGroup className='mb-1'>
+                      <SidebarGroup className='py-0'>
                         <SidebarGroupLabel
                           asChild
-                          className='group/label text-sidebar-foreground/90 hover:text-sidebar-accent-foreground text-xs sm:text-sm font-semibold rounded-xl transition-all duration-300 border border-transparent hover:border-border'
+                          className='group/label text-sidebar-foreground hover:bg-sidebar-accent/60 rounded-md transition-colors duration-150 h-auto'
                         >
-                          <CollapsibleTrigger className='w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between group'>
-                            <div className='flex items-center gap-2 sm:gap-3'>
+                          <CollapsibleTrigger className='w-full px-2 py-2 flex items-center justify-between'>
+                            <div className='flex items-center gap-2.5'>
                               {item.icon && (
-                                <motion.div
-                                  whileHover={{ scale: 1.1, rotate: 5 }}
-                                  whileTap={{ scale: 0.95 }}
-                                  transition={{
-                                    type: 'spring',
-                                    stiffness: 400,
-                                    damping: 17
-                                  }}
-                                  className='flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300'
-                                >
-                                  <item.icon className='h-3 w-3 sm:h-4 sm:w-4' />
-                                </motion.div>
+                                <div className='flex h-6 w-6 items-center justify-center rounded bg-sidebar-accent/80 text-sidebar-accent-foreground'>
+                                  <item.icon className='h-3.5 w-3.5' />
+                                </div>
                               )}
-                              <span className='truncate font-medium'>
+                              <span className='text-xs font-bold tracking-wide uppercase'>
                                 {item.title}
                               </span>
                             </div>
-                            <motion.div
-                              initial={{ rotate: 0 }}
-                              whileHover={{ rotate: 90 }}
-                              transition={{ duration: 0.2 }}
-                              className='group-data-[state=open]/collapsible:rotate-90 transition-transform duration-300'
-                            >
-                              <ChevronRight className='h-3 w-3 sm:h-4 sm:w-4 opacity-70 group-hover:opacity-100 transition-opacity' />
-                            </motion.div>
+                            <ChevronRight className='h-3 w-3 text-muted-foreground transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
                           </CollapsibleTrigger>
                         </SidebarGroupLabel>
 
-                        <CollapsibleContent className='overflow-hidden'>
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: 'easeInOut' }}
-                          >
-                            <SidebarGroupContent className='pt-1 sm:pt-2 ml-1 sm:ml-2 border-l border-border'>
-                              <SidebarMenu className='space-y-0.5 sm:space-y-1'>
-                                {item.items.map((menuItem, menuIndex) => {
-                                  const isDisabled = (menuItem as any).disabled || false;
+                        <CollapsibleContent>
+                          <SidebarGroupContent className='pt-0.5 pb-1'>
+                            <SidebarMenu className='gap-0'>
+                              {item.items.map((menuItem, menuIndex) => {
+                                const isDisabled =
+                                  (menuItem as any).disabled || false;
+                                const active =
+                                  !isDisabled && isActiveRoute(menuItem.url);
 
-                                  return (
-                                    <motion.div
-                                      key={menuItem.title}
-                                      initial={{ opacity: 0, x: -10 }}
-                                      animate={{ opacity: 1, x: 0 }}
-                                      transition={{ delay: menuIndex * 0.05 }}
-                                      title={
-                                        isDisabled
-                                          ? 'Debe abrir un período de facturación primero'
-                                          : undefined
-                                      }
-                                    >
-                                      <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                          asChild={!isDisabled}
-                                          disabled={isDisabled}
-                                          isActive={!isDisabled && isActiveRoute(menuItem.url)}
-                                          className={`rounded-xl transition-all duration-200 ml-2 sm:ml-4 ${
-                                            isDisabled
-                                              ? 'opacity-50 cursor-not-allowed bg-muted/30 hover:bg-muted/30'
-                                              : 'hover:bg-accent/50 data-[active=true]:bg-accent data-[active=true]:text-accent-foreground data-[active=true]:border data-[active=true]:border-border hover:border hover:border-border'
-                                          }`}
-                                        >
-                                          {isDisabled ? (
-                                            <div className='px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 w-full'>
-                                              <Lock className='h-3 w-3 sm:h-4 sm:w-4 opacity-60' />
-                                              <span className='truncate'>
-                                                {menuItem.title}
-                                              </span>
-                                            </div>
-                                          ) : (
-                                            <motion.div
-                                              whileHover={{ x: 4 }}
-                                              transition={{
-                                                type: 'spring',
-                                                stiffness: 400,
-                                                damping: 17
-                                              }}
-                                              className='w-full'
-                                            >
-                                              <Link
-                                                to={menuItem.url}
-                                                className='px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2 w-full'
-                                              >
-                                                <motion.div
-                                                  className='w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-current opacity-50'
-                                                  whileHover={{
-                                                    scale: 1.5,
-                                                    opacity: 1
-                                                  }}
-                                                  transition={{ duration: 0.2 }}
-                                                />
-                                                <span className='truncate'>
-                                                  {menuItem.title}
-                                                </span>
-                                              </Link>
-                                            </motion.div>
-                                          )}
-                                        </SidebarMenuButton>
-                                      </SidebarMenuItem>
-                                    </motion.div>
-                                  );
-                                })}
-                              </SidebarMenu>
-                            </SidebarGroupContent>
-                          </motion.div>
+                                return (
+                                  <motion.div
+                                    key={menuItem.title}
+                                    initial={{ opacity: 0, x: -8 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{
+                                      duration: 0.15,
+                                      delay: menuIndex * 0.02,
+                                      ease: [0.25, 0.1, 0.25, 1]
+                                    }}
+                                  >
+                                    <SidebarMenuItem>
+                                      <SidebarMenuButton
+                                        asChild={!isDisabled}
+                                        disabled={isDisabled}
+                                        isActive={active}
+                                        className={`relative rounded-md transition-all duration-150 ml-4 h-auto py-1.5 ${
+                                          isDisabled
+                                            ? 'opacity-40 cursor-not-allowed'
+                                            : active
+                                              ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                                              : 'hover:bg-sidebar-accent/40 text-sidebar-foreground/80 hover:text-sidebar-foreground'
+                                        }`}
+                                        title={
+                                          isDisabled
+                                            ? 'Debe abrir un período de facturación primero'
+                                            : undefined
+                                        }
+                                      >
+                                        {isDisabled ? (
+                                          <div className='flex items-center gap-2 px-2 text-xs'>
+                                            <Lock className='h-3 w-3 shrink-0 opacity-50' />
+                                            <span className='truncate'>
+                                              {menuItem.title}
+                                            </span>
+                                          </div>
+                                        ) : (
+                                          <Link
+                                            to={menuItem.url}
+                                            className='flex items-center gap-2 px-2 text-xs w-full'
+                                          >
+                                            {/* Active indicator strip */}
+                                            {active && (
+                                              <motion.div
+                                                layoutId='sidebar-active-strip'
+                                                className='energy-strip energy-strip-active'
+                                                transition={{
+                                                  type: 'spring',
+                                                  stiffness: 500,
+                                                  damping: 35
+                                                }}
+                                              />
+                                            )}
+                                            <div
+                                              className={`w-1 h-1 rounded-full shrink-0 transition-colors duration-150 ${
+                                                active
+                                                  ? 'bg-energy'
+                                                  : 'bg-muted-foreground/30'
+                                              }`}
+                                            />
+                                            <span className='truncate'>
+                                              {menuItem.title}
+                                            </span>
+                                          </Link>
+                                        )}
+                                      </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                  </motion.div>
+                                );
+                              })}
+                            </SidebarMenu>
+                          </SidebarGroupContent>
                         </CollapsibleContent>
                       </SidebarGroup>
                     </Collapsible>
+
+                    {/* Industrial divider between sections */}
+                    {sectionIndex < filteredNavMain.length - 1 && (
+                      <div className='industrial-divider mx-3 my-1' />
+                    )}
                   </motion.div>
                 );
               })}
             </motion.div>
           ) : (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              className='flex items-center justify-center py-8 sm:py-12 text-center'
+              key='nav-empty'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className='flex flex-col items-center py-10 px-4 text-center'
             >
-              <div className='space-y-2 sm:space-y-3 max-w-[180px] sm:max-w-[200px] px-2'>
-                <motion.div
-                  initial={{ rotate: 0 }}
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  className='mx-auto w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/20 flex items-center justify-center'
-                >
-                  <div className='w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-primary opacity-50' />
-                </motion.div>
-                <div className='text-muted-foreground text-xs sm:text-sm leading-relaxed'>
-                  No se encontraron resultados para{' '}
-                  <span className='font-medium text-primary'>
-                    "{searchTerm}"
-                  </span>
-                </div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setSearchTerm('')}
-                  className='text-xs text-primary hover:text-primary/80 hover:underline bg-muted/50 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-border transition-all duration-200'
-                >
-                  Limpiar búsqueda
-                </motion.button>
-              </div>
+              <p className='text-xs text-muted-foreground'>
+                Sin resultados para{' '}
+                <span className='font-medium text-foreground'>
+                  &ldquo;{searchTerm}&rdquo;
+                </span>
+              </p>
+              <button
+                onClick={() => setSearchTerm('')}
+                className='mt-2 text-xs text-primary hover:underline underline-offset-2'
+              >
+                Limpiar búsqueda
+              </button>
             </motion.div>
           )}
         </AnimatePresence>
