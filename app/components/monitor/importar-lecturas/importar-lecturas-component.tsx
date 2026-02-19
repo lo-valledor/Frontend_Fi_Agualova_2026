@@ -328,7 +328,7 @@ export default function ImportarLecturasComponent() {
 
       const token = localStorage.getItem('token');
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/api';
+      const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/upload`;
 
       const response = await fetch(url, {
@@ -364,7 +364,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
+      const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/estado-procesamiento`;
 
       const response = await fetch(url, {
@@ -395,7 +395,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/api';
+      const baseUrl = VITE_API_URL || '';
       const url = `${baseUrl}/registros-pendientes`;
 
       const response = await fetch(url, {
@@ -436,7 +436,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const ENERLINK_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = ENERLINK_API_URL || 'http://192.168.1.139:8081/Enerlova';
+      const baseUrl = ENERLINK_API_URL || '';
       const url = `${baseUrl}/procesar-bt1-bt2`;
 
       const response = await fetch(url, {
@@ -481,7 +481,7 @@ export default function ImportarLecturasComponent() {
     try {
       const token = localStorage.getItem('token');
       const VITE_API_URL = import.meta.env.VITE_API_URL;
-      const baseUrl = VITE_API_URL || 'http://192.168.1.139:8081/Enerlova';
+      const baseUrl = VITE_API_URL || '';
 
       // Usar período actual si está disponible; de lo contrario, fallback a 102025
       const periodoActual = estadoProcesamiento?.periodoActivo || '102025';
@@ -589,24 +589,27 @@ export default function ImportarLecturasComponent() {
                   </div>
 
                   <div
-                    className={`text-center p-4 rounded-radius border ${estadoProcesamiento.registrosPendientes > 0
+                    className={`text-center p-4 rounded-radius border ${
+                      estadoProcesamiento.registrosPendientes > 0
                         ? 'bg-muted/50 border-border'
                         : 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200/50 dark:border-emerald-800/50'
-                      }`}
+                    }`}
                   >
                     <div
-                      className={`text-2xl font-bold mb-1 ${estadoProcesamiento.registrosPendientes > 0
+                      className={`text-2xl font-bold mb-1 ${
+                        estadoProcesamiento.registrosPendientes > 0
                           ? 'text-foreground'
                           : 'text-emerald-700 dark:text-emerald-400'
-                        }`}
+                      }`}
                     >
                       {estadoProcesamiento.registrosPendientes}
                     </div>
                     <div
-                      className={`text-xs font-medium ${estadoProcesamiento.registrosPendientes > 0
+                      className={`text-xs font-medium ${
+                        estadoProcesamiento.registrosPendientes > 0
                           ? 'text-muted-foreground'
                           : 'text-emerald-600 dark:text-emerald-500'
-                        }`}
+                      }`}
                     >
                       Pendientes
                     </div>
@@ -1154,28 +1157,32 @@ export default function ImportarLecturasComponent() {
                     ? handleDrop
                     : undefined
                 }
-                className={`relative border-2 border-dashed rounded-radius p-12 transition-all duration-300 ${validacionLecturas?.sinPendientes === false
+                className={`relative border-2 border-dashed rounded-radius p-12 transition-all duration-300 ${
+                  validacionLecturas?.sinPendientes === false
                     ? 'border-muted bg-muted/20 opacity-60 cursor-not-allowed'
                     : isDragging
                       ? 'border-primary bg-primary/5 scale-[1.02]'
                       : 'border-border hover:border-primary hover:bg-accent/50'
-                  }`}
+                }`}
               >
                 <div className='flex flex-col items-center gap-6 text-center'>
                   <div
                     className={`relative transition-all duration-300 ${isDragging ? 'scale-110' : ''}`}
                   >
                     <div
-                      className={`absolute inset-0 rounded-full blur-xl opacity-30 ${isDragging ? 'bg-primary' : 'bg-muted'
-                        }`}
+                      className={`absolute inset-0 rounded-full blur-xl opacity-30 ${
+                        isDragging ? 'bg-primary' : 'bg-muted'
+                      }`}
                     />
                     <div
-                      className={`relative p-5  ${isDragging ? 'bg-primary/10' : 'bg-muted'
-                        }`}
+                      className={`relative p-5  ${
+                        isDragging ? 'bg-primary/10' : 'bg-muted'
+                      }`}
                     >
                       <Upload
-                        className={`h-10 w-10 ${isDragging ? 'text-primary' : 'text-muted-foreground'
-                          }`}
+                        className={`h-10 w-10 ${
+                          isDragging ? 'text-primary' : 'text-muted-foreground'
+                        }`}
                       />
                     </div>
                   </div>
