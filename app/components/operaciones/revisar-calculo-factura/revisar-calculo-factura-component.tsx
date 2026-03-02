@@ -273,9 +273,9 @@ export default function RevisarCalculoFacturaComponent({
         <Card className='border border-border shadow-sm'>
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <Button
-              variant='outline'
+              variant='ghost'
               size='sm'
-              className='w-full flex justify-between items-center p-4 cursor-pointer hover:bg-muted/30 transition-colors text-left'
+              className='w-full flex justify-between items-center px-4 py-3 h-auto cursor-pointer hover:bg-muted/40 transition-colors rounded-b-none'
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
               onKeyDown={e => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -287,224 +287,162 @@ export default function RevisarCalculoFacturaComponent({
               aria-controls='filters-content'
               type='button'
             >
-              <div className='flex items-center gap-3 mb-4'>
-                <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
-                  <FileSpreadsheet className='w-4 h-4' />
-                </div>
-                <div>
-                  <CardTitle className='text-base'>
+              <div className='flex items-center gap-2.5'>
+                <FileSpreadsheet className='w-4 h-4 text-muted-foreground' />
+                <div className='text-left'>
+                  <p className='text-sm font-medium leading-none'>
                     Configuración de Búsqueda
-                  </CardTitle>
-                  <CardDescription className='text-xs'>
+                  </p>
+                  <p className='text-xs text-muted-foreground mt-0.5'>
                     Configure periodo y parámetros de consulta
-                  </CardDescription>
+                  </p>
                 </div>
               </div>
-              <div className='flex items-center'>
-                {isFiltersOpen ? (
-                  <ChevronUp className='h-4 w-4 text-muted-foreground' />
-                ) : (
-                  <ChevronDown className='h-4 w-4 text-muted-foreground' />
-                )}
-              </div>
+              {isFiltersOpen ? (
+                <ChevronUp className='h-4 w-4 text-muted-foreground shrink-0' />
+              ) : (
+                <ChevronDown className='h-4 w-4 text-muted-foreground shrink-0' />
+              )}
             </Button>
 
             <CollapsibleContent>
-              <CardContent className='px-4 pb-4'>
-                <div className='flex flex-col gap-4 w-full'>
-                  {/* Campos de filtro */}
-                  <div className='flex flex-col sm:flex-row gap-4 w-full'>
-                    {/* Periodo */}
-                    <div className='flex-1 min-w-0 mt-2'>
-                      <Label className='text-sm font-medium flex items-center gap-2 mb-1'>
-                        <CalendarIcon className='w-4 h-4' />
-                        Periodo
-                      </Label>
-                      {periodoAbierto && periodoAbierto.length > 0 ? (
-                        <div
-                          id='periodo-info'
-                          className='p-3 rounded-xl bg-background border border-border'
-                        >
-                          <div className='flex items-center gap-3'>
-                            <div className='w-8 h-8 bg-primary/10 rounded-xl flex items-center justify-center shrink-0'>
-                              <CalendarIcon className='w-4 h-4 text-primary' />
-                            </div>
-                            <div>
-                              <div className='font-semibold text-sm'>
-                                {periodoAbierto[0].mes
-                                  .toString()
-                                  .padStart(2, '0')}
-                                /{periodoAbierto[0].anio}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className='p-3 rounded-xl bg-muted/50 border border-border'>
-                          <div className='flex items-center gap-3'>
-                            <div className='w-8 h-8 bg-muted rounded-xl flex items-center justify-center shrink-0'>
-                              <AlertCircleIcon className='w-4 h-4 text-muted-foreground' />
-                            </div>
-                            <div>
-                              <div className='font-medium text-sm'>
-                                No hay periodo abierto
-                              </div>
-                              <p className='text-xs text-muted-foreground'>
-                                Contacte al administrador del sistema
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Ciclo de facturación */}
-                    <div className='flex-1 min-w-0'>
-                      <Label className='text-sm font-medium flex items-center gap-2 mb-1'>
-                        <FileTextIcon className='w-4 h-4' />
-                        Ciclo de Facturación
-                      </Label>
-                      <div className='p-3 rounded-xl bg-background border border-border'>
-                        <div className='flex items-center gap-3'>
-                          <div className='w-8 h-8 bg-emerald-50 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center shrink-0'>
-                            <CheckCircle className='w-4 h-4 text-emerald-600 dark:text-emerald-400' />
-                          </div>
-                          <div className='flex-1 min-w-0'>
-                            <div className='font-medium text-sm'>
-                              Ciclo día 15 (Único ciclo normado)
-                            </div>
-                            <p className='text-xs'>
-                              ✓ Ciclo autorizado por normativa vigente
-                            </p>
-                          </div>
-                        </div>
+              <CardContent className='px-4 pt-3 pb-4 border-t border-border space-y-3'>
+                {/* Campos de filtro */}
+                <div className='flex flex-col sm:flex-row gap-3'>
+                  {/* Periodo */}
+                  <div className='flex-1 min-w-0'>
+                    <Label className='text-xs text-muted-foreground flex items-center gap-1.5 mb-1.5'>
+                      <CalendarIcon className='w-3.5 h-3.5' />
+                      Periodo
+                    </Label>
+                    {periodoAbierto && periodoAbierto.length > 0 ? (
+                      <div
+                        id='periodo-info'
+                        className='h-9 px-3 rounded-md bg-muted/40 border border-border flex items-center gap-2'
+                      >
+                        <CalendarIcon className='w-3.5 h-3.5 text-muted-foreground shrink-0' />
+                        <span className='font-medium text-sm'>
+                          {periodoAbierto[0].mes.toString().padStart(2, '0')}/
+                          {periodoAbierto[0].anio}
+                        </span>
                       </div>
+                    ) : (
+                      <div className='h-9 px-3 rounded-md bg-muted/40 border border-border flex items-center gap-2'>
+                        <AlertCircleIcon className='w-3.5 h-3.5 text-muted-foreground shrink-0' />
+                        <span className='text-sm text-muted-foreground'>
+                          Sin periodo abierto
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Ciclo de facturación */}
+                  <div className='flex-1 min-w-0'>
+                    <Label className='text-xs text-muted-foreground flex items-center gap-1.5 mb-1.5'>
+                      <FileTextIcon className='w-3.5 h-3.5' />
+                      Ciclo de Facturación
+                    </Label>
+                    <div className='h-9 px-3 rounded-md bg-muted/40 border border-border flex items-center gap-2'>
+                      <CheckCircle className='w-3.5 h-3.5 text-muted-foreground shrink-0' />
+                      <span className='text-sm truncate'>Ciclo día 15</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Advertencia de precios no confirmados */}
+                {/* Estado de precios */}
                 {!isLoadingValidacion && !preciosConfirmados && (
-                  <div className='p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800'>
-                    <div className='flex items-start gap-2'>
-                      <AlertCircleIcon className='h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0' />
-                      <div className='flex-1'>
-                        <p className='text-sm font-medium text-amber-900 dark:text-amber-100'>
-                          Precios pendientes de confirmación
-                        </p>
-                        <p className='text-xs text-amber-700 dark:text-amber-300 mt-1'>
-                          Debes confirmar {preciosPendientesCount} de{' '}
-                          {totalPrecios} precios en{' '}
-                          <strong>Revisar Precios</strong> antes de procesar
-                          facturas.
-                        </p>
-                        <p className='text-xs text-amber-600 dark:text-amber-400 mt-1'>
-                          ✓ Confirmados: {preciosConfirmadosCount}/
-                          {totalPrecios}
-                        </p>
-                      </div>
+                  <div className='flex items-start gap-2 p-3 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400'>
+                    <AlertCircleIcon className='h-4 w-4 mt-0.5 shrink-0' />
+                    <div>
+                      <p className='text-sm font-medium'>
+                        Precios pendientes de confirmación
+                      </p>
+                      <p className='text-xs mt-0.5 opacity-80'>
+                        Confirma {preciosPendientesCount} de {totalPrecios}{' '}
+                        precios en <strong>Revisar Precios</strong> antes de
+                        continuar. ({preciosConfirmadosCount}/{totalPrecios}{' '}
+                        confirmados)
+                      </p>
                     </div>
                   </div>
                 )}
 
-                {/* Mensaje de precios confirmados */}
                 {!isLoadingValidacion && preciosConfirmados && (
-                  <div className='p-4 rounded-xl bg-linear-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-2 border-emerald-300 dark:border-emerald-700 shadow-sm'>
-                    <div className='flex items-start gap-3'>
-                      <div className='shrink-0 w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-800 flex items-center justify-center'>
-                        <CheckCircle className='h-5 w-5 text-emerald-600 dark:text-emerald-400' />
-                      </div>
-                      <div className='flex-1'>
-                        <p className='text-sm font-semibold text-emerald-900 dark:text-emerald-100 flex items-center gap-2'>
-                          ✓ Sistema listo para procesar
-                        </p>
-                        <p className='text-xs text-emerald-700 dark:text-emerald-300 mt-1.5'>
-                          {totalPrecios} precios confirmados. Haz clic en{' '}
-                          <span className='font-semibold'>
-                            "Preparar Cálculo"
-                          </span>{' '}
-                          para iniciar el procesamiento de facturación.
-                        </p>
-                        <p className='text-xs text-emerald-600 dark:text-emerald-400 mt-2 italic'>
-                          💡 Nota: El proceso puede tardar varios minutos. Una
-                          vez iniciado, espere y luego haga clic en "Ver Cálculo
-                          Facturas".
-                        </p>
-                      </div>
+                  <div className='flex items-center gap-2 p-3 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400'>
+                    <CheckCircle className='h-4 w-4 shrink-0' />
+                    <div>
+                      <p className='text-sm font-medium'>
+                        {totalPrecios} precios confirmados — listo para procesar
+                      </p>
+                      <p className='text-xs mt-0.5 opacity-80'>
+                        El proceso puede tardar varios minutos. Use "Ver Cálculo
+                        Facturas" para consultar los resultados.
+                      </p>
                     </div>
                   </div>
                 )}
 
-                {/* Acciones - Solo Preparar y Ver Cálculo */}
-                <div className='pt-4 border-t border-border'>
-                  <div className='grid grid-cols-2 gap-2'>
-                    {/* Botón principal de preparar cálculo */}
-                    <Button
-                      id='preparar-calculo-btn'
-                      onClick={handleLanzarCalculo}
-                      disabled={
-                        isLaunching ||
-                        !preciosConfirmados ||
-                        isLoadingValidacion
-                      }
-                      variant='default'
-                      size='sm'
-                      title={
-                        !preciosConfirmados
-                          ? 'Debes confirmar todos los precios primero'
-                          : 'Preparar cálculo de facturación'
-                      }
-                      className='bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md'
-                    >
-                      {isLaunching ? (
-                        <>
-                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          <span className='hidden sm:inline'>
-                            Preparando...
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <SearchIcon className='h-4 w-4' />
-                          <span className='hidden sm:inline'>
-                            Preparar Cálculo
-                          </span>
-                          <span className='sm:hidden'>Preparar</span>
-                        </>
-                      )}
-                    </Button>
+                {/* Acciones */}
+                <div className='flex gap-2 pt-1 border-t border-border'>
+                  <Button
+                    id='preparar-calculo-btn'
+                    onClick={handleLanzarCalculo}
+                    disabled={
+                      isLaunching || !preciosConfirmados || isLoadingValidacion
+                    }
+                    variant='default'
+                    size='sm'
+                    title={
+                      !preciosConfirmados
+                        ? 'Debes confirmar todos los precios primero'
+                        : 'Preparar cálculo de facturación'
+                    }
+                  >
+                    {isLaunching ? (
+                      <>
+                        <div className='h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                        <span className='hidden sm:inline'>Preparando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <SearchIcon className='h-4 w-4' />
+                        <span className='hidden sm:inline'>
+                          Preparar Cálculo
+                        </span>
+                        <span className='sm:hidden'>Preparar</span>
+                      </>
+                    )}
+                  </Button>
 
-                    {/* Ver cálculos */}
-                    <Button
-                      id='ver-calculo-btn'
-                      onClick={handleRevisarCalculo}
-                      disabled={
-                        isLoading || !preciosConfirmados || isLoadingValidacion
-                      }
-                      variant='secondary'
-                      size='sm'
-                      title={
-                        !preciosConfirmados
-                          ? 'Debes confirmar todos los precios primero'
-                          : 'Ver cálculos de facturación'
-                      }
-                    >
-                      {isLoading ? (
-                        <>
-                          <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-                          <span className='hidden sm:inline'>Cargando...</span>
-                        </>
-                      ) : (
-                        <>
-                          <FileTextIcon className='h-4 w-4' />
-                          <span className='hidden sm:inline'>
-                            Ver Cálculo Facturas
-                          </span>
-                          <span className='sm:hidden'>Ver Cálculo</span>
-                        </>
-                      )}
-                    </Button>
-                  </div>
+                  <Button
+                    id='ver-calculo-btn'
+                    onClick={handleRevisarCalculo}
+                    disabled={
+                      isLoading || !preciosConfirmados || isLoadingValidacion
+                    }
+                    variant='secondary'
+                    size='sm'
+                    title={
+                      !preciosConfirmados
+                        ? 'Debes confirmar todos los precios primero'
+                        : 'Ver cálculos de facturación'
+                    }
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className='h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
+                        <span className='hidden sm:inline'>Cargando...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileTextIcon className='h-4 w-4' />
+                        <span className='hidden sm:inline'>
+                          Ver Cálculo Facturas
+                        </span>
+                        <span className='sm:hidden'>Ver Cálculo</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </CollapsibleContent>
@@ -513,13 +451,11 @@ export default function RevisarCalculoFacturaComponent({
 
         {/* Resultados */}
         <Card className='border border-border shadow-sm'>
-          <CardHeader className='border-b border-border bg-background p-4'>
-            <div className='flex items-center gap-3'>
-              <div className='w-8 h-8 bg-background rounded-xl flex items-center justify-center'>
-                <TrendingUp className='w-4 h-4' />
-              </div>
+          <CardHeader className='border-b border-border px-4 py-3'>
+            <div className='flex items-center gap-2'>
+              <TrendingUp className='w-4 h-4 text-muted-foreground' />
               <div>
-                <CardTitle className='text-base'>
+                <CardTitle className='text-sm font-medium'>
                   Resultados de Consulta
                 </CardTitle>
                 <CardDescription className='text-xs'>
@@ -666,19 +602,19 @@ export default function RevisarCalculoFacturaComponent({
               }
 
               return (
-                <div className='space-y-6'>
-                  {/* Resumen estadístico (optimizado con useMemo) */}
-                  <div className='grid grid-cols-3 lg:grid-cols-3 gap-4 p-4 bg-background rounded-xl border-border'>
-                    <div className='text-center'>
-                      <div className='text-2xl font-semibold'>
+                <div className='space-y-4'>
+                  {/* Resumen estadístico */}
+                  <div className='grid grid-cols-3 divide-x divide-border border border-border rounded-md'>
+                    <div className='px-4 py-3 text-center'>
+                      <div className='text-xl font-semibold tabular-nums'>
                         {estadisticas.totalRegistros}
                       </div>
-                      <div className='text-xs font-medium'>
+                      <div className='text-xs text-muted-foreground mt-0.5'>
                         Lecturas Cerradas
                       </div>
                     </div>
-                    <div className='text-center'>
-                      <div className='text-xl font-semibold'>
+                    <div className='px-4 py-3 text-center'>
+                      <div className='text-lg font-semibold tabular-nums'>
                         {new Intl.NumberFormat('es-CL', {
                           style: 'currency',
                           currency: 'CLP',
@@ -686,19 +622,23 @@ export default function RevisarCalculoFacturaComponent({
                           maximumFractionDigits: 0
                         }).format(estadisticas.totalFacturado)}
                       </div>
-                      <div className='text-xs font-medium'>Total Facturado</div>
+                      <div className='text-xs text-muted-foreground mt-0.5'>
+                        Total Facturado
+                      </div>
                     </div>
-                    <div className='text-center'>
-                      <div className='text-2xl font-semibold'>
+                    <div className='px-4 py-3 text-center'>
+                      <div className='text-xl font-semibold tabular-nums'>
                         {estadisticas.totalConsumo.toLocaleString('es-CL')}
                       </div>
-                      <div className='text-xs font-medium'>Consumo Kwh</div>
+                      <div className='text-xs text-muted-foreground mt-0.5'>
+                        Consumo kWh
+                      </div>
                     </div>
                   </div>
 
                   {/* Barra de búsqueda */}
                   <div className='relative'>
-                    <SearchIcon className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400' />
+                    <SearchIcon className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground' />
                     <Input
                       type='text'
                       placeholder='Buscar por contrato, nombre, RUT, dirección...'
@@ -707,63 +647,58 @@ export default function RevisarCalculoFacturaComponent({
                       className='pl-10'
                     />
                     {searchTerm && (
-                      <div className='absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-muted-foreground'>
-                        {filteredData.length} de {data.length}
-                      </div>
+                      <span className='absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                        {filteredData.length}/{data.length}
+                      </span>
                     )}
                   </div>
 
                   {/* Contratos seleccionados */}
                   {selectedContratos.length > 0 && (
-                    <div className='p-4 bg-muted/50 border border-border rounded-xl'>
-                      <div className='flex items-center gap-2 mb-3'>
-                        <FileTextIcon className='h-4 w-4 text-primary' />
-                        <h4 className='font-medium text-foreground'>
-                          Contratos Seleccionados ({selectedContratos.length})
-                        </h4>
+                    <div className='px-3 py-2.5 bg-muted/40 border border-border rounded-md'>
+                      <div className='flex items-center gap-1.5 mb-2'>
+                        <FileTextIcon className='h-3.5 w-3.5 text-muted-foreground' />
+                        <span className='text-xs font-medium text-muted-foreground'>
+                          {selectedContratos.length} seleccionados
+                        </span>
                       </div>
-                      <div className='flex flex-wrap gap-2'>
+                      <div className='flex flex-wrap gap-1.5'>
                         {selectedContratos.slice(0, 20).map(lecturaId => (
                           <Badge
                             key={lecturaId}
                             variant='outline'
-                            className='bg-primary/10 text-primary border-primary/20'
+                            className='text-xs h-5'
                           >
-                            Lectura: {lecturaId}
+                            {lecturaId}
                           </Badge>
                         ))}
                         {selectedContratos.length > 20 && (
-                          <Badge variant='secondary'>
-                            +{selectedContratos.length - 20} más
+                          <Badge variant='secondary' className='text-xs h-5'>
+                            +{selectedContratos.length - 20}
                           </Badge>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* Encabezado de tabla */}
-                  <div className='flex items-center justify-between py-3 border-b border-border'>
-                    <div className='flex items-center gap-2'>
-                      <FileTextIcon className='h-4 w-4' />
-                      <span className='font-medium'>
-                        {filteredData.length} registros
-                        {searchTerm && ` (de ${data.length} total)`}
-                      </span>
-                    </div>
-                    <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                  {/* Info tabla */}
+                  <div className='flex items-center justify-between text-xs text-muted-foreground'>
+                    <span>
+                      {filteredData.length} registros
+                      {searchTerm && ` de ${data.length}`}
+                    </span>
+                    <span className='flex items-center gap-1'>
                       <ChevronRight className='h-3 w-3' />
-                      <span>Expandir para ver detalles</span>
-                    </div>
+                      Expandir fila para ver detalles
+                    </span>
                   </div>
 
                   {/* Tabla de datos */}
-                  <div>
-                    <HierarchicalDataTable
-                      columns={columns}
-                      data={filteredData}
-                      onSelectionChange={handleSelectionChange}
-                    />
-                  </div>
+                  <HierarchicalDataTable
+                    columns={columns}
+                    data={filteredData}
+                    onSelectionChange={handleSelectionChange}
+                  />
                 </div>
               );
             })()}
@@ -771,8 +706,10 @@ export default function RevisarCalculoFacturaComponent({
         </Card>
 
         {/* Barra de acciones flotante (drawer desde la derecha) */}
-        <div className={`fixed top-1/3 right-0 z-50 flex items-start transition-transform 
-                         duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-[calc(100%-2.5rem)]'}`}>
+        <div
+          className={`fixed top-1/3 right-0 z-50 flex items-start transition-transform
+                         duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-[calc(100%-2.5rem)]'}`}
+        >
           {/* Botón de control del menú (siempre visible en el borde) */}
           <Button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -793,19 +730,12 @@ export default function RevisarCalculoFacturaComponent({
           </Button>
 
           {/* Contenedor del menú que se desliza */}
-          <div
-            className="flex flex-col gap-2 bg-background/95 backdrop-blur-sm border border-border rounded-l-lg p-2 shadow-xl"
-          >
-            {/* Tooltip flotante para Aceptar */}
+          <div className='flex flex-col gap-1.5 bg-background border border-border rounded-l-lg p-2 shadow-lg'>
+            {/* Indicador de selección */}
             {selectedContratos.length > 0 && isMenuOpen && (
-              <div className='absolute -left-48 top-0 bg-zinc-800 dark:bg-zinc-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
-                <div className='flex items-center gap-2'>
-                  <CheckCircle className='h-4 w-4' />
-                  <span>
-                    Aceptar {selectedContratos.length}{' '}
-                    {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
-                  </span>
-                </div>
+              <div className='absolute -left-36 top-0 bg-popover border border-border text-popover-foreground px-3 py-1.5 rounded-md shadow-md text-xs font-medium whitespace-nowrap'>
+                {selectedContratos.length}{' '}
+                {selectedContratos.length === 1 ? 'cálculo' : 'cálculos'}
               </div>
             )}
 
@@ -818,7 +748,6 @@ export default function RevisarCalculoFacturaComponent({
               }
               variant='default'
               size='sm'
-              className='bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white'
               title={
                 !hasPermission
                   ? 'No tiene permisos para aceptar cálculos'
@@ -828,7 +757,7 @@ export default function RevisarCalculoFacturaComponent({
               }
             >
               {isAccepting ? (
-                <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+                <div className='h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
               ) : (
                 <CheckCircle className='h-4 w-4' />
               )}
@@ -856,7 +785,6 @@ export default function RevisarCalculoFacturaComponent({
               disabled={isLoading}
               variant='outline'
               size='sm'
-              className='border-rose-300 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-700 dark:hover:bg-rose-900/20 dark:hover:text-rose-400'
               title='Limpiar filtros y selecciones'
             >
               <Plus className='h-4 w-4 rotate-45' />
@@ -875,7 +803,6 @@ export default function RevisarCalculoFacturaComponent({
               disabled={filteredData.length === 0 || isLoading}
               variant='outline'
               size='sm'
-              className='border-emerald-300 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-700 dark:hover:bg-emerald-900/20 dark:hover:text-emerald-400'
               title='Exportar datos'
             >
               <FileSpreadsheet className='h-4 w-4' />
@@ -883,6 +810,6 @@ export default function RevisarCalculoFacturaComponent({
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 }
