@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: https://enerlovauat.mmlovalledor.cl/Enerlova
+        VITE_API_URL: https://uat-enerlova.mmlovalledor.cl/Enerlova
         VITE_APP_ENV: test
     environment:
       - NODE_ENV=production
