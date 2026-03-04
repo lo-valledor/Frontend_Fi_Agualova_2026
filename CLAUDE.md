@@ -15,12 +15,16 @@ pnpm build                # Build de producción
 pnpm start                # Servir build de producción
 pnpm test                 # Ejecutar tests (modo watch)
 pnpm test:run             # Ejecutar tests una vez
+pnpm test:ui              # Vitest UI (interfaz visual de tests en navegador)
 pnpm test:coverage        # Tests con cobertura (v8, reporters: text/json/html/lcov)
 pnpm vitest run app/utils/auth-utils.test.ts  # Test individual
 pnpm lint                 # ESLint
 pnpm lint:fix             # ESLint con auto-fix
+pnpm format               # Prettier (formatear todos los archivos)
+pnpm format:check         # Verificar formato sin modificar
 pnpm typecheck            # Generar tipos de React Router (typegen) + tsc
 pnpm ci                   # Pipeline completo: typecheck + lint + test + build
+pnpm quality:check        # lint + typecheck + test con cobertura
 pnpm build:analyze        # Build + visualizer de bundles (abre stats.html)
 ```
 
@@ -34,11 +38,15 @@ pnpm build:analyze        # Build + visualizer de bundles (abre stats.html)
 - **Tablas**: @tanstack/react-table + @tanstack/react-virtual (virtualización)
 - **Gráficos**: recharts
 - **HTTP**: axios (instancia centralizada con interceptores en `services/axiosConfig.ts`)
+- **Drag & Drop**: @dnd-kit/core + @dnd-kit/sortable
+- **Command Palette**: cmdk
+- **Paneles redimensionables**: react-resizable-panels
+- **Select avanzado**: react-select (estilos custom en `components/shared/react-select-styles.tsx`)
 - **Exportación**: xlsx (SheetJS desde CDN tgz), jspdf + jspdf-autotable
 - **Animaciones**: motion (framer-motion), driver.js (tours interactivos)
 - **Testing**: vitest + jsdom + @testing-library/react + msw
 - **Linting**: ESLint 9 flat config + typescript-eslint + unused-imports + jsdoc
-- **Formatting**: Prettier con plugin tailwindcss + sort-imports
+- **Formatting**: Prettier con plugin tailwindcss + sort-imports (single quotes, no trailing comma, `arrowParens: avoid`, `jsxSingleQuote: true` en TSX)
 - **Git hooks**: husky
 
 ## Arquitectura
@@ -65,7 +73,7 @@ pnpm build:analyze        # Build + visualizer de bundles (abre stats.html)
 
 Los servicios están en transición de archivos monolíticos a módulos especializados en subdirectorios:
 
-- **`services/core/`** — `BaseApiService` (clase base), `api-response.ts` (tipos `ServiceResponse<T>`), `api-processing.ts` (procesamiento de respuestas).
+- **`services/core/`** — `base-service.ts` (`BaseApiService` clase base con `executeOperation`/`executeDataOperation`), `api-response.ts` (tipos `ServiceResponse<T>`, constructores `successResponse`/`errorResponse`), `api-processing.ts` (procesamiento de respuestas).
 - **Subdirectorios refactorizados**: `administration/`, `operations/`, `reportes/`, `mantencion/`, `roles-permisos/`, `auto-insertion/`. Cada uno tiene su `index.ts` barrel, `types.ts`, y servicios especializados.
 - **Archivos legacy** (raíz de `services/`): `administracionService.ts`, `operacionesService.ts`, etc. — coexisten con los refactorizados.
 - **Barrel principal** (`services/index.ts`): exporta todo con aliases de backward-compatibility (e.g. `administracionService` → `administrationServices`).

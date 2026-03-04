@@ -1,4 +1,5 @@
-import { Plus } from 'lucide-react';
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
 import { toast } from 'sonner';
 
 import { useCallback, useState } from 'react';
@@ -10,7 +11,13 @@ import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card';
 import {
   type ClientFilters,
   useClientFilters
@@ -180,40 +187,43 @@ export default function ClientesComponent({
     });
   }, []);
 
+  const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
+
   return (
     <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
-        {/* Header con acciones */}
-        <ModernHeader
-          title='Clientes'
-          description='Gestiona los clientes del sistema'
-          actions={
-            <div className='flex gap-2'>
-              <ExportButton
-                data={filteredClients}
-                columns={clientColumns}
-                filename='clientes'
-                size='sm'
-              />
-              <Button
-                onClick={handleAddCliente}
-                variant='default'
-                size='sm'
-                disabled={!permissions.hasCreatePermission}
-                title={
-                  !permissions.hasCreatePermission
-                    ? 'No tiene permisos para crear clientes'
-                    : ''
-                }
-              >
-                <Plus className='mr-2 h-4 w-4' />
-                Agregar Cliente
-              </Button>
-            </div>
-          }
-        />
+      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+        <header>
+          <ModernHeader
+            title='Clientes'
+            description='Gestiona los clientes del sistema'
+            actions={
+              <div className='flex gap-2'>
+                <ExportButton
+                  data={filteredClients}
+                  columns={clientColumns}
+                  filename='clientes'
+                  size='sm'
+                />
+                <Button
+                  onClick={handleAddCliente}
+                  variant='default'
+                  size='sm'
+                  disabled={!permissions.hasCreatePermission}
+                  title={
+                    !permissions.hasCreatePermission
+                      ? 'No tiene permisos para crear clientes'
+                      : ''
+                  }
+                >
+                  <Plus className='mr-2 h-4 w-4' />
+                  Agregar Cliente
+                </Button>
+              </div>
+            }
+          />
+          <div className='industrial-divider mt-4' />
+        </header>
 
-        {/* Componente de filtros */}
         <ClientFiltersComponent
           filters={filters}
           onFiltersChange={handleFiltersChange}
@@ -221,7 +231,6 @@ export default function ClientesComponent({
           filterOptions={filterOptions}
         />
 
-        {/* Resumen de filtros aplicados */}
         <FilterSummary
           totalClients={clients.length}
           filteredClients={filteredClients.length}
@@ -229,26 +238,48 @@ export default function ClientesComponent({
           isFiltered={filterStats.isFiltered}
         />
 
-        {/* Tabla de clientes */}
-        <Card className='border border-border shadow-sm'>
-          <CardContent className='p-4'>
-            <div className='overflow-x-auto'>
-              <VirtualDataTable
-                columns={columns({
-                  onDetails: handleDetailsCliente,
-                  onEdit: handleEditCliente,
-                  editingClienteRut: null,
-                  detailingClienteRut: loadingState.rutLoading,
-                  canEdit: permissions.hasEditPermission
-                })}
-                data={filteredClients}
-                searchPlaceholder='Buscar por RUT, nombre o email...'
-                estimateRowHeight={55}
-                maxHeight='650px'
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: mechanicalEase }}
+        >
+          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
+            <CardHeader className='p-4 pb-3'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
+                  <LayoutList className='h-4 w-4' />
+                </div>
+                <div>
+                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                    Listado de Clientes
+                  </CardTitle>
+                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                    {filteredClients.length} cliente
+                    {filteredClients.length !== 1 ? 's' : ''}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <div className='industrial-divider' />
+            <CardContent className='p-4'>
+              <div className='overflow-x-auto -mx-1'>
+                <VirtualDataTable
+                  columns={columns({
+                    onDetails: handleDetailsCliente,
+                    onEdit: handleEditCliente,
+                    editingClienteRut: null,
+                    detailingClienteRut: loadingState.rutLoading,
+                    canEdit: permissions.hasEditPermission
+                  })}
+                  data={filteredClients}
+                  searchPlaceholder='Buscar por RUT, nombre o email...'
+                  estimateRowHeight={55}
+                  maxHeight='650px'
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Modal de detalles de cliente */}
         <ClienteDetailsModal

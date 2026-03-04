@@ -1,13 +1,5 @@
-import {
-  //Activity,
-  ArrowLeft,
-  //DollarSign,
-  FileText,
-  Settings,
-  TrendingUp,
-  User
-} from 'lucide-react';
-
+import { ArrowLeft, FileText, Settings, TrendingUp, User } from 'lucide-react';
+import { motion } from 'motion/react';
 import { memo, useMemo, useState } from 'react';
 
 import NumberFlow from '@number-flow/react';
@@ -16,7 +8,6 @@ import { useNavigate } from 'react-router';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Separator } from '~/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import type {
   DetalleCliente,
@@ -34,6 +25,7 @@ import EnergyConsumptionDashboard from './facturas/energy-consumption-dashboard'
 import FacturasAnalyticsSimple from './facturas-analytics-simple';
 import InformacionContrato from './informacion-contrato';
 import LecturasAnalyticsSimple from './lecturas-analytics-simple';
+import { Separator } from '~/components/ui/separator';
 
 interface ContratoComponentProps {
   detallesContrato: {
@@ -99,60 +91,70 @@ const ContratoComponent = memo(function ContratoComponent({
     navigate('/dashboard/reportes/consultar-contrato');
   };
 
+  const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
+
   return (
     <div className='min-h-screen bg-background'>
-      <div className='container mx-auto px-3 sm:px-4 lg:px-6 py-4 space-y-4 sm:space-y-6'>
-        {/* Header con navegación y estadísticas */}
-        <div className='space-y-4'>
-          {/* Botón de navegación */}
-          <div className='flex items-center gap-2'>
-            <Button
-              variant='ghost'
-              size='sm'
-              onClick={handleGoBack}
-              className='gap-2 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
-            >
-              <ArrowLeft className='h-4 w-4' />
-              Volver a Consultar Contratos Activos
-            </Button>
-          </div>
+      <div className='container mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-6'>
+        {/* Navegación y header industrial */}
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: mechanicalEase }}
+          className='space-y-4'
+        >
+          <Button
+            variant='ghost'
+            size='sm'
+            onClick={handleGoBack}
+            className='gap-2 text-muted-foreground hover:text-foreground'
+          >
+            <ArrowLeft className='h-4 w-4' />
+            Volver a Consultar Contratos Activos
+          </Button>
 
-          {/* Header principal mejorado */}
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 sm:pb-4 border-b border-border space-y-2 sm:space-y-0'>
-            <div className='text-center sm:text-left'>
-              <div className='flex items-center gap-2 justify-center sm:justify-start mb-2'>
-                <FileText className='h-5 w-5 text-blue-600' />
-                <h1 className='text-lg sm:text-xl lg:text-2xl font-semibold'>
+          <div className='industrial-divider' />
+
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+            <div className='flex items-center gap-3 min-w-0'>
+              <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
+                <FileText className='h-5 w-5' />
+              </div>
+              <div className='min-w-0'>
+                <h1 className='text-lg sm:text-xl font-semibold truncate'>
                   Contrato {contratoInfo?.contratoId}
                 </h1>
-                {contratoInfo?.estadoContrato && (
-                  <Badge
-                    variant={
-                      contratoInfo.estadoContrato === 'Activo'
-                        ? 'default'
-                        : 'secondary'
-                    }
-                  >
-                    {contratoInfo.estadoContrato}
-                  </Badge>
-                )}
+                <p className='text-xs text-muted-foreground mt-0.5'>
+                  {propietarioInfo?.nombre} • {localInfo?.empresa}
+                </p>
               </div>
-              <p className='text-xs sm:text-sm'>
-                {propietarioInfo?.nombre} • {localInfo?.empresa}
-              </p>
+              {contratoInfo?.estadoContrato && (
+                <Badge
+                  variant={
+                    contratoInfo.estadoContrato === 'Activo'
+                      ? 'default'
+                      : 'secondary'
+                  }
+                  className='shrink-0'
+                >
+                  {contratoInfo.estadoContrato}
+                </Badge>
+              )}
             </div>
 
-            {/* Estadísticas rápidas con colores mejorados */}
-            <div className='flex items-center gap-4 text-xs sm:text-sm'>
+            <div className='flex items-center gap-6 sm:gap-8 pl-0 sm:pl-4'>
               <div className='text-center'>
-                <div className='font-semibold'>
+                <div className='font-semibold tabular-nums text-foreground'>
                   <NumberFlow value={estadisticasHeader.totalFacturas} />
                 </div>
-                <div className='text-slate-500'>Facturas</div>
+                <div className='sidebar-section-label mt-0.5'>Facturas</div>
               </div>
-              <Separator orientation='vertical' className='h-8' />
+              <div
+                className='hidden sm:block w-px self-stretch min-h-10 bg-border'
+                role='separator'
+              />
               <div className='text-center'>
-                <div className='font-semibold'>
+                <div className='font-semibold tabular-nums text-foreground'>
                   <NumberFlow
                     value={estadisticasHeader.totalConsumo}
                     format={{
@@ -163,11 +165,16 @@ const ContratoComponent = memo(function ContratoComponent({
                   />{' '}
                   kWh
                 </div>
-                <div className='text-slate-500'>Consumo Total</div>
+                <div className='sidebar-section-label mt-0.5'>
+                  Consumo Total
+                </div>
               </div>
-              <Separator orientation='vertical' className='h-8' />
+              <div
+                className='hidden sm:block w-px self-stretch min-h-10 bg-border'
+                role='separator'
+              />
               <div className='text-center'>
-                <div className='font-semibold'>
+                <div className='font-semibold tabular-nums text-foreground'>
                   $
                   <NumberFlow
                     value={estadisticasHeader.totalFacturado}
@@ -178,19 +185,20 @@ const ContratoComponent = memo(function ContratoComponent({
                     locales='es-CL'
                   />
                 </div>
-                <div className='text-slate-500'>Facturado</div>
+                <div className='sidebar-section-label mt-0.5'>Facturado</div>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Tabs Container */}
+        <div className='industrial-divider' />
+
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
           className='space-y-4'
         >
-          <TabsList className='grid w-full grid-cols-2 sm:grid-cols-4 h-auto sm:h-11 gap-1 p-1'>
+          <TabsList className='grid w-full grid-cols-2 sm:grid-cols-4 h-auto sm:h-11 gap-1 p-1 bg-muted/50 border border-border'>
             <TabsTrigger value='resumen' className='gap-2 h-10 sm:h-9'>
               <User className='h-4 w-4 shrink-0' />
               <span className='hidden sm:inline'>Información</span>

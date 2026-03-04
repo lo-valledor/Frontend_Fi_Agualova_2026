@@ -170,7 +170,7 @@ describe('AcometidaComponent', () => {
         </MemoryRouter>
       );
 
-      expect(screen.getByText('2 registros')).toBeInTheDocument();
+      expect(screen.getByText('2 acometidas')).toBeInTheDocument();
     });
   });
 
@@ -259,7 +259,7 @@ describe('AcometidaComponent', () => {
       expect(
         screen.getByText('No se encontraron resultados.')
       ).toBeInTheDocument();
-      expect(screen.getByText('0 registros')).toBeInTheDocument();
+      expect(screen.getByText('0 acometidas')).toBeInTheDocument();
     });
   });
 
@@ -271,9 +271,8 @@ describe('AcometidaComponent', () => {
         </MemoryRouter>
       );
 
-      // Verificar que el resumen de filtros está presente
-      // Esto depende de cómo está implementado FilterSummary
-      expect(screen.getByText(/registros/i)).toBeInTheDocument();
+      // Verificar que el panel de filtros y el listado están presentes
+      expect(screen.getByText('Listado de Acometidas')).toBeInTheDocument();
     });
   });
 });

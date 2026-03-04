@@ -221,9 +221,9 @@ describe('RevisarCalculoFacturaComponent', () => {
       />
     );
 
-    expect(
-      screen.getByText('No hay periodo abierto')
-    ).toBeInTheDocument();
+    const sinPeriodo = screen.getByTestId('sin-periodo-abierto');
+    expect(sinPeriodo).toBeInTheDocument();
+    expect(sinPeriodo).toHaveTextContent('Sin periodo abierto');
   });
 
   it('debería mostrar estructura principal correctamente', () => {

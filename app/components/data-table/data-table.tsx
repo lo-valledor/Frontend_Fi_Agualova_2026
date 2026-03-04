@@ -111,9 +111,6 @@ export function DataTable<TData, TValue>({
       {/* Global Search */}
       {showSearch && (
         <div className='flex justify-between items-center'>
-          <div className='text-sm text-muted-foreground'>
-            {table.getFilteredRowModel().rows.length} registros
-          </div>
           <div className='relative w-64'>
             <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
             <Input
@@ -132,7 +129,10 @@ export function DataTable<TData, TValue>({
           <table className='w-full caption-bottom text-sm'>
             <TableHeader className='sticky top-0 z-10 bg-background'>
               {table.getHeaderGroups().map(headerGroup => (
-                <TableRow key={headerGroup.id} className='hover:bg-transparent border-b'>
+                <TableRow
+                  key={headerGroup.id}
+                  className='hover:bg-transparent border-b'
+                >
                   {headerGroup.headers.map(header => (
                     <TableHead
                       key={header.id}
@@ -158,7 +158,10 @@ export function DataTable<TData, TValue>({
                     data-state={row.getIsSelected() && 'selected'}
                   >
                     {row.getVisibleCells().map(cell => (
-                      <TableCell key={cell.id} className='h-10 px-3 py-1 text-sm'>
+                      <TableCell
+                        key={cell.id}
+                        className='h-10 px-3 py-1 text-sm'
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

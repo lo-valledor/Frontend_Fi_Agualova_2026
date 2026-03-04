@@ -1,7 +1,8 @@
-import { Plus, Filter, X } from 'lucide-react';
+import { Filter, LayoutList, Plus, X } from 'lucide-react';
+import { motion } from 'motion/react';
 import { toast } from 'sonner';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
@@ -10,7 +11,13 @@ import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card';
 import { Label } from '~/components/ui/label';
 import {
   Select,
@@ -116,12 +123,12 @@ export default function CargoTipoContratoComponent({
 
   return (
     <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
-        <ModernHeader
-          title='Cargo Tipo Contrato'
-          description='Gestiona las relaciones entre cargos y tipos de contrato'
-          actions={
-            <div className='flex gap-2'>
+      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+        <header>
+          <ModernHeader
+            title='Cargo Tipo Contrato'
+            description='Gestiona las relaciones entre cargos y tipos de contrato'
+            actions={
               <Button
                 onClick={handleAdd}
                 variant='default'
@@ -136,18 +143,41 @@ export default function CargoTipoContratoComponent({
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Cargo Tipo Contrato
               </Button>
-            </div>
-          }
-        />
-        <Card className='border border-border shadow-sm'>
-          <CardContent className='relative p-4'>
-            {isLoading && (
-              <div className='absolute inset-0 bg-background flex items-center justify-center rounded-xl z-10'>
-                <LoadingSpinner />
+            }
+          />
+          <div className='industrial-divider mt-4' />
+        </header>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+        >
+          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
+            <CardHeader className='p-4 pb-3'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
+                  <LayoutList className='h-4 w-4' />
+                </div>
+                <div>
+                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                    Listado de Cargos Tipo Contrato
+                  </CardTitle>
+                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                    {filteredData.length} registro
+                    {filteredData.length !== 1 ? 's' : ''}
+                  </CardDescription>
+                </div>
               </div>
-            )}
-            {/* Filtros */}
-            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4'>
+            </CardHeader>
+            <div className='industrial-divider' />
+            <CardContent className='relative p-4'>
+              {isLoading && (
+                <div className='absolute inset-0 bg-background flex items-center justify-center rounded-xl z-10'>
+                  <LoadingSpinner />
+                </div>
+              )}
+              <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4'>
               <div className='text-sm text-muted-foreground'>
                 Mostrando {filteredData.length} de {data.length} registros
               </div>
@@ -205,8 +235,9 @@ export default function CargoTipoContratoComponent({
               estimateRowHeight={60}
               maxHeight='600px'
             />
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         <DeleteDialog
           isOpen={isDeleteDialogOpen}

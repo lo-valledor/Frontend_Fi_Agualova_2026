@@ -24,12 +24,7 @@ import { Link } from 'react-router';
 import { usePrefetchMultiple } from '~/hooks/shared/use-prefetch';
 
 import { Badge } from '~/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
   type ChartConfig,
   ChartContainer,
@@ -63,7 +58,7 @@ const quickActions = [
     title: 'Periodo Facturación',
     description: 'Gestionar periodos activos',
     icon: Settings,
-    accent: 'border-chart-3 text-chart-3',
+    accent: 'border-chart-3 text-slate-800 dark:border-chart-3 dark:text-white',
     href: '/dashboard/operaciones/periodo-facturacion'
   },
   {
@@ -77,7 +72,8 @@ const quickActions = [
     title: 'Registrar Medidor',
     description: 'Añadir medidor al inventario',
     icon: Package,
-    accent: 'border-chart-4 text-chart-4',
+    accent:
+      'border-chart-4 text-purple-800 dark:border-chart-4 dark:text-white',
     href: '/dashboard/administracion/medidores/crear'
   },
   {
@@ -415,10 +411,7 @@ const AdminAnalyticsComponent = React.memo(() => {
                     </span>
                   </div>
                   <span className='text-sm font-bold font-mono tabular-nums shrink-0'>
-                    <NumberFlow
-                      value={item.cantidad}
-                      plugins={[continuous]}
-                    />
+                    <NumberFlow value={item.cantidad} plugins={[continuous]} />
                   </span>
                 </div>
               ))}
@@ -471,10 +464,7 @@ const AdminAnalyticsComponent = React.memo(() => {
                     </span>
                   </div>
                   <span className='text-sm font-bold font-mono tabular-nums'>
-                    <NumberFlow
-                      value={item.cantidad}
-                      plugins={[continuous]}
-                    />
+                    <NumberFlow value={item.cantidad} plugins={[continuous]} />
                   </span>
                 </div>
               ))}
@@ -516,10 +506,7 @@ const AdminAnalyticsComponent = React.memo(() => {
                         <span className='truncate'>{tipo}</span>
                       </div>
                       <span className='font-bold font-mono tabular-nums shrink-0'>
-                        <NumberFlow
-                          value={cantidad}
-                          plugins={[continuous]}
-                        />
+                        <NumberFlow value={cantidad} plugins={[continuous]} />
                       </span>
                     </div>
                   ))}
@@ -553,10 +540,7 @@ const AdminAnalyticsComponent = React.memo(() => {
                         </span>
                       </Badge>
                       <span className='font-bold font-mono tabular-nums shrink-0'>
-                        <NumberFlow
-                          value={cantidad}
-                          plugins={[continuous]}
-                        />
+                        <NumberFlow value={cantidad} plugins={[continuous]} />
                       </span>
                     </div>
                   ))}
@@ -616,10 +600,7 @@ const AdminAnalyticsComponent = React.memo(() => {
                     </span>
                   </div>
                   <span className='text-sm font-bold font-mono tabular-nums shrink-0'>
-                    <NumberFlow
-                      value={item.cantidad}
-                      plugins={[continuous]}
-                    />
+                    <NumberFlow value={item.cantidad} plugins={[continuous]} />
                   </span>
                 </div>
               ))}
