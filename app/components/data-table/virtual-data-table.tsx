@@ -99,9 +99,6 @@ export function VirtualDataTable<TData, TValue>({
     <div className='space-y-4'>
       {/* Search */}
       <div className='flex justify-between items-center'>
-        <div className='text-sm text-muted-foreground'>
-          {rows.length} registros
-        </div>
         <div className='relative w-64'>
           <Search className='absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
           <Input

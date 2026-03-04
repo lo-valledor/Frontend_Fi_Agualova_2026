@@ -1,4 +1,5 @@
-import { Plus } from 'lucide-react';
+import { LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
 import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -10,7 +11,13 @@ import { LoadingSpinner } from '~/components/loading-spinner';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card';
 import { useExportMedidores } from '~/hooks/administracion/use-export-medidores';
 import { useMedidorFilters } from '~/hooks/administracion/use-medidor-filters';
 import api from '~/lib/api';
@@ -199,10 +206,12 @@ export default function MedidoresComponent({
     }
   }, [selectedMedidor, refetchMedidores]);
 
+  const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
+
   if (isFetching && medidores.length === 0) {
     return (
       <div className='min-h-screen bg-background'>
-        <div className='container mx-auto p-3'>
+        <div className='container mx-auto p-4 sm:p-6'>
           <div className='flex items-center justify-center py-12 sm:py-20'>
             <LoadingSpinner />
           </div>
@@ -213,38 +222,39 @@ export default function MedidoresComponent({
 
   return (
     <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
-        {/* Header con acciones */}
-        <ModernHeader
-          title='Medidores'
-          description='Gestiona los medidores del sistema'
-          actions={
-            <div className='flex gap-2'>
-              <ExportButton
-                data={filteredMedidores}
-                columns={medidorColumns}
-                filename='medidores'
-                size='sm'
-              />
-              <Button
-                onClick={handleAdd}
-                variant='default'
-                size='sm'
-                disabled={!permissions.hasCreatePermission}
-                title={
-                  !permissions.hasCreatePermission
-                    ? 'No tiene permisos para crear medidores'
-                    : ''
-                }
-              >
-                <Plus className='mr-2 h-4 w-4' />
-                Agregar Medidor
-              </Button>
-            </div>
-          }
-        />
+      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+        <header>
+          <ModernHeader
+            title='Medidores'
+            description='Gestiona los medidores del sistema'
+            actions={
+              <div className='flex gap-2'>
+                <ExportButton
+                  data={filteredMedidores}
+                  columns={medidorColumns}
+                  filename='medidores'
+                  size='sm'
+                />
+                <Button
+                  onClick={handleAdd}
+                  variant='default'
+                  size='sm'
+                  disabled={!permissions.hasCreatePermission}
+                  title={
+                    !permissions.hasCreatePermission
+                      ? 'No tiene permisos para crear medidores'
+                      : ''
+                  }
+                >
+                  <Plus className='mr-2 h-4 w-4' />
+                  Agregar Medidor
+                </Button>
+              </div>
+            }
+          />
+          <div className='industrial-divider mt-4' />
+        </header>
 
-        {/* Filtros */}
         <MedidorFiltersComponent
           filters={filters}
           onFiltersChange={handleFiltersChange}
@@ -252,7 +262,6 @@ export default function MedidoresComponent({
           filterOptions={filterOptions}
         />
 
-        {/* Resumen de filtros */}
         <FilterSummary
           totalMedidores={filterStats.total}
           filteredMedidores={filterStats.filtered}
@@ -260,16 +269,37 @@ export default function MedidoresComponent({
           isFiltered={filterStats.isFiltered}
         />
 
-        {/* Tabla */}
-        <Card className='border border-border shadow-sm'>
-          <CardContent className='relative p-2 sm:p-4 lg:p-6'>
-            {isFetching && (
-              <div className='absolute inset-0 bg-background flex items-center justify-center rounded-xl z-10'>
-                <LoadingSpinner />
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: mechanicalEase }}
+        >
+          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
+            <CardHeader className='p-4 pb-3'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
+                  <LayoutList className='h-4 w-4' />
+                </div>
+                <div>
+                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                    Listado de Medidores
+                  </CardTitle>
+                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                    {filteredMedidores.length} medidor
+                    {filteredMedidores.length !== 1 ? 'es' : ''}
+                  </CardDescription>
+                </div>
               </div>
-            )}
-            <div className='overflow-x-auto'>
-              <VirtualDataTable
+            </CardHeader>
+            <div className='industrial-divider' />
+            <CardContent className='relative p-4'>
+              {isFetching && (
+                <div className='absolute inset-0 bg-background flex items-center justify-center rounded-xl z-10'>
+                  <LoadingSpinner />
+                </div>
+              )}
+              <div className='overflow-x-auto -mx-1'>
+                <VirtualDataTable
                 columns={columns({
                   onEdit: handleEdit,
                   onAsociarSubempalme: handleAsociarSubempalme,
@@ -280,10 +310,11 @@ export default function MedidoresComponent({
                 searchPlaceholder='Buscar por número de serie, local o acometida...'
                 estimateRowHeight={55}
                 maxHeight='650px'
-              />
-            </div>
-          </CardContent>
-        </Card>
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Diálogo de confirmación de eliminación */}
         <DeleteConfirmationDialog

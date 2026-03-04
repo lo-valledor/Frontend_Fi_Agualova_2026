@@ -1,4 +1,5 @@
-import { FileText, Plus } from 'lucide-react';
+import { FileText, LayoutList, Plus } from 'lucide-react';
+import { motion } from 'motion/react';
 
 import { useCallback, useMemo, useState } from 'react';
 
@@ -8,7 +9,13 @@ import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '~/components/ui/card';
 import { useContractFilters } from '~/hooks/administracion/use-contract-filters';
 import type { ContratoModalState, GetContratos } from '~/types/administracion';
 import {
@@ -188,41 +195,42 @@ export default function ContratosComponent({
     ]
   );
 
+  const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
+
   return (
     <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
-        {/* Header con acciones */}
-        <ModernHeader
-          title='Contratos'
-          description='Gestiona los contratos del sistema'
-          actions={
-            <div className='flex items-center gap-2'>
-              <ExportButtons
-                allContratos={contracts}
-                filteredContratos={filteredContracts}
-                isFiltered={filterStats.isFiltered}
-              />
-              <Button
-                onClick={handleAddContract}
-                variant='default'
-                size='sm'
-                disabled={!permissions.hasCreatePermission}
-                title={
-                  !permissions.hasCreatePermission
-                    ? 'No tiene permisos para crear contratos'
-                    : ''
-                }
-              >
-                <Plus className='mr-2 h-4 w-4' />
-                Agregar Contrato
-              </Button>
-            </div>
-          }
-        />
+      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+        <header>
+          <ModernHeader
+            title='Contratos'
+            description='Gestiona los contratos del sistema'
+            actions={
+              <div className='flex items-center gap-2'>
+                <ExportButtons
+                  allContratos={contracts}
+                  filteredContratos={filteredContracts}
+                  isFiltered={filterStats.isFiltered}
+                />
+                <Button
+                  onClick={handleAddContract}
+                  variant='default'
+                  size='sm'
+                  disabled={!permissions.hasCreatePermission}
+                  title={
+                    !permissions.hasCreatePermission
+                      ? 'No tiene permisos para crear contratos'
+                      : ''
+                  }
+                >
+                  <Plus className='mr-2 h-4 w-4' />
+                  Agregar Contrato
+                </Button>
+              </div>
+            }
+          />
+          <div className='industrial-divider mt-4' />
+        </header>
 
-        {/* Stats Cards */}
-
-        {/* Filters */}
         <ContractFiltersComponent
           filters={filters}
           onFiltersChange={handleFiltersChange}
@@ -230,7 +238,6 @@ export default function ContratosComponent({
           filterOptions={filterOptions}
         />
 
-        {/* Filter Summary */}
         <FilterSummary
           totalContracts={contracts.length}
           filteredContracts={filteredContracts.length}
@@ -238,9 +245,30 @@ export default function ContratosComponent({
           isFiltered={filterStats.isFiltered}
         />
 
-        {/* Table */}
-        <Card className='border border-border shadow-sm'>
-          <CardContent className='relative p-2 sm:p-4 lg:p-6'>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: mechanicalEase }}
+        >
+          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
+            <CardHeader className='p-4 pb-3'>
+              <div className='flex items-center gap-3'>
+                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
+                  <LayoutList className='h-4 w-4' />
+                </div>
+                <div>
+                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                    Listado de Contratos
+                  </CardTitle>
+                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                    {filteredContracts.length} contrato
+                    {filteredContracts.length !== 1 ? 's' : ''}
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <div className='industrial-divider' />
+            <CardContent className='relative p-4'>
             {filteredContracts.length === 0 ? (
               <div className='flex flex-col items-center justify-center py-8 sm:py-12'>
                 <div className='flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-linear-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-gray-800 mb-4'>
@@ -271,8 +299,9 @@ export default function ContratosComponent({
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Diálogo de confirmación de eliminación */}
         <DeleteConfirmationDialog

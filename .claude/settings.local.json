@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(gh api:*)",
+      "Bash(pnpm why:*)",
+      "Bash(pnpm update:*)"
     ],
     "deny": [],
     "ask": [],

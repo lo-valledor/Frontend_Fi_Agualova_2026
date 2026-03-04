@@ -327,7 +327,10 @@ export default function RevisarCalculoFacturaComponent({
                         </span>
                       </div>
                     ) : (
-                      <div className='h-9 px-3 rounded-md bg-muted/40 border border-border flex items-center gap-2'>
+                      <div
+                        className='h-9 px-3 rounded-md bg-muted/40 border border-border flex items-center gap-2'
+                        data-testid='sin-periodo-abierto'
+                      >
                         <AlertCircleIcon className='w-3.5 h-3.5 text-muted-foreground shrink-0' />
                         <span className='text-sm text-muted-foreground'>
                           Sin periodo abierto

@@ -22,6 +22,54 @@ interface InformacionContratoProps {
   ubicacionInfo?: DetalleUbicacion;
 }
 
+/** Card industrial reutilizable para bloques de información */
+function InfoCard({
+  icon: Icon,
+  title,
+  children
+}: {
+  icon: React.ElementType;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card className='overflow-hidden border border-border bg-card'>
+      <CardHeader className='pb-3'>
+        <div className='flex items-center gap-2.5'>
+          <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
+            <Icon className='h-4 w-4' />
+          </div>
+          <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+            {title}
+          </CardTitle>
+        </div>
+      </CardHeader>
+      <div className='industrial-divider' />
+      <CardContent className='space-y-2.5 pt-3'>{children}</CardContent>
+    </Card>
+  );
+}
+
+/** Fila de dato con label industrial */
+function InfoRow({
+  label,
+  value,
+  className
+}: {
+  label: string;
+  value: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={`flex justify-between items-baseline gap-2 ${className ?? ''}`}>
+      <span className='sidebar-section-label shrink-0'>{label}</span>
+      <span className='text-sm font-medium text-foreground text-right truncate'>
+        {value}
+      </span>
+    </div>
+  );
+}
+
 const InformacionContrato = memo(function InformacionContrato({
   contratoInfo,
   propietarioInfo,
@@ -32,43 +80,26 @@ const InformacionContrato = memo(function InformacionContrato({
 }: InformacionContratoProps) {
   return (
     <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-      {/* Información del Contrato */}
-      <Card className='border bg-background'>
-        <CardHeader className='pb-3'>
-          <CardTitle className='text-sm font-medium flex items-center gap-2'>
-            <FileText className='h-4 w-4 text-blue-600' />
-            Información del Contrato
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-2'>
-          {contratoInfo && (
-            <>
-              <div className='flex justify-between'>
-                <span className='text-xs'>ID:</span>
-                <span className='text-xs font-medium'>
-                  {contratoInfo.contratoId}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Tipo:</span>
-                <span className='text-xs font-medium'>
-                  {contratoInfo.tipoContrato}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Tarifa:</span>
-                <Badge variant='outline' className='text-xs'>
+      <InfoCard icon={FileText} title='Información del Contrato'>
+        {contratoInfo && (
+          <>
+            <InfoRow label='ID' value={contratoInfo.contratoId} />
+            <InfoRow label='Tipo' value={contratoInfo.tipoContrato} />
+            <InfoRow
+              label='Tarifa'
+              value={
+                <Badge variant='outline' className='text-xs font-medium'>
                   {contratoInfo.codigoTarifa}
                 </Badge>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Potencia:</span>
-                <span className='text-xs font-medium'>
-                  {contratoInfo.potenciaContratada} kW
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Estado:</span>
+              }
+            />
+            <InfoRow
+              label='Potencia'
+              value={`${contratoInfo.potenciaContratada} kW`}
+            />
+            <InfoRow
+              label='Estado'
+              value={
                 <Badge
                   variant={
                     contratoInfo.estadoContrato === 'Activo'
@@ -79,217 +110,73 @@ const InformacionContrato = memo(function InformacionContrato({
                 >
                   {contratoInfo.estadoContrato}
                 </Badge>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+              }
+            />
+          </>
+        )}
+      </InfoCard>
 
-      {/* Información del Propietario */}
-      <Card className='border bg-background'>
-        <CardHeader className='pb-3'>
-          <CardTitle className='text-sm font-medium flex items-center gap-2'>
-            <User className='h-4 w-4 text-green-600' />
-            Propietario
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-2'>
-          {propietarioInfo && (
-            <>
-              <div className='flex justify-between'>
-                <span className='text-xs'>RUT:</span>
-                <span className='text-xs font-medium'>
-                  {propietarioInfo.rut}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Nombre:</span>
-                <span className='text-xs font-medium'>
-                  {propietarioInfo.nombre}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Comuna:</span>
-                <span className='text-xs font-medium'>
-                  {propietarioInfo.comuna}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Teléfono:</span>
-                <span className='text-xs font-medium'>
-                  {propietarioInfo.telefono}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Email:</span>
-                <span className='text-xs font-medium truncate'>
-                  {propietarioInfo.email}
-                </span>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      <InfoCard icon={User} title='Propietario'>
+        {propietarioInfo && (
+          <>
+            <InfoRow label='RUT' value={propietarioInfo.rut} />
+            <InfoRow label='Nombre' value={propietarioInfo.nombre} />
+            <InfoRow label='Comuna' value={propietarioInfo.comuna} />
+            <InfoRow label='Teléfono' value={propietarioInfo.telefono} />
+            <InfoRow label='Email' value={propietarioInfo.email} />
+          </>
+        )}
+      </InfoCard>
 
-      {/* Información del Cliente */}
-      <Card className='border bg-background'>
-        <CardHeader className='pb-3'>
-          <CardTitle className='text-sm font-medium flex items-center gap-2'>
-            <User className='h-4 w-4 text-purple-600' />
-            Cliente
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-2'>
-          {clienteInfo && (
-            <>
-              <div className='flex justify-between'>
-                <span className='text-xs'>RUT:</span>
-                <span className='text-xs font-medium'>{clienteInfo.rut}</span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Nombre:</span>
-                <span className='text-xs font-medium'>
-                  {clienteInfo.nombre}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Comuna:</span>
-                <span className='text-xs font-medium'>
-                  {clienteInfo.comuna}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Teléfono:</span>
-                <span className='text-xs font-medium'>
-                  {clienteInfo.telefono}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Email:</span>
-                <span className='text-xs font-medium truncate'>
-                  {clienteInfo.email}
-                </span>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      <InfoCard icon={User} title='Cliente'>
+        {clienteInfo && (
+          <>
+            <InfoRow label='RUT' value={clienteInfo.rut} />
+            <InfoRow label='Nombre' value={clienteInfo.nombre} />
+            <InfoRow label='Comuna' value={clienteInfo.comuna} />
+            <InfoRow label='Teléfono' value={clienteInfo.telefono} />
+            <InfoRow label='Email' value={clienteInfo.email} />
+          </>
+        )}
+      </InfoCard>
 
-      {/* Información del Local */}
-      <Card className='border bg-background'>
-        <CardHeader className='pb-3'>
-          <CardTitle className='text-sm font-medium flex items-center gap-2'>
-            <MapPin className='h-4 w-4 text-orange-600' />
-            Local
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-2'>
-          {localInfo && (
-            <>
-              <div className='flex justify-between'>
-                <span className='text-xs'>ID:</span>
-                <span className='text-xs font-medium'>{localInfo.localId}</span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Empresa:</span>
-                <span className='text-xs font-medium'>{localInfo.empresa}</span>
-              </div>
-              <div className='flex flex-col gap-1'>
-                <span className='text-xs'>Dirección:</span>
-                <span className='text-xs font-medium'>
-                  {localInfo.lugarEntregaServicio}
-                </span>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      <InfoCard icon={MapPin} title='Local'>
+        {localInfo && (
+          <>
+            <InfoRow label='ID' value={localInfo.localId} />
+            <InfoRow label='Empresa' value={localInfo.empresa} />
+            <div className='flex flex-col gap-1'>
+              <span className='sidebar-section-label'>Dirección</span>
+              <span className='text-sm font-medium text-foreground'>
+                {localInfo.lugarEntregaServicio}
+              </span>
+            </div>
+          </>
+        )}
+      </InfoCard>
 
-      {/* Información del Medidor */}
-      <Card className='border bg-background'>
-        <CardHeader className='pb-3'>
-          <CardTitle className='text-sm font-medium flex items-center gap-2'>
-            <Zap className='h-4 w-4 text-yellow-600' />
-            Medidor
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-2'>
-          {medidorInfo && (
-            <>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Serie:</span>
-                <span className='text-xs font-medium'>
-                  {medidorInfo.nroSerie}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Tipo:</span>
-                <span className='text-xs font-medium'>
-                  {medidorInfo.tipoMedidor}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Constante:</span>
-                <span className='text-xs font-medium'>
-                  {medidorInfo.constanteMultiplicadora}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Dígitos:</span>
-                <span className='text-xs font-medium'>
-                  {medidorInfo.digitos}
-                </span>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      <InfoCard icon={Zap} title='Medidor'>
+        {medidorInfo && (
+          <>
+            <InfoRow label='Serie' value={medidorInfo.nroSerie} />
+            <InfoRow label='Tipo' value={medidorInfo.tipoMedidor} />
+            <InfoRow label='Constante' value={medidorInfo.constanteMultiplicadora} />
+            <InfoRow label='Dígitos' value={medidorInfo.digitos} />
+          </>
+        )}
+      </InfoCard>
 
-      {/* Información de Ubicación */}
-      <Card className='border bg-background'>
-        <CardHeader className='pb-3'>
-          <CardTitle className='text-sm font-medium flex items-center gap-2'>
-            <MapPin className='h-4 w-4 text-teal-600' />
-            Ubicación
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-2'>
-          {ubicacionInfo && (
-            <>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Subempalme:</span>
-                <span className='text-xs font-medium'>
-                  {ubicacionInfo.codigoSubempalme}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Nicho:</span>
-                <span className='text-xs font-medium'>
-                  {ubicacionInfo.nicho}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Sector:</span>
-                <span className='text-xs font-medium'>
-                  {ubicacionInfo.sector}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Empalme:</span>
-                <span className='text-xs font-medium'>
-                  {ubicacionInfo.empalme}
-                </span>
-              </div>
-              <div className='flex justify-between'>
-                <span className='text-xs'>Zona:</span>
-                <span className='text-xs font-medium'>
-                  {ubicacionInfo.zona}
-                </span>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+      <InfoCard icon={MapPin} title='Ubicación'>
+        {ubicacionInfo && (
+          <>
+            <InfoRow label='Subempalme' value={ubicacionInfo.codigoSubempalme} />
+            <InfoRow label='Nicho' value={ubicacionInfo.nicho} />
+            <InfoRow label='Sector' value={ubicacionInfo.sector} />
+            <InfoRow label='Empalme' value={ubicacionInfo.empalme} />
+            <InfoRow label='Zona' value={ubicacionInfo.zona} />
+          </>
+        )}
+      </InfoCard>
     </div>
   );
 });

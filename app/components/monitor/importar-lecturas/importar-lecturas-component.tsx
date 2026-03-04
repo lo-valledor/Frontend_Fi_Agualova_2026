@@ -83,7 +83,7 @@ export default function ImportarLecturasComponent() {
   // Solo administradores pueden permitir reprocesar período
   const { user } = useAuth();
   const isAdmin = useMemo(() => {
-    const role = (user?.role || '').toLowerCase();
+    const role = String(user?.role ?? '').toLowerCase();
     return role === 'admin' || role === 'administrador';
   }, [user]);
 
@@ -518,12 +518,6 @@ export default function ImportarLecturasComponent() {
         totalPendientes,
         detalles: [] // Detalles opcionales; podemos mapear si se requieren más adelante
       });
-
-      if (!sinPendientes) {
-        toast.warning(
-          `Hay ${totalPendientes} asignaciones pendientes por preparar`
-        );
-      }
     } catch (error: any) {
       toast.error(error.message || 'Error al validar lecturas pendientes');
     } finally {
@@ -704,10 +698,19 @@ export default function ImportarLecturasComponent() {
         <div className='space-y-3'>
           {/* Resultado de registros pendientes */}
           {registrosPendientes && (
-            <Alert>
+            <Alert className='relative pr-10'>
               <Info className='h-4 w-4' />
               <AlertTitle>Registros Pendientes</AlertTitle>
               <AlertDescription>{registrosPendientes.mensaje}</AlertDescription>
+              <Button
+                variant='ghost'
+                size='icon'
+                className='absolute top-2 right-2 h-8 w-8'
+                onClick={() => setRegistrosPendientes(null)}
+                aria-label='Cerrar'
+              >
+                <X className='h-4 w-4' />
+              </Button>
             </Alert>
           )}
 
@@ -1189,16 +1192,12 @@ export default function ImportarLecturasComponent() {
 
                   <div>
                     <p className='text-lg font-semibold text-background-900 dark:text-background-100 mb-2'>
-                      {validacionLecturas?.sinPendientes === false
-                        ? 'Carga de archivos bloqueada'
-                        : isDragging
-                          ? '¡Suelta el archivo aquí!'
-                          : 'Arrastra tu archivo Excel'}
+                      {isDragging
+                        ? '¡Suelta el archivo aquí!'
+                        : 'Arrastra tu archivo Excel'}
                     </p>
                     <p className='text-sm text-background-600 dark:text-background-400'>
-                      {validacionLecturas?.sinPendientes === false
-                        ? 'Completa la preparación de sectores para habilitar'
-                        : 'o haz clic en el botón para seleccionar'}
+                      o haz clic en el botón para seleccionar
                     </p>
                   </div>
 
@@ -1208,27 +1207,16 @@ export default function ImportarLecturasComponent() {
                     onChange={handleFileInput}
                     className='hidden'
                     id='file-upload'
-                    disabled={validacionLecturas?.sinPendientes === false}
                   />
 
-                  <Button
-                    asChild={validacionLecturas?.sinPendientes !== false}
-                    disabled={validacionLecturas?.sinPendientes === false}
-                  >
-                    {validacionLecturas?.sinPendientes !== false ? (
-                      <label
-                        htmlFor='file-upload'
-                        className='cursor-pointer gap-2'
-                      >
-                        <FileSpreadsheet className='h-4 w-4' />
-                        Seleccionar Archivo
-                      </label>
-                    ) : (
-                      <>
-                        <FileSpreadsheet className='h-4 w-4' />
-                        Seleccionar Archivo
-                      </>
-                    )}
+                  <Button asChild>
+                    <label
+                      htmlFor='file-upload'
+                      className='cursor-pointer gap-2'
+                    >
+                      <FileSpreadsheet className='h-4 w-4' />
+                      Seleccionar Archivo
+                    </label>
                   </Button>
                 </div>
               </div>
@@ -1270,9 +1258,7 @@ export default function ImportarLecturasComponent() {
                 {isValidFile && !isValidating && (
                   <Button
                     onClick={handleImportar}
-                    disabled={
-                      isImporting || validacionLecturas?.sinPendientes === false
-                    }
+                    disabled={isImporting}
                     variant='default'
                     size='lg'
                     className='w-full gap-2'
@@ -1285,11 +1271,7 @@ export default function ImportarLecturasComponent() {
                     ) : (
                       <>
                         <Upload className='h-5 w-5' />
-                        <span>
-                          {validacionLecturas?.sinPendientes === false
-                            ? 'Importación Bloqueada'
-                            : 'Importar Lecturas'}
-                        </span>
+                        <span>Importar Lecturas</span>
                       </>
                     )}
                   </Button>
