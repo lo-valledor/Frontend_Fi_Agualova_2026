@@ -121,8 +121,6 @@ export default function CargoTipoContratoComponent({
     }
   };
 
-  const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
-
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto p-4 sm:p-6 space-y-6'>
