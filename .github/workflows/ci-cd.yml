@@ -3,7 +3,8 @@ name: 🚀 CI/CD Frontend
 on:
   # Ejecutar en pull requests a cualquier rama
   pull_request:
-    branches: ["*"]
+    branches: [main]
+    types: [opened, synchronize, reopened, closed]
 
   # Ejecutar en push a ramas principales y test (CI + deploy-test en test)
   push:
@@ -97,7 +98,7 @@ jobs:
     needs: ci
     runs-on: [self-hosted, Linux, X64, deploy-test, frontend-runner]
     if: |
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/test') &&
+      github.ref == 'refs/heads/test' &&
       github.event_name == 'push'
 
     steps:
@@ -139,8 +140,12 @@ jobs:
     name: 🚀 Deploy to Production
     needs: ci
     runs-on: [self-hosted, Linux, X64, deploy-prod, enerlova-runner]
-    # Solo ejecutar si se dispara manualmente (workflow_dispatch)
-    if: github.event_name == 'workflow_dispatch'
+    # Ejecutar cuando un PR hacia main se mergea
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main'
 
     steps:
       - name: 📥 Checkout repository
