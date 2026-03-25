@@ -119,6 +119,13 @@ jobs:
       - name: 📋 Show image info
         run: docker images | grep enerlova-frontend
 
+      - name: 🐳 Deploy container (Test)
+        run: |
+          echo "🚀 Levantando contenedor TEST con docker compose..."
+          docker compose -f docker-compose.test.yml up -d --build
+          echo "📋 Contenedores Enerlova (TEST):"
+          docker ps --filter "name=enerlova-frontend-test" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
       - name: 📊 Build Summary
         run: |
           echo "## 🧪 Deploy Test - Build Summary" >> $GITHUB_STEP_SUMMARY
@@ -166,6 +173,13 @@ jobs:
 
       - name: 📋 Show image info
         run: docker images | grep enerlova-frontend
+
+      - name: 🐳 Deploy container (Production)
+        run: |
+          echo "🚀 Levantando contenedor PROD con docker compose..."
+          docker compose -f docker-compose.prod.yml up -d --build
+          echo "📋 Contenedores Enerlova (PROD):"
+          docker ps --filter "name=enerlova-frontend-prod" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
       - name: 📊 Production Build Summary
         run: |
