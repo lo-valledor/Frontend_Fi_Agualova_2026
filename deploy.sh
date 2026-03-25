@@ -61,7 +61,7 @@ run_compose_build() {
 deploy_prod() {
     echo "📦 Desplegando entorno de PRODUCCIÓN..."
     echo "🌐 Puerto: 8080"
-    echo "🔗 API: http://192.168.1.139:8081/Enerlova"
+    echo "🔗 API: http://192.168.1.197:8081/Enerlova"
     PROJECT=enerlova_prod
     run_compose_build "$PROJECT" docker-compose.prod.yml
     echo "✅ Entorno de producción desplegado / actualizado"
@@ -72,7 +72,7 @@ deploy_prod() {
 deploy_dev() {
     echo "🛠️  Desplegando entorno de DESARROLLO / UAT..."
     echo "🌐 Puerto: 4200"
-    echo "🔗 API: http://192.168.1.139:8082/Enerlova"
+    echo "🔗 API: http://192.168.1.197:8082/Enerlova"
     echo "🎨 Tema: Colores naranjas con badge DEV"
     PROJECT=enerlova_dev
     run_compose_build "$PROJECT" docker-compose.dev.yml

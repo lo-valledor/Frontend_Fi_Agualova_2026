@@ -624,7 +624,7 @@ export default function CerrarLecturasComponent({
                                 isBlocked
                                   ? 'opacity-50 cursor-not-allowed bg-muted hover:bg-muted text-muted-foreground border border-destructive/20'
                                   : hasWarnings
-                                    ? 'bg-warning hover:bg-warning/90 text-warning-foreground'
+                                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
                                     : ''
                               }`}
                               title={

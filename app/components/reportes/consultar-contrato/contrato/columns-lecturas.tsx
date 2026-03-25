@@ -54,14 +54,14 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
 
       if (lectura == null) {
         return (
-          <div className='text-right text-slate-400 dark:text-slate-600 italic text-sm'>
+          <div className='text-start text-slate-400 dark:text-slate-600 italic text-sm'>
             -
           </div>
         );
       }
 
       return (
-        <div className='text-right text-slate-600 dark:text-slate-400 font-mono text-sm'>
+        <div className='text-start text-slate-600 dark:text-slate-400 font-mono text-sm'>
           {lectura.toLocaleString('es-CL')}
         </div>
       );
@@ -79,14 +79,14 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
 
       if (lectura == null) {
         return (
-          <div className='text-right text-amber-600 dark:text-amber-500 italic text-sm font-medium'>
+          <div className='text-start text-amber-600 dark:text-amber-500 italic text-sm font-medium'>
             Pendiente
           </div>
         );
       }
 
       return (
-        <div className='text-right font-medium text-blue-700 dark:text-blue-400 font-mono'>
+        <div className='text-start font-medium text-blue-700 dark:text-blue-400 font-mono'>
           {lectura.toLocaleString('es-CL')}
         </div>
       );
@@ -105,14 +105,14 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       // Si no hay consumo registrado
       if (consumo == null || consumo === 0) {
         return (
-          <div className='text-right text-slate-400 dark:text-slate-600 italic'>
+          <div className='text-start text-slate-400 dark:text-slate-600 italic'>
             Sin consumo
           </div>
         );
       }
 
       return (
-        <div className='text-right text-slate-700 dark:text-slate-300'>
+        <div className='text-start text-slate-700 dark:text-slate-300'>
           <span className='font-bold'>{consumo.toLocaleString('es-CL')}</span>{' '}
           kWh
         </div>
@@ -131,12 +131,12 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
 
       if (energia == null) {
         return (
-          <div className='text-right text-slate-400 dark:text-slate-600'>-</div>
+          <div className='text-start text-slate-400 dark:text-slate-600'>-</div>
         );
       }
 
       return (
-        <div className='text-right text-emerald-600 dark:text-emerald-400'>
+        <div className='text-start text-emerald-600 dark:text-emerald-400'>
           {energia.toLocaleString('es-CL')} kWh
         </div>
       );
@@ -155,7 +155,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       // Si es null o no definido
       if (sobreconsumo == null) {
         return (
-          <div className='text-right text-slate-400 dark:text-slate-600'>-</div>
+          <div className='text-start text-slate-400 dark:text-slate-600'>-</div>
         );
       }
 
@@ -163,7 +163,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
 
       if (!hasSobreconsumo) {
         return (
-          <div className='text-right text-slate-400 dark:text-slate-600'>
+          <div className='text-start text-slate-400 dark:text-slate-600'>
             0 kWh
           </div>
         );
@@ -193,7 +193,7 @@ export const lecturasTableColumns: ColumnDef<DetalleLecturas>[] = [
       }
 
       return (
-        <div className='text-right'>
+        <div className='text-start'>
           <span className='text-amber-700 dark:text-amber-400 font-bold'>
             {sobreconsumo.toLocaleString('es-CL')} kWh
           </span>

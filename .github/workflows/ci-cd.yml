@@ -91,9 +91,7 @@ jobs:
   # ============================================
   # 🐳 DESPLIEGUE FASE 1: TEST (AUTOMÁTICO EN PUSH)
   # ============================================
-  # La imagen se construye en el runner. Para publicarla en un registro (Docker Hub,
-  # GHCR, etc.) y poder hacer pull en un servidor, añade un paso de login + push
-  # y configura los secrets (ej. DOCKER_USERNAME, DOCKER_PASSWORD o GITHUB_TOKEN).
+  # Build de imagen en el runner. Despliegue manual en 192.168.1.197 (test) y 192.168.1.183 (prod).
   deploy-test:
     name: 🧪 Build & Deploy to Test
     needs: ci
@@ -115,46 +113,24 @@ jobs:
       - name: 🏗️ Build Docker image (Test)
         run: |
           echo "🚀 Construyendo imagen Docker para TEST..."
-          docker build -t enerlova-frontend:dev -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -t ${{ env.IMAGE_NAME }}:test -f Dockerfile .
+          docker build -t enerlova-frontend:dev -f Dockerfile .
 
       - name: 📋 Show image info
-        run: docker images | grep -E "enerlova-frontend|lovalledor"
-
-      - name: 🐳 Push to Docker Hub (opcional)
-        if: ${{ secrets.DOCKER_USERNAME != '' && secrets.DOCKER_PASSWORD != '' }}
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
-          docker push ${{ env.IMAGE_NAME }}:test
-          echo "IMAGE_PUSHED=true" >> $GITHUB_ENV
-          echo "IMAGE_URL=docker.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+        run: docker images | grep enerlova-frontend
 
       - name: 📊 Build Summary
         run: |
           echo "## 🧪 Deploy Test - Build Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "✅ Imagen construida correctamente" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Imagen construida correctamente (solo en el runner)." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Detalles:" >> $GITHUB_STEP_SUMMARY
-          echo "- **Imagen**: \`enerlova-frontend:dev\` (local en runner)" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Rama**: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ env.IMAGE_PUSHED }}" = "true" ]; then
-            echo "### 📍 Dónde está la imagen (publicada)" >> $GITHUB_STEP_SUMMARY
-            echo "Imagen subida a **Docker Hub**:" >> $GITHUB_STEP_SUMMARY
-            echo "- \`docker pull ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}\`" >> $GITHUB_STEP_SUMMARY
-            echo "- \`docker pull ${{ env.IMAGE_NAME }}:test\` (último build de test)" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 🖥️ Servidor TEST (desplegar aquí)" >> $GITHUB_STEP_SUMMARY
-            echo "- **IP**: \`192.168.1.197\`" >> $GITHUB_STEP_SUMMARY
-            echo "- En el servidor: \`docker pull ${{ env.IMAGE_NAME }}:test\` y reiniciar el contenedor." >> $GITHUB_STEP_SUMMARY
-          else
-            echo "### ⚠️ Dónde queda la imagen" >> $GITHUB_STEP_SUMMARY
-            echo "La imagen **solo existe en el runner**. Al terminar el job se pierde." >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Para publicar en Docker Hub y desplegar en **192.168.1.197** (test), configura los **Secrets**: \`DOCKER_USERNAME\` y \`DOCKER_PASSWORD\`." >> $GITHUB_STEP_SUMMARY
-          fi
+          echo "### 🖥️ Despliegue manual" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test**: 192.168.1.197" >> $GITHUB_STEP_SUMMARY
+          echo "- **Prod**: 192.168.1.183" >> $GITHUB_STEP_SUMMARY
 
   # ============================================
   # 🐳 DESPLIEGUE FASE 2: PRODUCCIÓN (MANUAL)

@@ -50,7 +50,6 @@ import {
 } from '~/components/ui/chart';
 import { Separator } from '~/components/ui/separator';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
@@ -939,11 +938,11 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
             <CardContent>
               <div
                 ref={tableContainerRef}
-                className='rounded-md border overflow-auto'
+                className='relative rounded-md border overflow-auto'
                 style={{ height: '500px' }}
               >
-                <Table style={{ width: '100%' }}>
-                  <TableHeader className='sticky top-0 z-10 bg-background'>
+                <table className='w-full table-fixed caption-bottom text-sm'>
+                  <TableHeader className='sticky top-0 z-20 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70 shadow-xs'>
                     {table.getHeaderGroups().map(headerGroup => (
                       <TableRow
                         key={headerGroup.id}
@@ -955,7 +954,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                           return (
                             <TableHead
                               key={header.id}
-                              className='h-10 px-3 text-xs font-medium'
+                              className='h-[50px] px-3 text-xs font-medium border-b border-border'
                               style={{
                                 width: `${width}px`,
                                 minWidth: `${width}px`,
@@ -1021,7 +1020,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
                       );
                     })}
                   </TableBody>
-                </Table>
+                </table>
                 {rows.length === 0 && (
                   <div className='h-20 flex items-center justify-center text-sm text-muted-foreground'>
                     No se encontraron facturas.

@@ -105,7 +105,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     cell: ({ row }) => {
       const valor = row.getValue('valorNeto') as number;
       return (
-        <div className='text-right font-medium text-cyan-700 dark:text-cyan-400'>
+        <div className='text-start font-medium text-cyan-700 dark:text-cyan-400'>
           ${valor?.toLocaleString('es-CL')}
         </div>
       );
@@ -121,7 +121,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     cell: ({ row }) => {
       const iva = row.getValue('iva') as number;
       return (
-        <div className='text-right text-slate-600 dark:text-slate-400'>
+        <div className='text-start text-slate-600 dark:text-slate-400'>
           ${iva?.toLocaleString('es-CL')}
         </div>
       );
@@ -137,7 +137,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
     cell: ({ row }) => {
       const total = row.getValue('valorTotal') as number;
       return (
-        <div className='text-right font-bold text-emerald-700 dark:text-emerald-400 text-base'>
+        <div className='text-start font-bold text-emerald-700 dark:text-emerald-400 text-base'>
           ${total?.toLocaleString('es-CL')}
         </div>
       );
@@ -178,7 +178,7 @@ export const facturasTableColumns: ColumnDef<DetalleFacturas>[] = [
       }
 
       return (
-        <div className={`text-right ${colorClass}`}>
+        <div className={`text-start ${colorClass}`}>
           {consumo.toLocaleString('es-CL')} kWh
           {icon}
         </div>

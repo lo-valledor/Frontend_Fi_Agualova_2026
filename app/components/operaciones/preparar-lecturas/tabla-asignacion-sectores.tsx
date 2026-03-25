@@ -417,26 +417,27 @@ export default function TablaAsignacionSectores({
 
   return (
     <div className='space-y-4'>
-      {/* Barra de acciones flotante (derecha inferior) */}
-      <div className='fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 duration-300 flex flex-col items-end gap-3'>
-        {/* Tooltip flotante para Aceptar */}
-        {selectedNichos.length > 0 && (
-          <div className='bg-zinc-800 dark:bg-zinc-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium whitespace-nowrap animate-in fade-in-0 zoom-in-95 duration-200'>
-            <div className='flex items-center gap-2'>
-              <CheckCircle2 className='h-4 w-4' />
-              <span>
-                {selectedNichos.length}{' '}
-                {selectedNichos.length === 1
-                  ? 'nicho seleccionado'
-                  : 'nichos seleccionados'}
-              </span>
+      {/* Barra de acciones (no flotante) */}
+      <div className='rounded-xl border border-border bg-card p-3 shadow-sm'>
+        <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
+          <div className='flex items-center gap-2 text-sm'>
+            <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-background border border-border'>
+              <CheckCircle2 className='h-4 w-4 text-muted-foreground' />
+            </div>
+            <div className='min-w-0'>
+              <div className='font-medium'>
+                {selectedNichos.length === 0
+                  ? 'Sin selección'
+                  : `${selectedNichos.length} ${
+                      selectedNichos.length === 1 ? 'nicho' : 'nichos'
+                    } seleccionado(s)`}
+              </div>
+              <div className='text-xs text-muted-foreground'>
+                Selecciona filas para habilitar acciones
+              </div>
             </div>
           </div>
-        )}
 
-        {/* Contenedor de botones en grupo */}
-        <div className='flex flex-col gap-2 bg-background border border-border rounded-lg p-2 shadow-lg'>
-          {/* Preparar Lecturas */}
           <Button
             onClick={prepararLecturas}
             disabled={
@@ -448,7 +449,7 @@ export default function TablaAsignacionSectores({
             }
             variant='default'
             size='sm'
-            className='bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white'
+            className='gap-2 bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white w-full sm:w-auto'
             title={
               !hasPermission
                 ? 'No tiene permisos para preparar lecturas'
@@ -462,6 +463,7 @@ export default function TablaAsignacionSectores({
             ) : (
               <PlayIcon className='h-4 w-4' />
             )}
+            <span>{isSubmitting ? 'Procesando...' : 'Preparar lecturas'}</span>
           </Button>
         </div>
       </div>
