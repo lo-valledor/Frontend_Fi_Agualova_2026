@@ -3,7 +3,7 @@ name: 🚀 CI/CD Frontend
 on:
   # Ejecutar en pull requests a cualquier rama
   pull_request:
-    branches: ['*']
+    branches: ["*"]
 
   # Ejecutar en push a ramas principales y test (CI + deploy-test en test)
   push:
@@ -17,8 +17,8 @@ on:
 
 env:
   # Configuración de Node.js y pnpm
-  NODE_VERSION: '20'
-  PNPM_VERSION: '9'
+  NODE_VERSION: "20"
+  PNPM_VERSION: "9"
   IMAGE_NAME: lovalledor/enerlova-frontend
   IMAGE_TAG: ${{ github.sha }}
 
@@ -95,7 +95,7 @@ jobs:
   deploy-test:
     name: 🧪 Build & Deploy to Test
     needs: ci
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, deploy-test, frontend-runner]
     if: |
       (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/test') &&
       github.event_name == 'push'
@@ -138,7 +138,7 @@ jobs:
   deploy-prod:
     name: 🚀 Deploy to Production
     needs: ci
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux, X64, deploy-prod, enerlova-runner]
     # Solo ejecutar si se dispara manualmente (workflow_dispatch)
     if: github.event_name == 'workflow_dispatch'
 
