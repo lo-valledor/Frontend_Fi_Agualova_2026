@@ -51,7 +51,6 @@ import {
 } from '~/components/ui/chart';
 import { Separator } from '~/components/ui/separator';
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
