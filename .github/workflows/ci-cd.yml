@@ -114,7 +114,11 @@ jobs:
       - name: 🏗️ Build Docker image (Test)
         run: |
           echo "🚀 Construyendo imagen Docker para TEST..."
-          docker build -t enerlova-frontend:dev -f Dockerfile .
+          docker build \
+            -t enerlova-frontend:dev \
+            -t ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            -t ${{ env.IMAGE_NAME }}:test \
+            -f Dockerfile .
 
       - name: 📋 Show image info
         run: docker images | grep -E "enerlova-frontend|lovalledor"
