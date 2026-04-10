@@ -13,9 +13,9 @@ services:
     networks:
       - proxy
     ports:
-      - '80:80' # HTTP
-      - '443:443' # HTTPS
-      - '8080:8080' # Dashboard
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+      - "8080:8080" # Dashboard
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -25,12 +25,12 @@ services:
       - ./certs:/certs:ro # Certificados SSL auto-firmados
       - traefik_logs:/var/log/traefik
     labels:
-      - 'traefik.enable=true'
+      - "traefik.enable=true"
       # Dashboard accesible en /dashboard
-      - 'traefik.http.routers.traefik-dashboard.rule=Host(`enerlovauat.mmlovalledor.cl`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))'
-      - 'traefik.http.routers.traefik-dashboard.service=api@internal'
-      - 'traefik.http.routers.traefik-dashboard.entrypoints=websecure'
-      - 'traefik.http.routers.traefik-dashboard.tls=true'
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`uat-enerlova.mmlovalledor.cl`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.tls=true"
 
   # EJEMPLO: Frontend Enerlova
   # Descomentar y ajustar según tu configuración real

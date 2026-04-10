@@ -9,7 +9,7 @@
 #   docker-compose -f docker-compose.dev.yml up -d --build
 #
 # Variables de entorno opcionales (archivo .env):
-#   VITE_API_URL - URL del backend UAT (default: http://192.168.1.139:8082/Enerlova)
+#   VITE_API_URL - URL del backend UAT (default: http://192.168.1.197:8082/Enerlova)
 #   DEV_PORT - Puerto para UAT (default: 4200)
 #
 version: "3.8"
@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile.dev
       target: development-nginx
       args:
-        VITE_API_URL: ${VITE_API_URL:-http://192.168.1.139:8082/Enerlova}
+        VITE_API_URL: ${VITE_API_URL:-http://192.168.1.197:8082/Enerlova}
         NODE_ENV: development
         VITE_APP_ENV: development
 

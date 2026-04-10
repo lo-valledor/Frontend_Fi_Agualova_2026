@@ -28,7 +28,7 @@ function Show-Help {
 function Deploy-Production {
     Write-Host "📦 Desplegando entorno de PRODUCCIÓN..." -ForegroundColor Green
     Write-Host "🌐 Puerto: 8080" -ForegroundColor Yellow
-    Write-Host "🔗 API: http://192.168.1.139:8081/Enerlova" -ForegroundColor Yellow
+    Write-Host "🔗 API: http://192.168.1.197:8081/Enerlova" -ForegroundColor Yellow
 
     & docker-compose -f docker-compose.prod.yml down
     & docker-compose -f docker-compose.prod.yml up --build -d
@@ -45,7 +45,7 @@ function Deploy-Production {
 function Deploy-Development {
     Write-Host "🛠️  Desplegando entorno de DESARROLLO..." -ForegroundColor Blue
     Write-Host "🌐 Puerto: 4200" -ForegroundColor Yellow
-    Write-Host "🔗 API: http://192.168.1.139:8081/Enerlova" -ForegroundColor Yellow
+    Write-Host "🔗 API: http://192.168.1.197:8081/Enerlova" -ForegroundColor Yellow
 
     & docker-compose -f docker-compose.develop.yml down
     & docker-compose -f docker-compose.develop.yml up --build -d

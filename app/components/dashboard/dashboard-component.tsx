@@ -85,7 +85,10 @@ const quickActions = [
   }
 ];
 
-/** Procesa contratos agrupados por tipo */
+/**
+ * Procesa contratos agrupados por tipo
+ * @param data
+ */
 const procesarContratosPorTipo = (data: any[]): { [key: string]: number } => {
   const contratosPorTipo: { [key: string]: number } = {};
   if (!Array.isArray(data)) return contratosPorTipo;
@@ -97,7 +100,10 @@ const procesarContratosPorTipo = (data: any[]): { [key: string]: number } => {
   return contratosPorTipo;
 };
 
-/** Procesa clientes separando empresas de personas */
+/**
+ * Procesa clientes separando empresas de personas
+ * @param data
+ */
 const procesarClientesPorTipo = (
   data: any[]
 ): { empresa: number; persona: number } => {
@@ -116,7 +122,10 @@ const procesarClientesPorTipo = (
   return { empresa: empresas, persona: personas };
 };
 
-/** Procesa medidores agrupados por tipo y estado */
+/**
+ * Procesa medidores agrupados por tipo y estado
+ * @param data
+ */
 const procesarMedidores = (
   data: any[]
 ): {
@@ -141,7 +150,10 @@ const procesarMedidores = (
   return { porTipo: medidoresPorTipo, porEstado: medidoresPorEstado };
 };
 
-/** Procesa acometidas agrupadas por sector */
+/**
+ * Procesa acometidas agrupadas por sector
+ * @param response
+ */
 const procesarAcometidasPorSector = (
   response: any
 ): { [key: string]: number } => {
@@ -168,7 +180,11 @@ const procesarAcometidasPorSector = (
   return acometidasPorSector;
 };
 
-/** Renderiza el centro del gráfico donut */
+/**
+ * Renderiza el centro del gráfico donut
+ * @param value
+ * @param label
+ */
 const renderDonutLabel =
   (value: number, label: string = 'Total') =>
   ({ viewBox }: any) => {
@@ -202,7 +218,11 @@ const renderDonutLabel =
 /** Easing mecánico consistente con sidebar */
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
-/** Skeleton de carga industrial */
+/**
+ * Skeleton de carga industrial
+ * @param root0
+ * @param root0.rows
+ */
 const LoadingSkeleton = ({ rows = 3 }: { rows?: number }) => (
   <div className='flex items-center justify-center h-[200px] sm:h-[220px]'>
     <div className='space-y-3 w-full'>
@@ -216,7 +236,14 @@ const LoadingSkeleton = ({ rows = 3 }: { rows?: number }) => (
   </div>
 );
 
-/** Card wrapper industrial para analytics */
+/**
+ * Card wrapper industrial para analytics
+ * @param root0
+ * @param root0.icon
+ * @param root0.title
+ * @param root0.children
+ * @param root0.delay
+ */
 const AnalyticsCard = ({
   icon: Icon,
   title,
@@ -612,7 +639,14 @@ const AdminAnalyticsComponent = React.memo(() => {
   );
 });
 
-/** Renderiza el período actual formateado */
+/**
+ * Renderiza el período actual formateado
+ * @param loading
+ * @param periodoActual
+ * @param periodoActual.mes
+ * @param periodoActual.anio
+ * @param periodoActual.estado
+ */
 const renderPeriodoActual = (
   loading: boolean,
   periodoActual: { mes: number; anio: number; estado: string }
@@ -785,7 +819,7 @@ export default function DashboardComponent({
         </div>
       ),
       sub: (
-        <div className='flex items-center gap-1.5 mt-1'>
+        <div className='flex gap-1.5'>
           {dashboardData.periodoActual.mes > 0 && !dashboardData.loading && (
             <div className='energy-dot-sm' />
           )}
@@ -822,9 +856,11 @@ export default function DashboardComponent({
         </div>
       ),
       sub: (
-        <span className='text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold mt-1'>
-          Lecturas por procesar
-        </span>
+        <div>
+          <span className='text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold'>
+            Lecturas por procesar
+          </span>
+        </div>
       )
     },
     {
@@ -859,9 +895,11 @@ export default function DashboardComponent({
         </div>
       ),
       sub: (
-        <span className='text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold mt-1'>
-          Sobrecargo invierno
-        </span>
+        <div>
+          <span className='text-[0.65rem] text-muted-foreground uppercase tracking-wider font-bold'>
+            Sobrecargo invierno
+          </span>
+        </div>
       )
     },
     {
@@ -891,7 +929,7 @@ export default function DashboardComponent({
         </div>
       ),
       sub: (
-        <div className='flex items-center gap-2 mt-1.5'>
+        <div className='flex items-center gap-2'>
           <span className='text-[0.6rem] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-sm bg-destructive/10 text-destructive border border-destructive/20'>
             {displayData.totalesCorte.cortado} cortados
           </span>
@@ -942,7 +980,7 @@ export default function DashboardComponent({
               }}
             >
               <Card
-                className={`border-t-2 ${card.accentClass} overflow-hidden`}
+                className={`border-t-2 ${card.accentClass} overflow-hidden h-full flex flex-col`}
               >
                 <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-1.5 pt-3 px-4'>
                   <span className='text-[0.65rem] font-bold tracking-wider uppercase text-muted-foreground'>
@@ -952,7 +990,7 @@ export default function DashboardComponent({
                     <card.icon className='h-3.5 w-3.5' />
                   </div>
                 </CardHeader>
-                <CardContent className='px-4 pb-3'>
+                <CardContent className='px-4 pb-3 flex flex-col gap-1 flex-1'>
                   {card.content}
                   {card.sub}
                 </CardContent>
