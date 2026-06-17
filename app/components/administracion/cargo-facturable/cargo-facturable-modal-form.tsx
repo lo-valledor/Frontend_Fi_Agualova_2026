@@ -95,14 +95,13 @@ export default function CargoFacturableModalForm({
     defaultValues: {
       cuenta: '',
       descripcion: '',
-      codigo: '',
-      tipo: '',
       fijoVariable: '',
       periodicoEventual: '',
-      conceptoId: 0,
-      tarifaId: 0,
-      tipoMedidorId: 0,
-      muestraValorEn0: false
+      idConcepto: 0,
+      idTarifa: 0,
+      idTipoMedidor: 0,
+      codigoEnerlova: '',
+      muestraValorCero: false
     }
   });
 
@@ -126,38 +125,6 @@ export default function CargoFacturableModalForm({
           return valor;
         };
 
-        const mapearTipo = (valorApi: string): string => {
-          if (!valorApi) return '';
-
-          const valorTrimmed = String(valorApi).trim().toLowerCase();
-
-          // Mapeo por números
-          if (valorTrimmed === '1' || valorTrimmed === 'base ch')
-            return 'Base CH';
-          if (
-            valorTrimmed === '2' ||
-            valorTrimmed === 'cargo fact' ||
-            valorTrimmed === 'cargo fact.'
-          )
-            return 'Cargo Fact';
-          if (valorTrimmed === '3' || valorTrimmed === 'condición')
-            return 'Condición';
-          if (valorTrimmed === '4' || valorTrimmed === 'cargo fijo mensual')
-            return 'Cargo Fijo mensual';
-
-          // Si el valor ya es uno de los valores exactos, devolverlo
-          if (tiposOptions.some(option => option.value === valorApi)) {
-            return valorApi;
-          }
-
-          // Buscar coincidencia exacta en las opciones (case insensitive)
-          const foundOption = tiposOptions.find(
-            option => option.value.toLowerCase() === valorTrimmed
-          );
-
-          return foundOption ? foundOption.value : valorApi;
-        };
-
         const normalizeAndFind = (
           list: { id: string; descripcion: string }[],
           name: string | undefined
@@ -179,33 +146,29 @@ export default function CargoFacturableModalForm({
           return found?.id || 0;
         };
 
-        const tipoMapeado = mapearTipo(cargo.tipoCargo || '');
-
         form.reset({
           cuenta: cargo.cuenta || '',
           descripcion: cargo.descripcion || '',
-          codigo: cargo.codigoEnerlova || '',
-          tipo: tipoMapeado,
+          codigoEnerlova: cargo.codigoEnerlova || '',
           fijoVariable: mapearFijoVariable(cargo.fijoVariable || ''),
           periodicoEventual: mapearPeriodicoEventual(
             cargo.periodicoEventual || ''
           ),
-          concepto: normalizeAndFind(conceptos, cargo.concepto),
-          tarifa: normalizeAndFind(tarifas, cargo.tarifa),
-          tipoMedidor: normalizeAndFind(tiposMedidor, cargo.tipoMedidor)
+          idConcepto: normalizeAndFind(conceptos, cargo.concepto),
+          idTarifa: normalizeAndFind(tarifas, cargo.tarifa),
+          idTipoMedidor: normalizeAndFind(tiposMedidor, cargo.tipoMedidor)
         });
       } else {
         form.reset({
           cuenta: '',
           descripcion: '',
-          codigo: '',
-          tipo: '',
+          codigoEnerlova: '',
           fijoVariable: '',
           periodicoEventual: '',
-          conceptoId: 0,
-          tarifaId: 0,
-          tipoMedidorId: 0,
-          muestraValorEn0: false
+          idConcepto: 0,
+          idTarifa: 0,
+          idTipoMedidor: 0,
+          muestraValorCero: false
         });
       }
     }
@@ -235,10 +198,10 @@ export default function CargoFacturableModalForm({
         periodicoEventual: data.periodicoEventual,
         conceptoId: data.conceptoId,
         tarifaId: data.tarifaId,
-        tipoMedidorId: data.tipoMedidorId,
+        idTipoMedidor: data.idTipoMedidor,
         tipo: getTipoNumero(data.tipo),
-        codigoAgualova: data.codigo.trim(),
-        mostrarValorCero: data.muestraValorEn0
+        codigoEnerlova: data.codigo.trim(),
+        mostrarValorCero: data.muestraValorCero
       };
 
       if (mode === 'add') {
@@ -314,7 +277,7 @@ export default function CargoFacturableModalForm({
                 />
                 <FormField
                   control={form.control}
-                  name='codigo'
+                  name='codigoEnerlova'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='flex items-center gap-2'>
@@ -363,7 +326,7 @@ export default function CargoFacturableModalForm({
               </div>
               <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'>
                 <Controller
-                  name='tipo'
+                  name='idTipoMedidor'
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
@@ -373,7 +336,9 @@ export default function CargoFacturableModalForm({
                       </FormLabel>
                       <Select
                         options={tiposOptions}
-                        value={tiposOptions.find(o => o.value === field.value)}
+                        value={tiposOptions.find(
+                          o => o.value === field.value.toString()
+                        )}
                         onChange={(o: any) => field.onChange(o ? o.value : '')}
                         styles={selectStyles}
                         placeholder='Seleccione...'
@@ -442,7 +407,7 @@ export default function CargoFacturableModalForm({
               </div>
               <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6'>
                 <Controller
-                  name='conceptoId'
+                  name='idConcepto'
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
@@ -468,7 +433,7 @@ export default function CargoFacturableModalForm({
                   )}
                 />
                 <Controller
-                  name='tarifaId'
+                  name='idTarifa'
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
@@ -494,7 +459,7 @@ export default function CargoFacturableModalForm({
                   )}
                 />
                 <Controller
-                  name='tipoMedidorId'
+                  name='idTipoMedidor'
                   control={form.control}
                   render={({ field }) => (
                     <FormItem>
@@ -521,12 +486,12 @@ export default function CargoFacturableModalForm({
                 />
                 <FormField
                   control={form.control}
-                  name='muestraValorEn0'
+                  name='muestraValorCero'
                   render={({ field }) => (
                     <FormItem className='flex flex-row items-center justify-start space-x-3 space-y-0 rounded-md border p-3 sm:p-4 bg-muted/30 mt-6 sm:mt-8 sm:col-span-2'>
                       <FormControl>
                         <Checkbox
-                          checked={field.value}
+                          checked={field.value.toString() === 'true'}
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
