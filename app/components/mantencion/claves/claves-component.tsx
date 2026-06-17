@@ -6,7 +6,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -17,7 +16,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { Claves } from '~/types/mantencion';
+import type { Clave } from '~/types/mantencion';
 
 import ClaveFormModal from './clave-form-modal';
 import { createColumns } from './columns';
@@ -25,25 +24,19 @@ import { createColumns } from './columns';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface ClavesComponentProps {
-  claves: Claves[];
+  claves: Clave[];
 }
 
 export default function ClavesComponent({
   claves
 }: Readonly<ClavesComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClave, setSelectedClave] = useState<Claves | undefined>(
+  const [selectedClave, setSelectedClave] = useState<Clave | undefined>(
     undefined
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
-
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/mantencion/claves';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   const handleAdd = useCallback(() => {
     setSelectedClave(undefined);
@@ -51,21 +44,14 @@ export default function ClavesComponent({
     setIsModalOpen(true);
   }, []);
 
-  const handleEdit = useCallback(
-    (clave: Claves) => {
-      if (!hasEditPermission) {
-        toast.error('No tiene permisos para editar claves');
-        return;
-      }
-      setSelectedClave(clave);
-      setModalMode('edit');
-      setIsModalOpen(true);
-    },
-    [hasEditPermission]
-  );
+  const handleEdit = useCallback((clave: Clave) => {
+    setSelectedClave(clave);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  }, []);
 
   const handleDelete = useCallback(
-    async (clave: Claves) => {
+    async (clave: Clave) => {
       if (
         globalThis.confirm(
           `¿Está seguro de que desea eliminar la clave "${clave.codigo}"?`
@@ -100,10 +86,9 @@ export default function ClavesComponent({
     () =>
       createColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete,
-        canEdit: hasEditPermission
+        onDelete: handleDelete
       }),
-    [handleEdit, handleDelete, hasEditPermission]
+    [handleEdit, handleDelete]
   );
 
   return (
@@ -114,17 +99,7 @@ export default function ClavesComponent({
             title='Claves'
             description='Gestiona las claves del sistema'
             actions={
-              <Button
-                onClick={handleAdd}
-                variant='default'
-                size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear claves'
-                    : ''
-                }
-              >
+              <Button onClick={handleAdd} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Clave
               </Button>

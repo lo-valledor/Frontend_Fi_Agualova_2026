@@ -24,7 +24,7 @@ const mockAcometidas: Acometida[] = [
 describe('Acometida Columns', () => {
   it('should call onEdit when the edit button is clicked', async () => {
     const user = userEvent.setup();
-    const tableColumns = columns({ onEdit: mockOnEdit, canEdit: true });
+    const tableColumns = columns({ onEdit: mockOnEdit });
 
     render(
       <DataTable

@@ -6,7 +6,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -36,11 +35,6 @@ export default function NichosComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/mantencion/nichos';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   const handleAddNicho = useCallback(() => {
     setSelectedNicho(null);
@@ -50,15 +44,11 @@ export default function NichosComponent({
 
   const handleEditNicho = useCallback(
     (nicho: Nicho) => {
-      if (!hasEditPermission) {
-        toast.error('No tiene permisos para editar nichos');
-        return;
-      }
       setSelectedNicho(nicho);
       setModalMode('edit');
       setIsModalOpen(true);
     },
-    [hasEditPermission]
+    []
   );
 
   const handleDeleteNicho = useCallback((nicho: Nicho) => {
@@ -82,9 +72,8 @@ export default function NichosComponent({
       columns({
         onEdit: handleEditNicho,
         onDelete: handleDeleteNicho,
-        canEdit: hasEditPermission
       }),
-    [handleEditNicho, handleDeleteNicho, hasEditPermission]
+    [handleEditNicho, handleDeleteNicho]
   );
 
   return (
@@ -99,12 +88,6 @@ export default function NichosComponent({
                 onClick={handleAddNicho}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear nichos'
-                    : ''
-                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Nicho

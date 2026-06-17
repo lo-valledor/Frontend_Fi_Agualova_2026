@@ -5,7 +5,7 @@ import { administracionService } from '~/services/administracionService';
 
 export function meta() {
   return [
-    { title: 'Enerlova | Crear Medidor' },
+    { title: 'Agualova | Crear Medidor' },
     { name: 'description', content: 'Crear un nuevo medidor' }
   ];
 }

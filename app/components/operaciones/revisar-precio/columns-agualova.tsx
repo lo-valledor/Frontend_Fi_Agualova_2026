@@ -8,7 +8,7 @@ import type { RevisarPrecioDos } from '~/types/operaciones';
 
 import DialogModificarPrecio from './dialog-modificar-precio';
 
-export const columnsEnerlova: ColumnDef<RevisarPrecioDos>[] = [
+export const columnsAgualova: ColumnDef<RevisarPrecioDos>[] = [
   {
     id: 'select',
     header: ({ table }) => (

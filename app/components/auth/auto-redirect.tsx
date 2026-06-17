@@ -6,11 +6,11 @@ import MoonLoader from 'react-spinners/MoonLoader';
 import { useAuth } from '~/context/AuthContext';
 
 interface AutoRedirectProps {
-  /** Ruta a la que redirigir si el usuario está autenticado */
+  
   authenticatedRoute?: string;
-  /** Ruta a la que redirigir si el usuario no está autenticado */
+  
   unauthenticatedRoute?: string;
-  /** Mensaje de carga personalizado */
+  
   loadingMessage?: string;
 }
 

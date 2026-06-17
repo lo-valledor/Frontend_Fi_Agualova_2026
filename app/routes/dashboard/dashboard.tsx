@@ -1,61 +1,22 @@
 /* eslint-disable no-empty-pattern */
-import { useLoaderData } from 'react-router';
-
 import DashboardComponent from '~/components/dashboard/dashboard-component';
 import HydrateFallback from '~/components/hydrate-fallback';
-import api from '~/lib/api';
-import type { GetLimiteInvierno } from '~/types/administracion';
-import type {
-  PeriodoAbierto,
-  TotalesCorteReposicion,
-  ValidarSectoresPendientes
-} from '~/types/operaciones';
 
 import type { Route } from './+types/dashboard';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Inicio' },
+    { title: 'Agualova | Inicio' },
     { name: 'description', content: 'Dashboard' }
   ];
 }
 
 export async function clientLoader() {
-  const [
-    periodoAbiertoRes,
-    lecturasPendientesRes,
-    corteRes,
-    limiteInviernoRes
-  ] = await Promise.all([
-    api.get('ConsultarPeriodoAbierto'),
-    api.get('validar-lecturas-pendientes'),
-    api.get('consulta-registros-revision'),
-    api.get('parametro/limite-invierno')
-  ]);
-  const periodoAbierto = periodoAbiertoRes.data as PeriodoAbierto;
-  const lecturasPendientes =
-    lecturasPendientesRes.data as ValidarSectoresPendientes;
-  const corte = corteRes.data as TotalesCorteReposicion;
-  const limiteInvierno = limiteInviernoRes.data as GetLimiteInvierno;
-  return {
-    periodoAbierto,
-    lecturasPendientes,
-    corte,
-    limiteInvierno
-  };
+  return null;
 }
 
 export default function DashboardPage() {
-  const { periodoAbierto, lecturasPendientes, corte, limiteInvierno } =
-    useLoaderData<typeof clientLoader>();
-  return (
-    <DashboardComponent
-      periodoAbierto={periodoAbierto}
-      lecturasPendientes={lecturasPendientes}
-      corte={corte}
-      limiteInvierno={limiteInvierno}
-    />
-  );
+  return <DashboardComponent />;
 }
 
 export function hydrateFallback() {

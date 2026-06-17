@@ -10,9 +10,7 @@ import {
 } from './utils/filter-utilities';
 import { calculateFilterStats } from './utils/stats-calculator';
 
-/**
- * Opciones disponibles para filtros de contratos
- */
+
 export interface ContractFilterOptions {
   tiposContrato: string[];
   ciclosFacturacion: string[];
@@ -20,33 +18,15 @@ export interface ContractFilterOptions {
   comunas: string[];
 }
 
-/**
- * Alias para mantener compatibilidad con componentes existentes
- */
+
 export type FilterOptions = ContractFilterOptions;
 
-/**
- * Hook para filtrar contratos
- * Aplica SOLID: SRP (cada tipo de filtro es independiente)
- *
- * @param contracts - Array de contratos a filtrar
- * @param filters - Filtros a aplicar
- * @returns Contratos filtrados, estadísticas y opciones
- *
- * @example
- * const { filteredContracts, filterStats } = useContractFilters(
- *   contracts,
- *   { tipoContrato: 'Residencial', activo: 'true' }
- * );
- */
+
 export function useContractFilters(
   contracts: GetContratos[],
   filters: ContractFilters
 ) {
-  /**
-   * Extrae opciones únicas de los contratos
-   * Usa selector específico para cada propiedad
-   */
+  
   const filterOptions = useMemo((): ContractFilterOptions => {
     return {
       tiposContrato: extractUniqueOptions(contracts, (c) => c.tipoContrato),
@@ -59,10 +39,7 @@ export function useContractFilters(
     };
   }, [contracts]);
 
-  /**
-   * Aplica filtros con early returns
-   * Combina filtros string, booleano y rango de fechas
-   */
+  
   const filteredContracts = useMemo(() => {
     return contracts.filter((contract) => {
       // Filtros de string simples
@@ -116,9 +93,7 @@ export function useContractFilters(
     });
   }, [contracts, filters]);
 
-  /**
-   * Calcula estadísticas de filtros
-   */
+  
   const filterStats = useMemo(
     () => calculateFilterStats(contracts, filteredContracts, filters),
     [contracts.length, filteredContracts.length, filters]

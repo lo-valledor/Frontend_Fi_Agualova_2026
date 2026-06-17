@@ -15,7 +15,7 @@ import type { Route } from './+types/not-found';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Página no encontrada | Enerlova' },
+    { title: 'Página no encontrada | Agualova' },
     { name: 'description', content: 'La página que buscas no existe' }
   ];
 }

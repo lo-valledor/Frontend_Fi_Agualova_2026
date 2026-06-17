@@ -18,8 +18,6 @@ import 'driver.js/dist/driver.css';
 
 import React, { useMemo, useState } from 'react';
 
-import { useAuth } from '~/context/AuthContext';
-
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -52,7 +50,7 @@ import type {
 } from '~/types/operaciones';
 
 import { columnsEnel } from './columns-enel';
-import { columnsEnerlova } from './columns-enerlova';
+import { columnsAgualova } from './columns-agualova';
 import { DataTableVirtualized } from './data-table-virtualized';
 import DialogModificarPrecio from './dialog-modificar-precio';
 import {
@@ -100,14 +98,9 @@ export default function RevisarPrecioComponent({
   // Estados para los paneles colapsables
   const [isValidacionOpen, setIsValidacionOpen] = useState(true);
 
-  // Permisos
-  const { canCreate } = useAuth();
-  const route = '/dashboard/operaciones/revisar-precio';
-  const hasCreatePermission = canCreate(route);
-
   // Estados para las filas seleccionadas
   const [selectedEnelRows, setSelectedEnelRows] = useState<string[]>([]);
-  const [selectedEnerlovaRows, setSelectedEnerlovaRows] = useState<string[]>(
+  const [selectedAgualovaRows, setSelectedAgualovaRows] = useState<string[]>(
     []
   );
   const [isConfirming, setIsConfirming] = useState(false);
@@ -176,7 +169,7 @@ export default function RevisarPrecioComponent({
       return;
     }
 
-    if (selectedEnelRows.length === 0 && selectedEnerlovaRows.length === 0) {
+    if (selectedEnelRows.length === 0 && selectedAgualovaRows.length === 0) {
       toast.info('Debes seleccionar al menos un registro para confirmar');
       return;
     }
@@ -191,9 +184,9 @@ export default function RevisarPrecioComponent({
         'codigo'
       );
 
-      const confirmacionesEnerlova = filterPendingConfirmations(
+      const confirmacionesAgualova = filterPendingConfirmations(
         dataConsultarPreciosDos,
-        selectedEnerlovaRows,
+        selectedAgualovaRows,
         'codigo'
       );
 
@@ -210,27 +203,27 @@ export default function RevisarPrecioComponent({
         return;
       }
 
-      // Procesar confirmaciones Enerlova
-      const resultEnerlova = await processConfirmations(
-        confirmacionesEnerlova,
+      // Procesar confirmaciones Agualova
+      const resultAgualova = await processConfirmations(
+        confirmacionesAgualova,
         userData.nombreCompleto,
         toast
       );
 
       // Early return si debemos detener
-      if (resultEnerlova.shouldStop) {
+      if (resultAgualova.shouldStop) {
         setIsConfirming(false);
         return;
       }
 
       // Calcular totales
-      const totalExitosas = resultEnel.exitosas + resultEnerlova.exitosas;
-      const totalFallidas = resultEnel.fallidas + resultEnerlova.fallidas;
+      const totalExitosas = resultEnel.exitosas + resultAgualova.exitosas;
+      const totalFallidas = resultEnel.fallidas + resultAgualova.fallidas;
 
       // Actualizar UI si hubo confirmaciones exitosas
       if (totalExitosas > 0) {
         setSelectedEnelRows([]);
-        setSelectedEnerlovaRows([]);
+        setSelectedAgualovaRows([]);
         await onRecargarPrecios();
         toast.success(
           `Se han confirmado ${totalExitosas} registros correctamente`
@@ -301,8 +294,8 @@ export default function RevisarPrecioComponent({
     });
   }, [isAuthorized, onRecargarPrecios]);
 
-  const configuredColumnsEnerlova = useMemo(() => {
-    return columnsEnerlova.map(col => {
+  const configuredColumnsAgualova = useMemo(() => {
+    return columnsAgualova.map(col => {
       if (col.id === 'acciones') {
         return {
           ...col,
@@ -378,7 +371,7 @@ export default function RevisarPrecioComponent({
       popover: {
         title: '🔄 Pestañas de Precios',
         description:
-          'Alterna entre <strong>Valores ENEL</strong> y <strong>Precios Enerlova</strong> según el ciclo de facturación seleccionado.',
+          'Alterna entre <strong>Valores ENEL</strong> y <strong>Precios Agualova</strong> según el ciclo de facturación seleccionado.',
         side: 'top' as const,
         align: 'start' as const
       }
@@ -404,11 +397,11 @@ export default function RevisarPrecioComponent({
       }
     },
     {
-      element: '#tabla-precios-enerlova',
+      element: '#tabla-precios-agualova',
       popover: {
-        title: '💼 Tabla de Precios Enerlova',
+        title: '💼 Tabla de Precios Agualova',
         description:
-          'Esta tabla muestra los <strong>precios de Enerlova por ciclo</strong>. Revisa y confirma los valores antes de la facturación.',
+          'Esta tabla muestra los <strong>precios de Agualova por ciclo</strong>. Revisa y confirma los valores antes de la facturación.',
         side: 'top' as const,
         align: 'start' as const
       }
@@ -543,7 +536,6 @@ export default function RevisarPrecioComponent({
                       onKeyDown={handleKeyDown}
                       className='bg-background border-border h-10'
                       placeholder='Ingresa tu contraseña'
-                      disabled={!hasCreatePermission}
                     />
                   </div>
                   <div className='flex gap-3 w-full'>
@@ -551,12 +543,7 @@ export default function RevisarPrecioComponent({
                       id='autorizar-btn'
                       onClick={validarUsuario}
                       disabled={
-                        isLoading || !contrasena || !hasCreatePermission
-                      }
-                      title={
-                        !hasCreatePermission
-                          ? 'No tiene permisos para autorizar modificaciones'
-                          : ''
+                        isLoading || !contrasena
                       }
                       className='bg-primary hover:bg-primary/90 text-primary-foreground flex-1 h-10'
                       size='sm'
@@ -587,13 +574,13 @@ export default function RevisarPrecioComponent({
                           Registros seleccionados:{' '}
                         </span>
                         <span className='sm:hidden'>Seleccionados: </span>
-                        {selectedEnelRows.length + selectedEnerlovaRows.length}
+                        {selectedEnelRows.length + selectedAgualovaRows.length}
                       </p>
                     </div>
 
                     {/* Detalle de selección */}
                     {(selectedEnelRows.length > 0 ||
-                      selectedEnerlovaRows.length > 0) && (
+                      selectedAgualovaRows.length > 0) && (
                       <div className='p-3 sm:p-4 bg-muted/50 border border-border rounded-xl mt-3'>
                         <div className='flex items-center gap-2 mb-2'>
                           <Users className='w-4 h-4 text-primary' />
@@ -615,16 +602,16 @@ export default function RevisarPrecioComponent({
                               <span className='sm:hidden'> valores Enel</span>
                             </p>
                           )}
-                          {selectedEnerlovaRows.length > 0 && (
+                          {selectedAgualovaRows.length > 0 && (
                             <p>
-                              • {selectedEnerlovaRows.length}
+                              • {selectedAgualovaRows.length}
                               <span className='hidden sm:inline'>
                                 {' '}
                                 registros en Precios por Ciclo de Facturación
                               </span>
                               <span className='sm:hidden'>
                                 {' '}
-                                precios Enerlova
+                                precios Agualova
                               </span>
                             </p>
                           )}
@@ -669,7 +656,7 @@ export default function RevisarPrecioComponent({
                     </span>
                     <span className='sm:hidden'>Seleccionados: </span>
                     <span className='font-medium text-primary'>
-                      {selectedEnelRows.length + selectedEnerlovaRows.length}
+                      {selectedEnelRows.length + selectedAgualovaRows.length}
                     </span>
                   </p>
                 </div>
@@ -680,7 +667,7 @@ export default function RevisarPrecioComponent({
                     isConfirming ||
                     !isAuthorized ||
                     (selectedEnelRows.length === 0 &&
-                      selectedEnerlovaRows.length === 0)
+                      selectedAgualovaRows.length === 0)
                   }
                   className='bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto'
                   size='sm'
@@ -711,12 +698,12 @@ export default function RevisarPrecioComponent({
                   <span className='sm:hidden'>Enel</span>
                 </TabsTrigger>
                 <TabsTrigger
-                  value='enerlova'
+                  value='agualova'
                   className='relative h-auto rounded-none border-b-2 border-transparent bg-transparent px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-none'
                 >
                   <BarChartIcon className='mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4' />
-                  <span className='hidden sm:inline'>Precios Enerlova</span>
-                  <span className='sm:hidden'>Enerlova</span>
+                  <span className='hidden sm:inline'>Precios Agualova</span>
+                  <span className='sm:hidden'>Agualova</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -767,14 +754,14 @@ export default function RevisarPrecioComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value='enerlova' className='space-y-4 pt-4'>
+              <TabsContent value='agualova' className='space-y-4 pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div>
                     <h3 className='text-base sm:text-lg font-semibold'>
                       <span className='hidden sm:inline'>
                         Precios por Ciclo de Facturación
                       </span>
-                      <span className='sm:hidden'>Precios Enerlova</span>
+                      <span className='sm:hidden'>Precios Agualova</span>
                     </h3>
                     <p className='text-xs sm:text-sm'>
                       <span className='hidden sm:inline'>
@@ -842,17 +829,17 @@ export default function RevisarPrecioComponent({
                   </div>
                 </div>
 
-                {/* Tabla de precios Enerlova */}
+                {/* Tabla de precios Agualova */}
                 <div
-                  id='tabla-precios-enerlova'
+                  id='tabla-precios-agualova'
                   className='rounded-xl border border-border overflow-hidden bg-card'
                 >
                   <DataTableVirtualized
-                    columns={configuredColumnsEnerlova}
+                    columns={configuredColumnsAgualova}
                     data={dataConsultarPreciosDos}
                     enableSelection={isAuthorized}
-                    selectedRowIds={selectedEnerlovaRows}
-                    onRowSelectionChange={setSelectedEnerlovaRows}
+                    selectedRowIds={selectedAgualovaRows}
+                    onRowSelectionChange={setSelectedAgualovaRows}
                     isLoading={isLoadingPrecios}
                   />
                 </div>

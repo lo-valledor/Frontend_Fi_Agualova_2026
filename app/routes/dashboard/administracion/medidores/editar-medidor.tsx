@@ -18,7 +18,7 @@ import api from '~/lib/api';
 
 export function meta() {
   return [
-    { title: 'Enerlova | Medidor - Editar' },
+    { title: 'Agualova | Medidor - Editar' },
     { name: 'description', content: 'Medidor - Editar' }
   ];
 }

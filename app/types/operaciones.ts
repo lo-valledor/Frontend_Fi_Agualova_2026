@@ -27,17 +27,17 @@ export interface PreciosCargoEnel {
   valoractual3: string;
 }
 
-export interface PreciosCargoEnerlova {
+export interface PreciosCargoAgualova {
   CD_ID: number;
   CD_Descripcion: string;
   valor: string;
   dias: number;
   pc_confirmacion: number;
   pc_id: number;
-  cd_codigoenerlova: string;
+  cd_codigoagualova: string;
 }
 
-export interface DetallepreciosCargoEnerlova {
+export interface DetallepreciosCargoAgualova {
   codigo: number;
   descripcion: string;
   fecha_inicio: string;
@@ -100,7 +100,7 @@ export interface RevisarPrecioDos {
   indice: string;
 }
 
-export interface TablaValoresEnerlovaProps {
+export interface TablaValoresAgualovaProps {
   data: RevisarPrecioDos[];
   isLoading: boolean;
   isAuthorized: boolean;
@@ -215,7 +215,7 @@ export interface CalculoPrefacturaDetalle {
 
 // Tipos para los cargos de prefactura
 export interface CalculoPrefacturaCargo {
-  codigoEnerlova: string;
+  codigoAgualova: string;
   descripcion: string;
   cantidad: number;
   precioUnitario: number;

@@ -10,15 +10,7 @@ interface AuthLayoutProps {
   title?: string;
 }
 
-/**
- * Layout compartido para las páginas de autenticación
- * Incluye el panel izquierdo con logo y footer, y el panel derecho con el formulario
- *
- * @param {object} root0 - Props del componente
- * @param {React.ReactNode} root0.children - Formulario de autenticación a renderizar
- * @param {string} [root0.title] - Título opcional para mostrar en el logo móvil
- * @returns {JSX.Element} Layout de autenticación completo
- */
+
 export function AuthLayout({ children, title }: AuthLayoutProps) {
   const { isAuthenticated, loading } = useAuth();
   const [mounted, setMounted] = useState(false);
@@ -50,21 +42,21 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
             <div className='flex items-center gap-3'>
               <div className='bg-white/10 backdrop-blur-sm p-3 rounded-2xl'>
                 <img
-                  src='/logo-enerlova.png'
-                  alt='Enerlova'
+                  src='/logo-agualova.png'
+                  alt='Agualova'
                   className='h-12 w-12'
                 />
               </div>
               <div>
                 <h1 className='text-2xl font-bold text-white shadow-lg'>
-                  Enerlova
+                  Agualova
                 </h1>
               </div>
             </div>
 
             {/* Footer */}
             <div className='w-full text-sm text-white/70 text-center'>
-              © {new Date().getFullYear()} Enerlova. Todos los derechos
+              © {new Date().getFullYear()} Agualova. Todos los derechos
               reservados.
             </div>
           </div>
@@ -80,14 +72,14 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
           >
             <div className='flex items-center gap-2'>
               <div className='bg-card p-2 rounded-full shadow-lg'>
-                <img src='/logo-enerlova.png' alt='Enerlova' className='h-8' />
+                <img src='/logo-agualova.png' alt='Agualova' className='h-8' />
               </div>
               <div>
                 <span className='text-foreground text-lg font-bold'>
-                  Enerlova
+                  Agualova
                 </span>
                 <p className='text-xs text-muted-foreground'>
-                  {title || 'Enerlova'}
+                  {title || 'Agualova'}
                 </p>
               </div>
             </div>
@@ -103,7 +95,7 @@ export function AuthLayout({ children, title }: AuthLayoutProps) {
 
             {/* Mobile Footer */}
             <div className='lg:hidden mt-6 text-center text-muted-foreground text-xs'>
-              © {new Date().getFullYear()} Enerlova. Todos los derechos
+              © {new Date().getFullYear()} Agualova. Todos los derechos
               reservados.
             </div>
           </div>

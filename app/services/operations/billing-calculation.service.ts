@@ -8,24 +8,15 @@ import type {
 } from '~/types/operaciones';
 import api from '~/lib/api';
 
-/**
- * Interface para resultado de lanzar cálculo
- */
+
 export interface BillingCalculationRequest {
   cicloFacturacion: number;
   periodoFacturable: string;
 }
 
-/**
- * Servicio especializado para cálculo y verificación de facturación
- * Aplica SOLID: Single Responsibility = solo cálculo de facturación
- */
+
 export class BillingCalculationService extends BaseApiService {
-  /**
-   * Lanza el proceso de cálculo de facturación
-   *
-   * @param request - Datos del ciclo y período
-   */
+  
   async launchBillingCalculation(
     request: BillingCalculationRequest
   ): Promise<ServiceResponse<any>> {
@@ -45,13 +36,7 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al lanzar cálculo de facturación');
   }
 
-  /**
-   * Obtiene el identificador del proceso de facturación
-   *
-   * @param cicloId - ID del ciclo
-   * @param periodoId - ID del período
-   * @param modo - Modo de búsqueda (default: 1)
-   */
+  
   async getProcessIdentifier(
     cicloId: string,
     periodoId: string,
@@ -72,13 +57,7 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al obtener identificador del proceso');
   }
 
-  /**
-   * Obtiene el identificador actual del proceso
-   *
-   * @param cicloId - ID del ciclo
-   * @param periodoId - ID del período
-   * @param modo - Modo de búsqueda (default: 1)
-   */
+  
   async getCurrentProcessIdentifier(
     cicloId: string,
     periodoId: string,
@@ -99,11 +78,7 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al obtener identificador actual del proceso');
   }
 
-  /**
-   * Verifica el estado de un proceso de facturación
-   *
-   * @param procesoId - ID del proceso a verificar
-   */
+  
   async checkProcessStatus(
     procesoId: string
   ): Promise<ServiceResponse<EstadoProceso[]>> {
@@ -122,12 +97,7 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al verificar estado del proceso');
   }
 
-  /**
-   * Consulta el encabezado de la prefactura
-   *
-   * @param cicloId - ID del ciclo
-   * @param periodo - Período
-   */
+  
   async getPrefacturaHeader(
     cicloId: string,
     periodo: string
@@ -150,12 +120,7 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al consultar encabezado de prefactura');
   }
 
-  /**
-   * Consulta los cargos de la prefactura
-   *
-   * @param cicloId - ID del ciclo
-   * @param periodo - Período
-   */
+  
   async getPrefacturaCharges(
     cicloId: string,
     periodo: string
@@ -177,12 +142,7 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al consultar cargos de prefactura');
   }
 
-  /**
-   * Genera el detalle de factura
-   *
-   * @param lecturaId - ID de la lectura
-   * @param periodoId - ID del período
-   */
+  
   async generateBillingDetail(
     lecturaId: number,
     periodoId: string
@@ -203,12 +163,7 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al generar detalle de factura');
   }
 
-  /**
-   * Verifica el estado de cierre de lecturas
-   *
-   * @param cicloFacturable - Ciclo facturable
-   * @param periodo - Período
-   */
+  
   async checkReadingClosureStatus(
     cicloFacturable: string,
     periodo: string

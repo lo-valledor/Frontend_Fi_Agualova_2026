@@ -1,12 +1,3 @@
-/**
- * 🔐 Security Logger - ENERLOVA Frontend
- *
- * Structured logging utility for security events.
- * Following OWASP logging recommendations.
- *
- * @module lib/security-logger
- */
-
 // Log levels
 export enum LogLevel {
   DEBUG = 'DEBUG',
@@ -77,16 +68,12 @@ const SENSITIVE_PATTERNS = [
   /rut/i
 ];
 
-/**
- * Check if a key contains sensitive data
- */
+
 function isSensitiveKey(key: string): boolean {
   return SENSITIVE_PATTERNS.some(pattern => pattern.test(key));
 }
 
-/**
- * Sanitize object by masking sensitive values
- */
+
 function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
 
@@ -103,9 +90,7 @@ function sanitizeObject(obj: Record<string, unknown>): Record<string, unknown> {
   return sanitized;
 }
 
-/**
- * Get current session ID from storage (if available)
- */
+
 function getSessionId(): string | undefined {
   try {
     // Don't expose actual session ID, just a hash indicator
@@ -116,9 +101,7 @@ function getSessionId(): string | undefined {
   }
 }
 
-/**
- * Format log entry for console output
- */
+
 function formatLogEntry(entry: LogEntry): string {
   const parts = [
     `[${entry.timestamp}]`,
@@ -130,9 +113,7 @@ function formatLogEntry(entry: LogEntry): string {
   return parts.join(' ');
 }
 
-/**
- * Determine if we should log based on environment
- */
+
 function shouldLog(level: LogLevel): boolean {
   const isProduction = import.meta.env.PROD;
   const isDevelopment = import.meta.env.DEV;
@@ -150,14 +131,7 @@ function shouldLog(level: LogLevel): boolean {
   return true;
 }
 
-/**
- * Send log to external service (placeholder)
- * In production, this would send to a logging service like:
- * - Sentry
- * - LogRocket
- * - DataDog
- * - Custom backend endpoint
- */
+
 async function sendToExternalService(entry: LogEntry): Promise<void> {
   // Only send security events and errors in production
   if (!import.meta.env.PROD) return;
@@ -169,22 +143,16 @@ async function sendToExternalService(entry: LogEntry): Promise<void> {
   }
 }
 
-/**
- * Security Logger class
- */
+
 class SecurityLogger {
   private userId?: string;
 
-  /**
-   * Set current user ID for logging context
-   */
+  
   setUserId(userId: string | undefined): void {
     this.userId = userId;
   }
 
-  /**
-   * Create a log entry with common fields
-   */
+  
   private createEntry(
     level: LogLevel,
     message: string,
@@ -205,9 +173,7 @@ class SecurityLogger {
     };
   }
 
-  /**
-   * Log with specific level
-   */
+  
   private log(
     level: LogLevel,
     message: string,
@@ -259,9 +225,7 @@ class SecurityLogger {
     this.log(LogLevel.ERROR, message, undefined, context);
   }
 
-  /**
-   * Log a security event
-   */
+  
   security(
     eventType: SecurityEventType,
     message: string,

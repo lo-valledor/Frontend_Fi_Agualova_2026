@@ -46,10 +46,10 @@ import {
 import { Input } from '~/components/ui/input';
 import api from '~/lib/api';
 import type {
-  BuscarCargoFacturable,
-  GeCombosConceptos,
-  GetCombosTarifas,
-  GetCombosTiposMedidor
+  CargoFacturableRow,
+  CargoFacturableConceptos,
+  CargoFacturableTarifas,
+  CargoFacturableTiposMedidor
 } from '~/types/administracion';
 
 interface CargoFacturableModalFormProps {
@@ -57,11 +57,11 @@ interface CargoFacturableModalFormProps {
   onClose: () => void;
   onSubmit: (data: any) => Promise<void>;
   onSuccess: () => void;
-  cargo: BuscarCargoFacturable | undefined;
+  cargo: CargoFacturableRow | undefined;
   mode: 'add' | 'edit';
-  conceptos: GeCombosConceptos[];
-  tarifas: GetCombosTarifas[];
-  tiposMedidor: GetCombosTiposMedidor[];
+  conceptos: CargoFacturableConceptos[];
+  tarifas: CargoFacturableTarifas[];
+  tiposMedidor: CargoFacturableTiposMedidor[];
 }
 
 const tiposOptions = [
@@ -159,7 +159,7 @@ export default function CargoFacturableModalForm({
         };
 
         const normalizeAndFind = (
-          list: { id: number; nombre: string }[],
+          list: { id: string; descripcion: string }[],
           name: string | undefined
         ) => {
           if (!name) return 0;
@@ -170,7 +170,7 @@ export default function CargoFacturableModalForm({
             .replaceAll(/[\u0300-\u036f]/g, '');
           const found = list.find(
             item =>
-              item.nombre
+              item.descripcion
                 .trim()
                 .toLowerCase()
                 .normalize('NFD')
@@ -179,7 +179,7 @@ export default function CargoFacturableModalForm({
           return found?.id || 0;
         };
 
-        const tipoMapeado = mapearTipo(cargo.tipo || '');
+        const tipoMapeado = mapearTipo(cargo.tipoCargo || '');
 
         form.reset({
           cuenta: cargo.cuenta || '',
@@ -190,10 +190,9 @@ export default function CargoFacturableModalForm({
           periodicoEventual: mapearPeriodicoEventual(
             cargo.periodicoEventual || ''
           ),
-          conceptoId: normalizeAndFind(conceptos, cargo.concepto),
-          tarifaId: normalizeAndFind(tarifas, cargo.tarifa),
-          tipoMedidorId: normalizeAndFind(tiposMedidor, cargo.tipoMedidor),
-          muestraValorEn0: cargo.mostrarValorCero || false
+          concepto: normalizeAndFind(conceptos, cargo.concepto),
+          tarifa: normalizeAndFind(tarifas, cargo.tarifa),
+          tipoMedidor: normalizeAndFind(tiposMedidor, cargo.tipoMedidor)
         });
       } else {
         form.reset({
@@ -238,7 +237,7 @@ export default function CargoFacturableModalForm({
         tarifaId: data.tarifaId,
         tipoMedidorId: data.tipoMedidorId,
         tipo: getTipoNumero(data.tipo),
-        codigoEnerlova: data.codigo.trim(),
+        codigoAgualova: data.codigo.trim(),
         mostrarValorCero: data.muestraValorEn0
       };
 
@@ -454,11 +453,11 @@ export default function CargoFacturableModalForm({
                       <Select
                         options={conceptos.map(c => ({
                           value: c.id,
-                          label: c.nombre
+                          label: c.descripcion
                         }))}
                         value={conceptos
-                          .map(c => ({ value: c.id, label: c.nombre }))
-                          .find(c => c.value === field.value)}
+                          .map(c => ({ value: c.id, label: c.descripcion }))
+                          .find(c => c.value === field.value.toString())}
                         onChange={(o: any) => field.onChange(o ? o.value : 0)}
                         styles={selectStyles}
                         placeholder='Seleccione...'
@@ -480,11 +479,11 @@ export default function CargoFacturableModalForm({
                       <Select
                         options={tarifas.map(t => ({
                           value: t.id,
-                          label: t.nombre
+                          label: t.descripcion
                         }))}
                         value={tarifas
-                          .map(t => ({ value: t.id, label: t.nombre }))
-                          .find(t => t.value === field.value)}
+                          .map(t => ({ value: t.id, label: t.descripcion }))
+                          .find(t => t.value === field.value.toString())}
                         onChange={(o: any) => field.onChange(o ? o.value : 0)}
                         styles={selectStyles}
                         placeholder='Seleccione...'
@@ -506,11 +505,11 @@ export default function CargoFacturableModalForm({
                       <Select
                         options={tiposMedidor.map(t => ({
                           value: t.id,
-                          label: t.nombre
+                          label: t.descripcion
                         }))}
                         value={tiposMedidor
-                          .map(t => ({ value: t.id, label: t.nombre }))
-                          .find(t => t.value === field.value)}
+                          .map(t => ({ value: t.id, label: t.descripcion }))
+                          .find(t => t.value === field.value.toString())}
                         onChange={(o: any) => field.onChange(o ? o.value : 0)}
                         styles={selectStyles}
                         placeholder='Seleccione...'

@@ -9,10 +9,7 @@ import {
 } from './utils/filter-utilities';
 import { calculateFilterStats, type FilterStats } from './utils/stats-calculator';
 
-/**
- * Normalizaciones de valores del backend a valores de UI
- * Mapea caracteres cortos a descripciones legibles
- */
+
 const FIJO_VARIABLE_NORMALIZATIONS = {
   F: 'Fijo',
   V: 'Variable'
@@ -23,9 +20,7 @@ const PERIODICO_EVENTUAL_NORMALIZATIONS = {
   E: 'Eventual'
 };
 
-/**
- * Opciones disponibles para filtros de cargos
- */
+
 export interface CargoFilterOptions {
   tipos: string[];
   fijoVariable: string[];
@@ -35,36 +30,19 @@ export interface CargoFilterOptions {
   tiposMedidor: string[];
 }
 
-/**
- * Retorno del hook de filtros de cargos
- */
+
 export interface UseCargoFiltersReturn {
   filteredCargos: BuscarCargoFacturable[];
   filterStats: FilterStats;
   filterOptions: CargoFilterOptions;
 }
 
-/**
- * Hook para filtrar cargos facturables
- * Aplica SOLID: SRP (cada filtro normalizado es independiente)
- *
- * @param cargos - Array de cargos a filtrar
- * @param filters - Filtros a aplicar
- * @returns Cargos filtrados, estadísticas y opciones
- *
- * @example
- * const { filteredCargos, filterStats } = useCargoFilters(
- *   cargos,
- *   { tipo: 'Energía', fijoVariable: 'Fijo' }
- * );
- */
+
 export function useCargoFilters(
   cargos: BuscarCargoFacturable[],
   filters: CargoFilters
 ): UseCargoFiltersReturn {
-  /**
-   * Extrae opciones únicas incluyendo normalizaciones
-   */
+  
   const filterOptions = useMemo((): CargoFilterOptions => {
     return {
       tipos: extractUniqueOptions(cargos, (c) => c.tipo),
@@ -93,10 +71,7 @@ export function useCargoFilters(
     };
   }, [cargos]);
 
-  /**
-   * Aplica filtros con early returns
-   * Usa funciones normalizadas para valores del backend
-   */
+  
   const filteredCargos = useMemo(() => {
     return cargos.filter((cargo) => {
       // Filtros simples de string
@@ -141,9 +116,7 @@ export function useCargoFilters(
     });
   }, [cargos, filters]);
 
-  /**
-   * Calcula estadísticas con nombres más descriptivos
-   */
+  
   const filterStats = useMemo(
     () => calculateFilterStats(cargos, filteredCargos, filters),
     [cargos.length, filteredCargos.length, filters]

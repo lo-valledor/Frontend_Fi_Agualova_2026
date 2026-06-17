@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -22,7 +21,6 @@ import {
   createInitialContratoModalState,
   getContratoCreateUrl,
   getContratoEditUrl,
-  getContratoPermissions,
   isValidContratoForOperation
 } from '~/utils/administracion';
 
@@ -36,14 +34,7 @@ import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 import { ExportButtons } from './export-buttons';
 import { FilterSummary } from './filter-summary';
 
-const CONTRATOS_ROUTE = '/dashboard/administracion/contratos';
 
-/**
- * Componente principal para la gestión de contratos
- * Implementa estado unificado de modales y manejo de errores centralizado
- * @param root0
- * @param root0.contratos
- */
 export default function ContratosComponent({
   contratos
 }: {
@@ -74,30 +65,18 @@ export default function ContratosComponent({
 
   // Dependencias
   const navigate = useNavigate();
-  const { canCreate, canEdit } = useAuth();
-
-  // Permisos del usuario actual
-  const permissions = getContratoPermissions(
-    canCreate,
-    canEdit,
-    CONTRATOS_ROUTE
-  );
 
   const { filteredContracts, filterStats, filterOptions } = useContractFilters(
     contracts,
     filters
   );
 
-  /**
-   * Actualiza los filtros aplicados
-   */
+  
   const handleFiltersChange = useCallback((newFilters: ContractFilters) => {
     setFilters(newFilters);
   }, []);
 
-  /**
-   * Limpia todos los filtros aplicados
-   */
+  
   const handleClearFilters = useCallback(() => {
     setFilters({
       tipoContrato: 'all',
@@ -111,16 +90,12 @@ export default function ContratosComponent({
     });
   }, []);
 
-  /**
-   * Navega a la página de crear contrato
-   */
+  
   const handleAddContract = useCallback(() => {
     navigate(getContratoCreateUrl());
   }, [navigate]);
 
-  /**
-   * Navega a la página de editar contrato
-   */
+  
   const handleEditContract = useCallback(
     (contract: GetContratos) => {
       navigate(getContratoEditUrl(contract.codigoContrato));
@@ -128,9 +103,7 @@ export default function ContratosComponent({
     [navigate]
   );
 
-  /**
-   * Abre el diálogo de confirmación de eliminación
-   */
+  
   const handleDeleteContract = useCallback((contract: GetContratos) => {
     setSelectedContract(contract);
     setModalsState(prev => ({
@@ -139,9 +112,7 @@ export default function ContratosComponent({
     }));
   }, []);
 
-  /**
-   * Abre el modal de detalles del contrato
-   */
+  
   const handleViewDetails = useCallback((contract: GetContratos) => {
     setSelectedContract(contract);
     setModalsState(prev => ({
@@ -150,10 +121,7 @@ export default function ContratosComponent({
     }));
   }, []);
 
-  /**
-   * Confirma y ejecuta la eliminación del contrato
-   * Implementa early returns y validación centralizada
-   */
+  
   const handleConfirmDelete = useCallback(() => {
     // Early return: validar que exista contrato seleccionado
     if (!isValidContratoForOperation(selectedContract)) {
@@ -184,14 +152,12 @@ export default function ContratosComponent({
       columns({
         onEdit: handleEditContract,
         onDelete: handleDeleteContract,
-        onViewDetails: handleViewDetails,
-        canEdit: permissions.hasEditPermission
+        onViewDetails: handleViewDetails
       }),
     [
       handleEditContract,
       handleDeleteContract,
-      handleViewDetails,
-      permissions.hasEditPermission
+      handleViewDetails
     ]
   );
 
@@ -215,12 +181,6 @@ export default function ContratosComponent({
                   onClick={handleAddContract}
                   variant='default'
                   size='sm'
-                  disabled={!permissions.hasCreatePermission}
-                  title={
-                    !permissions.hasCreatePermission
-                      ? 'No tiene permisos para crear contratos'
-                      : ''
-                  }
                 >
                   <Plus className='mr-2 h-4 w-4' />
                   Agregar Contrato

@@ -9,7 +9,7 @@ import type { Route } from './+types/contrato';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Consulta Contrato' },
+    { title: 'Agualova | Consulta Contrato' },
     { name: 'description', content: 'Consulta de Contrato' }
   ];
 }

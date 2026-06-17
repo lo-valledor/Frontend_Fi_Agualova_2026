@@ -8,21 +8,19 @@ import type { Empalme } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (empalme: Empalme) => void;
   onDelete: (empalme: Empalme) => void;
-  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete,
-  canEdit = true
+  onDelete
 }: TableColumnsProps): ColumnDef<Empalme>[] => [
   {
-    accessorKey: 'codigo',
+    accessorKey: 'id',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Código' />
     ),
     cell: ({ row }) => {
-      const codigo = row.getValue('codigo');
+      const codigo = row.getValue('id');
       return (
         <div className='flex items-center'>
           <Badge variant='outline' className='font-mono'>
@@ -61,6 +59,21 @@ export const columns = ({
     enableSorting: true
   },
   {
+    accessorKey: 'nombreEmpresa',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Nombre Empresa' />
+    ),
+    cell: ({ row }) => {
+      const nombreEmpresa = row.getValue('nombreEmpresa');
+      return (
+        <div className='max-w-[150px] truncate font-medium'>
+          {nombreEmpresa as string}
+        </div>
+      );
+    },
+    enableSorting: true
+  },
+  {
     accessorKey: 'potenciaContratada',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Potencia Contratada' />
@@ -83,7 +96,11 @@ export const columns = ({
     ),
     cell: ({ row }) => {
       const tarifa = row.getValue('tarifa');
-      return <Badge variant='secondary'>{tarifa as string}</Badge>;
+      return (
+        <div className='text-center'>
+          <Badge variant='secondary'>{tarifa as string}</Badge>
+        </div>
+      );
     },
     enableSorting: true
   },
@@ -96,7 +113,6 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

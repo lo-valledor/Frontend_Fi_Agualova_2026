@@ -1,5 +1,5 @@
 import api from '~/lib/api';
-import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
+import type { UpdateUsuario, Usuarios } from '~/types/administracion';
 
 // Cache para usuarios
 const userCache = new Map<string, { data: Usuarios; timestamp: number }>();
@@ -14,7 +14,7 @@ export interface UserServiceResponse<T> {
 class UserService {
   async getAllUsers(): Promise<UserServiceResponse<Usuarios[]>> {
     try {
-      const response = await api.get('/listar');
+      const response = await api.get('/GetAllUsers');
       return {
         data: response.data as Usuarios[],
         error: null,
@@ -68,9 +68,7 @@ class UserService {
       }
 
       const usuarios = allUsersResponse.data!;
-      const usuarioEncontrado = usuarios.find(
-        u => u.idUsuario === Number.parseInt(userIdStr)
-      );
+      const usuarioEncontrado = usuarios.find(u => u.id === userIdStr);
 
       if (!usuarioEncontrado) {
         return {
@@ -130,7 +128,7 @@ class UserService {
 
       const usuarios = allUsersResponse.data!;
       const usuarioEncontrado = usuarios.find(
-        u => u.nombreDeUsuario.toLowerCase() === username.toLowerCase()
+        u => u.nombre_Usuario.toLowerCase() === username.toLowerCase()
       );
 
       if (!usuarioEncontrado) {
@@ -185,7 +183,7 @@ class UserService {
 
   async updateUser(
     userId: number,
-    userData: ActualizarUsuarioProps
+    userData: UpdateUsuario
   ): Promise<UserServiceResponse<Usuarios>> {
     try {
       const response = await api.put(`actualizar/${userId}`, userData);
@@ -200,7 +198,7 @@ class UserService {
       });
 
       // También actualizar caché por username si existe
-      const usernameCacheKey = `user_username_${updatedUser.nombreDeUsuario}`;
+      const usernameCacheKey = `user_username_${updatedUser.nombre_Usuario}`;
       userCache.set(usernameCacheKey, {
         data: updatedUser,
         timestamp: Date.now()
@@ -223,22 +221,27 @@ class UserService {
   createMockUserData(user: any): Usuarios {
     const nameParts = user.fullName.split(' ');
     return {
-      idUsuario: Number.parseInt(user.id),
-      nombreDeUsuario: user.username,
-      perfilId: Number.parseInt(user.profileId),
-      nombres: nameParts[0] || '',
-      apellidos: nameParts.slice(1).join(' ') || '',
-      departamento: 1, // Valor por defecto
-      activo: true,
-      fechaCreacion: new Date().toISOString(),
-      email: null,
-      roles: []
+      nombre_Usuario: nameParts[0],
+      apellidos_Usuario: nameParts.slice(1).join(' '),
+      id: user.id.toString(),
+      userName: user.username,
+      normalizedUserName: user.username.toUpperCase(),
+      email: user.email,
+      normalizedEmail: user.email.toUpperCase(),
+      emailConfirmed: true,
+      passwordHash: '',
+      securityStamp: '',
+      concurrencyStamp: '',
+      phoneNumber: null,
+      phoneNumberConfirmed: false,
+      twoFactorEnabled: false,
+      lockoutEnd: null,
+      lockoutEnabled: false,
+      accessFailedCount: 0
     };
   }
 
-  /**
-   * Limpia el caché
-   */
+  
   clearCache(): void {
     userCache.clear();
   }

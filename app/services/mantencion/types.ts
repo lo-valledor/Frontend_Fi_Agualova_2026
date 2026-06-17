@@ -1,7 +1,3 @@
-/**
- * Mantencion module types and interfaces
- */
-
 export interface MantencionRequest {
   id?: number;
   name?: string;

@@ -2,47 +2,31 @@ import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
 import type {
   PreciosCargoEnel,
-  PreciosCargoEnerlova,
+  PreciosCargoAgualova,
   RevisarPrecioUno,
   RevisarPrecioDos
 } from '~/types/operaciones';
 
-/**
- * Interface para datos de precios consolidados
- */
+
 export interface PricingData {
   tablaEnel: PreciosCargoEnel[];
-  tablaEnerlova: PreciosCargoEnerlova[];
+  tablaAgualova: PreciosCargoAgualova[];
 }
 
-/**
- * Interface para precios por ciclo
- */
+
 export interface CyclePrices {
   preciosUno: RevisarPrecioUno[];
   preciosDos: RevisarPrecioDos[];
 }
 
-/**
- * Servicio especializado para gestión de precios y cargos
- * Aplica SOLID: Single Responsibility = solo gestión de precios
- */
+
 export class PricingService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene los precios de cargo para un mes y año específicos
-   *
-   * @param mes - Mes (1-12 o nombre)
-   * @param anio - Año
-   * @returns Respuesta con datos de precios consolidados
-   */
+  
   async getPricingData(
     mes: string,
     anio: string
@@ -55,7 +39,7 @@ export class PricingService extends BaseApiService {
     }
 
     return this.executeDataOperation(async () => {
-      const [enel, enerlova] = await this.executeParallelOperations([
+      const [enel, agualova] = await this.executeParallelOperations([
         () =>
           this.httpClient.get(`/consulta-precio-pago?mes=${mes}&año=${anio}`),
         () => this.httpClient.get(`/consulta-precio-pago-tabla`)
@@ -63,18 +47,12 @@ export class PricingService extends BaseApiService {
 
       return {
         tablaEnel: this.processResponseArray<PreciosCargoEnel>(enel),
-        tablaEnerlova: this.processResponseArray<PreciosCargoEnerlova>(enerlova)
+        tablaAgualova: this.processResponseArray<PreciosCargoAgualova>(agualova)
       };
     }, `Error al obtener precios para ${mes}/${anio}`);
   }
 
-  /**
-   * Obtiene precios tipo uno (consulta básica)
-   *
-   * @param mes - Mes
-   * @param anio - Año
-   * @returns Respuesta con precios tipo uno
-   */
+  
   async getPreciosUno(
     mes: number,
     anio: number
@@ -94,14 +72,7 @@ export class PricingService extends BaseApiService {
     }, `Error al obtener precios tipo uno`);
   }
 
-  /**
-   * Obtiene precios tipo dos (consulta con día)
-   *
-   * @param mes - Mes
-   * @param anio - Año
-   * @param dia - Día (default: 15)
-   * @returns Respuesta con precios tipo dos
-   */
+  
   async getPreciosDos(
     mes: number,
     anio: number,
@@ -122,14 +93,7 @@ export class PricingService extends BaseApiService {
     }, `Error al obtener precios tipo dos`);
   }
 
-  /**
-   * Obtiene ambos tipos de precios por ciclo (carga paralela)
-   *
-   * @param mes - Mes
-   * @param anio - Año
-   * @param dia - Día para precios dos (default: 15)
-   * @returns Respuesta con precios de ambos tipos
-   */
+  
   async getCyclePrices(
     mes: number,
     anio: number,

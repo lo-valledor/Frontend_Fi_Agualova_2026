@@ -35,13 +35,13 @@ import {
   TableRow
 } from '~/components/ui/table';
 import type {
-  Acometida,
+  AcometidaRow,
   ActualizarAcometidaProps,
-  ComboEmpalmes,
-  ComboNichos,
-  ComboSectores,
-  ContratosDisponibles,
-  CrearAcometidaProps
+  BuscarContratosLibres,
+  CrearAcometidaProps,
+  Empalmes,
+  Nichos,
+  Sectores
 } from '~/types/administracion';
 
 // Tipos para las opciones de react-select
@@ -57,12 +57,12 @@ interface AcometidaFormProps {
   onSubmit: (
     data: CrearAcometidaProps | ActualizarAcometidaProps
   ) => Promise<void>;
-  acometida?: Acometida | null;
+  acometida?: AcometidaRow | null;
   isLoading?: boolean;
-  comboEmpalmes: ComboEmpalmes[];
-  comboNichos: ComboNichos[];
-  contratosDisponibles: ContratosDisponibles[];
-  comboSectores: ComboSectores[];
+  comboEmpalmes: Empalmes[];
+  comboNichos: Nichos[];
+  contratosDisponibles: BuscarContratosLibres[];
+  comboSectores: Sectores[];
 }
 
 export function AcometidaForm({
@@ -98,21 +98,19 @@ export function AcometidaForm({
   // Preparar opciones para react-select
   const empalmeOptions: SelectOption[] = comboEmpalmes.map(empalme => ({
     value: empalme.id,
-    label: empalme.nombre
+    label: empalme.descripcion
   }));
 
   const nichoOptions: SelectOption[] = comboNichos.map(nicho => ({
     value: nicho.id,
-    label: nicho.nombre
+    label: nicho.descripcion
   }));
 
   // Verificar si el contrato actual está disponible
   const contratoActualDisponible = useMemo(() => {
     if (!isEdit || !acometida?.contratoId) return null;
 
-    return contratosDisponibles.find(
-      c => c.contratoId === acometida.contratoId
-    );
+    return contratosDisponibles.find(c => c.idContrato === acometida.contratoId);
   }, [isEdit, acometida, contratosDisponibles]);
 
   // Usar estilos compartidos para react-select
@@ -121,7 +119,7 @@ export function AcometidaForm({
   // Datos derivados
   const contratosFiltrados = contratosDisponibles.filter(c => {
     const texto =
-      `${c.contratoId} ${c.clienteNombre} ${c.clienteApellidos} ${c.empresa} ${c.local}`.toLowerCase();
+      `${c.idContrato} ${c.cliente} ${c.apellido} ${c.empresa} ${c.local}`.toLowerCase();
     return texto.includes(busquedaContrato.toLowerCase());
   });
 
@@ -133,11 +131,9 @@ export function AcometidaForm({
   useEffect(() => {
     if (isEdit && acometida) {
       const empalmeId =
-        comboEmpalmes.find(e => e.nombre === acometida.empalmeDescripcion)
-          ?.id || '';
+        comboEmpalmes.find(e => e.descripcion === acometida.empalme)?.id || '';
       const nichoId =
-        comboNichos.find(n => n.nombre === acometida.nichoDescripcion)?.id ||
-        '';
+        comboNichos.find(n => n.descripcion === acometida.nicho)?.id || '';
 
       // Siempre establecer el contratoId original, independientemente de si está en la lista
       const contratoId = acometida.contratoId || '';
@@ -148,7 +144,7 @@ export function AcometidaForm({
         nichoId,
         contratoId,
         codigo: acometida.codigo || '',
-        limitePotencia: acometida.limitePotencia?.toString() || '0'
+        limitePotencia: acometida.limitePotencia || '0'
       });
     } else {
       form.reset({
@@ -227,22 +223,22 @@ export function AcometidaForm({
 
       if (isEdit && acometida) {
         const submitData: ActualizarAcometidaProps = {
-          acometidaId: acometida.acometidaId,
+          idAcometida: acometida.idAcometida,
           ubicacion: data.ubicacion.trim(),
-          empalmeId,
-          nichoId,
-          contratoId: contratoIdFinal,
-          limitePotencia
+          idEmpalme: empalmeId,
+          idNicho: nichoId,
+          idContrato: contratoIdFinal,
+          limitePotencia: String(limitePotencia)
         };
         await onSubmit(submitData);
       } else {
         const submitData: CrearAcometidaProps = {
           ubicacion: data.ubicacion.trim(),
-          empalmeId,
-          nichoId,
-          contratoId: contratoIdFinal,
+          idEmpalme: empalmeId,
+          idNicho: nichoId,
+          idContrato: contratoIdFinal,
           codigo,
-          limitePotencia
+          limitePotencia: String(limitePotencia)
         };
         await onSubmit(submitData);
       }
@@ -267,11 +263,11 @@ export function AcometidaForm({
 
     // Mostrar mensaje de confirmación
     const contrato = contratosDisponibles.find(
-      c => c.contratoId === contratoId
+      c => c.idContrato === contratoId
     );
     if (contrato) {
       toast.success('Contrato seleccionado correctamente', {
-        description: `${contrato.clienteNombre} ${contrato.clienteApellidos} - ${contrato.empresa}`,
+        description: `${contrato.cliente} ${contrato.apellido} - ${contrato.empresa}`,
         duration: 4200
       });
     }
@@ -419,36 +415,12 @@ export function AcometidaForm({
                 {/* Información del contrato seleccionado - buscar por ID */}
                 {(() => {
                   const contratoEncontrado = contratosDisponibles.find(
-                    c => c.contratoId === form.watch('contratoId')
+                    c => c.idContrato === form.watch('contratoId')
                   );
                   if (!contratoEncontrado) return null;
 
                   return (
-                    <div
-                      className={`p-3 rounded-xl border ${
-                        contratoEncontrado.estadoActivo === false
-                          ? 'bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800'
-                          : 'bg-emerald-50 dark:bg-emerald-900/10 border-border'
-                      }`}
-                    >
-                      {contratoEncontrado.estadoActivo === false && (
-                        <div className='mb-2 flex items-center gap-2 text-amber-700 dark:text-amber-300'>
-                          <svg
-                            className='h-4 w-4'
-                            viewBox='0 0 20 20'
-                            fill='currentColor'
-                          >
-                            <path
-                              fillRule='evenodd'
-                              d='M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z'
-                              clipRule='evenodd'
-                            />
-                          </svg>
-                          <span className='text-xs font-medium'>
-                            Contrato asociado (puede estar inactivo)
-                          </span>
-                        </div>
-                      )}
+                    <div className='p-3 rounded-xl border bg-emerald-50 dark:bg-emerald-900/10 border-border'>
                       <div className='flex items-center gap-2 mb-3'>
                         <div className='p-1.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-md'>
                           <User className='h-4 w-4 text-emerald-600 dark:text-emerald-400' />
@@ -457,34 +429,21 @@ export function AcometidaForm({
                           Contrato verificado
                         </span>
                         <Badge variant='outline' className='font-mono text-xs'>
-                          {contratoEncontrado.contratoId}
+                          {contratoEncontrado.idContrato}
                         </Badge>
                       </div>
                       <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-xs'>
                         <div>
-                          <span
-                            className={`font-medium ${
-                              contratoEncontrado.estadoActivo === false
-                                ? 'text-amber-700 dark:text-amber-300'
-                                : 'text-emerald-700 dark:text-emerald-300'
-                            }`}
-                          >
+                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
                             Cliente:
                           </span>
                           <p className=''>
-                            {contratoEncontrado.clienteNombre ||
-                              'No disponible'}{' '}
-                            {contratoEncontrado.clienteApellidos || ''}
+                            {contratoEncontrado.cliente || 'No disponible'}{' '}
+                            {contratoEncontrado.apellido || ''}
                           </p>
                         </div>
                         <div>
-                          <span
-                            className={`font-medium ${
-                              contratoEncontrado.estadoActivo === false
-                                ? 'text-amber-700 dark:text-amber-300'
-                                : 'text-emerald-700 dark:text-emerald-300'
-                            }`}
-                          >
+                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
                             Empresa:
                           </span>
                           <p className=''>
@@ -492,13 +451,7 @@ export function AcometidaForm({
                           </p>
                         </div>
                         <div>
-                          <span
-                            className={`font-medium ${
-                              contratoEncontrado.estadoActivo === false
-                                ? 'text-amber-700 dark:text-amber-300'
-                                : 'text-emerald-700 dark:text-emerald-300'
-                            }`}
-                          >
+                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
                             Local:
                           </span>
                           <p className=''>
@@ -506,13 +459,7 @@ export function AcometidaForm({
                           </p>
                         </div>
                         <div>
-                          <span
-                            className={`font-medium ${
-                              contratoEncontrado.estadoActivo === false
-                                ? 'text-amber-700 dark:text-amber-300'
-                                : 'text-emerald-700 dark:text-emerald-300'
-                            }`}
-                          >
+                          <span className='font-medium text-emerald-700 dark:text-emerald-300'>
                             Tarifa:
                           </span>
                           <p className=''>
@@ -622,7 +569,7 @@ export function AcometidaForm({
                         variant='outline'
                         className='text-sky-700 dark:text-sky-300'
                       >
-                        {empalmeSeleccionado.nombre}
+                        {empalmeSeleccionado.descripcion}
                       </Badge>
                     </div>
                   </div>
@@ -736,7 +683,7 @@ export function AcometidaForm({
                     )}
                     {contratosFiltrados.map(c => (
                       <TableRow
-                        key={c.contratoId}
+                        key={c.idContrato}
                         className='hover:bg-muted/50 transition-colors'
                       >
                         <TableCell>
@@ -744,7 +691,7 @@ export function AcometidaForm({
                             variant='outline'
                             className='font-mono text-xs'
                           >
-                            {c.contratoId}
+                            {c.idContrato}
                           </Badge>
                         </TableCell>
                         <TableCell className='font-medium'>
@@ -752,7 +699,7 @@ export function AcometidaForm({
                             <User className='h-4 w-4 text-muted-foreground shrink-0' />
                             <div className='min-w-0'>
                               <p className='truncate'>
-                                {c.clienteNombre} {c.clienteApellidos}
+                                {c.cliente} {c.apellido}
                               </p>
                             </div>
                           </div>
@@ -774,7 +721,7 @@ export function AcometidaForm({
                         <TableCell className='text-center sticky right-0 bg-background z-20'>
                           <Button
                             size='sm'
-                            onClick={() => handleSelectContrato(c.contratoId)}
+                            onClick={() => handleSelectContrato(c.idContrato)}
                             className='bg-emerald-600 hover:bg-emerald-700 h-8 px-3 text-xs'
                           >
                             Seleccionar

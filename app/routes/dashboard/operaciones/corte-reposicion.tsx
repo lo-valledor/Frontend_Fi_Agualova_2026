@@ -7,7 +7,7 @@ import type { Route } from './+types/corte-reposicion';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Corte y Reposición' },
+    { title: 'Agualova | Corte y Reposición' },
     { name: 'description', content: 'Corte y Reposición' }
   ];
 }

@@ -20,7 +20,6 @@ import 'driver.js/dist/driver.css';
 
 import { useMemo, useState, useCallback } from 'react';
 
-import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Badge } from '~/components/ui/badge';
@@ -60,11 +59,6 @@ export default function RevisarCalculoFacturaComponent({
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(true);
   const cicloId = '1';
-
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/operaciones/revisar-calculo-factura';
-  const hasPermission = canCreate(route) || canEdit(route);
 
   // Memoizar periodo formateado
   const periodoFormateado = useMemo(() => {
@@ -747,16 +741,14 @@ export default function RevisarCalculoFacturaComponent({
               id='aceptar-calculo-btn'
               onClick={handleAceptarCalculo}
               disabled={
-                isAccepting || selectedContratos.length === 0 || !hasPermission
+                isAccepting || selectedContratos.length === 0
               }
               variant='default'
               size='sm'
               title={
-                !hasPermission
-                  ? 'No tiene permisos para aceptar cálculos'
-                  : selectedContratos.length === 0
-                    ? 'Seleccione al menos un contrato'
-                    : `Aceptar ${selectedContratos.length} ${selectedContratos.length === 1 ? 'cálculo' : 'cálculos'} seleccionado(s)`
+                selectedContratos.length === 0
+                  ? 'Seleccione al menos un contrato'
+                  : `Aceptar ${selectedContratos.length} ${selectedContratos.length === 1 ? 'cálculo' : 'cálculos'} seleccionado(s)`
               }
             >
               {isAccepting ? (

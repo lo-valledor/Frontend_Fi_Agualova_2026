@@ -13,7 +13,7 @@ import type {
   PeriodoAbierto,
   Periodos,
   PreciosCargoEnel,
-  PreciosCargoEnerlova,
+  PreciosCargoAgualova,
   RevisarPrecioDos,
   RevisarPrecioUno,
   TotalesCorteReposicion,
@@ -124,11 +124,11 @@ class OperacionesService {
   ): Promise<
     OperacionesServiceResponse<{
       tablaEnel: PreciosCargoEnel[];
-      tablaEnerlova: PreciosCargoEnerlova[];
+      tablaAgualova: PreciosCargoAgualova[];
     }>
   > {
     try {
-      const [resTablaEnel, resTablaEnerlova] = await Promise.all([
+      const [resTablaEnel, resTablaAgualova] = await Promise.all([
         api.get(`/consulta-precio-pago?mes=${mes}&año=${anio}`),
         api.get(`/consulta-precio-pago-tabla`)
       ]);
@@ -136,7 +136,7 @@ class OperacionesService {
       return {
         data: {
           tablaEnel: resTablaEnel.data as PreciosCargoEnel[],
-          tablaEnerlova: resTablaEnerlova.data as PreciosCargoEnerlova[]
+          tablaAgualova: resTablaAgualova.data as PreciosCargoAgualova[]
         },
         error: null
       };

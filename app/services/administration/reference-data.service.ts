@@ -1,11 +1,3 @@
-/**
- * Módulo especializado para datos de referencia/catálogos
- *
- * Maneja operaciones con datos de referencia del sistema: giros, comunas, marcas,
- * condiciones de contrato, cargos facturables, etc.
- * Extiende BaseApiService para reutilizar lógica común.
- */
-
 import api from '~/lib/api';
 import { BaseApiService, type ServiceResponse } from '../core';
 import type { GetGiros, GetComunas } from '~/types/administracion';
@@ -14,7 +6,7 @@ import type { GetGiros, GetComunas } from '~/types/administracion';
 // TIPOS
 // ============================================================================
 
-/** Datos de referencia completos */
+
 export interface ReferenceDataBundle {
   giros: GetGiros[];
   comunas: GetComunas[];
@@ -28,23 +20,14 @@ export interface ReferenceDataBundle {
 // SERVICIO
 // ============================================================================
 
-/**
- * Servicio especializado para operaciones con datos de referencia
- */
+
 class ReferenceDataService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene todos los giros disponibles
-   *
-   * @returns Respuesta con lista de giros
-   */
+  
   async getGiros(): Promise<ServiceResponse<GetGiros[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('giro/buscar');
@@ -52,11 +35,7 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener giros');
   }
 
-  /**
-   * Obtiene todas las comunas disponibles
-   *
-   * @returns Respuesta con lista de comunas
-   */
+  
   async getComunas(): Promise<ServiceResponse<GetComunas[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('comuna/por-region');
@@ -64,11 +43,7 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener comunas');
   }
 
-  /**
-   * Obtiene todas las marcas de medidores disponibles
-   *
-   * @returns Respuesta con lista de marcas
-   */
+  
   async getMarcas(): Promise<ServiceResponse<Array<{ [key: string]: any }>>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('marca/buscar');
@@ -76,11 +51,7 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener marcas');
   }
 
-  /**
-   * Obtiene todas las condiciones de contrato disponibles
-   *
-   * @returns Respuesta con lista de condiciones
-   */
+  
   async getCondiciones(): Promise<
     ServiceResponse<Array<{ [key: string]: any }>>
   > {
@@ -90,11 +61,7 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener condiciones de contrato');
   }
 
-  /**
-   * Obtiene todos los tipos de cargo de contrato
-   *
-   * @returns Respuesta con lista de tipos de cargo
-   */
+  
   async getCargosTipo(): Promise<
     ServiceResponse<Array<{ [key: string]: any }>>
   > {
@@ -104,11 +71,7 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener tipos de cargo');
   }
 
-  /**
-   * Obtiene todos los cargos facturables
-   *
-   * @returns Respuesta con lista de cargos facturables
-   */
+  
   async getCargosFacturables(): Promise<
     ServiceResponse<Array<{ [key: string]: any }>>
   > {
@@ -118,14 +81,7 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener cargos facturables');
   }
 
-  /**
-   * Obtiene todos los datos de referencia en paralelo
-   *
-   * Carga todos los catálogos de referencia en una sola llamada
-   * combinada para optimizar el performance
-   *
-   * @returns Respuesta con todos los datos de referencia
-   */
+  
   async getAll(): Promise<ServiceResponse<ReferenceDataBundle>> {
     return this.executeDataOperation(async () => {
       const results = (await this.executeParallelOperations([

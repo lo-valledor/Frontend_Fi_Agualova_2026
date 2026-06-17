@@ -5,8 +5,6 @@ import { toast } from 'sonner';
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
-
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -36,12 +34,10 @@ import {
   createInitialClienteModalState,
   createInitialLoadingState,
   extractClienteErrorMessage,
-  getClientePermissions,
   getClienteEditUrl,
   normalizeClienteDetallado,
   isValidDetailedCliente,
-  CLIENTES_CREAR_ROUTE,
-  CLIENTES_ROUTE
+  CLIENTES_CREAR_ROUTE
 } from '~/utils/administracion';
 
 import { ClientFiltersComponent } from './client-filters';
@@ -86,10 +82,6 @@ export default function ClientesComponent({
   // Dependencias
   const navigate = useNavigate();
   const { getClienteByRut } = useClientes();
-  const { canCreate, canEdit } = useAuth();
-
-  // Permisos del usuario actual
-  const permissions = getClientePermissions(canCreate, canEdit, CLIENTES_ROUTE);
 
   const { filteredClients, filterStats, filterOptions } = useClientFilters(
     clients,
@@ -97,16 +89,12 @@ export default function ClientesComponent({
   );
   const { clientColumns } = useExportClientes();
 
-  /**
-   * Navega a la página de crear cliente
-   */
+  
   const handleAddCliente = useCallback(() => {
     navigate(CLIENTES_CREAR_ROUTE);
   }, [navigate]);
 
-  /**
-   * Navega a la página de editar cliente
-   */
+  
   const handleEditCliente = useCallback(
     (cliente: GetClientes) => {
       navigate(getClienteEditUrl(cliente.rut));
@@ -114,11 +102,7 @@ export default function ClientesComponent({
     [navigate]
   );
 
-  /**
-   * Carga y muestra los detalles de un cliente
-   * Elimina IIFE anidado por un useCallback adecuado
-   * Implementa early returns para validaciones
-   */
+  
   const handleDetailsCliente = useCallback(
     async (cliente: GetClientes) => {
       // Early return: validar cliente
@@ -166,16 +150,12 @@ export default function ClientesComponent({
     [getClienteByRut]
   );
 
-  /**
-   * Actualiza los filtros aplicados
-   */
+  
   const handleFiltersChange = useCallback((newFilters: ClientFilters) => {
     setFilters(newFilters);
   }, []);
 
-  /**
-   * Limpia todos los filtros aplicados
-   */
+  
   const handleClearFilters = useCallback(() => {
     setFilters({
       esEmpresa: 'all',
@@ -208,12 +188,6 @@ export default function ClientesComponent({
                   onClick={handleAddCliente}
                   variant='default'
                   size='sm'
-                  disabled={!permissions.hasCreatePermission}
-                  title={
-                    !permissions.hasCreatePermission
-                      ? 'No tiene permisos para crear clientes'
-                      : ''
-                  }
                 >
                   <Plus className='mr-2 h-4 w-4' />
                   Agregar Cliente
@@ -268,8 +242,7 @@ export default function ClientesComponent({
                     onDetails: handleDetailsCliente,
                     onEdit: handleEditCliente,
                     editingClienteRut: null,
-                    detailingClienteRut: loadingState.rutLoading,
-                    canEdit: permissions.hasEditPermission
+                    detailingClienteRut: loadingState.rutLoading
                   })}
                   data={filteredClients}
                   searchPlaceholder='Buscar por RUT, nombre o email...'

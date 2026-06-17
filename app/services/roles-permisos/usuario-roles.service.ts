@@ -2,31 +2,19 @@ import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
 import type { Roles } from '~/types/roles-permisos';
 
-/**
- * Interface para asignar roles a un usuario
- */
+
 export interface AssignUserRolesRequest {
   roles: number[];
 }
 
-/**
- * Servicio especializado para gestión de roles asignados a usuarios
- * Aplica SOLID: Single Responsibility = solo asignación de roles a usuarios
- */
+
 export class UsuarioRolesService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene los roles asignados a un usuario
-   * @param codigoUsuario Código del usuario
-   * @returns Respuesta con lista de roles del usuario
-   */
+  
   async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
     if (!codigoUsuario?.trim()) {
       return this.handleError(
@@ -41,13 +29,7 @@ export class UsuarioRolesService extends BaseApiService {
     }, `Error al obtener roles del usuario ${codigoUsuario}`);
   }
 
-  /**
-   * Asigna roles a un usuario
-   * El API espera un array directo de IDs de roles, no un objeto con propiedad roles
-   * @param codigoUsuario Código del usuario
-   * @param request Datos de roles a asignar
-   * @returns Respuesta con lista de roles asignados
-   */
+  
   async assignToUsuario(
     codigoUsuario: string,
     request: AssignUserRolesRequest
@@ -90,12 +72,7 @@ export class UsuarioRolesService extends BaseApiService {
     }, `Error al asignar roles al usuario ${codigoUsuario}`);
   }
 
-  /**
-   * Quita un rol específico de un usuario
-   * @param codigoUsuario Código del usuario
-   * @param idRol ID del rol a quitar
-   * @returns Respuesta con confirmación de éxito
-   */
+  
   async removeFromUsuario(
     codigoUsuario: string,
     idRol: number

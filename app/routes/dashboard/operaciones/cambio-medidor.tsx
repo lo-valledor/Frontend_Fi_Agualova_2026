@@ -8,7 +8,7 @@ import type { Route } from './+types/cambio-medidor';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Cambio de Medidor' },
+    { title: 'Agualova | Cambio de Medidor' },
     { name: 'description', content: 'Cambio de Medidor' }
   ];
 }

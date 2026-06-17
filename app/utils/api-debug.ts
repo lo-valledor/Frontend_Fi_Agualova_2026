@@ -1,8 +1,3 @@
-/**
- * Utilidad para debugging de APIs
- * Ayuda a visualizar requests/responses y validar contra plantillas
- */
-
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 export interface ApiDebugOptions {

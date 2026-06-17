@@ -1,16 +1,3 @@
-/**
- * Performance Monitoring con Web Vitals
- *
- * Monitorea métricas clave de performance:
- * - LCP (Largest Contentful Paint)
- * - FID (First Input Delay)
- * - CLS (Cumulative Layout Shift)
- * - FCP (First Contentful Paint)
- * - TTFB (Time to First Byte)
- *
- * Solo funciona en producción para no afectar desarrollo
- */
-
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 type PerformanceRating = 'good' | 'needs-improvement' | 'poor';
@@ -66,9 +53,7 @@ function sendToAnalytics(metric: PerformanceMetric) {
   }
 }
 
-/**
- * Observa Web Vitals usando Performance Observer API
- */
+
 export function initPerformanceMonitoring() {
   if (typeof globalThis === 'undefined') return;
 

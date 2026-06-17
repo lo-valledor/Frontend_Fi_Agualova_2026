@@ -21,7 +21,7 @@ export function SiteHeader() {
   const { user } = useAuth();
   const [clock, setClock] = useState('');
 
-  const isUAT = window.location.hostname !== 'enerlova.mmlovalledor.cl';
+  const isUAT = window.location.hostname !== 'agualova.mmlovalledor.cl';
   const environment = isUAT ? 'UAT' : 'CORE';
 
   useEffect(() => {

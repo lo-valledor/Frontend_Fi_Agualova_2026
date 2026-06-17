@@ -8,14 +8,15 @@ import { rolesPermisosService } from '~/services/rolesPermisosService';
 import type { Route } from './+types/roles-permisos';
 
 // Lazy load del componente pesado (35 KB)
-const RolesPermisosComponent = lazy(() =>
-  import('~/components/configuracion/roles-permisos/roles-permisos-component')
+const RolesPermisosComponent = lazy(
+  () =>
+    import('~/components/configuracion/roles-permisos/roles-permisos-component')
 );
 
 export function meta(_args: Route.MetaArgs) {
   return [
     {
-      title: 'Enerlova | Roles y Permisos',
+      title: 'Agualova | Roles y Permisos',
       description: 'Gestión de roles y permisos del sistema.'
     }
   ];

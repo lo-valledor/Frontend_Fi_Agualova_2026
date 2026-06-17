@@ -1,8 +1,3 @@
-/**
- * Mantencion Services Module
- * Barrel export pattern for all maintenance services
- */
-
 import { referenceDataMantencionService } from './reference-data.service';
 import { conceptsService } from './concepts.service';
 import { classificationsService } from './classifications.service';

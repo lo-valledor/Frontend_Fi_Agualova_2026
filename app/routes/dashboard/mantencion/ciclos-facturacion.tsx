@@ -12,7 +12,7 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Ciclos de Facturación' },
+    { title: 'Agualova | Ciclos de Facturación' },
     {
       name: 'description',
       content: ' ciclos de facturación del sistema'

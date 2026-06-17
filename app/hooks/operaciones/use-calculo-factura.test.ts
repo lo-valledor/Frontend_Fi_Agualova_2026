@@ -1,8 +1,3 @@
-/**
- * Tests para useCalculoFactura hook
- * Verifica obtención y filtrado de datos de prefactura
- */
-
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCalculoFactura } from './use-calculo-factura';

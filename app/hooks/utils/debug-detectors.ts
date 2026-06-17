@@ -1,10 +1,3 @@
-/**
- * Debug Detection Utilities
- *
- * Helper functions for detecting browser environment conditions
- * such as private mode, proxies, and network interception.
- */
-
 export interface ProxyDetectionResult {
   detected: boolean;
   evidence: string[];
@@ -23,12 +16,7 @@ export interface DebugDetectionResult {
   networkInterception?: string[];
 }
 
-/**
- * Detects browser name from user agent string
- *
- * @param userAgent - Navigator user agent string
- * @returns Browser name (Chrome, Firefox, Safari, Edge, Opera, or Unknown)
- */
+
 export function detectBrowserName(userAgent: string): string {
   if (userAgent.includes('Chrome') && !userAgent.includes('Edg')) return 'Chrome';
   if (userAgent.includes('Firefox')) return 'Firefox';
@@ -38,14 +26,7 @@ export function detectBrowserName(userAgent: string): string {
   return 'Unknown';
 }
 
-/**
- * Detects if browser is in private/incognito mode
- *
- * Uses storage quota estimation which is significantly lower in private mode.
- * Fallback detection via IndexedDB and LocalStorage availability.
- *
- * @returns Promise resolving to true if private mode detected
- */
+
 export async function detectPrivateMode(): Promise<boolean> {
   try {
     // Method 1: Storage quota estimation
@@ -73,16 +54,7 @@ export async function detectPrivateMode(): Promise<boolean> {
   }
 }
 
-/**
- * Detects potential proxy or network interception
- *
- * Checks for:
- * - Suspicious scripts (Fiddler, Charles, proxy tools)
- * - Modified XMLHttpRequest
- * - Modified fetch() API
- *
- * @returns Detection result with evidence list
- */
+
 export function detectProxyOrInterception(): ProxyDetectionResult {
   const evidence: string[] = [];
 
@@ -120,23 +92,12 @@ export function detectProxyOrInterception(): ProxyDetectionResult {
   };
 }
 
-/**
- * Gets token preview (first 20 characters + ellipsis)
- *
- * @param token - Full token string
- * @returns Preview string or undefined if no token
- */
+
 export function getTokenPreview(token: string | null): string | undefined {
   return token ? `${token.substring(0, 20)}...` : undefined;
 }
 
-/**
- * Gathers complete debug information
- *
- * Combines all detection methods to build comprehensive debug info.
- *
- * @returns Promise resolving to complete debug information
- */
+
 export async function gatherDebugInfo(): Promise<DebugDetectionResult> {
   const userAgent = navigator.userAgent;
   const token = localStorage.getItem('token');

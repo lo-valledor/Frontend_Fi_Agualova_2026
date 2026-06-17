@@ -6,7 +6,6 @@ import { useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -22,13 +21,13 @@ import { useAcometidaFilters } from '~/hooks/administracion/use-acometida-filter
 import { useExportAcometidas } from '~/hooks/administracion/use-export-acometidas';
 import api from '~/lib/api';
 import type {
-  Acometida,
+  AcometidaRow,
   ActualizarAcometidaProps,
-  ComboEmpalmes,
-  ComboNichos,
-  ComboSectores,
-  ContratosDisponibles,
-  CrearAcometidaProps
+  BuscarContratosLibres,
+  CrearAcometidaProps,
+  Empalmes,
+  Nichos,
+  Sectores
 } from '~/types/administracion';
 
 import {
@@ -40,11 +39,11 @@ import { columns } from './columns';
 import { FilterSummary } from './filter-summary';
 
 interface AcometidaComponentProps {
-  acometidas: Acometida[];
-  comboEmpalmes: ComboEmpalmes[];
-  comboNichos: ComboNichos[];
-  comboSectores: ComboSectores[];
-  contratosDisponibles: ContratosDisponibles[];
+  acometidas: AcometidaRow[];
+  comboEmpalmes: Empalmes[];
+  comboNichos: Nichos[];
+  comboSectores: Sectores[];
+  contratosDisponibles: BuscarContratosLibres[];
 }
 
 export default function AcometidaComponent({
@@ -55,7 +54,7 @@ export default function AcometidaComponent({
   contratosDisponibles
 }: Readonly<AcometidaComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedAcometida, setSelectedAcometida] = useState<Acometida | null>(
+  const [selectedAcometida, setSelectedAcometida] = useState<AcometidaRow | null>(
     null
   );
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
@@ -74,12 +73,6 @@ export default function AcometidaComponent({
   });
 
   const revalidator = useRevalidator();
-
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/administracion/acometida';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   const { acometidaColumns } = useExportAcometidas();
   const { filteredAcometidas, filterStats, filterOptions } =
@@ -108,12 +101,8 @@ export default function AcometidaComponent({
     setIsModalOpen(true);
   };
 
-  const handleEditAcometida = async (acometida: Acometida) => {
-    if (!hasEditPermission) {
-      toast.error('No tiene permisos para editar acometidas');
-      return;
-    }
-    setEditingAcometidaId(acometida.acometidaId);
+  const handleEditAcometida = async (acometida: AcometidaRow) => {
+    setEditingAcometidaId(acometida.idAcometida);
     setSelectedAcometida(acometida);
     setModalMode('edit');
     setIsModalOpen(true);
@@ -137,10 +126,10 @@ export default function AcometidaComponent({
   ) => {
     try {
       if (modalMode === 'add') {
-        await api.post('/crear-Nueva-Acometida', data as CrearAcometidaProps);
+        await api.post('/acometidas/crear', data as CrearAcometidaProps);
       } else {
-        await api.put(`/modificar-Acometida-Existen`, {
-          acometidaId: selectedAcometida?.acometidaId,
+        await api.put('/acometidas/editar', {
+          idAcometida: selectedAcometida?.idAcometida,
           ...data
         });
       }
@@ -169,12 +158,6 @@ export default function AcometidaComponent({
                   onClick={handleAddAcometida}
                   variant='default'
                   size='sm'
-                  disabled={!hasCreatePermission}
-                  title={
-                    hasCreatePermission
-                      ? ''
-                      : 'No tiene permisos para crear acometidas'
-                  }
                 >
                   <Plus className='mr-2 h-4 w-4' />
                   Agregar Acometida
@@ -226,8 +209,7 @@ export default function AcometidaComponent({
               <div className='overflow-x-auto -mx-1'>
                 <VirtualDataTable
                   columns={columns({
-                    onEdit: handleEditAcometida,
-                    canEdit: hasEditPermission
+                    onEdit: handleEditAcometida
                   })}
                   data={filteredAcometidas}
                   searchPlaceholder='Buscar por código, ubicación o contrato...'

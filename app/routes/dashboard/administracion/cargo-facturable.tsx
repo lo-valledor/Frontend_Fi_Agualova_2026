@@ -8,7 +8,7 @@ import type { Route } from './+types/cargo-facturable';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Cargo Facturable' },
+    { title: 'Agualova | Cargo Facturable' },
     { name: 'description', content: 'Cargo Facturable' }
   ];
 }

@@ -10,13 +10,13 @@ import { administracionService } from '~/services/administracionService';
 import type { Route } from './+types/contratos';
 
 // Lazy load del componente pesado (38 KB)
-const ContratosComponent = lazy(() =>
-  import('~/components/administracion/contratos/contratos-component')
+const ContratosComponent = lazy(
+  () => import('~/components/administracion/contratos/contratos-component')
 );
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Contratos' },
+    { title: 'Agualova | Contratos' },
     { name: 'description', content: 'Contratos' }
   ];
 }

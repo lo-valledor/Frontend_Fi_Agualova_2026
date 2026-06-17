@@ -10,15 +10,13 @@ interface TableColumnsProps {
   onDelete: (user: Usuarios) => void;
   onViewPermissions: (user: Usuarios) => void;
   onManageRoles: (user: Usuarios) => void;
-  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
   onDelete,
   onViewPermissions,
-  onManageRoles,
-  canEdit = true
+  onManageRoles
 }: TableColumnsProps): ColumnDef<Usuarios>[] => [
   {
     accessorKey: 'nombres',
@@ -64,7 +62,7 @@ export const columns = ({
         3: 'Recaudación',
         4: 'Seguridad',
         5: 'RR.HH',
-        6: 'Enerlova'
+        6: 'Agualova'
       };
       return (
         <div className='text-sm text-gray-600 dark:text-gray-300'>
@@ -74,7 +72,7 @@ export const columns = ({
       );
     }
   },
-  
+
   {
     accessorKey: 'activo',
     header: 'Estado',
@@ -109,8 +107,7 @@ export const columns = ({
             variant='ghost'
             size='sm'
             onClick={() => onManageRoles(user)}
-            disabled={!canEdit}
-            title={!canEdit ? 'No tiene permisos para gestionar roles' : 'Gestionar roles'}
+            title='Gestionar roles'
             className='h-8 w-8 p-0'
           >
             <UserCog className='h-4 w-4 text-purple-600 dark:text-purple-400' />
@@ -128,8 +125,7 @@ export const columns = ({
             variant='ghost'
             size='sm'
             onClick={() => onEdit(user)}
-            disabled={!canEdit}
-            title={!canEdit ? 'No tiene permisos para editar' : 'Editar'}
+            title='Editar'
             className='h-8 w-8 p-0'
           >
             <Pencil className='h-4 w-4 text-amber-600 dark:text-amber-400' />
@@ -138,8 +134,7 @@ export const columns = ({
             variant='ghost'
             size='sm'
             onClick={() => onDelete(user)}
-            disabled={!canEdit}
-            title={!canEdit ? 'No tiene permisos para eliminar' : 'Eliminar'}
+            title='Eliminar'
             className='h-8 w-8 p-0'
           >
             <Trash2 className='h-4 w-4 text-red-600 dark:text-red-400' />

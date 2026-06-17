@@ -30,10 +30,10 @@ import { Textarea } from '~/components/ui/textarea';
 import type { Parametro } from '~/types/mantencion';
 
 const parametroSchema = z.object({
-  descripcion: z
+  nombre: z
     .string()
-    .min(1, 'La descripción es requerida')
-    .max(200, 'La descripción no debe exceder 200 caracteres'),
+    .min(1, 'El nombre es requerido')
+    .max(200, 'El nombre no debe exceder 200 caracteres'),
   valor: z
     .string()
     .min(1, 'El valor es requerido')
@@ -65,7 +65,7 @@ export default function ParametroFormModal({
   const form = useForm<ParametroFormData>({
     resolver: zodResolver(parametroSchema),
     defaultValues: {
-      descripcion: parametro?.descripcion || '',
+      nombre: parametro?.nombre || '',
       valor: parametro?.valor || '',
       sigla: parametro?.sigla || '',
       estado: parametro?.estado ?? true
@@ -77,7 +77,7 @@ export default function ParametroFormModal({
   React.useEffect(() => {
     if (isOpen) {
       form.reset({
-        descripcion: parametro?.descripcion || '',
+        nombre: parametro?.nombre || '',
         valor: parametro?.valor || '',
         sigla: parametro?.sigla || '',
         estado: parametro?.estado ?? true
@@ -90,9 +90,9 @@ export default function ParametroFormModal({
       const { default: api } = await import('~/lib/api');
 
       if (mode === 'add') {
-        await api.post('/crearParametro', data);
+        await api.post('/parametros/crear', data);
       } else {
-        await api.put(`/modificarParametro`, { ...data, id: parametro?.id });
+        await api.put(`/parametros/editar`, { ...data, id: parametro?.id });
       }
 
       onSuccess();
@@ -120,14 +120,14 @@ export default function ParametroFormModal({
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
             <FormField
               control={form.control}
-              name='descripcion'
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descripción</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
-                      placeholder='Ingrese la descripción del parámetro'
+                      placeholder='Ingrese el nombre del parámetro'
                       rows={3}
                     />
                   </FormControl>

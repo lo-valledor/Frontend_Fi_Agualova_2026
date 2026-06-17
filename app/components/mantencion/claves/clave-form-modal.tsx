@@ -34,7 +34,7 @@ import {
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import { Textarea } from '~/components/ui/textarea';
-import type { Claves } from '~/types/mantencion';
+import type { Clave } from '~/types/mantencion';
 
 const createClaveSchema = (existingCodes: string[], currentCode?: string) =>
   z.object({
@@ -76,7 +76,7 @@ interface ClaveFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  clave?: Claves;
+  clave?: Clave;
   mode: 'add' | 'edit';
   existingCodes: string[];
 }
@@ -94,7 +94,7 @@ export default function ClaveFormModal({
     resolver: zodResolver(claveSchema),
     defaultValues: {
       codigo: clave?.codigo || '',
-      descripcion: clave?.descripcion || '',
+      descripcion: clave?.nombre || '',
       tipo: clave?.tipo || '',
       estado: clave?.estado ?? true
     }
@@ -106,7 +106,7 @@ export default function ClaveFormModal({
     if (isOpen) {
       form.reset({
         codigo: clave?.codigo || '',
-        descripcion: clave?.descripcion || '',
+        descripcion: clave?.nombre || '',
         tipo: clave?.tipo || '',
         estado: clave?.estado ?? true
       });
@@ -118,9 +118,9 @@ export default function ClaveFormModal({
       const { default: api } = await import('~/lib/api');
 
       if (mode === 'add') {
-        await api.post('/crearClaves', data);
+        await api.post('/claves/crear', data);
       } else {
-        await api.put(`/modificarClaves`, { ...data, id: clave?.id });
+        await api.put(`/claves/editar`, { ...data, id: clave?.id });
       }
 
       onSuccess();

@@ -1,8 +1,3 @@
-/**
- * Status mapping and utilities for Monitor module
- * Centralized status configuration and helper functions
- */
-
 import {
   AlertCircle,
   AlertTriangle,
@@ -33,9 +28,7 @@ export interface MeterStatusInfo {
   severity: 0 | 1 | 2 | 3 | 4;
 }
 
-/**
- * Status configuration map
- */
+
 const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
   SINLEC: {
     color: 'gray',
@@ -111,11 +104,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
   }
 };
 
-/**
- * Get meter status information
- * @param claveHtml - Status code from the API
- * @returns Status information object
- */
+
 export function getMeterStatus(
   claveHtml: string | null | undefined
 ): MeterStatusInfo {
@@ -130,14 +119,7 @@ export function getMeterStatus(
   return STATUS_MAP[statusKey] ?? STATUS_MAP.SINLEC;
 }
 
-/**
- * Check if a reading is imported but not validated
- * @param medidor - Meter object with reading data
- * @param medidor.consumo
- * @param medidor.fechaLectura
- * @param medidor.clave
- * @returns True if the reading appears to be imported
- */
+
 export function isImportedReading(medidor: {
   consumo: number | null | undefined;
   fechaLectura: string | null | undefined;
@@ -161,41 +143,26 @@ export function isImportedReading(medidor: {
   return hasConsumo && (!hasFechaLectura || !hasClave);
 }
 
-/**
- * Get numeric severity level for a status
- * @param claveHtml - Status code
- * @returns Severity level (0-4)
- */
+
 export function getStatusSeverity(
   claveHtml: string | null | undefined
 ): 0 | 1 | 2 | 3 | 4 {
   return getMeterStatus(claveHtml).severity;
 }
 
-/**
- * Get all available status types
- * @returns Array of all status keys
- */
+
 export function getAllStatusTypes(): MeterStatus[] {
   return Object.keys(STATUS_MAP) as MeterStatus[];
 }
 
-/**
- * Check if a status code is valid
- * @param claveHtml - Status code to check
- * @returns True if the status is recognized
- */
+
 export function isValidStatus(claveHtml: string | null | undefined): boolean {
   if (!claveHtml) return false;
   const statusKey = claveHtml.toUpperCase() as MeterStatus;
   return statusKey in STATUS_MAP;
 }
 
-/**
- * Get status label
- * @param claveHtml - Status code
- * @returns Human-readable label
- */
+
 export function getStatusLabel(claveHtml: string | null | undefined): string {
   return getMeterStatus(claveHtml).label;
 }

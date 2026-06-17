@@ -8,13 +8,13 @@ import { administracionService } from '~/services/administracionService';
 import type { Route } from './+types/medidores';
 
 // Lazy load del componente pesado (54 KB)
-const MedidoresComponent = lazy(() =>
-  import('~/components/administracion/medidores/medidores-component')
+const MedidoresComponent = lazy(
+  () => import('~/components/administracion/medidores/medidores-component')
 );
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Medidores' },
+    { title: 'Agualova | Medidores' },
     { name: 'description', content: 'Medidores' }
   ];
 }

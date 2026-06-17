@@ -3,18 +3,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { Sectores } from '~/types/mantencion';
+import type { Sector } from '~/types/mantencion';
 
 interface TableColumnsProps {
-  onEdit: (sector: Sectores) => void;
-  onDelete: (sector: Sectores) => void;
-  canEdit?: boolean;
+  onEdit: (sector: Sector) => void;
+  onDelete: (sector: Sector) => void;
 }
 
 export const columns = ({
   onEdit,
   onDelete
-}: TableColumnsProps): ColumnDef<Sectores>[] => [
+}: TableColumnsProps): ColumnDef<Sector>[] => [
   {
     accessorKey: 'nombre',
     header: ({ column }) => (

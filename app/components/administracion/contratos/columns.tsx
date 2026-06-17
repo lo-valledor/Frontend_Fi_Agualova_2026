@@ -12,7 +12,6 @@ interface TableColumnsProps {
   onEdit: (contract: GetContratos) => void;
   onDelete: (contract: GetContratos) => void;
   onViewDetails: (contract: GetContratos) => void;
-  canEdit?: boolean;
 }
 
 // Función para convertir string de fecha a objeto Date (para ordenamiento)
@@ -134,8 +133,7 @@ const formatDateToSpanish = (
 export const columns = ({
   onEdit,
   onDelete,
-  onViewDetails,
-  canEdit = true
+  onViewDetails
 }: TableColumnsProps): ColumnDef<GetContratos>[] => [
   {
     accessorKey: 'codigoContrato',
@@ -386,7 +384,6 @@ export const columns = ({
             onView={() => onViewDetails(row.original)}
             item={row.original}
             showView={true}
-            disableEdit={!canEdit}
           />
         </div>
       );
@@ -395,24 +392,4 @@ export const columns = ({
   }
 ];
 
-/**
- * export interface GetContratos {
-  codigoContrato: string;
-  acometida: string;
-  tipoContrato: string;
-  tarifa: string;
-  nombrePropietario: string;
-  nombreCliente: string;
-  local: string;
-  fechaInicio: string;
-  activo: boolean;
-  fechaTermino: string;
-  comunaEnvio: string;
-  direccionEnvio: string;
-  limiteInvierno: number;
-  promedioAnual: string;
-  cicloFacturacion: string;
-  potenciaContratada: string;
-  liberadoCorte: boolean;
-}
- */
+

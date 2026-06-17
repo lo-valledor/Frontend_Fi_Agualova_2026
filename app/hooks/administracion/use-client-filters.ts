@@ -9,9 +9,7 @@ import {
 } from './utils/filter-utilities';
 import { calculateFilterStats } from './utils/stats-calculator';
 
-/**
- * Filtros para clientes
- */
+
 export interface ClientFilters {
   esEmpresa: string;
   comuna: string;
@@ -21,42 +19,22 @@ export interface ClientFilters {
   tieneEmail: string;
 }
 
-/**
- * Opciones disponibles para filtros de clientes
- */
+
 export interface ClientFilterOptions {
   tiposCliente: string[];
   comunas: string[];
   codigosComuna: string[];
 }
 
-/**
- * Alias para mantener compatibilidad con componentes existentes
- */
+
 export type FilterOptions = ClientFilterOptions;
 
-/**
- * Hook para filtrar clientes
- * Aplica SOLID: SRP (cada criterio es independiente)
- *
- * @param clients - Array de clientes a filtrar
- * @param filters - Filtros a aplicar
- * @returns Clientes filtrados, estadísticas y opciones
- *
- * @example
- * const { filteredClients, filterStats, filterOptions } = useClientFilters(
- *   clients,
- *   { esEmpresa: 'true', comuna: 'Santiago' }
- * );
- */
+
 export function useClientFilters(
   clients: GetClientes[],
   filters: ClientFilters
 ) {
-  /**
-   * Extrae opciones únicas de los clientes
-   * Tipos de cliente son estáticos
-   */
+  
   const filterOptions = useMemo((): ClientFilterOptions => {
     return {
       tiposCliente: ['Persona', 'Empresa'],
@@ -65,10 +43,7 @@ export function useClientFilters(
     };
   }, [clients]);
 
-  /**
-   * Aplica filtros con early returns
-   * Cada filtro es una responsabilidad separada
-   */
+  
   const filteredClients = useMemo(() => {
     return clients.filter(client => {
       // Filtro booleano: tipo de cliente
@@ -102,9 +77,7 @@ export function useClientFilters(
     });
   }, [clients, filters]);
 
-  /**
-   * Calcula estadísticas de filtros
-   */
+  
   const filterStats = useMemo(
     () => calculateFilterStats(clients, filteredClients, filters),
     [clients.length, filteredClients.length, filters]
