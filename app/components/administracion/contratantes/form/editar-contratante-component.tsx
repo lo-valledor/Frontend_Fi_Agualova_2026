@@ -8,15 +8,14 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import { Form } from '~/components/ui/form';
 import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
 import type {
-  GetContratante,
   GetComunas,
+  GetContratante,
   GetGiros
 } from '~/types/administracion';
 import { formatRut, isValidRutFormat } from '~/utils/rut-utils';
@@ -56,19 +55,6 @@ type ContratanteFormData = z.infer<ReturnType<typeof createContratanteSchema>>;
 export default function EditarContratanteComponent() {
   const navigate = useNavigate();
   const { id: rut } = useParams<{ id: string }>();
-
-  // Permisos
-  const { canEdit } = useAuth();
-  const route = '/dashboard/administracion/contratantes';
-  const hasEditPermission = canEdit(route);
-
-  // Redirigir si no tiene permisos
-  useEffect(() => {
-    if (!hasEditPermission) {
-      toast.error('No tiene permisos para editar contratantes');
-      navigate('/dashboard/administracion/contratantes');
-    }
-  }, [hasEditPermission, navigate]);
 
   const [contratante, setContratante] = useState<GetContratante | null>(null);
   const [, setGiros] = useState<GetGiros[]>([]);
@@ -275,12 +261,7 @@ export default function EditarContratanteComponent() {
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
                   className='gap-2'
-                  disabled={isSubmitting || !hasEditPermission}
-                  title={
-                    !hasEditPermission
-                      ? 'No tiene permisos para editar contratantes'
-                      : ''
-                  }
+                  disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
                   {isSubmitting ? 'Actualizando...' : 'Actualizar Contratante'}

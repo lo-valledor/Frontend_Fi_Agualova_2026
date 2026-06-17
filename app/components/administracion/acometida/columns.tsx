@@ -3,24 +3,22 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { Acometida } from '~/types/administracion';
+import type { AcometidaRow } from '~/types/administracion';
 
 interface TableColumnsProps {
-  onEdit: (acometida: Acometida) => void;
-  canEdit?: boolean;
+  onEdit: (acometida: AcometidaRow) => void;
 }
 
 export const columns = ({
-  onEdit,
-  canEdit = true
-}: TableColumnsProps): ColumnDef<Acometida>[] => [
+  onEdit
+}: TableColumnsProps): ColumnDef<AcometidaRow>[] => [
   {
-    accessorKey: 'acometidaId',
+    accessorKey: 'idAcometida',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
-      const id: number = row.getValue('acometidaId');
+      const id: number = row.getValue('idAcometida');
       return (
         <div className='flex items-center gap-2'>
           <span className='font-mono text-xs sm:text-sm font-medium'>{id}</span>
@@ -97,12 +95,12 @@ export const columns = ({
     maxSize: 130
   },
   {
-    accessorKey: 'empalmeDescripcion',
+    accessorKey: 'empalme',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Empalme' />
     ),
     cell: ({ row }) => {
-      const empalme: string = row.getValue('empalmeDescripcion');
+      const empalme: string = row.getValue('empalme');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
@@ -118,12 +116,12 @@ export const columns = ({
     maxSize: 160
   },
   {
-    accessorKey: 'nichoDescripcion',
+    accessorKey: 'nicho',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Nicho' />
     ),
     cell: ({ row }) => {
-      const nicho: string = row.getValue('nichoDescripcion');
+      const nicho: string = row.getValue('nicho');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
@@ -139,12 +137,12 @@ export const columns = ({
     maxSize: 150
   },
   {
-    accessorKey: 'sectorDescripcion',
+    accessorKey: 'sector',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Sector' />
     ),
     cell: ({ row }) => {
-      const sector: string = row.getValue('sectorDescripcion');
+      const sector: string = row.getValue('sector');
       return (
         <div className='flex items-center gap-2'>
           <Badge
@@ -166,7 +164,7 @@ export const columns = ({
       <DataTableColumnHeader column={column} title='Límite kW' />
     ),
     cell: ({ row }) => {
-      const limite: number | null = row.getValue('limitePotencia');
+      const limite = Number(row.getValue('limitePotencia') || 0);
 
       if (limite === null || limite === 0) {
         return (
@@ -196,12 +194,12 @@ export const columns = ({
     maxSize: 130
   },
   {
-    accessorKey: 'numeroMedidor',
+    accessorKey: 'medidor',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='N° Medidor' />
     ),
     cell: ({ row }) => {
-      const numeroMedidor: string = row.getValue('numeroMedidor');
+      const numeroMedidor: string = row.getValue('medidor');
       return (
         <div className='flex items-center gap-2 min-w-0'>
           <span
@@ -229,7 +227,6 @@ export const columns = ({
             item={row.original}
             showView={false}
             showDelete={false}
-            disableEdit={!canEdit}
           />
         </div>
       );

@@ -12,9 +12,7 @@ import type {
 } from '~/types/reportes';
 import api from '~/lib/api';
 
-/**
- * Contract Details Response Interface
- */
+
 export interface DetallesContrato {
   detallePropietario: DetallePropietario[];
   detalleCliente: DetalleCliente[];
@@ -26,32 +24,14 @@ export interface DetallesContrato {
   detalleFacturas: DetalleFacturas[];
 }
 
-/**
- * ContractDetailsReportService
- * Manages detailed contract information reports
- * - Owner details
- * - Client details
- * - Location details
- * - Meter details
- * - Reading details
- * - Invoice details
- * - Contract details
- * - Local details
- */
+
 export class ContractDetailsReportService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient: any = api) {
     super(httpClient);
   }
 
-  /**
-   * Get all details for a contract
-   * Executes 8 parallel requests for comprehensive contract information
-   * @param contratoId Contract ID
-   */
+  
   async getDetallesPorContrato(
     contratoId: number
   ): Promise<ServiceResponse<DetallesContrato>> {
@@ -106,10 +86,7 @@ export class ContractDetailsReportService extends BaseApiService {
     }, 'Error getting contract details');
   }
 
-  /**
-   * Safe API call helper that returns empty array on error
-   * @param endpoint API endpoint
-   */
+  
   private async safeApiCall<T>(endpoint: string): Promise<T[]> {
     try {
       const response = await this.httpClient.get(endpoint);
@@ -120,10 +97,7 @@ export class ContractDetailsReportService extends BaseApiService {
     }
   }
 
-  /**
-   * Get owner details for a contract
-   * @param contratoId Contract ID
-   */
+  
   async getDetallePropietario(
     contratoId: number
   ): Promise<ServiceResponse<DetallePropietario[]>> {
@@ -141,10 +115,7 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  /**
-   * Get client details for a contract
-   * @param contratoId Contract ID
-   */
+  
   async getDetalleCliente(
     contratoId: number
   ): Promise<ServiceResponse<DetalleCliente[]>> {
@@ -161,10 +132,7 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  /**
-   * Get meter details for a contract
-   * @param contratoId Contract ID
-   */
+  
   async getDetalleMedidores(
     contratoId: number
   ): Promise<ServiceResponse<DetalleMedidores[]>> {
@@ -181,10 +149,7 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  /**
-   * Get reading details for a contract
-   * @param contratoId Contract ID
-   */
+  
   async getDetalleLecturas(
     contratoId: number
   ): Promise<ServiceResponse<DetalleLecturas[]>> {
@@ -201,10 +166,7 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  /**
-   * Get invoice details for a contract
-   * @param contratoId Contract ID
-   */
+  
   async getDetalleFacturas(
     contratoId: number
   ): Promise<ServiceResponse<DetalleFacturas[]>> {

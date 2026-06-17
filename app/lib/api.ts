@@ -15,7 +15,7 @@ interface ApiResponse<T> {
 const api = {
   // Auth endpoints
   auth: {
-    login: (credentials: { usuario: string; contrasena: string }) =>
+    login: (credentials: { email: string; password: string }) =>
       axiosInstance.post<ApiResponse<{ token: string }> | { token: string }>(
         '/login',
         credentials

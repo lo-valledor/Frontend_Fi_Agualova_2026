@@ -3,7 +3,7 @@ import CrearContratanteComponent from '~/components/administracion/contratantes/
 
 export function meta() {
   return [
-    { title: 'Enerlova | Crear Contratante' },
+    { title: 'Agualova | Crear Contratante' },
     { description: 'Crea un nuevo contratante en el sistema' }
   ];
 }

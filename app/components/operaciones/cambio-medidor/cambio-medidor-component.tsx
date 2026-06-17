@@ -40,11 +40,7 @@ import DetalleMedidorNuevoComponent from './detalle-medidor-nuevo';
 import NuevoMedidorForm from './nuevo-medidor-form';
 
 export default function CambioMedidorComponent() {
-  const { user, canEdit } = useAuth();
-
-  // Permisos
-  const route = '/dashboard/operaciones/cambio-medidor';
-  const hasEditPermission = canEdit(route);
+  const { user } = useAuth();
 
   // Estados para medidor antiguo
   const [medidorAntiguo, setMedidorAntiguo] = useState<MedidorAntiguo>({
@@ -434,7 +430,7 @@ export default function CambioMedidorComponent() {
                   onMedidorChange={handleMedidorAntiguoChange}
                   onBuscar={handleBuscarAntiguo}
                   onLimpiar={handleLimpiarMedidorAntiguo}
-                  disabled={!hasEditPermission}
+                  disabled={false}
                 />
               </CardContent>
               <CardFooter className='flex justify-end border-t border-border p-3'>
@@ -720,13 +716,8 @@ export default function CambioMedidorComponent() {
                 </Button>
                 <Button
                   onClick={handleCambioMedidor}
-                  disabled={!isFormValid || isLoading || !hasEditPermission}
+                  disabled={!isFormValid || isLoading}
                   className='bg-primary hover:bg-primary/90'
-                  title={
-                    !hasEditPermission
-                      ? 'No tiene permisos para ejecutar cambios de medidor'
-                      : ''
-                  }
                 >
                   {isLoading ? (
                     <RefreshCw className='mr-2 h-4 w-4 animate-spin' />

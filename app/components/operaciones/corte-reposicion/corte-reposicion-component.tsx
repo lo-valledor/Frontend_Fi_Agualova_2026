@@ -17,7 +17,6 @@ import 'driver.js/dist/driver.css';
 
 import { useEffect, useState } from 'react';
 
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -71,13 +70,6 @@ export default function CorteReposicionComponent({
 
   // Estado para el AlertDialog de confirmación
   const [showFinalizarDialog, setShowFinalizarDialog] = useState(false);
-
-  // Permisos
-  const { canCreate, canEdit, canDelete } = useAuth();
-  const route = '/dashboard/operaciones/corte-reposicion';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
-  const hasDeletePermission = canDelete(route);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -467,12 +459,7 @@ export default function CorteReposicionComponent({
                       variant='link'
                       size='sm'
                       onClick={handleActivarActualizacion}
-                      disabled={!hasEditPermission || isActivating}
-                      title={
-                        !hasEditPermission
-                          ? 'No tiene permisos para actualizar'
-                          : ''
-                      }
+                      disabled={isActivating}
                       className='bg-accent/10 hover:bg-accent/20 transition-colors text-accent-foreground hover:text-accent-foreground/90 w-full'
                     >
                       {isActivating ? (
@@ -486,12 +473,7 @@ export default function CorteReposicionComponent({
                       variant='destructive'
                       size='sm'
                       onClick={handleIniciar}
-                      disabled={!hasCreatePermission || isStarting}
-                      title={
-                        !hasCreatePermission
-                          ? 'No tiene permisos para iniciar'
-                          : ''
-                      }
+                      disabled={isStarting}
                       className='gap-1.5 w-full'
                     >
                       {isStarting ? (
@@ -505,12 +487,7 @@ export default function CorteReposicionComponent({
                       variant='secondary'
                       size='sm'
                       onClick={() => setShowFinalizarDialog(true)}
-                      disabled={!hasDeletePermission || isFinalizing}
-                      title={
-                        !hasDeletePermission
-                          ? 'No tiene permisos para finalizar'
-                          : ''
-                      }
+                      disabled={isFinalizing}
                       className='gap-1.5 w-full'
                     >
                       {isFinalizing ? (
@@ -603,7 +580,7 @@ export default function CorteReposicionComponent({
                     className='border-border bg-card overflow-hidden'
                   >
                     <DataTable
-                      columns={columns(hasEditPermission)}
+                      columns={columns()}
                       data={mantenedorCorteData}
                       meta={{ handleBuscar }}
                       searchPlaceholder='Buscar por código, RUT o razón social...'

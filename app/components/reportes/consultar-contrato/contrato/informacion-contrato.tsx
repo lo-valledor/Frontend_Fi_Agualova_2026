@@ -22,7 +22,7 @@ interface InformacionContratoProps {
   ubicacionInfo?: DetalleUbicacion;
 }
 
-/** Card industrial reutilizable para bloques de información */
+
 function InfoCard({
   icon: Icon,
   title,
@@ -50,7 +50,7 @@ function InfoCard({
   );
 }
 
-/** Fila de dato con label industrial */
+
 function InfoRow({
   label,
   value,

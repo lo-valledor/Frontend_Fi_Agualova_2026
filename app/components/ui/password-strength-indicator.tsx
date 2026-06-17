@@ -1,8 +1,3 @@
-/**
- * Componente de indicador de fortaleza de contraseña
- * Muestra visualmente qué tan segura es una contraseña
- */
-
 import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import { motion } from 'motion/react';
 

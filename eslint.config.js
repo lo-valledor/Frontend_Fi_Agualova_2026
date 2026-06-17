@@ -2,7 +2,6 @@
 import js from '@eslint/js';
 import pluginReact from 'eslint-plugin-react';
 import unusedImports from 'eslint-plugin-unused-imports';
-import jsdoc from 'eslint-plugin-jsdoc';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import airbnb from 'eslint-config-airbnb-base';
@@ -25,8 +24,7 @@ export default [
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     plugins: {
       react: pluginReact,
-      'unused-imports': unusedImports,
-      jsdoc
+      'unused-imports': unusedImports
     },
     languageOptions: {
       parser: tseslint.parser,
@@ -72,30 +70,7 @@ export default [
 
       // TypeScript specific
       '@typescript-eslint/no-unused-vars': 'off', // handled by unused-imports
-      '@typescript-eslint/no-explicit-any': 'off',
-
-      // JSDoc rules for documentation
-      'jsdoc/check-alignment': 'warn',
-      'jsdoc/check-indentation': 'warn',
-      'jsdoc/check-param-names': 'warn',
-      'jsdoc/check-tag-names': 'warn',
-      'jsdoc/check-types': 'off', // TypeScript handles this
-      'jsdoc/require-description': [
-        'warn',
-        {
-          contexts: [
-            'ClassDeclaration',
-            'FunctionDeclaration',
-            'MethodDefinition'
-          ]
-        }
-      ],
-      'jsdoc/require-param': 'warn',
-      'jsdoc/require-param-description': 'warn',
-      'jsdoc/require-returns': 'warn',
-      'jsdoc/require-returns-description': 'warn',
-      'jsdoc/no-undefined-types': 'off', // TypeScript handles this
-      'jsdoc/valid-types': 'off' // TypeScript handles this
+      '@typescript-eslint/no-explicit-any': 'off'
     }
   }
 ];

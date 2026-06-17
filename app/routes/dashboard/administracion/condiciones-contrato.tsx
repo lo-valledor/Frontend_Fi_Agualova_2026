@@ -8,7 +8,7 @@ import type { Route } from './+types/condiciones-contrato';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Condiciones Contrato' },
+    { title: 'Agualova | Condiciones Contrato' },
     { name: 'description', content: 'Condiciones Contrato' }
   ];
 }

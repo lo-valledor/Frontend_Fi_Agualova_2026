@@ -10,7 +10,7 @@ import type { Route } from './+types/revisar-precio';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Revisar Precio' },
+    { title: 'Agualova | Revisar Precio' },
     { name: 'description', content: 'Revisar Precio' }
   ];
 }

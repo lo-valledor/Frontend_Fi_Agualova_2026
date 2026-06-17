@@ -11,8 +11,6 @@ import { toast } from 'sonner';
 
 import React, { useState } from 'react';
 
-import { useAuth } from '~/context/AuthContext';
-
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { Checkbox } from '~/components/ui/checkbox';
@@ -73,10 +71,6 @@ export default function TablaAsignacionSectores({
   const [selectAll, setSelectAll] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/operaciones/preparar-lecturas';
-  const hasPermission = canCreate(route) || canEdit(route);
   const [submitResults, setSubmitResults] = useState<{
     success: number;
     errors: number;
@@ -368,8 +362,6 @@ export default function TablaAsignacionSectores({
             checked={isNichoSelected(item.nichoId)}
             onCheckedChange={() => handleSelectNicho(item)}
             aria-label={`Seleccionar nicho ${item.nichoId}`}
-            disabled={!hasPermission}
-            title={hasPermission ? '' : 'No tiene permisos para seleccionar'}
           />
         </TableCell>
         <TableCell className='text-center px-2 sm:px-4 py-2 sm:py-3'>
@@ -444,18 +436,15 @@ export default function TablaAsignacionSectores({
               isSubmitting ||
               selectedNichos.length === 0 ||
               !periodo ||
-              !cicloFacturable ||
-              !hasPermission
+              !cicloFacturable
             }
             variant='default'
             size='sm'
             className='gap-2 bg-linear-to-br from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white w-full sm:w-auto'
             title={
-              !hasPermission
-                ? 'No tiene permisos para preparar lecturas'
-                : selectedNichos.length === 0
-                  ? 'Seleccione al menos un nicho'
-                  : `Preparar lecturas para ${selectedNichos.length} nicho(s)`
+              selectedNichos.length === 0
+                ? 'Seleccione al menos un nicho'
+                : `Preparar lecturas para ${selectedNichos.length} nicho(s)`
             }
           >
             {isSubmitting ? (
@@ -517,10 +506,6 @@ export default function TablaAsignacionSectores({
                     checked={selectAll}
                     onCheckedChange={handleSelectAll}
                     aria-label='Seleccionar todos'
-                    disabled={!hasPermission}
-                    title={
-                      hasPermission ? '' : 'No tiene permisos para seleccionar'
-                    }
                   />
                 </TableHead>
                 <TableHead className='text-center font-semibold text-xs sm:text-sm px-2 sm:px-4'>

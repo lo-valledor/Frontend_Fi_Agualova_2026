@@ -67,16 +67,6 @@ export interface AsignarRolesUsuarioData {
 }
 
 // Interfaces adicionales para permisos y relaciones
-export interface PermisosUsuario {
-  idMenu: number;
-  nombreMenu: string;
-  ruta: string;
-  puedeVer: boolean;
-  puedeCrear: boolean;
-  puedeEditar: boolean;
-  puedeEliminar: boolean;
-}
-
 export interface RolMenu {
   idRol: number;
   idMenu: number;
@@ -482,27 +472,6 @@ class RolesPermisosService {
           error.response?.data?.message ||
           error.message ||
           'Error al eliminar el menú'
-      };
-    }
-  }
-
-  // ============================================
-  // MÉTODOS PARA PERMISOS DE USUARIOS
-  // ============================================
-
-  async getPermisosUsuario(
-    codigoUsuario: string
-  ): Promise<RolesPermisosServiceResponse<PermisosUsuario[]>> {
-    try {
-      const response = await api.get(`ObtenerPermisoUsuario/${codigoUsuario}`);
-      return {
-        data: this.processApiResponse<PermisosUsuario>(response),
-        error: null
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : 'Error desconocido'
       };
     }
   }

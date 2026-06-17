@@ -3,29 +3,27 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { CiclosFacturacion } from '~/types/mantencion';
+import type { CicloFacturacion } from '~/types/mantencion';
 
 interface TableColumnsProps {
-  onEdit: (ciclo: CiclosFacturacion) => void;
-  onDelete: (ciclo: CiclosFacturacion) => void;
-  canEdit?: boolean;
+  onEdit: (ciclo: CicloFacturacion) => void;
+  onDelete: (ciclo: CicloFacturacion) => void;
 }
 
 export const columns = ({
   onEdit,
-  onDelete,
-  canEdit = true
-}: TableColumnsProps): ColumnDef<CiclosFacturacion>[] => [
+  onDelete
+}: TableColumnsProps): ColumnDef<CicloFacturacion>[] => [
   {
-    accessorKey: 'descripcion',
+    accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => {
-      const descripcion = row.getValue('descripcion');
+      const nombre = row.getValue('nombre');
       return (
         <div className='max-w-[200px] truncate font-medium'>
-          {descripcion as string}
+          {nombre as string}
         </div>
       );
     },
@@ -116,7 +114,6 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

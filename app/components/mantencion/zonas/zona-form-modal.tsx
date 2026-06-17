@@ -28,7 +28,7 @@ import {
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
 import api from '~/lib/api';
-import type { Zonas } from '~/types/mantencion';
+import type { Zona } from '~/types/mantencion';
 
 const zonaFormSchema = z.object({
   nombre: z
@@ -48,7 +48,7 @@ interface ZonaFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  zona: Zonas | null;
+  zona: Zona | null;
   mode: 'add' | 'edit';
 }
 
@@ -92,9 +92,9 @@ export default function ZonaFormModal({
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/crearZona', data);
+        await api.post('/zonas/crear', data);
       } else if (mode === 'edit' && zona) {
-        await api.put(`/modificarZona/${zona.id}`, data);
+        await api.put('/zonas/editar/', { ...data, id: zona.id });
       }
       onSuccess();
     } catch (error) {

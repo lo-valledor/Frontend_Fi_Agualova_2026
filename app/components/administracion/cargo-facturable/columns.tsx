@@ -3,19 +3,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { BuscarCargoFacturable } from '~/types/administracion';
+import type { CargoFacturableRow } from '~/types/administracion';
 
 interface TableColumnsProps {
-  onEdit: (cargo: BuscarCargoFacturable) => void;
+  onEdit: (cargo: CargoFacturableRow) => void;
   editingCargoId: number | null;
-  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  editingCargoId,
-  canEdit = true
-}: TableColumnsProps): ColumnDef<BuscarCargoFacturable>[] => [
+  editingCargoId
+}: TableColumnsProps): ColumnDef<CargoFacturableRow>[] => [
   {
     accessorKey: 'cuenta',
     header: ({ column }) => (
@@ -36,26 +34,6 @@ export const columns = ({
     maxSize: 160
   },
   {
-    accessorKey: 'codigoEnerlova',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código' />
-    ),
-    cell: ({ row }) => (
-      <Badge
-        variant='outline'
-        className='text-xs font-mono px-1 sm:px-2'
-        title={row.original.codigoEnerlova}
-      >
-        <span className='truncate max-w-20 sm:max-w-none'>
-          {row.original.codigoEnerlova}
-        </span>
-      </Badge>
-    ),
-    size: 115,
-    minSize: 100,
-    maxSize: 130
-  },
-  {
     accessorKey: 'descripcion',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Descripción' />
@@ -73,26 +51,6 @@ export const columns = ({
     size: 215,
     minSize: 180,
     maxSize: 250
-  },
-  {
-    accessorKey: 'tipo',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Tipo' />
-    ),
-    cell: ({ row }) => (
-      <Badge
-        variant='outline'
-        className='flex items-center gap-1.5 bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-800 text-xs px-1 sm:px-2'
-        title={row.original.tipo}
-      >
-        <span className='truncate max-w-[60px] sm:max-w-none'>
-          {row.original.tipo}
-        </span>
-      </Badge>
-    ),
-    size: 120,
-    minSize: 100,
-    maxSize: 140
   },
   {
     accessorKey: 'fijoVariable',
@@ -216,6 +174,18 @@ export const columns = ({
     maxSize: 170
   },
   {
+    accessorKey: 'tipoCargo',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Tipo Cargo' />
+    )
+  },
+  {
+    accessorKey: 'codigoEnerlova',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Código Enerlova' />
+    )
+  },
+  {
     id: 'actions',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Acciones' />
@@ -230,7 +200,6 @@ export const columns = ({
             showView={false}
             showDelete={false}
             loadingEdit={isEditing}
-            disableEdit={!canEdit}
           />
         </div>
       );

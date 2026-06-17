@@ -29,7 +29,7 @@ import {
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
 import { Textarea } from '~/components/ui/textarea';
-import type { ComboAsociadoConceptos, Conceptos } from '~/types/mantencion';
+import type { ConceptoAsociables, Concepto } from '~/types/mantencion';
 
 const conceptoSchema = z.object({
   denominacion: z
@@ -45,7 +45,7 @@ const conceptoSchema = z.object({
     .min(1, 'La unidad es requerida')
     .max(20, 'La unidad no debe exceder 20 caracteres'),
   fijoVariable: z.string().min(1, 'El tipo Fijo/Variable es requerido'),
-  asociadoId: z.number().optional()
+  conceptoAsociado: z.string().optional()
 });
 
 type ConceptoFormData = z.infer<typeof conceptoSchema>;
@@ -54,9 +54,9 @@ interface ConceptoFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  concepto?: Conceptos;
+  concepto?: Concepto;
   mode: 'add' | 'edit';
-  comboAsociadoConceptos: ComboAsociadoConceptos[];
+  comboAsociadoConceptos: ConceptoAsociables[];
 }
 
 export default function ConceptoFormModal({
@@ -74,7 +74,7 @@ export default function ConceptoFormModal({
       descripcion: concepto?.descripcion || '',
       unidad: concepto?.unidad || '',
       fijoVariable: concepto?.fijoVariable || '',
-      asociadoId: concepto?.asociadoId || undefined
+      conceptoAsociado: concepto?.conceptoAsociado || undefined
     }
   });
   const { theme } = useTheme();
@@ -86,15 +86,15 @@ export default function ConceptoFormModal({
 
   React.useEffect(() => {
     if (isOpen) {
-      // Buscar el asociadoId a partir de la descripción si no viene el ID
-      let asociadoIdFinal = concepto?.asociadoId;
+      // Buscar el conceptoAsociado a partir de la descripción si no viene el ID
+      let conceptoAsociadoFinal = concepto?.conceptoAsociado;
 
-      if (!asociadoIdFinal && concepto?.asociadoDescripcion) {
+      if (!conceptoAsociadoFinal && concepto?.descripcion) {
         const asociadoEncontrado = comboAsociadoConceptos.find(
-          a => a.descripcion === concepto.asociadoDescripcion
+          a => a.descripcion === concepto.descripcion
         );
         if (asociadoEncontrado) {
-          asociadoIdFinal = asociadoEncontrado.id;
+          conceptoAsociadoFinal = asociadoEncontrado.id.toString();
         }
       }
 
@@ -103,7 +103,7 @@ export default function ConceptoFormModal({
         descripcion: concepto?.descripcion || '',
         unidad: concepto?.unidad || '',
         fijoVariable: concepto?.fijoVariable || '',
-        asociadoId: asociadoIdFinal ?? undefined
+        conceptoAsociado: conceptoAsociadoFinal ?? undefined
       });
     }
   }, [isOpen, concepto, comboAsociadoConceptos, form]);
@@ -113,9 +113,9 @@ export default function ConceptoFormModal({
       const { default: api } = await import('~/lib/api');
 
       if (mode === 'add') {
-        await api.post('/crearConceptos', data);
+        await api.post('/conceptos/crear', data);
       } else {
-        await api.put(`/modificarConceptos`, { ...data, id: concepto?.id });
+        await api.put(`/conceptos/editar`, { ...data, id: concepto?.id });
       }
 
       onSuccess();
@@ -242,7 +242,7 @@ export default function ConceptoFormModal({
                   Asociado (Opcional)
                 </label>
                 <Controller
-                  name='asociadoId'
+                  name='conceptoAsociado'
                   control={form.control}
                   render={({ field }) => {
                     // Filtrar el elemento "Seleccione.." (id: 0)
@@ -251,8 +251,10 @@ export default function ConceptoFormModal({
                     );
 
                     const selectedAsociado =
-                      field.value != null && field.value !== 0
-                        ? validAsociados.find(a => a.id === field.value)
+                      field.value != null && field.value !== '0'
+                        ? validAsociados.find(
+                            a => a.id.toString() === field.value
+                          )
                         : null;
 
                     return (
@@ -284,9 +286,9 @@ export default function ConceptoFormModal({
                 <p className='text-sm text-muted-foreground mt-1'>
                   Seleccione un concepto asociado
                 </p>
-                {form.formState.errors.asociadoId && (
+                {form.formState.errors.conceptoAsociado && (
                   <p className='text-sm font-medium text-destructive mt-1'>
-                    {form.formState.errors.asociadoId.message}
+                    {form.formState.errors.conceptoAsociado.message}
                   </p>
                 )}
               </div>

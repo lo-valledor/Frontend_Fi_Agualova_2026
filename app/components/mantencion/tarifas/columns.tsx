@@ -3,19 +3,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { Tarifas } from '~/types/mantencion';
+import type { Tarifa } from '~/types/mantencion';
 
 interface TarifasColumnsProps {
-  onEdit: (tarifa: Tarifas) => void;
-  onDelete: (tarifa: Tarifas) => void;
-  canEdit?: boolean;
+  onEdit: (tarifa: Tarifa) => void;
+  onDelete: (tarifa: Tarifa) => void;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete,
-  canEdit = true
-}: TarifasColumnsProps): ColumnDef<Tarifas>[] => [
+  onDelete
+}: TarifasColumnsProps): ColumnDef<Tarifa>[] => [
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
@@ -47,7 +45,6 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

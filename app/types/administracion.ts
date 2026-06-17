@@ -1,392 +1,69 @@
-export interface Usuarios {
-  idUsuario: number;
-  nombreDeUsuario: string;
-  perfilId: number;
-  nombres: string;
-  apellidos: string;
-  departamento: number;
-  activo: boolean;
-  fechaCreacion: string;
-  email: string | null;
-  roles: any[];
-}
-
-export interface PermisoUsuario {
-  idMenu: number;
-  nombreMenu: string;
-  ruta: string;
-  puedeVer: boolean;
-  puedeCrear: boolean;
-  puedeEditar: boolean;
-  puedeEliminar: boolean;
-}
-
-export interface CrearUsuarioProps {
-  nombreDeUsuario: string;
-  contrasena: string;
-  email: string;
-  perfilId: number;
-  nombres: string;
-  apellidos: string;
-  departamento: number;
-  activo: boolean;
-}
-
-export interface ActualizarUsuarioProps {
-  nombreDeUsuario: string;
-  contrasena: string;
-  nuevaContrasena?: string;
-  nombres: string;
-  apellidos: string;
-  departamento: number;
-  activo: boolean;
-}
-
-//Contratos
-
-export interface ContratanteProps {
-  rut: string;
-  nombre: string;
-  apellido: string;
-  esEmpresa: boolean;
-  direccion: string;
-  comuna: string;
-  contacto: string;
-  telefono: string;
-  email: string;
-}
-
-export interface GetClienteContrato {
-  rut: string;
-  nombre: string;
-  esEmpresa: boolean;
-  direccion: string;
-  comunaCodigo: string;
-  contacto: string;
-  telefono: string;
-  email: string;
-  comunaDescripcion: string;
-}
-
-export interface GetLocal {
-  numeroLocal: string;
-  empresa: string;
-  estadoHabilitado: string;
-  propietario: string;
+// Acometida
+export type AcometidaRow = {
+  idAcometida: number;
+  codigo: string;
+  ubicacion: string;
+  contratoId: string;
+  empalme: string;
+  nicho: string;
   sector: string;
-}
+  limitePotencia: string;
+  medidor: string;
+};
 
-export interface GetPropietario {
-  rut: string;
-  nombre: string;
-  comuna: string;
-  telefono: string;
-  celular: string;
-  email: string;
-}
+export type AcometidaDetail = AcometidaRow & {
+  idEmpalme?: number | string | null;
+  idNicho?: number | string | null;
+  idContrato?: string | null;
+};
 
-export interface GetContratante {
-  rut: string;
-  nombre: string;
+export type AcometidaProps = {
+  codigo: string;
+  ubicacion: string;
+  idEmpalme: number;
+  idNicho: number;
+  idContrato: string;
+  limitePotencia: string;
+};
+
+export type AcometidaFormValues = {
+  codigo: string;
+  ubicacion: string;
+  idEmpalme: string;
+  idNicho: string;
+  idContrato: string;
+  limitePotencia: string;
+  idAcometida: number | null;
+};
+
+export type Sectores = {
+  id: string;
+  descripcion: string;
+};
+
+export type Nichos = {
+  id: string;
+  descripcion: string;
+};
+
+export type Empalmes = {
+  id: string;
+  descripcion: string;
+};
+
+export type BuscarContratosLibres = {
+  idContrato: string;
+  local: string;
+  tipoContrato: string;
+  tarifa: string;
+  propietario: string;
+  cliente: string;
   apellido: string;
-  esEmpresa: boolean;
-  direccion: string;
-  comuna: string;
-  contacto: string;
-  telefono: string;
-  email: string;
-}
-
-export interface GetMadres {
-  codigoContrato: string;
-  subEmpalme: string;
-  tipoContrato: string;
-  tarifa: string;
-  nombrePropietario: string;
-  nombreCliente: string;
-  numeroLocal: string;
-  fechaInicio: string;
-  activo: boolean;
-  fechaTermino: string;
-  comunaEnvio: string;
-  direccionEnvio: string;
-  limiteInvierno: number;
-  cicloFacturacion: string;
-  potenciaContratada: string;
-}
-
-export interface GetContratos {
-  codigoContrato: string;
-  acometida: string;
-  tipoContrato: string;
-  tarifa: string;
-  nombrePropietario: string;
-  nombreCliente: string;
-  local: string;
-  fechaInicio: string;
-  activo: boolean;
-  fechaTermino: string;
-  comunaEnvio: string;
-  direccionEnvio: string;
-  limiteInvierno: number;
-  promedioAnual: string;
-  cicloFacturacion: string;
-  potenciaContratada: string;
-  liberadoCorte: boolean;
-  madre?: string; // Campo opcional para contrato madre
-}
-
-export interface GetContratoPorId {
-  tipoContrato: string;
-  tarifa: string;
-  nombrePropietario: string;
-  rutPropietario: string;
-  nombreCliente: string;
-  rutCliente: string;
-  localId: string;
-  codigoLocal: string;
-  fechaInicio: string;
-  activoTexto: string;
-  fechaTermino: string;
-  direccion: string;
-  codigoComuna: string;
-  limiteInvierno: number;
-  cicloFacturacion: string;
-  potenciaContratada: string;
-  comunaNombre: string;
-  esMadreTexto: string;
-  codigoContratoMadre: string;
-  lugarEntrega: string;
-  liberadoCorteTexto: string;
-}
-
-export interface ContratosDisponibles {
-  contratoId: string;
-  local: string;
-  tipoContrato: string;
-  tarifa: string;
-  propietario: string;
-  clienteNombre: string;
-  clienteApellidos: string;
   empresa: string;
-  fechaInicio: string;
-  fechaFin: string;
-  direccionEnvio: string;
-  limiteInventario: number;
-  cicloFacturacion: string;
-  estadoActivo: boolean;
-}
+};
 
-export interface ContratoMadresBuscar {
-  nombrePropietario: string;
-  rutPropietario: string;
-}
-
-export interface ContratosDisponiblesPorId {
-  tipoContrato: string;
-  tarifa: string;
-  nombrePropietario: string;
-  rutPropietario: string;
-  nombreCliente: string;
-  rutCliente: string;
-  localId: string;
-  codigoLocal: string;
-  fechaInicio: string;
-  activoTexto: string;
-  fechaTermino: string;
-  direccion: string;
-  codigoComuna: string;
-  limiteInvierno: number;
-  cicloFacturacion: string;
-  potenciaContratada: string;
-  comunaNombre: string;
-  esMadreTexto: string;
-  codigoContratoMadre: string;
-  lugarEntrega: string;
-  liberadoCorteTexto: string;
-}
-
-export interface CrearContratoProps {
-  tipoContrato: number;
-  tarifa: number;
-  propietario: string;
-  cliente: string;
-  localId: string;
-  fechaInicio: string;
-  activo: boolean;
-  direccion: string;
-  comuna: string;
-  limite: number;
-  ciclo: number;
-  potencia: string;
-  guardaCliente: string;
-  esMadre: string;
-  madre: string;
-  lugar: string;
-  sinCorte: number;
-}
-
-export interface ModificarContratoProps {
-  codigo: string;
-  tipoContrato: number;
-  tarifa: number;
-  propietario: string;
-  cliente: string;
-  localId: string;
-  fechaInicio: string;
-  activo: boolean;
-  fechaTermino: string;
-  direccion: string;
-  comuna: string;
-  limite: number;
-  ciclo: number;
-  potencia: string;
-  madre: string;
-  lugar: string;
-  sinCorte: number;
-}
-
-export interface ContratoFormData {
-  tipoContrato: string;
-  tarifa: string;
-  nombrePropietario: string;
-  nombreCliente: string;
-  local: string;
-  fechaInicio: string;
-  activo: boolean;
-  fechaTermino: string;
-  comunaEnvio: string;
-  direccionEnvio: string;
-  limiteInvierno: number;
-  promedioAnual: string;
-  cicloFacturacion: string;
-  potenciaContratada: string;
-  liberadoCorte: boolean;
-  madre: string;
-}
-
-export interface ActualizarPropietariosLocal {
-  registrosAfectados: 0;
-  mensaje: 'Propietarios sincronizados correctamente.';
-}
-
-export interface GetRegiones {
-  region: string;
-  codigo: string;
-  totalComunas: number;
-}
-
-export interface GetComunas {
-  nombre: string;
-  region: string;
-  codigo: string;
-}
-
-export interface GetContratosClientes {
-  codigoContrato: string;
-  acometida: string;
-  tipoContrato: string;
-  tarifa: string;
-  nombrePropietario: string;
-  nombreCliente: string;
-  local: string;
-  fechaInicio: string;
-  activo: boolean;
-  fechaTermino: string;
-  comunaEnvio: string;
-  direccionEnvio: string;
-  limiteInvierno: number;
-  promedioAnual: string;
-  cicloFacturacion: string;
-  potenciaContratada: string;
-  liberadoCorte: boolean;
-}
-
-export interface GetLimiteInvierno {
-  valor: string;
-}
-
-export interface GetFechaActual {
-  fecha: string;
-}
-
-// Acometidas
-
-export interface Acometida {
-  acometidaId: number;
-  codigo: string;
-  ubicacion: string;
-  contratoId: string;
-  empalmeDescripcion: string;
-  nichoDescripcion: string;
-  sectorDescripcion: string;
-  limitePotencia: number | null;
-  numeroMedidor: string;
-}
-
-export interface AcometidaPorId {
-  acometidaId: number;
-  ubicacion: string;
-  contratoId: string;
-  empalmeId: number;
-  nichoId: number;
-  codigo: string;
-  limitePotencia: number | null;
-}
-
-export interface CrearAcometidaProps {
-  ubicacion: string;
-  empalmeId: number;
-  nichoId: number;
-  contratoId: string;
-  codigo: string;
-  limitePotencia: number;
-}
-
-export interface ActualizarAcometidaProps {
-  acometidaId: number;
-  ubicacion: string;
-  empalmeId: number;
-  nichoId: number;
-  contratoId: string;
-  limitePotencia: number;
-}
-
-export interface AcometidaPorContratos {
-  contratoId: string;
-  local: string;
-  tipoContrato: string;
-  tarifa: string;
-  propietario: string;
-  clienteNombre: string;
-  clienteApellidos: string;
-  empresa: string;
-  fechaInicio: string;
-  fechaFin: string;
-  direccionEnvio: string;
-  limiteInventario: number;
-  cicloFacturacion: string;
-  estadoActivo: boolean;
-}
-
-export interface ComboEmpalmes {
-  id: string;
-  nombre: string;
-}
-
-export interface ComboNichos {
-  id: string;
-  nombre: string;
-}
-
-export interface ComboSectores {
-  id: string;
-  nombre: string;
-}
-
-// Cargo Tipo Facturable
-
-export interface BuscarCargoFacturable {
+// Cargo Facturable
+export type CargoFacturableRow = {
   id: number;
   cuenta: string;
   descripcion: string;
@@ -395,157 +72,85 @@ export interface BuscarCargoFacturable {
   concepto: string;
   tarifa: string;
   tipoMedidor: string;
-  tipo: string;
+  tipoCargo: string;
   codigoEnerlova: string;
-  mostrarValorCero: boolean;
-}
+};
 
-export interface CrearCargoFacturableProps {
+export type CargoFacturableConceptos = {
+  id: string;
+  descripcion: string;
+};
+
+export type CargoFacturableTarifas = {
+  id: string;
+  descripcion: string;
+};
+
+export type CargoFacturableTiposMedidor = {
+  id: string;
+  descripcion: string;
+};
+
+export type CargoFacturableProps = {
   cuenta: string;
   descripcion: string;
   fijoVariable: string;
   periodicoEventual: string;
-  conceptoId: number;
-  tarifaId: number;
-  tipoMedidorId: number;
-  tipo: number;
+  idConcepto: number;
+  idTarifa: number;
+  idTipoMedidor: number;
+  tipoCargo: number;
   codigoEnerlova: string;
-  mostrarValorCero: boolean;
-}
+  muestraValorCero: boolean;
+  id: number;
+};
 
-export interface ActualizarCargoFacturableProps {
-  cuenta: string;
+// Cargo Tipo Contrato
+export type CargoTipoContrato = {
+  idTipoContrato: number;
+  tipoContrato: string;
+  cargoFacturable: string;
+  condicionContrato: string;
   descripcion: string;
-  fijoVariable: string;
-  periodicoEventual: string;
-  conceptoId: number;
-  tarifaId: number;
-  tipoMedidorId: number;
-  tipo: number;
-  codigoEnerlova: string;
-  mostrarValorCero: boolean;
-  id: number;
-}
+  estado: boolean;
+};
 
-export interface GeCombosConceptos {
-  id: number;
-  nombre: string;
-}
+export type TiposContrato = {
+  id: string;
+  descripcion: string;
+};
 
-export interface GetCombosTarifas {
-  id: number;
-  nombre: string;
-}
+export type Conceptos = {
+  id: string;
+  descripcion: string;
+};
 
-export interface GetCombosTiposMedidor {
-  id: number;
-  nombre: string;
-}
+export type Condiciones = {
+  id: string;
+  descripcion: string;
+};
 
-// Medidores
+export type CargosFacturables = {
+  id: string;
+  descripcion: string;
+};
 
-export interface GetMedidores {
-  codigo: number;
-  marca: string;
-  tipo: string;
-  modelo: string;
-  serie: string;
-  fechaInicio: string;
-  digitos: number;
-  multiplicar: number;
-  ubicacion: string;
-  estado: string;
-  codigoAcometida: string;
-}
+export type GuardarConfiguracionPayload = {
+  idTipoContrato: number;
+  condiciones: {
+    idCargo: number;
+    idCondicion: number;
+    descripcion: string;
+  }[];
+  idsCargosMonofasicos: number[];
+  idsCargosTrifasicos: number[];
+  idsCargosAmbos: number[];
+};
 
-export interface GetMedidorByCodigo {
-  mM_ID: string;
-  tM_ID: number;
-  modelo: string;
-  numeroSerie: string;
-  estadoId: number;
-  fechaInicio: string;
-  digitos: number;
-  constanteMultiplicar: number;
-  subEmpalmeId: number;
-  codigoSubEmpalme: string;
-  estadoNombre: string;
-}
-
-export interface GetMedidorLecturas {
-  cantidadLecturas: string;
-}
-
-export interface CrearMedidorProps {
-  marcaId: string; // Cambiado de number a string según el backend
-  tipoId: number;
-  modelo: string;
-  serie: string;
-  estadoId: number;
-  fechaInicio: string;
-  digitos: number;
-  multiplicar: number;
-  primeraLectura: string;
-  fechaPrimeraLectura: string;
-}
-
-export interface ActualizarMedidorProps {
-  codigoMedidor: number;
-  marcaId: string; // Cambiado de number a string según el backend
-  modelo: string;
-  serie: string;
-  estadoId: number;
-  fechaInicio: string;
-  digitos: number;
-  multiplicar: number;
-  tipoId: number;
-  subempalmeCodigo: string | null;
-  primeraLectura: string;
-  fechaPrimeraLectura: string;
-}
-
-export interface ModificarSubempalmeProps {
-  codigoMedidor: number;
-  subempalmeId: number;
-}
-
-export interface GetMedidoresSubempalmes {
-  id: number;
-  codigo: string;
-  ubicacion: string;
-  contratoId: number;
-  descripcionEmpalme: string;
-  descripcionNicho: string;
-}
-
-export interface SubempalmeOption {
-  id: number;
-  codigo: string;
-  ubicacion: string;
-  contratoId: number;
-  descripcionEmpalme: string;
-  descripcionNicho: string;
-}
-
-export interface MedidorSubempalmeProps {
-  ubicacion: string;
-  codigoAcometida: string;
-}
-
-export interface GetMedidorByLecturas {
-  cantidadLecturas: string;
-}
-
-export interface GetExportarMedidoresByNombreYSerie {
-  nombre: string;
-  serie: string;
-}
-
-// Clientes
-
-export interface GetClientes {
+//Clientes
+export type ClientesRow = {
   rut: string;
-  nombreCompleto: string;
+  razonSocialNombre: string;
   esEmpresa: boolean;
   direccion: string;
   comuna: string;
@@ -553,324 +158,209 @@ export interface GetClientes {
   telefono: string;
   email: string;
   codigoComuna: string;
-}
+};
 
-export interface GetClienteById {
+export type Cliente = {
+  nombreComuna: string;
+  nombreGiro: string;
   rut: string;
   nombre: string;
   apellido: string;
   esEmpresa: boolean;
   direccion: string;
-  comuna: string;
-  codComuna: string;
+  codigoComuna: string;
   contacto: string;
   telefono: string;
   email: string;
   codigoGiro: string;
-  giro: string;
-}
+};
 
-export interface GetGiros {
-  codigo: string;
-  actividadEconomica: string;
-  afectoIVA: string;
-  categoriaTributaria: string;
-}
-
-export interface GetClientesByRut {
+export type ClienteFormValues = {
   rut: string;
   nombre: string;
   apellido: string;
   esEmpresa: boolean;
   direccion: string;
-  comuna: string;
-  codComuna: string;
+  codigoComuna: string;
   contacto: string;
   telefono: string;
-  correo: string;
+  email: string;
   codigoGiro: string;
-  giro: string;
-}
+};
 
-export interface ClientesFormData {
-  rut: string;
-  nombre: string;
-  apellido: string;
-  esEmpresa: boolean;
-  direccion: string;
-  codComuna: string;
-  contacto: string;
-  telefono: string;
-  correo: string;
-  codigoGiro: string;
-}
+export type NombreRegion = string | { nombreRegion: string };
 
-// Cargo Tipo Contrato
+export type NombreComuna =
+  | string
+  | {
+      codigo: string;
+      nombre: string;
+      provincia: string;
+    };
 
-export interface GetCargoTipoContrato {
-  tipoContratoId: number;
-  tipoContratoDescripcion: string;
-  cargoFacturableDescripcion: string;
-  condicionContratoDescripcion: string;
-  estado: boolean;
-  descripcion: string;
-}
-
-export interface CargoTipoContratoEditor {
-  grilla: CargoTipoDetalle[];
-  cargoMonofasico: CargoTipoListbox[];
-  cargoTrifasico: CargoTipoListbox[];
-  cargoAmbos: CargoTipoListbox[];
-}
-
-export interface CargoTipoDetalle {
-  cargoId: number;
-  cargoDescripcion: string;
-  condicionId: number;
-  condicionDescripcion: string;
-  descripcion: string;
-}
-
-export interface CargoTipoListbox {
-  tipoMedidor: number;
-  cargoId: number;
-  cargoDescripcion: string;
-}
-
-export interface GuardarCargoTipoContratoConfiguracion {
-  tipoContratoId: number;
-  configuraciones: ConfiguracionCargo[];
-  cargoMonofasicoIds: number[];
-  cargoTrifasicoIds: number[];
-  cargoAmbosIds: number[];
-}
-
-export interface ConfiguracionCargo {
-  cargoId: number;
-  tipoContratoId: number;
-  condicionId: number;
-  descripcion: string;
-}
-
-export interface GetCargoTipoContrato {
-  tipoContratoId: number;
-  tipoContratoDescripcion: string;
-  cargoFacturableDescripcion: string;
-  condicionContratoDescripcion: string;
-  estado: boolean;
-  descripcion: string;
-}
+export type NombreGiro =
+  | string
+  | {
+      codigo: string;
+      actividad: string;
+      afectoIva: string;
+      categoria: string;
+    };
 
 // Condiciones Contrato
-
-export interface GetCondicionesContrato {
-  id: number;
-  nombre: string;
-  concepto: string;
-  factorPorcentual: string;
-  valorFijo: number | null;
-  estado: boolean;
-}
-
-export interface GetCondicionesContratoPorId {
+export type CondicionesContratoRow = {
   id: number;
   descripcion: string;
-  conceptoId: number;
-  usaPorcentaje: boolean;
+  concepto: string;
+  factorPorcentual: string;
+  valorFijo: string;
+  estado: boolean;
+};
+
+export type CondicionContrato = {
+  id: number;
+  descripcion: string;
+  idConcepto: number;
+  tipoCondicion: number;
   valor: number;
   estado: boolean;
-  factorPorcentual: number;
-  valorFijo: number | null;
-  tipo: number;
-}
+};
 
-export interface CrearCondicionContratoProps {
-  nombre: string;
-  conceptoId: number;
-  usaPorcentaje: boolean;
+export type CondicionContratoFormValues = {
+  descripcion: string;
+  idConcepto: number;
+  tipoCondicion: number;
   valor: number;
   estado: boolean;
-}
+  id: number;
+};
 
-export interface ActualizarCondicionContratoProps {
-  codigo: number;
-  nombre: string;
-  conceptoId: number;
-  usaPorcentaje: boolean;
-  valor: number;
-  estado: boolean;
-}
+export type Concepto = {
+  id: number;
+  descripcion: string;
+};
 
-export interface MedidorFormData {
+// Contratos
+export type ContratosRow = {
+  id: string;
+  codigo: string;
+  descripcion: string;
+  estado: string;
+};
+
+// Medidores
+export type MedidoresRow = {
+  idMedidor: number;
   marca: string;
   tipo: string;
   modelo: string;
   serie: string;
-  estado: string;
   fechaInicio: string;
   digitos: number;
-  multiplicar: number;
+  multiplicador: number;
+  ubicacion: string;
+  estado: string;
+  codigoAcometida: string;
+};
+
+export type MedidorProps = {
+  idMarca: string;
+  idTipo: string;
+  modelo: string;
+  serie: string;
+  idEstado: string;
+  fechaInicio: string;
+  digitos: number;
+  multiplicador: number;
   primeraLectura: string;
-  fechaPrimeraLectura: string;
-}
+  fechaLectura: string;
+  horaLectura: string;
+  minutoLectura: string;
+  idSubEmpalme: string;
+};
 
-// Tipos específicos para Usuarios Component
+export type MedidorFormValues = {
+  idMarca: string;
+  idTipo: string;
+  modelo: string;
+  serie: string;
+  idEstado: string;
+  fechaInicio: string;
+  digitos: number;
+  multiplicador: number;
+  primeraLectura: string;
+  fechaLectura: string;
+  horaLectura: string;
+  minutoLectura: string;
+  idSubEmpalme: string;
+  codigoMedidor: string;
+};
 
-export type UsuarioModalMode = 'add' | 'edit';
+export type Marca = {
+  id: number;
+  descripcion: string;
+};
 
-/**
- * Estado unificado para todos los modales en el componente de usuarios
- * Reduce la cantidad de useState necesarios y mejora la mantenibilidad
- */
-export interface UsuarioModalState {
-  userForm: {
-    isOpen: boolean;
-    mode: UsuarioModalMode;
-  };
-  deleteDialog: {
-    isOpen: boolean;
-  };
-  permissions: {
-    isOpen: boolean;
-  };
-  roles: {
-    isOpen: boolean;
-  };
-}
+export type Tipo = {
+  id: number;
+  descripcion: string;
+};
 
-/**
- * Información de permisos del usuario autenticado para la gestión de usuarios
- */
-export interface UsuarioPermissions {
-  hasCreatePermission: boolean;
-  hasEditPermission: boolean;
-}
+export type Estado = {
+  id: number;
+  descripcion: string;
+};
 
-/**
- * Información de error normalizada para manejo consistente
- */
-export interface UsuarioErrorInfo {
-  message: string;
-  isNetworkError: boolean;
-}
+export type BuscarAcometidas = {
+  id: number;
+  codigo: string;
+  ubicacion: string;
+  contratoId: string;
+  empalme: string;
+  nicho: string;
+};
 
-// Tipos específicos para Clientes Component
+// Usuarios
+export type Usuarios = {
+  nombre_Usuario: string;
+  apellidos_Usuario: string;
+  id: string;
+  userName: string;
+  normalizedUserName: string;
+  email: string;
+  normalizedEmail: string;
+  emailConfirmed: boolean;
+  passwordHash: string;
+  securityStamp: string;
+  concurrencyStamp: string;
+  phoneNumber: string | null;
+  phoneNumberConfirmed: boolean;
+  twoFactorEnabled: boolean;
+  lockoutEnd: string | null;
+  lockoutEnabled: boolean;
+  accessFailedCount: number;
+};
 
-/**
- * Estado unificado para los modales del componente de clientes
- */
-export interface ClienteModalState {
-  details: {
-    isOpen: boolean;
-  };
-}
+export type UpdateUsuario = {
+  nombre: string;
+  apellido: string;
+  email: string;
+  username: string;
+  newPassword?: string;
+};
 
-/**
- * Información de permisos para el módulo de clientes
- */
-export interface ClientePermissions {
-  hasCreatePermission: boolean;
-  hasEditPermission: boolean;
-}
+export type UpdateRolUsuario = {
+  nuevoRol: string;
+};
 
-/**
- * Información de carga de detalles de cliente
- */
-export interface ClienteLoadingState {
-  isLoading: boolean;
-  rutLoading: string | null;
-}
+export type Permisos = {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  modulo: string;
+};
 
-/**
- * Información de error normalizada para clientes
- */
-export interface ClienteErrorInfo {
-  message: string;
-  isNetworkError: boolean;
-}
-
-// Tipos específicos para Medidores Component
-
-/**
- * Estado unificado para los modales del componente de medidores
- */
-export interface MedidorModalState {
-  delete: {
-    isOpen: boolean;
-  };
-  asociarSubempalme: {
-    isOpen: boolean;
-  };
-}
-
-/**
- * Información de permisos para el módulo de medidores
- */
-export interface MedidorPermissions {
-  hasCreatePermission: boolean;
-  hasEditPermission: boolean;
-}
-
-/**
- * Información de error normalizada para medidores
- */
-export interface MedidorErrorInfo {
-  message: string;
-  isNetworkError: boolean;
-}
-
-// Tipos específicos para Contratos Component
-
-/**
- * Estado unificado para los modales del componente de contratos
- */
-export interface ContratoModalState {
-  delete: {
-    isOpen: boolean;
-  };
-  details: {
-    isOpen: boolean;
-  };
-}
-
-/**
- * Información de permisos para el módulo de contratos
- */
-export interface ContratoPermissions {
-  hasCreatePermission: boolean;
-  hasEditPermission: boolean;
-}
-
-/**
- * Información de error normalizada para contratos
- */
-export interface ContratoErrorInfo {
-  message: string;
-  isNetworkError: boolean;
-}
-
-// Tipos específicos para Propietarios Component
-
-/**
- * Estado unificado para los modales del componente de propietarios
- */
-export interface PropietarioModalState {
-  details: {
-    isOpen: boolean;
-  };
-}
-
-/**
- * Información de permisos para el módulo de propietarios
- */
-export interface PropietarioPermissions {
-  hasEditPermission: boolean;
-}
-
-/**
- * Información de error normalizada para propietarios
- */
-export interface PropietarioErrorInfo {
-  message: string;
-  isNetworkError: boolean;
-}
+export type CrearUsuario = {
+  email: string;
+  rol: string;
+};

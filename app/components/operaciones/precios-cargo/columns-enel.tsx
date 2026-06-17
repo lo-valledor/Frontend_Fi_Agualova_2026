@@ -9,8 +9,7 @@ import DialogAgregarPrecios from './dialog-agregar-precios';
 export const columns = (
   mes: string,
   anio: string,
-  onSuccess: () => void,
-  canCreate: boolean = true
+  onSuccess: () => void
 ): ColumnDef<PreciosCargoEnel>[] => [
   {
     accessorKey: 'codigo',
@@ -33,7 +32,7 @@ export const columns = (
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title='Cód. Enerlova'
+        title='Cód. Agualova'
         className='text-slate-700 dark:text-slate-300 font-semibold'
       />
     ),
@@ -240,25 +239,15 @@ export const columns = (
       return (
         <div className='flex justify-center'>
           {hasNoValues ? (
-            canCreate ? (
-              <DialogAgregarPrecios
-                valor1={Number(valoractual.replace(',', '.'))}
-                valor2={Number(valoractual2.replace(',', '.'))}
-                valor3={Number(valoractual3.replace(',', '.'))}
-                codigo={codigo}
-                mes={mes}
-                anio={anio}
-                onSuccess={onSuccess}
-              />
-            ) : (
-              <Badge
-                variant='outline'
-                className='bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-border text-xs px-1 py-0'
-                title='No tiene permisos para agregar precios'
-              >
-                ✗ <span className='hidden sm:inline'>Sin permisos</span>
-              </Badge>
-            )
+            <DialogAgregarPrecios
+              valor1={Number(valoractual.replace(',', '.'))}
+              valor2={Number(valoractual2.replace(',', '.'))}
+              valor3={Number(valoractual3.replace(',', '.'))}
+              codigo={codigo}
+              mes={mes}
+              anio={anio}
+              onSuccess={onSuccess}
+            />
           ) : (
             <Badge
               variant='outline'

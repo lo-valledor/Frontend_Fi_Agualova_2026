@@ -1,8 +1,3 @@
-/**
- * Calculation utilities for Monitor module
- * Statistical calculations and aggregations with edge case handling
- */
-
 import type { Fila, Medidor, NichoBusqueda } from '~/types/monitor';
 import { getMeterStatus } from './monitor-status';
 
@@ -16,11 +11,7 @@ export interface StatsData {
   imported: number;
 }
 
-/**
- * Calculate statistics for a single nicho
- * @param nicho - Nicho object with filas and medidores
- * @returns Statistics object
- */
+
 export function calculateNichoStats(
   nicho: NichoBusqueda | null | undefined
 ): StatsData {
@@ -88,11 +79,7 @@ export function calculateNichoStats(
   }, defaultStats);
 }
 
-/**
- * Calculate total statistics across all nichos
- * @param nichos - Array of nichos
- * @returns Aggregated statistics
- */
+
 export function calculateTotalStats(
   nichos: NichoBusqueda[] | null | undefined
 ): StatsData {
@@ -127,13 +114,7 @@ export function calculateTotalStats(
   }, defaultStats);
 }
 
-/**
- * Calculate percentage with safe division
- * @param value - Numerator
- * @param total - Denominator
- * @param decimals - Number of decimal places (default: 1)
- * @returns Percentage string or "0.0" for division by zero
- */
+
 export function calculatePercentage(
   value: number,
   total: number,
@@ -147,13 +128,7 @@ export function calculatePercentage(
   return percentage.toFixed(decimals);
 }
 
-/**
- * Calculate consumption from current and previous readings
- * @param currentReading - Current meter reading
- * @param previousReading - Previous meter reading
- * @param multiplier - Meter constant multiplier (default: 1)
- * @returns Calculated consumption or 0 for invalid inputs
- */
+
 export function calculateConsumption(
   currentReading: number | null | undefined,
   previousReading: number | null | undefined,
@@ -180,11 +155,7 @@ export function calculateConsumption(
   return consumption >= 0 ? consumption : 0;
 }
 
-/**
- * Group meters by status
- * @param medidores - Array of meters
- * @returns Object mapping status to array of meters
- */
+
 export function aggregateMetersByStatus(
   medidores: Medidor[] | null | undefined
 ): Record<string, Medidor[]> {
@@ -211,11 +182,7 @@ export function aggregateMetersByStatus(
   }, defaultGrouping);
 }
 
-/**
- * Get all meters from a nicho flattened into a single array
- * @param nicho - Nicho object
- * @returns Flat array of all meters
- */
+
 export function getAllMetersFromNicho(
   nicho: NichoBusqueda | null | undefined
 ): Medidor[] {
@@ -233,11 +200,7 @@ export function getAllMetersFromNicho(
   });
 }
 
-/**
- * Get problem meters (severity > 2) from a nicho
- * @param nicho - Nicho object
- * @returns Array of meters with problems
- */
+
 export function getProblemMeters(
   nicho: NichoBusqueda | null | undefined
 ): Medidor[] {
@@ -249,11 +212,7 @@ export function getProblemMeters(
   });
 }
 
-/**
- * Count meters by severity level in a fila
- * @param fila - Fila object
- * @returns Count of meters at each severity level
- */
+
 export function countMetersBySeverity(
   fila: Fila | null | undefined
 ): Record<number, number> {

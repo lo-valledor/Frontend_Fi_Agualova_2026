@@ -1,7 +1,3 @@
-/**
- * Tipos compartidos para los servicios de roles y permisos
- */
-
 export interface RoleMenuPermissions {
   lectura: boolean;
   escritura: boolean;

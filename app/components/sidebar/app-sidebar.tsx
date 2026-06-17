@@ -13,7 +13,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import { Link, useLocation } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { useDebounce } from '~/hooks/shared/use-debounce';
 import { usePeriodoAbierto } from '~/hooks/use-operaciones';
 
@@ -238,7 +237,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = React.useState('');
   const debouncedSearch = useDebounce(searchTerm, 300);
-  const { canView } = useAuth();
   const { periodoAbierto } = usePeriodoAbierto();
 
   const hasPeriodoAbierto = periodoAbierto.length > 0;
@@ -250,10 +248,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       .map(section => {
         const filteredItems = section.items
           .map(item => {
-            if (!canView(item.url)) {
-              return null;
-            }
-
             const isOperacionesItem = section.title === 'Operaciones';
             const isPeriodoFacturacionItem =
               isOperacionesItem && item.title === 'Periodo Facturación';
@@ -267,7 +261,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               disabled: isDisabled
             };
           })
-          .filter(item => item !== null)
           .filter(item => {
             if (debouncedSearch.trim()) {
               return (
@@ -288,7 +281,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         };
       })
       .filter(section => section !== null) as typeof data.navMain;
-  }, [debouncedSearch, canView, hasPeriodoAbierto]);
+  }, [debouncedSearch, hasPeriodoAbierto]);
 
   const isActiveRoute = (url: string) => {
     return location.pathname === url;
@@ -300,7 +293,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className='border-b border-sidebar-border px-4 py-3'>
         <div className='flex items-center gap-3'>
           <div className='flex h-8 w-8 items-center justify-center rounded-md'>
-            <img src='/logo-enerlova.png' alt='Logo' width={32} height={32} />
+            <img src='/logo-agualova.png' alt='Logo' width={32} height={32} />
           </div>
           <div className='flex flex-col'>
             <span className='text-sm font-black tracking-tight leading-none'>

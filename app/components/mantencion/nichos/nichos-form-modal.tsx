@@ -35,7 +35,7 @@ import {
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import { mantencionService } from '~/services/mantencionService';
-import type { Nicho, Sectores } from '~/types/mantencion';
+import type { Nicho, Sector } from '~/types/mantencion';
 
 const nichoFormSchema = z.object({
   sectorId: z.string().min(1, { message: 'El sector es requerido.' }),
@@ -50,7 +50,7 @@ const nichoFormSchema = z.object({
   estado: z.boolean()
 });
 
-type NichoFormValues = z.infer<typeof nichoFormSchema>;
+type NichoFormSchemaValues = z.infer<typeof nichoFormSchema>;
 
 interface NichoFormModalProps {
   isOpen: boolean;
@@ -68,10 +68,10 @@ export default function NichoFormModal({
   mode
 }: Readonly<NichoFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
-  const [sectores, setSectores] = useState<Sectores[]>([]);
+  const [sectores, setSectores] = useState<Sector[]>([]);
   const [isLoadingSectores, setIsLoadingSectores] = useState(false);
 
-  const form = useForm<NichoFormValues>({
+  const form = useForm<NichoFormSchemaValues>({
     resolver: zodResolver(nichoFormSchema),
     defaultValues: {
       sectorId: '',
@@ -108,7 +108,7 @@ export default function NichoFormModal({
   useEffect(() => {
     if (isOpen) {
       if (mode === 'edit' && nicho) {
-        const sector = sectores.find(s => s.nombre === nicho.sectorNombre);
+        const sector = sectores.find(s => s.nombre === nicho.nombre);
         const formData = {
           sectorId: sector?.id.toString() || '',
           nombre: nicho.nombre,
@@ -130,11 +130,12 @@ export default function NichoFormModal({
     }
   }, [isOpen, mode, nicho, sectores, form]);
 
-  const handleSubmit = async (data: NichoFormValues) => {
+  const handleSubmit = async (data: NichoFormSchemaValues) => {
     setIsLoading(true);
     try {
       const payload = {
-        sectorId: Number.parseInt(data.sectorId, 10),
+        id: nicho?.id,
+        idSector: Number.parseInt(data.sectorId, 10),
         nombre: data.nombre,
         ubicacion: data.ubicacion,
         estado: data.estado

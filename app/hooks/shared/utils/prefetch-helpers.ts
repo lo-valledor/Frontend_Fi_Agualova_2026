@@ -1,25 +1,3 @@
-/**
- * Prefetch Helpers Utility
- *
- * Helper functions for creating and managing route prefetch links.
- * Eliminates duplicate logic across various prefetch hook variants.
- */
-
-/**
- * Creates or checks for existing prefetch link
- *
- * Avoids creating duplicate links for the same route by checking
- * for existing prefetch links before adding new ones.
- *
- * @param routePath - Route path to prefetch
- * @returns true if link was created, false if already exists
- *
- * @example
- * ```typescript
- * const created = createPrefetchLink('/dashboard/users');
- * // First call returns true, subsequent calls return false
- * ```
- */
 export function createPrefetchLink(routePath: string): boolean {
   if (typeof window === 'undefined') return false;
 
@@ -40,28 +18,7 @@ export function createPrefetchLink(routePath: string): boolean {
   return true;
 }
 
-/**
- * Creates prefetch links with staggered delays
- *
- * Schedules multiple prefetch links to be created at different intervals
- * to avoid blocking other operations.
- *
- * @param routes - Array of route paths to prefetch
- * @param baseDelay - Initial delay in milliseconds
- * @param increment - Delay increment for each route
- * @returns Cleanup function that cancels all pending timers
- *
- * @example
- * ```typescript
- * const cleanup = createStaggeredPrefetchLinks(
- *   ['/users', '/settings', '/profile'],
- *   2000,
- *   1000
- * );
- * // Routes prefetch at: 2s, 3s, 4s respectively
- * // Call cleanup() to cancel all pending operations
- * ```
- */
+
 export function createStaggeredPrefetchLinks(
   routes: string[],
   baseDelay: number = 2000,
@@ -85,25 +42,7 @@ export function createStaggeredPrefetchLinks(
   };
 }
 
-/**
- * Creates conditional prefetch links based on conditions
- *
- * Evaluates conditions and creates prefetch links only if conditions are met.
- * Useful for user-role-based or feature-flag-based prefetching.
- *
- * @param routeMap - Map of condition => routes
- * @param evaluator - Function to evaluate conditions (default: eval-based)
- * @returns Cleanup function that cancels all pending timers
- *
- * @example
- * ```typescript
- * const cleanup = createConditionalPrefetchLinks({
- *   isAdmin: ['/admin/users', '/admin/settings'],
- *   isOperator: ['/monitor/readings'],
- *   isAll: ['/dashboard']
- * }, (condition, context) => context[condition] ?? false);
- * ```
- */
+
 export function createConditionalPrefetchLinks(
   routeMap: Record<string, string[]>,
   evaluator?: (condition: string, context?: any) => boolean
@@ -136,22 +75,7 @@ export function createConditionalPrefetchLinks(
   };
 }
 
-/**
- * Creates prefetch link with optional delay
- *
- * Simple utility for delayed prefetch, useful when you want to
- * prefetch after a certain amount of time.
- *
- * @param routePath - Route to prefetch
- * @param delay - Delay in milliseconds
- * @returns Cleanup function that cancels the timer
- *
- * @example
- * ```typescript
- * const cleanup = createDelayedPrefetchLink('/checkout', 5000);
- * // Link is prefetched after 5 seconds
- * ```
- */
+
 export function createDelayedPrefetchLink(routePath: string, delay: number = 2000): () => void {
   const timer = setTimeout(() => {
     createPrefetchLink(routePath);
@@ -160,40 +84,14 @@ export function createDelayedPrefetchLink(routePath: string, delay: number = 200
   return () => clearTimeout(timer);
 }
 
-/**
- * Creates prefetch link on hover event
- *
- * Returns an event handler that can be attached to element events.
- *
- * @param routePath - Route to prefetch
- * @returns Event handler function
- *
- * @example
- * ```typescript
- * const onMouseEnter = createHoverPrefetchHandler('/users');
- * return (
- *   <Link to="/users" onMouseEnter={onMouseEnter}>
- *     Users
- *   </Link>
- * );
- * ```
- */
+
 export function createHoverPrefetchHandler(routePath: string): () => void {
   return () => {
     createPrefetchLink(routePath);
   };
 }
 
-/**
- * Removes all prefetch links for given routes
- *
- * @param routes - Route paths to remove
- *
- * @example
- * ```typescript
- * removePrefetchLinks(['/old-page', '/deprecated-route']);
- * ```
- */
+
 export function removePrefetchLinks(routes: string[]): void {
   if (typeof window === 'undefined') return;
 
@@ -208,12 +106,7 @@ export function removePrefetchLinks(routes: string[]): void {
   });
 }
 
-/**
- * Checks if a route is already prefetched
- *
- * @param routePath - Route to check
- * @returns true if prefetch link exists
- */
+
 export function isPrefetched(routePath: string): boolean {
   if (typeof window === 'undefined') return false;
 
@@ -222,11 +115,7 @@ export function isPrefetched(routePath: string): boolean {
   );
 }
 
-/**
- * Gets all currently prefetched routes
- *
- * @returns Array of prefetched route paths
- */
+
 export function getPrefetchedRoutes(): string[] {
   if (typeof window === 'undefined') return [];
 

@@ -46,17 +46,7 @@ import { type Clave, type Periodo, type Sector } from '~/types/monitor';
 import { driver } from 'driver.js';
 import 'driver.js/dist/driver.css';
 
-/**
- * Props for MonitorLecturasComponent
- * Contains all required data for rendering the meter reading monitor interface
- *
- * @typedef {Object} MonitorLecturasComponentProps
- * @property {Periodo[]} periodos - Array of available billing periods
- * @property {Sector[]} sectores - Array of available monitoring sectors
- * @property {Clave[]} claves - Array of available reading codes/keys
- * @property {number | null} activePeriodoId - ID of the currently active period (or null if none)
- * @property {Error | null} error - Loading error (null if successful)
- */
+
 interface MonitorLecturasComponentProps {
   periodos: Periodo[];
   sectores: Sector[];
@@ -65,53 +55,7 @@ interface MonitorLecturasComponentProps {
   error: Error | null;
 }
 
-/**
- * MonitorLecturasComponent - Main meter reading monitoring interface
- *
- * Provides a comprehensive UI for managing meter reading monitoring with:
- * - Sector selection (required)
- * - Period/billing cycle selection (required)
- * - Date range filtering
- * - Advanced filters (meter serial, reading code, status)
- * - Interactive tour guide for new users
- * - Real-time search with validation
- * - Keyboard shortcuts support (Ctrl+K search, Ctrl+Enter refresh, Esc close)
- *
- * @component
- * @param {MonitorLecturasComponentProps} props - Component properties
- * @param {Periodo[]} props.periodos - Available billing periods to select from
- * @param {Sector[]} props.sectores - Available sectors for monitoring
- * @param {Clave[]} props.claves - Reading code/key definitions
- * @param {number | null} props.activePeriodoId - Currently active period ID
- * @param {Error | null} props.error - Any loading errors to display
- *
- * @returns {JSX.Element} Complete monitoring interface with filters and results
- *
- * @example
- * // Basic usage with loaded data
- * <MonitorLecturasComponent
- *   periodos={[{IdPeriodo: '1', DescripcionPeriodo: 'Enero 2025', ...}]}
- *   sectores={[{sectorId: 'SEC1', descripcion: 'Centro', ...}]}
- *   claves={[{IdClave: 1, DescripcionClave: 'Sin Lectura', ...}]}
- *   activePeriodoId={1}
- *   error={null}
- * />
- *
- * @example
- * // With error state
- * <MonitorLecturasComponent
- *   periodos={[]}
- *   sectores={[]}
- *   claves={[]}
- *   activePeriodoId={null}
- *   error={new Error('Failed to load data')}
- * />
- *
- * @throws {Error} Display error alert if error prop is provided
- *
- * @fires {window.alert} Interactive tour starts when user clicks help button
- * @listens {KeyboardEvent} Ctrl+K (search), Ctrl+Enter (refresh), Esc (close filters)
- */
+
 const MonitorLecturasComponent = ({
   periodos,
   sectores,
@@ -166,22 +110,7 @@ const MonitorLecturasComponent = ({
     }
   }, [selectedPeriodo]);
 
-  /**
-   * Clears all filters and resets component state to initial values
-   * Restores default period and dates, collapses results
-   *
-   * @function
-   * @returns {void}
-   *
-   * @example
-   * // User clicks "Limpiar" button
-   * handleLimpiezaFiltros();
-   * // Result:
-   * // - All filters cleared (sector, period, clave, meter serial, status)
-   * // - Filters panel opens
-   * // - Results hidden
-   * // - Default period restored
-   */
+  
   const handleLimpiezaFiltros = () => {
     setIsSearchActive(false);
     setSearchTrigger(0);
@@ -199,22 +128,7 @@ const MonitorLecturasComponent = ({
     setIsFiltersOpen(true);
   };
 
-  /**
-   * Executes search with validation of required parameters
-   * Shows error toast if validation fails, triggers search if valid
-   *
-   * @function
-   * @returns {void}
-   *
-   * @example
-   * // User clicks "Iniciar Monitoreo" button
-   * handleSearch();
-   * // If valid: searches for readings, collapses filters
-   * // If invalid: shows error toast (e.g., "Debe seleccionar sector")
-   *
-   * @throws Shows toast.error on validation failure (not thrown, displayed to user)
-   * Required fields: sector and period
-   */
+  
   const handleSearch = () => {
     const validation = validateSearchParams(selectedSector, selectedPeriodo);
 
@@ -263,19 +177,7 @@ const MonitorLecturasComponent = ({
     );
   }
 
-  /**
-   * Initializes and starts the interactive tour guide
-   * Uses driver.js to highlight key components and explain their functionality
-   * Steps: sector selector → period → date fin → advanced filters → search button
-   *
-   * @function
-   * @returns {void}
-   *
-   * @example
-   * // User clicks help (?) button
-   * startTour();
-   * // Result: Tour starts with smooth scrolling and highlights
-   */
+  
   const startTour = () => {
     const driverjs = driver({
       showProgress: true,
@@ -299,12 +201,7 @@ const MonitorLecturasComponent = ({
     driverjs.drive();
   };
 
-  /**
-   * Interactive tour steps configuration for driver.js
-   * Guides new users through the monitoring interface
-   *
-   * @type {Array<{element: string, popover: {title: string, description: string}}>}
-   */
+  
   const tourSteps = [
     {
       element: '#sector-selector',

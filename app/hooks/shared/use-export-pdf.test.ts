@@ -278,7 +278,7 @@ describe('useExportPDF', () => {
       const sections: PDFSection[] = [{ type: 'text', text: 'Test' }];
       const options: PDFExportOptions = {
         companyInfo: {
-          name: 'Enerlova S.A.',
+          name: 'Agualova S.A.',
           address: 'Av. Principal 123',
           phone: '+56 2 1234 5678'
         }

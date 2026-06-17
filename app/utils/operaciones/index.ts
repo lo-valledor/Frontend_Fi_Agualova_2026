@@ -1,7 +1,3 @@
-/**
- * Re-exportación centralizada de utilidades de operaciones
- */
-
 // Constants
 export {
   MONTHS,

@@ -6,7 +6,6 @@ import React, { useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -39,12 +38,6 @@ export default function ParametrosComponent({
 
   const revalidator = useRevalidator();
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/mantencion/parametros';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
-
   const handleAdd = () => {
     setSelectedParametro(undefined);
     setModalMode('add');
@@ -52,10 +45,6 @@ export default function ParametrosComponent({
   };
 
   const handleEdit = (parametro: Parametro) => {
-    if (!hasEditPermission) {
-      toast.error('No tiene permisos para editar par?metros');
-      return;
-    }
     setSelectedParametro(parametro);
     setModalMode('edit');
     setIsModalOpen(true);
@@ -64,18 +53,18 @@ export default function ParametrosComponent({
   const handleDelete = async (parametro: Parametro) => {
     if (
       globalThis.confirm(
-        `?Est? seguro de que desea eliminar el par?metro "${parametro.descripcion}"?`
+        `¿Está seguro de que desea eliminar el parámetro "${parametro.nombre}"?`
       )
     ) {
       try {
         const { default: api } = await import('~/lib/api');
-        await api.delete(`/eliminarParametro/${parametro.id}`);
+        await api.delete(`/parametros/eliminar/${parametro.id}`);
 
-        toast.success('Par?metro eliminado exitosamente');
+        toast.success('Parámetro eliminado exitosamente');
         revalidator.revalidate();
       } catch (error) {
-        console.error('Error al eliminar el par?metro:', error);
-        toast.error('Error al eliminar el par?metro');
+        console.error('Error al eliminar el parámetro:', error);
+        toast.error('Error al eliminar el parámetro');
       }
     }
   };
@@ -83,8 +72,8 @@ export default function ParametrosComponent({
   const handleSuccess = () => {
     toast.success(
       modalMode === 'add'
-        ? 'Par?metro creado exitosamente'
-        : 'Par?metro actualizado exitosamente'
+        ? 'Parámetro creado exitosamente'
+        : 'Parámetro actualizado exitosamente'
     );
     revalidator.revalidate();
   };
@@ -93,10 +82,9 @@ export default function ParametrosComponent({
     () =>
       createColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete,
-        canEdit: hasEditPermission
+        onDelete: handleDelete
       }),
-    [handleEdit, handleDelete, hasEditPermission]
+    [handleEdit, handleDelete]
   );
 
   return (
@@ -104,22 +92,12 @@ export default function ParametrosComponent({
       <div className='container mx-auto p-4 sm:p-6 space-y-6'>
         <header>
           <ModernHeader
-            title='Par?metros'
-            description='Gestiona los par?metros del sistema'
+            title='Parámetros'
+            description='Gestiona los parámetros del sistema'
             actions={
-              <Button
-                onClick={handleAdd}
-                variant='default'
-                size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear par?metros'
-                    : ''
-                }
-              >
+              <Button onClick={handleAdd} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
-                Agregar Par?metro
+                Agregar Parámetro
               </Button>
             }
           />
@@ -139,10 +117,11 @@ export default function ParametrosComponent({
                 </div>
                 <div>
                   <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
-                    Listado de Par?metros
+                    Listado de Parámetros
                   </CardTitle>
                   <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
-                    {parametros.length} par?metro{parametros.length !== 1 ? 's' : ''}
+                    {parametros.length} parámetro
+                    {parametros.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>

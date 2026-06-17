@@ -1,28 +1,6 @@
-/**
- * CSV and Excel Export Utilities
- *
- * Helper functions for converting data to CSV/Excel formats and downloading files.
- * Handles BOM encoding for UTF-8, lazy-loaded xlsx library, and blob creation.
- */
-
 import type { ExportColumn } from './types';
 
-/**
- * Converts array of records to CSV format
- *
- * @param data - Array of records to convert
- * @param columns - Column definitions with keys, headers, and optional formatters
- * @param includeHeaders - Whether to include header row (default: true)
- * @returns CSV string with rows separated by newlines
- *
- * @example
- * ```typescript
- * const csv = convertToCSV(
- *   [{ id: 1, name: 'John' }],
- *   [{ key: 'id', header: 'ID' }, { key: 'name', header: 'Name' }]
- * );
- * ```
- */
+
 export function convertToCSV<T extends Record<string, any>>(
   data: T[],
   columns: ExportColumn[],
@@ -46,19 +24,7 @@ export function convertToCSV<T extends Record<string, any>>(
   return csvContent.join('\n');
 }
 
-/**
- * Triggers CSV file download with UTF-8 BOM encoding
- *
- * @param csvContent - CSV formatted string
- * @param filename - Base filename without extension or date
- *
- * @example
- * ```typescript
- * const csv = 'id,name\n1,"John"';
- * downloadCSVFile(csv, 'users');
- * // Downloads: users_2024-01-15.csv
- * ```
- */
+
 export function downloadCSVFile(csvContent: string, filename: string): void {
   // Add UTF-8 BOM (\uFEFF) for proper Excel/Sheets character encoding
   const blob = new Blob(['\uFEFF' + csvContent], {
@@ -82,26 +48,7 @@ export function downloadCSVFile(csvContent: string, filename: string): void {
   }
 }
 
-/**
- * Converts data to Excel format and triggers download
- * Dynamically imports xlsx library (lazy loading)
- *
- * @param data - Array of records to export
- * @param columns - Column definitions with formatting
- * @param filename - Base filename without extension or date
- * @param includeHeaders - Whether to include header row (default: true)
- *
- * @example
- * ```typescript
- * const data = [{ id: 1, amount: 100.50 }];
- * const columns = [
- *   { key: 'id', header: 'ID' },
- *   { key: 'amount', header: 'Amount', formatter: v => v.toFixed(2) }
- * ];
- * await downloadExcelFile(data, columns, 'sales');
- * // Downloads: sales_2024-01-15.xlsx
- * ```
- */
+
 export async function downloadExcelFile<T extends Record<string, any>>(
   data: T[],
   columns: ExportColumn[],
@@ -171,12 +118,7 @@ export async function downloadExcelFile<T extends Record<string, any>>(
   }
 }
 
-/**
- * Validates that data is ready for export
- *
- * @param data - Array of records
- * @returns true if data is valid and non-empty
- */
+
 export function validateExportData<T extends Record<string, any>>(data: T[]): boolean {
   return Array.isArray(data) && data.length > 0;
 }

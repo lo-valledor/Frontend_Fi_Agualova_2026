@@ -6,7 +6,7 @@ import { administracionService } from '~/services/administracionService';
 
 export function meta() {
   return [
-    { title: 'Enerlova | Crear Contrato' },
+    { title: 'Agualova | Crear Contrato' },
     { name: 'description', content: 'Crear un nuevo contrato' }
   ];
 }

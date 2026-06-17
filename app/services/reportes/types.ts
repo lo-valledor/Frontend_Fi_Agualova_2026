@@ -1,7 +1,3 @@
-/**
- * Reportes module types and interfaces
- */
-
 export interface ReportRequest {
   contratoId?: number;
   periodo?: string;

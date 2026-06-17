@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Upload,
   FileSpreadsheet,
@@ -40,7 +40,6 @@ import {
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
 import { Checkbox } from '~/components/ui/checkbox';
-import { useAuth } from '~/context/AuthContext';
 import type {
   EstadoProcesamiento,
   ProcesamientoResult,
@@ -79,13 +78,6 @@ export default function ImportarLecturasComponent() {
   const [forceReprocessOpen, setForceReprocessOpen] = useState(false);
   const [confirmPeriodInput, setConfirmPeriodInput] = useState('');
   const [ackRiskChecked, setAckRiskChecked] = useState(false);
-
-  // Solo administradores pueden permitir reprocesar período
-  const { user } = useAuth();
-  const isAdmin = useMemo(() => {
-    const role = String(user?.role ?? '').toLowerCase();
-    return role === 'admin' || role === 'administrador';
-  }, [user]);
 
   const pageBreadcrumbs = [
     { label: 'Monitor' },
@@ -674,22 +666,16 @@ export default function ImportarLecturasComponent() {
                   Este período ya fue procesado
                 </p>
               )}
-              {yaProcesado &&
-                estadoProcesamiento?.periodoActivo &&
-                (isAdmin ? (
-                  <Button
-                    onClick={() => setForceReprocessOpen(true)}
-                    variant='outline'
-                    size='sm'
-                    className='w-full mt-2'
-                  >
-                    Permitir reprocesar período
-                  </Button>
-                ) : (
-                  <p className='text-xs text-center text-muted-foreground'>
-                    Reproceso permitido solo para administradores
-                  </p>
-                ))}
+              {yaProcesado && estadoProcesamiento?.periodoActivo && (
+                <Button
+                  onClick={() => setForceReprocessOpen(true)}
+                  variant='outline'
+                  size='sm'
+                  className='w-full mt-2'
+                >
+                  Permitir reprocesar período
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -840,8 +826,7 @@ export default function ImportarLecturasComponent() {
           {/*             Actualizar */}
           {/*           </Button> */}
           {/*         </div> */}
-          {/**/}
-          {/*         <div className='grid grid-cols-2 gap-3'> */}
+          {}
           {/*           <div className='p-4 bg-white dark:bg-background/50 rounded-lg border border-red-200 dark:border-red-800 shadow-sm'> */}
           {/*             <div className='flex items-center gap-2 mb-1'> */}
           {/*               <div className='h-2 w-2 rounded-full bg-orange-500 animate-pulse' /> */}
@@ -868,8 +853,7 @@ export default function ImportarLecturasComponent() {
           {/*             </p> */}
           {/*           </div> */}
           {/*         </div> */}
-          {/**/}
-          {/*         <Collapsible */}
+          {}
           {/*           open={showDetallesPendientes} */}
           {/*           onOpenChange={setShowDetallesPendientes} */}
           {/*         > */}
@@ -932,8 +916,7 @@ export default function ImportarLecturasComponent() {
           {/*             </div> */}
           {/*           </CollapsibleContent> */}
           {/*         </Collapsible> */}
-          {/**/}
-          {/*         <div className='relative overflow-hidden p-4 bg-linear-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 rounded-lg border-2 border-amber-300 dark:border-amber-700 shadow-sm'> */}
+          {}
           {/*           <div className='absolute top-0 right-0 w-32 h-32 bg-amber-300/10 dark:bg-amber-700/10 rounded-full -mr-16 -mt-16' /> */}
           {/*           <div className='relative flex gap-3'> */}
           {/*             <div className='shrink-0'> */}
@@ -1022,18 +1005,11 @@ export default function ImportarLecturasComponent() {
                 </Button>
                 <Button
                   disabled={
-                    !isAdmin ||
                     !estadoProcesamiento?.periodoActivo ||
                     confirmPeriodInput !== estadoProcesamiento?.periodoActivo ||
                     !ackRiskChecked
                   }
                   onClick={() => {
-                    if (!isAdmin) {
-                      toast.error(
-                        'Solo administradores pueden permitir el reprocesamiento'
-                      );
-                      return;
-                    }
                     const periodo = estadoProcesamiento?.periodoActivo;
                     if (periodo) {
                       const key = `bt1bt2_processed_period:${periodo}`;

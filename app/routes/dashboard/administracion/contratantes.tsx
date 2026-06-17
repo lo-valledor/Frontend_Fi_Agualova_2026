@@ -9,7 +9,7 @@ import { administracionService } from '~/services/administracionService';
 
 export function meta(_args: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Contratantes' },
+    { title: 'Agualova | Contratantes' },
     { name: 'description', content: 'Contratantes' }
   ];
 }

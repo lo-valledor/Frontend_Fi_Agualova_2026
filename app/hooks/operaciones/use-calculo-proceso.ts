@@ -1,10 +1,3 @@
-/**
- * Hook para ejecutar procesos de cálculo y aceptación de facturas
- * Maneja dos operaciones: lanzar el cálculo y aceptar cálculos generados
- *
- * @module operaciones/use-calculo-proceso
- */
-
 import { toast } from 'sonner';
 
 import { useState } from 'react';
@@ -16,41 +9,14 @@ import {
 } from './utils/cycle-utilities';
 import { extraerErrorMessage } from './utils/error-handler';
 
-/**
- * Props del hook de cálculo de proceso
- */
+
 interface UseCalculoProcesoProps {
   periodoFormateado: string;
   cicloId: string;
   onCalculoAceptado: () => void;
 }
 
-/**
- * Hook para ejecutar procesos de cálculo de facturación
- *
- * Aplica SOLID: SRP (separa lanzar cálculo de aceptar), DRY (utilities compartidas)
- *
- * @param periodoFormateado - Período en formato MMYYYY
- * @param periodoFormateado.periodoFormateado
- * @param cicloId - ID del ciclo de facturación
- * @param periodoFormateado.cicloId
- * @param onCalculoAceptado - Callback ejecutado cuando se aceptan cálculos
- * @param periodoFormateado.onCalculoAceptado
- * @returns Estados y funciones para procesos de cálculo
- *
- * @example
- * const {
- *   isLaunching,
- *   selectedContratos,
- *   setSelectedContratos,
- *   handleLanzarCalculo,
- *   handleAceptarCalculo
- * } = useCalculoProceso({
- *   periodoFormateado: '012024',
- *   cicloId: '1',
- *   onCalculoAceptado: () => refetch()
- * });
- */
+
 export function useCalculoProceso({
   periodoFormateado,
   cicloId,
@@ -60,10 +26,7 @@ export function useCalculoProceso({
   const [isAccepting, setIsAccepting] = useState(false);
   const [selectedContratos, setSelectedContratos] = useState<number[]>([]);
 
-  /**
-   * Lanza el proceso de cálculo de facturación en el backend
-   * El proceso corre asincronamente, puede tardar varios minutos
-   */
+  
   const handleLanzarCalculo = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
@@ -95,10 +58,7 @@ export function useCalculoProceso({
     }
   };
 
-  /**
-   * Acepta múltiples cálculos de factura
-   * Intenta procesar todos los cálculos seleccionados y reporta éxitos/fallos
-   */
+  
   const handleAceptarCalculo = async (): Promise<void> => {
     // Early return si no hay contratos seleccionados
     if (selectedContratos.length === 0) {

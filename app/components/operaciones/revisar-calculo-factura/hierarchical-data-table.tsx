@@ -77,7 +77,7 @@ export function HierarchicalDataTable({
 
       {/* N° Serie - vacío para cargos */}
       <TableCell className='py-0 px-0.5'>
-        <span className='font-medium col-span-2'>{cargo.codigoEnerlova}</span>
+        <span className='font-medium col-span-2'>{cargo.codigoAgualova}</span>
       </TableCell>
 
       {/* Descripción Cargo - esta es la primera columna con contenido */}

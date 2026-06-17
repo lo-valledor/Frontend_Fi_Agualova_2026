@@ -2,39 +2,26 @@ import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
 import type { Roles } from '~/types/roles-permisos';
 
-/**
- * Interface para crear un rol
- */
+
 export interface CreateRoleRequest {
   nombreRol: string;
   descripcion: string;
   estadoRol: boolean;
 }
 
-/**
- * Interface para actualizar un rol
- */
+
 export interface UpdateRoleRequest extends CreateRoleRequest {
   idRol: number;
 }
 
-/**
- * Servicio especializado para gestión de roles
- * Aplica SOLID: Single Responsibility = solo gestión de roles
- */
+
 export class RolesService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene la lista completa de roles
-   * @returns Respuesta con lista de roles
-   */
+  
   async getAll(): Promise<ServiceResponse<Roles[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('listarRoles');
@@ -51,11 +38,7 @@ export class RolesService extends BaseApiService {
     }, 'Error al obtener roles');
   }
 
-  /**
-   * Obtiene un rol específico por ID
-   * @param id ID del rol
-   * @returns Respuesta con datos del rol o null si no existe
-   */
+  
   async getById(id: number): Promise<ServiceResponse<Roles | null>> {
     if (!id) {
       return this.handleError(
@@ -70,11 +53,7 @@ export class RolesService extends BaseApiService {
     }, `Error al obtener el rol ${id}`) as Promise<ServiceResponse<Roles>>;
   }
 
-  /**
-   * Crea un nuevo rol
-   * @param request Datos del rol a crear
-   * @returns Respuesta con datos del rol creado
-   */
+  
   async create(request: CreateRoleRequest): Promise<ServiceResponse<Roles>> {
     if (!request.nombreRol?.trim()) {
       return this.handleError(
@@ -100,11 +79,7 @@ export class RolesService extends BaseApiService {
     }, 'Error al crear el rol') as Promise<ServiceResponse<Roles>>;
   }
 
-  /**
-   * Actualiza un rol existente
-   * @param request Datos del rol a actualizar
-   * @returns Respuesta con datos del rol actualizado
-   */
+  
   async update(request: UpdateRoleRequest): Promise<ServiceResponse<Roles>> {
     if (!request.idRol) {
       return this.handleError(
@@ -137,11 +112,7 @@ export class RolesService extends BaseApiService {
     }, 'Error al actualizar el rol') as Promise<ServiceResponse<Roles>>;
   }
 
-  /**
-   * Elimina un rol
-   * @param id ID del rol a eliminar
-   * @returns Respuesta con confirmación de éxito
-   */
+  
   async delete(id: number): Promise<ServiceResponse<boolean>> {
     if (!id) {
       return this.handleError(
@@ -156,11 +127,7 @@ export class RolesService extends BaseApiService {
     }, `Error al eliminar el rol ${id}`);
   }
 
-  /**
-   * Obtiene roles de un usuario específico
-   * @param codigoUsuario Código del usuario
-   * @returns Respuesta con lista de roles del usuario
-   */
+  
   async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
     if (!codigoUsuario?.trim()) {
       return this.handleError(

@@ -1,7 +1,3 @@
-/**
- * Tipos compartidos para servicios de operaciones
- */
-
 export interface OperationRequest {
   cicloFacturable?: string;
   periodo?: string;

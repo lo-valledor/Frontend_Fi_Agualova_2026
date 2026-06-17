@@ -4,9 +4,7 @@ import type { MedidorNichoItem } from '~/types/monitor';
 import { validationService, type ValidationResult } from './validation.service';
 import { consumptionCalculationService } from './consumption-calculation.service';
 
-/**
- * Interface para lectura preparada para inserción
- */
+
 export interface ReadingForInsertion {
   meter: MedidorNichoItem;
   validation: ValidationResult;
@@ -15,9 +13,7 @@ export interface ReadingForInsertion {
   calculatedConsumption: number;
 }
 
-/**
- * Interface para resultado de inserción automática
- */
+
 export interface AutoInsertionResult {
   successful: number;
   failed: number;
@@ -30,9 +26,7 @@ export interface AutoInsertionResult {
   }[];
 }
 
-/**
- * Interface para análisis de medidores
- */
+
 export interface MeterAnalysisResult {
   autoInsertable: ReadingForInsertion[];
   requiresReview: ReadingForInsertion[];
@@ -43,25 +37,14 @@ export interface MeterAnalysisResult {
   };
 }
 
-/**
- * Servicio especializado para procesamiento de inserción automática
- * Aplica SOLID: Single Responsibility = solo orchestración de inserción
- */
+
 export class AutoInsertionService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  /**
-   * Analiza todos los medidores y clasifica cuáles califican para inserción automática
-   *
-   * @param meters - Array de medidores a analizar
-   * @returns Resultado del análisis con medidores clasificados
-   */
+  
   async analyzeMeterQualification(
     meters: MedidorNichoItem[]
   ): Promise<ServiceResponse<MeterAnalysisResult>> {
@@ -120,13 +103,7 @@ export class AutoInsertionService extends BaseApiService {
     }
   }
 
-  /**
-   * Procesa inserción automática en lote para múltiples lecturas
-   *
-   * @param readings - Array de lecturas validadas para insertar
-   * @param _period - Periodo de facturación (no usado, el endpoint lo determina)
-   * @returns Resultado con estadísticas de la inserción
-   */
+  
   async processBatch(
     readings: ReadingForInsertion[],
     _period: string
@@ -203,24 +180,14 @@ export class AutoInsertionService extends BaseApiService {
     }, 'Error processing automatic insertion batch');
   }
 
-  /**
-   * Procesa inserción automática para una sola lectura
-   *
-   * @param reading - Lectura a insertar
-   * @returns Resultado con estadísticas de la inserción
-   */
+  
   async processSingle(
     reading: ReadingForInsertion
   ): Promise<ServiceResponse<AutoInsertionResult>> {
     return this.processBatch([reading], '');
   }
 
-  /**
-   * Obtiene estadísticas consolidadas de un análisis
-   *
-   * @param analysis - Resultado del análisis de medidores
-   * @returns Objeto con estadísticas y detalles consolidados
-   */
+  
   getStatistics(analysis: MeterAnalysisResult): {
     successRate: number;
     estimatedAutoInsertions: number;

@@ -1,10 +1,3 @@
-/**
- * Hook para validar que todos los precios estén confirmados antes de facturar
- * Obtiene precios de dos tablas y verifica su estado de confirmación
- *
- * @module operaciones/use-validacion-precios
- */
-
 import { useEffect, useState } from 'react';
 
 import api from '~/lib/api';
@@ -21,17 +14,13 @@ import {
   type PriceValidationResult
 } from './utils/price-validator';
 
-/**
- * Props del hook de validación de precios
- */
+
 interface UseValidacionPreciosProps {
   periodoFormateado: string;
   cicloId: string;
 }
 
-/**
- * Resultado del hook de validación de precios
- */
+
 export interface ValidacionPreciosResult extends PriceValidationResult {
   preciosConfirmados: boolean;
   preciosConfirmadosCount: number;
@@ -42,27 +31,7 @@ export interface ValidacionPreciosResult extends PriceValidationResult {
   verificarPrecios: () => Promise<void>;
 }
 
-/**
- * Hook para validar precios de facturación
- * Obtiene precios de dos tablas ENEL y verifica si están confirmados
- *
- * Aplica SOLID: SRP (solo valida precios), DRY (usa utilities compartidas)
- *
- * @param periodoFormateado - Período en formato MMYYYY
- * @param periodoFormateado.periodoFormateado
- * @param cicloId - ID del ciclo de facturación
- * @param periodoFormateado.cicloId
- * @returns Estado de validación y función para verificar precios
- *
- * @example
- * const { preciosConfirmados, isLoading, verificarPrecios } = useValidacionPrecios({
- *   periodoFormateado: '012024',
- *   cicloId: '1'
- * });
- *
- * // Verificar precios manualmente
- * await verificarPrecios();
- */
+
 export function useValidacionPrecios({
   periodoFormateado,
   cicloId
@@ -74,10 +43,7 @@ export function useValidacionPrecios({
   const [totalConfirmados, setTotalConfirmados] = useState(0);
   const [totalPendientes, setTotalPendientes] = useState(0);
 
-  /**
-   * Verifica precios consultando dos endpoints
-   * Filtra solo precios con índice válido y cuenta confirmados
-   */
+  
   const verificarPrecios = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
@@ -118,10 +84,7 @@ export function useValidacionPrecios({
     }
   };
 
-  /**
-   * Actualiza el estado con los resultados de validación
-   * @param resultado
-   */
+  
   const actualizarEstadoPrecios = (resultado: PriceValidationResult): void => {
     setTotalValidos(resultado.totalValidos);
     setTotalConfirmados(resultado.totalConfirmados);
