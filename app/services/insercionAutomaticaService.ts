@@ -1,8 +1,3 @@
-/**
- * Servicio para inserción automática de lecturas importadas
- * Valida y procesa lecturas BT1 y BT2 de forma segura
- */
-
 import api from '~/lib/api';
 import type { MedidorNichoItem } from '~/types/monitor';
 
@@ -32,14 +27,7 @@ export interface ResultadoInsercion {
   }[];
 }
 
-/**
- * Detecta anomalías en el consumo calculado
- * @param lecturaActual - Lectura actual del medidor
- * @param lecturaAnterior - Lectura anterior del medidor
- * @param consumoAnterior - Consumo del periodo anterior (puede ser null)
- * @param capacidadMedidor - Capacidad máxima del medidor (default: 99999)
- * @returns Objeto con información de anomalía detectada
- */
+
 function detectarConsumoAnomalo(
   lecturaActual: number,
   lecturaAnterior: number,
@@ -104,11 +92,7 @@ function detectarConsumoAnomalo(
   return { anomalo: false };
 }
 
-/**
- * Valida si una lectura califica para inserción automática
- * @param medidor - Datos del medidor con lecturas importadas
- * @returns Resultado de validación con razones y severidad
- */
+
 export function validarLecturaParaInsercionAutomatica(
   medidor: MedidorNichoItem
 ): ValidacionResultado {
@@ -221,15 +205,7 @@ export function validarLecturaParaInsercionAutomatica(
   return { valido: true, razones, severidad: 'ok' };
 }
 
-/**
- * Calcula el consumo considerando rollovers y constante multiplicadora
- * (Misma lógica que bt1-bt2-form.tsx)
- * @param lecturaActual - Valor actual del medidor
- * @param lecturaAnterior - Valor anterior del medidor
- * @param digitos - Número de dígitos del medidor
- * @param constante - Constante multiplicadora del medidor
- * @returns Consumo calculado en kWh
- */
+
 function calcularConsumoReal(
   lecturaActual: number,
   lecturaAnterior: number,
@@ -273,11 +249,7 @@ function calcularConsumoReal(
   return (lecturaActual - lecturaAnterior) * constante;
 }
 
-/**
- * Analiza todos los medidores y clasifica cuáles califican para inserción automática
- * @param medidores - Array de medidores a analizar
- * @returns Objeto con medidores clasificados y resumen estadístico
- */
+
 export function analizarMedidoresParaInsercion(medidores: MedidorNichoItem[]): {
   autoInsertables: LecturaParaInsertar[];
   requierenRevision: LecturaParaInsertar[];
@@ -331,12 +303,7 @@ export function analizarMedidoresParaInsercion(medidores: MedidorNichoItem[]): {
   };
 }
 
-/**
- * Procesa inserción automática en lote
- * @param lecturas - Array de lecturas validadas para insertar
- * @param _periodo - Periodo de facturación (no usado, el endpoint usa el periodo del LM_ID)
- * @returns Resultado del procesamiento con estadísticas y detalles
- */
+
 export async function procesarInsercionAutomatica(
   lecturas: LecturaParaInsertar[],
   _periodo: string

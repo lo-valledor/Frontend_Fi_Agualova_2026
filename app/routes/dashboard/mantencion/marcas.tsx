@@ -12,7 +12,7 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Marcas' },
+    { title: 'Agualova | Marcas' },
     { name: 'description', content: ' marcas del sistema' }
   ];
 }

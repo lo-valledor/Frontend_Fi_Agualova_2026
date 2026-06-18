@@ -8,13 +8,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from '~/components/ui/alert-dialog';
-import type { GetCargoTipoContrato } from '~/types/administracion';
+import type { CargoTipoContrato } from '~/types/administracion';
 
 interface DeleteDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  data: GetCargoTipoContrato | null;
+  data: CargoTipoContrato | null;
 }
 
 export function DeleteDialog({
@@ -30,11 +30,15 @@ export function DeleteDialog({
           <AlertDialogTitle>¿Estás completamente seguro?</AlertDialogTitle>
           <AlertDialogDescription>
             Esta acción no se puede deshacer. Se eliminará la relación entre el
-            tipo de contrato <span className='font-semibold text-foreground'>
-              {data?.tipoContratoDescripcion}
-            </span> y el cargo facturable <span className='font-semibold text-foreground'>
-              {data?.cargoFacturableDescripcion}
-            </span>.
+            tipo de contrato{' '}
+            <span className='font-semibold text-foreground'>
+              {data?.tipoContrato}
+            </span>{' '}
+            y el cargo facturable{' '}
+            <span className='font-semibold text-foreground'>
+              {data?.cargoFacturable}
+            </span>
+            .
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

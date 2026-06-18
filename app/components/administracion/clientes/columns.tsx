@@ -11,15 +11,13 @@ interface ClientesColumnsProps {
   onDetails: (cliente: GetClientes) => void;
   editingClienteRut: string | null;
   detailingClienteRut: string | null;
-  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
   onDetails,
   editingClienteRut,
-  detailingClienteRut,
-  canEdit = true
+  detailingClienteRut
 }: ClientesColumnsProps): ColumnDef<GetClientes>[] => [
   {
     accessorKey: 'rut',
@@ -186,7 +184,6 @@ export const columns = ({
             showDelete={false}
             loadingEdit={editingClienteRut === row.original.rut}
             loadingView={detailingClienteRut === row.original.rut}
-            disableEdit={!canEdit}
           />
         </div>
       );

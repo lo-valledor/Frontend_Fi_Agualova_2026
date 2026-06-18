@@ -12,7 +12,7 @@ interface LoaderData {
 
 export function meta() {
   return [
-    { title: 'Enerlova | Usuarios' },
+    { title: 'Agualova | Usuarios' },
     { name: 'description', content: ' usuarios del sistema' }
   ];
 }
@@ -27,7 +27,9 @@ export async function clientLoader(): Promise<LoaderData> {
   return { usuarios: result.data };
 }
 
-export default function Usuarios({ loaderData }: Readonly<{ loaderData: LoaderData }>) {
+export default function Usuarios({
+  loaderData
+}: Readonly<{ loaderData: LoaderData }>) {
   const { usuarios } = loaderData;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Usuarios' }];
   return (

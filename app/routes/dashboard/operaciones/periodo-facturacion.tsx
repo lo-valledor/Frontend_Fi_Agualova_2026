@@ -9,7 +9,7 @@ import type { Route } from './+types/periodo-facturacion';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Periodos de Facturación' },
+    { title: 'Agualova | Periodos de Facturación' },
     { name: 'description', content: 'Periodos de Facturación' }
   ];
 }

@@ -37,34 +37,7 @@ export interface PDFSection {
   text?: string;
 }
 
-/**
- * Hook para exportar datos a PDF con múltiples secciones
- *
- * Soporta tablas, KPIs, texto y placeholders de gráficos.
- * Maneja automáticamente saltos de página y estilos consistentes.
- *
- * @returns Objeto con estado de exportación y función exportToPDF
- *
- * @example
- * ```tsx
- * const { isExporting, exportToPDF } = useExportPDF();
- *
- * const handleExport = async () => {
- *   await exportToPDF([
- *     { type: 'text', text: 'Resumen Mensual' },
- *     {
- *       type: 'table',
- *       title: 'Datos',
- *       data: records,
- *       columns: [{ key: 'name', header: 'Nombre' }]
- *     }
- *   ], {
- *     title: 'Reporte Mensual',
- *     filename: 'reporte'
- *   });
- * };
- * ```
- */
+
 export function useExportPDF() {
   const [isExporting, setIsExporting] = useState(false);
 

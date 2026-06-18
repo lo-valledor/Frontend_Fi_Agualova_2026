@@ -9,7 +9,7 @@ import PropietariosComponent from '~/components/administracion/propietarios/prop
 
 export function meta(_args: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Propietarios' },
+    { title: 'Agualova | Propietarios' },
     { name: 'description', content: 'Propietarios' }
   ];
 }

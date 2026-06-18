@@ -3,9 +3,7 @@ import type { ServiceResponse } from '~/services/core/api-response';
 import type { Menus } from '~/types/roles-permisos';
 import { debugApi, API_TEMPLATES } from '~/utils/api-debug';
 
-/**
- * Interface para crear un menú
- */
+
 export interface CreateMenuRequest {
   nombreMenu: string;
   ruta: string;
@@ -14,30 +12,19 @@ export interface CreateMenuRequest {
   esVisible: boolean;
 }
 
-/**
- * Interface para actualizar un menú
- */
+
 export interface UpdateMenuRequest extends CreateMenuRequest {
   idMenu: number;
 }
 
-/**
- * Servicio especializado para gestión de menús
- * Aplica SOLID: Single Responsibility = solo gestión de menús
- */
+
 export class MenusService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene la lista completa de menús
-   * @returns Respuesta con lista de menús
-   */
+  
   async getAll(): Promise<ServiceResponse<Menus[]>> {
     const endpoint = 'ListarMenus';
 
@@ -62,11 +49,7 @@ export class MenusService extends BaseApiService {
     }, 'Error al obtener menús');
   }
 
-  /**
-   * Obtiene un menú específico por ID
-   * @param idMenu ID del menú
-   * @returns Respuesta con datos del menú o null si no existe
-   */
+  
   async getById(idMenu: number): Promise<ServiceResponse<Menus>> {
     if (!idMenu) {
       return this.handleError(
@@ -81,11 +64,7 @@ export class MenusService extends BaseApiService {
     }, `Error al obtener el menú ${idMenu}`) as Promise<ServiceResponse<Menus>>;
   }
 
-  /**
-   * Crea un nuevo menú
-   * @param request Datos del menú a crear
-   * @returns Respuesta con datos del menú creado
-   */
+  
   async create(request: CreateMenuRequest): Promise<ServiceResponse<Menus>> {
     if (!request.nombreMenu?.trim()) {
       return this.handleError(
@@ -139,11 +118,7 @@ export class MenusService extends BaseApiService {
     }, 'Error al crear el menú') as Promise<ServiceResponse<Menus>>;
   }
 
-  /**
-   * Actualiza un menú existente
-   * @param request Datos del menú a actualizar
-   * @returns Respuesta con datos del menú actualizado
-   */
+  
   async update(request: UpdateMenuRequest): Promise<ServiceResponse<Menus>> {
     if (!request.idMenu) {
       return this.handleError(
@@ -201,11 +176,7 @@ export class MenusService extends BaseApiService {
     }, 'Error al actualizar el menú') as Promise<ServiceResponse<Menus>>;
   }
 
-  /**
-   * Elimina un menú
-   * @param idMenu ID del menú a eliminar
-   * @returns Respuesta con confirmación de éxito
-   */
+  
   async delete(idMenu: number): Promise<ServiceResponse<boolean>> {
     if (!idMenu) {
       return this.handleError(
@@ -220,11 +191,7 @@ export class MenusService extends BaseApiService {
     }, `Error al eliminar el menú ${idMenu}`);
   }
 
-  /**
-   * Obtiene menús de un rol específico
-   * @param idRol ID del rol
-   * @returns Respuesta con lista de menús del rol
-   */
+  
   async getByRol(idRol: number): Promise<ServiceResponse<Menus[]>> {
     if (!idRol) {
       return this.handleError(

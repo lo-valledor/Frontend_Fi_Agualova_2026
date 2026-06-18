@@ -1,13 +1,3 @@
-/**
- * Utilidades para generar códigos auto-incrementales
- */
-
-/**
- * Genera el próximo código disponible basado en los códigos existentes
- * @param existingCodes Array de códigos existentes (string o number)
- * @param asNumber Si debe retornar un número en lugar de string
- * @returns El siguiente código disponible
- */
 export const generateNextCode = (
   existingCodes: (string | number)[],
   asNumber: boolean = false
@@ -36,13 +26,7 @@ export const generateNextCode = (
   return asNumber ? nextNumber : nextNumber.toString();
 };
 
-/**
- * Valida si un código sigue el formato esperado
- * @param code Código a validar
- * @param prefix Prefijo esperado (opcional)
- * @param padding Número de dígitos esperado
- * @returns true si el código es válido
- */
+
 export const isValidCodeFormat = (
   code: string,
   prefix?: string,
@@ -66,12 +50,7 @@ export const isValidCodeFormat = (
   }
 };
 
-/**
- * Extrae el número de un código
- * @param code Código del cual extraer el número
- * @param prefix Prefijo a remover (opcional)
- * @returns El número extraído o 0 si no es válido
- */
+
 export const extractNumberFromCode = (
   code: string,
   prefix?: string

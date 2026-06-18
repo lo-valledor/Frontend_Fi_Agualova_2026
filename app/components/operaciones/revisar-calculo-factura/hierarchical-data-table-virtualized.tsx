@@ -162,7 +162,7 @@ export function HierarchicalDataTableVirtualized({
     <>
       <TableCell colSpan={9} className='py-0 px-0.5'></TableCell>
       <TableCell className='py-0 px-0.5'>
-        <span className='font-medium col-span-2'>{cargo.codigoEnerlova}</span>
+        <span className='font-medium col-span-2'>{cargo.codigoAgualova}</span>
       </TableCell>
       <TableCell colSpan={2} className='pl-2 py-0 px-0.5'>
         <span className='font-medium col-span-2'>{cargo.descripcion}</span>

@@ -8,8 +8,8 @@ import type { Route } from './+types/reset-password';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Restablecer Contraseña' },
-    { name: 'description', content: 'Enerlova | Restablecer Contraseña' }
+    { title: 'Agualova | Restablecer Contraseña' },
+    { name: 'description', content: 'Agualova | Restablecer Contraseña' }
   ];
 }
 

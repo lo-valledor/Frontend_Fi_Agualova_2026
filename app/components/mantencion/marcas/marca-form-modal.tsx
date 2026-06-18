@@ -30,8 +30,8 @@ import api from '~/lib/api';
 import type { Marca } from '~/types/mantencion';
 
 const marcaFormSchema = z.object({
-  codigo: z
-    .string()
+  id: z
+    .number()
     .min(1, { message: 'El código es requerido.' })
     .max(20, { message: 'El código no puede exceder 20 caracteres.' }),
   nombre: z
@@ -62,7 +62,7 @@ export default function MarcaFormModal({
   const form = useForm<MarcaFormValues>({
     resolver: zodResolver(marcaFormSchema),
     defaultValues: {
-      codigo: '',
+      id: 0,
       nombre: ''
     }
   });
@@ -71,12 +71,12 @@ export default function MarcaFormModal({
     if (isOpen) {
       if (mode === 'edit' && marca) {
         form.reset({
-          codigo: marca.codigo,
+          id: marca.id,
           nombre: marca.nombre
         });
       } else {
         form.reset({
-          codigo: '',
+          id: 0,
           nombre: ''
         });
       }
@@ -87,9 +87,9 @@ export default function MarcaFormModal({
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/crearMarcaM', data);
+        await api.post('/marcas/crear', data);
       } else if (mode === 'edit' && marca) {
-        await api.put('/modificarMarca', { ...data, id: marca.id });
+        await api.put('/marcas/editar', { ...data, id: marca.id });
       }
 
       onSuccess();
@@ -131,7 +131,7 @@ export default function MarcaFormModal({
           >
             <FormField
               control={form.control}
-              name='codigo'
+              name='id'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Código</FormLabel>

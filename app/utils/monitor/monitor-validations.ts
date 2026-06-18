@@ -1,8 +1,3 @@
-/**
- * Validation utilities for Monitor module
- * Centralized validation functions with edge case handling
- */
-
 import type { Periodo, Sector } from '~/types/monitor';
 
 export interface ValidationResult {
@@ -10,12 +5,7 @@ export interface ValidationResult {
   error: string | null;
 }
 
-/**
- * Validates search parameters for monitor lecturas
- * @param sector - Selected sector (can be null)
- * @param periodo - Selected periodo (can be null)
- * @returns Validation result with error message if invalid
- */
+
 export function validateSearchParams(
   sector: Sector | null,
   periodo: Periodo | null
@@ -37,12 +27,7 @@ export function validateSearchParams(
   return { isValid: true, error: null };
 }
 
-/**
- * Validates a date range
- * @param startDate - Start date string
- * @param endDate - End date string
- * @returns Validation result
- */
+
 export function validateDateRange(
   startDate: string | null | undefined,
   endDate: string | null | undefined
@@ -88,12 +73,7 @@ export function validateDateRange(
   return { isValid: true, error: null };
 }
 
-/**
- * Validates a meter reading value
- * @param value - Reading value to validate
- * @param allowNegative - Whether to allow negative values (default: false)
- * @returns Validation result
- */
+
 export function validateReadingValue(
   value: number | string | null | undefined,
   allowNegative = false
@@ -124,11 +104,7 @@ export function validateReadingValue(
   return { isValid: true, error: null };
 }
 
-/**
- * Validates a meter serial number
- * @param serialNumber - Serial number to validate
- * @returns Validation result
- */
+
 export function validateMeterSerialNumber(
   serialNumber: string | null | undefined
 ): ValidationResult {
@@ -150,12 +126,7 @@ export function validateMeterSerialNumber(
   return { isValid: true, error: null };
 }
 
-/**
- * Validates energy value (active or reactive)
- * @param value - Energy value to validate
- * @param fieldName - Name of the field for error messages
- * @returns Validation result
- */
+
 export function isValidEnergyValue(
   value: number | string | null | undefined,
   fieldName = 'Energía'
@@ -183,14 +154,7 @@ export function isValidEnergyValue(
   return { isValid: true, error: null };
 }
 
-/**
- * Validates power demand data including date and time
- * @param demand - Demand value
- * @param date - Demand date
- * @param time - Demand time
- * @param demandType - Type of demand for error messages
- * @returns Validation result
- */
+
 export function validatePowerDemandData(
   demand: number | string | null | undefined,
   date: string | null | undefined,
@@ -243,13 +207,7 @@ export function validatePowerDemandData(
   return { isValid: true, error: null };
 }
 
-/**
- * Validates consumption value
- * @param consumption - Consumption value
- * @param previousReading - Previous reading for comparison
- * @param currentReading - Current reading for comparison
- * @returns Validation result
- */
+
 export function validateConsumption(
   consumption: number | null | undefined,
   previousReading?: number | null,

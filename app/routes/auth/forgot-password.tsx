@@ -6,8 +6,8 @@ import type { Route } from './+types/forgot-password';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Recuperar Contraseña' },
-    { name: 'description', content: 'Enerlova | Recuperar Contraseña' }
+    { title: 'Agualova | Recuperar Contraseña' },
+    { name: 'description', content: 'Agualova | Recuperar Contraseña' }
   ];
 }
 

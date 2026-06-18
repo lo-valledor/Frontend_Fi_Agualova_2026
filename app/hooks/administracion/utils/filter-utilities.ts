@@ -1,20 +1,3 @@
-/**
- * Filter Utilities - Funciones reutilizables para filtrado
- * Implementa principios SOLID y early returns
- */
-
-/**
- * Extrae opciones únicas de un array de objetos
- * Utiliza Set para eliminar duplicados y sort para ordenar
- *
- * @template T - Tipo del objeto en el array
- * @param items - Array de items
- * @param selector - Función para extraer el valor a filtrar
- * @returns Array ordenado de valores únicos
- *
- * @example
- * const marcas = extractUniqueOptions(medidores, m => m.marca);
- */
 export function extractUniqueOptions<T>(
   items: T[],
   selector: (item: T) => string | undefined | null
@@ -28,17 +11,7 @@ export function extractUniqueOptions<T>(
   ].sort();
 }
 
-/**
- * Filtra items por coincidencia exacta de string
- * Early return para no procesar si no hay filtro
- *
- * @param value - Valor del item
- * @param filterValue - Valor del filtro
- * @returns true si el item coincide o no hay filtro
- *
- * @example
- * items.filter(item => filterByString(item.marca, filters.marca))
- */
+
 export function filterByString(
   value: string | undefined | null,
   filterValue?: string | null
@@ -49,17 +22,7 @@ export function filterByString(
   return value === filterValue;
 }
 
-/**
- * Filtra items por boolean con normalización de valores
- * Maneja conversión de booleanos a string ('true'/'false')
- *
- * @param value - Valor booleano del item
- * @param filterValue - Valor del filtro ('true'/'false')
- * @returns true si coincide o no hay filtro
- *
- * @example
- * items.filter(item => filterByBoolean(item.activo, filters.activo))
- */
+
 export function filterByBoolean(
   value: boolean | undefined | null,
   filterValue?: string | null
@@ -72,18 +35,7 @@ export function filterByBoolean(
   return stringValue === filterValue;
 }
 
-/**
- * Filtra items por presencia/ausencia de valor
- * Verifica si un campo tiene contenido (no vacío, no null)
- *
- * @param hasValue - true si el campo tiene valor
- * @param filterValue - 'true' para tener valor, 'false' para no tenerlo
- * @returns true si coincide con el criterio
- *
- * @example
- * const tieneUbicacion = Boolean(medidor.ubicacion?.trim());
- * items.filter(item => filterByPresence(tieneUbicacion, filters.tieneUbicacion))
- */
+
 export function filterByPresence(
   hasValue: boolean,
   filterValue?: string | null
@@ -103,24 +55,7 @@ export function filterByPresence(
   return true;
 }
 
-/**
- * Filtra items por rango numérico (min y max)
- * Early returns para cada condición
- *
- * @param value - Valor numérico del item
- * @param minValue - Valor mínimo del filtro
- * @param maxValue - Valor máximo del filtro
- * @returns true si el valor está dentro del rango
- *
- * @example
- * items.filter(item =>
- *   filterByNumberRange(
- *     item.limitePotencia,
- *     filters.limitePotenciaMin,
- *     filters.limitePotenciaMax
- *   )
- * )
- */
+
 export function filterByNumberRange(
   value: number | undefined | null,
   minValue?: string | null,
@@ -155,24 +90,7 @@ export function filterByNumberRange(
   return true;
 }
 
-/**
- * Filtra items por rango de fechas (desde y hasta)
- * Convierte strings ISO a Date y compara
- *
- * @param value - Fecha del item
- * @param fromDate - Fecha inicial del filtro (ISO string)
- * @param toDate - Fecha final del filtro (ISO string)
- * @returns true si la fecha está dentro del rango
- *
- * @example
- * items.filter(item =>
- *   filterByDateRange(
- *     item.fechaInicio,
- *     filters.fechaDesde,
- *     filters.fechaHasta
- *   )
- * )
- */
+
 export function filterByDateRange(
   value: string | undefined | null,
   fromDate?: string | null,
@@ -212,18 +130,7 @@ export function filterByDateRange(
   return true;
 }
 
-/**
- * Normaliza valores de booleano de backend (F/V, P/E, etc)
- * para coincidir con valores esperados (Fijo/Variable, Periódico/Eventual)
- *
- * @param value - Valor a normalizar
- * @param normalizations - Map de valores a normalizar
- * @returns Valor normalizado o el original
- *
- * @example
- * const normalized = normalizeValue('F', { 'F': 'Fijo', 'V': 'Variable' });
- * // Returns 'Fijo'
- */
+
 export function normalizeValue(
   value: string | undefined | null,
   normalizations: Record<string, string>
@@ -234,24 +141,7 @@ export function normalizeValue(
   return normalizations[value] || value;
 }
 
-/**
- * Filtra items por string normalizado
- * Combina normalización y filtrado
- *
- * @param value - Valor del item
- * @param filterValue - Valor del filtro
- * @param normalizations - Map de normalizaciones
- * @returns true si coincide (con normalización)
- *
- * @example
- * items.filter(item =>
- *   filterByNormalizedString(
- *     item.fijoVariable,
- *     filters.fijoVariable,
- *     { 'F': 'Fijo', 'V': 'Variable' }
- *   )
- * )
- */
+
 export function filterByNormalizedString(
   value: string | undefined | null,
   filterValue?: string | null,

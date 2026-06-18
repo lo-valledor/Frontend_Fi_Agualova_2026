@@ -6,7 +6,7 @@ import { administracionService } from '~/services/administracionService';
 
 export function meta() {
   return [
-    { title: 'Enerlova | Contrato - Editar' },
+    { title: 'Agualova | Contrato - Editar' },
     { name: 'description', content: 'Contrato - Editar' }
   ];
 }

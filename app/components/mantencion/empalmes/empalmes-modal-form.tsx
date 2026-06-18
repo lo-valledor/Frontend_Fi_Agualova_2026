@@ -32,13 +32,8 @@ import { Switch } from '~/components/ui/switch';
 import { useTarifas } from '~/hooks/use-mantencion';
 import api from '~/lib/api';
 import type { Empalme } from '~/types/mantencion';
-import { generateNextCode } from '~/utils/auto-increment-utils';
 
 const empalmeFormSchema = z.object({
-  codigo: z
-    .string()
-    .min(1, { message: 'El código es requerido.' })
-    .max(20, { message: 'El código no puede exceder 20 caracteres.' }),
   nombre: z
     .string()
     .min(1, { message: 'El nombre es requerido.' })
@@ -48,6 +43,12 @@ const empalmeFormSchema = z.object({
     .min(1, { message: 'El código del cliente es requerido.' })
     .max(20, {
       message: 'El código del cliente no puede exceder 20 caracteres.'
+    }),
+  nombreEmpresa: z
+    .string()
+    .min(1, { message: 'El nombre de la empresa es requerido.' })
+    .max(150, {
+      message: 'El nombre de la empresa no puede exceder 150 caracteres.'
     }),
   potenciaContratada: z
     .number({ message: 'La potencia contratada debe ser un número válido.' })
@@ -66,7 +67,6 @@ interface EmpalmeFormModalProps {
   onSuccess: () => void;
   empalme: Empalme | null;
   mode: 'add' | 'edit';
-  existingCodes: string[];
 }
 
 export default function EmpalmesModalForm({
@@ -74,8 +74,7 @@ export default function EmpalmesModalForm({
   onClose,
   onSuccess,
   empalme,
-  mode,
-  existingCodes
+  mode
 }: Readonly<EmpalmeFormModalProps>) {
   const [isLoading, setIsLoading] = useState(false);
   const [isManualTarifa, setIsManualTarifa] = useState(false);
@@ -86,9 +85,9 @@ export default function EmpalmesModalForm({
   const form = useForm<EmpalmeFormValues>({
     resolver: zodResolver(empalmeFormSchema),
     defaultValues: {
-      codigo: '',
       nombre: '',
       codigoCliente: '',
+      nombreEmpresa: '',
       potenciaContratada: 0,
       tarifa: ''
     }
@@ -98,9 +97,9 @@ export default function EmpalmesModalForm({
     if (isOpen) {
       if (mode === 'edit' && empalme) {
         form.reset({
-          codigo: empalme.codigo,
           nombre: empalme.nombre,
           codigoCliente: empalme.codigoCliente,
+          nombreEmpresa: empalme.nombreEmpresa,
           potenciaContratada: empalme.potenciaContratada,
           tarifa: empalme.tarifa
         });
@@ -108,29 +107,27 @@ export default function EmpalmesModalForm({
         const tarifaExiste = tarifas.some(t => t.codigo === empalme.tarifa);
         setIsManualTarifa(!tarifaExiste);
       } else {
-        // Generar el próximo código disponible para modo agregar
-        const nextCode = generateNextCode(existingCodes, false);
         form.reset({
-          codigo: String(nextCode),
           nombre: '',
           codigoCliente: '',
+          nombreEmpresa: '',
           potenciaContratada: 0,
           tarifa: ''
         });
         setIsManualTarifa(false);
       }
     }
-  }, [isOpen, mode, empalme, existingCodes, tarifas, form]);
+  }, [isOpen, mode, empalme, tarifas, form]);
 
   const handleSubmit = async (data: EmpalmeFormValues) => {
     setIsLoading(true);
     try {
       if (mode === 'add') {
-        await api.post('/crearEmpalmes', data);
+        await api.post('/empalmes/crear', data);
       } else if (mode === 'edit' && empalme) {
-        await api.put('/modificarEmpalmes', {
+        await api.put('/empalmes/editar', {
           ...data,
-          codigo: empalme.codigo
+          id: empalme.id
         });
       }
       onSuccess();
@@ -172,28 +169,6 @@ export default function EmpalmesModalForm({
           >
             <FormField
               control={form.control}
-              name='codigo'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Código</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      disabled={true}
-                      placeholder='Generado automáticamente'
-                      className='bg-muted'
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Código numérico auto-generado
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
               name='nombre'
               render={({ field }) => (
                 <FormItem>
@@ -221,6 +196,21 @@ export default function EmpalmesModalForm({
                       <Input {...field} placeholder='Código del cliente' />
                     </FormControl>
                     <FormDescription>Máx. 20 caracteres</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='nombreEmpresa'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre Empresa</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder='Empresa asociada' />
+                    </FormControl>
+                    <FormDescription>Máx. 150 caracteres</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

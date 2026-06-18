@@ -3,23 +3,21 @@ import type { ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { Badge } from '~/components/ui/badge';
-import type { GetCondicionesContrato } from '~/types/administracion';
+import type { CondicionesContratoRow } from '~/types/administracion';
 
 import { TableActions } from '../../data-table/table-helpers';
 
 interface TableColumnsProps {
-  onEdit: (condicionContrato: GetCondicionesContrato) => void;
-  onView: (condicionContrato: GetCondicionesContrato) => void;
+  onEdit: (condicionContrato: CondicionesContratoRow) => void;
+  onView: (condicionContrato: CondicionesContratoRow) => void;
   editingCondicionContrato: number | null;
-  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
   onView,
-  editingCondicionContrato,
-  canEdit = true
-}: TableColumnsProps): ColumnDef<GetCondicionesContrato>[] => [
+  editingCondicionContrato
+}: TableColumnsProps): ColumnDef<CondicionesContratoRow>[] => [
   {
     id: 'id',
     header: ({ column }) => (
@@ -33,14 +31,14 @@ export const columns = ({
     maxSize: 80
   },
   {
-    id: 'nombre',
+    id: 'descripcion',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
+      <DataTableColumnHeader column={column} title='Descripción' />
     ),
     cell: ({ row }) => {
       return (
-        <div className='font-medium truncate' title={row.original.nombre}>
-          {row.original.nombre}
+        <div className='font-medium truncate' title={row.original.descripcion}>
+          {row.original.descripcion}
         </div>
       );
     },
@@ -131,7 +129,6 @@ export const columns = ({
         onView={() => onView(row.original)}
         showView={true}
         item={row.original}
-        disableEdit={!canEdit}
       />
     ),
     size: 90,

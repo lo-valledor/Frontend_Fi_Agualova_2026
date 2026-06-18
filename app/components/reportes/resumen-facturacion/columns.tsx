@@ -96,13 +96,4 @@ export const columns: ColumnDef<FacturacionPorCargo>[] = [
     enableSorting: true
   }
 ];
-/**
- * cargoDescripcion: string;
-  totalEnergiaPeriodoAnterior: string;
-  totalFacturaPeriodoAnterior: string;
-  cantidadCargosPeriodoAnterior: string;
-  totalEnergiaPeriodoActual: string;
-  totalFacturaPeriodoActual: string;
-  cantidadCargosPeriodoActual: string;
-  diferenciaPeriodos: string;
- */
+

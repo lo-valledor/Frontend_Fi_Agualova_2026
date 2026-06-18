@@ -2,9 +2,7 @@ import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
 import { debugApi, API_TEMPLATES } from '~/utils/api-debug';
 
-/**
- * Interface para los permisos de un rol sobre un menú
- */
+
 export interface RolePermissions {
   lectura?: boolean;
   escritura?: boolean;
@@ -12,18 +10,14 @@ export interface RolePermissions {
   eliminacion?: boolean;
 }
 
-/**
- * Interface para asignar permisos en formato legado
- */
+
 export interface AssignPermissionsRequest {
   idRol: number;
   idMenu: number;
   permisos: RolePermissions;
 }
 
-/**
- * Interface para asignar permisos en formato directo del API
- */
+
 export interface AssignPermissionDirectRequest {
   idRol: number;
   idMenu: number;
@@ -34,9 +28,7 @@ export interface AssignPermissionDirectRequest {
   fechaAsignacion?: string;
 }
 
-/**
- * Interface para permisos de usuario
- */
+
 export interface UserPermissions {
   idMenu: number;
   nombreMenu: string;
@@ -47,9 +39,7 @@ export interface UserPermissions {
   puedeEliminar: boolean;
 }
 
-/**
- * Interface para relación rol-menú con permisos
- */
+
 export interface RoleMenuRelation {
   idRelacion: number;
   idRol: number;
@@ -61,24 +51,14 @@ export interface RoleMenuRelation {
   fechaModificacion?: string;
 }
 
-/**
- * Servicio especializado para gestión de permisos (rol-menú)
- * Aplica SOLID: Single Responsibility = solo gestión de permisos
- */
+
 export class PermisosService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene los permisos de un usuario específico
-   * @param codigoUsuario Código del usuario
-   * @returns Respuesta con permisos del usuario
-   */
+  
   async getUsuarioPermisos(
     codigoUsuario: string
   ): Promise<ServiceResponse<UserPermissions[]>> {
@@ -97,12 +77,7 @@ export class PermisosService extends BaseApiService {
     }, `Error al obtener permisos del usuario ${codigoUsuario}`);
   }
 
-  /**
-   * Obtiene la relación específica entre un rol y un menú
-   * @param idRol ID del rol
-   * @param idMenu ID del menú
-   * @returns Respuesta con datos de la relación o null si no existe
-   */
+  
   async getRelacionRolMenu(
     idRol: number,
     idMenu: number
@@ -124,11 +99,7 @@ export class PermisosService extends BaseApiService {
     >;
   }
 
-  /**
-   * Asigna permisos a un rol sobre un menú (formato legado)
-   * @param request Datos de los permisos a asignar
-   * @returns Respuesta con datos de la relación creada/actualizada
-   */
+  
   async assignPermissions(
     request: AssignPermissionsRequest
   ): Promise<ServiceResponse<RoleMenuRelation>> {
@@ -165,11 +136,7 @@ export class PermisosService extends BaseApiService {
     >;
   }
 
-  /**
-   * Asigna permisos a un rol sobre un menú (formato directo del API)
-   * @param request Datos de los permisos a asignar
-   * @returns Respuesta con datos de la relación creada/actualizada
-   */
+  
   async assignPermissionDirect(
     request: AssignPermissionDirectRequest
   ): Promise<ServiceResponse<AssignPermissionDirectRequest>> {
@@ -227,12 +194,7 @@ export class PermisosService extends BaseApiService {
     >;
   }
 
-  /**
-   * Elimina la relación entre un rol y un menú (y sus permisos asociados)
-   * @param idRol ID del rol
-   * @param idMenu ID del menú
-   * @returns Respuesta con confirmación de éxito
-   */
+  
   async deleteRelacionRolMenu(
     idRol: number,
     idMenu: number

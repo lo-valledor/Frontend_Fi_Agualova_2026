@@ -1,45 +1,28 @@
 import { BaseApiService } from '~/services/core/base-service';
 import type { MedidorNichoItem } from '~/types/monitor';
 
-/**
- * Interface para resultado de validación
- */
+
 export interface ValidationResult {
   valid: boolean;
   reasons: string[];
   severity: 'ok' | 'warning' | 'error';
 }
 
-/**
- * Interface para detección de consumo anómalo
- */
+
 export interface AnomalyDetection {
   anomalous: boolean;
   type?: string;
   reason?: string;
 }
 
-/**
- * Servicio especializado para validación de lecturas de medidores
- * Aplica SOLID: Single Responsibility = solo validación
- */
+
 export class ValidationService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  /**
-   * Detecta anomalías en el consumo calculado
-   * @param currentReading - Lectura actual del medidor
-   * @param previousReading - Lectura anterior del medidor
-   * @param previousConsumption - Consumo del periodo anterior (puede ser null)
-   * @param meterCapacity - Capacidad máxima del medidor (default: 99999)
-   * @returns Objeto con detección de anomalía si existe
-   */
+  
   private detectAnomalousConsumption(
     currentReading: number,
     previousReading: number,
@@ -102,11 +85,7 @@ export class ValidationService extends BaseApiService {
     return { anomalous: false };
   }
 
-  /**
-   * Valida si una lectura califica para inserción automática
-   * @param meter - Datos del medidor con lecturas importadas
-   * @returns Objeto con resultado de validación
-   */
+  
   validateForAutoInsertion(meter: MedidorNichoItem): ValidationResult {
     const reasons: string[] = [];
 

@@ -1,7 +1,3 @@
-/**
- * Constantes compartidas para módulos de operaciones
- */
-
 // Meses del año
 export const MONTHS = [
   { value: '01', label: 'Enero' },
@@ -18,9 +14,7 @@ export const MONTHS = [
   { value: '12', label: 'Diciembre' }
 ] as const;
 
-/**
- * Genera un array de años dinámicamente: [año anterior, año actual, año siguiente]
- */
+
 export function getYearsRange() {
   const currentYear = new Date().getFullYear();
   const years = [currentYear - 1, currentYear, currentYear + 1];
@@ -31,24 +25,17 @@ export function getYearsRange() {
   }));
 }
 
-/**
- * Obtiene el mes actual en formato '01'-'12'
- */
+
 export function getCurrentMonth(): string {
   return (new Date().getMonth() + 1).toString().padStart(2, '0');
 }
 
-/**
- * Obtiene el año actual en formato string
- */
+
 export function getCurrentYear(): string {
   return new Date().getFullYear().toString();
 }
 
-/**
- * Obtiene el nombre del mes a partir del valor
- * @param monthValue
- */
+
 export function getMonthLabel(monthValue: string): string {
   const month = MONTHS.find(m => m.value === monthValue);
   return month?.label ?? monthValue;

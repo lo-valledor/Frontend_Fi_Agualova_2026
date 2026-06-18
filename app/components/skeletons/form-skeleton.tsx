@@ -2,20 +2,11 @@ import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import { Skeleton } from '~/components/ui/skeleton';
 
 interface FormSkeletonProps {
-  /**
-   * Número de campos a mostrar
-   * @default 6
-   */
+  
   fields?: number;
-  /**
-   * Mostrar header con título
-   * @default true
-   */
+  
   showHeader?: boolean;
-  /**
-   * Mostrar botones de acción
-   * @default true
-   */
+  
   showActions?: boolean;
 }
 

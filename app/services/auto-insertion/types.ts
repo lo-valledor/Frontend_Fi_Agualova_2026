@@ -1,7 +1,3 @@
-/**
- * Tipos compartidos para servicios de inserción automática
- */
-
 export interface MeterValidationRequest {
   meterId: number;
   currentReading: number;

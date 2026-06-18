@@ -1,10 +1,3 @@
-/**
- * Módulo especializado para operaciones con propietarios y contratantes
- *
- * Maneja operaciones CRUD relacionadas con propietarios y contratantes del sistema.
- * Extiende BaseApiService para reutilizar lógica común.
- */
-
 import api from '~/lib/api';
 import { BaseApiService, type ServiceResponse } from '../core';
 import type { GetPropietario, GetContratante } from '~/types/administracion';
@@ -13,7 +6,7 @@ import type { GetPropietario, GetContratante } from '~/types/administracion';
 // TIPOS - PROPIETARIOS
 // ============================================================================
 
-/** Solicitud para crear nuevo propietario */
+
 export interface CreatePropietarioRequest {
   rut: string;
   nombre: string;
@@ -23,7 +16,7 @@ export interface CreatePropietarioRequest {
   email: string;
 }
 
-/** Solicitud para actualizar propietario */
+
 export interface UpdatePropietarioRequest {
   id: string | number;
   rut?: string;
@@ -43,7 +36,7 @@ export type PropietarioOperationResponse = {
 // TIPOS - CONTRATANTES
 // ============================================================================
 
-/** Solicitud para crear nuevo contratante */
+
 export interface CreateContratanteRequest {
   rut: string;
   nombre: string;
@@ -56,7 +49,7 @@ export interface CreateContratanteRequest {
   email: string;
 }
 
-/** Solicitud para actualizar contratante */
+
 export interface UpdateContratanteRequest {
   id: string | number;
   rut?: string;
@@ -79,23 +72,14 @@ export type ContratanteOperationResponse = {
 // SERVICIO - PROPIETARIOS
 // ============================================================================
 
-/**
- * Servicio especializado para operaciones con propietarios
- */
+
 class PropietariosService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene todos los propietarios del sistema
-   *
-   * @returns Respuesta con lista de propietarios
-   */
+  
   async getAll(): Promise<ServiceResponse<GetPropietario[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('propietario/buscar');
@@ -103,12 +87,7 @@ class PropietariosService extends BaseApiService {
     }, 'Error al obtener propietarios');
   }
 
-  /**
-   * Obtiene un propietario específico por ID
-   *
-   * @param id - ID del propietario
-   * @returns Respuesta con datos del propietario
-   */
+  
   async getById(
     id: string | number
   ): Promise<ServiceResponse<GetPropietario | null>> {
@@ -125,12 +104,7 @@ class PropietariosService extends BaseApiService {
     }, `Error al obtener propietario ${id}`);
   }
 
-  /**
-   * Crea un nuevo propietario
-   *
-   * @param data - Datos del nuevo propietario
-   * @returns Respuesta con propietario creado
-   */
+  
   async create(
     data: CreatePropietarioRequest
   ): Promise<ServiceResponse<GetPropietario | null>> {
@@ -147,12 +121,7 @@ class PropietariosService extends BaseApiService {
     }, 'Error al crear propietario');
   }
 
-  /**
-   * Actualiza un propietario existente
-   *
-   * @param data - Datos a actualizar (incluye ID)
-   * @returns Respuesta con propietario actualizado
-   */
+  
   async update(
     data: UpdatePropietarioRequest
   ): Promise<ServiceResponse<GetPropietario | null>> {
@@ -173,12 +142,7 @@ class PropietariosService extends BaseApiService {
     }, `Error al actualizar propietario ${data.id}`);
   }
 
-  /**
-   * Elimina un propietario
-   *
-   * @param id - ID del propietario a eliminar
-   * @returns Respuesta de éxito/error
-   */
+  
   async delete(id: string | number): Promise<ServiceResponse<string>> {
     if (!id) {
       return this.handleError(
@@ -192,12 +156,7 @@ class PropietariosService extends BaseApiService {
     }, `Propietario ${id} eliminado exitosamente`);
   }
 
-  /**
-   * Obtiene propietarios de un cliente
-   *
-   * @param clienteId - ID del cliente
-   * @returns Respuesta con propietarios del cliente
-   */
+  
   async getByCliente(
     clienteId: string | number
   ): Promise<ServiceResponse<GetPropietario[]>> {
@@ -221,23 +180,14 @@ class PropietariosService extends BaseApiService {
 // SERVICIO - CONTRATANTES
 // ============================================================================
 
-/**
- * Servicio especializado para operaciones con contratantes
- */
+
 class ContratantesService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene todos los contratantes del sistema
-   *
-   * @returns Respuesta con lista de contratantes
-   */
+  
   async getAll(): Promise<ServiceResponse<GetContratante[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('contratante/buscar');
@@ -245,12 +195,7 @@ class ContratantesService extends BaseApiService {
     }, 'Error al obtener contratantes');
   }
 
-  /**
-   * Obtiene un contratante específico por ID
-   *
-   * @param id - ID del contratante
-   * @returns Respuesta con datos del contratante
-   */
+  
   async getById(
     id: string | number
   ): Promise<ServiceResponse<GetContratante | null>> {
@@ -267,12 +212,7 @@ class ContratantesService extends BaseApiService {
     }, `Error al obtener contratante ${id}`);
   }
 
-  /**
-   * Crea un nuevo contratante
-   *
-   * @param data - Datos del nuevo contratante
-   * @returns Respuesta con contratante creado
-   */
+  
   async create(
     data: CreateContratanteRequest
   ): Promise<ServiceResponse<GetContratante | null>> {
@@ -289,12 +229,7 @@ class ContratantesService extends BaseApiService {
     }, 'Error al crear contratante');
   }
 
-  /**
-   * Actualiza un contratante existente
-   *
-   * @param data - Datos a actualizar (incluye ID)
-   * @returns Respuesta con contratante actualizado
-   */
+  
   async update(
     data: UpdateContratanteRequest
   ): Promise<ServiceResponse<GetContratante | null>> {
@@ -315,12 +250,7 @@ class ContratantesService extends BaseApiService {
     }, `Error al actualizar contratante ${data.id}`);
   }
 
-  /**
-   * Elimina un contratante
-   *
-   * @param id - ID del contratante a eliminar
-   * @returns Respuesta de éxito/error
-   */
+  
   async delete(id: string | number): Promise<ServiceResponse<string>> {
     if (!id) {
       return this.handleError(
@@ -334,12 +264,7 @@ class ContratantesService extends BaseApiService {
     }, `Contratante ${id} eliminado exitosamente`);
   }
 
-  /**
-   * Obtiene contratantes de un cliente
-   *
-   * @param clienteId - ID del cliente
-   * @returns Respuesta con contratantes del cliente
-   */
+  
   async getByCliente(
     clienteId: string | number
   ): Promise<ServiceResponse<GetContratante[]>> {

@@ -284,7 +284,7 @@ export default function ProfileComponent() {
                   <SelectItem value='3'>Recaudación</SelectItem>
                   <SelectItem value='4'>Seguridad</SelectItem>
                   <SelectItem value='5'>RR.HH</SelectItem>
-                  <SelectItem value='6'>Enerlova</SelectItem>
+                  <SelectItem value='6'>Agualova</SelectItem>
                 </SelectContent>
               </Select>
             </div>

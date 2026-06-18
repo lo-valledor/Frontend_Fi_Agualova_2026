@@ -1,12 +1,3 @@
-/**
- * 🚨 Security Alert System - ENERLOVA Frontend
- *
- * Real-time security alerts for critical events.
- * Integrates with the security logger and notification system.
- *
- * @module lib/security-alerts
- */
-
 import { securityLogger, SecurityEventType } from './security-logger';
 
 // Alert severity levels
@@ -164,9 +155,7 @@ const RATE_LIMIT_CONFIG = {
   blockDurationMs: 300000 // 5 minutes
 };
 
-/**
- * Check rate limit for a given action
- */
+
 function checkRateLimit(action: string): boolean {
   const now = Date.now();
   const state = rateLimitStates.get(action);
@@ -224,9 +213,7 @@ function checkRateLimit(action: string): boolean {
   return true;
 }
 
-/**
- * Security Alert Manager
- */
+
 class SecurityAlertManager {
   private alertHandlers: Map<
     AlertSeverity,
@@ -238,9 +225,7 @@ class SecurityAlertManager {
     this.initCSPListener();
   }
 
-  /**
-   * Initialize CSP violation reporting
-   */
+  
   private initCSPListener(): void {
     if (typeof document === 'undefined') return;
 
@@ -259,9 +244,7 @@ class SecurityAlertManager {
     });
   }
 
-  /**
-   * Register an alert handler for a severity level
-   */
+  
   onAlert(
     severity: AlertSeverity,
     handler: (message: string, context?: Record<string, unknown>) => void
@@ -271,9 +254,7 @@ class SecurityAlertManager {
     this.alertHandlers.set(severity, handlers);
   }
 
-  /**
-   * Trigger a security alert
-   */
+  
   triggerAlert(
     eventType: SecurityEventType,
     message: string,
@@ -301,9 +282,7 @@ class SecurityAlertManager {
     return { blocked: config.block };
   }
 
-  /**
-   * Report alert to backend (placeholder)
-   */
+  
   private async reportToBackend(
     eventType: SecurityEventType,
     message: string,
@@ -331,16 +310,12 @@ class SecurityAlertManager {
     }
   }
 
-  /**
-   * Check rate limit for an action
-   */
+  
   checkRateLimit(action: string): boolean {
     return checkRateLimit(action);
   }
 
-  /**
-   * Convenience methods for common alerts
-   */
+  
 
   loginAttempt(
     success: boolean,

@@ -1,8 +1,3 @@
-/**
- * Componente de diálogo para inserción automática de lecturas
- * Muestra resumen de validación y procesa inserciones en lote
- */
-
 import { useState } from 'react';
 import { AlertCircle, CheckCircle2, Loader2, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';

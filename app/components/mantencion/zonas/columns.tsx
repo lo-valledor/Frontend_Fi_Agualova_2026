@@ -3,19 +3,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { Zonas } from '~/types/mantencion';
+import type { Zona } from '~/types/mantencion';
 
 interface TableColumnsProps {
-  onEdit: (zona: Zonas) => void;
-  onDelete: (zona: Zonas) => void;
-  canEdit?: boolean;
+  onEdit: (zona: Zona) => void;
+  onDelete: (zona: Zona) => void;
 }
 
 export const columns = ({
   onEdit,
-  onDelete,
-  canEdit = true
-}: TableColumnsProps): ColumnDef<Zonas>[] => [
+  onDelete
+}: TableColumnsProps): ColumnDef<Zona>[] => [
   {
     accessorKey: 'nombre',
     header: ({ column }) => (
@@ -83,7 +81,6 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

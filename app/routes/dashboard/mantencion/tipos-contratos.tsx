@@ -12,7 +12,7 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Tipos de Contratos' },
+    { title: 'Agualova | Tipos de Contratos' },
     { name: 'description', content: ' Tipos de Contratos' }
   ];
 }

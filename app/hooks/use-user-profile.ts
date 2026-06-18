@@ -1,22 +1,10 @@
-/**
- * User Profile Hook
- *
- * Provides a hook for loading and updating user profile data.
- * Includes error handling and fallback mechanisms for offline or API unavailability scenarios.
- *
- * The hook attempts to fetch user data from the API, but gracefully falls back
- * to creating mock data from the authentication token if the API is unavailable.
- */
-
 import { useCallback, useEffect, useState } from 'react';
 
 import { useAuth } from '~/context/AuthContext';
 import api from '~/lib/api';
 import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 
-/**
- * Return type for useUserProfile hook
- */
+
 interface UseUserProfileReturn {
   userData: Usuarios | null;
   isLoading: boolean;
@@ -25,18 +13,7 @@ interface UseUserProfileReturn {
   refreshProfile: () => Promise<void>;
 }
 
-/**
- * Creates mock user data from authenticated user token
- *
- * Used as fallback when API is unavailable or user is not found in database.
- *
- * @param user - Authenticated user from token
- * @param user.id
- * @param user.username
- * @param user.profileId
- * @param user.fullName
- * @returns Mock user data
- */
+
 function createMockUserData(user: {
   id: string;
   username: string;
@@ -61,73 +38,14 @@ function createMockUserData(user: {
   };
 }
 
-/**
- * Hook for loading and updating user profile
- *
- * Fetches detailed user profile information from the API and provides
- * functions to update and refresh the profile. Includes graceful fallback
- * to token-based data if API is unavailable.
- *
- * Features:
- * - Automatic loading on mount
- * - Fallback to token data if API fails
- * - Profile update with optimistic updates
- * - Manual refresh capability
- *
- * @returns {UseUserProfileReturn} Hook state and profile operations
- *
- * @example
- * ```tsx
- * const {
- *   userData,
- *   isLoading,
- *   error,
- *   updateProfile,
- *   refreshProfile
- * } = useUserProfile();
- *
- * if (isLoading) return <Loading />;
- * if (error) return <Error message={error.message} />;
- * if (!userData) return null;
- *
- * return (
- *   <ProfileForm
- *     userData={userData}
- *     onSubmit={updateProfile}
- *   />
- * );
- * ```
- *
- * @example
- * ```tsx
- * // Update user profile
- * const { updateProfile } = useUserProfile();
- *
- * const handleSubmit = async (formData) => {
- *   try {
- *     await updateProfile({
- *       nombreDeUsuario: formData.username,
- *       nombres: formData.firstName,
- *       apellidos: formData.lastName,
- *       departamento: formData.department,
- *       activo: true
- *     });
- *     toast.success('Profile updated successfully');
- *   } catch (error) {
- *     toast.error('Failed to update profile');
- *   }
- * };
- * ```
- */
+
 export function useUserProfile(): UseUserProfileReturn {
   const { user } = useAuth();
   const [userData, setUserData] = useState<Usuarios | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  /**
-   * Fetches user profile from API or creates fallback from token
-   */
+  
   const fetchUserProfile = useCallback(async (): Promise<void> => {
     // Early return if no authenticated user
     if (!user) {
@@ -139,7 +57,7 @@ export function useUserProfile(): UseUserProfileReturn {
       setError(null);
 
       // Fetch user list and find current user
-      const response = await api.get('/listar');
+      const response = await api.get('/GetAllUsers');
       const usuarios = response.data as Usuarios[];
 
       const usuarioEncontrado = usuarios.find(
@@ -169,15 +87,7 @@ export function useUserProfile(): UseUserProfileReturn {
     }
   }, [user]);
 
-  /**
-   * Updates user profile
-   *
-   * Attempts to update via API, falls back to local update only if API fails.
-   * Throws error on failure for the caller to handle.
-   *
-   * @param data - Profile data to update
-   * @throws Error if update fails
-   */
+  
   const updateProfile = useCallback(
     async (data: ActualizarUsuarioProps): Promise<void> => {
       // Early return if no user data loaded
@@ -245,9 +155,7 @@ export function useUserProfile(): UseUserProfileReturn {
     [userData]
   );
 
-  /**
-   * Refreshes user profile from API
-   */
+  
   const refreshProfile = useCallback(async (): Promise<void> => {
     await fetchUserProfile();
   }, [fetchUserProfile]);

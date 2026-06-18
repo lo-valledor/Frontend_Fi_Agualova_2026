@@ -20,9 +20,7 @@ export interface ReportesServiceResponse<T> {
 }
 
 class ReportesService {
-  /**
-   * Función helper para procesar respuestas de API
-   */
+  
 
   private processApiResponse<T>(response: any): T[] {
     // Si ya es un array, devolverlo directamente

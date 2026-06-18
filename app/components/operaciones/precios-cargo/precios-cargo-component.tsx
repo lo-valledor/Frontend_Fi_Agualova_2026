@@ -15,8 +15,6 @@ import 'driver.js/dist/driver.css';
 
 import { useEffect, useState } from 'react';
 
-import { useAuth } from '~/context/AuthContext';
-
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -34,11 +32,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import api from '~/lib/api';
 import type {
   PreciosCargoEnel,
-  PreciosCargoEnerlova
+  PreciosCargoAgualova
 } from '~/types/operaciones';
 
 import { columns as columnsEnel } from './columns-enel';
-import { columns } from './columns-enerlova';
+import { columns } from './columns-agualova';
 import { DataTablePreciosVirtualized } from './data-table-precios-virtualized';
 import {
   MONTHS,
@@ -51,7 +49,7 @@ import {
 
 interface PreciosCargoComponentProps {
   tablaEnel: PreciosCargoEnel[];
-  tablaEnerlova: PreciosCargoEnerlova[];
+  tablaAgualova: PreciosCargoAgualova[];
   initialMes: string;
   initialAnio: string;
   error: string | null;
@@ -59,7 +57,7 @@ interface PreciosCargoComponentProps {
 
 export default function PreciosCargoComponent({
   tablaEnel: initialTablaEnel,
-  tablaEnerlova: initialTablaEnerlova,
+  tablaAgualova: initialTablaAgualova,
   initialMes,
   initialAnio,
   error
@@ -68,7 +66,7 @@ export default function PreciosCargoComponent({
   const [mes, setMes] = useState(initialMes);
   const [anio, setAnio] = useState(initialAnio);
   const [tablaEnel, setTablaEnel] = useState(initialTablaEnel);
-  const [tablaEnerlova, setTablaEnerlova] = useState(initialTablaEnerlova);
+  const [tablaAgualova, setTablaAgualova] = useState(initialTablaAgualova);
   const [isLoading, setIsLoading] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [periodoAbierto, setPeriodoAbierto] = useState<{
@@ -76,12 +74,6 @@ export default function PreciosCargoComponent({
     mes: number;
     anio: number;
   } | null>(null);
-
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/operaciones/precios-cargo';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   // Consultar periodo abierto al montar el componente
   useEffect(() => {
@@ -148,12 +140,12 @@ export default function PreciosCargoComponent({
     await handleSearch();
   };
 
-  // Actualizar datos de Enerlova
-  const handleEnerlovaDataUpdate = async () => {
+  // Actualizar datos de Agualova
+  const handleAgualovaDataUpdate = async () => {
     try {
       setIsLoading(true);
       const response = await api.get('/consulta-precio-pago-tabla');
-      setTablaEnerlova(response.data as PreciosCargoEnerlova[]);
+      setTablaAgualova(response.data as PreciosCargoAgualova[]);
       toast.success('Datos actualizados correctamente');
     } catch (error) {
       toast.error('Error al actualizar los datos', error as any);
@@ -209,7 +201,7 @@ export default function PreciosCargoComponent({
       popover: {
         title: '🔄 Pestañas de Precios',
         description:
-          'Usa estas pestañas para alternar entre <strong>Precios ENEL</strong> (distribuidora) y <strong>Precios Enerlova</strong> (propios de la empresa).',
+          'Usa estas pestañas para alternar entre <strong>Precios ENEL</strong> (distribuidora) y <strong>Precios Agualova</strong> (propios de la empresa).',
         side: 'top' as const,
         align: 'start' as const
       }
@@ -225,11 +217,11 @@ export default function PreciosCargoComponent({
       }
     },
     {
-      element: '#tabla-enerlova',
+      element: '#tabla-agualova',
       popover: {
-        title: '💼 Tabla de Precios Enerlova',
+        title: '💼 Tabla de Precios Agualova',
         description:
-          'Esta tabla muestra los <strong>precios propios de Enerlova</strong>, fijados internamente para el período actual.',
+          'Esta tabla muestra los <strong>precios propios de Agualova</strong>, fijados internamente para el período actual.',
         side: 'top' as const,
         align: 'start' as const
       }
@@ -431,11 +423,11 @@ export default function PreciosCargoComponent({
                   Precios Enel
                 </TabsTrigger>
                 <TabsTrigger
-                  value='enerlova'
+                  value='agualova'
                   className='data-[state=active]:bg-background'
                 >
                   <BarChart className='mr-2 h-4 w-4' />
-                  Precios Enerlova
+                  Precios Agualova
                 </TabsTrigger>
               </TabsList>
 
@@ -471,8 +463,7 @@ export default function PreciosCargoComponent({
                     columns={columnsEnel(
                       mes,
                       anio,
-                      handleDataUpdate,
-                      hasCreatePermission
+                      handleDataUpdate
                     )}
                     data={tablaEnel}
                     searchPlaceholder='Buscar por descripción o código...'
@@ -511,16 +502,16 @@ export default function PreciosCargoComponent({
                 </div>
               </TabsContent>
 
-              <TabsContent value='enerlova' className='space-y-3 pt-4'>
+              <TabsContent value='agualova' className='space-y-3 pt-4'>
                 <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
                   <div className='flex-1'>
                     <h3 className='text-base font-medium'>
-                      Precios de Cargo - Enerlova
+                      Precios de Cargo - Agualova
                     </h3>
                     <p className='text-xs text-muted-foreground flex items-center gap-2 mt-1'>
                       <Info className='w-4 h-4 text-success' />
                       <span>
-                        Precios fijados directamente por Enerlova para el mes
+                        Precios fijados directamente por Agualova para el mes
                         actual
                       </span>
                     </p>
@@ -530,15 +521,14 @@ export default function PreciosCargoComponent({
                   </Badge>
                 </div>
                 <div
-                  id='tabla-enerlova'
+                  id='tabla-agualova'
                   className='rounded-xl border border-border overflow-hidden'
                 >
                   <DataTablePreciosVirtualized
                     columns={columns(
-                      handleEnerlovaDataUpdate,
-                      hasEditPermission
+                      handleAgualovaDataUpdate
                     )}
-                    data={tablaEnerlova}
+                    data={tablaAgualova}
                     searchPlaceholder='Buscar por descripción o código...'
                     showSearch={true}
                     columnGroups={[
@@ -547,7 +537,7 @@ export default function PreciosCargoComponent({
                         title: 'Información',
                         columns: [
                           'CD_ID',
-                          'cd_codigoenerlova',
+                          'cd_codigoagualova',
                           'CD_Descripcion'
                         ],
                         className: 'bg-primary text-primary-foreground'

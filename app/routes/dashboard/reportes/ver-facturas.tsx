@@ -6,7 +6,7 @@ import type { Route } from './+types/ver-facturas';
 export function meta(_args: Route.MetaArgs) {
   return [
     {
-      title: 'Enerlova | Ver Facturas',
+      title: 'Agualova | Ver Facturas',
       description:
         'Próximamente tendrás acceso a un visor completo de facturas con opciones de búsqueda, filtros y exportación.'
     }

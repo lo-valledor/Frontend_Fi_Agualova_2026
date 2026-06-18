@@ -8,25 +8,23 @@ import type { Parametro } from '~/types/mantencion';
 interface ParametrosColumnsProps {
   onEdit: (parametro: Parametro) => void;
   onDelete: (parametro: Parametro) => void;
-  canEdit?: boolean;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete,
-  canEdit = true
+  onDelete
 }: ParametrosColumnsProps): ColumnDef<Parametro>[] => [
   {
-    accessorKey: 'descripcion',
+    accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => (
       <div
         className='max-w-[200px] truncate font-medium'
-        title={row.getValue('descripcion')}
+        title={row.getValue('nombre')}
       >
-        {row.getValue('descripcion')}
+        {row.getValue('nombre')}
       </div>
     )
   },
@@ -82,7 +80,6 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

@@ -6,7 +6,6 @@ import React, { useMemo, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -17,7 +16,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { ComboAsociadoConceptos, Conceptos } from '~/types/mantencion';
+import type { ConceptoAsociables, Concepto } from '~/types/mantencion';
 
 import { createColumns } from './columns';
 import ConceptoFormModal from './concepto-form-modal';
@@ -25,8 +24,8 @@ import ConceptoFormModal from './concepto-form-modal';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface ConceptosComponentProps {
-  conceptos: Conceptos[];
-  comboAsociadoConceptos: ComboAsociadoConceptos[];
+  conceptos: Concepto[];
+  comboAsociadoConceptos: ConceptoAsociables[];
 }
 
 export default function ConceptosComponent({
@@ -35,17 +34,11 @@ export default function ConceptosComponent({
 }: Readonly<ConceptosComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedConcepto, setSelectedConcepto] = useState<
-    Conceptos | undefined
+    Concepto | undefined
   >(undefined);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
   const revalidator = useRevalidator();
-
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/mantencion/conceptos';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   const handleAdd = () => {
     setSelectedConcepto(undefined);
@@ -53,17 +46,13 @@ export default function ConceptosComponent({
     setIsModalOpen(true);
   };
 
-  const handleEdit = (concepto: Conceptos) => {
-    if (!hasEditPermission) {
-      toast.error('No tiene permisos para editar conceptos');
-      return;
-    }
+  const handleEdit = (concepto: Concepto) => {
     setSelectedConcepto(concepto);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  const handleDelete = async (concepto: Conceptos) => {
+  const handleDelete = async (concepto: Concepto) => {
     if (
       globalThis.confirm(
         `¿Está seguro de que desea eliminar el concepto "${concepto.denominacion}"?`
@@ -95,10 +84,9 @@ export default function ConceptosComponent({
     () =>
       createColumns({
         onEdit: handleEdit,
-        onDelete: handleDelete,
-        canEdit: hasEditPermission
+        onDelete: handleDelete
       }),
-    [handleEdit, handleDelete, hasEditPermission]
+    [handleEdit, handleDelete]
   );
 
   return (
@@ -109,17 +97,7 @@ export default function ConceptosComponent({
             title='Conceptos'
             description='Gestiona los conceptos del sistema'
             actions={
-              <Button
-                onClick={handleAdd}
-                variant='default'
-                size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear conceptos'
-                    : ''
-                }
-              >
+              <Button onClick={handleAdd} variant='default' size='sm'>
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Concepto
               </Button>
@@ -144,7 +122,8 @@ export default function ConceptosComponent({
                     Listado de Conceptos
                   </CardTitle>
                   <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
-                    {conceptos.length} concepto{conceptos.length !== 1 ? 's' : ''}
+                    {conceptos.length} concepto
+                    {conceptos.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>

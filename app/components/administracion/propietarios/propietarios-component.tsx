@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -25,7 +24,6 @@ import type {
 import {
   createInitialPropietarioModalState,
   extractPropietarioErrorMessage,
-  getPropietarioPermissions,
   getSyncStatusMessage
 } from '~/utils/administracion';
 
@@ -46,14 +44,7 @@ interface FilterOptions {
   comunas: string[];
 }
 
-const PROPIETARIOS_ROUTE = '/dashboard/administracion/propietarios';
 
-/**
- * Componente principal para la gestión de propietarios
- * Implementa estado unificado de modales y manejo de errores centralizado
- * @param root0
- * @param root0.propietarios
- */
 export default function PropietariosComponent({
   propietarios
 }: Readonly<PropietariosComponentProps>) {
@@ -79,10 +70,6 @@ export default function PropietariosComponent({
   });
 
   // Dependencias
-  const { canEdit } = useAuth();
-
-  // Permisos del usuario actual
-  const permissions = getPropietarioPermissions(canEdit, PROPIETARIOS_ROUTE);
 
   // Filter options from data
   const filterOptions = useMemo((): FilterOptions => {
@@ -167,9 +154,7 @@ export default function PropietariosComponent({
     { header: 'Email', key: 'email' }
   ];
 
-  /**
-   * Abre el modal de detalles del propietario
-   */
+  
   const handleDetailsPropietario = useCallback(
     (propietario: GetPropietario) => {
       setDetailedPropietario(propietario);
@@ -181,17 +166,8 @@ export default function PropietariosComponent({
     []
   );
 
-  /**
-   * Sincroniza propietarios con locales
-   * Implementa manejo de errores centralizado
-   */
+  
   const handleSyncPropietarios = useCallback(async () => {
-    // Early return: validar que el usuario tenga permisos
-    if (!permissions.hasEditPermission) {
-      toast.error('No tiene permisos para sincronizar propietarios');
-      return;
-    }
-
     setIsSyncing(true);
     try {
       const result = await administracionService.sincronizarPropietarios();
@@ -218,15 +194,10 @@ export default function PropietariosComponent({
     } finally {
       setIsSyncing(false);
     }
-  }, [permissions.hasEditPermission]);
+  }, []);
 
-  /**
-   * Auto-sincroniza propietarios con locales al entrar al módulo.
-   * Se ejecuta una sola vez por sesión para evitar múltiples sincronizaciones.
-   */
+  
   useEffect(() => {
-    if (!permissions.hasEditPermission) return;
-
     const alreadySynced =
       sessionStorage.getItem('propietariosSyncDone') === 'true';
     if (!alreadySynced) {
@@ -234,18 +205,14 @@ export default function PropietariosComponent({
       sessionStorage.setItem('propietariosSyncDone', 'true');
       void handleSyncPropietarios();
     }
-  }, [permissions.hasEditPermission, handleSyncPropietarios]);
+  }, [handleSyncPropietarios]);
 
-  /**
-   * Actualiza los filtros aplicados
-   */
+  
   const handleFiltersChange = useCallback((newFilters: PropietarioFilters) => {
     setFilters(newFilters);
   }, []);
 
-  /**
-   * Limpia todos los filtros aplicados
-   */
+  
   const handleClearFilters = useCallback(() => {
     setFilters({
       comuna: 'all',
@@ -276,12 +243,7 @@ export default function PropietariosComponent({
                   onClick={handleSyncPropietarios}
                   className='bg-emerald-600 hover:bg-emerald-700'
                   size='sm'
-                  disabled={isSyncing || !permissions.hasEditPermission}
-                  title={
-                    !permissions.hasEditPermission
-                      ? 'No tiene permisos para sincronizar'
-                      : ''
-                  }
+                  disabled={isSyncing}
                 >
                   <RefreshCw
                     className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}

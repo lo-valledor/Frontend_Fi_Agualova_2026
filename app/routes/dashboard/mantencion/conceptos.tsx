@@ -12,7 +12,7 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Conceptos' },
+    { title: 'Agualova | Conceptos' },
     { name: 'description', content: ' Conceptos del sistema' }
   ];
 }

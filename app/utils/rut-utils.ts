@@ -1,21 +1,8 @@
-/**
- * Utilidades para manejo y formateo de RUT chileno
- */
-
-/**
- * Limpia el RUT removiendo puntos, espacios y caracteres no válidos
- * @param rut - RUT a limpiar
- * @returns RUT limpio con solo números, K y guión
- */
 export const cleanRut = (rut: string): string => {
   return rut.replaceAll(/[^\dkK-]/g, '').toUpperCase();
 };
 
-/**
- * Formatea el RUT agregando el guión antes del dígito verificador
- * @param rut - RUT a formatear
- * @returns RUT formateado con guión (ej: 12345678-9)
- */
+
 export const formatRut = (rut: string): string => {
   const cleaned = cleanRut(rut);
   if (cleaned.length < 2) return cleaned;
@@ -40,21 +27,13 @@ export const formatRut = (rut: string): string => {
   return cleaned;
 };
 
-/**
- * Valida el formato básico del RUT
- * @param rut - RUT a validar
- * @returns true si el formato es válido (7-8 dígitos + guión + dígito verificador)
- */
+
 export const isValidRutFormat = (rut: string): boolean => {
   const rutRegex = /^\d{7,8}-[\dkK]$/;
   return rutRegex.test(rut);
 };
 
-/**
- * Calcula el dígito verificador de un RUT
- * @param rutBody - Cuerpo del RUT (sin dígito verificador)
- * @returns Dígito verificador calculado
- */
+
 export const calculateRutVerifier = (rutBody: string): string => {
   let sum = 0;
   let multiplier = 2;
@@ -73,11 +52,7 @@ export const calculateRutVerifier = (rutBody: string): string => {
   return verifier.toString();
 };
 
-/**
- * Valida completamente un RUT (formato y dígito verificador)
- * @param rut - RUT completo a validar
- * @returns true si el RUT es válido
- */
+
 export const isValidRut = (rut: string): boolean => {
   if (!isValidRutFormat(rut)) return false;
 
@@ -87,11 +62,7 @@ export const isValidRut = (rut: string): boolean => {
   return calculatedVerifier.toUpperCase() === verifier.toUpperCase();
 };
 
-/**
- * Formatea un RUT para mostrar con puntos y guión (ej: 12.345.678-9)
- * @param rut - RUT a formatear
- * @returns RUT formateado con puntos y guión
- */
+
 export const formatRutWithDots = (rut: string): string => {
   const formatted = formatRut(rut);
   if (!isValidRutFormat(formatted)) return formatted;

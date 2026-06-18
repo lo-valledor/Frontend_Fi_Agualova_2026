@@ -12,7 +12,7 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Tarifas' },
+    { title: 'Agualova | Tarifas' },
     { name: 'description', content: ' Tarifas del sistema' }
   ];
 }

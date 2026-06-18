@@ -1,8 +1,3 @@
-/**
- * Reportes Services Module
- * Barrel export pattern for all reporting services
- */
-
 import { summaryReportService } from './summary-report.service';
 import { billingReportService } from './billing-report.service';
 import { contractDetailsReportService } from './contract-details-report.service';

@@ -6,7 +6,6 @@ import React, { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -34,11 +33,6 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/mantencion/sector';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   const handleAddSector = useCallback(() => {
     setSelectedSector(null);
@@ -48,15 +42,11 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
 
   const handleEditSector = useCallback(
     (sector: Sectores) => {
-      if (!hasEditPermission) {
-        toast.error('No tiene permisos para editar sectores');
-        return;
-      }
       setSelectedSector(sector);
       setModalMode('edit');
       setIsModalOpen(true);
     },
-    [hasEditPermission]
+    []
   );
 
   const handleDeleteSector = useCallback((sector: Sectores) => {
@@ -88,12 +78,6 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
                 onClick={handleAddSector}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear sectores'
-                    : ''
-                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Sector
@@ -131,7 +115,6 @@ export default function SectorComponent({ sectores }: SectorComponentProps) {
                   columns={columns({
                     onEdit: handleEditSector,
                     onDelete: handleDeleteSector,
-                    canEdit: hasEditPermission
                   })}
                   data={sectores}
                 />

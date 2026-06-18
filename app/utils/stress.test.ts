@@ -3,12 +3,7 @@ import { validatePassword } from './password-validation';
 import { formatRut, isValidRutFormat, cleanRut } from './rut-utils';
 import { formatToDate } from './date-formatter';
 
-/**
- * Tests de Estrés (Stress Tests)
- *
- * Estos tests simulan cargas extremas y condiciones edge case
- * para verificar la estabilidad del sistema bajo estrés.
- */
+
 
 describe('Stress Tests - Utilidades Críticas bajo Carga Extrema', () => {
   describe('Password Validation Under Stress', () => {

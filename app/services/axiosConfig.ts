@@ -5,14 +5,13 @@ import { toast } from 'sonner';
 // TIPOS
 // ============================================================================
 
-/** Configuración de Axios */
+
 interface AxiosConfig {
   readonly baseURL: string;
-  readonly withCredentials: boolean;
   readonly timeout: number;
 }
 
-/** Rutas donde ciertos errores HTTP son respuestas esperadas */
+
 interface ExpectedErrorRoutes {
   readonly status: number;
   readonly routes: readonly string[];
@@ -22,16 +21,47 @@ interface ExpectedErrorRoutes {
 // CONSTANTES
 // ============================================================================
 
-const API_URL = import.meta.env.DEV ? '/api' : import.meta.env.VITE_API_URL;
+function joinUrl(base: string, path: string): string {
+  const normalizedBase = base.replace(/\/+$/, '');
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${normalizedBase}${normalizedPath}`;
+}
+
+function resolveApiUrl(): string {
+  const apiPath = import.meta.env.VITE_API_URL;
+  const devBackend = import.meta.env.VITE_DEV_BACKEND;
+
+  if (!apiPath) {
+    throw new Error('VITE_API_URL is not configured');
+  }
+
+  const isAbsoluteUrl = /^https?:\/\//i.test(apiPath);
+  if (isAbsoluteUrl) {
+    return apiPath;
+  }
+
+  if (import.meta.env.DEV) {
+    if (!devBackend) {
+      throw new Error(
+        'VITE_DEV_BACKEND is required in development when VITE_API_URL is a relative path'
+      );
+    }
+
+    return joinUrl(devBackend, apiPath);
+  }
+
+  return apiPath;
+}
+
+const API_URL = resolveApiUrl();
 const REQUEST_TIMEOUT_MS = 15000;
 
 const AXIOS_CONFIG: AxiosConfig = {
   baseURL: API_URL,
-  withCredentials: true,
   timeout: REQUEST_TIMEOUT_MS
 };
 
-/** Rutas donde los errores son respuestas esperadas del negocio */
+
 const EXPECTED_ERROR_ROUTES: readonly ExpectedErrorRoutes[] = [
   {
     status: 401,
@@ -56,53 +86,38 @@ const EXPECTED_ERROR_ROUTES: readonly ExpectedErrorRoutes[] = [
 // INSTANCIAS
 // ============================================================================
 
-/** Instancia separada para refresh token - evita loop infinito en interceptores */
+
 const refreshAxiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
 
-/** Instancia principal con interceptores configurados */
+
 const axiosInstance: AxiosInstance = axios.create(AXIOS_CONFIG);
 
 // ============================================================================
 // FUNCIONES PRIVADAS
 // ============================================================================
 
-/**
- * Obtiene el token del almacenamiento local
- * @returns Token o null si no existe
- */
+
 function getStoredToken(): string | null {
   return localStorage.getItem('token');
 }
 
-/**
- * Guarda el token en almacenamiento local
- * @param token - Token a guardar
- */
+
 function saveToken(token: string): void {
   localStorage.setItem('token', token);
 }
 
-/**
- * Elimina el token del almacenamiento
- */
+
 function clearToken(): void {
   localStorage.removeItem('token');
 }
 
-/**
- * Redirige a la página de sesión expirada
- */
+
 function redirectToSessionExpired(): void {
   clearToken();
   globalThis.location.href = '/session-expired';
 }
 
-/**
- * Determina si una ruta espera cierto error HTTP como respuesta válida
- * @param requestUrl - URL de la solicitud
- * @param statusCode - Código HTTP
- * @returns true si el error es esperado para esta ruta
- */
+
 function isExpectedError(
   requestUrl: string | undefined,
   statusCode: number
@@ -118,12 +133,7 @@ function isExpectedError(
   );
 }
 
-/**
- * Extrae el mensaje de error de la respuesta del servidor
- * @param errorData - Datos de error de la respuesta
- * @param defaultMessage - Mensaje por defecto si no hay mensaje disponible
- * @returns Mensaje de error a mostrar
- */
+
 function extractErrorMessage(
   errorData: unknown,
   defaultMessage: string
@@ -142,17 +152,12 @@ function extractErrorMessage(
   return defaultMessage;
 }
 
-/**
- * Maneja errores de solicitud (sin respuesta del servidor)
- */
+
 function handleNetworkError(): void {
   toast.error('Error de red. Por favor, verifica tu conexión.');
 }
 
-/**
- * Maneja error 400 (Bad Request)
- * @param errorData
- */
+
 function handleBadRequestError(errorData: unknown): void {
   const message = extractErrorMessage(
     errorData,
@@ -161,33 +166,23 @@ function handleBadRequestError(errorData: unknown): void {
   toast.error(message);
 }
 
-/**
- * Maneja error 403 (Forbidden)
- */
+
 function handleForbiddenError(): void {
   toast.error('No tienes permiso para realizar esta acción.');
 }
 
-/**
- * Maneja error 500 (Internal Server Error)
- */
+
 function handleServerError(): void {
   toast.error('Error del servidor. Por favor, intenta más tarde.');
 }
 
-/**
- * Maneja error 404 (Not Found)
- * @param errorData
- */
+
 function handleNotFoundError(errorData: unknown): void {
   const message = extractErrorMessage(errorData, 'Recurso no encontrado.');
   toast.error(message);
 }
 
-/**
- * Maneja error genérico
- * @param errorData
- */
+
 function handleGenericError(errorData: unknown): void {
   const message = extractErrorMessage(
     errorData,
@@ -196,11 +191,7 @@ function handleGenericError(errorData: unknown): void {
   toast.error(message);
 }
 
-/**
- * Intenta refrescar el token de autenticación
- * @returns Nuevo token
- * @throws Error si el refresh falla
- */
+
 async function attemptTokenRefresh(): Promise<string> {
   const response = await refreshAxiosInstance.post<{ token: string }>(
     '/refresh-token'
@@ -214,11 +205,7 @@ async function attemptTokenRefresh(): Promise<string> {
   return newToken;
 }
 
-/**
- * Maneja error 401 (Unauthorized) con refresh automático de token
- * @param error
- * @param originalRequest
- */
+
 async function handleUnauthorizedError(
   error: AxiosError,
   originalRequest: any
@@ -250,10 +237,7 @@ async function handleUnauthorizedError(
   }
 }
 
-/**
- * Maneja respuestas de error HTTP según el código de estado
- * @param error
- */
+
 async function handleErrorResponse(error: AxiosError): Promise<void> {
   if (!error.response) {
     handleNetworkError();
@@ -297,9 +281,7 @@ async function handleErrorResponse(error: AxiosError): Promise<void> {
 // INTERCEPTORES
 // ============================================================================
 
-/**
- * Interceptor de request: Agrega token de autenticación automáticamente
- */
+
 axiosInstance.interceptors.request.use(
   config => {
     const token = getStoredToken();
@@ -313,9 +295,7 @@ axiosInstance.interceptors.request.use(
   error => Promise.reject(error)
 );
 
-/**
- * Interceptor de response: Maneja errores y refresh de token
- */
+
 axiosInstance.interceptors.response.use(
   response => response,
   (error: AxiosError) => handleErrorResponse(error)

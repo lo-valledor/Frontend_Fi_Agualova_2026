@@ -22,40 +22,11 @@ export interface ExportColumn {
   formatter?: (value: any) => string;
 }
 
-/**
- * Hook para exportar datos a CSV o Excel
- *
- * Proporciona funciones para exportar datos tabulares a CSV (con BOM UTF-8)
- * o Excel (XLSX con lazy loading). Incluye formatters comunes como fechas.
- *
- * @template T - Tipo de datos a exportar
- * @returns Objeto con estado de exportación y funciones
- *
- * @example
- * ```tsx
- * const { isExporting, exportData, formatDateForExport } = useExportData();
- *
- * const columns: ExportColumn[] = [
- *   { key: 'id', header: 'ID' },
- *   { key: 'date', header: 'Fecha', formatter: formatDateForExport },
- *   { key: 'amount', header: 'Monto' }
- * ];
- *
- * const handleExport = async () => {
- *   await exportData(records, columns, { format: 'xlsx', filename: 'ventas' });
- * };
- * ```
- */
+
 export function useExportData<T extends Record<string, any>>() {
   const [isExporting, setIsExporting] = useState(false);
 
-  /**
-   * Exporta datos en el formato especificado
-   *
-   * @param data - Registros a exportar
-   * @param columns - Definición de columnas con formatters opcionales
-   * @param options - Opciones de exportación (formato, nombre de archivo, headers)
-   */
+  
   const exportData = async (
     data: T[],
     columns: ExportColumn[],

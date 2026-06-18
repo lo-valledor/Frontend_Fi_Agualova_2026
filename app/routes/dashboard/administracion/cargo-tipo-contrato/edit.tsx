@@ -1,20 +1,12 @@
-/* eslint-disable no-empty-pattern */
 import EditarTipoContrato from '~/components/administracion/cargo-tipo-contrato/form/editar-tipo-contrato';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
-import type {
-  BuscarCargoFacturable,
-  GeCombosConceptos,
-  GetCombosTarifas,
-  GetCombosTiposMedidor,
-  GetCondicionesContrato
-} from '~/types/administracion';
 
 import type { Route } from './+types/edit';
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
-    { title: 'Enerlova | Cargo Tipo Contrato - Editar' },
+    { title: 'Agualova | Cargo Tipo Contrato - Editar' },
     { name: 'description', content: 'Cargo Tipo Contrato - Editar' }
   ];
 }
@@ -31,14 +23,13 @@ export async function clientLoader({ params }: Route.ClientActionArgs) {
   return { cargoTipoContrato: result.data };
 }
 
-export default function Edit({ loaderData, params }: Route.ComponentProps) {
+export default function Edit({ loaderData }: Route.ComponentProps) {
   const { cargoTipoContrato } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Administracion' },
     { label: 'Cargo Tipo Contrato' }
   ];
 
-  // Si no hay datos, mostrar mensaje de error o loading
   if (!cargoTipoContrato) {
     return (
       <div>
@@ -56,21 +47,12 @@ export default function Edit({ loaderData, params }: Route.ComponentProps) {
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <EditarTipoContrato
-        cargoTipoContrato={cargoTipoContrato.editar}
-        detalle={cargoTipoContrato.detalle}
-        listbox={cargoTipoContrato.listbox}
-        conceptos={
-          cargoTipoContrato.conceptos as unknown as GeCombosConceptos[]
-        }
-        tarifas={cargoTipoContrato.tarifas as unknown as GetCombosTarifas[]}
-        tiposMedidor={
-          cargoTipoContrato.tiposMedidor as unknown as GetCombosTiposMedidor[]
-        }
-        condicionesContrato={
-          cargoTipoContrato.condicionesContrato as unknown as GetCondicionesContrato[]
-        }
-        cargos={cargoTipoContrato.cargos as unknown as BuscarCargoFacturable[]}
-        tipoContratoId={Number(params.cargoTipoContratoId)}
+        tipoContratoId={cargoTipoContrato.tipoContratoId}
+        tipoContrato={cargoTipoContrato.tipoContrato}
+        configuracion={cargoTipoContrato.configuracion}
+        conceptos={cargoTipoContrato.conceptos}
+        condiciones={cargoTipoContrato.condiciones}
+        cargosFacturables={cargoTipoContrato.cargosFacturables}
       />
     </div>
   );

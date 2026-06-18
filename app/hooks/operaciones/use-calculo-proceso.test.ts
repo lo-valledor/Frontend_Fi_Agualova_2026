@@ -1,8 +1,3 @@
-/**
- * Tests para useCalculoProceso hook
- * Verifica lanzamiento y aceptación de cálculos
- */
-
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCalculoProceso } from './use-calculo-proceso';

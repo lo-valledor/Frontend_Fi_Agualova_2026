@@ -6,8 +6,8 @@ import type { Route } from './+types/login';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Login' },
-    { name: 'description', content: 'Enerlova | Login' }
+    { title: 'Agualova | Login' },
+    { name: 'description', content: 'Agualova | Login' }
   ];
 }
 
