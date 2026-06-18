@@ -1,0 +1,171 @@
+name: 🚧 CI & Deploy Staging (develop)
+
+on:
+  pull_request:
+    branches: [develop, main]
+    types: [opened, synchronize, reopened]
+
+  push:
+    branches: [develop]
+
+  workflow_dispatch:
+
+# Cancela ejecuciones redundantes en pushes sucesivos al mismo PR.
+concurrency:
+  group: staging-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9'
+  VITE_ENV_MODE: uat
+
+jobs:
+  # ============================================================================
+  # CI — corre en todo PR y en push a develop
+  # ============================================================================
+  ci:
+    name: 🧪 CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: 📦 Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 💾 Resolve pnpm store path
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: 🗂️ Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔍 TypeScript typecheck
+        run: pnpm run typecheck
+
+      - name: 🧹 Lint (Biome)
+        run: pnpm run lint
+
+      - name: 🧪 Tests
+        run: pnpm run test:run
+
+      - name: 🏗️ Build
+        env:
+          VITE_API_URL: ${{ secrets.STAGING_API_URL }}
+        run: pnpm run build
+
+      - name: 📤 Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-staging
+          path: build/client/
+          retention-days: 3
+
+  # ============================================================================
+  # Deploy staging — sólo en push a develop (post-merge)
+  # Runner: agualova_dev (self-hosted, Linux, X64, staging)
+  # ============================================================================
+  deploy-staging:
+    name: 🚀 Deploy Staging
+    needs: ci
+    runs-on: [self-hosted, Linux, X64, staging]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-staging
+          path: build/client/
+
+      - name: 🔍 Verify build output
+        run: |
+          if [ ! -f build/client/index.html ]; then
+            echo "❌ build/client/index.html not found"
+            exit 1
+          fi
+          echo "✅ Build artifact OK"
+          ls -la build/client/ | head -20
+
+      - name: 🚀 Deploy to staging path
+        env:
+          STAGING_DEPLOY_PATH: ${{ secrets.STAGING_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${STAGING_DEPLOY_PATH:-}" ]; then
+            echo "❌ STAGING_DEPLOY_PATH secret not configured"
+            exit 1
+          fi
+
+          TARGET="$STAGING_DEPLOY_PATH"
+
+          echo "🎯 Deploying to: $TARGET"
+
+          # Backup del despliegue anterior (preservar 1 rotación).
+          if [ -d "$TARGET" ]; then
+            rm -rf "${TARGET}.previous"
+            cp -a "$TARGET" "${TARGET}.previous" 2>/dev/null || true
+            echo "📦 Backup created at ${TARGET}.previous"
+          fi
+
+          # Sincronizar nuevo build. --delete elimina archivos obsoletos.
+          # --exclude preserva archivos que nginx puede haber añadido
+          # (por ejemplo, .htaccess o custom 50x.html).
+          mkdir -p "$TARGET"
+          rsync -a --delete \
+            --exclude='.well-known' \
+            --exclude='*.bak' \
+            build/client/ "$TARGET/"
+
+          echo "✅ Staging deploy completed"
+
+          # Validar que el index.html esté presente tras el deploy.
+          if [ ! -f "$TARGET/index.html" ]; then
+            echo "❌ index.html missing after deploy"
+            exit 1
+          fi
+
+      - name: 📊 Deploy Summary
+        if: success()
+        run: |
+          echo "## 🚧 Staging Deploy - ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Rama**: \`develop\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Actor**: \`${{ github.actor }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Runner**: \`agualova_dev\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🧹 Rollback on failure
+        if: failure()
+        env:
+          STAGING_DEPLOY_PATH: ${{ secrets.STAGING_DEPLOY_PATH }}
+        run: |
+          set -euo pipefail
+          if [ -d "${STAGING_DEPLOY_PATH:-}.previous" ]; then
+            echo "⏪ Rolling back to previous deployment"
+            rm -rf "$STAGING_DEPLOY_PATH"
+            mv "${STAGING_DEPLOY_PATH}.previous" "$STAGING_DEPLOY_PATH"
+          else
+            echo "⚠️ No previous deployment to roll back to"
+          fi
