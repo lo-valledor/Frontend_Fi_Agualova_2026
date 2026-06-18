@@ -16,6 +16,7 @@ concurrency:
 
 env:
   NODE_VERSION: '24'
+  PNPM_VERSION: '9'
   VITE_ENV_MODE: production
 
 jobs:
@@ -36,8 +37,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: 📦 Enable pnpm via Corepack
-        run: corepack enable pnpm
+      - name: 📦 Install pnpm ${{ env.PNPM_VERSION }}
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🗂️ Cache pnpm store
         uses: actions/cache@v4
@@ -49,6 +52,10 @@ jobs:
 
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
+
+      # Ver nota en ci-staging.yml: el lockfile incluye tarballs sin
+      # 'integrity' (xlsx desde CDN externo), por lo que debemos mantener
+      # pnpm 9 alineado con ci-cd.yml existente.
 
       - name: 🔍 TypeScript typecheck
         run: pnpm run typecheck
