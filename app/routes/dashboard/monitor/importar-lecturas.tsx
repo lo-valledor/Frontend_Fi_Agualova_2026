@@ -10,7 +10,7 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Exportar Lecturas' },
+    { title: 'Agualova | Exportar Lecturas' },
     { name: 'description', content: 'Exportar lecturas de medidores' }
   ];
 }

@@ -21,7 +21,6 @@ import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { getReactSelectStyles } from '~/components/shared/react-select-styles';
 import { useTheme } from '~/components/theme-provider';
@@ -76,19 +75,6 @@ type ContratanteFormData = z.infer<ReturnType<typeof createContratanteSchema>>;
 export default function CrearContratanteComponent() {
   const navigate = useNavigate();
   const { theme } = useTheme();
-
-  // Permisos
-  const { canCreate } = useAuth();
-  const route = '/dashboard/administracion/contratantes';
-  const hasCreatePermission = canCreate(route);
-
-  // Redirigir si no tiene permisos
-  useEffect(() => {
-    if (!hasCreatePermission) {
-      toast.error('No tiene permisos para crear contratantes');
-      navigate('/dashboard/administracion/contratantes');
-    }
-  }, [hasCreatePermission, navigate]);
 
   const [, setGiros] = useState<GetGiros[]>([]);
   const [comunas, setComunas] = useState<GetComunas[]>([]);
@@ -228,12 +214,7 @@ export default function CrearContratanteComponent() {
                 <Button
                   onClick={form.handleSubmit(onSubmit)}
                   className='gap-2'
-                  disabled={isSubmitting || !hasCreatePermission}
-                  title={
-                    !hasCreatePermission
-                      ? 'No tiene permisos para crear contratantes'
-                      : ''
-                  }
+                  disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
                   {isSubmitting ? 'Creando...' : 'Crear Contratante'}

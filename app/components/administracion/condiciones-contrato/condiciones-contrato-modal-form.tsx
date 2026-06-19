@@ -31,8 +31,8 @@ import {
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
 import api from '~/lib/api';
-import type { GetCondicionesContrato } from '~/types/administracion';
-import type { Conceptos } from '~/types/mantencion';
+import type { CondicionesContratoRow } from '~/types/administracion';
+import type { Concepto } from '~/types/mantencion';
 
 const condicionContratoFormSchema = z.object({
   descripcion: z.string().min(1, { message: 'La descripción es requerida.' }),
@@ -48,9 +48,9 @@ interface CondicionesContratoModalFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  condicionContrato: GetCondicionesContrato | undefined;
+  condicionContrato: CondicionesContratoRow | undefined;
   mode: 'add' | 'edit';
-  conceptos: Conceptos[];
+  conceptos: Concepto[];
 }
 
 export default function CondicionesContratoModalForm({
@@ -125,7 +125,7 @@ export default function CondicionesContratoModalForm({
       const conceptoId = conceptoEncontrado?.id || 0;
 
       const formValues = {
-        descripcion: condicionContrato?.nombre || '',
+        descripcion: condicionContrato?.descripcion || '',
         conceptoId: conceptoId,
         usaPorcentaje: usaPorcentaje,
         valor: valor,

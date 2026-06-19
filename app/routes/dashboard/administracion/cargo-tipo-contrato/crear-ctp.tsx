@@ -1,51 +1,32 @@
-import React from 'react';
 import CrearTipoContratoComponent from '~/components/administracion/cargo-tipo-contrato/form/crear-tipo-contrato-component';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
-import { mantencionService } from '~/services/mantencionService';
 
 export function meta() {
   return [
-    { title: 'Enerlova | Crear Cargo Tipo Contrato' },
-    { name: 'description', content: 'Crear un nuevo cargo tipo contrato' }
+    { title: 'Agualova | Crear Cargo Tipo Contrato' },
+    { name: 'description', content: 'Crear una nueva configuración de cargo tipo contrato' }
   ];
 }
 
 export async function clientLoader() {
-  const [resultCargos, resultTiposContratos] = await Promise.all([
-    administracionService.getCargoTipoContratoCrear(),
-    mantencionService.getTiposContratos()
-  ]);
+  const result = await administracionService.getCargoTipoContratoCrear();
 
-  if (resultCargos.error || !resultCargos.data) {
+  if (result.error || !result.data) {
     return {
+      tiposContrato: [],
       conceptos: [],
-      tarifas: [],
-      tiposMedidor: [],
-      condicionesContrato: [],
-      cargos: [],
-      tiposContratos: resultTiposContratos.data || []
+      condiciones: [],
+      cargosFacturables: []
     };
   }
 
-  return {
-    ...resultCargos.data,
-    tiposContratos: resultTiposContratos.data || []
-  };
+  return result.data;
 }
 
 export default function CrearCtp({
   loaderData
-}: Readonly<{ loaderData: any }>) {
-  const {
-    conceptos,
-    tarifas,
-    tiposMedidor,
-    condicionesContrato,
-    cargos,
-    tiposContratos
-  } = loaderData;
+}: Readonly<{ loaderData: Awaited<ReturnType<typeof clientLoader>> }>) {
   const pageBreadcrumbs = [
     { label: 'Administracion' },
     { label: 'Cargo Tipo Contrato' }
@@ -55,12 +36,10 @@ export default function CrearCtp({
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <CrearTipoContratoComponent
-        conceptos={conceptos}
-        tarifas={tarifas}
-        tiposMedidor={tiposMedidor}
-        condicionesContrato={condicionesContrato}
-        cargos={cargos}
-        tiposContratos={tiposContratos}
+        tiposContrato={loaderData.tiposContrato}
+        conceptos={loaderData.conceptos}
+        condiciones={loaderData.condiciones}
+        cargosFacturables={loaderData.cargosFacturables}
       />
     </div>
   );

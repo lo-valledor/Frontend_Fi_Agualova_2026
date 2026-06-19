@@ -25,7 +25,7 @@ import {
   FormMessage
 } from '~/components/ui/form';
 import { Input } from '~/components/ui/input';
-import type { Tarifas } from '~/types/mantencion';
+import type { Tarifa } from '~/types/mantencion';
 
 const tarifaSchema = z.object({
   codigo: z
@@ -44,7 +44,7 @@ interface TarifaFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  tarifa?: Tarifas;
+  tarifa?: Tarifa;
   mode: 'add' | 'edit';
 }
 
@@ -79,9 +79,9 @@ export default function TarifaFormModal({
       const { default: api } = await import('~/lib/api');
 
       if (mode === 'add') {
-        await api.post('/crearTarifa', data);
+        await api.post('/tarifas/crear', data);
       } else {
-        await api.put(`/modificarTarifa`, { ...data, id: tarifa?.id });
+        await api.put(`/tarifas/editar`, { ...data, id: tarifa?.id });
       }
 
       onSuccess();

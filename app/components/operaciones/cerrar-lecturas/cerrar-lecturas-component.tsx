@@ -15,7 +15,6 @@ import { toast } from 'sonner';
 
 import { useMemo, useState } from 'react';
 
-import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
@@ -64,11 +63,6 @@ export default function CerrarLecturasComponent({
   const [totalLecturasCerrar, setTotalLecturasCerrar] = useState(0);
   const [showSinLecturas, setShowSinLecturas] = useState(false);
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/operaciones/cerrar-lecturas';
-  const hasPermission = canCreate(route) || canEdit(route);
-
   const periodoFormateado = useMemo(() => {
     if (periodoAbierto && periodoAbierto.length > 0) {
       const { mes, anio } = periodoAbierto[0];
@@ -104,12 +98,7 @@ export default function CerrarLecturasComponent({
     };
   }, [estadoCierreLecturas]);
 
-  /**
-   * Convierte el día de facturación seleccionado al ID del ciclo que espera la API
-   *
-   * @param diaFacturacion - Día de facturación (ej: "15", "16", "30")
-   * @returns ID del ciclo para la API: '1' para ciclo 15, '2' para ciclo 30
-   */
+  
   const obtenerCicloParaAPI = (diaFacturacion: string): string => {
     if (!ciclosFacturacion || ciclosFacturacion.length === 0) {
       return diaFacturacion;
@@ -766,7 +755,7 @@ export default function CerrarLecturasComponent({
             periodo={periodoFormateado}
             onSuccess={handleLecturaCerrada}
             totalLecturas={totalLecturasCerrar}
-            disabled={!hasPermission}
+            disabled={false}
           />
         )}
       </div>

@@ -3,34 +3,20 @@ import type { ServiceResponse } from '~/services/core/api-response';
 import type { ComboEmpalmes, PeriodosFacturacion } from '~/types/reportes';
 import api from '~/lib/api';
 
-/**
- * Summary Report Data Interface
- */
+
 export interface ResumenFacturacionData {
   comboEmpalmes: ComboEmpalmes[];
   periodosFacturacion: PeriodosFacturacion[];
 }
 
-/**
- * SummaryReportService
- * Manages summary and overview reports
- * - Billing summaries
- * - Available empalmes and periods
- * - Search contracts overview
- */
+
 export class SummaryReportService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient: any = api) {
     super(httpClient);
   }
 
-  /**
-   * Get resumen facturación with empalmes and periods
-   * Parallel execution for independent data loads
-   */
+  
   async getResumenFacturacion(): Promise<
     ServiceResponse<ResumenFacturacionData>
   > {
@@ -51,9 +37,7 @@ export class SummaryReportService extends BaseApiService {
     }, 'Error getting billing summary');
   }
 
-  /**
-   * Get contract search data
-   */
+  
   async getBuscarContrato(): Promise<
     ServiceResponse<{
       buscarContratos: any[];
@@ -67,9 +51,7 @@ export class SummaryReportService extends BaseApiService {
     }, 'Error getting contract search data');
   }
 
-  /**
-   * Get available empalmes only
-   */
+  
   async getComboEmpalmes(): Promise<ServiceResponse<ComboEmpalmes[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('/combo-empalmes');
@@ -77,9 +59,7 @@ export class SummaryReportService extends BaseApiService {
     }, 'Error getting empalmes');
   }
 
-  /**
-   * Get billing periods only
-   */
+  
   async getPeriodosFacturacion(): Promise<
     ServiceResponse<PeriodosFacturacion[]>
   > {

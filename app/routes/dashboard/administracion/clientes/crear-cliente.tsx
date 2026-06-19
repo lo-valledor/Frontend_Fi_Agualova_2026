@@ -3,7 +3,7 @@ import CrearClienteComponent from '~/components/administracion/clientes/form/cre
 
 export function meta() {
   return [
-    { title: 'Enerlova | Crear Cliente' },
+    { title: 'Agualova | Crear Cliente' },
     { description: 'Crea un nuevo cliente en el sistema' }
   ];
 }

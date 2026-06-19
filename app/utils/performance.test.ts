@@ -3,12 +3,7 @@ import { validatePassword } from './password-validation';
 import { formatRut, isValidRutFormat, cleanRut } from './rut-utils';
 import { formatToDate } from './date-formatter';
 
-/**
- * Tests de Rendimiento (Performance Tests)
- *
- * Estos tests miden el rendimiento de funciones críticas del sistema
- * bajo carga para asegurar que se mantienen dentro de márgenes aceptables.
- */
+
 
 describe('Performance Tests - Utilidades Críticas', () => {
   describe('Password Validation Performance', () => {

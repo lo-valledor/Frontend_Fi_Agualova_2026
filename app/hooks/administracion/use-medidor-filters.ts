@@ -11,9 +11,7 @@ import {
 } from './utils/filter-utilities';
 import { calculateFilterStats } from './utils/stats-calculator';
 
-/**
- * Opciones disponibles para filtros de medidores
- */
+
 export interface MedidorFilterOptions {
   marcas: string[];
   tipos: string[];
@@ -21,39 +19,15 @@ export interface MedidorFilterOptions {
   estados: string[];
 }
 
-/**
- * Alias para mantener compatibilidad con componentes existentes
- */
+
 export type FilterOptions = MedidorFilterOptions;
 
-/**
- * Hook para filtrar medidores
- * Aplica SOLID: SRP (cada tipo de filtro es independiente)
- * Maneja múltiples tipos de filtros: string, presencia, rango numérico y rango de fechas
- *
- * @param medidores - Array de medidores a filtrar
- * @param filters - Filtros a aplicar
- * @returns Medidores filtrados, estadísticas y opciones
- *
- * @example
- * const { filteredMedidores, filterStats } = useMedidorFilters(
- *   medidores,
- *   {
- *     marca: 'Siemens',
- *     digitosMin: '5',
- *     digitosMax: '7',
- *     tieneUbicacion: 'true'
- *   }
- * );
- */
+
 export function useMedidorFilters(
   medidores: GetMedidores[],
   filters: MedidorFilters
 ) {
-  /**
-   * Extrae opciones únicas de los medidores
-   * Usa selector específico para cada propiedad
-   */
+  
   const filterOptions = useMemo((): MedidorFilterOptions => {
     return {
       marcas: extractUniqueOptions(medidores, (m) => m.marca),
@@ -63,10 +37,7 @@ export function useMedidorFilters(
     };
   }, [medidores]);
 
-  /**
-   * Aplica filtros con early returns
-   * Combina múltiples tipos de filtros: string, rango numérico, presencia y fechas
-   */
+  
   const filteredMedidores = useMemo(() => {
     return medidores.filter((medidor) => {
       // Filtros de string simple
@@ -141,9 +112,7 @@ export function useMedidorFilters(
     });
   }, [medidores, filters]);
 
-  /**
-   * Calcula estadísticas de filtros
-   */
+  
   const filterStats = useMemo(
     () => calculateFilterStats(medidores, filteredMedidores, filters),
     [medidores.length, filteredMedidores.length, filters]

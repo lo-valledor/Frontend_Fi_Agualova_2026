@@ -1,10 +1,3 @@
-/**
- * Hook para ejecutar un flujo multi-paso de cálculo de facturación
- * Orquesta 5 pasos secuenciales: lanzar, obtener ID, verificar, consultar datos
- *
- * @module operaciones/use-calculo-facturacion-flow
- */
-
 import { toast } from 'sonner';
 
 import { useCallback, useEffect, useState } from 'react';
@@ -22,9 +15,7 @@ import {
 import { combinarPrefactura } from './utils/data-combiner';
 import { extraerErrorMessage } from './utils/error-handler';
 
-/**
- * Estado de un paso en el flujo
- */
+
 export interface FlowStep {
   id: number;
   name: string;
@@ -35,18 +26,14 @@ export interface FlowStep {
   timestamp?: string;
 }
 
-/**
- * Props del hook de flujo de facturación
- */
+
 interface UseCalculoFacturacionFlowProps {
   periodoFormateado: string;
   cicloId: string;
   onFlowCompleted?: () => void;
 }
 
-/**
- * Inicializa el array de pasos del flujo
- */
+
 function inicializarFlowSteps(): FlowStep[] {
   return [
     {
@@ -82,31 +69,7 @@ function inicializarFlowSteps(): FlowStep[] {
   ];
 }
 
-/**
- * Hook para ejecutar flujo de cálculo de facturación
- *
- * Aplica SOLID: SRP (solo orquesta el flujo), DRY (usa utilities compartidas)
- *
- * @param periodoFormateado - Período en formato MMYYYY
- * @param periodoFormateado.periodoFormateado
- * @param cicloId - ID del ciclo de facturación
- * @param periodoFormateado.cicloId
- * @param onFlowCompleted - Callback cuando se completa el flujo
- * @param periodoFormateado.onFlowCompleted
- * @returns Estados, datos y funciones para ejecutar el flujo
- *
- * @example
- * const {
- *   currentStep,
- *   isRunning,
- *   datosCompletos,
- *   ejecutarFlujoCompleto
- * } = useCalculoFacturacionFlow({
- *   periodoFormateado: '012024',
- *   cicloId: '1',
- *   onFlowCompleted: () => refetch()
- * });
- */
+
 export function useCalculoFacturacionFlow({
   periodoFormateado,
   cicloId,
@@ -131,9 +94,7 @@ export function useCalculoFacturacionFlow({
     inicializarFlowSteps()
   );
 
-  /**
-   * Actualiza el estado de un paso en el flujo
-   */
+  
   const logStep = useCallback(
     (
       stepId: number,
@@ -158,9 +119,7 @@ export function useCalculoFacturacionFlow({
     []
   );
 
-  /**
-   * Paso 1: Lanza el cálculo de facturación en el backend
-   */
+  
   const ejecutarPaso1 = async (): Promise<boolean> => {
     logStep(1, 'loading');
 
@@ -188,9 +147,7 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  /**
-   * Paso 2: Obtiene el identificador del proceso
-   */
+  
   const ejecutarPaso2 = async (): Promise<boolean> => {
     logStep(2, 'loading');
 
@@ -233,9 +190,7 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  /**
-   * Paso 3: Verifica el estado del proceso
-   */
+  
   const ejecutarPaso3 = async (): Promise<boolean> => {
     // Early return si no hay procesoId
     if (!procesoId) {
@@ -277,9 +232,7 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  /**
-   * Paso 4: Consulta los encabezados de prefactura
-   */
+  
   const ejecutarPaso4 = async (): Promise<boolean> => {
     logStep(4, 'loading');
 
@@ -313,9 +266,7 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  /**
-   * Paso 5: Consulta los cargos y combina con encabezados
-   */
+  
   const ejecutarPaso5 = async (): Promise<boolean> => {
     logStep(5, 'loading');
 
@@ -361,10 +312,7 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  /**
-   * Ejecuta los pasos del flujo secuencialmente
-   * @param paso
-   */
+  
   const ejecutarPasosSiguientes = async (paso: number): Promise<boolean> => {
     switch (paso) {
       case 2:
@@ -405,9 +353,7 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  /**
-   * Ejecuta el flujo completo desde el principio
-   */
+  
   const ejecutarFlujoCompleto = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
@@ -431,9 +377,7 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  /**
-   * Limpia el estado del flujo
-   */
+  
   const limpiarFlujo = (): void => {
     setCurrentStep(0);
     setProcesoId(null);

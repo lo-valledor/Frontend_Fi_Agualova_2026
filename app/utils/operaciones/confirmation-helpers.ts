@@ -1,7 +1,3 @@
-/**
- * Procesamiento deconfirmaciones de precios en lote
- */
-
 import api from '~/lib/api';
 import {
   getErrorMessage,
@@ -14,12 +10,7 @@ interface ProcessResult {
   shouldStop: boolean;
 }
 
-/**
- * Procesa una lista de confirmaciones de precios
- * @param items
- * @param userName
- * @param toast
- */
+
 export async function processConfirmations(
   items: Array<{ indice: string; codigo: string }>,
   userName: string,
@@ -62,12 +53,7 @@ export async function processConfirmations(
   return { exitosas, fallidas, shouldStop: false };
 }
 
-/**
- * Filtra registros pendientes de confirmación
- * @param data
- * @param selectedCodes
- * @param codeField
- */
+
 export function filterPendingConfirmations<
   T extends { indice: string; confirmacion: string }
 >(data: T[], selectedCodes: string[], codeField: keyof T): T[] {

@@ -10,7 +10,6 @@ interface ContratantesColumnsProps {
   onDetails: (contratante: GetContratante) => void;
   detailingContratanteRut: string | null;
   comunas: GetComunas[];
-  canEdit?: boolean;
 }
 
 export const columns = ({

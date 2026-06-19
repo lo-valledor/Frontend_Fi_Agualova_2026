@@ -8,13 +8,13 @@ import { operacionesService } from '~/services/operacionesService';
 import type { Route } from './+types/precios-cargo';
 
 // Lazy load del componente pesado (42 KB)
-const PreciosCargoComponent = lazy(() =>
-  import('~/components/operaciones/precios-cargo/precios-cargo-component')
+const PreciosCargoComponent = lazy(
+  () => import('~/components/operaciones/precios-cargo/precios-cargo-component')
 );
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Precios de Cargo' },
+    { title: 'Agualova | Precios de Cargo' },
     { name: 'description', content: 'Precios de Cargo' }
   ];
 }
@@ -33,7 +33,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
   if (result.error || !result.data) {
     return {
       tablaEnel: [],
-      tablaEnerlova: [],
+      tablaAgualova: [],
       initialMes: currentMonth,
       initialAnio: currentYear,
       error: 'Error al cargar los datos'
@@ -42,7 +42,7 @@ export async function clientLoader({ request }: Route.ClientLoaderArgs) {
 
   return {
     tablaEnel: result.data.tablaEnel,
-    tablaEnerlova: result.data.tablaEnerlova,
+    tablaAgualova: result.data.tablaAgualova,
     initialMes: mes,
     initialAnio: anio,
     error: null

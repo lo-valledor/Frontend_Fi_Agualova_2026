@@ -528,7 +528,7 @@ const FacturasAnalyticsSimple = memo(function FacturasAnalyticsSimple({
       filename: `facturas_contrato_${contratoId}`,
       orientation: 'landscape',
       companyInfo: {
-        name: 'Sistema de Gestión Enerlova',
+        name: 'Sistema de Gestión Agualova',
         address: 'Reporte generado automáticamente',
         phone: ''
       }

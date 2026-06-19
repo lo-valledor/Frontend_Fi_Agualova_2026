@@ -16,7 +16,6 @@ import { useNavigate } from 'react-router';
 
 import { useVirtualizer } from '@tanstack/react-virtual';
 
-import { useAuth } from '~/context/AuthContext';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
 import {
@@ -75,18 +74,7 @@ export default function EditarContratoComponent({
 }) {
   const navigate = useNavigate();
 
-  // Permisos
-  const { canEdit } = useAuth();
-  const route = '/dashboard/administracion/contratos';
-  const hasEditPermission = canEdit(route);
 
-  // Redirigir si no tiene permisos
-  useEffect(() => {
-    if (!hasEditPermission) {
-      toast.error('No tiene permisos para editar contratos');
-      navigate('/dashboard/administracion/contratos');
-    }
-  }, [hasEditPermission, navigate]);
 
   // Estados para los modales de selección
   const [modalPropietario, setModalPropietario] = useState(false);
@@ -646,12 +634,7 @@ export default function EditarContratoComponent({
                 <Button
                   onClick={handleSubmit}
                   className='gap-2 bg-primary hover:bg-primary/90'
-                  disabled={isSubmitting || !hasEditPermission}
-                  title={
-                    hasEditPermission
-                      ? ''
-                      : 'No tiene permisos para editar contratos'
-                  }
+                  disabled={isSubmitting}
                 >
                   <Save className='h-4 w-4' />
                   {isSubmitting ? 'Actualizando...' : 'Actualizar Contrato'}

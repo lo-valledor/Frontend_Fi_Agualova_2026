@@ -1,10 +1,3 @@
-/**
- * Export Utilities - Barrel Export
- *
- * Consolidates all export-related utilities in a single entry point.
- * Includes CSV/Excel export, PDF rendering, formatters, and column builders.
- */
-
 // Type definitions
 export type { ExportColumn, ExportConfig, PDFSection, PDFTableColumn, CompanyInfo } from './types';
 

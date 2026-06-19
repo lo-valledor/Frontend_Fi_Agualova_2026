@@ -8,25 +8,23 @@ import type { Marca } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (marca: Marca) => void;
   onDelete: (marca: Marca) => void;
-  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete,
-  canEdit = true
+  onDelete
 }: TableColumnsProps): ColumnDef<Marca>[] => [
   {
-    accessorKey: 'codigo',
+    accessorKey: 'id',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Código' />
+      <DataTableColumnHeader column={column} title='ID' />
     ),
     cell: ({ row }) => {
-      const codigo = row.getValue('codigo') as string;
+      const id = row.getValue('id') as string;
       return (
         <div className='flex items-center'>
           <Badge variant='outline' className='font-mono'>
-            {codigo}
+            {id}
           </Badge>
         </div>
       );
@@ -54,7 +52,6 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

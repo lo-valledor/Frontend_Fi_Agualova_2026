@@ -1,8 +1,3 @@
-/**
- * Barrel export para servicios de operaciones
- * Centraliza todas las exportaciones de la carpeta operations
- */
-
 import { periodosService } from './periodos.service';
 import { pricingService } from './pricing.service';
 import { preparationService } from './preparation.service';
@@ -30,10 +25,7 @@ export type { BillingCalculationRequest } from './billing-calculation.service';
 // Tipos compartidos
 export * from './types';
 
-/**
- * Objeto consolidado con todos los servicios de operaciones
- * Permite importar como: import { operacionesServices } from '~/services'
- */
+
 export const operacionesServices = {
   periodos: periodosService,
   pricing: pricingService,

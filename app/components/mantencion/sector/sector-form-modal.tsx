@@ -35,7 +35,7 @@ import {
 } from '~/components/ui/select';
 import { Switch } from '~/components/ui/switch';
 import api from '~/lib/api';
-import type { Sectores, Zonas } from '~/types/mantencion';
+import type { Sector, SectorZona } from '~/types/mantencion';
 
 const SectorFormSchema = z.object({
   nombre: z
@@ -52,7 +52,7 @@ interface SectorFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  sector: Sectores | null;
+  sector: Sector | null;
   mode: 'add' | 'edit';
 }
 
@@ -64,7 +64,7 @@ export default function SectorFormModal({
   mode
 }: SectorFormModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [zonas, setZonas] = useState<Zonas[]>([]);
+  const [zonas, setZonas] = useState<SectorZona[]>([]);
   const [isLoadingZonas, setIsLoadingZonas] = useState(false);
 
   const form = useForm<SectorFormValues>({
@@ -80,17 +80,17 @@ export default function SectorFormModal({
     const fetchZonas = async () => {
       setIsLoadingZonas(true);
       try {
-        const response = await api.get('/buscarZona');
+        const response = await api.get('/sectores/zonas');
 
         // Manejar diferentes formatos de respuesta de la API
-        let zonasData: Zonas[] = [];
+        let zonasData: SectorZona[] = [];
         if (
           response.data &&
           typeof response.data === 'object' &&
           'data' in response.data &&
           Array.isArray((response.data as any).data)
         ) {
-          zonasData = (response.data as { data: Zonas[] }).data;
+          zonasData = (response.data as { data: SectorZona[] }).data;
         } else if (Array.isArray(response.data)) {
           zonasData = response.data;
         }
@@ -130,7 +130,7 @@ export default function SectorFormModal({
     setIsLoading(true);
     try {
       // Buscar el ID de la zona seleccionada
-      const zonaSeleccionada = zonas.find(z => z.nombre === data.zona);
+      const zonaSeleccionada = zonas.find(z => z.descripcion === data.zona);
       const zonaId = zonaSeleccionada?.id;
 
       // Preparar el payload según lo que espera la API
@@ -140,35 +140,18 @@ export default function SectorFormModal({
         estado: data.estado
       };
 
-      // DEBUG
-      console.log('=== DEBUG: Sector Submit ===');
-      console.log('Mode:', mode);
-      console.log('Sector ID:', sector?.id);
-      console.log('Form Data (raw):', data);
-      console.log('Zona seleccionada:', zonaSeleccionada);
-      console.log('API Payload:', apiPayload);
-      console.log('📋 JSON para Swagger:');
-      console.log(JSON.stringify(apiPayload, null, 2));
-      console.log('============================');
-
       if (mode === 'add') {
-        const response = await api.post('/crearSector', apiPayload);
+        const response = await api.post('/sectores/crear', apiPayload);
         console.log('CREATE Response:', response);
       } else if (mode === 'edit' && sector) {
-        const response = await api.put(
-          `/modificarSector/${sector.id}`,
-          apiPayload
-        );
+        const response = await api.put('/sectores/editar', {
+          ...apiPayload,
+          id: sector.id
+        });
         console.log('UPDATE Response:', response);
       }
       onSuccess();
-    } catch (error: any) {
-      console.error('=== DEBUG: Error en Submit ===');
-      console.error('Error completo:', error);
-      console.error('Error response:', error.response);
-      console.error('Error response data:', error.response?.data);
-      console.error('==============================');
-
+    } catch (_error: any) {
       toast.error(
         mode === 'add'
           ? 'Error al crear el sector'
@@ -242,8 +225,8 @@ export default function SectorFormModal({
                     </FormControl>
                     <SelectContent>
                       {zonas.map(zona => (
-                        <SelectItem key={zona.id} value={zona.nombre}>
-                          {zona.nombre}
+                        <SelectItem key={zona.id} value={zona.descripcion}>
+                          {zona.descripcion}
                         </SelectItem>
                       ))}
                     </SelectContent>

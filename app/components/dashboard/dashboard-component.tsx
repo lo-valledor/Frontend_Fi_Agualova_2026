@@ -32,12 +32,6 @@ import {
   ChartTooltipContent
 } from '~/components/ui/chart';
 import api from '~/lib/api';
-import type { GetLimiteInvierno } from '~/types/administracion';
-import type {
-  PeriodoAbierto,
-  TotalesCorteReposicion,
-  ValidarSectoresPendientes
-} from '~/types/operaciones';
 
 const quickActions = [
   {
@@ -85,10 +79,7 @@ const quickActions = [
   }
 ];
 
-/**
- * Procesa contratos agrupados por tipo
- * @param data
- */
+
 const procesarContratosPorTipo = (data: any[]): { [key: string]: number } => {
   const contratosPorTipo: { [key: string]: number } = {};
   if (!Array.isArray(data)) return contratosPorTipo;
@@ -100,10 +91,7 @@ const procesarContratosPorTipo = (data: any[]): { [key: string]: number } => {
   return contratosPorTipo;
 };
 
-/**
- * Procesa clientes separando empresas de personas
- * @param data
- */
+
 const procesarClientesPorTipo = (
   data: any[]
 ): { empresa: number; persona: number } => {
@@ -122,10 +110,7 @@ const procesarClientesPorTipo = (
   return { empresa: empresas, persona: personas };
 };
 
-/**
- * Procesa medidores agrupados por tipo y estado
- * @param data
- */
+
 const procesarMedidores = (
   data: any[]
 ): {
@@ -150,10 +135,7 @@ const procesarMedidores = (
   return { porTipo: medidoresPorTipo, porEstado: medidoresPorEstado };
 };
 
-/**
- * Procesa acometidas agrupadas por sector
- * @param response
- */
+
 const procesarAcometidasPorSector = (
   response: any
 ): { [key: string]: number } => {
@@ -180,11 +162,7 @@ const procesarAcometidasPorSector = (
   return acometidasPorSector;
 };
 
-/**
- * Renderiza el centro del gráfico donut
- * @param value
- * @param label
- */
+
 const renderDonutLabel =
   (value: number, label: string = 'Total') =>
   ({ viewBox }: any) => {
@@ -215,14 +193,10 @@ const renderDonutLabel =
     }
   };
 
-/** Easing mecánico consistente con sidebar */
+
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
-/**
- * Skeleton de carga industrial
- * @param root0
- * @param root0.rows
- */
+
 const LoadingSkeleton = ({ rows = 3 }: { rows?: number }) => (
   <div className='flex items-center justify-center h-[200px] sm:h-[220px]'>
     <div className='space-y-3 w-full'>
@@ -236,14 +210,7 @@ const LoadingSkeleton = ({ rows = 3 }: { rows?: number }) => (
   </div>
 );
 
-/**
- * Card wrapper industrial para analytics
- * @param root0
- * @param root0.icon
- * @param root0.title
- * @param root0.children
- * @param root0.delay
- */
+
 const AnalyticsCard = ({
   icon: Icon,
   title,
@@ -276,7 +243,7 @@ const AnalyticsCard = ({
   </motion.div>
 );
 
-/** Componente de analytics de administración */
+
 const AdminAnalyticsComponent = React.memo(() => {
   const [analyticsData, setAnalyticsData] = useState({
     contratosPorTipo: {} as { [key: string]: number },
@@ -292,10 +259,10 @@ const AdminAnalyticsComponent = React.memo(() => {
       try {
         const [contratosRes, clientesRes, medidoresRes, acometidasRes] =
           await Promise.all([
-            api.get('contrato/buscar'),
-            api.get('ClienteBuscar'),
-            api.get('buscarMedidor'),
-            api.get('buscar-Acometida')
+            api.get('contratos/buscar'),
+            api.get('clientes/buscar'),
+            api.get('medidores/buscar'),
+            api.get('acometidas/buscar')
           ]);
 
         const contratosPorTipo = procesarContratosPorTipo(
@@ -639,14 +606,7 @@ const AdminAnalyticsComponent = React.memo(() => {
   );
 });
 
-/**
- * Renderiza el período actual formateado
- * @param loading
- * @param periodoActual
- * @param periodoActual.mes
- * @param periodoActual.anio
- * @param periodoActual.estado
- */
+
 const renderPeriodoActual = (
   loading: boolean,
   periodoActual: { mes: number; anio: number; estado: string }
@@ -666,17 +626,7 @@ const renderPeriodoActual = (
   return <span className='text-sm text-destructive'>Sin período</span>;
 };
 
-export default function DashboardComponent({
-  periodoAbierto,
-  lecturasPendientes,
-  corte,
-  limiteInvierno
-}: Readonly<{
-  periodoAbierto: PeriodoAbierto;
-  lecturasPendientes: ValidarSectoresPendientes;
-  corte: TotalesCorteReposicion;
-  limiteInvierno: GetLimiteInvierno;
-}>) {
+export default function DashboardComponent() {
   usePrefetchMultiple(
     [
       '/dashboard/administracion/contratos',
@@ -700,7 +650,7 @@ export default function DashboardComponent({
       total: 0
     },
     fechaHora: new Date(),
-    loading: true
+    loading: false
   });
 
   const [displayData, setDisplayData] = useState({
@@ -723,88 +673,7 @@ export default function DashboardComponent({
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    const processDashboardData = () => {
-      try {
-        let periodoActual = { mes: 0, anio: 0, estado: 'Sin período abierto' };
-        if (
-          periodoAbierto &&
-          Array.isArray(periodoAbierto) &&
-          periodoAbierto.length > 0
-        ) {
-          const periodo = periodoAbierto[0];
-          periodoActual = {
-            mes: periodo.mes || 0,
-            anio: periodo.anio || 0,
-            estado: 'Abierto'
-          };
-        }
-
-        let lecturasPendientesCount = 0;
-        if (
-          lecturasPendientes &&
-          typeof lecturasPendientes === 'object' &&
-          'sinPendientes' in lecturasPendientes &&
-          !lecturasPendientes.sinPendientes
-        ) {
-          lecturasPendientesCount = lecturasPendientes.totalPendientes || 0;
-        }
-
-        const totalesCorte = {
-          pendiente: 0,
-          liberado: 0,
-          cortado: 0,
-          reposicionSolicitada: 0,
-          total: 0
-        };
-
-        if (corte && Array.isArray(corte)) {
-          for (const item of corte) {
-            switch (item.codigo) {
-              case 'NULL':
-                totalesCorte.pendiente = item.cantidad || 0;
-                break;
-              case '1':
-                totalesCorte.liberado = item.cantidad || 0;
-                break;
-              case '2':
-                totalesCorte.cortado = item.cantidad || 0;
-                break;
-              case '3':
-                totalesCorte.reposicionSolicitada = item.cantidad || 0;
-                break;
-              case 'TOTAL':
-                totalesCorte.total = item.cantidad || 0;
-                break;
-            }
-          }
-        }
-
-        setDashboardData(prev => ({
-          ...prev,
-          periodoActual,
-          lecturasPendientes: lecturasPendientesCount,
-          totalesCorte,
-          loading: false
-        }));
-
-        setTimeout(() => {
-          setDisplayData({
-            lecturasPendientes: lecturasPendientesCount,
-            totalesCorte,
-            limiteInvierno: Number.parseInt(limiteInvierno?.valor || '0', 10)
-          });
-        }, 100);
-      } catch (_error) {
-        console.error('Error processing dashboard data:', _error);
-        setDashboardData(prev => ({ ...prev, loading: false }));
-      }
-    };
-
-    processDashboardData();
-  }, [periodoAbierto, lecturasPendientes, corte, limiteInvierno]);
-
-  /** Stat card data */
+  
   const statCards = [
     {
       label: 'Período Actual',

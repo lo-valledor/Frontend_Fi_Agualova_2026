@@ -1,10 +1,3 @@
-/**
- * Módulo especializado para operaciones con acometidas
- *
- * Maneja todas las operaciones CRUD relacionadas con acometidas del sistema.
- * Extiende BaseApiService para reutilizar lógica común.
- */
-
 import api from '~/lib/api';
 import { BaseApiService, type ServiceResponse } from '../core';
 
@@ -30,23 +23,14 @@ export interface AcometidaOperationResponse {
   message: string;
 }
 
-/**
- * Servicio especializado para operaciones con acometidas
- */
+
 class AcometidaService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene todas las acometidas del sistema
-   *
-   * @returns Respuesta con lista de acometidas
-   */
+  
   async getAll(): Promise<ServiceResponse<Acometida[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('Acometida/buscar');
@@ -54,12 +38,7 @@ class AcometidaService extends BaseApiService {
     }, 'Error al obtener acometidas');
   }
 
-  /**
-   * Obtiene una acometida específica por ID
-   *
-   * @param id - ID de la acometida
-   * @returns Respuesta con datos de la acometida
-   */
+  
   async getById(
     id: string | number
   ): Promise<ServiceResponse<Acometida | null>> {
@@ -76,12 +55,7 @@ class AcometidaService extends BaseApiService {
     }, `Error al obtener acometida ${id}`);
   }
 
-  /**
-   * Crea una nueva acometida
-   *
-   * @param data - Datos de la nueva acometida
-   * @returns Respuesta con acometida creada
-   */
+  
   async create(
     data: CreateAcometidaRequest
   ): Promise<ServiceResponse<Acometida | null>> {
@@ -98,12 +72,7 @@ class AcometidaService extends BaseApiService {
     }, 'Error al crear acometida');
   }
 
-  /**
-   * Actualiza una acometida existente
-   *
-   * @param data - Datos a actualizar (incluye ID)
-   * @returns Respuesta con acometida actualizada
-   */
+  
   async update(
     data: UpdateAcometidaRequest
   ): Promise<ServiceResponse<Acometida | null>> {
@@ -121,12 +90,7 @@ class AcometidaService extends BaseApiService {
     }, `Error al actualizar acometida ${data.id}`);
   }
 
-  /**
-   * Elimina una acometida
-   *
-   * @param id - ID de la acometida a eliminar
-   * @returns Respuesta de éxito/error
-   */
+  
   async delete(id: string | number): Promise<ServiceResponse<null>> {
     if (!id) {
       return this.handleError(
@@ -142,12 +106,7 @@ class AcometidaService extends BaseApiService {
     >;
   }
 
-  /**
-   * Obtiene acometidas por cliente
-   *
-   * @param clienteId - ID del cliente
-   * @returns Respuesta con acometidas del cliente
-   */
+  
   async getByCliente(
     clienteId: string | number
   ): Promise<ServiceResponse<Acometida[]>> {
@@ -166,12 +125,7 @@ class AcometidaService extends BaseApiService {
     }, `Error al obtener acometidas del cliente ${clienteId}`);
   }
 
-  /**
-   * Obtiene acometidas por contrato
-   *
-   * @param contratoId - ID del contrato
-   * @returns Respuesta con acometidas del contrato
-   */
+  
   async getByContrato(
     contratoId: string | number
   ): Promise<ServiceResponse<Acometida[]>> {

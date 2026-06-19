@@ -2,12 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useExportData, type ExportColumn } from './use-export-data';
 
-/**
- * Tests de Carga (Load Tests) para función de exportación
- *
- * Simula exportaciones de grandes volúmenes de datos
- * para verificar estabilidad bajo carga
- */
+
 
 vi.mock('sonner', () => ({
   toast: {

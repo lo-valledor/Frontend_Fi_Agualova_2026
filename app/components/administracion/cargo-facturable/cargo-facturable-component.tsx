@@ -6,7 +6,6 @@ import { useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -21,12 +20,11 @@ import {
 import { useCargoFilters } from '~/hooks/administracion/use-cargo-filters';
 import api from '~/lib/api';
 import type {
-  ActualizarCargoFacturableProps,
-  BuscarCargoFacturable,
-  CrearCargoFacturableProps,
-  GeCombosConceptos,
-  GetCombosTarifas,
-  GetCombosTiposMedidor
+  CargoFacturableProps,
+  CargoFacturableRow,
+  CargoFacturableConceptos,
+  CargoFacturableTarifas,
+  CargoFacturableTiposMedidor
 } from '~/types/administracion';
 
 import CargoFacturableModalForm from './cargo-facturable-modal-form';
@@ -35,10 +33,10 @@ import { columns } from './columns';
 import { FilterSummary } from './filter-summary';
 
 interface CargoFacturableComponentProps {
-  cargos: BuscarCargoFacturable[];
-  conceptos: GeCombosConceptos[];
-  tarifas: GetCombosTarifas[];
-  tiposMedidor: GetCombosTiposMedidor[];
+  cargos: CargoFacturableRow[];
+  conceptos: CargoFacturableConceptos[];
+  tarifas: CargoFacturableTarifas[];
+  tiposMedidor: CargoFacturableTiposMedidor[];
 }
 
 export default function CargoFacturableComponent({
@@ -49,7 +47,7 @@ export default function CargoFacturableComponent({
 }: Readonly<CargoFacturableComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCargo, setSelectedCargo] = useState<
-    BuscarCargoFacturable | undefined
+    CargoFacturableRow | undefined
   >(undefined);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [editingCargoId, setEditingCargoId] = useState<number | null>(null);
@@ -64,12 +62,6 @@ export default function CargoFacturableComponent({
 
   const revalidator = useRevalidator();
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/administracion/cargo-facturable';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
-
   const { filteredCargos, filterStats } = useCargoFilters(cargos, filters);
 
   const handleAddCargo = () => {
@@ -78,25 +70,19 @@ export default function CargoFacturableComponent({
     setIsModalOpen(true);
   };
 
-  const handleEditCargo = (cargo: BuscarCargoFacturable) => {
-    if (!hasEditPermission) {
-      toast.error('No tiene permisos para editar cargos facturables');
-      return;
-    }
+  const handleEditCargo = (cargo: CargoFacturableRow) => {
     setEditingCargoId(cargo.id);
     setSelectedCargo(cargo);
     setModalMode('edit');
     setIsModalOpen(true);
   };
 
-  const handleSubmit = async (
-    data: CrearCargoFacturableProps | ActualizarCargoFacturableProps
-  ) => {
+  const handleSubmit = async (data: CargoFacturableProps) => {
     try {
       if (modalMode === 'add') {
-        await api.post('cargoFacturable/crearCargoFacturableNuevo', data);
+        await api.post('cargos-facturables/crear', data);
       } else {
-        await api.put('cargoFacturable/modificarCargoFacturable', data);
+        await api.put('cargos-facturables/editar', data);
       }
       handleSuccess();
     } catch (error) {
@@ -135,15 +121,15 @@ export default function CargoFacturableComponent({
   const cargoColumns = [
     { key: 'id', header: 'ID' },
     { key: 'cuenta', header: 'Cuenta' },
-    { key: 'codigoEnerlova', header: 'Código' },
+    { key: 'codigoAgualova', header: 'Código' },
     { key: 'descripcion', header: 'Descripción' },
     { key: 'tipo', header: 'Tipo' },
     { key: 'fijoVariable', header: 'Modalidad' },
     { key: 'periodicoEventual', header: 'Frecuencia' },
-    { key: 'concepto', header: 'Concepto' },
-    { key: 'tarifa', header: 'Tarifa' },
-    { key: 'tipoMedidor', header: 'Tipo Medidor' },
-    { key: 'mostrarValorCero', header: 'Mostrar Valor Cero' }
+    { key: 'idConcepto', header: 'Concepto' },
+    { key: 'idTarifa', header: 'Tarifa' },
+    { key: 'idTipoMedidor', header: 'Tipo Medidor' },
+    { key: 'muestraValorCero', header: 'Mostrar Valor Cero' }
   ];
 
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
@@ -163,17 +149,7 @@ export default function CargoFacturableComponent({
                   filename='cargos'
                   size='sm'
                 />
-                <Button
-                  onClick={handleAddCargo}
-                  variant='default'
-                  size='sm'
-                  disabled={!hasCreatePermission}
-                  title={
-                    hasCreatePermission
-                      ? ''
-                      : 'No tiene permisos para crear cargos facturables'
-                  }
-                >
+                <Button onClick={handleAddCargo} variant='default' size='sm'>
                   <Plus className='mr-2 h-4 w-4' />
                   Agregar Cargo Facturable
                 </Button>
@@ -227,8 +203,7 @@ export default function CargoFacturableComponent({
                 <VirtualDataTable
                   columns={columns({
                     onEdit: handleEditCargo,
-                    editingCargoId,
-                    canEdit: hasEditPermission
+                    editingCargoId
                   })}
                   data={filteredCargos}
                   searchPlaceholder='Buscar por cuenta, código, descripción...'

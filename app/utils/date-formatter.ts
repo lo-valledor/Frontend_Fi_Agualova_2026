@@ -1,26 +1,6 @@
-/**
- * Date/Time Formatting Utilities
- *
- * Unified date and time formatting functions with locale support (es-CL).
- * Handles various date formats and provides safe formatting with fallbacks.
- */
-
 import { format } from 'date-fns';
 
-/**
- * Formats date string to dd-MM-yyyy format
- *
- * @param dateString - Date string to format (ISO or other formats)
- * @param fallback - Fallback value for null/invalid dates (default: '-')
- * @returns Formatted date string or fallback
- *
- * @example
- * ```typescript
- * formatToDate('2024-01-15')    // "15-01-2024"
- * formatToDate(null)            // "-"
- * formatToDate('invalid', 'N/A') // "N/A"
- * ```
- */
+
 export function formatToDate(dateString: string | null | undefined, fallback = '-'): string {
   if (!dateString) return fallback;
 
@@ -33,19 +13,7 @@ export function formatToDate(dateString: string | null | undefined, fallback = '
   }
 }
 
-/**
- * Formats time string to HH:mm:ss format
- *
- * @param dateString - Date/time string to extract time from
- * @param fallback - Fallback value for null/invalid times (default: '-')
- * @returns Formatted time string or fallback
- *
- * @example
- * ```typescript
- * formatToTime('2024-01-15T14:30:45')  // "14:30:45"
- * formatToTime(null)                   // "-"
- * ```
- */
+
 export function formatToTime(dateString: string | null | undefined, fallback = '-'): string {
   if (!dateString) return fallback;
 
@@ -58,20 +26,7 @@ export function formatToTime(dateString: string | null | undefined, fallback = '
   }
 }
 
-/**
- * Formats date string to YYYYMMDD format (no separators)
- *
- * @param dateString - Date string in dd-MM-yyyy or YYYY-MM-DD format
- * @param fallback - Fallback value for invalid dates (default: '')
- * @returns Formatted date string (YYYYMMDD) or fallback
- *
- * @example
- * ```typescript
- * formatToYYYYMMDD('2024-01-15')   // "20240115"
- * formatToYYYYMMDD('15-01-2024')   // "20240115"
- * formatToYYYYMMDD('invalid')      // ""
- * ```
- */
+
 export function formatToYYYYMMDD(dateString: string | null | undefined, fallback = ''): string {
   if (!dateString) return fallback;
 
@@ -97,22 +52,7 @@ export function formatToYYYYMMDD(dateString: string | null | undefined, fallback
   return `${year}${month}${day}`;
 }
 
-/**
- * Safely formats date with locale awareness (es-CL)
- *
- * Formats date to "dd/M/yyyy, HH:mm" format with graceful fallback handling.
- *
- * @param date - Date string or null/undefined
- * @param fallback - Fallback text for null/invalid dates (default: 'Sin registro')
- * @returns Formatted date string or fallback
- *
- * @example
- * ```typescript
- * formatSafeDate('2024-01-15T14:30:00')  // "15/1/2024, 14:30"
- * formatSafeDate(null)                   // "Sin registro"
- * formatSafeDate('invalid', 'N/A')       // "N/A"
- * ```
- */
+
 export function formatSafeDate(
   date: string | null | undefined,
   fallback = 'Sin registro'
@@ -139,21 +79,7 @@ export function formatSafeDate(
   }
 }
 
-/**
- * Formats date for export operations in es-CL locale
- *
- * Formats to "dd/M/yyyy" format, safe for export to CSV/Excel.
- *
- * @param date - Date string or null/undefined
- * @param fallback - Fallback value for null/invalid dates (default: '')
- * @returns Formatted date string or fallback
- *
- * @example
- * ```typescript
- * formatDateForExport('2024-01-15')  // "15/1/2024"
- * formatDateForExport(null)          // ""
- * ```
- */
+
 export function formatDateForExport(date: string | null | undefined, fallback = ''): string {
   if (!date) return fallback;
 

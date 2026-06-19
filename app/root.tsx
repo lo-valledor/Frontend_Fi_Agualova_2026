@@ -15,7 +15,7 @@ import {
 import './app.css';
 const isUAT =
   typeof window !== 'undefined' &&
-  window.location.hostname !== 'enerlova.mmlovalledor.cl';
+  window.location.hostname !== 'agualova.mmlovalledor.cl';
 if (isUAT) {
   import('./app.uat.css');
 }
@@ -48,10 +48,12 @@ export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
       <head>
         <meta charSet='utf-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1' />
-        <meta
-          http-equiv='Content-Security-Policy'
-          content='upgrade-insecure-requests'
-        ></meta>
+        {!isDev && (
+          <meta
+            http-equiv='Content-Security-Policy'
+            content='upgrade-insecure-requests'
+          ></meta>
+        )}
         <Meta />
         <Links />
       </head>
@@ -106,6 +108,12 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
   let message = '¡Ups!';
   let details = 'Ha ocurrido un error inesperado.';
   let stack: string | undefined;
+  const isBrowser = typeof window !== 'undefined';
+  const userAgent = isBrowser ? navigator.userAgent : 'No disponible en SSR';
+  const currentUrl = isBrowser
+    ? globalThis.location.href
+    : 'No disponible en SSR';
+  const hasToken = isBrowser ? localStorage.getItem('token') : null;
 
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? '404' : 'Error';
@@ -128,14 +136,13 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
           <h2 className='font-semibold mb-2'>Información de depuración:</h2>
           <ul className='text-sm space-y-1'>
             <li>
-              <strong>Navegador:</strong> {navigator.userAgent}
+              <strong>Navegador:</strong> {userAgent}
             </li>
             <li>
-              <strong>URL:</strong> {globalThis.location.href}
+              <strong>URL:</strong> {currentUrl}
             </li>
             <li>
-              <strong>Token en localStorage:</strong>{' '}
-              {localStorage.getItem('token') ? 'SÍ' : 'NO'}
+              <strong>Token en localStorage:</strong> {hasToken ? 'SÍ' : 'NO'}
             </li>
           </ul>
         </div>
@@ -153,15 +160,21 @@ export function ErrorBoundary({ error }: Readonly<{ error: unknown }>) {
 
         <div className='flex gap-4'>
           <button
-            onClick={() => globalThis.location.reload()}
+            onClick={() => {
+              if (isBrowser) {
+                globalThis.location.reload();
+              }
+            }}
             className='px-4 py-2 bg-blue-600 rounded hover:bg-blue-700'
           >
             Recargar página
           </button>
           <button
             onClick={() => {
-              localStorage.clear();
-              globalThis.location.href = '/auth/login';
+              if (isBrowser) {
+                localStorage.clear();
+                globalThis.location.href = '/auth/login';
+              }
             }}
             className='px-4 py-2 bg-red-600 rounded hover:bg-red-700'
           >

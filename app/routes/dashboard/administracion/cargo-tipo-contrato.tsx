@@ -8,7 +8,7 @@ import type { Route } from './+types/cargo-tipo-contrato';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Cargo Tipo Contrato' },
+    { title: 'Agualova | Cargo Tipo Contrato' },
     { name: 'description', content: 'Cargo Tipo Contrato' }
   ];
 }

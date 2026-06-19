@@ -1,13 +1,6 @@
-/**
- * Utilidades para validación de usuario en revisar-precio
- */
-
 import type { AxiosError } from 'axios';
 
-/**
- * Verifica si el error es de credenciales incorrectas (no sesión expirada)
- * @param errorMessage
- */
+
 export function isCredentialError(errorMessage: string): boolean {
   const lowerMessage = errorMessage.toLowerCase();
   return (
@@ -18,10 +11,7 @@ export function isCredentialError(errorMessage: string): boolean {
   );
 }
 
-/**
- * Verifica si el error es de autorización (no sesión)
- * @param errorMessage
- */
+
 export function isAuthorizationError(errorMessage: string): boolean {
   const lowerMessage = errorMessage.toLowerCase();
   return (
@@ -34,20 +24,12 @@ export function isAuthorizationError(errorMessage: string): boolean {
   );
 }
 
-/**
- * Obtiene el mensaje de error del response de Axios
- * @param error
- */
+
 export function getErrorMessage(error: AxiosError<any>): string {
   return error.response?.data?.mensaje || error.response?.data?.message || '';
 }
 
-/**
- * Maneja errores de validación HTTP (401, 400, 403)
- * Retorna true si se manejó el error, false para continuar
- * @param error
- * @param toast
- */
+
 export function handleValidationHTTPError(
   error: AxiosError<any>,
   toast: any
@@ -81,11 +63,7 @@ export function handleValidationHTTPError(
   return false;
 }
 
-/**
- * Maneja error general de validación
- * @param error
- * @param toast
- */
+
 export function handleGeneralValidationError(error: any, toast: any): void {
   if (error.response) {
     const errorMessage = getErrorMessage(error as AxiosError<any>);

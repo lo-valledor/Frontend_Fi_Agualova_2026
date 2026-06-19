@@ -1,10 +1,3 @@
-/**
- * EnvironmentBadge Component
- *
- * Displays a fixed badge indicating the current environment (DEV/PROD)
- * Only visible in development environment
- */
-
 export function EnvironmentBadge() {
   const envMode = import.meta.env.VITE_ENV_MODE || 'production';
 

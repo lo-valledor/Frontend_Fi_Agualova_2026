@@ -28,13 +28,13 @@ import {
 import { Input } from '~/components/ui/input';
 import { Switch } from '~/components/ui/switch';
 import api from '~/lib/api';
-import type { CiclosFacturacion } from '~/types/mantencion';
+import type { CicloFacturacion } from '~/types/mantencion';
 
 const cicloFormSchema = z.object({
-  descripcion: z
+  nombre: z
     .string()
-    .min(1, { message: 'La descripción es requerida.' })
-    .max(100, { message: 'La descripción no puede exceder 100 caracteres.' }),
+    .min(1, { message: 'El nombre es requerido.' })
+    .max(100, { message: 'El nombre no puede exceder 100 caracteres.' }),
   diaFacturacion: z
     .number({ message: 'El día de facturación debe ser un número válido.' })
     .int({ message: 'El día de facturación debe ser un número entero.' })
@@ -63,7 +63,7 @@ interface CicloFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  ciclo: CiclosFacturacion | null;
+  ciclo: CicloFacturacion | null;
   mode: 'add' | 'edit';
 }
 
@@ -79,7 +79,7 @@ export default function CiclosFacturacionModalForm({
   const form = useForm<CicloFormValues>({
     resolver: zodResolver(cicloFormSchema),
     defaultValues: {
-      descripcion: '',
+      nombre: '',
       diaFacturacion: 1,
       diaInicioLectura: 1,
       diasVencimientoFactura: 30,
@@ -91,7 +91,7 @@ export default function CiclosFacturacionModalForm({
     if (isOpen) {
       if (mode === 'edit' && ciclo) {
         form.reset({
-          descripcion: ciclo.descripcion,
+          nombre: ciclo.nombre,
           diaFacturacion: ciclo.diaFacturacion,
           diaInicioLectura: ciclo.diaInicioLectura,
           diasVencimientoFactura: ciclo.diasVencimientoFactura,
@@ -99,7 +99,7 @@ export default function CiclosFacturacionModalForm({
         });
       } else {
         form.reset({
-          descripcion: '',
+          nombre: '',
           diaFacturacion: 1,
           diaInicioLectura: 1,
           diasVencimientoFactura: 30,
@@ -159,10 +159,10 @@ export default function CiclosFacturacionModalForm({
           >
             <FormField
               control={form.control}
-              name='descripcion'
+              name='nombre'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descripción del Ciclo</FormLabel>
+                  <FormLabel>Nombre del Ciclo</FormLabel>
                   <FormControl>
                     <Input
                       placeholder='Ej: Ciclo Mensual Residencial'

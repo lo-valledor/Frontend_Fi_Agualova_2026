@@ -9,7 +9,7 @@ import type { Route } from './+types/cerrar-lecturas';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Cerrar Lecturas' },
+    { title: 'Agualova | Cerrar Lecturas' },
     { name: 'description', content: 'Cerrar Lecturas' }
   ];
 }

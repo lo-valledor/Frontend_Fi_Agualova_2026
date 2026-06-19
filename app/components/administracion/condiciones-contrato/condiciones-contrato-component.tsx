@@ -1,50 +1,3 @@
-/**
- * Componente principal para Gestión de Condiciones de Contrato
- *
- * Funcionalidades principales:
- * - Visualización de condiciones de contrato en tabla
- * - Creación de nuevas condiciones con selección de concepto
- * - Edición de condiciones existentes
- * - Visualización de detalles completos en modal
- * - Asociación de conceptos a condiciones
- *
- * Flujo de trabajo:
- * 1. Usuario visualiza tabla de condiciones de contrato
- * 2. Acciones disponibles:
- * - Crear nueva condición (modal)
- * - Editar condición existente (modal)
- * - Ver detalles completos (modal)
- * 3. Sistema valida datos antes de guardar
- * 4. Recarga automática después de operaciones
- *
- * Arquitectura:
- * - DataTable con columnas personalizadas
- * - Modal CondicionesContratoModalForm para CRUD
- * - Modal DetallesCondicionesContrato para visualización
- * - Dialog para detalles con ScrollArea
- * - Recarga con useRevalidator
- *
- * Conceptos asociables:
- * - Lista completa de conceptos disponibles
- * - Selección mediante react-select
- * - Asociación múltiple por condición
- *
- * @param {Object} props - Props del componente
- * @param {GetCondicionesContrato[]} props.condicionesContrato - Lista de condiciones
- * @param {Conceptos[]} props.conceptos - Conceptos disponibles para asociar
- *
- * @example
- * ```tsx
- * export default function CondicionesContratoRoute({ loaderData }) {
- *   return (
- *     <CondicionesContratoComponent
- *       condicionesContrato={loaderData.condiciones}
- *       conceptos={loaderData.conceptos}
- *     />
- *   );
- * }
- * ```
- */
 import { LayoutList, Plus } from 'lucide-react';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
@@ -53,7 +6,6 @@ import React, { useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -73,16 +25,16 @@ import {
 } from '~/components/ui/dialog';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
-import type { GetCondicionesContrato } from '~/types/administracion';
-import type { Conceptos } from '~/types/mantencion';
+import type { CondicionesContratoRow } from '~/types/administracion';
+import type { Concepto } from '~/types/mantencion';
 
 import { columns } from './columns';
 import CondicionesContratoModalForm from './condiciones-contrato-modal-form';
 import DetallesCondicionesContrato from './detalles-condiciones-contrato';
 
 interface CondicionesContratoComponentProps {
-  condicionesContrato: GetCondicionesContrato[];
-  conceptos: Conceptos[];
+  condicionesContrato: CondicionesContratoRow[];
+  conceptos: Concepto[];
 }
 
 export default function CondicionesContratoComponent({
@@ -91,7 +43,7 @@ export default function CondicionesContratoComponent({
 }: Readonly<CondicionesContratoComponentProps>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCondicionContrato, setSelectedCondicionContrato] = useState<
-    GetCondicionesContrato | undefined
+    CondicionesContratoRow | undefined
   >(undefined);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -101,12 +53,6 @@ export default function CondicionesContratoComponent({
 
   const revalidator = useRevalidator();
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/administracion/condiciones-contrato';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
-
   const handleAddCondicionContrato = () => {
     setSelectedCondicionContrato(undefined);
     setModalMode('add');
@@ -114,7 +60,7 @@ export default function CondicionesContratoComponent({
   };
 
   const handleEditCondicionContrato = (
-    condicionContrato: GetCondicionesContrato
+    condicionContrato: CondicionesContratoRow
   ) => {
     setSelectedCondicionContrato(condicionContrato);
     setModalMode('edit');
@@ -122,7 +68,7 @@ export default function CondicionesContratoComponent({
   };
 
   const handleViewCondicionContrato = (
-    condicionContrato: GetCondicionesContrato
+    condicionContrato: CondicionesContratoRow
   ) => {
     setSelectedCondicionId(condicionContrato.id);
     setIsDetailsOpen(true);
@@ -154,12 +100,6 @@ export default function CondicionesContratoComponent({
                 onClick={handleAddCondicionContrato}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  hasCreatePermission
-                    ? ''
-                    : 'No tiene permisos para crear condiciones de contrato'
-                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Condición Contrato
@@ -198,8 +138,7 @@ export default function CondicionesContratoComponent({
                   columns={columns({
                     onEdit: handleEditCondicionContrato,
                     onView: handleViewCondicionContrato,
-                    editingCondicionContrato: null,
-                    canEdit: hasEditPermission
+                    editingCondicionContrato: null
                   })}
                   data={condicionesContrato}
                   searchPlaceholder='Buscar condiciones...'

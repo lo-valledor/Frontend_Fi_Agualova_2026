@@ -2,25 +2,13 @@ import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import { Skeleton } from '~/components/ui/skeleton';
 
 interface DataTableSkeletonProps {
-  /**
-   * Número de columnas a mostrar
-   * @default 5
-   */
+  
   columns?: number;
-  /**
-   * Número de filas a mostrar
-   * @default 10
-   */
+  
   rows?: number;
-  /**
-   * Mostrar header con título y botones
-   * @default true
-   */
+  
   showHeader?: boolean;
-  /**
-   * Mostrar paginación
-   * @default true
-   */
+  
   showPagination?: boolean;
 }
 

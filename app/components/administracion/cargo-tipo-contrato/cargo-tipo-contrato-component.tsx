@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -27,60 +26,43 @@ import {
   SelectValue
 } from '~/components/ui/select';
 import api from '~/lib/api';
-import type { GetCargoTipoContrato } from '~/types/administracion';
+import type { CargoTipoContrato } from '~/types/administracion';
 
 import { columns } from './columns';
-import { DeleteDialog } from './delete-dialog';
 
 export default function CargoTipoContratoComponent({
   cargoTipoContrato: initialData
 }: Readonly<{
-  cargoTipoContrato: GetCargoTipoContrato[];
+  cargoTipoContrato: CargoTipoContrato[];
 }>) {
-  const [data, setData] = useState<GetCargoTipoContrato[]>(initialData);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<GetCargoTipoContrato | null>(
-    null
-  );
+  const [data, setData] = useState<CargoTipoContrato[]>(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const [tipoContratoFilter, setTipoContratoFilter] = useState<string>('all');
   const router = useNavigate();
-
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/administracion/cargo-tipo-contrato';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   useEffect(() => {
     setData(initialData);
   }, [initialData]);
 
-  // Obtener tipos de contrato únicos para el filtro
   const tiposContratoUnicos = useMemo(() => {
-    const tipos = new Set(
-      data.map(item => item.tipoContratoDescripcion).filter(Boolean)
-    );
+    const tipos = new Set(data.map(item => item.tipoContrato).filter(Boolean));
     return Array.from(tipos).sort((a, b) => a.localeCompare(b));
   }, [data]);
 
-  // Filtrar datos basado en el filtro de tipo de contrato
   const filteredData = useMemo(() => {
     if (tipoContratoFilter === 'all') {
       return data;
     }
-    return data.filter(
-      item => item.tipoContratoDescripcion === tipoContratoFilter
-    );
+    return data.filter(item => item.tipoContrato === tipoContratoFilter);
   }, [data, tipoContratoFilter]);
 
   const refetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await api.get('cargoTipoContrato-buscar');
-      setData(response.data as GetCargoTipoContrato[]);
-    } catch (_error) {
-      console.error(_error);
+      const response = await api.get('/cargos-tipos-contrato/buscar');
+      setData(response.data as CargoTipoContrato[]);
+    } catch (error) {
+      console.error(error);
       toast.error('Error al recargar los datos.');
     } finally {
       setIsLoading(false);
@@ -91,58 +73,27 @@ export default function CargoTipoContratoComponent({
     router('/dashboard/administracion/cargo-tipo-contrato/crear');
   };
 
-  const handleEdit = (item: GetCargoTipoContrato) => {
-    router(
-      `/dashboard/administracion/cargo-tipo-contrato/edit/${item.tipoContratoId}`
-    );
-  };
-
-  const handleDelete = (item: GetCargoTipoContrato) => {
-    setSelectedItem(item);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!selectedItem) return;
-    setIsLoading(true);
-    try {
-      await api.delete(
-        `/cargoTipoContrato-eliminar/${selectedItem.tipoContratoId}`
-      );
-      toast.success('Relación eliminada exitosamente');
-      await refetchData();
-    } catch (_error) {
-      console.error(_error);
-      toast.error('Error al eliminar la relación.');
-    } finally {
-      setIsLoading(false);
-      setIsDeleteDialogOpen(false);
-      setSelectedItem(null);
-    }
+  const handleEdit = (item: CargoTipoContrato) => {
+    router(`/dashboard/administracion/cargo-tipo-contrato/edit/${item.idTipoContrato}`);
   };
 
   return (
     <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+      <div className='container mx-auto space-y-6 p-4 sm:p-6'>
         <header>
           <ModernHeader
             title='Cargo Tipo Contrato'
-            description='Gestiona las relaciones entre cargos y tipos de contrato'
+            description='Gestiona las configuraciones por tipo de contrato.'
             actions={
-              <Button
-                onClick={handleAdd}
-                variant='default'
-                size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  hasCreatePermission
-                    ? ''
-                    : 'No tiene permisos para crear cargos tipo contrato'
-                }
-              >
-                <Plus className='mr-2 h-4 w-4' />
-                Agregar Cargo Tipo Contrato
-              </Button>
+              <div className='flex gap-2'>
+                <Button onClick={refetchData} variant='outline' size='sm'>
+                  Recargar
+                </Button>
+                <Button onClick={handleAdd} variant='default' size='sm'>
+                  <Plus className='mr-2 h-4 w-4' />
+                  Agregar Configuración
+                </Button>
+              </div>
             }
           />
           <div className='industrial-divider mt-4' />
@@ -156,16 +107,15 @@ export default function CargoTipoContratoComponent({
           <Card className='overflow-hidden border border-border bg-card shadow-sm'>
             <CardHeader className='p-4 pb-3'>
               <div className='flex items-center gap-3'>
-                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
+                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-accent text-accent-foreground'>
                   <LayoutList className='h-4 w-4' />
                 </div>
                 <div>
                   <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
-                    Listado de Cargos Tipo Contrato
+                    Listado de configuraciones
                   </CardTitle>
-                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
-                    {filteredData.length} registro
-                    {filteredData.length !== 1 ? 's' : ''}
+                  <CardDescription className='mt-0.5 text-xs text-muted-foreground'>
+                    {filteredData.length} registro{filteredData.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
@@ -173,78 +123,60 @@ export default function CargoTipoContratoComponent({
             <div className='industrial-divider' />
             <CardContent className='relative p-4'>
               {isLoading && (
-                <div className='absolute inset-0 bg-background flex items-center justify-center rounded-xl z-10'>
+                <div className='absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-background'>
                   <LoadingSpinner />
                 </div>
               )}
-              <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4'>
-              <div className='text-sm text-muted-foreground'>
-                Mostrando {filteredData.length} de {data.length} registros
-              </div>
 
-              <div className='flex items-center gap-3 w-full sm:w-auto'>
-                {/* Filtro por Tipo de Contrato */}
-                <div className='flex items-center gap-2 flex-1 sm:flex-initial'>
-                  <Label htmlFor='tipo-contrato-filter' className='text-xs '>
-                    <Filter className='h-3 w-3 inline mr-1' />
-                    Tipo de Contrato:
-                  </Label>
-                  <Select
-                    value={tipoContratoFilter}
-                    onValueChange={setTipoContratoFilter}
-                  >
-                    <SelectTrigger
-                      id='tipo-contrato-filter'
-                      className='h-8 text-sm w-[200px]'
-                    >
-                      <SelectValue placeholder='Todos' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value='all'>Todos</SelectItem>
-                      {tiposContratoUnicos.map(tipo => (
-                        <SelectItem key={tipo} value={tipo}>
-                          {tipo}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {tipoContratoFilter !== 'all' && (
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      className='h-8 px-2'
-                      onClick={() => setTipoContratoFilter('all')}
-                      title='Limpiar filtro'
-                    >
-                      <X className='h-4 w-4' />
-                    </Button>
-                  )}
+              <div className='mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center'>
+                <div className='text-sm text-muted-foreground'>
+                  Mostrando {filteredData.length} de {data.length} registros
+                </div>
+
+                <div className='flex w-full items-center gap-3 sm:w-auto'>
+                  <div className='flex flex-1 items-center gap-2 sm:flex-initial'>
+                    <Label htmlFor='tipo-contrato-filter' className='text-xs'>
+                      <Filter className='mr-1 inline h-3 w-3' />
+                      Tipo de Contrato:
+                    </Label>
+                    <Select value={tipoContratoFilter} onValueChange={setTipoContratoFilter}>
+                      <SelectTrigger id='tipo-contrato-filter' className='h-8 w-[200px] text-sm'>
+                        <SelectValue placeholder='Todos' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value='all'>Todos</SelectItem>
+                        {tiposContratoUnicos.map(tipo => (
+                          <SelectItem key={tipo} value={tipo}>
+                            {tipo}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {tipoContratoFilter !== 'all' && (
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        className='h-8 px-2'
+                        onClick={() => setTipoContratoFilter('all')}
+                        title='Limpiar filtro'
+                      >
+                        <X className='h-4 w-4' />
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Virtualized Table */}
-            <VirtualDataTable
-              columns={columns({
-                onEdit: handleEdit,
-                onDelete: handleDelete,
-                canEdit: hasEditPermission
-              })}
-              data={filteredData}
-              searchPlaceholder='Buscar cargo tipo contrato...'
-              estimateRowHeight={60}
-              maxHeight='600px'
-            />
+              <VirtualDataTable
+                columns={columns({ onEdit: handleEdit })}
+                data={filteredData}
+                searchPlaceholder='Buscar configuración...'
+                estimateRowHeight={60}
+                maxHeight='600px'
+              />
             </CardContent>
           </Card>
         </motion.div>
-
-        <DeleteDialog
-          isOpen={isDeleteDialogOpen}
-          onClose={() => setIsDeleteDialogOpen(false)}
-          onConfirm={handleConfirmDelete}
-          data={selectedItem}
-        />
       </div>
     </div>
   );

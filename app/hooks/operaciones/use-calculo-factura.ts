@@ -1,10 +1,3 @@
-/**
- * Hook para obtener y gestionar datos de cálculos de prefactura
- * Obtiene encabezados y cargos de prefactura, luego los combina
- *
- * @module operaciones/use-calculo-factura
- */
-
 import { toast } from 'sonner';
 
 import { useEffect, useState } from 'react';
@@ -19,17 +12,13 @@ import { convertirCicloParaAPI } from './utils/cycle-utilities';
 import { combinarPrefactura } from './utils/data-combiner';
 import { extraerErrorMessage, es404 } from './utils/error-handler';
 
-/**
- * Props del hook de cálculo de factura
- */
+
 interface UseCalculoFacturaProps {
   periodoFormateado: string;
   cicloId: string;
 }
 
-/**
- * Resultado del hook de cálculo de factura
- */
+
 export interface UseCalculoFacturaResult {
   data: CalculoPrefacturaCompleto[];
   filteredData: CalculoPrefacturaCompleto[];
@@ -41,30 +30,7 @@ export interface UseCalculoFacturaResult {
   setData: (data: CalculoPrefacturaCompleto[]) => void;
 }
 
-/**
- * Hook para obtener y filtrar datos de cálculos de factura
- *
- * Aplica SOLID: SRP (solo obtiene datos), DRY (usa utilities para combinación y ciclo)
- *
- * @param periodoFormateado - Período en formato MMYYYY
- * @param periodoFormateado.periodoFormateado
- * @param cicloId - ID del ciclo de facturación
- * @param periodoFormateado.cicloId
- * @returns Datos de prefacturas, estado de carga y funciones de filtrado
- *
- * @example
- * const {
- *   data,
- *   filteredData,
- *   isLoading,
- *   searchTerm,
- *   setSearchTerm,
- *   handleRevisarCalculo
- * } = useCalculoFactura({
- *   periodoFormateado: '012024',
- *   cicloId: '1'
- * });
- */
+
 export function useCalculoFactura({
   periodoFormateado,
   cicloId
@@ -77,10 +43,7 @@ export function useCalculoFactura({
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  /**
-   * Obtiene y procesa los datos de prefactura
-   * Realiza dos llamadas API y combina los resultados
-   */
+  
   const handleRevisarCalculo = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!periodoFormateado || !cicloId) {
@@ -157,10 +120,7 @@ export function useCalculoFactura({
     }
   };
 
-  /**
-   * Filtra datos según el término de búsqueda
-   * Busca en todos los campos del objeto
-   */
+  
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter(item => {

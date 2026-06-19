@@ -1,14 +1,13 @@
 import type { ColumnDef } from '@tanstack/react-table';
 
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
-import type { PreciosCargoEnerlova } from '~/types/operaciones';
+import type { PreciosCargoAgualova } from '~/types/operaciones';
 
-import DetallePreciosEnerlova from './detalle-precios-enerlova';
+import DetallePreciosAgualova from './detalle-precios-agualova';
 
 export const columns = (
-  onDataUpdate?: () => void,
-  canEdit: boolean = true
-): ColumnDef<PreciosCargoEnerlova>[] => [
+  onDataUpdate?: () => void
+): ColumnDef<PreciosCargoAgualova>[] => [
   {
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -33,10 +32,10 @@ export const columns = (
         className='text-blue-700 dark:text-blue-300 font-semibold'
       />
     ),
-    accessorKey: 'cd_codigoenerlova',
+    accessorKey: 'cd_codigoagualova',
     cell: ({ row }) => (
       <div className='font-mono text-xs sm:text-sm '>
-        {row.getValue('cd_codigoenerlova')}
+        {row.getValue('cd_codigoagualova')}
       </div>
     ),
     size: 100
@@ -116,10 +115,9 @@ export const columns = (
       const data = row.original;
       return (
         <div className='flex justify-center'>
-          <DetallePreciosEnerlova
+          <DetallePreciosAgualova
             codigo={data.CD_ID}
             onDataUpdate={onDataUpdate}
-            canEdit={canEdit}
           />
         </div>
       );

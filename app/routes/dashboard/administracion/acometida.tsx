@@ -8,13 +8,13 @@ import { administracionService } from '~/services/administracionService';
 import type { Route } from './+types/acometida';
 
 // Lazy load del componente pesado (36 KB)
-const AcometidaComponent = lazy(() =>
-  import('~/components/administracion/acometida/acometida-component')
+const AcometidaComponent = lazy(
+  () => import('~/components/administracion/acometida/acometida-component')
 );
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Acometidas' },
+    { title: 'Agualova | Acometidas' },
     { name: 'description', content: 'Acometidas' }
   ];
 }

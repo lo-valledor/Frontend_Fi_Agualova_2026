@@ -5,8 +5,6 @@ import { toast } from 'sonner';
 import React, { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
-
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -17,7 +15,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
-import type { Zonas } from '~/types/mantencion';
+import type { Zona } from '~/types/mantencion';
 
 import { columns } from './columns';
 import ZonaFormModal from './zona-form-modal';
@@ -25,20 +23,15 @@ import ZonaFormModal from './zona-form-modal';
 const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
 interface ZonasComponentProps {
-  zonas: Zonas[];
+  zonas: Zona[];
 }
 
 export default function ZonasComponent({ zonas }: ZonasComponentProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedZona, setSelectedZona] = useState<Zonas | null>(null);
+  const [selectedZona, setSelectedZona] = useState<Zona | null>(null);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/mantencion/zonas';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   const handleAddZona = useCallback(() => {
     setSelectedZona(null);
@@ -47,19 +40,15 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
   }, []);
 
   const handleEditZona = useCallback(
-    (zona: Zonas) => {
-      if (!hasEditPermission) {
-        toast.error('No tiene permisos para editar zonas');
-        return;
-      }
+    (zona: Zona) => {
       setSelectedZona(zona);
       setModalMode('edit');
       setIsModalOpen(true);
     },
-    [hasEditPermission]
+    []
   );
 
-  const handleDeleteZona = useCallback((zona: Zonas) => {
+  const handleDeleteZona = useCallback((zona: Zona) => {
     setSelectedZona(zona);
     toast.warning('Zona eliminada exitosamente');
     setIsModalOpen(true);
@@ -87,12 +76,6 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
                 onClick={handleAddZona}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear zonas'
-                    : ''
-                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Zona
@@ -130,7 +113,6 @@ export default function ZonasComponent({ zonas }: ZonasComponentProps) {
                   columns={columns({
                     onEdit: handleEditZona,
                     onDelete: handleDeleteZona,
-                    canEdit: hasEditPermission
                   })}
                   data={zonas}
                 />

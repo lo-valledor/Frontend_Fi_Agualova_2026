@@ -9,7 +9,7 @@ import type { Route } from './+types/resumen-facturacion';
 export function meta(_args: Route.MetaArgs) {
   return [
     {
-      title: 'Enerlova | Resumen de Facturación',
+      title: 'Agualova | Resumen de Facturación',
       description:
         'reporte de facturación con análisis detallados y estadísticas avanzadas.'
     }

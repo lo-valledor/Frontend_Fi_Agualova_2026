@@ -1,8 +1,3 @@
-/**
- * Barrel export para servicios de roles y permisos
- * Centraliza todas las exportaciones de la carpeta roles-permisos
- */
-
 import { menusService } from './menus.service';
 import { permisosService } from './permisos.service';
 import { rolesService } from './roles.service';
@@ -33,10 +28,7 @@ export type { AssignUserRolesRequest } from './usuario-roles.service';
 // Tipos compartidos
 export * from './types';
 
-/**
- * Objeto consolidado con todos los servicios de roles y permisos
- * Permite importar como: import { rolesPermisosServices } from '~/services'
- */
+
 export const rolesPermisosServices = {
   roles: rolesService,
   menus: menusService,

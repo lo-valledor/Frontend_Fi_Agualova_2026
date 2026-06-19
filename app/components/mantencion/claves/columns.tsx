@@ -3,19 +3,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { Claves } from '~/types/mantencion';
+import type { Clave } from '~/types/mantencion';
 
 interface ClavesColumnsProps {
-  onEdit: (clave: Claves) => void;
-  onDelete: (clave: Claves) => void;
-  canEdit?: boolean;
+  onEdit: (clave: Clave) => void;
+  onDelete: (clave: Clave) => void;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete,
-  canEdit = true
-}: ClavesColumnsProps): ColumnDef<Claves>[] => [
+  onDelete
+}: ClavesColumnsProps): ColumnDef<Clave>[] => [
   {
     accessorKey: 'codigo',
     header: ({ column }) => (
@@ -28,16 +26,13 @@ export const createColumns = ({
     )
   },
   {
-    accessorKey: 'descripcion',
+    accessorKey: 'nombre',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Descripción' />
+      <DataTableColumnHeader column={column} title='Nombre' />
     ),
     cell: ({ row }) => (
-      <div
-        className='max-w-[200px] truncate'
-        title={row.getValue('descripcion')}
-      >
-        {row.getValue('descripcion')}
+      <div className='max-w-[200px] truncate' title={row.getValue('nombre')}>
+        {row.getValue('nombre')}
       </div>
     )
   },
@@ -82,7 +77,6 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

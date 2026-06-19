@@ -1,10 +1,3 @@
-/**
- * Módulo especializado para operaciones con clientes
- *
- * Maneja todas las operaciones CRUD relacionadas con clientes del sistema.
- * Extiende BaseApiService para reutilizar lógica común.
- */
-
 import api from '~/lib/api';
 import { BaseApiService, type ServiceResponse } from '../core';
 import type { GetClienteContrato, GetComunas } from '~/types/administracion';
@@ -13,7 +6,7 @@ import type { GetClienteContrato, GetComunas } from '~/types/administracion';
 // TIPOS
 // ============================================================================
 
-/** Respuesta con datos de clientes y combos relacionados */
+
 export interface GetClientesDataResponse {
   clientes: GetClienteContrato[];
   comunas: GetComunas[];
@@ -23,23 +16,14 @@ export interface GetClientesDataResponse {
 // SERVICIO
 // ============================================================================
 
-/**
- * Servicio especializado para operaciones con clientes
- */
+
 class ClientesService extends BaseApiService {
-  /**
-   * Constructor
-   * @param httpClient Axios HTTP client instance
-   */
+  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  /**
-   * Obtiene todos los clientes del sistema
-   *
-   * @returns Respuesta con lista de clientes
-   */
+  
   async getAll(): Promise<ServiceResponse<GetClienteContrato[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('ClienteBuscar');
@@ -47,13 +31,7 @@ class ClientesService extends BaseApiService {
     }, 'Error al obtener clientes');
   }
 
-  /**
-   * Obtiene datos de clientes con comunas
-   *
-   * Retorna clientes y comunas disponibles para formularios
-   *
-   * @returns Respuesta con clientes y comunas
-   */
+  
   async getDataWithCombos(): Promise<ServiceResponse<GetClientesDataResponse>> {
     return this.executeDataOperation(async () => {
       const results = (await this.executeParallelOperations([
@@ -68,12 +46,7 @@ class ClientesService extends BaseApiService {
     }, 'Error al obtener datos de clientes');
   }
 
-  /**
-   * Busca un cliente por RUT
-   *
-   * @param rut - RUT del cliente (con o sin formato)
-   * @returns Respuesta con datos del cliente encontrado
-   */
+  
   async searchByRut(
     rut: string
   ): Promise<ServiceResponse<GetClienteContrato | null>> {
@@ -90,11 +63,7 @@ class ClientesService extends BaseApiService {
     }, `Error al buscar cliente con RUT ${rut}`);
   }
 
-  /**
-   * Obtiene todos los clientes por búsqueda genérica
-   *
-   * @returns Respuesta con lista de clientes
-   */
+  
   async search(): Promise<ServiceResponse<GetClienteContrato[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('cliente/buscar');

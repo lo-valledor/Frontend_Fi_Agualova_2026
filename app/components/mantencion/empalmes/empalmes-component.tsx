@@ -6,7 +6,6 @@ import { useCallback, useState } from 'react';
 
 import { useRevalidator } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { DataTable } from '~/components/data-table/data-table';
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -36,11 +35,6 @@ export default function EmpalmesComponent({
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const revalidator = useRevalidator();
 
-  // Permisos
-  const { canCreate, canEdit } = useAuth();
-  const route = '/dashboard/mantencion/empalmes';
-  const hasCreatePermission = canCreate(route);
-  const hasEditPermission = canEdit(route);
 
   const handleAddEmpalme = useCallback(() => {
     setSelectedEmpalme(null);
@@ -50,15 +44,11 @@ export default function EmpalmesComponent({
 
   const handleEditEmpalme = useCallback(
     (empalme: Empalme) => {
-      if (!hasEditPermission) {
-        toast.error('No tiene permisos para editar empalmes');
-        return;
-      }
       setSelectedEmpalme(empalme);
       setModalMode('edit');
       setIsModalOpen(true);
     },
-    [hasEditPermission]
+    []
   );
 
   const handleDeleteEmpalme = useCallback((empalme: Empalme) => {
@@ -90,12 +80,6 @@ export default function EmpalmesComponent({
                 onClick={handleAddEmpalme}
                 variant='default'
                 size='sm'
-                disabled={!hasCreatePermission}
-                title={
-                  !hasCreatePermission
-                    ? 'No tiene permisos para crear empalmes'
-                    : ''
-                }
               >
                 <Plus className='mr-2 h-4 w-4' />
                 Agregar Empalme
@@ -133,7 +117,6 @@ export default function EmpalmesComponent({
                   columns={columns({
                     onEdit: handleEditEmpalme,
                     onDelete: handleDeleteEmpalme,
-                    canEdit: hasEditPermission
                   })}
                   data={empalmes}
                 />
@@ -149,7 +132,6 @@ export default function EmpalmesComponent({
           onSuccess={handleEmpalmeSuccess}
           empalme={selectedEmpalme}
           mode={modalMode}
-          existingCodes={empalmes.map(emp => emp.codigo)}
         />
       </div>
     </div>

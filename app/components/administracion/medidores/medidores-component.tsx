@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '~/context/AuthContext';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ExportButton } from '~/components/shared/export-button';
@@ -27,10 +26,8 @@ import {
   createInitialMedidorModalState,
   extractMedidorErrorMessage,
   getMedidorEditUrl,
-  getMedidorPermissions,
   isValidMedidorForOperation,
-  MEDIDORES_CREAR_ROUTE,
-  MEDIDORES_ROUTE
+  MEDIDORES_CREAR_ROUTE
 } from '~/utils/administracion';
 
 import { AsociarSubempalmeModal } from './asociar-subempalme-modal';
@@ -86,14 +83,8 @@ export default function MedidoresComponent({
 
   // Dependencias
   const navigate = useNavigate();
-  const { canCreate, canEdit } = useAuth();
 
-  // Permisos del usuario actual
-  const permissions = getMedidorPermissions(canCreate, canEdit, MEDIDORES_ROUTE);
-
-  /**
-   * Sincronizar medidores cuando los datos del loader cambian
-   */
+  
   useEffect(() => {
     setMedidores(initialMedidores);
   }, [initialMedidores]);
@@ -133,16 +124,12 @@ export default function MedidoresComponent({
     }
   }, []);
 
-  /**
-   * Navega a la página de crear medidor
-   */
+  
   const handleAdd = useCallback(() => {
     navigate(MEDIDORES_CREAR_ROUTE);
   }, [navigate]);
 
-  /**
-   * Navega a la página de editar medidor
-   */
+  
   const handleEdit = useCallback(
     (medidor: GetMedidores) => {
       navigate(getMedidorEditUrl(medidor.codigo));
@@ -150,9 +137,7 @@ export default function MedidoresComponent({
     [navigate]
   );
 
-  /**
-   * Abre el modal para asociar subempalme a un medidor
-   */
+  
   const handleAsociarSubempalme = useCallback((medidor: GetMedidores) => {
     setSelectedMedidor(medidor);
     setModalsState((prev) => ({
@@ -161,9 +146,7 @@ export default function MedidoresComponent({
     }));
   }, []);
 
-  /**
-   * Abre el diálogo de confirmación de eliminación
-   */
+  
   const handleDeleteMedidor = useCallback((medidor: GetMedidores) => {
     setSelectedMedidor(medidor);
     setModalsState((prev) => ({
@@ -172,10 +155,7 @@ export default function MedidoresComponent({
     }));
   }, []);
 
-  /**
-   * Confirma y ejecuta la eliminación del medidor
-   * Implementa early returns y manejo de errores centralizado
-   */
+  
   const handleConfirmDelete = useCallback(async () => {
     // Early return: validar que exista medidor seleccionado
     if (!isValidMedidorForOperation(selectedMedidor)) {
@@ -239,12 +219,6 @@ export default function MedidoresComponent({
                   onClick={handleAdd}
                   variant='default'
                   size='sm'
-                  disabled={!permissions.hasCreatePermission}
-                  title={
-                    !permissions.hasCreatePermission
-                      ? 'No tiene permisos para crear medidores'
-                      : ''
-                  }
                 >
                   <Plus className='mr-2 h-4 w-4' />
                   Agregar Medidor
@@ -303,8 +277,7 @@ export default function MedidoresComponent({
                 columns={columns({
                   onEdit: handleEdit,
                   onAsociarSubempalme: handleAsociarSubempalme,
-                  onDelete: handleDeleteMedidor,
-                  canEdit: permissions.hasEditPermission
+                  onDelete: handleDeleteMedidor
                 })}
                 data={filteredMedidores}
                 searchPlaceholder='Buscar por número de serie, local o acometida...'

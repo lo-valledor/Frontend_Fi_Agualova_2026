@@ -29,9 +29,9 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import api from '~/lib/api';
-import type { DetallepreciosCargoEnerlova } from '~/types/operaciones';
+import type { DetallepreciosCargoAgualova } from '~/types/operaciones';
 
-import DialogNuevoValorEnerlova from './dialog-nuevo-valor-enerlova';
+import DialogNuevoValorAgualova from './dialog-nuevo-valor-agualova';
 
 // Modificamos la configuración del gráfico para usar un color personalizado
 const chartConfig = {
@@ -89,16 +89,14 @@ const formatearValor = (valor: number | string): string => {
 // Tipos para los filtros de tiempo
 type PeriodoTiempo = 'todo' | '1año' | '6meses' | '3meses';
 
-export default function DetallePreciosEnerlova({
+export default function DetallePreciosAgualova({
   codigo,
-  onDataUpdate,
-  canEdit = true
+  onDataUpdate
 }: {
   codigo: number;
   onDataUpdate?: () => void;
-  canEdit?: boolean;
 }) {
-  const [data, setData] = useState<DetallepreciosCargoEnerlova[]>([]);
+  const [data, setData] = useState<DetallepreciosCargoAgualova[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [periodoSeleccionado, setPeriodoSeleccionado] =
@@ -111,7 +109,7 @@ export default function DetallePreciosEnerlova({
 
       // Normalizamos los datos al recibirlos
       const datosNormalizados = (
-        response.data as DetallepreciosCargoEnerlova[]
+        response.data as DetallepreciosCargoAgualova[]
       ).map(item => ({
         ...item,
         // Aseguramos que valor sea un número para operaciones
@@ -137,12 +135,7 @@ export default function DetallePreciosEnerlova({
   // Obtenemos el ultimo valor del cargo
   const ultimoValor = data && data.length > 0 ? data[data.length - 1] : null;
 
-  /**
-   * Calcula la fecha siguiente a la fecha dada y la devuelve en formato DD-MM-YYYY.
-   * Asume que la fecha de entrada está en formato DD-MM-YYYY.
-   * @param ultimaFechaFin - La última fecha de fin en formato DD-MM-YYYY (ej: "31-01-2025").
-   * @returns La fecha siguiente en formato DD-MM-YYYY (ej: "01-02-2025") o una cadena vacía si hay error.
-   */
+  
   const obtenerNuevaFechaInicio = (
     ultimaFechaFin: string | undefined
   ): string => {
@@ -475,7 +468,7 @@ export default function DetallePreciosEnerlova({
             Cerrar
           </Button>
           {nuevaFechaInicio && ultimoValor && (
-            <DialogNuevoValorEnerlova
+            <DialogNuevoValorAgualova
               codigo={codigo.toString()}
               descripcion={data[0]?.descripcion || ''}
               fecha_inicio={nuevaFechaInicio}
@@ -488,7 +481,6 @@ export default function DetallePreciosEnerlova({
                 }
               }}
               id={ultimoValor.id.toString() || ''}
-              disabled={!canEdit}
             />
           )}
         </div>

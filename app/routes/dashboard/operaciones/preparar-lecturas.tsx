@@ -10,7 +10,7 @@ import type { Route } from './+types/preparar-lecturas';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Preparar Lecturas' },
+    { title: 'Agualova | Preparar Lecturas' },
     { name: 'description', content: 'Preparar Lecturas' }
   ];
 }

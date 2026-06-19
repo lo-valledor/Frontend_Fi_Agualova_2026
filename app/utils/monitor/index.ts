@@ -1,8 +1,3 @@
-/**
- * Index file for monitor utilities
- * Re-exports all utility functions for convenient importing
- */
-
 // Validations
 export * from './monitor-validations';
 

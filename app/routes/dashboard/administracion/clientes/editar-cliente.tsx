@@ -3,7 +3,7 @@ import EditarClienteComponent from '~/components/administracion/clientes/form/ed
 
 export function meta() {
   return [
-    { title: 'Enerlova | Editar Cliente' },
+    { title: 'Agualova | Editar Cliente' },
     { description: 'Edita un cliente existente en el sistema' }
   ];
 }

@@ -1,21 +1,6 @@
-/**
- * PDF Rendering Utilities
- *
- * Helper functions for rendering different section types in PDF documents.
- * Provides consistent styling and layout for company info, headers, KPIs, tables, text, and charts.
- */
-
 import type { PDFSection, CompanyInfo } from './types';
 
-/**
- * Renders company information at the top of the PDF
- *
- * @param doc - jsPDF document instance
- * @param companyInfo - Company details (name, address, phone)
- * @param margin - Left/right margin in mm
- * @param yPosition - Current Y position
- * @returns Updated Y position after rendering
- */
+
 export function renderCompanyInfo(
   doc: any,
   companyInfo: CompanyInfo,
@@ -44,18 +29,7 @@ export function renderCompanyInfo(
   return currentY + 5;
 }
 
-/**
- * Renders PDF title, subtitle, and optional date
- *
- * @param doc - jsPDF document instance
- * @param options - Header configuration
- * @param options.title
- * @param options.subtitle
- * @param options.includeDate
- * @param pageWidth - PDF page width
- * @param yPosition - Current Y position
- * @returns Updated Y position after rendering
- */
+
 export function renderHeader(
   doc: any,
   options: { title?: string; subtitle?: string; includeDate?: boolean },
@@ -92,17 +66,7 @@ export function renderHeader(
   return currentY;
 }
 
-/**
- * Renders KPI section with grid layout
- *
- * @param doc - jsPDF document instance
- * @param kpis - Array of KPI objects with label and value
- * @param margin - Left/right margin in mm
- * @param contentWidth - Available content width
- * @param yPosition - Current Y position
- * @param checkNewPage - Callback to handle page breaks
- * @returns Updated Y position after rendering
- */
+
 export function renderKPISection(
   doc: any,
   kpis: Array<{ label: string; value: string | number }>,
@@ -146,15 +110,7 @@ export function renderKPISection(
   return currentY + 20;
 }
 
-/**
- * Renders table section with autoTable styling
- *
- * @param doc - jsPDF document instance
- * @param section - PDF section with table data and columns
- * @param margin - Left/right margin in mm
- * @param yPosition - Current Y position
- * @returns Updated Y position after rendering
- */
+
 export function renderTableSection(
   doc: any,
   section: PDFSection,
@@ -199,16 +155,7 @@ export function renderTableSection(
   return doc.lastAutoTable.finalY + 8;
 }
 
-/**
- * Renders text section with word wrapping
- *
- * @param doc - jsPDF document instance
- * @param text - Text content to render
- * @param margin - Left/right margin in mm
- * @param contentWidth - Available content width
- * @param yPosition - Current Y position
- * @returns Updated Y position after rendering
- */
+
 export function renderTextSection(
   doc: any,
   text: string,
@@ -226,18 +173,7 @@ export function renderTextSection(
   return yPosition + lines.length * 5 + 5;
 }
 
-/**
- * Renders placeholder for chart section
- * Actual chart visualization requires digital version
- *
- * @param doc - jsPDF document instance
- * @param pageWidth - PDF page width
- * @param margin - Left/right margin in mm
- * @param contentWidth - Available content width
- * @param yPosition - Current Y position
- * @param checkNewPage - Callback to handle page breaks
- * @returns Updated Y position after rendering
- */
+
 export function renderChartSection(
   doc: any,
   pageWidth: number,
@@ -262,19 +198,7 @@ export function renderChartSection(
   return yPosition + 45;
 }
 
-/**
- * Dispatcher function to render appropriate section type
- *
- * @param doc - jsPDF document instance
- * @param section - PDF section to render
- * @param config - Rendering configuration (margins, widths, callbacks)
- * @param config.margin
- * @param config.contentWidth
- * @param config.pageWidth
- * @param config.checkNewPage
- * @param yPosition - Current Y position
- * @returns Updated Y position after rendering
- */
+
 export function renderSection(
   doc: any,
   section: PDFSection,
@@ -348,13 +272,7 @@ export function renderSection(
   return currentY + 5;
 }
 
-/**
- * Adds page numbers to all pages in the PDF
- *
- * @param doc - jsPDF document instance
- * @param pageWidth - PDF page width
- * @param pageHeight - PDF page height
- */
+
 export function addPageFooters(
   doc: any,
   pageWidth: number,

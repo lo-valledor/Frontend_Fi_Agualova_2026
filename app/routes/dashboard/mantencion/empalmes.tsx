@@ -12,7 +12,7 @@ export function hydrateFallback() {
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Enerlova | Empalmes' },
+    { title: 'Agualova | Empalmes' },
     { name: 'description', content: ' empalmes del sistema' }
   ];
 }

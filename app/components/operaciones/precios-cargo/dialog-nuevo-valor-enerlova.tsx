@@ -38,7 +38,7 @@ import { ScrollArea } from '~/components/ui/scroll-area';
 import { Separator } from '~/components/ui/separator';
 import api from '~/lib/api';
 
-interface DialogNuevoValorEnerlovaProps {
+interface DialogNuevoValorAgualovaProps {
   codigo: string;
   descripcion: string;
   fecha_inicio: string;
@@ -49,7 +49,7 @@ interface DialogNuevoValorEnerlovaProps {
   disabled?: boolean;
 }
 
-export default function DialogNuevoValorEnerlova({
+export default function DialogNuevoValorAgualova({
   codigo,
   descripcion,
   fecha_inicio,
@@ -57,7 +57,7 @@ export default function DialogNuevoValorEnerlova({
   onSuccess,
   id,
   disabled = false
-}: DialogNuevoValorEnerlovaProps) {
+}: DialogNuevoValorAgualovaProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [valorDisplay, setValorDisplay] = useState('');
@@ -272,7 +272,7 @@ export default function DialogNuevoValorEnerlova({
       };
 
       const response = await api.post(
-        '/ingresa-precio-cargo-enerlova',
+        '/ingresa-precio-cargo-agualova',
         payload
       );
 

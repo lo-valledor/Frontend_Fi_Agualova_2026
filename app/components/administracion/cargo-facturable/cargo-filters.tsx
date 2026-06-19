@@ -20,9 +20,9 @@ import {
 } from '~/components/ui/select';
 import { Separator } from '~/components/ui/separator';
 import type {
-  GeCombosConceptos,
-  GetCombosTarifas,
-  GetCombosTiposMedidor
+  CargoFacturableConceptos,
+  CargoFacturableTarifas,
+  CargoFacturableTiposMedidor
 } from '~/types/administracion';
 
 export interface CargoFilters {
@@ -38,9 +38,9 @@ interface CargoFiltersProps {
   filters: CargoFilters;
   onFiltersChange: (filters: CargoFilters) => void;
   onClearFilters: () => void;
-  conceptos: GeCombosConceptos[];
-  tarifas: GetCombosTarifas[];
-  tiposMedidor: GetCombosTiposMedidor[];
+  conceptos: CargoFacturableConceptos[];
+  tarifas: CargoFacturableTarifas[];
+  tiposMedidor: CargoFacturableTiposMedidor[];
 }
 
 export function CargoFiltersComponent({
@@ -224,8 +224,11 @@ export function CargoFiltersComponent({
                   <SelectContent>
                     <SelectItem value='all'>Todos los conceptos</SelectItem>
                     {conceptos.map(concepto => (
-                      <SelectItem key={concepto.id} value={concepto.nombre}>
-                        {concepto.nombre}
+                      <SelectItem
+                        key={concepto.id}
+                        value={concepto.descripcion}
+                      >
+                        {concepto.descripcion}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -247,8 +250,8 @@ export function CargoFiltersComponent({
                   <SelectContent>
                     <SelectItem value='all'>Todas las tarifas</SelectItem>
                     {tarifas.map(tarifa => (
-                      <SelectItem key={tarifa.id} value={tarifa.nombre}>
-                        {tarifa.nombre}
+                      <SelectItem key={tarifa.id} value={tarifa.descripcion}>
+                        {tarifa.descripcion}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -272,8 +275,8 @@ export function CargoFiltersComponent({
                   <SelectContent>
                     <SelectItem value='all'>Todos los tipos</SelectItem>
                     {tiposMedidor.map(tipo => (
-                      <SelectItem key={tipo.id} value={tipo.nombre}>
-                        {tipo.nombre}
+                      <SelectItem key={tipo.id} value={tipo.descripcion}>
+                        {tipo.descripcion}
                       </SelectItem>
                     ))}
                   </SelectContent>

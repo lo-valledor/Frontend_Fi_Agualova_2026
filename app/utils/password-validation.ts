@@ -1,8 +1,3 @@
-/**
- * Utilidades para validación de contraseñas seguras
- * Implementa mejores prácticas de seguridad según OWASP
- */
-
 export interface PasswordValidationRule {
   id: string;
   label: string;
@@ -17,9 +12,7 @@ export interface PasswordStrength {
   percentage: number;
 }
 
-/**
- * Reglas de validación de contraseña según mejores prácticas
- */
+
 export const PASSWORD_RULES: PasswordValidationRule[] = [
   {
     id: 'length',
@@ -53,9 +46,7 @@ export const PASSWORD_RULES: PasswordValidationRule[] = [
   }
 ];
 
-/**
- * Patrones comunes que deben evitarse
- */
+
 const COMMON_PATTERNS = [
   /^123456/,
   /password/i,

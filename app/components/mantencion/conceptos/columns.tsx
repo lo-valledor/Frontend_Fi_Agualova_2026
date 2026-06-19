@@ -3,19 +3,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { DataTableColumnHeader } from '~/components/data-table/data-table-column-header';
 import { TableActions } from '~/components/data-table/table-helpers';
 import { Badge } from '~/components/ui/badge';
-import type { Conceptos } from '~/types/mantencion';
+import type { Concepto } from '~/types/mantencion';
 
 interface ConceptosColumnsProps {
-  onEdit: (concepto: Conceptos) => void;
-  onDelete: (concepto: Conceptos) => void;
-  canEdit?: boolean;
+  onEdit: (concepto: Concepto) => void;
+  onDelete: (concepto: Concepto) => void;
 }
 
 export const createColumns = ({
   onEdit,
-  onDelete,
-  canEdit = true
-}: ConceptosColumnsProps): ColumnDef<Conceptos>[] => [
+  onDelete
+}: ConceptosColumnsProps): ColumnDef<Concepto>[] => [
   {
     accessorKey: 'denominacion',
     header: ({ column }) => (
@@ -78,16 +76,16 @@ export const createColumns = ({
     }
   },
   {
-    accessorKey: 'asociadoDescripcion',
+    accessorKey: 'conceptoAsociado',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Asociado' />
     ),
     cell: ({ row }) => (
       <div
         className='max-w-[150px] truncate'
-        title={row.getValue('asociadoDescripcion')}
+        title={row.getValue('conceptoAsociado') || 'N/A'}
       >
-        {row.getValue('asociadoDescripcion') || 'N/A'}
+        {row.getValue('conceptoAsociado') || 'N/A'}
       </div>
     )
   },
@@ -100,7 +98,6 @@ export const createColumns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

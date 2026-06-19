@@ -8,13 +8,11 @@ import type { Nicho } from '~/types/mantencion';
 interface TableColumnsProps {
   onEdit: (nicho: Nicho) => void;
   onDelete: (nicho: Nicho) => void;
-  canEdit?: boolean;
 }
 
 export const columns = ({
   onEdit,
-  onDelete,
-  canEdit = true
+  onDelete
 }: TableColumnsProps): ColumnDef<Nicho>[] => [
   {
     accessorKey: 'id',
@@ -34,7 +32,7 @@ export const columns = ({
     size: 80
   },
   {
-    accessorKey: 'sectorNombre',
+    accessorKey: 'nombre',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Sector' />
     ),
@@ -43,28 +41,13 @@ export const columns = ({
       return (
         <div className='flex items-center space-x-3'>
           <div>
-            <div className='font-medium '>{nicho.sectorNombre}</div>
+            <div className='font-medium '>{nicho.nombre}</div>
           </div>
         </div>
       );
     },
     enableSorting: true,
     enableHiding: false
-  },
-  {
-    accessorKey: 'nombre',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Nombre' />
-    ),
-    cell: ({ row }) => {
-      const nombre = row.getValue('nombre');
-      return (
-        <div className='max-w-[150px] truncate font-medium'>
-          {nombre as string}
-        </div>
-      );
-    },
-    enableSorting: true
   },
   {
     accessorKey: 'ubicacion',
@@ -115,7 +98,6 @@ export const columns = ({
         onDelete={() => onDelete(row.original)}
         showView={false}
         item={row.original}
-        disableEdit={!canEdit}
       />
     )
   }

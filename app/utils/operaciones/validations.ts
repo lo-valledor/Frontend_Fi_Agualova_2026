@@ -1,17 +1,9 @@
-/**
- * Validaciones para módulos de operaciones
- */
-
 export interface ValidationResult {
   isValid: boolean;
   error?: string;
 }
 
-/**
- * Valida que un período (mes/año) sea válido
- * @param mes
- * @param anio
- */
+
 export function validatePeriod(
   mes: string | null | undefined,
   anio: string | null | undefined
@@ -47,10 +39,7 @@ export function validatePeriod(
   return { isValid: true };
 }
 
-/**
- * Valida que un precio sea válido
- * @param price
- */
+
 export function validatePrice(
   price: number | string | null | undefined
 ): ValidationResult {
@@ -83,11 +72,7 @@ export function validatePrice(
   return { isValid: true };
 }
 
-/**
- * Valida credenciales de usuario
- * @param username
- * @param password
- */
+
 export function validateUserCredentials(
   username: string | null | undefined,
   password: string | null | undefined
@@ -119,10 +104,7 @@ export function validateUserCredentials(
   return { isValid: true };
 }
 
-/**
- * Valida que un ciclo sea válido
- * @param ciclo
- */
+
 export function validateCycle(
   ciclo: string | null | undefined
 ): ValidationResult {
@@ -136,11 +118,7 @@ export function validateCycle(
   return { isValid: true };
 }
 
-/**
- * Valida que haya elementos seleccionados
- * @param items
- * @param itemName
- */
+
 export function validateSelection<T>(
   items: T[] | null | undefined,
   itemName = 'elementos'

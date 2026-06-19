@@ -27,8 +27,8 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
   const [input, setInput] = useState({
-    usuario: '',
-    contrasena: ''
+    email: '',
+    password: ''
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -45,11 +45,11 @@ export function LoginForm({
     e.preventDefault();
     setErrorMessage(null); // Limpiar error anterior
 
-    if (input.usuario && input.contrasena) {
+    if (input.email && input.password) {
       try {
-        // Obtener la ruta desde donde vino el usuario, o usar dashboard por defecto
+        // Obtener la ruta desde donde vino el email, o usar dashboard por defecto
         const from = (location.state as any)?.from?.pathname || '/dashboard';
-        await login(input.usuario, input.contrasena, from);
+        await login(input.email, input.password, from);
         // La redirección se maneja en el contexto de autenticación
       } catch (error) {
         const message =
@@ -64,7 +64,7 @@ export function LoginForm({
         );
       }
     } else {
-      setErrorMessage('El usuario y la contraseña son obligatorios.');
+      setErrorMessage('El email y la contraseña son obligatorios.');
     }
   };
 
@@ -126,7 +126,7 @@ export function LoginForm({
 
           <div className='space-y-4'>
             <div className='space-y-2'>
-              <Label htmlFor='usuario' className='block text-sm font-semibold'>
+              <Label htmlFor='email' className='block text-sm font-semibold'>
                 Correo Electrónico
               </Label>
               <div className='relative group'>
@@ -134,11 +134,11 @@ export function LoginForm({
                   <User className='h-5 w-5 text-muted-foreground group-focus-within:text-ring transition-colors' />
                 </div>
                 <Input
-                  id='usuario'
-                  name='usuario'
+                  id='email'
+                  name='email'
                   type='email'
                   placeholder='ejemplo@ejemplo.com'
-                  value={input.usuario}
+                  value={input.email}
                   onChange={handleInput}
                   required
                   className='pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all'
@@ -149,7 +149,7 @@ export function LoginForm({
             <div className='space-y-2'>
               <div className='flex items-center justify-between'>
                 <Label
-                  htmlFor='contrasena'
+                  htmlFor='password'
                   className='block text-sm font-semibold'
                 >
                   Contraseña
@@ -167,11 +167,11 @@ export function LoginForm({
                   <Lock className='h-5 w-5 text-muted-foreground group-focus-within:text-ring  transition-colors' />
                 </div>
                 <Input
-                  id='contrasena'
-                  name='contrasena'
+                  id='password'
+                  name='password'
                   type={showPassword ? 'text' : 'password'}
                   placeholder='Ingresa tu contraseña'
-                  value={input.contrasena}
+                  value={input.password}
                   onChange={handleInput}
                   required
                   className='pl-12 h-12 bg-background border-border focus:ring-ring rounded-xl   transition-all'

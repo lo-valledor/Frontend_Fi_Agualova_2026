@@ -1,27 +1,6 @@
-/**
- * Formatting utilities for Monitor module
- * Consistent data formatting with null safety
- */
-
-/**
- * Safely format a date with fallback for invalid dates
- *
- * @deprecated Use formatSafeDate from ~/utils/date-formatter instead
- * This is a re-export for backward compatibility
- *
- * @param date - Date string or null
- * @param fallback - Fallback text for null/invalid dates
- * @returns Formatted date string or fallback
- */
 export { formatSafeDate } from '~/utils/date-formatter';
 
-/**
- * Format meter reading value with appropriate decimals
- * @param value - Reading value
- * @param decimals - Number of decimal places (default: 0)
- * @param fallback - Fallback for null values
- * @returns Formatted reading string
- */
+
 export function formatMeterReading(
   value: number | string | null | undefined,
   decimals = 0,
@@ -40,14 +19,7 @@ export function formatMeterReading(
   return numValue.toFixed(decimals);
 }
 
-/**
- * Format consumption value with units
- * @param consumption - Consumption value
- * @param unit - Unit to append (default: 'kWh')
- * @param decimals - Number of decimal places (default: 2)
- * @param fallback - Fallback for null values
- * @returns Formatted consumption string
- */
+
 export function formatConsumption(
   consumption: number | null | undefined,
   unit = 'kWh',
@@ -65,13 +37,7 @@ export function formatConsumption(
   return `${consumption.toFixed(decimals)} ${unit}`;
 }
 
-/**
- * Format energy value (active or reactive)
- * @param value - Energy value
- * @param decimals - Number of decimal places (default: 2)
- * @param fallback - Fallback for null values
- * @returns Formatted energy string
- */
+
 export function formatEnergyValue(
   value: number | string | null | undefined,
   decimals = 2,
@@ -90,14 +56,7 @@ export function formatEnergyValue(
   return numValue.toFixed(decimals);
 }
 
-/**
- * Format power demand value
- * @param demand - Demand value
- * @param unit - Unit to append (default: 'kW')
- * @param decimals - Number of decimal places (default: 2)
- * @param fallback - Fallback for null values
- * @returns Formatted demand string
- */
+
 export function formatPowerDemand(
   demand: number | string | null | undefined,
   unit = 'kW',
@@ -118,13 +77,7 @@ export function formatPowerDemand(
   return `${numDemand.toFixed(decimals)} ${unit}`;
 }
 
-/**
- * Format percentage value
- * @param value - Percentage value (0-100)
- * @param decimals - Number of decimal places (default: 1)
- * @param includeSymbol - Whether to include % symbol (default: true)
- * @returns Formatted percentage string
- */
+
 export function formatPercentage(
   value: number | null | undefined,
   decimals = 1,
@@ -138,13 +91,7 @@ export function formatPercentage(
   return includeSymbol ? `${formatted}%` : formatted;
 }
 
-/**
- * Format serial number with consistent casing
- * @param serialNumber - Serial number
- * @param uppercase - Whether to convert to uppercase (default: true)
- * @param fallback - Fallback for null values
- * @returns Formatted serial number
- */
+
 export function formatSerialNumber(
   serialNumber: string | null | undefined,
   uppercase = true,
@@ -158,12 +105,7 @@ export function formatSerialNumber(
   return uppercase ? trimmed.toUpperCase() : trimmed;
 }
 
-/**
- * Format time value (HH:MM)
- * @param time - Time string
- * @param fallback - Fallback for null values
- * @returns Formatted time string
- */
+
 export function formatTime(
   time: string | null | undefined,
   fallback = '--:--'
