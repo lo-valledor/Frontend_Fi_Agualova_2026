@@ -6,6 +6,8 @@ import type {
   CorteReposicionLiberarRequest,
   CorteReposicionRegistrarCorteRequest,
   CorteReposicionResumenResponse,
+  PeriodosAniosDisponiblesResponse,
+  PeriodosBuscarRequest,
   PeriodosCrearRequest,
   PreciosConsultarRequest,
   PreciosGuardarMasivoRequest,
@@ -24,6 +26,31 @@ export interface OperacionesServiceResponse<T> {
 }
 
 class OperacionesService {
+  private processApiResponse<T>(response: unknown): T[] {
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      'data' in response
+    ) {
+      const data = (response as { data?: unknown }).data;
+
+      if (
+        typeof data === 'object' &&
+        data !== null &&
+        'data' in data &&
+        Array.isArray((data as { data?: unknown }).data)
+      ) {
+        return (data as { data: T[] }).data;
+      }
+
+      if (Array.isArray(data)) {
+        return data as T[];
+      }
+    }
+
+    return [];
+  }
+
   /**
    * Periodos Facturacion
    * @returns
@@ -50,7 +77,7 @@ class OperacionesService {
     anio?: string,
     limit?: number,
     offset?: number
-  ) {
+  ): Promise<OperacionesServiceResponse<PeriodosBuscarRequest[]>> {
     try {
       const params = new URLSearchParams();
       if (mes) params.append('mes', mes);
@@ -61,7 +88,57 @@ class OperacionesService {
         params
       });
       return {
-        data: response.data,
+        data: this.processApiResponse<PeriodosBuscarRequest>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getPeriodosAniosDisponibles(): Promise<
+    OperacionesServiceResponse<PeriodosAniosDisponiblesResponse[]>
+  > {
+    try {
+      const response = await api.get('/periodos/anios-disponibles');
+      return {
+        data: this.processApiResponse<PeriodosAniosDisponiblesResponse>(
+          response
+        ),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getPeriodoFacturacionPageData(): Promise<
+    OperacionesServiceResponse<{
+      years: PeriodosAniosDisponiblesResponse[];
+      periodos: PeriodosBuscarRequest[];
+    }>
+  > {
+    try {
+      const [yearsResponse, periodosResponse] = await Promise.all([
+        api.get('/periodos/anios-disponibles'),
+        api.get('/periodos/buscar')
+      ]);
+
+      return {
+        data: {
+          years: this.processApiResponse<PeriodosAniosDisponiblesResponse>(
+            yearsResponse
+          ),
+          periodos: this.processApiResponse<PeriodosBuscarRequest>(
+            periodosResponse
+          )
+        },
         error: null
       };
     } catch (error) {
