@@ -6,7 +6,6 @@ import type {
   GetContratos
 } from '~/types/administracion';
 
-
 export function createInitialContratoModalState(): ContratoModalState {
   return {
     delete: {
@@ -17,7 +16,6 @@ export function createInitialContratoModalState(): ContratoModalState {
     }
   };
 }
-
 
 export function extractContratoErrorMessage(
   error: unknown,
@@ -46,23 +44,21 @@ export function extractContratoErrorMessage(
   };
 }
 
-
 export function getContratoEditUrl(codigoContrato: string): string {
   return `/dashboard/administracion/contratos/${codigoContrato}`;
 }
-
 
 export function getContratoCreateUrl(): string {
   return '/dashboard/administracion/contratos/crear';
 }
 
-
 export function isValidContratoForOperation(
   contrato: GetContratos | null | undefined
 ): contrato is GetContratos {
-  return contrato !== null && contrato !== undefined && !!contrato.codigoContrato;
+  return (
+    contrato !== null && contrato !== undefined && !!contrato.codigoContrato
+  );
 }
-
 
 export function isContratosListEmpty(contratos: GetContratos[]): boolean {
   return !Array.isArray(contratos) || contratos.length === 0;

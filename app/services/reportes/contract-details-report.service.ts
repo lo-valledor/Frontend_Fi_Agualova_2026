@@ -1,5 +1,6 @@
-import { BaseApiService } from '~/services/core/base-service';
+import api from '~/lib/api';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type {
   DetalleCliente,
   DetalleContrato,
@@ -10,8 +11,6 @@ import type {
   DetallePropietario,
   DetalleUbicacion
 } from '~/types/reportes';
-import api from '~/lib/api';
-
 
 export interface DetallesContrato {
   detallePropietario: DetallePropietario[];
@@ -24,14 +23,11 @@ export interface DetallesContrato {
   detalleFacturas: DetalleFacturas[];
 }
 
-
 export class ContractDetailsReportService extends BaseApiService {
-  
   constructor(httpClient: any = api) {
     super(httpClient);
   }
 
-  
   async getDetallesPorContrato(
     contratoId: number
   ): Promise<ServiceResponse<DetallesContrato>> {
@@ -86,7 +82,6 @@ export class ContractDetailsReportService extends BaseApiService {
     }, 'Error getting contract details');
   }
 
-  
   private async safeApiCall<T>(endpoint: string): Promise<T[]> {
     try {
       const response = await this.httpClient.get(endpoint);
@@ -97,7 +92,6 @@ export class ContractDetailsReportService extends BaseApiService {
     }
   }
 
-  
   async getDetallePropietario(
     contratoId: number
   ): Promise<ServiceResponse<DetallePropietario[]>> {
@@ -115,7 +109,6 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  
   async getDetalleCliente(
     contratoId: number
   ): Promise<ServiceResponse<DetalleCliente[]>> {
@@ -132,7 +125,6 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  
   async getDetalleMedidores(
     contratoId: number
   ): Promise<ServiceResponse<DetalleMedidores[]>> {
@@ -149,7 +141,6 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  
   async getDetalleLecturas(
     contratoId: number
   ): Promise<ServiceResponse<DetalleLecturas[]>> {
@@ -166,7 +157,6 @@ export class ContractDetailsReportService extends BaseApiService {
     );
   }
 
-  
   async getDetalleFacturas(
     contratoId: number
   ): Promise<ServiceResponse<DetalleFacturas[]>> {

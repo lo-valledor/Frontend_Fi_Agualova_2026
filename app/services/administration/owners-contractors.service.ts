@@ -1,11 +1,10 @@
 import api from '~/lib/api';
+import type { GetContratante, GetPropietario } from '~/types/administracion';
 import { BaseApiService, type ServiceResponse } from '../core';
-import type { GetPropietario, GetContratante } from '~/types/administracion';
 
 // ============================================================================
 // TIPOS - PROPIETARIOS
 // ============================================================================
-
 
 export interface CreatePropietarioRequest {
   rut: string;
@@ -15,7 +14,6 @@ export interface CreatePropietarioRequest {
   celular: string;
   email: string;
 }
-
 
 export interface UpdatePropietarioRequest {
   id: string | number;
@@ -36,7 +34,6 @@ export type PropietarioOperationResponse = {
 // TIPOS - CONTRATANTES
 // ============================================================================
 
-
 export interface CreateContratanteRequest {
   rut: string;
   nombre: string;
@@ -48,7 +45,6 @@ export interface CreateContratanteRequest {
   telefono: string;
   email: string;
 }
-
 
 export interface UpdateContratanteRequest {
   id: string | number;
@@ -72,14 +68,11 @@ export type ContratanteOperationResponse = {
 // SERVICIO - PROPIETARIOS
 // ============================================================================
 
-
 class PropietariosService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<GetPropietario[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('propietario/buscar');
@@ -87,7 +80,6 @@ class PropietariosService extends BaseApiService {
     }, 'Error al obtener propietarios');
   }
 
-  
   async getById(
     id: string | number
   ): Promise<ServiceResponse<GetPropietario | null>> {
@@ -104,7 +96,6 @@ class PropietariosService extends BaseApiService {
     }, `Error al obtener propietario ${id}`);
   }
 
-  
   async create(
     data: CreatePropietarioRequest
   ): Promise<ServiceResponse<GetPropietario | null>> {
@@ -121,7 +112,6 @@ class PropietariosService extends BaseApiService {
     }, 'Error al crear propietario');
   }
 
-  
   async update(
     data: UpdatePropietarioRequest
   ): Promise<ServiceResponse<GetPropietario | null>> {
@@ -142,7 +132,6 @@ class PropietariosService extends BaseApiService {
     }, `Error al actualizar propietario ${data.id}`);
   }
 
-  
   async delete(id: string | number): Promise<ServiceResponse<string>> {
     if (!id) {
       return this.handleError(
@@ -156,7 +145,6 @@ class PropietariosService extends BaseApiService {
     }, `Propietario ${id} eliminado exitosamente`);
   }
 
-  
   async getByCliente(
     clienteId: string | number
   ): Promise<ServiceResponse<GetPropietario[]>> {
@@ -180,14 +168,11 @@ class PropietariosService extends BaseApiService {
 // SERVICIO - CONTRATANTES
 // ============================================================================
 
-
 class ContratantesService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<GetContratante[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('contratante/buscar');
@@ -195,7 +180,6 @@ class ContratantesService extends BaseApiService {
     }, 'Error al obtener contratantes');
   }
 
-  
   async getById(
     id: string | number
   ): Promise<ServiceResponse<GetContratante | null>> {
@@ -212,7 +196,6 @@ class ContratantesService extends BaseApiService {
     }, `Error al obtener contratante ${id}`);
   }
 
-  
   async create(
     data: CreateContratanteRequest
   ): Promise<ServiceResponse<GetContratante | null>> {
@@ -229,7 +212,6 @@ class ContratantesService extends BaseApiService {
     }, 'Error al crear contratante');
   }
 
-  
   async update(
     data: UpdateContratanteRequest
   ): Promise<ServiceResponse<GetContratante | null>> {
@@ -250,7 +232,6 @@ class ContratantesService extends BaseApiService {
     }, `Error al actualizar contratante ${data.id}`);
   }
 
-  
   async delete(id: string | number): Promise<ServiceResponse<string>> {
     if (!id) {
       return this.handleError(
@@ -264,7 +245,6 @@ class ContratantesService extends BaseApiService {
     }, `Contratante ${id} eliminado exitosamente`);
   }
 
-  
   async getByCliente(
     clienteId: string | number
   ): Promise<ServiceResponse<GetContratante[]>> {

@@ -1,10 +1,7 @@
-/* eslint-disable no-empty-pattern */
-import React from 'react';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import AbrirPeriodoFacturacion from '~/components/operaciones/periodo-facturacion/periodo-facturacion-component';
 import { operacionesService } from '~/services/operacionesService';
-
+import type { PeriodosBuscarRequest } from '~/types/operaciones';
 import type { Route } from './+types/periodo-facturacion';
 
 export function meta({}: Route.MetaArgs) {
@@ -15,12 +12,11 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function clientLoader() {
-  const result = await operacionesService.getPeriodoFacturacionData();
+  const result = await operacionesService.getPeriodoAbierto();
 
   if (result.error || !result.data) {
     return {
-      years: [],
-      periodos: []
+      data: result.data as PeriodosBuscarRequest[]
     };
   }
 

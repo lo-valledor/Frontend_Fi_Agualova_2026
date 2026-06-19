@@ -13,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
 
 const ForgotPassword = () => {
   return (
-    <AuthLayout title='Recuperar Contraseña'>
+    <AuthLayout title="Recuperar Contraseña">
       <ForgotForm />
     </AuthLayout>
   );

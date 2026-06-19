@@ -1,7 +1,7 @@
-import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useCalculoProceso } from './use-calculo-proceso';
+import { act, renderHook } from '@testing-library/react';
 import { toast } from 'sonner';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useCalculoProceso } from './use-calculo-proceso';
 
 vi.mock('sonner', () => ({
   toast: {
@@ -48,9 +48,7 @@ describe('useCalculoProceso', () => {
 
     await result.current.handleLanzarCalculo();
 
-    expect(toast.error).toHaveBeenCalledWith(
-      'Periodo y ciclo son requeridos.'
-    );
+    expect(toast.error).toHaveBeenCalledWith('Periodo y ciclo son requeridos.');
   });
 
   it('debería mostrar error si falta cicloId en handleLanzarCalculo', async () => {
@@ -64,9 +62,7 @@ describe('useCalculoProceso', () => {
 
     await result.current.handleLanzarCalculo();
 
-    expect(toast.error).toHaveBeenCalledWith(
-      'Periodo y ciclo son requeridos.'
-    );
+    expect(toast.error).toHaveBeenCalledWith('Periodo y ciclo son requeridos.');
   });
 
   it('debería mostrar error si no hay contratos seleccionados en handleAceptarCalculo', async () => {

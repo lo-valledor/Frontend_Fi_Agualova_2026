@@ -12,7 +12,6 @@ export interface PasswordStrength {
   percentage: number;
 }
 
-
 export const PASSWORD_RULES: PasswordValidationRule[] = [
   {
     id: 'length',
@@ -45,7 +44,6 @@ export const PASSWORD_RULES: PasswordValidationRule[] = [
     message: 'Debe incluir al menos un carácter especial (!@#$%&*...)'
   }
 ];
-
 
 const COMMON_PATTERNS = [
   /^123456/,

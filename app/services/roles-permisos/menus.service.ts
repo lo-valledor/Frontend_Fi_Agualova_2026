@@ -1,8 +1,7 @@
-import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type { Menus } from '~/types/roles-permisos';
-import { debugApi, API_TEMPLATES } from '~/utils/api-debug';
-
+import { API_TEMPLATES, debugApi } from '~/utils/api-debug';
 
 export interface CreateMenuRequest {
   nombreMenu: string;
@@ -12,19 +11,15 @@ export interface CreateMenuRequest {
   esVisible: boolean;
 }
 
-
 export interface UpdateMenuRequest extends CreateMenuRequest {
   idMenu: number;
 }
 
-
 export class MenusService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<Menus[]>> {
     const endpoint = 'ListarMenus';
 
@@ -49,7 +44,6 @@ export class MenusService extends BaseApiService {
     }, 'Error al obtener menús');
   }
 
-  
   async getById(idMenu: number): Promise<ServiceResponse<Menus>> {
     if (!idMenu) {
       return this.handleError(
@@ -64,7 +58,6 @@ export class MenusService extends BaseApiService {
     }, `Error al obtener el menú ${idMenu}`) as Promise<ServiceResponse<Menus>>;
   }
 
-  
   async create(request: CreateMenuRequest): Promise<ServiceResponse<Menus>> {
     if (!request.nombreMenu?.trim()) {
       return this.handleError(
@@ -118,7 +111,6 @@ export class MenusService extends BaseApiService {
     }, 'Error al crear el menú') as Promise<ServiceResponse<Menus>>;
   }
 
-  
   async update(request: UpdateMenuRequest): Promise<ServiceResponse<Menus>> {
     if (!request.idMenu) {
       return this.handleError(
@@ -176,7 +168,6 @@ export class MenusService extends BaseApiService {
     }, 'Error al actualizar el menú') as Promise<ServiceResponse<Menus>>;
   }
 
-  
   async delete(idMenu: number): Promise<ServiceResponse<boolean>> {
     if (!idMenu) {
       return this.handleError(
@@ -191,7 +182,6 @@ export class MenusService extends BaseApiService {
     }, `Error al eliminar el menú ${idMenu}`);
   }
 
-  
   async getByRol(idRol: number): Promise<ServiceResponse<Menus[]>> {
     if (!idRol) {
       return this.handleError(

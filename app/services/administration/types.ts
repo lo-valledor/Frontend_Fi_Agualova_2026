@@ -2,13 +2,11 @@
 // TIPOS DE RESPUESTA GENÉRICOS
 // ============================================================================
 
-
 export interface EntityOperationResponse<T> {
   data: T;
   message: string;
   timestamp: string;
 }
-
 
 export interface EntityListResponse<T> {
   items: T[];
@@ -21,16 +19,13 @@ export interface EntityListResponse<T> {
 // TIPOS DE SOLICITUD
 // ============================================================================
 
-
 export interface SearchByRutRequest {
   rut: string;
 }
 
-
 export interface SearchByIdRequest {
   id: string | number;
 }
-
 
 export interface SearchByRelationRequest {
   relationId: string | number;
@@ -40,12 +35,10 @@ export interface SearchByRelationRequest {
 // TIPOS DE VALIDACIÓN
 // ============================================================================
 
-
 export interface ValidationResult {
   isValid: boolean;
   errors: ValidationError[];
 }
-
 
 export interface ValidationError {
   field: string;

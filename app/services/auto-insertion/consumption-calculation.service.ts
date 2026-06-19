@@ -1,20 +1,16 @@
 import { BaseApiService } from '~/services/core/base-service';
 
-
 export interface ConsumptionCalculationResult {
   consumptionKwh: number;
   hasRollover: boolean;
   adjustedReading: number;
 }
 
-
 export class ConsumptionCalculationService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   calculateRealConsumption(
     currentReading: number,
     previousReading: number,
@@ -51,7 +47,6 @@ export class ConsumptionCalculationService extends BaseApiService {
     };
   }
 
-  
   calculateSimpleConsumption(
     currentReading: number,
     previousReading: number
@@ -59,7 +54,6 @@ export class ConsumptionCalculationService extends BaseApiService {
     return this.calculateRealConsumption(currentReading, previousReading, 5, 1);
   }
 
-  
   isValidConsumption(
     currentReading: number,
     previousReading: number,
@@ -76,7 +70,6 @@ export class ConsumptionCalculationService extends BaseApiService {
     return rolloverConsumption > 0 && rolloverConsumption <= meterCapacity;
   }
 
-  
   getValidConsumptionRange(
     previousConsumption: number | null,
     multiplier: number = 3

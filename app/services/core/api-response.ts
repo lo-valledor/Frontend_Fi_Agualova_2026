@@ -2,14 +2,11 @@
 // TIPOS
 // ============================================================================
 
-
 export interface ServiceResponse<T> {
-  
   data: T | null;
-  
+
   error: string | null;
 }
-
 
 export type OperationResult<T> =
   | {
@@ -25,21 +22,17 @@ export type OperationResult<T> =
 // CONSTRUCTORES
 // ============================================================================
 
-
 export function successResponse<T>(data: T): ServiceResponse<T> {
   return { data, error: null };
 }
-
 
 export function errorResponse<T>(error: string): ServiceResponse<T> {
   return { data: null, error };
 }
 
-
 export function successResult<T>(data: T): OperationResult<T> {
   return { success: true, data };
 }
-
 
 export function errorResult<T>(error: Error): OperationResult<T> {
   return { success: false, error };
@@ -48,7 +41,6 @@ export function errorResult<T>(error: Error): OperationResult<T> {
 // ============================================================================
 // UTILIDADES
 // ============================================================================
-
 
 export function toErrorMessage(error: unknown): string {
   if (error instanceof Error) {
@@ -60,13 +52,11 @@ export function toErrorMessage(error: unknown): string {
   return 'Error desconocido';
 }
 
-
 export function isSuccess<T>(
   response: ServiceResponse<T>
 ): response is ServiceResponse<T> & { data: T; error: null } {
   return response.data !== null && response.error === null;
 }
-
 
 export function hasError<T>(
   response: ServiceResponse<T>

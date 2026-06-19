@@ -20,8 +20,6 @@ export interface ReportesServiceResponse<T> {
 }
 
 class ReportesService {
-  
-
   private processApiResponse<T>(response: any): T[] {
     // Si ya es un array, devolverlo directamente
     if (Array.isArray(response.data)) {

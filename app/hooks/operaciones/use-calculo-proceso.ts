@@ -1,6 +1,5 @@
-import { toast } from 'sonner';
-
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import api from '~/lib/api';
 import {
@@ -9,13 +8,11 @@ import {
 } from './utils/cycle-utilities';
 import { extraerErrorMessage } from './utils/error-handler';
 
-
 interface UseCalculoProcesoProps {
   periodoFormateado: string;
   cicloId: string;
   onCalculoAceptado: () => void;
 }
-
 
 export function useCalculoProceso({
   periodoFormateado,
@@ -26,7 +23,6 @@ export function useCalculoProceso({
   const [isAccepting, setIsAccepting] = useState(false);
   const [selectedContratos, setSelectedContratos] = useState<number[]>([]);
 
-  
   const handleLanzarCalculo = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
@@ -58,7 +54,6 @@ export function useCalculoProceso({
     }
   };
 
-  
   const handleAceptarCalculo = async (): Promise<void> => {
     // Early return si no hay contratos seleccionados
     if (selectedContratos.length === 0) {

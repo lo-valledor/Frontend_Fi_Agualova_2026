@@ -5,22 +5,18 @@ import { BaseApiService, type ServiceResponse } from '../core';
 // TIPOS
 // ============================================================================
 
-
 export interface CreateMedidorRequest {
   [key: string]: any;
 }
-
 
 export interface UpdateMedidorRequest {
   id: string | number;
   [key: string]: any;
 }
 
-
 export interface Medidor {
   [key: string]: any;
 }
-
 
 export interface MedidorOperationResponse {
   medidor: Medidor;
@@ -31,14 +27,11 @@ export interface MedidorOperationResponse {
 // SERVICIO
 // ============================================================================
 
-
 class MedidoresService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<Medidor[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('medidor/buscar');
@@ -46,7 +39,6 @@ class MedidoresService extends BaseApiService {
     }, 'Error al obtener medidores');
   }
 
-  
   async getById(id: string | number): Promise<ServiceResponse<Medidor | null>> {
     if (!id) {
       return this.handleError(
@@ -61,7 +53,6 @@ class MedidoresService extends BaseApiService {
     }, `Error al obtener medidor ${id}`);
   }
 
-  
   async create(
     data: CreateMedidorRequest
   ): Promise<ServiceResponse<Medidor | null>> {
@@ -78,7 +69,6 @@ class MedidoresService extends BaseApiService {
     }, 'Error al crear medidor');
   }
 
-  
   async update(
     data: UpdateMedidorRequest
   ): Promise<ServiceResponse<Medidor | null>> {
@@ -96,7 +86,6 @@ class MedidoresService extends BaseApiService {
     }, `Error al actualizar medidor ${data.id}`);
   }
 
-  
   async delete(id: string | number): Promise<ServiceResponse<null>> {
     if (!id) {
       return this.handleError(
@@ -112,7 +101,6 @@ class MedidoresService extends BaseApiService {
     >;
   }
 
-  
   async getByContrato(
     contratoId: string | number
   ): Promise<ServiceResponse<Medidor[]>> {
@@ -131,7 +119,6 @@ class MedidoresService extends BaseApiService {
     }, `Error al obtener medidores del contrato ${contratoId}`);
   }
 
-  
   async getByAcometida(
     acometidaId: string | number
   ): Promise<ServiceResponse<Medidor[]>> {

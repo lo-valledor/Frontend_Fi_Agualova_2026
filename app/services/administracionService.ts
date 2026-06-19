@@ -2,6 +2,8 @@ import api from '~/lib/api';
 import type {
   AcometidaDetail,
   AcometidaRow,
+  BuscarAcometidas,
+  BuscarContratosLibres,
   CargoFacturableConceptos,
   CargoFacturableProps,
   CargoFacturableRow,
@@ -9,17 +11,15 @@ import type {
   CargoFacturableTiposMedidor,
   CargosFacturables,
   CargoTipoContrato,
-  ClienteFormValues,
   Cliente,
-  BuscarAcometidas,
-  BuscarContratosLibres,
+  ClienteFormValues,
   ClientesRow,
-  CondicionContratoFormValues,
+  Concepto,
+  Conceptos,
   CondicionContrato,
+  CondicionContratoFormValues,
   Condiciones,
   CondicionesContratoRow,
-  Conceptos,
-  Concepto,
   ContratosRow,
   Empalmes,
   Estado,
@@ -36,17 +36,13 @@ import type {
   Usuarios
 } from '~/types/administracion';
 
-
 export interface AdministracionServiceResponse<T> {
-  
   data: T | null;
-  
+
   error: string | null;
 }
 
-
 class AdministracionService {
-  
   private processApiResponse<T>(response: any): T[] {
     if (
       response.data &&
@@ -61,7 +57,6 @@ class AdministracionService {
     return [];
   }
 
-  
   async getAcometidasData(): Promise<
     AdministracionServiceResponse<{
       acometidas: AcometidaRow[];
@@ -106,6 +101,61 @@ class AdministracionService {
     }
   }
 
+  async getAcometidaByLimitAndOffset(
+    ubicacion?: string,
+    idSector?: number,
+    idNicho?: number,
+    limit = 10,
+    offset = 0
+  ) {
+    try {
+      const params: Record<string, string | number> = {
+        limit,
+        offset
+      };
+      if (ubicacion) params.ubicacion = ubicacion;
+      if (idSector) params.idSector = idSector;
+      if (idNicho) params.idNicho = idNicho;
+
+      const response = await api.get('/acometidas/buscar', { params });
+      return {
+        data: this.processApiResponse<AcometidaRow>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
+  async getAcometidasBuscarContratosLibres(
+    nombreCliente?: string,
+    limit?: number,
+    offset?: number
+  ) {
+    try {
+      const params: Record<string, string | number> = {};
+      if (nombreCliente) params.nombreCliente = nombreCliente;
+      if (limit) params.limit = limit;
+      if (offset) params.offset = offset;
+
+      const response = await api.get('/acometidas/buscar-contratos-libres', {
+        params
+      });
+      return {
+        data: this.processApiResponse<BuscarContratosLibres>(response),
+        error: null
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : 'Error desconocido'
+      };
+    }
+  }
+
   async getAcometidaById(
     id: number
   ): Promise<AdministracionServiceResponse<AcometidaDetail>> {
@@ -123,7 +173,6 @@ class AdministracionService {
     }
   }
 
-  
   async getClientesData(): Promise<
     AdministracionServiceResponse<{
       clientes: ClientesRow[];
@@ -156,7 +205,6 @@ class AdministracionService {
     }
   }
 
-  
   async getContratosData(): Promise<
     AdministracionServiceResponse<{
       contratos: ContratosRow[];
@@ -179,7 +227,6 @@ class AdministracionService {
     }
   }
 
-  
   async getClientesBuscar(): Promise<
     AdministracionServiceResponse<ClientesRow[]>
   > {
@@ -197,10 +244,9 @@ class AdministracionService {
     }
   }
 
-  
-  async getContratoById(id: number): Promise<
-    AdministracionServiceResponse<unknown>
-  > {
+  async getContratoById(
+    id: number
+  ): Promise<AdministracionServiceResponse<unknown>> {
     try {
       const resContratos = await api.get(`/contratos/${id}`);
       return {
@@ -215,7 +261,6 @@ class AdministracionService {
     }
   }
 
-  
   async getDataCreacionContrato(): Promise<
     AdministracionServiceResponse<unknown>
   > {
@@ -232,7 +277,6 @@ class AdministracionService {
     }
   }
 
-  
   async getMedidoresData(): Promise<
     AdministracionServiceResponse<{
       medidores: MedidoresRow[];
@@ -276,7 +320,6 @@ class AdministracionService {
     }
   }
 
-  
   async postMedidoresData(): Promise<
     AdministracionServiceResponse<{
       marca: Marca[];
@@ -304,7 +347,6 @@ class AdministracionService {
     }
   }
 
-  
   async getMedidoresByCodigo({ codigo }: { codigo: string }): Promise<
     AdministracionServiceResponse<{
       medidor: MedidoresRow | null;
@@ -348,7 +390,6 @@ class AdministracionService {
     }
   }
 
-  
   async getUsuarios(): Promise<AdministracionServiceResponse<Usuarios[]>> {
     try {
       const response = await api.get('GetAllUsers');
@@ -364,7 +405,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCargoTipoContrato(): Promise<
     AdministracionServiceResponse<CargoTipoContrato[]>
   > {
@@ -382,7 +422,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCargoTipoContratoById(cargoTipoContratoId: number): Promise<
     AdministracionServiceResponse<{
       tipoContratoId: number;
@@ -472,9 +511,7 @@ class AdministracionService {
                   );
                   return tipoMedidor === 1;
                 })
-                .map(item =>
-                  toNumber((item as { cargoId?: unknown }).cargoId)
-                )
+                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
                 .filter((item): item is number => item !== null),
         idsCargosTrifasicos:
           toNumberArray(estructura.idsCargosTrifasicos).length > 0
@@ -486,9 +523,7 @@ class AdministracionService {
                   );
                   return tipoMedidor === 2;
                 })
-                .map(item =>
-                  toNumber((item as { cargoId?: unknown }).cargoId)
-                )
+                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
                 .filter((item): item is number => item !== null),
         idsCargosAmbos:
           toNumberArray(estructura.idsCargosAmbos).length > 0
@@ -500,9 +535,7 @@ class AdministracionService {
                   );
                   return tipoMedidor === 0;
                 })
-                .map(item =>
-                  toNumber((item as { cargoId?: unknown }).cargoId)
-                )
+                .map(item => toNumber((item as { cargoId?: unknown }).cargoId))
                 .filter((item): item is number => item !== null)
       };
 
@@ -518,9 +551,8 @@ class AdministracionService {
           condiciones: this.processApiResponse<Condiciones>(
             responseCondicionesContrato
           ),
-          cargosFacturables: this.processApiResponse<CargosFacturables>(
-            responseCargos
-          )
+          cargosFacturables:
+            this.processApiResponse<CargosFacturables>(responseCargos)
         },
         error: null
       };
@@ -532,7 +564,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCargoTipoContratoCrear(): Promise<
     AdministracionServiceResponse<{
       tiposContrato: TiposContrato[];
@@ -563,9 +594,8 @@ class AdministracionService {
           condiciones: this.processApiResponse<Condiciones>(
             responseCondicionesContrato
           ),
-          cargosFacturables: this.processApiResponse<CargosFacturables>(
-            responseCargos
-          )
+          cargosFacturables:
+            this.processApiResponse<CargosFacturables>(responseCargos)
         },
         error: null
       };
@@ -597,7 +627,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCondicionesContratoData(): Promise<
     AdministracionServiceResponse<{
       condicionesContrato: CondicionesContratoRow[];
@@ -612,8 +641,9 @@ class AdministracionService {
 
       return {
         data: {
-          condicionesContrato:
-            this.processApiResponse<CondicionesContratoRow>(resCondicionesContrato),
+          condicionesContrato: this.processApiResponse<CondicionesContratoRow>(
+            resCondicionesContrato
+          ),
           conceptos: this.processApiResponse<Concepto>(resConceptos)
         },
         error: null
@@ -626,7 +656,6 @@ class AdministracionService {
     }
   }
 
-  
   async getCargoFacturableData(): Promise<
     AdministracionServiceResponse<{
       cargos: CargoFacturableRow[];
@@ -646,7 +675,8 @@ class AdministracionService {
 
       return {
         data: {
-          cargos: this.processApiResponse<CargoFacturableRow>(resCargoFacturable),
+          cargos:
+            this.processApiResponse<CargoFacturableRow>(resCargoFacturable),
           conceptos:
             this.processApiResponse<CargoFacturableConceptos>(resConceptos),
           tarifas: this.processApiResponse<CargoFacturableTarifas>(resTarifas),
@@ -767,7 +797,6 @@ class AdministracionService {
     }
   }
 
-  
   async crearContrato(
     contratoData: Record<string, unknown>
   ): Promise<AdministracionServiceResponse<any>> {
@@ -807,7 +836,6 @@ class AdministracionService {
     }
   }
 
-  
   async modificarContrato(
     contratoData: Record<string, unknown>
   ): Promise<AdministracionServiceResponse<any>> {
@@ -848,7 +876,6 @@ class AdministracionService {
     }
   }
 
-  
   async getGiros(): Promise<AdministracionServiceResponse<NombreGiro[]>> {
     try {
       const response = await api.get('/clientes/buscar-giros');
@@ -864,7 +891,6 @@ class AdministracionService {
     }
   }
 
-  
   async getComunas(
     region?: string
   ): Promise<AdministracionServiceResponse<NombreComuna[]>> {
@@ -885,7 +911,6 @@ class AdministracionService {
     }
   }
 
-  
   async getClientesByRut(): Promise<
     AdministracionServiceResponse<ClientesRow[]>
   > {
@@ -903,7 +928,6 @@ class AdministracionService {
     }
   }
 
-  
   async getClienteByRut(
     rut: string
   ): Promise<AdministracionServiceResponse<Cliente>> {
@@ -955,7 +979,6 @@ class AdministracionService {
     }
   }
 
-  
   async getContratanteByRut(
     rut: string
   ): Promise<AdministracionServiceResponse<unknown>> {
@@ -973,12 +996,17 @@ class AdministracionService {
     }
   }
 
-  
   async getPropietarioByRut(
-    rut: string
+    nombre?: string,
+    rut?: string
   ): Promise<AdministracionServiceResponse<unknown>> {
     try {
-      const response = await api.get(`/clientes/datos-propietario/${rut}`);
+      const params = new URLSearchParams();
+      if (nombre) params.append('nombre', nombre);
+      if (rut) params.append('rut', rut);
+      const response = await api.get(`/contratos/buscar-propietarios`, {
+        params
+      });
       return {
         data: response.data,
         error: null
@@ -991,7 +1019,6 @@ class AdministracionService {
     }
   }
 
-  
   async crearMedidor(
     data: MedidorProps
   ): Promise<AdministracionServiceResponse<{ id: number }>> {
@@ -1009,7 +1036,6 @@ class AdministracionService {
     }
   }
 
-  
   async modificarMedidor(
     data: MedidorProps
   ): Promise<AdministracionServiceResponse<any>> {
@@ -1030,7 +1056,6 @@ class AdministracionService {
     }
   }
 
-  
   async crearContratante(
     contratanteData: any
   ): Promise<AdministracionServiceResponse<any>> {
@@ -1051,7 +1076,6 @@ class AdministracionService {
     }
   }
 
-  
   async sincronizarPropietarios(): Promise<
     AdministracionServiceResponse<{
       registrosAfectados: number;
@@ -1059,7 +1083,7 @@ class AdministracionService {
     }>
   > {
     try {
-      const response = await api.put('/contrato/actualizar-propietarios-local');
+      const response = await api.post('/contrato/sincronizar-propietarios');
       return {
         data: response.data as { registrosAfectados: number; mensaje: string },
         error: null

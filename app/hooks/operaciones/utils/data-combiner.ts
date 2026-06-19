@@ -4,7 +4,6 @@ import type {
   CalculoPrefacturaDetalle
 } from '~/types/operaciones';
 
-
 export function combinarPrefactura(
   encabezados: CalculoPrefacturaDetalle[],
   cargosData: CalculoPrefacturaCargoResponse[]
@@ -26,13 +25,11 @@ export function combinarPrefactura(
   });
 }
 
-
 export function calcularTotalFacturado(
   datosCompletos: CalculoPrefacturaCompleto[]
 ): number {
   return datosCompletos.reduce((sum, item) => sum + item.totalFacturado, 0);
 }
-
 
 export function validarDatosCombinados(
   encabezados: CalculoPrefacturaDetalle[] | undefined,

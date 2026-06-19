@@ -1,5 +1,5 @@
 /* eslint-disable no-empty-pattern */
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import PrepararLecturasComponent from '~/components/operaciones/preparar-lecturas/preparar-lecturas-component';

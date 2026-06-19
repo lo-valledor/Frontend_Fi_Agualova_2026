@@ -1,26 +1,22 @@
-import { BaseApiService } from '~/services/core/base-service';
+import api from '~/lib/api';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type {
   Claves,
-  Conceptos,
-  ComboAsociadoConceptos
+  ComboAsociadoConceptos,
+  Conceptos
 } from '~/types/mantencion';
-import api from '~/lib/api';
-
 
 export interface ConceptosData {
   conceptos: Conceptos[];
   comboAsociadoConceptos: ComboAsociadoConceptos[];
 }
 
-
 export class ConceptsService extends BaseApiService {
-  
   constructor(httpClient: any = api) {
     super(httpClient);
   }
 
-  
   async getClaves(): Promise<ServiceResponse<Claves[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('/buscarClaves');
@@ -28,7 +24,6 @@ export class ConceptsService extends BaseApiService {
     }, 'Error getting keys');
   }
 
-  
   async getConceptosData(): Promise<ServiceResponse<ConceptosData>> {
     return this.executeDataOperation(async () => {
       const [resConceptos, resComboAsociado] =
@@ -45,7 +40,6 @@ export class ConceptsService extends BaseApiService {
     }, 'Error getting concepts data');
   }
 
-  
   async getConceptos(): Promise<ServiceResponse<Conceptos[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('/buscarConceptos');
@@ -53,7 +47,6 @@ export class ConceptsService extends BaseApiService {
     }, 'Error getting concepts');
   }
 
-  
   async getComboAsociadoConceptos(): Promise<
     ServiceResponse<ComboAsociadoConceptos[]>
   > {

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import EditarContratoComponent from '~/components/administracion/contratos/route/editar-contrato-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';
@@ -47,8 +45,8 @@ export default function EditarContrato({
     return (
       <div>
         <BreadcrumbSetter items={pageBreadcrumbs} />
-        <div className='flex items-center justify-center p-8'>
-          <p className='text-gray-500'>
+        <div className="flex items-center justify-center p-8">
+          <p className="text-gray-500">
             No se pudieron cargar los datos del contrato.
           </p>
         </div>

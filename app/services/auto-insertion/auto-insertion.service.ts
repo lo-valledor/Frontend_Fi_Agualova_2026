@@ -1,9 +1,8 @@
-import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type { MedidorNichoItem } from '~/types/monitor';
-import { validationService, type ValidationResult } from './validation.service';
 import { consumptionCalculationService } from './consumption-calculation.service';
-
+import { type ValidationResult, validationService } from './validation.service';
 
 export interface ReadingForInsertion {
   meter: MedidorNichoItem;
@@ -12,7 +11,6 @@ export interface ReadingForInsertion {
   previousReading: number;
   calculatedConsumption: number;
 }
-
 
 export interface AutoInsertionResult {
   successful: number;
@@ -26,7 +24,6 @@ export interface AutoInsertionResult {
   }[];
 }
 
-
 export interface MeterAnalysisResult {
   autoInsertable: ReadingForInsertion[];
   requiresReview: ReadingForInsertion[];
@@ -37,14 +34,11 @@ export interface MeterAnalysisResult {
   };
 }
 
-
 export class AutoInsertionService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   async analyzeMeterQualification(
     meters: MedidorNichoItem[]
   ): Promise<ServiceResponse<MeterAnalysisResult>> {
@@ -103,7 +97,6 @@ export class AutoInsertionService extends BaseApiService {
     }
   }
 
-  
   async processBatch(
     readings: ReadingForInsertion[],
     _period: string
@@ -180,14 +173,12 @@ export class AutoInsertionService extends BaseApiService {
     }, 'Error processing automatic insertion batch');
   }
 
-  
   async processSingle(
     reading: ReadingForInsertion
   ): Promise<ServiceResponse<AutoInsertionResult>> {
     return this.processBatch([reading], '');
   }
 
-  
   getStatistics(analysis: MeterAnalysisResult): {
     successRate: number;
     estimatedAutoInsertions: number;

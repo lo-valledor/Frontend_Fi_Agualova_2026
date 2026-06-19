@@ -10,16 +10,14 @@ import {
 } from './utils/cycle-utilities';
 import { extraerErrorMessage } from './utils/error-handler';
 import {
-  validarPreciosConfirmados,
-  type PriceValidationResult
+  type PriceValidationResult,
+  validarPreciosConfirmados
 } from './utils/price-validator';
-
 
 interface UseValidacionPreciosProps {
   periodoFormateado: string;
   cicloId: string;
 }
-
 
 export interface ValidacionPreciosResult extends PriceValidationResult {
   preciosConfirmados: boolean;
@@ -30,7 +28,6 @@ export interface ValidacionPreciosResult extends PriceValidationResult {
   error: string | null;
   verificarPrecios: () => Promise<void>;
 }
-
 
 export function useValidacionPrecios({
   periodoFormateado,
@@ -43,7 +40,6 @@ export function useValidacionPrecios({
   const [totalConfirmados, setTotalConfirmados] = useState(0);
   const [totalPendientes, setTotalPendientes] = useState(0);
 
-  
   const verificarPrecios = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
@@ -84,7 +80,6 @@ export function useValidacionPrecios({
     }
   };
 
-  
   const actualizarEstadoPrecios = (resultado: PriceValidationResult): void => {
     setTotalValidos(resultado.totalValidos);
     setTotalConfirmados(resultado.totalConfirmados);

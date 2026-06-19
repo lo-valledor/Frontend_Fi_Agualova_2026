@@ -1,6 +1,3 @@
-/* eslint-disable no-empty-pattern */
-import React from 'react';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import ContratoComponent from '~/components/reportes/consultar-contrato/contrato/contrato-component';
 import { reportesService } from '~/services/reportesService';

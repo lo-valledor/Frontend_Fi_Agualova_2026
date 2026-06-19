@@ -6,9 +6,8 @@ import {
   Gauge,
   RefreshCw
 } from 'lucide-react';
-import { toast } from 'sonner';
-
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 import { ModernHeader } from '~/components/shared/modern-header';
 import { Button } from '~/components/ui/button';
@@ -408,38 +407,37 @@ export default function CambioMedidorComponent() {
     switch (currentStep) {
       case 1:
         return (
-          <div className='space-y-4'>
-            <Card className='border-border'>
-              <CardHeader className='bg-background border-b border-border'>
-                <div className='flex items-center gap-3'>
-                  <div className='p-2 bg-sky-100 dark:bg-sky-900 rounded-xl'>
-                    <Gauge className='h-5 w-5' />
+          <div className="space-y-4">
+            <Card className="border-border">
+              <CardHeader className="bg-background border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-sky-100 dark:bg-sky-900 rounded-xl">
+                    <Gauge className="h-5 w-5" />
                   </div>
                   <div>
-                    <CardTitle className='text-lg'>Paso 1:</CardTitle>
-                    <CardDescription className=''>
+                    <CardTitle className="text-lg">Paso 1:</CardTitle>
+                    <CardDescription className="">
                       Busque el medidor que será reemplazado
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className='p-3'>
+              <CardContent className="p-3">
                 <AntiguoMedidorForm
                   medidorAntiguo={medidorAntiguo}
                   isLoading={isLoading}
                   onMedidorChange={handleMedidorAntiguoChange}
                   onBuscar={handleBuscarAntiguo}
                   onLimpiar={handleLimpiarMedidorAntiguo}
-                  disabled={false}
                 />
               </CardContent>
-              <CardFooter className='flex justify-end border-t border-border p-3'>
+              <CardFooter className="flex justify-end border-t border-border p-3">
                 <Button
                   onClick={nextStep}
                   disabled={!detalleMedidorAntiguo.medidorId || isLoading}
-                  className='bg-primary hover:bg-primary/90'
+                  className="bg-primary hover:bg-primary/90"
                 >
-                  Siguiente <ArrowRight className='ml-2 h-4 w-4' />
+                  Siguiente <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
@@ -447,41 +445,41 @@ export default function CambioMedidorComponent() {
         );
       case 2:
         return (
-          <div className='space-y-4'>
-            <Card className='border-border'>
-              <CardHeader className='bg-background border-b border-border'>
-                <div className='flex items-center gap-3'>
-                  <div className='p-2 bg-primary/10 rounded-xl'>
-                    <Gauge className='h-5 w-5 text-primary' />
+          <div className="space-y-4">
+            <Card className="border-border">
+              <CardHeader className="bg-background border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-xl">
+                    <Gauge className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className='text-lg'>Paso 2:</CardTitle>
-                    <CardDescription className=''>
+                    <CardTitle className="text-lg">Paso 2:</CardTitle>
+                    <CardDescription className="">
                       Revise la información del medidor a reemplazar
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className='p-3'>
+              <CardContent className="p-3">
                 <DetalleMedidorAntiguoComponent
                   detalleMedidorAntiguo={detalleMedidorAntiguo}
                   onUltimaLecturaChange={handleUltimaLecturaChange}
                   onLecturaActualChange={handleLecturaActualChange}
                 />
               </CardContent>
-              <CardFooter className='flex justify-between border-t border-border p-3'>
+              <CardFooter className="flex justify-between border-t border-border p-3">
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={prevStep}
-                  className='border-border'
+                  className="border-border"
                 >
-                  <ArrowLeft className='mr-2 h-4 w-4' /> Anterior
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
                 </Button>
                 <Button
                   onClick={nextStep}
-                  className='bg-primary hover:bg-primary/90'
+                  className="bg-primary hover:bg-primary/90"
                 >
-                  Siguiente <ArrowRight className='ml-2 h-4 w-4' />
+                  Siguiente <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
@@ -489,23 +487,23 @@ export default function CambioMedidorComponent() {
         );
       case 3:
         return (
-          <div className='space-y-4'>
-            <Card className='border-border'>
-              <CardHeader className='bg-background border-b border-border'>
-                <div className='flex items-center gap-3'>
-                  <div className='p-2 bg-primary/10 rounded-xl'>
-                    <Gauge className='h-5 w-5 text-primary' />
+          <div className="space-y-4">
+            <Card className="border-border">
+              <CardHeader className="bg-background border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-xl">
+                    <Gauge className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className='text-lg'>Paso 3:</CardTitle>
-                    <CardDescription className=''>
+                    <CardTitle className="text-lg">Paso 3:</CardTitle>
+                    <CardDescription className="">
                       Configure el nuevo medidor a instalar
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className='p-3'>
-                <div className='space-y-4'>
+              <CardContent className="p-3">
+                <div className="space-y-4">
                   <NuevoMedidorForm
                     medidorNuevo={medidorNuevo}
                     isLoading={isLoading}
@@ -521,20 +519,20 @@ export default function CambioMedidorComponent() {
                   )}
                 </div>
               </CardContent>
-              <CardFooter className='flex justify-between border-t border-border p-3'>
+              <CardFooter className="flex justify-between border-t border-border p-3">
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={prevStep}
-                  className='border-border'
+                  className="border-border"
                 >
-                  <ArrowLeft className='mr-2 h-4 w-4' /> Anterior
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
                 </Button>
                 <Button
                   onClick={nextStep}
                   disabled={!detalleMedidorNuevo.numero_serie || isLoading}
-                  className='bg-primary hover:bg-primary/90'
+                  className="bg-primary hover:bg-primary/90"
                 >
-                  Siguiente <ArrowRight className='ml-2 h-4 w-4' />
+                  Siguiente <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardFooter>
             </Card>
@@ -542,96 +540,96 @@ export default function CambioMedidorComponent() {
         );
       case 4:
         return (
-          <div className='space-y-4'>
-            <Card className='border-border'>
-              <CardHeader className='bg-background border-b border-border'>
-                <div className='flex items-center gap-3'>
-                  <div className='p-2 bg-primary/10 rounded-xl'>
-                    <FileText className='h-5 w-5 text-primary' />
+          <div className="space-y-4">
+            <Card className="border-border">
+              <CardHeader className="bg-background border-b border-border">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 rounded-xl">
+                    <FileText className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <CardTitle className='text-lg'>
+                    <CardTitle className="text-lg">
                       Paso 4: Confirmar Cambio
                     </CardTitle>
-                    <CardDescription className=''>
+                    <CardDescription className="">
                       Revise y confirme el cambio de medidor
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className='p-3'>
-                <div className='space-y-4'>
-                  <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-                    <Card className='border-border'>
-                      <CardHeader className='bg-background p-3'>
-                        <CardTitle className='text-base'>
+              <CardContent className="p-3">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <Card className="border-border">
+                      <CardHeader className="bg-background p-3">
+                        <CardTitle className="text-base">
                           Medidor Antiguo
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className='p-3'>
-                        <div className='space-y-3'>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Acometida:</span>
-                            <span className='font-medium text-sm'>
+                      <CardContent className="p-3">
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-sm">Acometida:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorAntiguo.acometidaDetalle}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Número de Serie:</span>
-                            <span className='font-medium text-sm'>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Número de Serie:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorAntiguo.numeroMedidor}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Última Lectura:</span>
-                            <span className='font-medium text-sm'>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Última Lectura:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorAntiguo.ultimaLectura}
                             </span>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
-                    <Card className='border-border'>
-                      <CardHeader className='bg-background p-3'>
-                        <CardTitle className='text-base'>
+                    <Card className="border-border">
+                      <CardHeader className="bg-background p-3">
+                        <CardTitle className="text-base">
                           Medidor Nuevo
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className='p-3'>
-                        <div className='space-y-3'>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Número de Serie:</span>
-                            <span className='font-medium text-sm'>
+                      <CardContent className="p-3">
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-sm">Número de Serie:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorNuevo.numero_serie}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Tipo de Medidor:</span>
-                            <span className='font-medium text-sm'>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Tipo de Medidor:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorNuevo.tipo_medidor}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Constante:</span>
-                            <span className='font-medium text-sm'>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Constante:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorNuevo.constante_multiplicar}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Marca:</span>
-                            <span className='font-medium text-sm'>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Marca:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorNuevo.marca}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Modelo:</span>
-                            <span className='font-medium text-sm'>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Modelo:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorNuevo.modelo}
                             </span>
                           </div>
-                          <div className='flex justify-between'>
-                            <span className='text-sm'>Estado:</span>
-                            <span className='font-medium text-sm'>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Estado:</span>
+                            <span className="font-medium text-sm">
                               {detalleMedidorNuevo.estado_medidor === 1
                                 ? 'Activo'
                                 : 'Inactivo'}
@@ -643,62 +641,62 @@ export default function CambioMedidorComponent() {
                   </div>
 
                   {/* Campos adicionales para la API */}
-                  <Card className='border-border'>
-                    <CardHeader className='bg-background p-3'>
-                      <CardTitle className='text-base flex items-center'>
-                        <FileText className='mr-2 h-4 w-4' />
+                  <Card className="border-border">
+                    <CardHeader className="bg-background p-3">
+                      <CardTitle className="text-base flex items-center">
+                        <FileText className="mr-2 h-4 w-4" />
                         Información Adicional
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className='p-3'>
-                      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-                        <div className='space-y-2'>
+                    <CardContent className="p-3">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="space-y-2">
                           <Label
-                            htmlFor='valor-primera-lectura'
-                            className='text-sm'
+                            htmlFor="valor-primera-lectura"
+                            className="text-sm"
                           >
                             Valor Primera Lectura
                           </Label>
                           <Input
-                            id='valor-primera-lectura'
-                            type='number'
-                            step='0.01'
-                            placeholder='0.00'
+                            id="valor-primera-lectura"
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
                             value={valorPrimeraLectura}
                             onChange={e =>
                               setValorPrimeraLectura(e.target.value)
                             }
-                            className='bg-background'
+                            className="bg-background"
                           />
                         </div>
-                        <div className='space-y-2'>
+                        <div className="space-y-2">
                           <Label
-                            htmlFor='fecha-primera-lectura'
-                            className='text-sm'
+                            htmlFor="fecha-primera-lectura"
+                            className="text-sm"
                           >
                             Fecha de Primera Lectura
                           </Label>
                           <Input
-                            id='fecha-primera-lectura'
-                            type='date'
+                            id="fecha-primera-lectura"
+                            type="date"
                             value={fechaPrimeraLectura}
                             onChange={e =>
                               setFechaPrimeraLectura(e.target.value)
                             }
-                            className='bg-background'
+                            className="bg-background"
                           />
                         </div>
-                        <div className='space-y-2 lg:col-span-2'>
-                          <Label htmlFor='codigo-contrato' className='text-sm'>
+                        <div className="space-y-2 lg:col-span-2">
+                          <Label htmlFor="codigo-contrato" className="text-sm">
                             Código de Contrato (Opcional)
                           </Label>
                           <Input
-                            id='codigo-contrato'
-                            type='number'
-                            placeholder='Código del contrato'
+                            id="codigo-contrato"
+                            type="number"
+                            placeholder="Código del contrato"
                             value={codigoContrato}
                             onChange={e => setCodigoContrato(e.target.value)}
-                            className='bg-background'
+                            className="bg-background"
                           />
                         </div>
                       </div>
@@ -706,23 +704,23 @@ export default function CambioMedidorComponent() {
                   </Card>
                 </div>
               </CardContent>
-              <CardFooter className='flex justify-between border-t border-border p-3'>
+              <CardFooter className="flex justify-between border-t border-border p-3">
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={prevStep}
-                  className='border-border'
+                  className="border-border"
                 >
-                  <ArrowLeft className='mr-2 h-4 w-4' /> Anterior
+                  <ArrowLeft className="mr-2 h-4 w-4" /> Anterior
                 </Button>
                 <Button
                   onClick={handleCambioMedidor}
                   disabled={!isFormValid || isLoading}
-                  className='bg-primary hover:bg-primary/90'
+                  className="bg-primary hover:bg-primary/90"
                 >
                   {isLoading ? (
-                    <RefreshCw className='mr-2 h-4 w-4 animate-spin' />
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <CheckCircle2 className='mr-2 h-4 w-4' />
+                    <CheckCircle2 className="mr-2 h-4 w-4" />
                   )}
                   Confirmar Cambio
                 </Button>
@@ -736,18 +734,18 @@ export default function CambioMedidorComponent() {
   };
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-3 space-y-4'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-3 space-y-4">
         {/* Header */}
         <ModernHeader
-          title='Cambio Medidor'
-          description='Gestión de cambio de medidores por medidores nuevos'
+          title="Cambio Medidor"
+          description="Gestión de cambio de medidores por medidores nuevos"
         />
 
         {/* Stepper */}
-        <div className='mb-6'>
-          <div className='flex items-center justify-between mb-4 overflow-x-auto'>
-            <div className='flex items-center min-w-0'>
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4 overflow-x-auto">
+            <div className="flex items-center min-w-0">
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full ${
                   currentStep >= 1
@@ -756,22 +754,22 @@ export default function CambioMedidorComponent() {
                 }`}
               >
                 {currentStep > 1 ? (
-                  <CheckCircle2 className='h-4 w-4' />
+                  <CheckCircle2 className="h-4 w-4" />
                 ) : (
-                  <span className='text-sm'>1</span>
+                  <span className="text-sm">1</span>
                 )}
               </div>
-              <div className='ml-2 text-sm font-medium'>Medidor Antiguo</div>
+              <div className="ml-2 text-sm font-medium">Medidor Antiguo</div>
             </div>
-            <div className='flex-1 h-0.5 mx-4 bg-border'>
+            <div className="flex-1 h-0.5 mx-4 bg-border">
               <div
-                className='h-full bg-primary'
+                className="h-full bg-primary"
                 style={{
                   width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`
                 }}
               ></div>
             </div>
-            <div className='flex items-center min-w-0'>
+            <div className="flex items-center min-w-0">
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full ${
                   currentStep >= 2
@@ -780,22 +778,22 @@ export default function CambioMedidorComponent() {
                 }`}
               >
                 {currentStep > 2 ? (
-                  <CheckCircle2 className='h-4 w-4' />
+                  <CheckCircle2 className="h-4 w-4" />
                 ) : (
-                  <span className='text-sm'>2</span>
+                  <span className="text-sm">2</span>
                 )}
               </div>
-              <div className='ml-2 text-sm font-medium'>Detalles</div>
+              <div className="ml-2 text-sm font-medium">Detalles</div>
             </div>
-            <div className='flex-1 h-0.5 mx-4 bg-border'>
+            <div className="flex-1 h-0.5 mx-4 bg-border">
               <div
-                className='h-full bg-primary'
+                className="h-full bg-primary"
                 style={{
                   width: `${((currentStep - 2) / (totalSteps - 1)) * 100}%`
                 }}
               ></div>
             </div>
-            <div className='flex items-center min-w-0'>
+            <div className="flex items-center min-w-0">
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full ${
                   currentStep >= 3
@@ -804,22 +802,22 @@ export default function CambioMedidorComponent() {
                 }`}
               >
                 {currentStep > 3 ? (
-                  <CheckCircle2 className='h-4 w-4' />
+                  <CheckCircle2 className="h-4 w-4" />
                 ) : (
-                  <span className='text-sm'>3</span>
+                  <span className="text-sm">3</span>
                 )}
               </div>
-              <div className='ml-2 text-sm font-medium'>Medidor Nuevo</div>
+              <div className="ml-2 text-sm font-medium">Medidor Nuevo</div>
             </div>
-            <div className='flex-1 h-0.5 mx-4 bg-border'>
+            <div className="flex-1 h-0.5 mx-4 bg-border">
               <div
-                className='h-full bg-primary'
+                className="h-full bg-primary"
                 style={{
                   width: `${((currentStep - 3) / (totalSteps - 1)) * 100}%`
                 }}
               ></div>
             </div>
-            <div className='flex items-center min-w-0'>
+            <div className="flex items-center min-w-0">
               <div
                 className={`flex items-center justify-center w-8 h-8 rounded-full ${
                   currentStep >= 4
@@ -827,12 +825,12 @@ export default function CambioMedidorComponent() {
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
-                <span className='text-sm'>4</span>
+                <span className="text-sm">4</span>
               </div>
-              <div className='ml-2 text-sm font-medium'>Confirmar</div>
+              <div className="ml-2 text-sm font-medium">Confirmar</div>
             </div>
           </div>
-          <Progress value={(currentStep / totalSteps) * 100} className='h-2' />
+          <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
         </div>
 
         {/* Contenido del paso actual */}

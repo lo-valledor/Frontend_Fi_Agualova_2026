@@ -18,7 +18,7 @@ const ResetPassword = () => {
   const token = searchParams.get('token');
 
   return (
-    <AuthLayout title='Restablecer Contraseña'>
+    <AuthLayout title="Restablecer Contraseña">
       <ResetForm token={token || undefined} />
     </AuthLayout>
   );

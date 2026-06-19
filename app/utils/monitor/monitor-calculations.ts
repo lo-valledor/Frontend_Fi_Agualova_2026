@@ -11,7 +11,6 @@ export interface StatsData {
   imported: number;
 }
 
-
 export function calculateNichoStats(
   nicho: NichoBusqueda | null | undefined
 ): StatsData {
@@ -79,7 +78,6 @@ export function calculateNichoStats(
   }, defaultStats);
 }
 
-
 export function calculateTotalStats(
   nichos: NichoBusqueda[] | null | undefined
 ): StatsData {
@@ -114,7 +112,6 @@ export function calculateTotalStats(
   }, defaultStats);
 }
 
-
 export function calculatePercentage(
   value: number,
   total: number,
@@ -127,7 +124,6 @@ export function calculatePercentage(
   const percentage = (value / total) * 100;
   return percentage.toFixed(decimals);
 }
-
 
 export function calculateConsumption(
   currentReading: number | null | undefined,
@@ -155,7 +151,6 @@ export function calculateConsumption(
   return consumption >= 0 ? consumption : 0;
 }
 
-
 export function aggregateMetersByStatus(
   medidores: Medidor[] | null | undefined
 ): Record<string, Medidor[]> {
@@ -182,7 +177,6 @@ export function aggregateMetersByStatus(
   }, defaultGrouping);
 }
 
-
 export function getAllMetersFromNicho(
   nicho: NichoBusqueda | null | undefined
 ): Medidor[] {
@@ -200,7 +194,6 @@ export function getAllMetersFromNicho(
   });
 }
 
-
 export function getProblemMeters(
   nicho: NichoBusqueda | null | undefined
 ): Medidor[] {
@@ -211,7 +204,6 @@ export function getProblemMeters(
     return status.severity > 2;
   });
 }
-
 
 export function countMetersBySeverity(
   fila: Fila | null | undefined

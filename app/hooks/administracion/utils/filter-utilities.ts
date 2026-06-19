@@ -4,13 +4,10 @@ export function extractUniqueOptions<T>(
 ): string[] {
   return [
     ...new Set(
-      items
-        .map(selector)
-        .filter((value): value is string => Boolean(value))
+      items.map(selector).filter((value): value is string => Boolean(value))
     )
   ].sort();
 }
-
 
 export function filterByString(
   value: string | undefined | null,
@@ -21,7 +18,6 @@ export function filterByString(
   }
   return value === filterValue;
 }
-
 
 export function filterByBoolean(
   value: boolean | undefined | null,
@@ -34,7 +30,6 @@ export function filterByBoolean(
   const stringValue = String(value);
   return stringValue === filterValue;
 }
-
 
 export function filterByPresence(
   hasValue: boolean,
@@ -54,7 +49,6 @@ export function filterByPresence(
 
   return true;
 }
-
 
 export function filterByNumberRange(
   value: number | undefined | null,
@@ -89,7 +83,6 @@ export function filterByNumberRange(
 
   return true;
 }
-
 
 export function filterByDateRange(
   value: string | undefined | null,
@@ -130,7 +123,6 @@ export function filterByDateRange(
   return true;
 }
 
-
 export function normalizeValue(
   value: string | undefined | null,
   normalizations: Record<string, string>
@@ -140,7 +132,6 @@ export function normalizeValue(
   }
   return normalizations[value] || value;
 }
-
 
 export function filterByNormalizedString(
   value: string | undefined | null,

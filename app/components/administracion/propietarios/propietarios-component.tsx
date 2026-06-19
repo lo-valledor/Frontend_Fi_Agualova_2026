@@ -1,8 +1,7 @@
 import { LayoutList, RefreshCw } from 'lucide-react';
 import { motion } from 'motion/react';
-import { toast } from 'sonner';
-
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
 
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { ExportButton } from '~/components/shared/export-button';
@@ -16,45 +15,38 @@ import {
   CardTitle
 } from '~/components/ui/card';
 import { administracionService } from '~/services/administracionService';
-import type {
-  GetContratante,
-  GetPropietario,
-  PropietarioModalState
-} from '~/types/administracion';
+import type { PropietariosRow } from '~/types/administracion';
 import {
   createInitialPropietarioModalState,
   extractPropietarioErrorMessage,
   getSyncStatusMessage
 } from '~/utils/administracion';
-
 import { columns } from './columns';
 import { PropietarioDetailsModal } from './detalles-propietario';
 import { FilterSummary } from './filter-summary';
 import {
-  PropietarioFiltersComponent,
-  type PropietarioFilters
+  type PropietarioFilters,
+  PropietarioFiltersComponent
 } from './propietario-filters';
 
 interface PropietariosComponentProps {
-  propietarios: GetPropietario[];
-  contratantes: GetContratante[];
+  propietarios: PropietariosRow[];
 }
 
 interface FilterOptions {
   comunas: string[];
 }
 
-
 export default function PropietariosComponent({
   propietarios
 }: Readonly<PropietariosComponentProps>) {
   // Estado de datos
-  const [propietariosList] = useState<GetPropietario[]>(propietarios);
+  const [propietariosList] = useState<PropietariosRow[]>(propietarios);
   const [detailedPropietario, setDetailedPropietario] =
-    useState<GetPropietario | null>(null);
+    useState<PropietariosRow | null>(null);
 
   // Estado unificado de modales
-  const [modalsState, setModalsState] = useState<PropietarioModalState>(
+  const [modalsState, setModalsState] = useState(
     createInitialPropietarioModalState()
   );
 
@@ -154,9 +146,8 @@ export default function PropietariosComponent({
     { header: 'Email', key: 'email' }
   ];
 
-  
   const handleDetailsPropietario = useCallback(
-    (propietario: GetPropietario) => {
+    (propietario: PropietariosRow) => {
       setDetailedPropietario(propietario);
       setModalsState(prev => ({
         ...prev,
@@ -166,7 +157,6 @@ export default function PropietariosComponent({
     []
   );
 
-  
   const handleSyncPropietarios = useCallback(async () => {
     setIsSyncing(true);
     try {
@@ -196,7 +186,6 @@ export default function PropietariosComponent({
     }
   }, []);
 
-  
   useEffect(() => {
     const alreadySynced =
       sessionStorage.getItem('propietariosSyncDone') === 'true';
@@ -207,12 +196,10 @@ export default function PropietariosComponent({
     }
   }, [handleSyncPropietarios]);
 
-  
   const handleFiltersChange = useCallback((newFilters: PropietarioFilters) => {
     setFilters(newFilters);
   }, []);
 
-  
   const handleClearFilters = useCallback(() => {
     setFilters({
       comuna: 'all',
@@ -225,24 +212,24 @@ export default function PropietariosComponent({
   const mechanicalEase = [0.25, 0.1, 0.25, 1] as const;
 
   return (
-    <div className='min-h-screen bg-background'>
-      <div className='container mx-auto p-4 sm:p-6 space-y-6'>
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto p-4 sm:p-6 space-y-6">
         <header>
           <ModernHeader
-            title='Propietarios'
-            description='Gestiona los propietarios del sistema'
+            title="Propietarios"
+            description="Gestiona los propietarios del sistema"
             actions={
-              <div className='flex gap-2'>
+              <div className="flex gap-2">
                 <ExportButton
                   data={filteredPropietarios}
                   columns={propietarioColumns}
-                  filename='propietarios'
-                  size='sm'
+                  filename="propietarios"
+                  size="sm"
                 />
                 <Button
                   onClick={handleSyncPropietarios}
-                  className='bg-emerald-600 hover:bg-emerald-700'
-                  size='sm'
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                  size="sm"
                   disabled={isSyncing}
                 >
                   <RefreshCw
@@ -253,7 +240,7 @@ export default function PropietariosComponent({
               </div>
             }
           />
-          <div className='industrial-divider mt-4' />
+          <div className="industrial-divider mt-4" />
         </header>
 
         <PropietarioFiltersComponent
@@ -275,34 +262,34 @@ export default function PropietariosComponent({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: mechanicalEase }}
         >
-          <Card className='overflow-hidden border border-border bg-card shadow-sm'>
-            <CardHeader className='p-4 pb-3'>
-              <div className='flex items-center gap-3'>
-                <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border'>
-                  <LayoutList className='h-4 w-4' />
+          <Card className="overflow-hidden border border-border bg-card shadow-sm">
+            <CardHeader className="p-4 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground border border-border">
+                  <LayoutList className="h-4 w-4" />
                 </div>
                 <div>
-                  <CardTitle className='text-xs font-bold uppercase tracking-wide text-foreground'>
+                  <CardTitle className="text-xs font-bold uppercase tracking-wide text-foreground">
                     Listado de Propietarios
                   </CardTitle>
-                  <CardDescription className='text-xs mt-0.5 text-muted-foreground'>
+                  <CardDescription className="text-xs mt-0.5 text-muted-foreground">
                     {filteredPropietarios.length} propietario
                     {filteredPropietarios.length !== 1 ? 's' : ''}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <div className='industrial-divider' />
-            <CardContent className='p-4'>
-              <div className='overflow-x-auto -mx-1'>
+            <div className="industrial-divider" />
+            <CardContent className="p-4">
+              <div className="overflow-x-auto -mx-1">
                 <VirtualDataTable
-              columns={columns({
-                onDetails: handleDetailsPropietario
-              })}
-              data={filteredPropietarios}
-              searchPlaceholder='Buscar por RUT, nombre o email...'
-              estimateRowHeight={60}
-              maxHeight='600px'
+                  columns={columns({
+                    onDetails: handleDetailsPropietario
+                  })}
+                  data={filteredPropietarios}
+                  searchPlaceholder="Buscar por RUT, nombre o email..."
+                  estimateRowHeight={60}
+                  maxHeight="600px"
                 />
               </div>
             </CardContent>

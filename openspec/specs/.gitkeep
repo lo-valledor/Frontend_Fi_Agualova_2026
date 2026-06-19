@@ -1,0 +1,2 @@
+# Keep this directory under version control. `specs/` holds the main (merged) specs,
+# one folder per domain. Domain folders are added by sdd-archive as changes are merged.

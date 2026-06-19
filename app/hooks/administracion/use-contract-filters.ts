@@ -4,12 +4,11 @@ import type { ContractFilters } from '~/components/administracion/contratos/cont
 import type { GetContratos } from '~/types/administracion';
 import {
   extractUniqueOptions,
-  filterByString,
   filterByBoolean,
-  filterByDateRange
+  filterByDateRange,
+  filterByString
 } from './utils/filter-utilities';
 import { calculateFilterStats } from './utils/stats-calculator';
-
 
 export interface ContractFilterOptions {
   tiposContrato: string[];
@@ -18,40 +17,33 @@ export interface ContractFilterOptions {
   comunas: string[];
 }
 
-
 export type FilterOptions = ContractFilterOptions;
-
 
 export function useContractFilters(
   contracts: GetContratos[],
   filters: ContractFilters
 ) {
-  
   const filterOptions = useMemo((): ContractFilterOptions => {
     return {
-      tiposContrato: extractUniqueOptions(contracts, (c) => c.tipoContrato),
+      tiposContrato: extractUniqueOptions(contracts, c => c.tipoContrato),
       ciclosFacturacion: extractUniqueOptions(
         contracts,
-        (c) => c.cicloFacturacion
+        c => c.cicloFacturacion
       ),
-      tarifas: extractUniqueOptions(contracts, (c) => c.tarifa),
-      comunas: extractUniqueOptions(contracts, (c) => c.comunaEnvio)
+      tarifas: extractUniqueOptions(contracts, c => c.tarifa),
+      comunas: extractUniqueOptions(contracts, c => c.comunaEnvio)
     };
   }, [contracts]);
 
-  
   const filteredContracts = useMemo(() => {
-    return contracts.filter((contract) => {
+    return contracts.filter(contract => {
       // Filtros de string simples
       if (!filterByString(contract.tipoContrato, filters.tipoContrato)) {
         return false;
       }
 
       if (
-        !filterByString(
-          contract.cicloFacturacion,
-          filters.cicloFacturacion
-        )
+        !filterByString(contract.cicloFacturacion, filters.cicloFacturacion)
       ) {
         return false;
       }
@@ -69,12 +61,7 @@ export function useContractFilters(
         return false;
       }
 
-      if (
-        !filterByBoolean(
-          contract.liberadoCorte,
-          filters.liberadoCorte
-        )
-      ) {
+      if (!filterByBoolean(contract.liberadoCorte, filters.liberadoCorte)) {
         return false;
       }
 
@@ -93,7 +80,6 @@ export function useContractFilters(
     });
   }, [contracts, filters]);
 
-  
   const filterStats = useMemo(
     () => calculateFilterStats(contracts, filteredContracts, filters),
     [contracts.length, filteredContracts.length, filters]

@@ -26,7 +26,6 @@ export const generateNextCode = (
   return asNumber ? nextNumber : nextNumber.toString();
 };
 
-
 export const isValidCodeFormat = (
   code: string,
   prefix?: string,
@@ -49,7 +48,6 @@ export const isValidCodeFormat = (
     return /^\d+$/.test(code);
   }
 };
-
 
 export const extractNumberFromCode = (
   code: string,

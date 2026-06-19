@@ -13,8 +13,11 @@ export function formatDateForExport(date: string | null | undefined): string {
   }
 }
 
-
-export function formatCurrency(value: number, decimals: number = 2, currency: string = 'CLP'): string {
+export function formatCurrency(
+  value: number,
+  decimals: number = 2,
+  currency: string = 'CLP'
+): string {
   if (typeof value !== 'number' || Number.isNaN(value)) {
     return '';
   }
@@ -27,7 +30,6 @@ export function formatCurrency(value: number, decimals: number = 2, currency: st
   }).format(value);
 }
 
-
 export function formatNumber(value: number, decimals: number = 0): string {
   if (typeof value !== 'number' || Number.isNaN(value)) {
     return '';
@@ -39,7 +41,6 @@ export function formatNumber(value: number, decimals: number = 0): string {
   }).format(value);
 }
 
-
 export function formatPercentage(value: number, decimals: number = 2): string {
   if (typeof value !== 'number' || Number.isNaN(value)) {
     return '';
@@ -48,7 +49,6 @@ export function formatPercentage(value: number, decimals: number = 2): string {
   return (value * 100).toFixed(decimals).replace('.', ',') + '%';
 }
 
-
 export function formatBoolean(
   value: boolean,
   trueText: string = 'Sí',
@@ -56,7 +56,6 @@ export function formatBoolean(
 ): string {
   return value ? trueText : falseText;
 }
-
 
 export function formatValue(value: any, fallback: string = ''): string {
   if (value === null || value === undefined) {
@@ -78,7 +77,6 @@ export function formatValue(value: any, fallback: string = ''): string {
   return String(value);
 }
 
-
 export function truncateString(
   value: string,
   maxLength: number = 50,
@@ -97,12 +95,13 @@ export function truncateString(
   return value.substring(0, maxContentLength) + ellipsis;
 }
 
-
 export function generateFilename(
   baseName: string,
   format: string = 'csv',
   includeTimestamp: boolean = true
 ): string {
-  const timestamp = includeTimestamp ? `_${new Date().toISOString().split('T')[0]}` : '';
+  const timestamp = includeTimestamp
+    ? `_${new Date().toISOString().split('T')[0]}`
+    : '';
   return `${baseName}${timestamp}.${format}`;
 }

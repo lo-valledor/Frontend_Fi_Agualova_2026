@@ -2,11 +2,9 @@ import { useExportData } from '~/hooks/shared/use-export-data';
 import type { GetContratos } from '~/types/administracion';
 import { ExportColumnBuilder, getExportConfig } from './utils/export-utilities';
 
-
 export function useExportContratos() {
   const { isExporting, exportData } = useExportData<GetContratos>();
 
-  
   const contractColumns = new ExportColumnBuilder()
     .addString('codigoContrato', 'Código Contrato')
     .addString('acometida', 'Acometida')
@@ -27,7 +25,6 @@ export function useExportContratos() {
     .addBoolean('liberadoCorte', 'Liberado Corte', 'Sí', 'No')
     .build();
 
-  
   const exportAllContratos = async (
     allData: GetContratos[],
     format: 'csv' | 'xlsx' = 'xlsx'
@@ -45,7 +42,6 @@ export function useExportContratos() {
     await exportData(allData, contractColumns, config);
   };
 
-  
   const exportFilteredContratos = async (
     filteredData: GetContratos[],
     format: 'csv' | 'xlsx' = 'xlsx'

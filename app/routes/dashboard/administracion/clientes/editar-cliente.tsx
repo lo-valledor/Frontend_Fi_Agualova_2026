@@ -1,4 +1,3 @@
-import React from 'react';
 import EditarClienteComponent from '~/components/administracion/clientes/form/editar-cliente-component';
 
 export function meta() {

@@ -34,8 +34,8 @@ export default function Edit({ loaderData }: Route.ComponentProps) {
     return (
       <div>
         <BreadcrumbSetter items={pageBreadcrumbs} />
-        <div className='flex items-center justify-center p-8'>
-          <p className='text-gray-500'>
+        <div className="flex items-center justify-center p-8">
+          <p className="text-gray-500">
             No se pudieron cargar los datos del cargo tipo contrato.
           </p>
         </div>

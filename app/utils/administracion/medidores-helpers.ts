@@ -5,10 +5,9 @@ import type {
   MedidorModalState
 } from '~/types/administracion';
 
-
 export const MEDIDORES_ROUTE = '/dashboard/administracion/medidores';
-export const MEDIDORES_CREAR_ROUTE = '/dashboard/administracion/medidores/crear';
-
+export const MEDIDORES_CREAR_ROUTE =
+  '/dashboard/administracion/medidores/crear';
 
 export const createInitialMedidorModalState = (): MedidorModalState => ({
   delete: {
@@ -18,7 +17,6 @@ export const createInitialMedidorModalState = (): MedidorModalState => ({
     isOpen: false
   }
 });
-
 
 export const extractMedidorErrorMessage = (
   error: unknown,
@@ -48,18 +46,15 @@ export const extractMedidorErrorMessage = (
   };
 };
 
-
 const isNetworkError = (error: unknown): boolean => {
   const axiosError = error as AxiosError;
   return !axiosError?.response;
 };
 
-
 const extractServerMessage = (error: unknown): string | null => {
   const axiosError = error as AxiosError<{ message?: string }>;
   return axiosError?.response?.data?.message || null;
 };
-
 
 export const isValidMedidorForOperation = (
   medidor: GetMedidores | null | undefined
@@ -67,16 +62,13 @@ export const isValidMedidorForOperation = (
   return medidor !== null && medidor !== undefined && medidor.codigo > 0;
 };
 
-
 export const getMedidorEditUrl = (codigoMedidor: number): string => {
   return `${MEDIDORES_ROUTE}/${codigoMedidor}`;
 };
 
-
 export const isMedidoresListEmpty = (medidores: GetMedidores[]): boolean => {
   return !Array.isArray(medidores) || medidores.length === 0;
 };
-
 
 export const getMedidorStatusSummary = (
   medidores: GetMedidores[]
@@ -86,7 +78,7 @@ export const getMedidorStatusSummary = (
   sinUbicacion: number;
 } => {
   const total = medidores.length;
-  const conUbicacion = medidores.filter((m) => m.ubicacion).length;
+  const conUbicacion = medidores.filter(m => m.ubicacion).length;
   const sinUbicacion = total - conUbicacion;
 
   return {

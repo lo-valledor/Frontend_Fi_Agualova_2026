@@ -53,7 +53,6 @@ function sendToAnalytics(metric: PerformanceMetric) {
   }
 }
 
-
 export function initPerformanceMonitoring() {
   if (typeof globalThis === 'undefined') return;
 
@@ -186,9 +185,7 @@ export function measureComponentPerformance(componentName: string) {
       const duration = performance.now() - startTime;
 
       if (isDevelopment) {
-        console.log(
-          `⏱️ ${componentName} render time: ${duration.toFixed(2)}ms`
-        );
+        console.log(`⏱️ ${componentName} render time: ${duration.toFixed(2)}ms`);
       }
       // Enviar a analytics si es muy lento (>100ms)
       if (duration > 100) {

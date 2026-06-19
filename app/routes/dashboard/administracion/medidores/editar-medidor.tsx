@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { toast } from 'sonner';
 import EditarMedidorComponent from '~/components/administracion/medidores/form/editar-medidor-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -10,11 +13,8 @@ import {
   DialogHeader,
   DialogTitle
 } from '~/components/ui/dialog';
-import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
-import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
-import { administracionService } from '~/services/administracionService';
 import api from '~/lib/api';
+import { administracionService } from '~/services/administracionService';
 
 export function meta() {
   return [
@@ -104,14 +104,14 @@ export default function EditarMedidor({
 
   // Estados para el modal de éxito
   const [modalExito, setModalExito] = useState(false);
-  const [medidorModificado, setMedidorModificado] = useState<{
+  const [_medidorModificado, setMedidorModificado] = useState<{
     id: string | number | null;
     fecha: string;
   } | null>(null);
   const [isSubmitting] = useState(false);
 
   // Función para copiar código al portapapeles
-  const copiarCodigoMedidor = async (codigo: string | number) => {
+  const _copiarCodigoMedidor = async (codigo: string | number) => {
     try {
       await navigator.clipboard.writeText(codigo.toString());
       toast.success('ID del medidor copiado al portapapeles', {
@@ -148,8 +148,8 @@ export default function EditarMedidor({
     return (
       <div>
         <BreadcrumbSetter items={pageBreadcrumbs} />
-        <div className='flex items-center justify-center p-8'>
-          <p className='text-gray-500'>
+        <div className="flex items-center justify-center p-8">
+          <p className="text-gray-500">
             No se pudieron cargar los datos del medidor.
           </p>
         </div>
@@ -158,28 +158,28 @@ export default function EditarMedidor({
   }
 
   return (
-    <div className='min-h-screen bg-background'>
+    <div className="min-h-screen bg-background">
       <BreadcrumbSetter items={pageBreadcrumbs} />
 
       {/* Header */}
-      <div className='sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60'>
-        <div className='container mx-auto px-4 py-4'>
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+        <div className="container mx-auto px-4 py-4">
           <ModernHeader
-            title='Editar Medidor'
+            title="Editar Medidor"
             description={`Editando medidor ID: ${medidor.mM_ID}`}
             actions={
               <>
                 <Button
-                  variant='ghost'
+                  variant="ghost"
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className='gap-2'
+                  className="gap-2"
                 >
-                  <ArrowLeft className='h-4 w-4' />
+                  <ArrowLeft className="h-4 w-4" />
                   Volver
                 </Button>
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={handleCancel}
                   disabled={isSubmitting}
                 >
@@ -192,7 +192,7 @@ export default function EditarMedidor({
       </div>
 
       {/* Contenido principal */}
-      <div className='container mx-auto px-4 py-6'>
+      <div className="container mx-auto px-4 py-6">
         <EditarMedidorComponent
           medidor={medidor}
           marca={marca}
@@ -207,35 +207,35 @@ export default function EditarMedidor({
 
       {/* Modal de Éxito - Medidor Modificado */}
       <Dialog open={modalExito} onOpenChange={setModalExito}>
-        <DialogContent className='w-[95vw] sm:max-w-[500px] lg:max-w-[600px] max-h-[85vh] overflow-y-auto'>
-          <DialogHeader className='space-y-4'>
-            <div className='flex items-center gap-3'>
-              <div className='p-3 bg-green-100 dark:bg-green-900/30 rounded-full'>
-                <CheckCircle2 className='h-6 w-6 text-green-600 dark:text-green-400' />
+        <DialogContent className="w-[95vw] sm:max-w-[500px] lg:max-w-[600px] max-h-[85vh] overflow-y-auto">
+          <DialogHeader className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                <CheckCircle2 className="h-6 w-6 text-green-600 dark:text-green-400" />
               </div>
-              <div className='text-left'>
-                <DialogTitle className='text-xl font-bold text-green-900 dark:text-green-100'>
+              <div className="text-left">
+                <DialogTitle className="text-xl font-bold text-green-900 dark:text-green-100">
                   ¡Medidor Modificado Exitosamente!
                 </DialogTitle>
-                <DialogDescription className='text-sm text-green-700 dark:text-green-300 mt-1'>
+                <DialogDescription className="text-sm text-green-700 dark:text-green-300 mt-1">
                   Los cambios del medidor han sido guardados correctamente
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
 
-          <div className='space-y-6 pt-4'>
+          <div className="space-y-6 pt-4">
             {/* Botones de acción */}
-            <div className='flex flex-col sm:flex-row gap-3 pt-4 border-t'>
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
               <Button
-                variant='outline'
+                variant="outline"
                 onClick={() => {
                   setModalExito(false);
                   setMedidorModificado(null);
                 }}
-                className='flex-1 gap-2'
+                className="flex-1 gap-2"
               >
-                <X className='h-4 w-4' />
+                <X className="h-4 w-4" />
                 Cerrar
               </Button>
               <Button
@@ -244,9 +244,9 @@ export default function EditarMedidor({
                   setMedidorModificado(null);
                   navigate('/dashboard/administracion/medidores');
                 }}
-                className='flex-1 gap-2 bg-green-600 hover:bg-green-700'
+                className="flex-1 gap-2 bg-green-600 hover:bg-green-700"
               >
-                <ArrowLeft className='h-4 w-4' />
+                <ArrowLeft className="h-4 w-4" />
                 Volver a Medidores
               </Button>
             </div>

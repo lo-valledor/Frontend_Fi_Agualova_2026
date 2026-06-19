@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import {
+  addPageFooters,
   renderCompanyInfo,
   renderHeader,
-  renderSection,
-  addPageFooters
+  renderSection
 } from './utils/pdf-rendering';
 
 export interface PDFExportOptions {
@@ -36,7 +36,6 @@ export interface PDFSection {
   kpis?: Array<{ label: string; value: string | number }>;
   text?: string;
 }
-
 
 export function useExportPDF() {
   const [isExporting, setIsExporting] = useState(false);
@@ -90,7 +89,12 @@ export function useExportPDF() {
       }
 
       // Render header
-      yPosition = renderHeader(doc, { title, subtitle, includeDate }, pageWidth, yPosition);
+      yPosition = renderHeader(
+        doc,
+        { title, subtitle, includeDate },
+        pageWidth,
+        yPosition
+      );
 
       // Draw separator line
       doc.setDrawColor(200, 200, 200);
@@ -115,7 +119,8 @@ export function useExportPDF() {
         duration: 4000
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error desconocido';
       toast.error('Error al generar el PDF', {
         description: errorMessage
       });

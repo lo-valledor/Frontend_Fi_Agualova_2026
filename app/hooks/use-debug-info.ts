@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import {
-  gatherDebugInfo,
-  type DebugDetectionResult
+  type DebugDetectionResult,
+  gatherDebugInfo
 } from './utils/debug-detectors';
-
 
 export const useDebugInfo = (): DebugDetectionResult | null => {
   const [debugInfo, setDebugInfo] = useState<DebugDetectionResult | null>(null);

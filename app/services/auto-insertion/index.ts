@@ -1,30 +1,26 @@
-import { validationService } from './validation.service';
-import { consumptionCalculationService } from './consumption-calculation.service';
 import { autoInsertionService } from './auto-insertion.service';
+import { consumptionCalculationService } from './consumption-calculation.service';
+import { validationService } from './validation.service';
 
-// Servicios
-export { validationService, ValidationService } from './validation.service';
-export type { ValidationResult, AnomalyDetection } from './validation.service';
-
-export {
-  consumptionCalculationService,
-  ConsumptionCalculationService
-} from './consumption-calculation.service';
-export type { ConsumptionCalculationResult } from './consumption-calculation.service';
-
-export {
-  autoInsertionService,
-  AutoInsertionService
-} from './auto-insertion.service';
 export type {
-  ReadingForInsertion,
   AutoInsertionResult,
-  MeterAnalysisResult
+  MeterAnalysisResult,
+  ReadingForInsertion
 } from './auto-insertion.service';
-
+export {
+  AutoInsertionService,
+  autoInsertionService
+} from './auto-insertion.service';
+export type { ConsumptionCalculationResult } from './consumption-calculation.service';
+export {
+  ConsumptionCalculationService,
+  consumptionCalculationService
+} from './consumption-calculation.service';
 // Tipos compartidos
 export * from './types';
-
+export type { AnomalyDetection, ValidationResult } from './validation.service';
+// Servicios
+export { ValidationService, validationService } from './validation.service';
 
 export const autoInsertionServices = {
   validation: validationService,

@@ -1,6 +1,5 @@
 import type { AxiosError } from 'axios';
 
-
 export function isCredentialError(errorMessage: string): boolean {
   const lowerMessage = errorMessage.toLowerCase();
   return (
@@ -10,7 +9,6 @@ export function isCredentialError(errorMessage: string): boolean {
     lowerMessage.includes('credenciales')
   );
 }
-
 
 export function isAuthorizationError(errorMessage: string): boolean {
   const lowerMessage = errorMessage.toLowerCase();
@@ -24,11 +22,9 @@ export function isAuthorizationError(errorMessage: string): boolean {
   );
 }
 
-
 export function getErrorMessage(error: AxiosError<any>): string {
   return error.response?.data?.mensaje || error.response?.data?.message || '';
 }
-
 
 export function handleValidationHTTPError(
   error: AxiosError<any>,
@@ -62,7 +58,6 @@ export function handleValidationHTTPError(
 
   return false;
 }
-
 
 export function handleGeneralValidationError(error: any, toast: any): void {
   if (error.response) {

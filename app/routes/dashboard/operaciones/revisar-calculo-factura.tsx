@@ -1,6 +1,3 @@
-/* eslint-disable no-empty-pattern */
-import React from 'react';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import RevisarCalculoFacturaComponent from '~/components/operaciones/revisar-calculo-factura/revisar-calculo-factura-component';
 import { operacionesService } from '~/services/operacionesService';

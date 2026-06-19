@@ -1,22 +1,19 @@
-import { BaseApiService } from '~/services/core/base-service';
-import type { ServiceResponse } from '~/services/core/api-response';
-import type {
-  IdentificadorProceso,
-  EstadoProceso,
-  CalculoPrefacturaDetalle,
-  CalculoPrefacturaCargoResponse
-} from '~/types/operaciones';
 import api from '~/lib/api';
-
+import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
+import type {
+  CalculoPrefacturaCargoResponse,
+  CalculoPrefacturaDetalle,
+  EstadoProceso,
+  IdentificadorProceso
+} from '~/types/operaciones';
 
 export interface BillingCalculationRequest {
   cicloFacturacion: number;
   periodoFacturable: string;
 }
 
-
 export class BillingCalculationService extends BaseApiService {
-  
   async launchBillingCalculation(
     request: BillingCalculationRequest
   ): Promise<ServiceResponse<any>> {
@@ -36,7 +33,6 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al lanzar cálculo de facturación');
   }
 
-  
   async getProcessIdentifier(
     cicloId: string,
     periodoId: string,
@@ -57,7 +53,6 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al obtener identificador del proceso');
   }
 
-  
   async getCurrentProcessIdentifier(
     cicloId: string,
     periodoId: string,
@@ -78,7 +73,6 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al obtener identificador actual del proceso');
   }
 
-  
   async checkProcessStatus(
     procesoId: string
   ): Promise<ServiceResponse<EstadoProceso[]>> {
@@ -97,7 +91,6 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al verificar estado del proceso');
   }
 
-  
   async getPrefacturaHeader(
     cicloId: string,
     periodo: string
@@ -120,7 +113,6 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al consultar encabezado de prefactura');
   }
 
-  
   async getPrefacturaCharges(
     cicloId: string,
     periodo: string
@@ -142,7 +134,6 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al consultar cargos de prefactura');
   }
 
-  
   async generateBillingDetail(
     lecturaId: number,
     periodoId: string
@@ -163,7 +154,6 @@ export class BillingCalculationService extends BaseApiService {
     }, 'Error al generar detalle de factura');
   }
 
-  
   async checkReadingClosureStatus(
     cicloFacturable: string,
     periodo: string

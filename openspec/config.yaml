@@ -1,0 +1,86 @@
+schema: spec-driven
+
+# Project name (Engram key) and execution context (cached at sdd-init time)
+project: frontend_fi_agualova_2026
+execution_mode: interactive
+artifact_store: openspec
+chained_pr_strategy: ask-always
+review_budget_lines: 400
+
+context: |
+  Tech stack: React Router 7 (SPA, ssr:false) + Vite 6 + React 19 + TypeScript 5 (strict) + Tailwind CSS 4 + Biome (lint+format).
+  Architecture: App-Router layout under `app/routes/`. Domain folders (administracion, operaciones, mantencion, monitor, reportes, configuracion, auth).
+  Persistence: REST API via axios + jwt-decode + localStorage; no SSR data layer.
+  Testing: Vitest 3 (jsdom, globals:true) + @testing-library/react + @testing-library/user-event + msw (network mocks).
+  Style: 2-space indent, single quotes, semicolons, line-width 80, LF endings, kebab-case folders, PascalCase components, `~/*` → `app/*`.
+  Bundle/build: Vite 6 with @tailwindcss/vite, vite-tsconfig-paths, vite-plugin-compression, rollup-plugin-visualizer.
+
+# Strict TDD is enabled at the project level. Test infrastructure is configured (Vitest + jsdom + Testing Library + msw)
+# and 27 colocated *.test.tsx/*.test.ts files exist. NOTE: vitest.config.ts references './test/setup.ts' which is
+# currently MISSING from the repo; the full test suite cannot run until that file is restored. SDD phases should
+# still write/run targeted tests where possible and surface the missing setup file as a follow-up risk.
+strict_tdd: true
+
+testing:
+  runner: pnpm test:run
+  watch: pnpm test
+  coverage: pnpm test:coverage
+  framework: vitest
+  version: 3.2.6
+  environment: jsdom
+  globals: true
+  setup_file: ./test/setup.ts
+  setup_file_status: MISSING — vitest.config.ts references it but the file does not exist; test suite currently fails to load
+  coverage_provider: v8
+  coverage_reporters: [text, json, html, lcov]
+
+  layers:
+    unit:        { available: true,  tool: vitest }
+    component:   { available: true,  tool: "@testing-library/react + @testing-library/user-event + @testing-library/jest-dom" }
+    integration: { available: true,  tool: msw (Mock Service Worker) }
+    e2e:         { available: false, tool: "—" }
+
+  discovered_test_files: 27
+
+  quality:
+    linter:       { available: true,  command: "pnpm lint",        tool: "@biomejs/biome 2.5.0" }
+    typechecker:  { available: true,  command: "pnpm typecheck",   tool: "react-router typegen && tsc" }
+    formatter:    { available: true,  command: "pnpm format",      tool: "@biomejs/biome 2.5.0" }
+    ci_pipeline:  "pnpm ci → typecheck && lint && test:run && build"
+
+# Override the AGENTS.md claim: this repo uses Biome, NOT ESLint/Prettier.
+# `pnpm lint` runs `biome lint --write`; `pnpm format` runs `biome format --write`.
+# `pnpm ci` runs the full pipeline (typecheck + lint + test:run + build).
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Spell out the domain area (administracion / operaciones / mantencion / monitor / reportes / configuracion / auth) the change touches
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - State route URLs that change when the change touches `app/routes/`
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale, especially around React Router 7 SPA data flow
+    - Note when a change spans both `app/components/...` and the duplicated tree under `app/routes/dashboard/reportes/components/...`
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+    - Group tests next to the implementation they cover
+  apply:
+    - Follow existing code patterns (kebab-case folders, PascalCase components, `~/*` alias)
+    - Prefer colocated *.test.tsx / *.test.ts files
+    - Honor `prefers-color-scheme` and the existing `ThemeProvider` (defaultTheme: 'dark')
+    tdd: true
+    test_command: "pnpm test:run"
+  verify:
+    test_command: "pnpm test:run"
+    build_command: "pnpm build"
+    typecheck_command: "pnpm typecheck"
+    lint_command: "pnpm lint"
+    coverage_command: "pnpm test:coverage"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas
+    - Confirm the duplicated-components tree (`app/routes/dashboard/reportes/components/...`) is reconciled

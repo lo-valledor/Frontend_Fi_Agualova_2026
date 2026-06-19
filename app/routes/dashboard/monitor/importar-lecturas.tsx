@@ -1,8 +1,8 @@
 /* eslint-disable no-empty-pattern */
-import { MonitorHydrateFallback } from '~/components/monitor/monitor-hydrate-fallback';
 
-import type { Route } from './+types/importar-lecturas';
 import ImportarLecturasComponent from '~/components/monitor/importar-lecturas/importar-lecturas-component';
+import { MonitorHydrateFallback } from '~/components/monitor/monitor-hydrate-fallback';
+import type { Route } from './+types/importar-lecturas';
 
 export function hydrateFallback() {
   return <MonitorHydrateFallback />;

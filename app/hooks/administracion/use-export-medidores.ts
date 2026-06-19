@@ -2,11 +2,9 @@ import { useExportData } from '~/hooks/shared/use-export-data';
 import type { GetMedidores } from '~/types/administracion';
 import { ExportColumnBuilder, getExportConfig } from './utils/export-utilities';
 
-
 export function useExportMedidores() {
   const { isExporting, exportData } = useExportData<GetMedidores>();
 
-  
   const medidorColumns = new ExportColumnBuilder()
     .addString('codigo', 'Código')
     .addString('serie', 'Número de Serie')
@@ -21,7 +19,6 @@ export function useExportMedidores() {
     .addString('codigoAcometida', 'Código Acometida')
     .build();
 
-  
   const exportMedidores = async (
     data: GetMedidores[],
     format: 'csv' | 'xlsx' = 'xlsx',

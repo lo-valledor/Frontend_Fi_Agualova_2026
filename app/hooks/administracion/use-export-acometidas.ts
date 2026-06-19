@@ -2,11 +2,9 @@ import { useExportData } from '~/hooks/shared/use-export-data';
 import type { AcometidaRow } from '~/types/administracion';
 import { ExportColumnBuilder, getExportConfig } from './utils/export-utilities';
 
-
 export function useExportAcometidas() {
   const { isExporting, exportData } = useExportData<AcometidaRow>();
 
-  
   const acometidaColumns = new ExportColumnBuilder()
     .addString('idAcometida', 'ID')
     .addString('codigo', 'Código')
@@ -19,7 +17,6 @@ export function useExportAcometidas() {
     .addString('medidor', 'Medidor Asignado')
     .build();
 
-  
   const exportAcometidas = async (
     data: AcometidaRow[],
     format: 'csv' | 'xlsx' = 'xlsx',

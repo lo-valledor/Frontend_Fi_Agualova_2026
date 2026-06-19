@@ -27,7 +27,6 @@ export interface ResultadoInsercion {
   }[];
 }
 
-
 function detectarConsumoAnomalo(
   lecturaActual: number,
   lecturaAnterior: number,
@@ -91,7 +90,6 @@ function detectarConsumoAnomalo(
 
   return { anomalo: false };
 }
-
 
 export function validarLecturaParaInsercionAutomatica(
   medidor: MedidorNichoItem
@@ -205,7 +203,6 @@ export function validarLecturaParaInsercionAutomatica(
   return { valido: true, razones, severidad: 'ok' };
 }
 
-
 function calcularConsumoReal(
   lecturaActual: number,
   lecturaAnterior: number,
@@ -248,7 +245,6 @@ function calcularConsumoReal(
   // Consumo normal (lectura actual mayor o igual)
   return (lecturaActual - lecturaAnterior) * constante;
 }
-
 
 export function analizarMedidoresParaInsercion(medidores: MedidorNichoItem[]): {
   autoInsertables: LecturaParaInsertar[];
@@ -302,7 +298,6 @@ export function analizarMedidoresParaInsercion(medidores: MedidorNichoItem[]): {
     }
   };
 }
-
 
 export async function procesarInsercionAutomatica(
   lecturas: LecturaParaInsertar[],

@@ -1,10 +1,6 @@
 import {
   type ColumnDef,
   type ColumnFiltersState,
-  type PaginationState,
-  type RowSelectionState,
-  type SortingState,
-  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -12,7 +8,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable
+  type PaginationState,
+  type RowSelectionState,
+  type SortingState,
+  useReactTable,
+  type VisibilityState
 } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 
@@ -51,6 +51,7 @@ export function DataTablePrecios<TData, TValue>({
   data,
   searchPlaceholder = 'Buscar...',
   defaultPageSize = 10,
+  pageSizeOptions = [5, 10, 20, 50, 100],
   showSearch = true,
   columnGroups = []
 }: DataTablePreciosProps<TData, TValue>) {
@@ -101,29 +102,29 @@ export function DataTablePrecios<TData, TValue>({
   };
 
   return (
-    <div className='space-y-1'>
+    <div className="space-y-1">
       {/* Search */}
       {showSearch && (
-        <div className='flex justify-end'>
-          <div className='relative w-full max-w-xs sm:max-w-sm'>
-            <Search className='absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3 sm:h-4 sm:w-4' />
+        <div className="flex justify-end">
+          <div className="relative w-full max-w-xs sm:max-w-sm">
+            <Search className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3 w-3 sm:h-4 sm:w-4" />
             <Input
               placeholder={searchPlaceholder}
               value={globalFilter ?? ''}
               onChange={e => table.setGlobalFilter(e.target.value)}
-              className='pl-8 sm:pl-10 w-full bg-background h-8 sm:h-10 text-xs sm:text-sm'
+              className="pl-8 sm:pl-10 w-full bg-background h-8 sm:h-10 text-xs sm:text-sm"
             />
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className='rounded border border-border bg-card overflow-x-auto shadow'>
-        <Table className='min-w-full text-xs align-middle'>
-          <TableHeader className='text-xs sticky top-0 z-10 bg-background'>
+      <div className="rounded border border-border bg-card overflow-x-auto shadow">
+        <Table className="min-w-full text-xs align-middle">
+          <TableHeader className="text-xs sticky top-0 z-10 bg-background">
             {/* Headers agrupados */}
             {columnGroups.length > 0 && (
-              <TableRow className='border-b-0 h-8'>
+              <TableRow className="border-b-0 h-8">
                 {columnGroups.map(group => (
                   <TableHead
                     key={group.id}
@@ -142,7 +143,7 @@ export function DataTablePrecios<TData, TValue>({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className='border-b bg-muted/50 h-8'
+                className="border-b bg-muted/50 h-8"
               >
                 {headerGroup.headers.map(header => {
                   const group = getColumnGroup(header.column.id);
@@ -172,7 +173,7 @@ export function DataTablePrecios<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className='text-xs'>
+          <TableBody className="text-xs">
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
@@ -203,7 +204,7 @@ export function DataTablePrecios<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-12 text-center text-muted-foreground text-xs'
+                  className="h-12 text-center text-muted-foreground text-xs"
                 >
                   No se encontraron resultados.
                 </TableCell>
@@ -214,7 +215,7 @@ export function DataTablePrecios<TData, TValue>({
       </div>
 
       {/* Pagination */}
-      <DataTablePagination table={table} />
+      <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} />
     </div>
   );
 }

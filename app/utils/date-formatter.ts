@@ -1,7 +1,9 @@
 import { format } from 'date-fns';
 
-
-export function formatToDate(dateString: string | null | undefined, fallback = '-'): string {
+export function formatToDate(
+  dateString: string | null | undefined,
+  fallback = '-'
+): string {
   if (!dateString) return fallback;
 
   try {
@@ -13,8 +15,10 @@ export function formatToDate(dateString: string | null | undefined, fallback = '
   }
 }
 
-
-export function formatToTime(dateString: string | null | undefined, fallback = '-'): string {
+export function formatToTime(
+  dateString: string | null | undefined,
+  fallback = '-'
+): string {
   if (!dateString) return fallback;
 
   try {
@@ -26,8 +30,10 @@ export function formatToTime(dateString: string | null | undefined, fallback = '
   }
 }
 
-
-export function formatToYYYYMMDD(dateString: string | null | undefined, fallback = ''): string {
+export function formatToYYYYMMDD(
+  dateString: string | null | undefined,
+  fallback = ''
+): string {
   if (!dateString) return fallback;
 
   // Split date into parts
@@ -51,7 +57,6 @@ export function formatToYYYYMMDD(dateString: string | null | undefined, fallback
 
   return `${year}${month}${day}`;
 }
-
 
 export function formatSafeDate(
   date: string | null | undefined,
@@ -79,8 +84,10 @@ export function formatSafeDate(
   }
 }
 
-
-export function formatDateForExport(date: string | null | undefined, fallback = ''): string {
+export function formatDateForExport(
+  date: string | null | undefined,
+  fallback = ''
+): string {
   if (!date) return fallback;
 
   try {

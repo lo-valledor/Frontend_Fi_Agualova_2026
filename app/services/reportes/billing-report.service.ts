@@ -1,16 +1,13 @@
-import { BaseApiService } from '~/services/core/base-service';
-import type { ServiceResponse } from '~/services/core/api-response';
-import type { FacturacionPorCargo } from '~/types/reportes';
 import api from '~/lib/api';
-
+import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
+import type { FacturacionPorCargo } from '~/types/reportes';
 
 export class BillingReportService extends BaseApiService {
-  
   constructor(httpClient: any = api) {
     super(httpClient);
   }
 
-  
   async getFacturacionPorCargo(
     periodo: string,
     emId: number

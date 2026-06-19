@@ -17,7 +17,11 @@ export interface UserData {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: UserData | null;
-  login: (email: string, password: string, redirectTo?: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    redirectTo?: string
+  ) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -127,7 +131,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [navigate]);
 
-  const login = async (email: string, password: string, redirectTo?: string) => {
+  const login = async (
+    email: string,
+    password: string,
+    redirectTo?: string
+  ) => {
     try {
       setLoading(true);
       setError(null);

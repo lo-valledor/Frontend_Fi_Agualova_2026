@@ -1,7 +1,6 @@
-import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
-import { debugApi, API_TEMPLATES } from '~/utils/api-debug';
-
+import { BaseApiService } from '~/services/core/base-service';
+import { API_TEMPLATES, debugApi } from '~/utils/api-debug';
 
 export interface RolePermissions {
   lectura?: boolean;
@@ -10,13 +9,11 @@ export interface RolePermissions {
   eliminacion?: boolean;
 }
 
-
 export interface AssignPermissionsRequest {
   idRol: number;
   idMenu: number;
   permisos: RolePermissions;
 }
-
 
 export interface AssignPermissionDirectRequest {
   idRol: number;
@@ -28,7 +25,6 @@ export interface AssignPermissionDirectRequest {
   fechaAsignacion?: string;
 }
 
-
 export interface UserPermissions {
   idMenu: number;
   nombreMenu: string;
@@ -38,7 +34,6 @@ export interface UserPermissions {
   puedeEditar: boolean;
   puedeEliminar: boolean;
 }
-
 
 export interface RoleMenuRelation {
   idRelacion: number;
@@ -51,14 +46,11 @@ export interface RoleMenuRelation {
   fechaModificacion?: string;
 }
 
-
 export class PermisosService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   async getUsuarioPermisos(
     codigoUsuario: string
   ): Promise<ServiceResponse<UserPermissions[]>> {
@@ -77,7 +69,6 @@ export class PermisosService extends BaseApiService {
     }, `Error al obtener permisos del usuario ${codigoUsuario}`);
   }
 
-  
   async getRelacionRolMenu(
     idRol: number,
     idMenu: number
@@ -99,7 +90,6 @@ export class PermisosService extends BaseApiService {
     >;
   }
 
-  
   async assignPermissions(
     request: AssignPermissionsRequest
   ): Promise<ServiceResponse<RoleMenuRelation>> {
@@ -136,7 +126,6 @@ export class PermisosService extends BaseApiService {
     >;
   }
 
-  
   async assignPermissionDirect(
     request: AssignPermissionDirectRequest
   ): Promise<ServiceResponse<AssignPermissionDirectRequest>> {
@@ -194,7 +183,6 @@ export class PermisosService extends BaseApiService {
     >;
   }
 
-  
   async deleteRelacionRolMenu(
     idRol: number,
     idMenu: number

@@ -18,7 +18,6 @@ export function createPrefetchLink(routePath: string): boolean {
   return true;
 }
 
-
 export function createStaggeredPrefetchLinks(
   routes: string[],
   baseDelay: number = 2000,
@@ -41,7 +40,6 @@ export function createStaggeredPrefetchLinks(
     timers.forEach(timer => clearTimeout(timer));
   };
 }
-
 
 export function createConditionalPrefetchLinks(
   routeMap: Record<string, string[]>,
@@ -75,8 +73,10 @@ export function createConditionalPrefetchLinks(
   };
 }
 
-
-export function createDelayedPrefetchLink(routePath: string, delay: number = 2000): () => void {
+export function createDelayedPrefetchLink(
+  routePath: string,
+  delay: number = 2000
+): () => void {
   const timer = setTimeout(() => {
     createPrefetchLink(routePath);
   }, delay);
@@ -84,13 +84,11 @@ export function createDelayedPrefetchLink(routePath: string, delay: number = 200
   return () => clearTimeout(timer);
 }
 
-
 export function createHoverPrefetchHandler(routePath: string): () => void {
   return () => {
     createPrefetchLink(routePath);
   };
 }
-
 
 export function removePrefetchLinks(routes: string[]): void {
   if (typeof window === 'undefined') return;
@@ -106,15 +104,11 @@ export function removePrefetchLinks(routes: string[]): void {
   });
 }
 
-
 export function isPrefetched(routePath: string): boolean {
   if (typeof window === 'undefined') return false;
 
-  return !!document.querySelector(
-    `link[rel="prefetch"][href="${routePath}"]`
-  );
+  return !!document.querySelector(`link[rel="prefetch"][href="${routePath}"]`);
 }
-
 
 export function getPrefetchedRoutes(): string[] {
   if (typeof window === 'undefined') return [];

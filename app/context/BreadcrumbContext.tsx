@@ -1,9 +1,4 @@
-import React, {
-  type ReactNode,
-  createContext,
-  useContext,
-  useState
-} from 'react';
+import { createContext, type ReactNode, useContext, useState } from 'react';
 
 // Reutiliza la interfaz que ya tienes en SiteHeader
 interface BreadcrumbItem {

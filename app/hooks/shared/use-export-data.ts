@@ -22,11 +22,9 @@ export interface ExportColumn {
   formatter?: (value: any) => string;
 }
 
-
 export function useExportData<T extends Record<string, any>>() {
   const [isExporting, setIsExporting] = useState(false);
 
-  
   const exportData = async (
     data: T[],
     columns: ExportColumn[],

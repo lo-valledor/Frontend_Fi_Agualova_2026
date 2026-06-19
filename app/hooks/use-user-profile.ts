@@ -4,7 +4,6 @@ import { useAuth } from '~/context/AuthContext';
 import api from '~/lib/api';
 import type { ActualizarUsuarioProps, Usuarios } from '~/types/administracion';
 
-
 interface UseUserProfileReturn {
   userData: Usuarios | null;
   isLoading: boolean;
@@ -12,7 +11,6 @@ interface UseUserProfileReturn {
   updateProfile: (data: ActualizarUsuarioProps) => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
-
 
 function createMockUserData(user: {
   id: string;
@@ -38,14 +36,12 @@ function createMockUserData(user: {
   };
 }
 
-
 export function useUserProfile(): UseUserProfileReturn {
   const { user } = useAuth();
   const [userData, setUserData] = useState<Usuarios | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  
   const fetchUserProfile = useCallback(async (): Promise<void> => {
     // Early return if no authenticated user
     if (!user) {
@@ -87,7 +83,6 @@ export function useUserProfile(): UseUserProfileReturn {
     }
   }, [user]);
 
-  
   const updateProfile = useCallback(
     async (data: ActualizarUsuarioProps): Promise<void> => {
       // Early return if no user data loaded
@@ -155,7 +150,6 @@ export function useUserProfile(): UseUserProfileReturn {
     [userData]
   );
 
-  
   const refreshProfile = useCallback(async (): Promise<void> => {
     await fetchUserProfile();
   }, [fetchUserProfile]);

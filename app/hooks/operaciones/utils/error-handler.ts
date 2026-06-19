@@ -5,7 +5,6 @@ export interface ErrorResponse {
   originalError: any;
 }
 
-
 export function extraerErrorMessage(error: any): ErrorResponse {
   // Verificar si es AxiosError
   if (error?.response?.status === 404) {
@@ -47,16 +46,13 @@ export function extraerErrorMessage(error: any): ErrorResponse {
   };
 }
 
-
 export function validarRespuestaAPI(data: any): data is any[] {
   return Array.isArray(data) && data.length > 0;
 }
 
-
 export function es404(error: any): boolean {
   return error?.response?.status === 404;
 }
-
 
 export function extraerCodigoEstatus(error: any): number {
   return error?.response?.status ?? 0;

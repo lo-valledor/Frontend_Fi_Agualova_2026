@@ -1,6 +1,5 @@
 import type { ExportColumn } from './types';
 
-
 export function convertToCSV<T extends Record<string, any>>(
   data: T[],
   columns: ExportColumn[],
@@ -24,7 +23,6 @@ export function convertToCSV<T extends Record<string, any>>(
   return csvContent.join('\n');
 }
 
-
 export function downloadCSVFile(csvContent: string, filename: string): void {
   // Add UTF-8 BOM (\uFEFF) for proper Excel/Sheets character encoding
   const blob = new Blob(['\uFEFF' + csvContent], {
@@ -47,7 +45,6 @@ export function downloadCSVFile(csvContent: string, filename: string): void {
     URL.revokeObjectURL(url);
   }
 }
-
 
 export async function downloadExcelFile<T extends Record<string, any>>(
   data: T[],
@@ -118,7 +115,8 @@ export async function downloadExcelFile<T extends Record<string, any>>(
   }
 }
 
-
-export function validateExportData<T extends Record<string, any>>(data: T[]): boolean {
+export function validateExportData<T extends Record<string, any>>(
+  data: T[]
+): boolean {
   return Array.isArray(data) && data.length > 0;
 }
