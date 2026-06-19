@@ -3,31 +3,26 @@ import { permisosService } from './permisos.service';
 import { rolesService } from './roles.service';
 import { usuarioRolesService } from './usuario-roles.service';
 
-// Servicios
-export { rolesService, RolesService } from './roles.service';
-export type { CreateRoleRequest, UpdateRoleRequest } from './roles.service';
-
-export { menusService, MenusService } from './menus.service';
 export type { CreateMenuRequest, UpdateMenuRequest } from './menus.service';
-
-export { permisosService, PermisosService } from './permisos.service';
+export { MenusService, menusService } from './menus.service';
 export type {
-  RolePermissions,
-  AssignPermissionsRequest,
   AssignPermissionDirectRequest,
-  UserPermissions,
-  RoleMenuRelation
+  AssignPermissionsRequest,
+  RoleMenuRelation,
+  RolePermissions,
+  UserPermissions
 } from './permisos.service';
-
-export {
-  usuarioRolesService,
-  UsuarioRolesService
-} from './usuario-roles.service';
-export type { AssignUserRolesRequest } from './usuario-roles.service';
-
+export { PermisosService, permisosService } from './permisos.service';
+export type { CreateRoleRequest, UpdateRoleRequest } from './roles.service';
+// Servicios
+export { RolesService, rolesService } from './roles.service';
 // Tipos compartidos
 export * from './types';
-
+export type { AssignUserRolesRequest } from './usuario-roles.service';
+export {
+  UsuarioRolesService,
+  usuarioRolesService
+} from './usuario-roles.service';
 
 export const rolesPermisosServices = {
   roles: rolesService,

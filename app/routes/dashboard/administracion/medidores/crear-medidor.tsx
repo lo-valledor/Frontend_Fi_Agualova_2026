@@ -1,4 +1,3 @@
-import React from 'react';
 import CrearMedidorComponent from '~/components/administracion/medidores/form/crear-medidor-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';

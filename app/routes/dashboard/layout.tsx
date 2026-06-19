@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Outlet, useRouteError } from 'react-router';
 
 import { ErrorBoundary as ErrorBoundaryComponent } from '~/components/error-boundary';
@@ -10,11 +8,11 @@ import { SidebarInset, SidebarProvider } from '~/components/ui/sidebar';
 const DashboardLayout = () => {
   return (
     <SidebarProvider>
-      <AppSidebar variant='inset' />
+      <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader />
-        <div className='flex flex-1 flex-col grid-bg'>
-          <div className='@container/main flex flex-1 flex-col gap-2'>
+        <div className="flex flex-1 flex-col grid-bg">
+          <div className="@container/main flex flex-1 flex-col gap-2">
             <Outlet />
           </div>
         </div>

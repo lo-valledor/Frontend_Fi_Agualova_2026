@@ -1,11 +1,10 @@
 import api from '~/lib/api';
+import type { GetComunas, GetGiros } from '~/types/administracion';
 import { BaseApiService, type ServiceResponse } from '../core';
-import type { GetGiros, GetComunas } from '~/types/administracion';
 
 // ============================================================================
 // TIPOS
 // ============================================================================
-
 
 export interface ReferenceDataBundle {
   giros: GetGiros[];
@@ -20,14 +19,11 @@ export interface ReferenceDataBundle {
 // SERVICIO
 // ============================================================================
 
-
 class ReferenceDataService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getGiros(): Promise<ServiceResponse<GetGiros[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('giro/buscar');
@@ -35,7 +31,6 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener giros');
   }
 
-  
   async getComunas(): Promise<ServiceResponse<GetComunas[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('comuna/por-region');
@@ -43,7 +38,6 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener comunas');
   }
 
-  
   async getMarcas(): Promise<ServiceResponse<Array<{ [key: string]: any }>>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('marca/buscar');
@@ -51,7 +45,6 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener marcas');
   }
 
-  
   async getCondiciones(): Promise<
     ServiceResponse<Array<{ [key: string]: any }>>
   > {
@@ -61,7 +54,6 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener condiciones de contrato');
   }
 
-  
   async getCargosTipo(): Promise<
     ServiceResponse<Array<{ [key: string]: any }>>
   > {
@@ -71,7 +63,6 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener tipos de cargo');
   }
 
-  
   async getCargosFacturables(): Promise<
     ServiceResponse<Array<{ [key: string]: any }>>
   > {
@@ -81,7 +72,6 @@ class ReferenceDataService extends BaseApiService {
     }, 'Error al obtener cargos facturables');
   }
 
-  
   async getAll(): Promise<ServiceResponse<ReferenceDataBundle>> {
     return this.executeDataOperation(async () => {
       const results = (await this.executeParallelOperations([

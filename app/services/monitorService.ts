@@ -1,12 +1,10 @@
 import api from '~/lib/api';
 import type { Clave, Periodo, Sector } from '~/types/monitor';
 
-
 export interface MonitorServiceResponse<T> {
   data: T | null;
   error: string | null;
 }
-
 
 export interface MonitorBasicData {
   periodos: Periodo[];
@@ -15,9 +13,7 @@ export interface MonitorBasicData {
   activePeriodoId: number | null;
 }
 
-
 class MonitorService {
-  
   async getBasicData(): Promise<MonitorServiceResponse<MonitorBasicData>> {
     try {
       // Verificar si hay token antes de hacer peticiones
@@ -69,7 +65,6 @@ class MonitorService {
     }
   }
 
-  
   async getPeriodosAndSectores(): Promise<
     MonitorServiceResponse<{
       periodos: Periodo[];
@@ -124,7 +119,6 @@ class MonitorService {
     }
   }
 
-  
   async getPeriodos(): Promise<MonitorServiceResponse<Periodo[]>> {
     try {
       const response = await api.get<Periodo[]>('/Periodos');
@@ -142,7 +136,6 @@ class MonitorService {
     }
   }
 
-  
   async getSectores(): Promise<MonitorServiceResponse<Sector[]>> {
     try {
       const response = await api.get<Sector[]>('/Sectores');
@@ -160,7 +153,6 @@ class MonitorService {
     }
   }
 
-  
   async getClaves(): Promise<MonitorServiceResponse<Clave[]>> {
     try {
       const response = await api.get<Clave[]>('/Claves');
@@ -178,7 +170,6 @@ class MonitorService {
     }
   }
 
-  
   findActivePeriodo(periodos: Periodo[]): number | null {
     if (!periodos || periodos.length === 0) return null;
 

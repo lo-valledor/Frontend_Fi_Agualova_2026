@@ -248,13 +248,11 @@ export interface ProcesamientoResult {
 // Enhanced Types for Refactored Components
 // ============================================
 
-
 export interface ValidationResult {
   isValid: boolean;
   error: string | null;
   value?: unknown;
 }
-
 
 export interface StatsData {
   total: number;
@@ -266,7 +264,6 @@ export interface StatsData {
   imported: number;
 }
 
-
 export type MeterStatusType =
   | 'SINLEC' // Sin Lectura
   | 'SINCLA' // Lectura Normal
@@ -277,7 +274,6 @@ export type MeterStatusType =
   | 'LECIMP' // En Facturación
   | 'IMPORT'; // Lecturas Importadas
 
-
 export interface MeterStatusInfo {
   color: string;
   bgColor: string;
@@ -287,7 +283,6 @@ export interface MeterStatusInfo {
   icon: unknown; // Will be React.ReactElement at runtime
   severity: 0 | 1 | 2 | 3 | 4;
 }
-
 
 export interface SearchParams {
   sector: string;

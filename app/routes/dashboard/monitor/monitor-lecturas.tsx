@@ -6,16 +6,13 @@ import { monitorService } from '~/services/monitorService';
 
 import type { Route } from './+types/monitor-lecturas';
 
-
 const MonitorLecturasComponent = lazy(
   () => import('~/components/monitor/monitor-lecturas-component')
 );
 
-
 export function hydrateFallback() {
   return <MonitorLecturasSkeleton />;
 }
-
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -23,7 +20,6 @@ export function meta({}: Route.MetaArgs) {
     { name: 'description', content: 'Monitoreo de lecturas de medidores' }
   ];
 }
-
 
 export async function clientLoader() {
   const result = await monitorService.getBasicData();
@@ -46,7 +42,6 @@ export async function clientLoader() {
     error: null
   };
 }
-
 
 export default function MonitorLecturasPage({
   loaderData

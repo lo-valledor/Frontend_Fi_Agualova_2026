@@ -3,16 +3,14 @@ import { useEffect } from 'react';
 import {
   findMatchingShortcut,
   isUserTyping,
-  shouldAllowShortcutWhileTyping,
-  type KeyboardShortcut
+  type KeyboardShortcut,
+  shouldAllowShortcutWhileTyping
 } from './utils/keyboard-helpers';
-
 
 interface UseKeyboardShortcutsOptions {
   shortcuts: KeyboardShortcut[];
   enabled?: boolean;
 }
-
 
 export function useKeyboardShortcuts({
   shortcuts,
@@ -57,13 +55,11 @@ export function useKeyboardShortcuts({
   }, [shortcuts, enabled]);
 }
 
-
 interface MonitorKeyboardCallbacks {
   onSearch?: () => void;
   onRefresh?: () => void;
   onEscape?: () => void;
 }
-
 
 export function useMonitorKeyboardShortcuts(
   callbacks: MonitorKeyboardCallbacks

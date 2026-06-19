@@ -13,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
 
 const Login = () => {
   return (
-    <AuthLayout title='Iniciar Sesión'>
+    <AuthLayout title="Iniciar Sesión">
       <LoginForm />
     </AuthLayout>
   );

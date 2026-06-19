@@ -1,0 +1,2 @@
+# Keep this directory under version control. The `changes/` directory holds in-flight
+# SDD changes; each change gets its own subfolder created by the orchestrator.

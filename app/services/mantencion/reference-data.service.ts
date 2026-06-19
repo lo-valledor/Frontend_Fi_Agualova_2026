@@ -1,5 +1,6 @@
-import { BaseApiService } from '~/services/core/base-service';
+import api from '~/lib/api';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type {
   CicloFacturacion,
   Empalme,
@@ -7,11 +8,8 @@ import type {
   Tarifa,
   Zona
 } from '~/types/mantencion';
-import api from '~/lib/api';
-
 
 export class ReferenceDataMantencionService extends BaseApiService {
-  
   constructor(httpClient: any = api) {
     super(httpClient);
   }

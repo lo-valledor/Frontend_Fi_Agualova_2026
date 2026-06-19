@@ -1,5 +1,4 @@
-import type { PDFSection, CompanyInfo } from './types';
-
+import type { CompanyInfo, PDFSection } from './types';
 
 export function renderCompanyInfo(
   doc: any,
@@ -28,7 +27,6 @@ export function renderCompanyInfo(
 
   return currentY + 5;
 }
-
 
 export function renderHeader(
   doc: any,
@@ -65,7 +63,6 @@ export function renderHeader(
 
   return currentY;
 }
-
 
 export function renderKPISection(
   doc: any,
@@ -109,7 +106,6 @@ export function renderKPISection(
 
   return currentY + 20;
 }
-
 
 export function renderTableSection(
   doc: any,
@@ -155,7 +151,6 @@ export function renderTableSection(
   return doc.lastAutoTable.finalY + 8;
 }
 
-
 export function renderTextSection(
   doc: any,
   text: string,
@@ -172,7 +167,6 @@ export function renderTextSection(
 
   return yPosition + lines.length * 5 + 5;
 }
-
 
 export function renderChartSection(
   doc: any,
@@ -197,7 +191,6 @@ export function renderChartSection(
 
   return yPosition + 45;
 }
-
 
 export function renderSection(
   doc: any,
@@ -271,7 +264,6 @@ export function renderSection(
 
   return currentY + 5;
 }
-
 
 export function addPageFooters(
   doc: any,

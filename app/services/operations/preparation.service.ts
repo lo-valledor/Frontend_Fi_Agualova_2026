@@ -1,16 +1,15 @@
-import { BaseApiService } from '~/services/core/base-service';
+import api from '~/lib/api';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type {
-  PeriodoAbierto,
-  ValidarSectoresPendientes,
+  ConsultarAsignacionSectores,
+  ConsultarMantenedorRevisionCorte,
   ConsultarSectores,
   OpcionesPrepararLecturas,
-  ConsultarAsignacionSectores,
+  PeriodoAbierto,
   TotalesCorteReposicion,
-  ConsultarMantenedorRevisionCorte
+  ValidarSectoresPendientes
 } from '~/types/operaciones';
-import api from '~/lib/api';
-
 
 export interface PrepareReadingsData {
   periodoAbierto: PeriodoAbierto[];
@@ -18,7 +17,6 @@ export interface PrepareReadingsData {
   sectores: ConsultarSectores[];
   opcionesPreparar: OpcionesPrepararLecturas[];
 }
-
 
 export interface ReviewPriceData {
   dataPeriodoAbierto: PeriodoAbierto[];
@@ -30,15 +28,12 @@ export interface ReviewPriceData {
   }>;
 }
 
-
 export interface CutRepositionData {
   totalesData: TotalesCorteReposicion[];
   mantenedorCorteData: ConsultarMantenedorRevisionCorte[];
 }
 
-
 export class PreparationService extends BaseApiService {
-  
   async getPrepareReadingsData(): Promise<
     ServiceResponse<PrepareReadingsData>
   > {
@@ -68,7 +63,6 @@ export class PreparationService extends BaseApiService {
     }, 'Error al obtener datos para preparar lecturas');
   }
 
-  
   async getSectorAssignment(
     cicloFacturable: string,
     periodo: string
@@ -96,7 +90,6 @@ export class PreparationService extends BaseApiService {
     }, `Error al obtener asignación de sectores`);
   }
 
-  
   async getReviewPriceData(
     dia: string = '15'
   ): Promise<ServiceResponse<ReviewPriceData>> {
@@ -146,7 +139,6 @@ export class PreparationService extends BaseApiService {
     }, 'Error al obtener datos para revisión de precios');
   }
 
-  
   async getCutRepositionData(): Promise<ServiceResponse<CutRepositionData>> {
     return this.executeDataOperation(async () => {
       const [totales, mantenedor] = await this.executeParallelOperations([

@@ -23,14 +23,11 @@ export interface AcometidaOperationResponse {
   message: string;
 }
 
-
 class AcometidaService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<Acometida[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('Acometida/buscar');
@@ -38,7 +35,6 @@ class AcometidaService extends BaseApiService {
     }, 'Error al obtener acometidas');
   }
 
-  
   async getById(
     id: string | number
   ): Promise<ServiceResponse<Acometida | null>> {
@@ -55,7 +51,6 @@ class AcometidaService extends BaseApiService {
     }, `Error al obtener acometida ${id}`);
   }
 
-  
   async create(
     data: CreateAcometidaRequest
   ): Promise<ServiceResponse<Acometida | null>> {
@@ -72,7 +67,6 @@ class AcometidaService extends BaseApiService {
     }, 'Error al crear acometida');
   }
 
-  
   async update(
     data: UpdateAcometidaRequest
   ): Promise<ServiceResponse<Acometida | null>> {
@@ -90,7 +84,6 @@ class AcometidaService extends BaseApiService {
     }, `Error al actualizar acometida ${data.id}`);
   }
 
-  
   async delete(id: string | number): Promise<ServiceResponse<null>> {
     if (!id) {
       return this.handleError(
@@ -106,7 +99,6 @@ class AcometidaService extends BaseApiService {
     >;
   }
 
-  
   async getByCliente(
     clienteId: string | number
   ): Promise<ServiceResponse<Acometida[]>> {
@@ -125,7 +117,6 @@ class AcometidaService extends BaseApiService {
     }, `Error al obtener acometidas del cliente ${clienteId}`);
   }
 
-  
   async getByContrato(
     contratoId: string | number
   ): Promise<ServiceResponse<Acometida[]>> {

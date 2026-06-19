@@ -4,12 +4,11 @@ import type { AcometidaFilters } from '~/components/administracion/acometida/aco
 import type { AcometidaRow } from '~/types/administracion';
 import {
   extractUniqueOptions,
-  filterByString,
+  filterByNumberRange,
   filterByPresence,
-  filterByNumberRange
+  filterByString
 } from './utils/filter-utilities';
 import { calculateFilterStats } from './utils/stats-calculator';
-
 
 export interface FilterOptions {
   empalmes: string[];
@@ -17,12 +16,10 @@ export interface FilterOptions {
   sectores: string[];
 }
 
-
 export function useAcometidaFilters(
   acometidas: AcometidaRow[],
   filters: AcometidaFilters
 ) {
-  
   const filterOptions = useMemo((): FilterOptions => {
     return {
       empalmes: extractUniqueOptions(acometidas, a => a.empalme),
@@ -31,16 +28,10 @@ export function useAcometidaFilters(
     };
   }, [acometidas]);
 
-  
   const filteredAcometidas = useMemo(() => {
-    return acometidas.filter((acometida) => {
+    return acometidas.filter(acometida => {
       // Filtros de string: empalme, nicho, sector
-      if (
-        !filterByString(
-          acometida.empalme,
-          filters.empalmeDescripcion
-        )
-      ) {
+      if (!filterByString(acometida.empalme, filters.empalmeDescripcion)) {
         return false;
       }
 
@@ -48,12 +39,7 @@ export function useAcometidaFilters(
         return false;
       }
 
-      if (
-        !filterByString(
-          acometida.sector,
-          filters.sectorDescripcion
-        )
-      ) {
+      if (!filterByString(acometida.sector, filters.sectorDescripcion)) {
         return false;
       }
 
@@ -104,10 +90,8 @@ export function useAcometidaFilters(
     });
   }, [acometidas, filters]);
 
-  
   const filterStats = useMemo(
-    () =>
-      calculateFilterStats(acometidas, filteredAcometidas, filters),
+    () => calculateFilterStats(acometidas, filteredAcometidas, filters),
     [acometidas.length, filteredAcometidas.length, filters]
   );
 

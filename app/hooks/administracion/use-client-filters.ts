@@ -4,11 +4,10 @@ import type { GetClientes } from '~/types/administracion';
 import {
   extractUniqueOptions,
   filterByBoolean,
-  filterByString,
-  filterByPresence
+  filterByPresence,
+  filterByString
 } from './utils/filter-utilities';
 import { calculateFilterStats } from './utils/stats-calculator';
-
 
 export interface ClientFilters {
   esEmpresa: string;
@@ -19,22 +18,18 @@ export interface ClientFilters {
   tieneEmail: string;
 }
 
-
 export interface ClientFilterOptions {
   tiposCliente: string[];
   comunas: string[];
   codigosComuna: string[];
 }
 
-
 export type FilterOptions = ClientFilterOptions;
-
 
 export function useClientFilters(
   clients: GetClientes[],
   filters: ClientFilters
 ) {
-  
   const filterOptions = useMemo((): ClientFilterOptions => {
     return {
       tiposCliente: ['Persona', 'Empresa'],
@@ -43,7 +38,6 @@ export function useClientFilters(
     };
   }, [clients]);
 
-  
   const filteredClients = useMemo(() => {
     return clients.filter(client => {
       // Filtro booleano: tipo de cliente
@@ -77,7 +71,6 @@ export function useClientFilters(
     });
   }, [clients, filters]);
 
-  
   const filterStats = useMemo(
     () => calculateFilterStats(clients, filteredClients, filters),
     [clients.length, filteredClients.length, filters]

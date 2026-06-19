@@ -14,7 +14,6 @@ export const MONTHS = [
   { value: '12', label: 'Diciembre' }
 ] as const;
 
-
 export function getYearsRange() {
   const currentYear = new Date().getFullYear();
   const years = [currentYear - 1, currentYear, currentYear + 1];
@@ -25,16 +24,13 @@ export function getYearsRange() {
   }));
 }
 
-
 export function getCurrentMonth(): string {
   return (new Date().getMonth() + 1).toString().padStart(2, '0');
 }
 
-
 export function getCurrentYear(): string {
   return new Date().getFullYear().toString();
 }
-
 
 export function getMonthLabel(monthValue: string): string {
   const month = MONTHS.find(m => m.value === monthValue);

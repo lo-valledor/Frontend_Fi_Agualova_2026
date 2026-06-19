@@ -10,15 +10,14 @@ import type {
   OpcionesPrepararLecturas,
   PeriodoAbierto,
   Periodos,
-  PreciosCargoEnel,
   PreciosCargoAgualova,
+  PreciosCargoEnel,
   RevisarPrecioDos,
   RevisarPrecioUno,
   TotalesCorteReposicion,
   ValidarSectoresPendientes
 } from '~/types/operaciones';
 import { handleDataLoad } from './utils/data-loader';
-
 
 export function usePrepararLecturasData() {
   const [data, setData] = useState<{
@@ -56,7 +55,6 @@ export function usePrepararLecturasData() {
   };
 }
 
-
 export function useAsignacionSectores() {
   const [data, setData] = useState<ConsultarAsignacionSectores[]>([]);
   const [loading, setLoading] = useState(false);
@@ -88,7 +86,6 @@ export function useAsignacionSectores() {
   };
 }
 
-
 export function usePreciosCargo(mes: string, anio: string) {
   const [data, setData] = useState<{
     tablaEnel: PreciosCargoEnel[];
@@ -112,7 +109,6 @@ export function usePreciosCargo(mes: string, anio: string) {
     error
   };
 }
-
 
 export function useRevisarPrecio(dia: string = '15') {
   const [data, setData] = useState<{
@@ -185,7 +181,6 @@ export function useRevisarPrecio(dia: string = '15') {
   };
 }
 
-
 export function useCorteReposicion() {
   const [data, setData] = useState<{
     totalesData: TotalesCorteReposicion[];
@@ -209,7 +204,6 @@ export function useCorteReposicion() {
     error
   };
 }
-
 
 export function useCerrarLecturas() {
   const [data, setData] = useState<{
@@ -235,7 +229,6 @@ export function useCerrarLecturas() {
   };
 }
 
-
 export function usePeriodoFacturacion() {
   const [data, setData] = useState<{
     years: Anio[];
@@ -259,7 +252,6 @@ export function usePeriodoFacturacion() {
     error
   };
 }
-
 
 export function usePeriodoAbierto() {
   const [periodoAbierto, setPeriodoAbierto] = useState<PeriodoAbierto[]>([]);

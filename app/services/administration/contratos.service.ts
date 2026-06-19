@@ -1,21 +1,18 @@
 import api from '~/lib/api';
-import { BaseApiService, type ServiceResponse } from '../core';
 import type {
-  GetContratos,
   CrearContratoProps,
+  GetContratos,
   ModificarContratoProps
 } from '~/types/administracion';
+import { BaseApiService, type ServiceResponse } from '../core';
 
 // ============================================================================
 // TIPOS
 // ============================================================================
 
-
 export type CreateContratoRequest = CrearContratoProps;
 
-
 export type UpdateContratoRequest = ModificarContratoProps;
-
 
 export interface ContratoOperationResponse {
   contrato: GetContratos;
@@ -26,14 +23,11 @@ export interface ContratoOperationResponse {
 // SERVICIO
 // ============================================================================
 
-
 class ContratosService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<GetContratos[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('contrato/buscar');
@@ -41,7 +35,6 @@ class ContratosService extends BaseApiService {
     }, 'Error al obtener contratos');
   }
 
-  
   async getByCodigo(
     codigo: string
   ): Promise<ServiceResponse<GetContratos | null>> {
@@ -58,7 +51,6 @@ class ContratosService extends BaseApiService {
     }, `Error al obtener contrato ${codigo}`);
   }
 
-  
   async create(
     data: CreateContratoRequest
   ): Promise<ServiceResponse<GetContratos | null>> {
@@ -75,7 +67,6 @@ class ContratosService extends BaseApiService {
     }, 'Error al crear contrato');
   }
 
-  
   async update(
     data: UpdateContratoRequest
   ): Promise<ServiceResponse<GetContratos | null>> {
@@ -96,7 +87,6 @@ class ContratosService extends BaseApiService {
     }, `Error al actualizar contrato ${data.codigo}`);
   }
 
-  
   async delete(codigo: string): Promise<ServiceResponse<null>> {
     if (!codigo) {
       return this.handleError(
@@ -112,7 +102,6 @@ class ContratosService extends BaseApiService {
     >;
   }
 
-  
   async getAvailable(): Promise<ServiceResponse<GetContratos[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('contrato/disponibles');

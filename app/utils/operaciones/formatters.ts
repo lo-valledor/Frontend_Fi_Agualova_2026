@@ -18,7 +18,6 @@ export function formatPeriodLabel(mes: string, anio: string): string {
   return `${monthName} ${anio}`;
 }
 
-
 export function formatPrice(price: number | null | undefined): string {
   if (price === null || price === undefined || isNaN(price)) {
     return '$ 0,00';
@@ -34,7 +33,6 @@ export function formatPrice(price: number | null | undefined): string {
     .replace('CLP', '$');
 }
 
-
 export function formatNumber(
   value: number | null | undefined,
   decimals = 2
@@ -49,12 +47,10 @@ export function formatNumber(
   }).format(value);
 }
 
-
 export function formatCycle(ciclo: string | null | undefined): string {
   if (!ciclo) return 'Sin ciclo';
   return `Ciclo ${ciclo}`;
 }
-
 
 export function formatDate(date: string | Date | null | undefined): string {
   if (!date) return 'Sin fecha';

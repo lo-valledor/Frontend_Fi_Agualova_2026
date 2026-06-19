@@ -4,14 +4,12 @@ export function convertirCicloParaAPI(ciclo: string): string {
   return ciclo;
 }
 
-
 export function validarCicloYPeriodo(
   periodoFormateado: string,
   cicloId: string
 ): boolean {
   return !!(periodoFormateado && cicloId);
 }
-
 
 export function extraerMesYAnio(periodoFormateado: string): {
   mes: string;
@@ -22,7 +20,6 @@ export function extraerMesYAnio(periodoFormateado: string): {
     anio: periodoFormateado.substring(2)
   };
 }
-
 
 export function obtenerDiaDelCiclo(cicloParaAPI: string): string {
   return cicloParaAPI === '1' ? '15' : '30';

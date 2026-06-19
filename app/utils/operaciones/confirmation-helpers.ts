@@ -10,7 +10,6 @@ interface ProcessResult {
   shouldStop: boolean;
 }
 
-
 export async function processConfirmations(
   items: Array<{ indice: string; codigo: string }>,
   userName: string,
@@ -52,7 +51,6 @@ export async function processConfirmations(
 
   return { exitosas, fallidas, shouldStop: false };
 }
-
 
 export function filterPendingConfirmations<
   T extends { indice: string; confirmacion: string }

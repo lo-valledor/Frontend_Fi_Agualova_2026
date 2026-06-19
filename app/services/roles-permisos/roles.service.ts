@@ -1,7 +1,6 @@
-import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type { Roles } from '~/types/roles-permisos';
-
 
 export interface CreateRoleRequest {
   nombreRol: string;
@@ -9,19 +8,15 @@ export interface CreateRoleRequest {
   estadoRol: boolean;
 }
 
-
 export interface UpdateRoleRequest extends CreateRoleRequest {
   idRol: number;
 }
 
-
 export class RolesService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<Roles[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('listarRoles');
@@ -38,7 +33,6 @@ export class RolesService extends BaseApiService {
     }, 'Error al obtener roles');
   }
 
-  
   async getById(id: number): Promise<ServiceResponse<Roles | null>> {
     if (!id) {
       return this.handleError(
@@ -53,7 +47,6 @@ export class RolesService extends BaseApiService {
     }, `Error al obtener el rol ${id}`) as Promise<ServiceResponse<Roles>>;
   }
 
-  
   async create(request: CreateRoleRequest): Promise<ServiceResponse<Roles>> {
     if (!request.nombreRol?.trim()) {
       return this.handleError(
@@ -79,7 +72,6 @@ export class RolesService extends BaseApiService {
     }, 'Error al crear el rol') as Promise<ServiceResponse<Roles>>;
   }
 
-  
   async update(request: UpdateRoleRequest): Promise<ServiceResponse<Roles>> {
     if (!request.idRol) {
       return this.handleError(
@@ -112,7 +104,6 @@ export class RolesService extends BaseApiService {
     }, 'Error al actualizar el rol') as Promise<ServiceResponse<Roles>>;
   }
 
-  
   async delete(id: number): Promise<ServiceResponse<boolean>> {
     if (!id) {
       return this.handleError(
@@ -127,7 +118,6 @@ export class RolesService extends BaseApiService {
     }, `Error al eliminar el rol ${id}`);
   }
 
-  
   async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
     if (!codigoUsuario?.trim()) {
       return this.handleError(

@@ -1,8 +1,6 @@
 import * as React from 'react';
 
-
 const MOBILE_BREAKPOINT = 768;
-
 
 export function useIsMobile(): boolean {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(
@@ -15,7 +13,6 @@ export function useIsMobile(): boolean {
       `(max-width: ${MOBILE_BREAKPOINT - 1}px)`
     );
 
-    
     const handleChange = (): void => {
       setIsMobile(globalThis.innerWidth < MOBILE_BREAKPOINT);
     };

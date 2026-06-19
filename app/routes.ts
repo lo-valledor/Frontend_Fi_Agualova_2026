@@ -1,8 +1,8 @@
 import {
-  type RouteConfig,
   index,
   layout,
   prefix,
+  type RouteConfig,
   route
 } from '@react-router/dev/routes';
 
@@ -165,10 +165,7 @@ export default [
             'consultar-contrato/contrato/:contratoId',
             'routes/dashboard/reportes/consultar-contrato/contrato.tsx'
           ),
-          route(
-            'resumen-facturacion',
-            'routes/dashboard/reportes/resumen-facturacion.tsx'
-          ),
+          route('nota-de-cobro', 'routes/dashboard/reportes/nota-de-cobro.tsx'),
           route('ver-facturas', 'routes/dashboard/reportes/ver-facturas.tsx')
         ]),
         ...prefix('configuracion', [

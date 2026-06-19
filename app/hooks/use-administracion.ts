@@ -12,19 +12,19 @@ import type {
   CargoTipoContrato,
   Cliente,
   ClientesRow,
-  CondicionesContratoRow,
-  Empalmes,
-  Nichos,
-  Sectores,
   Concepto,
+  CondicionesContratoRow,
   ContratosRow,
+  Empalmes,
   MedidoresRow,
+  Nichos,
   NombreComuna,
   NombreGiro,
+  Sectores,
   Usuarios
 } from '~/types/administracion';
-import { handleDataLoad } from './utils/data-loader';
 import type { Marca, Tarifa, TipoContrato } from '~/types/mantencion';
+import { handleDataLoad } from './utils/data-loader';
 
 export function useAcometidasData() {
   const [data, setData] = useState<{
@@ -233,7 +233,6 @@ export function useCargoFacturable() {
   };
 }
 
-
 interface LoadingState {
   createUsuario: { isLoading: boolean };
   updateUsuario: { isLoading: boolean };
@@ -249,7 +248,6 @@ export function useAdministracion() {
     fetchUsuarios: { isLoading: false }
   });
 
-  
   const createUsuario = async (
     userData: Partial<Usuarios>
   ): Promise<unknown> => {
@@ -269,7 +267,6 @@ export function useAdministracion() {
     }
   };
 
-  
   const updateUsuario = async (
     idUsuario: number,
     userData: Partial<Usuarios>
@@ -290,7 +287,6 @@ export function useAdministracion() {
     }
   };
 
-  
   const deleteUsuario = async (idUsuario: number): Promise<unknown> => {
     setLoadingState(prev => ({
       ...prev,
@@ -308,7 +304,6 @@ export function useAdministracion() {
     }
   };
 
-  
   const fetchUsuarios = async (): Promise<unknown> => {
     setLoadingState(prev => ({
       ...prev,
@@ -326,7 +321,6 @@ export function useAdministracion() {
     }
   };
 
-  
   const getUsuarioById = async (idUsuario: number): Promise<Usuarios> => {
     try {
       const response = await api.get(`/GetUserById/${idUsuario}`);
@@ -348,7 +342,6 @@ export function useAdministracion() {
 }
 
 export function useClientes() {
-  
   const getClienteByRut = async (rut: string): Promise<Cliente> => {
     const response = await api.get(`/clientes/${rut}`);
     return response.data as Cliente;

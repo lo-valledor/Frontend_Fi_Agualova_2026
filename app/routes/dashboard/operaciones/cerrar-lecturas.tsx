@@ -1,6 +1,3 @@
-/* eslint-disable no-empty-pattern */
-import React from 'react';
-
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CerrarLecturasComponent from '~/components/operaciones/cerrar-lecturas/cerrar-lecturas-component';
 import { operacionesService } from '~/services/operacionesService';

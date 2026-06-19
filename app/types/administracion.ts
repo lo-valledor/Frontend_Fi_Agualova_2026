@@ -320,6 +320,16 @@ export type BuscarAcometidas = {
   nicho: string;
 };
 
+export type PropietariosRow = {
+  rut: string;
+  nombre: string;
+  direccion: string;
+  comuna: string;
+  telefono: string;
+  celular: string;
+  email: string;
+};
+
 // Usuarios
 export type Usuarios = {
   nombre_Usuario: string;
@@ -347,6 +357,13 @@ export type UpdateUsuario = {
   email: string;
   username: string;
   newPassword?: string;
+};
+
+export type RegistrarUsuario = {
+  username: string;
+  email: string;
+  password: string;
+  nombre: string;
 };
 
 export type UpdateRolUsuario = {

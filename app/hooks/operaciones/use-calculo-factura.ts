@@ -1,6 +1,5 @@
-import { toast } from 'sonner';
-
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import api from '~/lib/api';
 import type {
@@ -10,14 +9,12 @@ import type {
 } from '~/types/operaciones';
 import { convertirCicloParaAPI } from './utils/cycle-utilities';
 import { combinarPrefactura } from './utils/data-combiner';
-import { extraerErrorMessage, es404 } from './utils/error-handler';
-
+import { es404, extraerErrorMessage } from './utils/error-handler';
 
 interface UseCalculoFacturaProps {
   periodoFormateado: string;
   cicloId: string;
 }
-
 
 export interface UseCalculoFacturaResult {
   data: CalculoPrefacturaCompleto[];
@@ -29,7 +26,6 @@ export interface UseCalculoFacturaResult {
   handleRevisarCalculo: () => Promise<void>;
   setData: (data: CalculoPrefacturaCompleto[]) => void;
 }
-
 
 export function useCalculoFactura({
   periodoFormateado,
@@ -43,7 +39,6 @@ export function useCalculoFactura({
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  
   const handleRevisarCalculo = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!periodoFormateado || !cicloId) {
@@ -99,15 +94,12 @@ export function useCalculoFactura({
       // Caso especial: 404 significa que no hay lecturas cerradas
       if (es404(err)) {
         setError('NO_LECTURAS_CERRADAS');
-        toast.success(
-          '✓ No hay lecturas pendientes de facturar',
-          {
-            duration: 6000,
-            description:
-              'Todas las lecturas cerradas ya están facturadas. Para procesar nuevas facturas, cierra las lecturas pendientes y ejecuta "Preparar Cálculo".',
-            icon: '✓'
-          }
-        );
+        toast.success('✓ No hay lecturas pendientes de facturar', {
+          duration: 6000,
+          description:
+            'Todas las lecturas cerradas ya están facturadas. Para procesar nuevas facturas, cierra las lecturas pendientes y ejecuta "Preparar Cálculo".',
+          icon: '✓'
+        });
       } else {
         const { message } = extraerErrorMessage(err);
         setError(message);
@@ -120,7 +112,6 @@ export function useCalculoFactura({
     }
   };
 
-  
   useEffect(() => {
     const lowercasedFilter = searchTerm.toLowerCase();
     const filtered = data.filter(item => {

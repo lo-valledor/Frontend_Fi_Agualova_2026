@@ -17,7 +17,6 @@ import type {
 } from '~/types/mantencion';
 import { handleDataLoad } from './utils/data-loader';
 
-
 export function useCiclosFacturacion() {
   const [data, setData] = useState<CiclosFacturacion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +25,7 @@ export function useCiclosFacturacion() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getCiclosFacturacion(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -38,7 +37,6 @@ export function useCiclosFacturacion() {
     error
   };
 }
-
 
 export function useClaves() {
   const [data, setData] = useState<Claves[]>([]);
@@ -48,7 +46,7 @@ export function useClaves() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getClaves(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -60,7 +58,6 @@ export function useClaves() {
     error
   };
 }
-
 
 export function useConceptos() {
   const [data, setData] = useState<{
@@ -86,7 +83,6 @@ export function useConceptos() {
   };
 }
 
-
 export function useEmpalmes() {
   const [data, setData] = useState<Empalme[]>([]);
   const [loading, setLoading] = useState(true);
@@ -95,7 +91,7 @@ export function useEmpalmes() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getEmpalmes(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -107,7 +103,6 @@ export function useEmpalmes() {
     error
   };
 }
-
 
 export function useMarcas() {
   const [data, setData] = useState<Marca[]>([]);
@@ -117,7 +112,7 @@ export function useMarcas() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getMarcas(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -129,7 +124,6 @@ export function useMarcas() {
     error
   };
 }
-
 
 export function useNichos() {
   const [data, setData] = useState<Nicho[]>([]);
@@ -139,7 +133,7 @@ export function useNichos() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getNichos(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -151,7 +145,6 @@ export function useNichos() {
     error
   };
 }
-
 
 export function useParametros() {
   const [data, setData] = useState<Parametro[]>([]);
@@ -161,7 +154,7 @@ export function useParametros() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getParametros(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -173,7 +166,6 @@ export function useParametros() {
     error
   };
 }
-
 
 export function useSectores() {
   const [data, setData] = useState<Sectores[]>([]);
@@ -183,7 +175,7 @@ export function useSectores() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getSectores(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -195,7 +187,6 @@ export function useSectores() {
     error
   };
 }
-
 
 export function useTarifas() {
   const [data, setData] = useState<Tarifas[]>([]);
@@ -205,7 +196,7 @@ export function useTarifas() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getTarifas(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -217,7 +208,6 @@ export function useTarifas() {
     error
   };
 }
-
 
 export function useTiposContratos() {
   const [data, setData] = useState<TiposContrato[]>([]);
@@ -227,7 +217,7 @@ export function useTiposContratos() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getTiposContratos(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );
@@ -240,7 +230,6 @@ export function useTiposContratos() {
   };
 }
 
-
 export function useZonas() {
   const [data, setData] = useState<Zonas[]>([]);
   const [loading, setLoading] = useState(true);
@@ -249,7 +238,7 @@ export function useZonas() {
   useEffect(() => {
     handleDataLoad(
       () => mantencionService.getZonas(),
-      (result) => setData(result || []),
+      result => setData(result || []),
       setError,
       setLoading
     );

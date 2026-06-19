@@ -56,7 +56,7 @@ export default function PreciosCargo({ loaderData }: Route.ComponentProps) {
   ];
 
   return (
-    <div className='min-h-screen'>
+    <div className="min-h-screen">
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <Suspense fallback={<DataTableSkeleton columns={8} rows={12} />}>
         <PreciosCargoComponent {...loaderData} />

@@ -4,13 +4,11 @@ export interface ExportColumn {
   formatter?: (value: any) => string;
 }
 
-
 export interface ExportConfig {
   format: 'csv' | 'xlsx' | 'pdf';
   filename: string;
   includeHeaders: boolean;
 }
-
 
 export interface PDFTableColumn {
   key: string;
@@ -19,7 +17,6 @@ export interface PDFTableColumn {
   align?: 'left' | 'center' | 'right';
   formatter?: (value: any) => string;
 }
-
 
 export interface PDFSection {
   title?: string;
@@ -31,7 +28,6 @@ export interface PDFSection {
   content?: any;
   options?: Record<string, any>;
 }
-
 
 export interface CompanyInfo {
   name?: string;

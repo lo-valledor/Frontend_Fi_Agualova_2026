@@ -7,8 +7,10 @@ export interface KeyboardShortcut {
   description?: string;
 }
 
-
-export function matchesShortcut(event: KeyboardEvent, shortcut: KeyboardShortcut): boolean {
+export function matchesShortcut(
+  event: KeyboardEvent,
+  shortcut: KeyboardShortcut
+): boolean {
   const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
   const ctrlMatch = !!shortcut.ctrlKey === event.ctrlKey;
   const shiftMatch = !!shortcut.shiftKey === event.shiftKey;
@@ -16,7 +18,6 @@ export function matchesShortcut(event: KeyboardEvent, shortcut: KeyboardShortcut
 
   return keyMatch && ctrlMatch && shiftMatch && altMatch;
 }
-
 
 export function isUserTyping(event: KeyboardEvent): boolean {
   const target = event.target as HTMLElement;
@@ -27,7 +28,6 @@ export function isUserTyping(event: KeyboardEvent): boolean {
   );
 }
 
-
 export function shouldAllowShortcutWhileTyping(
   event: KeyboardEvent,
   shortcut: KeyboardShortcut
@@ -36,14 +36,12 @@ export function shouldAllowShortcutWhileTyping(
   return !!event.ctrlKey || !!event.altKey;
 }
 
-
 export function findMatchingShortcut(
   event: KeyboardEvent,
   shortcuts: KeyboardShortcut[]
 ): KeyboardShortcut | undefined {
   return shortcuts.find(shortcut => matchesShortcut(event, shortcut));
 }
-
 
 export function formatShortcut(shortcut: KeyboardShortcut): string {
   const parts: string[] = [];
@@ -55,7 +53,6 @@ export function formatShortcut(shortcut: KeyboardShortcut): string {
 
   return parts.join('+');
 }
-
 
 export function validateShortcut(shortcut: KeyboardShortcut): {
   valid: boolean;
@@ -71,7 +68,12 @@ export function validateShortcut(shortcut: KeyboardShortcut): {
     errors.push('Shortcut must have a callback function');
   }
 
-  if (!shortcut.ctrlKey && !shortcut.shiftKey && !shortcut.altKey && shortcut.key.length === 1) {
+  if (
+    !shortcut.ctrlKey &&
+    !shortcut.shiftKey &&
+    !shortcut.altKey &&
+    shortcut.key.length === 1
+  ) {
     // Plain letter shortcuts without modifiers should have a warning
     // but not an error - they're just less ideal
   }

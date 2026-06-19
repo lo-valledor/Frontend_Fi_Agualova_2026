@@ -1,13 +1,11 @@
 import { BaseApiService } from '~/services/core/base-service';
 import type { MedidorNichoItem } from '~/types/monitor';
 
-
 export interface ValidationResult {
   valid: boolean;
   reasons: string[];
   severity: 'ok' | 'warning' | 'error';
 }
-
 
 export interface AnomalyDetection {
   anomalous: boolean;
@@ -15,14 +13,11 @@ export interface AnomalyDetection {
   reason?: string;
 }
 
-
 export class ValidationService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   private detectAnomalousConsumption(
     currentReading: number,
     previousReading: number,
@@ -85,7 +80,6 @@ export class ValidationService extends BaseApiService {
     return { anomalous: false };
   }
 
-  
   validateForAutoInsertion(meter: MedidorNichoItem): ValidationResult {
     const reasons: string[] = [];
 

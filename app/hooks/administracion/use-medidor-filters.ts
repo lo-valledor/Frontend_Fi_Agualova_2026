@@ -4,13 +4,12 @@ import type { MedidorFilters } from '~/components/administracion/medidores/medid
 import type { GetMedidores } from '~/types/administracion';
 import {
   extractUniqueOptions,
-  filterByString,
-  filterByPresence,
+  filterByDateRange,
   filterByNumberRange,
-  filterByDateRange
+  filterByPresence,
+  filterByString
 } from './utils/filter-utilities';
 import { calculateFilterStats } from './utils/stats-calculator';
-
 
 export interface MedidorFilterOptions {
   marcas: string[];
@@ -19,27 +18,23 @@ export interface MedidorFilterOptions {
   estados: string[];
 }
 
-
 export type FilterOptions = MedidorFilterOptions;
-
 
 export function useMedidorFilters(
   medidores: GetMedidores[],
   filters: MedidorFilters
 ) {
-  
   const filterOptions = useMemo((): MedidorFilterOptions => {
     return {
-      marcas: extractUniqueOptions(medidores, (m) => m.marca),
-      tipos: extractUniqueOptions(medidores, (m) => m.tipo),
-      modelos: extractUniqueOptions(medidores, (m) => m.modelo),
-      estados: extractUniqueOptions(medidores, (m) => m.estado)
+      marcas: extractUniqueOptions(medidores, m => m.marca),
+      tipos: extractUniqueOptions(medidores, m => m.tipo),
+      modelos: extractUniqueOptions(medidores, m => m.modelo),
+      estados: extractUniqueOptions(medidores, m => m.estado)
     };
   }, [medidores]);
 
-  
   const filteredMedidores = useMemo(() => {
-    return medidores.filter((medidor) => {
+    return medidores.filter(medidor => {
       // Filtros de string simple
       if (!filterByString(medidor.marca, filters.marca)) {
         return false;
@@ -112,7 +107,6 @@ export function useMedidorFilters(
     });
   }, [medidores, filters]);
 
-  
   const filterStats = useMemo(
     () => calculateFilterStats(medidores, filteredMedidores, filters),
     [medidores.length, filteredMedidores.length, filters]

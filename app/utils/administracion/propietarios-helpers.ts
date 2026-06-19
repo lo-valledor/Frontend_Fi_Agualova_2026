@@ -1,11 +1,17 @@
 import axios from 'axios';
 
-import type {
-  GetPropietario,
-  PropietarioErrorInfo,
-  PropietarioModalState
-} from '~/types/administracion';
+import type { PropietariosRow } from '~/types/administracion';
 
+type PropietarioModalState = {
+  details: {
+    isOpen: boolean;
+  };
+};
+
+type PropietarioErrorInfo = {
+  message: string;
+  isNetworkError: boolean;
+};
 
 export function createInitialPropietarioModalState(): PropietarioModalState {
   return {
@@ -14,7 +20,6 @@ export function createInitialPropietarioModalState(): PropietarioModalState {
     }
   };
 }
-
 
 export function extractPropietarioErrorMessage(
   error: unknown,
@@ -43,18 +48,17 @@ export function extractPropietarioErrorMessage(
   };
 }
 
-
 export function isValidPropietarioForOperation(
-  propietario: GetPropietario | null | undefined
-): propietario is GetPropietario {
+  propietario: PropietariosRow | null | undefined
+): propietario is PropietariosRow {
   return propietario !== null && propietario !== undefined && !!propietario.rut;
 }
 
-
-export function isPropietariosListEmpty(propietarios: GetPropietario[]): boolean {
+export function isPropietariosListEmpty(
+  propietarios: PropietariosRow[]
+): boolean {
   return !Array.isArray(propietarios) || propietarios.length === 0;
 }
-
 
 export function getSyncStatusMessage(isSyncing: boolean): string {
   return isSyncing ? 'Sincronizando...' : 'Sincronizar con Locales';

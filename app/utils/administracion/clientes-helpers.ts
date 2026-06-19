@@ -8,10 +8,8 @@ import type {
   GetClientesByRut
 } from '~/types/administracion';
 
-
 export const CLIENTES_ROUTE = '/dashboard/administracion/clientes';
 export const CLIENTES_CREAR_ROUTE = '/dashboard/administracion/clientes/crear';
-
 
 export const createInitialClienteModalState = (): ClienteModalState => ({
   details: {
@@ -19,12 +17,10 @@ export const createInitialClienteModalState = (): ClienteModalState => ({
   }
 });
 
-
 export const createInitialLoadingState = (): ClienteLoadingState => ({
   isLoading: false,
   rutLoading: null
 });
-
 
 export const extractClienteErrorMessage = (
   error: unknown,
@@ -54,18 +50,15 @@ export const extractClienteErrorMessage = (
   };
 };
 
-
 const isNetworkError = (error: unknown): boolean => {
   const axiosError = error as AxiosError;
   return !axiosError?.response;
 };
 
-
 const extractServerMessage = (error: unknown): string | null => {
   const axiosError = error as AxiosError<{ message?: string }>;
   return axiosError?.response?.data?.message || null;
 };
-
 
 export const isValidClienteForOperation = (
   cliente: GetClientes | null | undefined
@@ -73,18 +66,15 @@ export const isValidClienteForOperation = (
   return cliente !== null && cliente !== undefined && Boolean(cliente.rut);
 };
 
-
 export const isValidDetailedCliente = (
   cliente: GetClienteById | GetClientesByRut | null | undefined
 ): cliente is GetClienteById | GetClientesByRut => {
   return cliente !== null && cliente !== undefined && Boolean(cliente.rut);
 };
 
-
 export const getClienteEditUrl = (rutCliente: string): string => {
   return `${CLIENTES_ROUTE}/${rutCliente}`;
 };
-
 
 export const normalizeClienteDetallado = (
   clienteDetallado: GetClienteById | GetClientesByRut | any
@@ -104,7 +94,6 @@ export const normalizeClienteDetallado = (
     giro: clienteDetallado.giro ?? ''
   };
 };
-
 
 export const isLoadingCliente = (
   loading: ClienteLoadingState,

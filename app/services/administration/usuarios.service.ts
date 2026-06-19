@@ -1,11 +1,10 @@
 import api from '~/lib/api';
-import { BaseApiService, type ServiceResponse } from '../core';
 import type { Usuarios } from '~/types/administracion';
+import { BaseApiService, type ServiceResponse } from '../core';
 
 // ============================================================================
 // TIPOS
 // ============================================================================
-
 
 export interface CreateUsuarioRequest {
   nombreDeUsuario: string;
@@ -18,7 +17,6 @@ export interface CreateUsuarioRequest {
   activo: boolean;
 }
 
-
 export interface UpdateUsuarioRequest {
   id: string | number;
   nombreDeUsuario?: string;
@@ -30,7 +28,6 @@ export interface UpdateUsuarioRequest {
   activo?: boolean;
 }
 
-
 export interface UsuarioOperationResponse {
   usuario: Usuarios;
   message: string;
@@ -40,14 +37,11 @@ export interface UsuarioOperationResponse {
 // SERVICIO
 // ============================================================================
 
-
 class UsuariosService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<Usuarios[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('usuario/buscar');
@@ -55,7 +49,6 @@ class UsuariosService extends BaseApiService {
     }, 'Error al obtener usuarios');
   }
 
-  
   async getById(
     id: string | number
   ): Promise<ServiceResponse<Usuarios | null>> {
@@ -72,7 +65,6 @@ class UsuariosService extends BaseApiService {
     }, `Error al obtener usuario ${id}`);
   }
 
-  
   async create(
     data: CreateUsuarioRequest
   ): Promise<ServiceResponse<Usuarios | null>> {
@@ -89,7 +81,6 @@ class UsuariosService extends BaseApiService {
     }, 'Error al crear usuario');
   }
 
-  
   async update(
     data: UpdateUsuarioRequest
   ): Promise<ServiceResponse<Usuarios | null>> {
@@ -107,7 +98,6 @@ class UsuariosService extends BaseApiService {
     }, `Error al actualizar usuario ${data.id}`);
   }
 
-  
   async delete(id: string | number): Promise<ServiceResponse<null>> {
     if (!id) {
       return this.handleError(
@@ -123,7 +113,6 @@ class UsuariosService extends BaseApiService {
     >;
   }
 
-  
   async getByRol(rolId: string | number): Promise<ServiceResponse<Usuarios[]>> {
     if (!rolId) {
       return this.handleError(
@@ -138,7 +127,6 @@ class UsuariosService extends BaseApiService {
     }, `Error al obtener usuarios del rol ${rolId}`);
   }
 
-  
   async getByEmpresa(
     empresaId: string | number
   ): Promise<ServiceResponse<Usuarios[]>> {

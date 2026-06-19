@@ -1,20 +1,17 @@
-import { BaseApiService } from '~/services/core/base-service';
+import api from '~/lib/api';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type {
-  Nicho,
   CreateNichoRequest,
+  Nicho,
   UpdateNichoRequest
 } from '~/types/mantencion';
-import api from '~/lib/api';
-
 
 export class NichosService extends BaseApiService {
-  
   constructor(httpClient: any = api) {
     super(httpClient);
   }
 
-  
   async getNichos(): Promise<ServiceResponse<Nicho[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('/buscarNichoM');
@@ -22,7 +19,6 @@ export class NichosService extends BaseApiService {
     }, 'Error getting nichos');
   }
 
-  
   async createNicho(
     nicho: CreateNichoRequest
   ): Promise<ServiceResponse<Nicho>> {
@@ -39,7 +35,6 @@ export class NichosService extends BaseApiService {
     }, 'Error creating nicho') as Promise<ServiceResponse<Nicho>>;
   }
 
-  
   async updateNicho(
     id: number,
     nicho: UpdateNichoRequest

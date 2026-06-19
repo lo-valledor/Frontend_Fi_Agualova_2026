@@ -5,7 +5,6 @@ export interface ValidationResult {
   error: string | null;
 }
 
-
 export function validateSearchParams(
   sector: Sector | null,
   periodo: Periodo | null
@@ -26,7 +25,6 @@ export function validateSearchParams(
 
   return { isValid: true, error: null };
 }
-
 
 export function validateDateRange(
   startDate: string | null | undefined,
@@ -73,7 +71,6 @@ export function validateDateRange(
   return { isValid: true, error: null };
 }
 
-
 export function validateReadingValue(
   value: number | string | null | undefined,
   allowNegative = false
@@ -104,7 +101,6 @@ export function validateReadingValue(
   return { isValid: true, error: null };
 }
 
-
 export function validateMeterSerialNumber(
   serialNumber: string | null | undefined
 ): ValidationResult {
@@ -125,7 +121,6 @@ export function validateMeterSerialNumber(
 
   return { isValid: true, error: null };
 }
-
 
 export function isValidEnergyValue(
   value: number | string | null | undefined,
@@ -153,7 +148,6 @@ export function isValidEnergyValue(
 
   return { isValid: true, error: null };
 }
-
 
 export function validatePowerDemandData(
   demand: number | string | null | undefined,
@@ -206,7 +200,6 @@ export function validatePowerDemandData(
 
   return { isValid: true, error: null };
 }
-
 
 export function validateConsumption(
   consumption: number | null | undefined,

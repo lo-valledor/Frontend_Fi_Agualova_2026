@@ -1,4 +1,4 @@
-import { securityLogger, SecurityEventType } from './security-logger';
+import { SecurityEventType, securityLogger } from './security-logger';
 
 // Alert severity levels
 export enum AlertSeverity {
@@ -155,7 +155,6 @@ const RATE_LIMIT_CONFIG = {
   blockDurationMs: 300000 // 5 minutes
 };
 
-
 function checkRateLimit(action: string): boolean {
   const now = Date.now();
   const state = rateLimitStates.get(action);
@@ -213,7 +212,6 @@ function checkRateLimit(action: string): boolean {
   return true;
 }
 
-
 class SecurityAlertManager {
   private alertHandlers: Map<
     AlertSeverity,
@@ -225,7 +223,6 @@ class SecurityAlertManager {
     this.initCSPListener();
   }
 
-  
   private initCSPListener(): void {
     if (typeof document === 'undefined') return;
 
@@ -244,7 +241,6 @@ class SecurityAlertManager {
     });
   }
 
-  
   onAlert(
     severity: AlertSeverity,
     handler: (message: string, context?: Record<string, unknown>) => void
@@ -254,7 +250,6 @@ class SecurityAlertManager {
     this.alertHandlers.set(severity, handlers);
   }
 
-  
   triggerAlert(
     eventType: SecurityEventType,
     message: string,
@@ -282,7 +277,6 @@ class SecurityAlertManager {
     return { blocked: config.block };
   }
 
-  
   private async reportToBackend(
     eventType: SecurityEventType,
     message: string,
@@ -310,12 +304,9 @@ class SecurityAlertManager {
     }
   }
 
-  
   checkRateLimit(action: string): boolean {
     return checkRateLimit(action);
   }
-
-  
 
   loginAttempt(
     success: boolean,

@@ -1,22 +1,18 @@
-import { BaseApiService } from '~/services/core/base-service';
-import type { ServiceResponse } from '~/services/core/api-response';
-import type { ComboEmpalmes, PeriodosFacturacion } from '~/types/reportes';
 import api from '~/lib/api';
-
+import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
+import type { ComboEmpalmes, PeriodosFacturacion } from '~/types/reportes';
 
 export interface ResumenFacturacionData {
   comboEmpalmes: ComboEmpalmes[];
   periodosFacturacion: PeriodosFacturacion[];
 }
 
-
 export class SummaryReportService extends BaseApiService {
-  
   constructor(httpClient: any = api) {
     super(httpClient);
   }
 
-  
   async getResumenFacturacion(): Promise<
     ServiceResponse<ResumenFacturacionData>
   > {
@@ -37,7 +33,6 @@ export class SummaryReportService extends BaseApiService {
     }, 'Error getting billing summary');
   }
 
-  
   async getBuscarContrato(): Promise<
     ServiceResponse<{
       buscarContratos: any[];
@@ -51,7 +46,6 @@ export class SummaryReportService extends BaseApiService {
     }, 'Error getting contract search data');
   }
 
-  
   async getComboEmpalmes(): Promise<ServiceResponse<ComboEmpalmes[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('/combo-empalmes');
@@ -59,7 +53,6 @@ export class SummaryReportService extends BaseApiService {
     }, 'Error getting empalmes');
   }
 
-  
   async getPeriodosFacturacion(): Promise<
     ServiceResponse<PeriodosFacturacion[]>
   > {

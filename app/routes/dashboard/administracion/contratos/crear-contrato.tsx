@@ -1,5 +1,3 @@
-import React from 'react';
-
 import CrearContratoComponent from '~/components/administracion/contratos/route/crear-contrato-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { administracionService } from '~/services/administracionService';

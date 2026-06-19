@@ -1,20 +1,16 @@
-import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type { Roles } from '~/types/roles-permisos';
-
 
 export interface AssignUserRolesRequest {
   roles: number[];
 }
 
-
 export class UsuarioRolesService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   async getByUsuario(codigoUsuario: string): Promise<ServiceResponse<Roles[]>> {
     if (!codigoUsuario?.trim()) {
       return this.handleError(
@@ -29,7 +25,6 @@ export class UsuarioRolesService extends BaseApiService {
     }, `Error al obtener roles del usuario ${codigoUsuario}`);
   }
 
-  
   async assignToUsuario(
     codigoUsuario: string,
     request: AssignUserRolesRequest
@@ -72,7 +67,6 @@ export class UsuarioRolesService extends BaseApiService {
     }, `Error al asignar roles al usuario ${codigoUsuario}`);
   }
 
-  
   async removeFromUsuario(
     codigoUsuario: string,
     idRol: number

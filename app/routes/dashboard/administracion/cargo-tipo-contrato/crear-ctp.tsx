@@ -5,7 +5,10 @@ import { administracionService } from '~/services/administracionService';
 export function meta() {
   return [
     { title: 'Agualova | Crear Cargo Tipo Contrato' },
-    { name: 'description', content: 'Crear una nueva configuración de cargo tipo contrato' }
+    {
+      name: 'description',
+      content: 'Crear una nueva configuración de cargo tipo contrato'
+    }
   ];
 }
 

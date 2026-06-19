@@ -7,7 +7,6 @@ import {
 import type { Periodo, Sector } from '~/types/monitor';
 import { handleDataLoad } from './utils/data-loader';
 
-
 export function useMonitorData() {
   const [data, setData] = useState<MonitorBasicData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,13 +38,11 @@ export function useMonitorData() {
   };
 }
 
-
 interface PeriodosAndSectoresData {
   periodos: Periodo[];
   sectores: Sector[];
   activePeriodoId: number | null;
 }
-
 
 export function useMonitorPeriodosAndSectores() {
   const [data, setData] = useState<PeriodosAndSectoresData | null>(null);
@@ -67,7 +64,6 @@ export function useMonitorPeriodosAndSectores() {
     error
   };
 }
-
 
 export const formatDateToYYYYMMDD = (dateString: string): string => {
   if (!dateString) {
@@ -95,7 +91,6 @@ export const formatDateToYYYYMMDD = (dateString: string): string => {
   return `${year}${month}${day}`;
 };
 
-
 export const findActivePeriod = (periodos: Periodo[]): Periodo | null => {
   if (!periodos || periodos.length === 0) {
     return null;
@@ -105,12 +100,10 @@ export const findActivePeriod = (periodos: Periodo[]): Periodo | null => {
   return activePeriodo || periodos[0];
 };
 
-
 interface ValidationResult {
   isValid: boolean;
   error?: string;
 }
-
 
 export const validateSearchParams = (
   sector: Sector | null,
@@ -133,12 +126,10 @@ export const validateSearchParams = (
   return { isValid: true };
 };
 
-
 interface DefaultDates {
   fechaInicio: string;
   fechaFin: string;
 }
-
 
 export const getDefaultDates = (periodo: Periodo | null): DefaultDates => {
   const today = new Date().toISOString().split('T')[0];

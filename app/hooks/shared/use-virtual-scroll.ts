@@ -1,7 +1,6 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useRef } from 'react';
 
-
 export function useVirtualScroll<T>(
   items: T[],
   estimateSize: number = 50,
@@ -19,7 +18,7 @@ export function useVirtualScroll<T>(
   return {
     virtualizer,
     parentRef,
-    
+
     getVirtualItemsWithData: () => {
       return virtualizer.getVirtualItems().map(virtualItem => ({
         ...virtualItem,
@@ -29,12 +28,12 @@ export function useVirtualScroll<T>(
   };
 }
 
-
 export function useVirtualScrollDynamic<T>(items: T[], overscan: number = 5) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   // Disable dynamic measurement in Firefox for compatibility
-  const shouldMeasure = typeof window !== 'undefined' &&
+  const shouldMeasure =
+    typeof window !== 'undefined' &&
     navigator.userAgent.indexOf('Firefox') === -1;
 
   const virtualizer = useVirtualizer({
@@ -51,7 +50,7 @@ export function useVirtualScrollDynamic<T>(items: T[], overscan: number = 5) {
     virtualizer,
     parentRef,
     measureElement: virtualizer.measureElement,
-    
+
     getVirtualItemsWithData: () => {
       return virtualizer.getVirtualItems().map(virtualItem => ({
         ...virtualItem,

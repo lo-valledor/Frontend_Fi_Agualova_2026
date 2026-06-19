@@ -1,32 +1,27 @@
-import { BaseApiService } from '~/services/core/base-service';
 import type { ServiceResponse } from '~/services/core/api-response';
+import { BaseApiService } from '~/services/core/base-service';
 import type {
-  PreciosCargoEnel,
   PreciosCargoAgualova,
-  RevisarPrecioUno,
-  RevisarPrecioDos
+  PreciosCargoEnel,
+  RevisarPrecioDos,
+  RevisarPrecioUno
 } from '~/types/operaciones';
-
 
 export interface PricingData {
   tablaEnel: PreciosCargoEnel[];
   tablaAgualova: PreciosCargoAgualova[];
 }
 
-
 export interface CyclePrices {
   preciosUno: RevisarPrecioUno[];
   preciosDos: RevisarPrecioDos[];
 }
 
-
 export class PricingService extends BaseApiService {
-  
   constructor(httpClient?: any) {
     super(httpClient);
   }
 
-  
   async getPricingData(
     mes: string,
     anio: string
@@ -52,7 +47,6 @@ export class PricingService extends BaseApiService {
     }, `Error al obtener precios para ${mes}/${anio}`);
   }
 
-  
   async getPreciosUno(
     mes: number,
     anio: number
@@ -72,7 +66,6 @@ export class PricingService extends BaseApiService {
     }, `Error al obtener precios tipo uno`);
   }
 
-  
   async getPreciosDos(
     mes: number,
     anio: number,
@@ -93,7 +86,6 @@ export class PricingService extends BaseApiService {
     }, `Error al obtener precios tipo dos`);
   }
 
-  
   async getCyclePrices(
     mes: number,
     anio: number,

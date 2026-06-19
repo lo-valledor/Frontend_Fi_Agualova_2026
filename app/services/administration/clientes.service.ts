@@ -1,11 +1,10 @@
 import api from '~/lib/api';
-import { BaseApiService, type ServiceResponse } from '../core';
 import type { GetClienteContrato, GetComunas } from '~/types/administracion';
+import { BaseApiService, type ServiceResponse } from '../core';
 
 // ============================================================================
 // TIPOS
 // ============================================================================
-
 
 export interface GetClientesDataResponse {
   clientes: GetClienteContrato[];
@@ -16,14 +15,11 @@ export interface GetClientesDataResponse {
 // SERVICIO
 // ============================================================================
 
-
 class ClientesService extends BaseApiService {
-  
   constructor(httpClient = api) {
     super(httpClient);
   }
 
-  
   async getAll(): Promise<ServiceResponse<GetClienteContrato[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('ClienteBuscar');
@@ -31,7 +27,6 @@ class ClientesService extends BaseApiService {
     }, 'Error al obtener clientes');
   }
 
-  
   async getDataWithCombos(): Promise<ServiceResponse<GetClientesDataResponse>> {
     return this.executeDataOperation(async () => {
       const results = (await this.executeParallelOperations([
@@ -46,7 +41,6 @@ class ClientesService extends BaseApiService {
     }, 'Error al obtener datos de clientes');
   }
 
-  
   async searchByRut(
     rut: string
   ): Promise<ServiceResponse<GetClienteContrato | null>> {
@@ -63,7 +57,6 @@ class ClientesService extends BaseApiService {
     }, `Error al buscar cliente con RUT ${rut}`);
   }
 
-  
   async search(): Promise<ServiceResponse<GetClienteContrato[]>> {
     return this.executeDataOperation(async () => {
       const response = await this.httpClient.get('cliente/buscar');

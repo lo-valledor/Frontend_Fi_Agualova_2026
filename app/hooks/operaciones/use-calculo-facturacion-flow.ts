@@ -1,6 +1,5 @@
-import { toast } from 'sonner';
-
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { operacionesService } from '~/services/operacionesService';
 import type {
@@ -15,7 +14,6 @@ import {
 import { combinarPrefactura } from './utils/data-combiner';
 import { extraerErrorMessage } from './utils/error-handler';
 
-
 export interface FlowStep {
   id: number;
   name: string;
@@ -26,13 +24,11 @@ export interface FlowStep {
   timestamp?: string;
 }
 
-
 interface UseCalculoFacturacionFlowProps {
   periodoFormateado: string;
   cicloId: string;
   onFlowCompleted?: () => void;
 }
-
 
 function inicializarFlowSteps(): FlowStep[] {
   return [
@@ -69,7 +65,6 @@ function inicializarFlowSteps(): FlowStep[] {
   ];
 }
 
-
 export function useCalculoFacturacionFlow({
   periodoFormateado,
   cicloId,
@@ -94,7 +89,6 @@ export function useCalculoFacturacionFlow({
     inicializarFlowSteps()
   );
 
-  
   const logStep = useCallback(
     (
       stepId: number,
@@ -119,7 +113,6 @@ export function useCalculoFacturacionFlow({
     []
   );
 
-  
   const ejecutarPaso1 = async (): Promise<boolean> => {
     logStep(1, 'loading');
 
@@ -147,7 +140,6 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  
   const ejecutarPaso2 = async (): Promise<boolean> => {
     logStep(2, 'loading');
 
@@ -190,7 +182,6 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  
   const ejecutarPaso3 = async (): Promise<boolean> => {
     // Early return si no hay procesoId
     if (!procesoId) {
@@ -205,8 +196,7 @@ export function useCalculoFacturacionFlow({
         await operacionesService.verificarEstadoProceso(procesoId);
 
       if (response.error || !response.data) {
-        const errorMsg =
-          response.error || 'No se pudo verificar el estado';
+        const errorMsg = response.error || 'No se pudo verificar el estado';
         logStep(3, 'error', null, errorMsg);
         toast.error(`Error en Paso 3: ${errorMsg}`);
         return false;
@@ -232,20 +222,19 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  
   const ejecutarPaso4 = async (): Promise<boolean> => {
     logStep(4, 'loading');
 
     try {
       const cicloParaAPI = convertirCicloParaAPI(cicloId);
-      const response =
-        await operacionesService.consultarEncabezadoPrefactura(
-          cicloParaAPI,
-          periodoFormateado
-        );
+      const response = await operacionesService.consultarEncabezadoPrefactura(
+        cicloParaAPI,
+        periodoFormateado
+      );
 
       if (response.error || !response.data) {
-        const errorMsg = response.error || 'No se encontraron datos de encabezado';
+        const errorMsg =
+          response.error || 'No se encontraron datos de encabezado';
         logStep(4, 'error', null, errorMsg);
         toast.error(`Error en Paso 4: ${errorMsg}`);
         return false;
@@ -266,17 +255,15 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  
   const ejecutarPaso5 = async (): Promise<boolean> => {
     logStep(5, 'loading');
 
     try {
       const cicloParaAPI = convertirCicloParaAPI(cicloId);
-      const response =
-        await operacionesService.consultarCargosPrefactura(
-          cicloParaAPI,
-          periodoFormateado
-        );
+      const response = await operacionesService.consultarCargosPrefactura(
+        cicloParaAPI,
+        periodoFormateado
+      );
 
       if (response.error || !response.data) {
         const errorMsg = response.error || 'No se encontraron cargos';
@@ -312,7 +299,6 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  
   const ejecutarPasosSiguientes = async (paso: number): Promise<boolean> => {
     switch (paso) {
       case 2:
@@ -353,7 +339,6 @@ export function useCalculoFacturacionFlow({
     }
   };
 
-  
   const ejecutarFlujoCompleto = async (): Promise<void> => {
     // Early return si faltan parámetros
     if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
@@ -371,13 +356,14 @@ export function useCalculoFacturacionFlow({
         await ejecutarPasosSiguientes(2);
       }
     } catch (error) {
-      toast.error(`Error inesperado en el flujo: ${extraerErrorMessage(error).message}`);
+      toast.error(
+        `Error inesperado en el flujo: ${extraerErrorMessage(error).message}`
+      );
     } finally {
       setIsRunning(false);
     }
   };
 
-  
   const limpiarFlujo = (): void => {
     setCurrentStep(0);
     setProcesoId(null);

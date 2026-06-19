@@ -1,4 +1,3 @@
-import React from 'react';
 import CrearClienteComponent from '~/components/administracion/clientes/form/crear-cliente-component';
 
 export function meta() {

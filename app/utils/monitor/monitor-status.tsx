@@ -28,7 +28,6 @@ export interface MeterStatusInfo {
   severity: 0 | 1 | 2 | 3 | 4;
 }
 
-
 const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
   SINLEC: {
     color: 'gray',
@@ -36,7 +35,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-gray-500',
     textColor: 'text-gray-500',
     label: 'Sin Lectura',
-    icon: <History className='h-3.5 w-3.5' />,
+    icon: <History className="h-3.5 w-3.5" />,
     severity: 1
   },
   SINCLA: {
@@ -45,7 +44,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-emerald-500',
     textColor: 'text-emerald-500',
     label: 'Lectura Normal',
-    icon: <Grid3X3 className='h-3.5 w-3.5' />,
+    icon: <Grid3X3 className="h-3.5 w-3.5" />,
     severity: 0
   },
   CLAINF: {
@@ -54,7 +53,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-yellow-500',
     textColor: 'text-yellow-500',
     label: 'Clave Informativa',
-    icon: <AlertCircle className='h-3.5 w-3.5' />,
+    icon: <AlertCircle className="h-3.5 w-3.5" />,
     severity: 2
   },
   CLAREL: {
@@ -63,7 +62,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-orange-500',
     textColor: 'text-orange-500',
     label: 'Clave Relevante',
-    icon: <AlertTriangle className='h-3.5 w-3.5' />,
+    icon: <AlertTriangle className="h-3.5 w-3.5" />,
     severity: 3
   },
   CLACRI: {
@@ -72,7 +71,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-red-500',
     textColor: 'text-red-500',
     label: 'Clave Crítica',
-    icon: <AlertCircle className='h-3.5 w-3.5' />,
+    icon: <AlertCircle className="h-3.5 w-3.5" />,
     severity: 4
   },
   LECCER: {
@@ -81,7 +80,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-blue-500',
     textColor: 'text-blue-500',
     label: 'Lectura Cerrada',
-    icon: <MapPin className='h-3.5 w-3.5' />,
+    icon: <MapPin className="h-3.5 w-3.5" />,
     severity: 0
   },
   LECIMP: {
@@ -90,7 +89,7 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-purple-500',
     textColor: 'text-purple-500',
     label: 'En Facturación',
-    icon: <BarChart3 className='h-3.5 w-3.5' />,
+    icon: <BarChart3 className="h-3.5 w-3.5" />,
     severity: 0
   },
   IMPORT: {
@@ -99,11 +98,10 @@ const STATUS_MAP: Record<MeterStatus, MeterStatusInfo> = {
     borderColor: 'border-pink-500',
     textColor: 'text-pink-500',
     label: 'Lecturas Importadas',
-    icon: <FileUp className='h-3.5 w-3.5' />,
+    icon: <FileUp className="h-3.5 w-3.5" />,
     severity: 0
   }
 };
-
 
 export function getMeterStatus(
   claveHtml: string | null | undefined
@@ -118,7 +116,6 @@ export function getMeterStatus(
   // Return status or default to SINLEC for unknown values
   return STATUS_MAP[statusKey] ?? STATUS_MAP.SINLEC;
 }
-
 
 export function isImportedReading(medidor: {
   consumo: number | null | undefined;
@@ -143,25 +140,21 @@ export function isImportedReading(medidor: {
   return hasConsumo && (!hasFechaLectura || !hasClave);
 }
 
-
 export function getStatusSeverity(
   claveHtml: string | null | undefined
 ): 0 | 1 | 2 | 3 | 4 {
   return getMeterStatus(claveHtml).severity;
 }
 
-
 export function getAllStatusTypes(): MeterStatus[] {
   return Object.keys(STATUS_MAP) as MeterStatus[];
 }
-
 
 export function isValidStatus(claveHtml: string | null | undefined): boolean {
   if (!claveHtml) return false;
   const statusKey = claveHtml.toUpperCase() as MeterStatus;
   return statusKey in STATUS_MAP;
 }
-
 
 export function getStatusLabel(claveHtml: string | null | undefined): string {
   return getMeterStatus(claveHtml).label;

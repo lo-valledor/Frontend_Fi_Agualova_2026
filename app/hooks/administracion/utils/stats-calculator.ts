@@ -1,21 +1,19 @@
 export interface FilterStats {
-  
   total: number;
-  
+
   filtered: number;
-  
+
   activeFilters: number;
-  
+
   isFiltered: boolean;
 }
 
-
 export function countActiveFilters(filters: Record<string, any>): number {
   return Object.values(filters).filter(
-    (value) => value !== '' && value !== 'all' && value !== null && value !== undefined
+    value =>
+      value !== '' && value !== 'all' && value !== null && value !== undefined
   ).length;
 }
-
 
 export function calculateFilterStats<T>(
   allItems: T[],
@@ -33,7 +31,6 @@ export function calculateFilterStats<T>(
     isFiltered: activeFilters > 0
   };
 }
-
 
 export function calculateFilterPercentage(
   filteredCount: number,

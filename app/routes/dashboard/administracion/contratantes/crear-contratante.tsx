@@ -1,4 +1,3 @@
-import React from 'react';
 import CrearContratanteComponent from '~/components/administracion/contratantes/form/crear-contratante-component';
 
 export function meta() {
