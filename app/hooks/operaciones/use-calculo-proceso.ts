@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import api from '~/lib/api';
-import {
-  convertirCicloParaAPI,
-  validarCicloYPeriodo
-} from './utils/cycle-utilities';
+import { operacionesService } from '~/services/operacionesService';
+import type { RevisarCalculosLanzarCalculoRequest } from '~/types/operaciones';
+
+import { validarCicloYPeriodo } from './utils/cycle-utilities';
 import { extraerErrorMessage } from './utils/error-handler';
 
 interface UseCalculoProcesoProps {
   periodoFormateado: string;
   cicloId: string;
-  onCalculoAceptado: () => void;
+  onCalculoAceptado?: () => void;
 }
 
 export function useCalculoProceso({
@@ -22,9 +21,9 @@ export function useCalculoProceso({
   const [isLaunching, setIsLaunching] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
   const [selectedContratos, setSelectedContratos] = useState<number[]>([]);
+  const [procesoId, setProcesoId] = useState<number | null>(null);
 
   const handleLanzarCalculo = async (): Promise<void> => {
-    // Early return si faltan parámetros
     if (!validarCicloYPeriodo(periodoFormateado, cicloId)) {
       toast.error('Periodo y ciclo son requeridos.');
       return;
@@ -33,17 +32,29 @@ export function useCalculoProceso({
     setIsLaunching(true);
 
     try {
-      const cicloParaAPI = convertirCicloParaAPI(cicloId);
-      const requestBody = {
-        cicloFacturacion: Number.parseInt(cicloParaAPI),
-        periodoFacturable: periodoFormateado
+      const cicloNumero = Number.parseInt(cicloId, 10);
+      const request: RevisarCalculosLanzarCalculoRequest = {
+        cicloId: cicloNumero,
+        periodoId: periodoFormateado,
+        rut: '',
+        nombre: '',
+        sector: '',
+        local: '',
+        modo: 0,
+        procesoId: procesoId ?? 0
       };
 
-      await api.post('lanzar-calculo-facturacion', requestBody);
+      const result =
+        await operacionesService.postRevisarCalculosLanzarCalculo(request);
+
+      if (result.error) {
+        toast.error(`Error: ${result.error}`);
+        return;
+      }
 
       toast.success('Proceso de cálculo iniciado exitosamente', {
         description:
-          'El sistema está procesando los cálculos de facturación. Este proceso puede tardar varios minutos dependiendo de la cantidad de lecturas. Por favor, espere unos minutos y luego haga clic en "Ver Cálculo Facturas" para revisar los resultados.',
+          'El sistema está procesando los cálculos de facturación. Este proceso puede tardar varios minutos.',
         duration: 8000
       });
     } catch (err) {
@@ -55,48 +66,39 @@ export function useCalculoProceso({
   };
 
   const handleAceptarCalculo = async (): Promise<void> => {
-    // Early return si no hay contratos seleccionados
     if (selectedContratos.length === 0) {
       toast.error('Debe seleccionar al menos un contrato.');
       return;
     }
 
+    if (!periodoFormateado) {
+      toast.error('Período es requerido.');
+      return;
+    }
+
     setIsAccepting(true);
-    let successCount = 0;
-    let errorCount = 0;
+    try {
+      const result =
+        await operacionesService.postRevisarCalculosAceptar(periodoFormateado);
 
-    // Procesar cada contrato seleccionado
-    for (const lecturaId of selectedContratos) {
-      try {
-        const requestBody = {
-          lecturaId,
-          periodoId: periodoFormateado
-        };
-
-        await api.post('generar-detalle-factura', requestBody);
-        successCount++;
-      } catch (error) {
-        console.error(
-          `Error al aceptar cálculo para lectura ${lecturaId}:`,
-          error
-        );
-        errorCount++;
+      if (result.error) {
+        toast.error(result.error);
+        return;
       }
-    }
 
-    // Reportar resultados
-    if (successCount > 0) {
-      toast.success(`${successCount} cálculos aceptados correctamente.`);
-      onCalculoAceptado();
+      toast.success('Cálculos aceptados correctamente.');
+      setSelectedContratos([]);
+      onCalculoAceptado?.();
+    } catch (err) {
+      const { message } = extraerErrorMessage(err);
+      toast.error(`Error al aceptar cálculos: ${message}`);
+    } finally {
+      setIsAccepting(false);
     }
+  };
 
-    if (errorCount > 0) {
-      toast.error(`${errorCount} cálculos fallaron.`);
-    }
-
-    // Limpiar selección
-    setSelectedContratos([]);
-    setIsAccepting(false);
+  const setProcesoIdActual = (id: number | null): void => {
+    setProcesoId(id);
   };
 
   return {
@@ -104,6 +106,8 @@ export function useCalculoProceso({
     isAccepting,
     selectedContratos,
     setSelectedContratos,
+    procesoId,
+    setProcesoId: setProcesoIdActual,
     handleLanzarCalculo,
     handleAceptarCalculo
   };

@@ -19,6 +19,62 @@ export type MonitorSectores = {
   color: number;
 };
 
+export type MonitorMedidores = {
+  id: number;
+  nSerie: string;
+  claveHtml: string;
+  ultimaLectura: number;
+  fechaLectura: string;
+  consumo: number;
+  clave: string;
+};
+
+export type MonitorFilas = {
+  numero: number;
+  medidores: MonitorMedidores[];
+};
+
+export type MonitorNichos = {
+  nombre: string;
+  filas: MonitorFilas[];
+};
+
+// historial-lectura
+export type MonitorCabecera = {
+  nroMedidor: string;
+  constante: string;
+  tipo: string;
+  subempalme: string;
+  tarifa: string;
+};
+
+export type MonitorHistorialLectura = {
+  estadoFacturar: number;
+  permiteAceptar: boolean;
+  permiteIngresar: boolean;
+  cabecera: MonitorCabecera;
+  claves: string[];
+  lecturasAnteriores: string[];
+  complementoBT43: string | null;
+};
+
+// Tipos base de useMonitor
+export interface Periodo {
+  IdPeriodo: string;
+  FechaInicio: string;
+  FechaFin: string;
+  FechaOrden: string;
+  DescripcionPeriodo: string;
+  EstadoPeriodo: number;
+}
+
+export interface Sector {
+  sectorId: string;
+  descripcion: string;
+  estado: number;
+  color: number;
+};
+
 export type MonitorGrillaProps = {
   periodo: string;
   sector: string;

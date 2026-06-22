@@ -1,5 +1,6 @@
 import api from "~/lib/api";
 import type {
+  AnularFacturaRequest,
   CambioMedidorBuscarAntiguoRequest,
   CambioMedidorBuscarNuevoRequest,
   CambioMedidorEjecutarCambioRequest,
@@ -7,6 +8,7 @@ import type {
   CorteReposicionLiberarRequest,
   CorteReposicionRegistrarCorteRequest,
   CorteReposicionResumenResponse,
+  EmpresaSAP,
   PeriodosAniosDisponiblesResponse,
   PeriodosBuscarRequest,
   PeriodosCrearRequest,
@@ -750,6 +752,113 @@ class OperacionesService {
         "/cambio-medidor/ejecutar-cambio",
         request,
       );
+      return {
+        data: response.data,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  /**
+   * SAP
+   */
+  async getListadoEmpresasSAP(): Promise<
+    OperacionesServiceResponse<EmpresaSAP[]>
+  > {
+    try {
+      const response = await api.get("/archivo-sap/empresas");
+      return {
+        data: response.data as EmpresaSAP[],
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async getNombreSugeridoSAP(nombreEmpresa?: string): Promise<
+    OperacionesServiceResponse<{
+      nombreEncabezado: string;
+      nombreDetalle: string;
+    }>
+  > {
+    try {
+      const params = new URLSearchParams();
+      if (nombreEmpresa) params.append("nombreEmpresa", nombreEmpresa);
+      const response = await api.get("/archivo-sap/nombre-sugerido", {
+        params,
+      });
+      return {
+        data: response.data as {
+          nombreEncabezado: string;
+          nombreDetalle: string;
+        },
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async getDescargarEncabezadoSAP(empresaId: number, nombreArchivo: string) {
+    try {
+      const params = new URLSearchParams();
+      params.append("empresaId", empresaId.toString());
+      params.append("nombreArchivo", nombreArchivo);
+      const response = await api.get("/archivo-sap/descargar-encabezado", {
+        params,
+        responseType: "blob",
+      });
+      return {
+        data: response.data,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  async getDescargarDetalleSAP(empresaId: number, nombreArchivo: string) {
+    try {
+      const params = new URLSearchParams();
+      params.append("empresaId", empresaId.toString());
+      params.append("nombreArchivo", nombreArchivo);
+      const response = await api.get("/archivo-sap/descargar-detalle", {
+        params,
+        responseType: "blob",
+      });
+      return {
+        data: response.data,
+        error: null,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Error desconocido",
+      };
+    }
+  }
+
+  /**
+   * Anular Factura
+   */
+  async postAnularFactura(request: AnularFacturaRequest) {
+    try {
+      const response = await api.post("/anular-factura/ejecutar", request);
       return {
         data: response.data,
         error: null,

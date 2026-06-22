@@ -1,7 +1,8 @@
-import { act, renderHook } from "@testing-library/react";
-import { toast } from "sonner";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useCalculoProceso } from "./use-calculo-proceso";
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { toast } from 'sonner';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { operacionesService } from '~/services/operacionesService';
+import { useCalculoProceso } from './use-calculo-proceso';
 
 vi.mock("sonner", () => ({
   toast: {
@@ -10,10 +11,11 @@ vi.mock("sonner", () => ({
   },
 }));
 
-vi.mock("~/lib/api", () => ({
-  default: {
-    post: vi.fn(),
-  },
+vi.mock('~/services/operacionesService', () => ({
+  operacionesService: {
+    postRevisarCalculosLanzarCalculo: vi.fn(),
+    postRevisarCalculosAceptar: vi.fn()
+  }
 }));
 
 describe("useCalculoProceso", () => {
@@ -48,7 +50,9 @@ describe("useCalculoProceso", () => {
 
     await result.current.handleLanzarCalculo();
 
-    expect(toast.error).toHaveBeenCalledWith("Periodo y ciclo son requeridos.");
+    expect(toast.error).toHaveBeenCalledWith(
+      'Periodo y ciclo son requeridos.'
+    );
   });
 
   it("debería mostrar error si falta cicloId en handleLanzarCalculo", async () => {
@@ -62,7 +66,9 @@ describe("useCalculoProceso", () => {
 
     await result.current.handleLanzarCalculo();
 
-    expect(toast.error).toHaveBeenCalledWith("Periodo y ciclo son requeridos.");
+    expect(toast.error).toHaveBeenCalledWith(
+      'Periodo y ciclo son requeridos.'
+    );
   });
 
   it("debería mostrar error si no hay contratos seleccionados en handleAceptarCalculo", async () => {
@@ -81,7 +87,7 @@ describe("useCalculoProceso", () => {
     );
   });
 
-  it("debería permitir establecer contratos seleccionados", () => {
+  it('debería permitir establecer contratos seleccionados', async () => {
     const { result } = renderHook(() =>
       useCalculoProceso({
         periodoFormateado: "202401",
@@ -90,15 +96,13 @@ describe("useCalculoProceso", () => {
       }),
     );
 
-    expect(result.current.selectedContratos).toEqual([]);
-
-    // El setter actualiza el estado
     act(() => {
       result.current.setSelectedContratos([123, 456]);
     });
 
-    // Después de actualizar, debe haber nuevos contratos
-    expect(result.current.selectedContratos).toEqual([123, 456]);
+    await waitFor(() => {
+      expect(result.current.selectedContratos).toEqual([123, 456]);
+    });
   });
 
   it("debería retornar funciones requeridas", () => {
@@ -115,20 +119,32 @@ describe("useCalculoProceso", () => {
     expect(typeof result.current.setSelectedContratos).toBe("function");
   });
 
-  it("debería soportar ciclos con formato 15", async () => {
-    renderHook(() =>
-      useCalculoProceso({
-        periodoFormateado: "202401",
-        cicloId: "15", // Debe convertirse a ciclo 1
-        onCalculoAceptado: mockOnCalculoAceptado,
-      }),
+  it('debería ejecutar lanzar correctamente', async () => {
+    vi.mocked(operacionesService.postRevisarCalculosLanzarCalculo).mockResolvedValue(
+      { data: { procesoId: 1 }, error: null }
     );
 
-    // No debe mostrar error por parámetros faltantes
-    expect(toast.error).not.toHaveBeenCalled();
+    const { result } = renderHook(() =>
+      useCalculoProceso({
+        periodoFormateado: '202401',
+        cicloId: '1',
+        onCalculoAceptado: mockOnCalculoAceptado
+      })
+    );
+
+    await result.current.handleLanzarCalculo();
+
+    expect(
+      operacionesService.postRevisarCalculosLanzarCalculo
+    ).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalled();
   });
 
-  it("debería ejecutar callback cuando se aceptan cálculos", async () => {
+  it('debería ejecutar aceptar correctamente', async () => {
+    vi.mocked(operacionesService.postRevisarCalculosAceptar).mockResolvedValue(
+      { data: null, error: null }
+    );
+
     const { result } = renderHook(() =>
       useCalculoProceso({
         periodoFormateado: "202401",
@@ -137,14 +153,26 @@ describe("useCalculoProceso", () => {
       }),
     );
 
-    // Establecer contratos
-    result.current.setSelectedContratos([123]);
+    act(() => {
+      result.current.setSelectedContratos([123]);
+    });
 
-    // Nota: El callback se ejecutará solo si la llamada API es exitosa
-    // Para este test necesitaríamos mockear la API
+    await act(async () => {
+      await result.current.handleAceptarCalculo();
+    });
+
+    expect(operacionesService.postRevisarCalculosAceptar).toHaveBeenCalledWith(
+      '202401'
+    );
+    expect(mockOnCalculoAceptado).toHaveBeenCalled();
+    expect(toast.success).toHaveBeenCalled();
   });
 
-  it("debería tener estados de loading para ambas operaciones", () => {
+  it('debería manejar error del service al lanzar', async () => {
+    vi.mocked(operacionesService.postRevisarCalculosLanzarCalculo).mockResolvedValue(
+      { data: null, error: 'Error del servidor' }
+    );
+
     const { result } = renderHook(() =>
       useCalculoProceso({
         periodoFormateado: "202401",
@@ -153,7 +181,8 @@ describe("useCalculoProceso", () => {
       }),
     );
 
-    expect(typeof result.current.isLaunching).toBe("boolean");
-    expect(typeof result.current.isAccepting).toBe("boolean");
+    await result.current.handleLanzarCalculo();
+
+    expect(toast.error).toHaveBeenCalledWith('Error: Error del servidor');
   });
 });
