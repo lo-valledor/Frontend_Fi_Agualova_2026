@@ -57,7 +57,7 @@ jobs:
 
       - name: Build (Vite)
         env:
-          VITE_API_URL: ${{ secrets.STAGING_API_URL }}
+          VITE_API_URL: ${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
           VITE_ENV_MODE: uat
           VITE_APP_ENV: staging
         run: pnpm run build
