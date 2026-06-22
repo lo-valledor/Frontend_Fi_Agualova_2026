@@ -4,6 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'sonner';
 
+import type {
+  MedidorListItem,
+  MedidorModalState
+} from '~/components/administracion/medidores/medidores-types';
 import { VirtualDataTable } from '~/components/data-table/virtual-data-table';
 import { LoadingSpinner } from '~/components/loading-spinner';
 import { ExportButton } from '~/components/shared/export-button';
@@ -18,9 +22,7 @@ import {
 } from '~/components/ui/card';
 import { useExportMedidores } from '~/hooks/administracion/use-export-medidores';
 import { useMedidorFilters } from '~/hooks/administracion/use-medidor-filters';
-import api from '~/lib/api';
-import type { GetMedidores, MedidorModalState } from '~/types/administracion';
-import type { Marca } from '~/types/mantencion';
+import { administracionService } from '~/services/administracionService';
 import {
   createInitialMedidorModalState,
   extractMedidorErrorMessage,
@@ -39,28 +41,20 @@ import {
 } from './medidor-filters';
 
 interface MedidoresComponentProps {
-  readonly medidores: GetMedidores[];
-  readonly marcas: Marca[];
+  readonly medidores: MedidorListItem[];
 }
 
 export default function MedidoresComponent({
   medidores: initialMedidores
 }: MedidoresComponentProps) {
-  // Estado de datos
-  const [medidores, setMedidores] = useState<GetMedidores[]>(initialMedidores);
-  const [selectedMedidor, setSelectedMedidor] = useState<GetMedidores | null>(
-    null
-  );
-
-  // Estado unificado de modales
+  const [medidores, setMedidores] =
+    useState<MedidorListItem[]>(initialMedidores);
+  const [selectedMedidor, setSelectedMedidor] =
+    useState<MedidorListItem | null>(null);
   const [modalsState, setModalsState] = useState<MedidorModalState>(
     createInitialMedidorModalState()
   );
-
-  // Estado de carga (sin estado muerto)
   const [isFetching, setIsFetching] = useState(false);
-
-  // Estados para filtros
   const [filters, setFilters] = useState<MedidorFilters>({
     marca: '',
     tipo: '',
@@ -81,8 +75,6 @@ export default function MedidoresComponent({
     medidores,
     filters
   );
-
-  // Dependencias
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -113,11 +105,12 @@ export default function MedidoresComponent({
   const refetchMedidores = useCallback(async () => {
     setIsFetching(true);
     try {
-      const response = await api.get('buscarMedidor');
-      const data = response.data as GetMedidores[];
-      setMedidores(data);
-    } catch (_error) {
-      console.error('Error al recargar los medidores', _error);
+      const result = await administracionService.getMedidoresData();
+      if (result.data?.medidores) {
+        setMedidores(result.data.medidores);
+      }
+    } catch (error) {
+      console.error('Error al recargar los medidores', error);
       toast.error('Error al recargar los medidores.');
     } finally {
       setIsFetching(false);
@@ -129,13 +122,13 @@ export default function MedidoresComponent({
   }, [navigate]);
 
   const handleEdit = useCallback(
-    (medidor: GetMedidores) => {
-      navigate(getMedidorEditUrl(medidor.codigo));
+    (medidor: MedidorListItem) => {
+      navigate(getMedidorEditUrl(medidor.idMedidor));
     },
     [navigate]
   );
 
-  const handleAsociarSubempalme = useCallback((medidor: GetMedidores) => {
+  const handleAsociarSubempalme = useCallback((medidor: MedidorListItem) => {
     setSelectedMedidor(medidor);
     setModalsState(prev => ({
       ...prev,
@@ -143,7 +136,7 @@ export default function MedidoresComponent({
     }));
   }, []);
 
-  const handleDeleteMedidor = useCallback((medidor: GetMedidores) => {
+  const handleDeleteMedidor = useCallback((medidor: MedidorListItem) => {
     setSelectedMedidor(medidor);
     setModalsState(prev => ({
       ...prev,
@@ -152,7 +145,6 @@ export default function MedidoresComponent({
   }, []);
 
   const handleConfirmDelete = useCallback(async () => {
-    // Early return: validar que exista medidor seleccionado
     if (!isValidMedidorForOperation(selectedMedidor)) {
       setModalsState(prev => ({
         ...prev,
@@ -162,7 +154,9 @@ export default function MedidoresComponent({
     }
 
     try {
-      await api.delete(`/MedidorEliminar/${selectedMedidor.codigo}`);
+      await fetch(`/MedidorEliminar/${selectedMedidor.idMedidor}`, {
+        method: 'DELETE'
+      });
       toast.success('Medidor eliminado exitosamente');
       await refetchMedidores();
       setSelectedMedidor(null);
@@ -173,7 +167,6 @@ export default function MedidoresComponent({
       );
       toast.error(errorInfo.message);
     } finally {
-      // Cerrar diálogo sin importar el resultado
       setModalsState(prev => ({
         ...prev,
         delete: { isOpen: false }
@@ -271,7 +264,7 @@ export default function MedidoresComponent({
                     onDelete: handleDeleteMedidor
                   })}
                   data={filteredMedidores}
-                  searchPlaceholder="Buscar por número de serie, local o acometida..."
+                  searchPlaceholder="Buscar por serie, modelo o acometida..."
                   estimateRowHeight={55}
                   maxHeight="650px"
                 />
@@ -280,7 +273,6 @@ export default function MedidoresComponent({
           </Card>
         </motion.div>
 
-        {/* Diálogo de confirmación de eliminación */}
         <DeleteConfirmationDialog
           isOpen={modalsState.delete.isOpen}
           onClose={() =>
@@ -293,7 +285,6 @@ export default function MedidoresComponent({
           medidor={selectedMedidor}
         />
 
-        {/* Modal para asociar subempalme */}
         <AsociarSubempalmeModal
           isOpen={modalsState.asociarSubempalme.isOpen}
           onClose={() =>

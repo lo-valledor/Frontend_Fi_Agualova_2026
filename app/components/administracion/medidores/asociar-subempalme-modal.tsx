@@ -2,7 +2,10 @@ import { Gauge, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { Badge } from '~/components/ui/badge';
+import type {
+  MedidorListItem,
+  SubempalmeOption
+} from '~/components/administracion/medidores/medidores-types';
 import { Button } from '~/components/ui/button';
 import {
   Dialog,
@@ -22,12 +25,11 @@ import {
   TableRow
 } from '~/components/ui/table';
 import api from '~/lib/api';
-import type { GetMedidores, SubempalmeOption } from '~/types/administracion';
 
 interface AsociarSubempalmeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  medidor: GetMedidores | null;
+  medidor: MedidorListItem | null;
   onSuccess: (codigo?: string) => void;
 }
 
@@ -42,7 +44,6 @@ export function AsociarSubempalmeModal({
   const [isLoadingSubempalmes, setIsLoadingSubempalmes] = useState(false);
   const [isAsociando, setIsAsociando] = useState(false);
 
-  // Cargar subempalmes al abrir el modal
   useEffect(() => {
     if (isOpen) {
       cargarSubempalmes();
@@ -63,28 +64,27 @@ export function AsociarSubempalmeModal({
     }
   };
 
-  // Función para asociar subempalme al medidor
   const handleAsociarSubempalme = async (
     subempalmeId: number,
     subempalmeCodigo: string
   ) => {
     if (!medidor) {
-      alert('No hay medidor seleccionado');
+      toast.error('No hay medidor seleccionado');
       return;
     }
 
     setIsAsociando(true);
     try {
       const payload = {
-        codigoMedidor: medidor.codigo,
-        subempalmeId: subempalmeId
+        codigoMedidor: medidor.idMedidor,
+        subempalmeId
       };
 
       const response = await api.put('/modificar-subempalme', payload);
 
       if (response.status === 200) {
         toast.success('Subempalme asociado correctamente');
-        onSuccess(subempalmeCodigo); // Entregar el código asociado
+        onSuccess(subempalmeCodigo);
         onClose();
         setBusquedaSubempalme('');
       }
@@ -95,7 +95,6 @@ export function AsociarSubempalmeModal({
     }
   };
 
-  // Filtrar subempalmes
   const subempalmesFiltrados = subempalmes.filter(subempalme => {
     const texto =
       `${subempalme.codigo} ${subempalme.ubicacion} ${subempalme.descripcionEmpalme} ${subempalme.descripcionNicho}`.toLowerCase();
@@ -108,7 +107,7 @@ export function AsociarSubempalmeModal({
         <DialogHeader className="space-y-3 pb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-              <Gauge className="h-5 w-5 " />
+              <Gauge className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
               <DialogTitle className="text-lg sm:text-xl font-semibold">
@@ -116,8 +115,8 @@ export function AsociarSubempalmeModal({
               </DialogTitle>
               <DialogDescription className="text-sm sm:text-base mt-1">
                 Seleccione el subempalme que desea asociar al medidor{' '}
-                <span className="font-mono font-semibold ">
-                  {medidor?.codigo}
+                <span className="font-mono font-semibold">
+                  {medidor?.idMedidor}
                 </span>
               </DialogDescription>
             </div>
@@ -125,7 +124,6 @@ export function AsociarSubempalmeModal({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Barra de búsqueda mejorada */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -136,33 +134,26 @@ export function AsociarSubempalmeModal({
             />
           </div>
 
-          {/* Tabla de subempalmes con mejor responsividad */}
           <div className="border rounded-xl overflow-hidden">
             <ScrollArea className="h-[50vh] sm:h-[60vh]">
               <Table>
                 <TableHeader className="bg-muted/50">
                   <TableRow>
-                    <TableHead className="text-xs sm:text-sm font-medium">
-                      ID
-                    </TableHead>
-                    <TableHead className="text-xs sm:text-sm font-medium">
-                      Código
-                    </TableHead>
-                    <TableHead className="text-xs sm:text-sm font-medium hidden sm:table-cell">
+                    <TableHead>ID</TableHead>
+                    <TableHead>Código</TableHead>
+                    <TableHead className="hidden sm:table-cell">
                       Ubicación
                     </TableHead>
-                    <TableHead className="text-xs sm:text-sm font-medium hidden lg:table-cell">
+                    <TableHead className="hidden lg:table-cell">
                       Contrato ID
                     </TableHead>
-                    <TableHead className="text-xs sm:text-sm font-medium hidden md:table-cell">
+                    <TableHead className="hidden md:table-cell">
                       Empalme
                     </TableHead>
-                    <TableHead className="text-xs sm:text-sm font-medium hidden lg:table-cell">
+                    <TableHead className="hidden lg:table-cell">
                       Nicho
                     </TableHead>
-                    <TableHead className="text-xs sm:text-sm font-medium text-center">
-                      Acción
-                    </TableHead>
+                    <TableHead className="text-center">Acción</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -172,10 +163,7 @@ export function AsociarSubempalmeModal({
                         colSpan={7}
                         className="text-center py-8 text-muted-foreground"
                       >
-                        <div className="flex flex-col items-center gap-2">
-                          <div className="h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                          <p className="text-sm">Cargando subempalmes...</p>
-                        </div>
+                        Cargando subempalmes...
                       </TableCell>
                     </TableRow>
                   )}
@@ -186,13 +174,8 @@ export function AsociarSubempalmeModal({
                           colSpan={7}
                           className="text-center py-8 text-muted-foreground"
                         >
-                          <div className="flex flex-col items-center gap-2">
-                            <Search className="h-8 w-8 opacity-50" />
-                            <p className="text-sm">
-                              No se encontraron subempalmes con los criterios de
-                              búsqueda.
-                            </p>
-                          </div>
+                          No se encontraron subempalmes con los criterios de
+                          búsqueda.
                         </TableCell>
                       </TableRow>
                     )}
@@ -201,50 +184,19 @@ export function AsociarSubempalmeModal({
                       key={subempalme.id}
                       className="hover:bg-muted/50 transition-colors"
                     >
-                      <TableCell className="text-xs sm:text-sm">
-                        <Badge variant="outline" className="font-mono text-xs">
-                          {subempalme.id}
-                        </Badge>
+                      <TableCell>{subempalme.id}</TableCell>
+                      <TableCell>{subempalme.codigo}</TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {subempalme.ubicacion}
                       </TableCell>
-                      <TableCell className="text-xs sm:text-sm">
-                        <Badge
-                          variant="secondary"
-                          className="font-mono text-xs"
-                        >
-                          {subempalme.codigo}
-                        </Badge>
+                      <TableCell className="hidden lg:table-cell">
+                        {subempalme.contratoId}
                       </TableCell>
-                      <TableCell className="font-medium text-xs sm:text-sm hidden sm:table-cell">
-                        <div className="flex items-center gap-2">
-                          <Gauge className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
-                          <span
-                            className="truncate max-w-[120px] lg:max-w-[150px]"
-                            title={subempalme.ubicacion}
-                          >
-                            {subempalme.ubicacion}
-                          </span>
-                        </div>
+                      <TableCell className="hidden md:table-cell">
+                        {subempalme.descripcionEmpalme}
                       </TableCell>
-                      <TableCell className="text-xs sm:text-sm hidden lg:table-cell">
-                        <Badge variant="outline" className="font-mono text-xs">
-                          {subempalme.contratoId}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-xs sm:text-sm hidden md:table-cell">
-                        <span
-                          className="truncate max-w-[100px] lg:max-w-[120px] block"
-                          title={subempalme.descripcionEmpalme}
-                        >
-                          {subempalme.descripcionEmpalme}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-xs sm:text-sm hidden lg:table-cell">
-                        <span
-                          className="truncate max-w-[100px] lg:max-w-[120px] block"
-                          title={subempalme.descripcionNicho}
-                        >
-                          {subempalme.descripcionNicho}
-                        </span>
+                      <TableCell className="hidden lg:table-cell">
+                        {subempalme.descripcionNicho}
                       </TableCell>
                       <TableCell className="text-center">
                         <Button
@@ -256,7 +208,7 @@ export function AsociarSubempalmeModal({
                             )
                           }
                           disabled={isAsociando}
-                          className="bg-blue-600 hover:bg-blue-700 text-xs sm:text-sm h-7 sm:h-8 px-2 sm:px-3"
+                          className="bg-blue-600 hover:bg-blue-700"
                         >
                           {isAsociando ? 'Asociando...' : 'Asociar'}
                         </Button>

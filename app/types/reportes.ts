@@ -1,27 +1,39 @@
-export interface BuscarContratos {
-  cT_ID: number;
-  lC_ID: string;
-  cL_RUT: string;
+export type BuscarContrato = {
+  idContrato: number;
+  nroLocal: string;
+  rutCliente: string;
   nombreCliente: string;
-  pR_RUT: string;
+  rutPropietario: string;
   nombrePropietario: string;
-  mE_NSerie: string;
-  cT_ID_Madre: number;
-  cT_esMadre: boolean;
-  se_codigo: string;
-}
+  nroMedidor: string;
+  acometida: string;
+};
 
-export interface DetallePropietario {
+export type ExportarExcelProps = {
+  nroLocal: string;
+  rutCliente: string;
+  nombreCliente: string;
+  rutPropietario: string;
+  nombrePropietario: string;
+  nroMedidor: string;
+  codigoContrato: number;
+  acometida: string;
+};
+
+// ============================================
+// Consultar Contrato
+// ============================================
+export type Propietario = {
   rut: string;
   nombre: string;
   direccion: string;
   comuna: string;
-  contacto: string;
   telefono: string;
   email: string;
-}
+  contacto: string;
+};
 
-export interface DetalleCliente {
+export type Cliente = {
   rut: string;
   nombre: string;
   direccion: string;
@@ -29,86 +41,112 @@ export interface DetalleCliente {
   telefono: string;
   email: string;
   contacto: string;
-}
+};
 
-export interface DetalleLocal {
-  localId: string;
-  empresa: string;
-  lugarEntregaServicio: string;
-}
+export type Lugar = {
+  nroLocal: string;
+  otroLugar: string;
+};
 
-export interface DetalleContrato {
-  contratoId: number;
+export type Contrato = {
+  nroContrato: string;
   tipoContrato: string;
   codigoTarifa: string;
-  limiteInversionVigente: number;
-  potenciaContratada: number;
   cicloFacturacion: string;
+  limiteInvVigente: string;
   fechaInicio: string;
-  estadoContrato: string;
-  contratoMadreId: number;
-}
+  potenciaContratada: string;
+  contratoMadre: string;
+  estado: string;
+};
 
-export interface DetalleMedidores {
-  nroSerie: string;
+export type Medidor = {
+  nroMedidor: string;
   tipoMedidor: string;
-  constanteMultiplicadora: number;
-  digitos: number;
-}
+  constanteMultiplicar: string;
+  digitos: string;
+};
 
-export interface DetalleUbicacion {
-  codigoSubempalme: string;
-  nicho: string;
-  sector: string;
-  empalme: string;
+export type Empalme = {
+  acometida: string;
   zona: string;
-}
+  sector: string;
+  empalmePrimario: string;
+  nicho: string;
+};
 
-export interface DetalleLecturas {
+export type Lecturas = {
   periodo: string;
   fechaLectura: string;
-  lecturaAnterior: number;
-  lecturaActual: number;
-  consumoPeriodo: number;
-  energiaBase: number;
-  sobreconsumo: number;
-}
+  ultimaLectura: string;
+  lecturaActual: string;
+  consumo: string;
+  energiaBase: string;
+  sobreconsumo: string;
+};
 
-export interface DetalleFacturas {
+export type Facturas = {
   periodo: string;
   nroFactura: string;
   tarifa: string;
   fechaEmision: string;
   fechaVencimiento: string;
-  valorNeto: number;
-  iva: number;
-  valorTotal: number;
-  consumoPeriodo: number;
-}
+  neto: string;
+  iva: string;
+  total: string;
+  consumo: string;
+};
 
-// Resumen Facturación
+export type ConsolidadoConsultaContrato = {
+  propietario: Propietario;
+  cliente: Cliente;
+  lugar: Lugar;
+  contrato: Contrato;
+  medidor: Medidor;
+  empalme: Empalme;
+  lecturas: Lecturas[];
+  facturas: Facturas[];
+};
 
-export interface FacturacionPorCargo {
-  cargoDescripcion: string;
-  totalEnergiaPeriodoAnterior: string;
-  totalFacturaPeriodoAnterior: string;
-  cantidadCargosPeriodoAnterior: string;
-  totalEnergiaPeriodoActual: string;
-  totalFacturaPeriodoActual: string;
-  cantidadCargosPeriodoActual: string;
-  diferenciaPeriodos: string;
-}
+/**
+ * Nota de Cobro
+ */
 
-export interface TotalFacturasPeriodo {
-  totalContratosFacturados: number;
-}
-
-export interface ComboEmpalmes {
-  emId: number;
+export type PeriodosDisponibles = {
+  id: string;
   descripcion: string;
-}
+};
 
-export interface PeriodosFacturacion {
-  pF_ID: string;
-  pF_Descripcion: string;
-}
+export type EmpalmesDisponibles = {
+  id: string;
+  descripcion: string;
+};
+
+export type DetalleNotadeCobro = {
+  cargoDescripcion: string;
+  cantidadM3PeriodoAnterior: string;
+  cantNotaCobroPeriodoAnterior: string;
+  totalCargosPeriodoAnterior: string;
+  cantidadM3PeriodoActual: string;
+  cantNotaCobroPeriodoActual: string;
+  totalCargosPeriodoActual: string;
+  diferenciaRecuperacion: string;
+};
+
+export type ResumenNotadeCobro = {
+  totalNotasCobroEmitidas: string;
+  detalle: DetalleNotadeCobro[];
+};
+
+/**
+ * Ver Facturas
+ */
+export type VerFacturasProps = {
+  tipo: number;
+  rutCliente: string;
+  local: string;
+  facturaInicial: string;
+  facturaFinal: string;
+  periodo: string;
+  acometida: string;
+};

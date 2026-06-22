@@ -1,4 +1,4 @@
-import NumberFlow from '@number-flow/react';
+import NumberFlow from "@number-flow/react";
 import {
   AlertCircle,
   AlertTriangle,
@@ -14,75 +14,79 @@ import {
   Info,
   MapPin,
   Pencil,
-  RefreshCw
-} from 'lucide-react';
-import { motion } from 'motion/react';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+  RefreshCw,
+} from "lucide-react";
+import { motion } from "motion/react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
-import DetallesMedidor from '~/components/monitor/monitor-lecturas/detalles-medidor';
-import MonitorNichos from '~/components/monitor/monitor-lecturas/monitor-nichos';
-import { Alert, AlertDescription } from '~/components/ui/alert';
-import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent } from '~/components/ui/card';
+import DetallesMedidor from "~/components/monitor/monitor-lecturas/detalles-medidor";
+import { Alert, AlertDescription } from "~/components/ui/alert";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent } from "~/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
-  CollapsibleTrigger
-} from '~/components/ui/collapsible';
+  CollapsibleTrigger,
+} from "~/components/ui/collapsible";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
-} from '~/components/ui/dialog';
+  DialogTrigger,
+} from "~/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '~/components/ui/dropdown-menu';
-import { EmptyState } from '~/components/ui/empty-state';
-import { ScrollArea } from '~/components/ui/scroll-area';
-import { Separator } from '~/components/ui/separator';
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { EmptyState } from "~/components/ui/empty-state";
+import { ScrollArea } from "~/components/ui/scroll-area";
+import { Separator } from "~/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger
-} from '~/components/ui/tooltip';
-import { useApiWithLoadingBar } from '~/lib/api';
-import { cn } from '~/lib/utils';
-import type { Fila, Medidor, NichoBusqueda } from '~/types/monitor';
-import { formatToYYYYMMDD } from '~/utils/date-formatter';
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
+import { useApiWithLoadingBar } from "~/lib/api";
+import { cn } from "~/lib/utils";
+import { monitorService } from "~/services";
+import type {
+  MonitorFilas,
+  MonitorGrillaProps,
+  MonitorMedidores,
+  MonitorNichosGet
+} from "~/types/monitor";
 import {
   calculateNichoStats,
   calculatePercentage,
-  calculateTotalStats
-} from '~/utils/monitor/monitor-calculations';
+  calculateTotalStats,
+} from "~/utils/monitor/monitor-calculations";
 import {
   getMeterStatus,
-  isImportedReading
-} from '~/utils/monitor/monitor-status';
+  isImportedReading,
+} from "~/utils/monitor/monitor-status";
 
 // Component for status circle indicator with subtle pulse animation
 const StatusIndicator = ({
   status,
-  size = 'md'
+  size = "md",
 }: {
   status: any;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
 }) => {
-  const sizeClasses: { [key in 'sm' | 'md' | 'lg']: string } = {
-    sm: 'h-2 w-2',
-    md: 'h-3 w-3',
-    lg: 'h-4 w-4'
+  const sizeClasses: { [key in "sm" | "md" | "lg"]: string } = {
+    sm: "h-2 w-2",
+    md: "h-3 w-3",
+    lg: "h-4 w-4",
   };
 
   return (
@@ -91,7 +95,7 @@ const StatusIndicator = ({
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.2 }}
       className={`rounded-full ${status.bgColor} ${
-        sizeClasses[size ?? 'md']
+        sizeClasses[size ?? "md"]
       } shrink-0`}
     />
   );
@@ -100,7 +104,7 @@ const StatusIndicator = ({
 // Meter card component for reuse with motion
 const MeterCard = ({
   medidor,
-  onRefresh
+  onRefresh,
 }: {
   medidor: any;
   onRefresh: any;
@@ -117,9 +121,9 @@ const MeterCard = ({
     >
       <Card
         className={cn(
-          'overflow-hidden transition-all duration-200 hover:shadow-lg border-l-4',
+          "overflow-hidden transition-all duration-200 hover:shadow-lg border-l-4",
           status.borderColor,
-          isImported && 'bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50'
+          isImported && "bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50",
         )}
       >
         <CardContent className="p-2">
@@ -181,13 +185,13 @@ const MeterCard = ({
             <div>
               <div className="text-muted-foreground text-[10px]">Lectura</div>
               <div className="font-semibold text-xs">
-                {medidor.consumo || '0'}
+                {medidor.consumo || "0"}
               </div>
             </div>
             <div>
               <div className="text-muted-foreground text-[10px]">Consumo</div>
               <div className="font-semibold text-xs">
-                {medidor.ultimaLectura || '-'}
+                {medidor.ultimaLectura || "-"}
               </div>
             </div>
             <div className="col-span-2">
@@ -196,7 +200,7 @@ const MeterCard = ({
                 <span className="truncate">
                   {medidor.fechaLectura
                     ? new Date(medidor.fechaLectura).toLocaleString()
-                    : 'Sin registro'}
+                    : "Sin registro"}
                 </span>
               </div>
             </div>
@@ -222,7 +226,7 @@ const MeterCard = ({
 // Componente de fila compacta para vista detallada
 const MeterRowDetailed = ({
   medidor,
-  onRefresh
+  onRefresh,
 }: {
   medidor: any;
   onRefresh: any;
@@ -233,10 +237,10 @@ const MeterRowDetailed = ({
   return (
     <div
       className={cn(
-        'group grid items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl border hover:bg-muted/50 transition-all duration-200 border-l-4',
-        'grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]',
+        "group grid items-center gap-2 sm:gap-4 p-2 sm:p-3 rounded-xl border hover:bg-muted/50 transition-all duration-200 border-l-4",
+        "grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto]",
         status.borderColor,
-        isImported && 'bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50'
+        isImported && "bg-pink-100/80 dark:bg-pink-950/30 shadow-pink-200/50",
       )}
     >
       {/* Status Indicator & Name/ID */}
@@ -249,7 +253,7 @@ const MeterRowDetailed = ({
           <div className="sm:hidden flex items-center gap-2 mt-1">
             <Badge
               variant="outline"
-              className={cn('text-xs', status.borderColor, status.textColor)}
+              className={cn("text-xs", status.borderColor, status.textColor)}
             >
               <span className="mr-1">{status.icon}</span>
               <span className="truncate">{medidor.clave || status.label}</span>
@@ -261,14 +265,14 @@ const MeterRowDetailed = ({
       {/* Lectura */}
       <div className="hidden sm:block text-left">
         <div className="text-xs text-muted-foreground">Lectura</div>
-        <div className="font-semibold text-sm">{medidor.consumo || '-'}</div>
+        <div className="font-semibold text-sm">{medidor.consumo || "-"}</div>
       </div>
 
       {/* Consumo */}
       <div className="hidden sm:block text-left">
         <div className="text-xs text-muted-foreground">Consumo</div>
         <div className="font-semibold text-sm">
-          {medidor.ultimaLectura || '0'}
+          {medidor.ultimaLectura || "0"}
         </div>
       </div>
 
@@ -277,12 +281,12 @@ const MeterRowDetailed = ({
         <div className="text-xs text-muted-foreground">Fecha</div>
         <div className="text-sm font-medium truncate">
           {medidor.fechaLectura
-            ? new Date(medidor.fechaLectura).toLocaleString('es-CL', {
-                dateStyle: 'short',
-                timeStyle: 'short',
-                hour12: false
+            ? new Date(medidor.fechaLectura).toLocaleString("es-CL", {
+                dateStyle: "short",
+                timeStyle: "short",
+                hour12: false,
               })
-            : 'Sin registro'}
+            : "Sin registro"}
         </div>
       </div>
 
@@ -290,7 +294,7 @@ const MeterRowDetailed = ({
       <div className="hidden sm:flex justify-start">
         <Badge
           variant="outline"
-          className={cn('text-xs ', status.borderColor, status.textColor)}
+          className={cn("text-xs ", status.borderColor, status.textColor)}
         >
           <span className="mr-1">{status.icon}</span>
           <span className="truncate">{medidor.clave || status.label}</span>
@@ -314,7 +318,7 @@ const MeterRowDetailed = ({
               <DialogTitle className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div
-                    className={cn('p-1.5 sm:p-2 rounded-xl', status.bgColor)}
+                    className={cn("p-1.5 sm:p-2 rounded-xl", status.bgColor)}
                   >
                     {status.icon}
                   </div>
@@ -327,7 +331,7 @@ const MeterRowDetailed = ({
                     </p>
                   </div>
                 </div>
-                <Badge className={cn(status.bgColor, 'text-xs sm:text-sm')}>
+                <Badge className={cn(status.bgColor, "text-xs sm:text-sm")}>
                   {status.label}
                 </Badge>
               </DialogTitle>
@@ -346,36 +350,27 @@ const MeterRowDetailed = ({
 
 // Type para el estado de resultados
 interface ResultsState {
-  nichos: NichoBusqueda[];
+  nichos: MonitorNichosGet[];
 }
 
 export default function ResultadosBusqueda({
-  sector,
   periodo,
-  stfechaini: startDate,
-  stfechafin: endDate,
-  tipoclave: keyType,
+  sector,
   medidor: meterSerial,
+  fechaIni: startDate,
+  fechaFin: endDate,
   clave: claveId,
-  triggerSearch
-}: Readonly<{
-  sector: string;
-  periodo: string;
-  stfechaini: string;
-  stfechafin: string;
-  tipoclave: string;
-  medidor: string;
-  clave: string;
-  triggerSearch: number;
-}>) {
+  criterio: keyType,
+  triggerSearch,
+}: Readonly<MonitorGrillaProps & { triggerSearch: number }>) {
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
   const [results, setResults] = useState<ResultsState>({ nichos: [] });
   const [refreshCounter, setRefreshCounter] = useState(0);
-  const [viewMode, setViewMode] = useState('default'); // 'default', 'compact', 'detailed'
+  const [viewMode, setViewMode] = useState("default"); // 'default', 'compact', 'detailed'
   const [selectedNichoIndex, setSelectedNichoIndex] = useState(0);
   const [expandedFilas, setExpandedFilas] = useState<Record<string, boolean>>(
-    {}
+    {},
   );
   const [isNichoModalOpen, setIsNichoModalOpen] = useState(false);
   const [needsNichoRefresh, setNeedsNichoRefresh] = useState(false);
@@ -384,68 +379,103 @@ export default function ResultadosBusqueda({
   // Validation with early returns
   const validateSearchFields = (): boolean => {
     if (!sector) {
-      toast.error('Sector no seleccionado');
+      toast.error("Sector no seleccionado");
       return false;
     }
 
     if (!periodo) {
-      toast.error('Periodo no seleccionado');
+      toast.error("Periodo no seleccionado");
       return false;
     }
 
-    if (!startDate || startDate.trim() === '') {
-      toast.error('Fecha de inicio no seleccionada');
+    if (!startDate || startDate.trim() === "") {
+      toast.error("Fecha de inicio no seleccionada");
       return false;
     }
 
-    if (!endDate || endDate.trim() === '') {
-      toast.error('Fecha de fin no seleccionada');
+    if (!endDate || endDate.trim() === "") {
+      toast.error("Fecha de fin no seleccionada");
       return false;
     }
 
     return true;
   };
 
-  // Build search parameters with proper variable names
-  const buildSearchParams = () => {
-    const params = new URLSearchParams({
-      sector,
-      periodo,
-      stfechaini: formatToYYYYMMDD(startDate),
-      stfechafin: formatToYYYYMMDD(endDate)
-    });
-
-    if (keyType) params.append('tipoclave', keyType);
-    if (meterSerial) params.append('medidor', meterSerial);
-    if (claveId) params.append('clave', claveId);
-
-    return params;
-  };
+  // Build the request body for postBuscarLecturas (MonitorGrillaProps shape).
+  // Las fechas vienen en formato DD-MM-YYYY desde el parent (MonitorGrillaProps),
+  // y se envían como JSON al endpoint /monitor-lecturas/grilla.
+  const buildGrillaRequest = (): MonitorGrillaProps => ({
+    periodo,
+    sector,
+    medidor: meterSerial,
+    fechaIni: startDate,
+    fechaFin: endDate,
+    clave: claveId,
+    criterio: keyType
+  });
 
   // Process search response with comprehensive edge case handling
-  const processSearchResponse = (response: any): NichoBusqueda[] => {
+  const processSearchResponse = (response: any): MonitorNichosGet[] => {
     // Early return for null/undefined response
     if (!response) return [];
 
-    // Ensure response has expected structure
+    // Si la respuesta ya es un array, podría ser:
+    // - Array plano de medidores (sin agrupar) → envolver en un nicho virtual
+    // - Array de nichos (cada item con { nombre, filas })
+    if (Array.isArray(response)) {
+      if (response.length === 0) return [];
+      const first = response[0];
+      if (first && typeof first === "object" && "filas" in first) {
+        return response.map((n: any, i: number) => ({
+          nombre: n?.nombre ?? `Nicho ${i + 1}`,
+          filas: Array.isArray(n?.filas) ? n.filas : []
+        }));
+      }
+      // Array plano de medidores → envolver en un nicho virtual
+      return [
+        {
+          nombre: "Resultados",
+          filas: response.map((m: any, idx: number) => ({
+            numero: idx + 1,
+            medidores: Array.isArray(m) ? m : [m]
+          }))
+        }
+      ];
+    }
+
+    // Si es un objeto, buscar nichos en varios paths
     const responseData =
-      response.data && typeof response.data === 'object'
+      response.data && typeof response.data === "object"
         ? response.data
-        : { nichos: [] };
+        : response;
 
     // Extract nichos array with type validation
     let rawNichos: any[] = [];
 
     if (
-      'data' in responseData &&
+      "data" in responseData &&
       responseData.data &&
-      typeof responseData.data === 'object'
+      typeof responseData.data === "object"
     ) {
       rawNichos = Array.isArray(responseData.data.nichos)
         ? responseData.data.nichos
         : [];
-    } else if ('nichos' in responseData && Array.isArray(responseData.nichos)) {
+    } else if ("nichos" in responseData && Array.isArray(responseData.nichos)) {
       rawNichos = responseData.nichos;
+    } else if (
+      "medidores" in responseData &&
+      Array.isArray(responseData.medidores)
+    ) {
+      // Array plano de medidores dentro de un objeto
+      return [
+        {
+          nombre: "Resultados",
+          filas: responseData.medidores.map((m: any, idx: number) => ({
+            numero: idx + 1,
+            medidores: [m]
+          }))
+        }
+      ];
     }
 
     // Early return for empty nichos
@@ -454,7 +484,7 @@ export default function ResultadosBusqueda({
     // Map and validate each nicho structure
     return rawNichos.map((nicho: any, index: number) => ({
       nombre: nicho?.nombre || `Nicho ${index + 1}`,
-      filas: Array.isArray(nicho?.filas) ? nicho.filas : []
+      filas: Array.isArray(nicho?.filas) ? nicho.filas : [],
     }));
   };
 
@@ -482,10 +512,9 @@ export default function ResultadosBusqueda({
     setIsSearching(true);
     setSearchError(null);
 
-    const params = buildSearchParams();
-
     try {
-      const response = await api.get('/sector', { params });
+      const requestBody = buildGrillaRequest();
+      const response = await monitorService.postBuscarLecturas(requestBody);
       const nichos = processSearchResponse(response);
 
       setResults({ nichos });
@@ -499,9 +528,9 @@ export default function ResultadosBusqueda({
       const newExpandedState = initializeExpandedState(nichos);
       setExpandedFilas(newExpandedState);
     } catch (error) {
-      console.error('Error al buscar lecturas:', error);
+      console.error("Error al buscar lecturas:", error);
       setSearchError(null);
-      toast.error('Error al buscar lecturas. Por favor, intente nuevamente.');
+      toast.error("Error al buscar lecturas. Por favor, intente nuevamente.");
     } finally {
       setIsSearching(false);
     }
@@ -510,12 +539,12 @@ export default function ResultadosBusqueda({
   const handleRefresh = useCallback(() => {
     // Early return if required fields are missing
     if (!sector || !periodo || !startDate || !endDate) {
-      toast.info('Seleccione Sector, Periodo y Fechas para refrescar.');
+      toast.info("Seleccione Sector, Periodo y Fechas para refrescar.");
       return;
     }
 
     // Increment refresh counter to trigger reload
-    setRefreshCounter(prev => prev + 1);
+    setRefreshCounter((prev) => prev + 1);
   }, [sector, periodo, startDate, endDate]);
 
   useEffect(() => {
@@ -535,21 +564,21 @@ export default function ResultadosBusqueda({
 
   const toggleFila: ToggleFilaFn = (nichoIndex, filaIndex) => {
     const key = `${nichoIndex}-${filaIndex}`;
-    setExpandedFilas(prev => ({
+    setExpandedFilas((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
   type HandleNichoChangeFn = (index: number) => void;
 
-  const handleNichoChange: HandleNichoChangeFn = index => {
+  const handleNichoChange: HandleNichoChangeFn = (index) => {
     setSelectedNichoIndex(index);
   };
 
   const handleNichoModalSuccess = () => {
     // Mostrar notificación de éxito inmediatamente
-    toast.success('Medidor actualizado correctamente');
+    toast.success("Medidor actualizado correctamente");
     setNeedsNichoRefresh(true);
 
     // Refrescar los resultados en segundo plano sin cerrar el modal
@@ -557,7 +586,7 @@ export default function ResultadosBusqueda({
 
     // Mostrar notificación adicional que los datos se están actualizando
     setTimeout(() => {
-      toast.info('Datos actualizados en segundo plano');
+      toast.info("Datos actualizados en segundo plano");
     }, 800);
   };
 
@@ -581,7 +610,7 @@ export default function ResultadosBusqueda({
             className="gap-1 text-foreground"
           >
             <RefreshCw
-              className={`h-4 w-4 ${isSearching ? 'animate-spin' : ''}`}
+              className={`h-4 w-4 ${isSearching ? "animate-spin" : ""}`}
             />
             <span className="hidden sm:inline">Refrescar</span>
           </Button>
@@ -698,7 +727,7 @@ export default function ResultadosBusqueda({
                                 </p>
                                 <p className="text-xl sm:text-2xl font-semibold">
                                   {results.nichos.length} nicho
-                                  {results.nichos.length === 1 ? '' : 's'}
+                                  {results.nichos.length === 1 ? "" : "s"}
                                 </p>
                               </div>
                             </div>
@@ -740,7 +769,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-red-600/70 dark:text-red-400/70">
                                       {calculatePercentage(
                                         stats.critical,
-                                        stats.total
+                                        stats.total,
                                       )}
                                       %
                                     </p>
@@ -751,7 +780,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.critical, stats.total)}%`
+                                      width: `${calculatePercentage(stats.critical, stats.total)}%`,
                                     }}
                                     transition={{ duration: 0.5, delay: 0.2 }}
                                     className="h-full bg-red-500 rounded-full"
@@ -787,7 +816,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-orange-600/70 dark:text-orange-400/70">
                                       {calculatePercentage(
                                         stats.warning,
-                                        stats.total
+                                        stats.total,
                                       )}
                                       %
                                     </p>
@@ -797,7 +826,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.warning, stats.total)}%`
+                                      width: `${calculatePercentage(stats.warning, stats.total)}%`,
                                     }}
                                     transition={{ duration: 0.5, delay: 0.25 }}
                                     className="h-full bg-orange-500 rounded-full"
@@ -833,7 +862,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-yellow-600/70 dark:text-yellow-400/70">
                                       {calculatePercentage(
                                         stats.info,
-                                        stats.total
+                                        stats.total,
                                       )}
                                       %
                                     </p>
@@ -843,7 +872,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.info, stats.total)}%`
+                                      width: `${calculatePercentage(stats.info, stats.total)}%`,
                                     }}
                                     transition={{ duration: 0.5, delay: 0.3 }}
                                     className="h-full bg-yellow-500 rounded-full"
@@ -881,7 +910,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-gray-600/70 dark:text-gray-400/70">
                                       {calculatePercentage(
                                         stats.sinlec - stats.imported,
-                                        stats.total
+                                        stats.total,
                                       )}
                                       %
                                     </p>
@@ -891,7 +920,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.sinlec - stats.imported, stats.total)}%`
+                                      width: `${calculatePercentage(stats.sinlec - stats.imported, stats.total)}%`,
                                     }}
                                     transition={{ duration: 0.5, delay: 0.35 }}
                                     className="h-full bg-gray-500 rounded-full"
@@ -927,7 +956,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-emerald-600/70 dark:text-emerald-400/70">
                                       {calculatePercentage(
                                         stats.normal,
-                                        stats.total
+                                        stats.total,
                                       )}
                                       %
                                     </p>
@@ -937,7 +966,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.normal, stats.total)}%`
+                                      width: `${calculatePercentage(stats.normal, stats.total)}%`,
                                     }}
                                     transition={{ duration: 0.5, delay: 0.4 }}
                                     className="h-full bg-emerald-500 rounded-full"
@@ -973,7 +1002,7 @@ export default function ResultadosBusqueda({
                                     <p className="text-xs sm:text-sm text-pink-600/70 dark:text-pink-400/70">
                                       {calculatePercentage(
                                         stats.imported,
-                                        stats.total
+                                        stats.total,
                                       )}
                                       %
                                     </p>
@@ -983,7 +1012,7 @@ export default function ResultadosBusqueda({
                                   <motion.div
                                     initial={{ width: 0 }}
                                     animate={{
-                                      width: `${calculatePercentage(stats.imported, stats.total)}%`
+                                      width: `${calculatePercentage(stats.imported, stats.total)}%`,
                                     }}
                                     transition={{ duration: 0.5, delay: 0.45 }}
                                     className="h-full bg-pink-500 rounded-full"
@@ -1007,7 +1036,7 @@ export default function ResultadosBusqueda({
             <div className="space-y-4">
               <ScrollArea className="w-full">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-1 p-1 bg-muted/30 rounded-xl border backdrop-blur-sm">
-                  {results.nichos.map((nicho: NichoBusqueda, index: number) => {
+                  {results.nichos.map((nicho: MonitorNichosGet, index: number) => {
                     const stats = calculateNichoStats(nicho);
                     const isActive = index === selectedNichoIndex;
 
@@ -1019,10 +1048,10 @@ export default function ResultadosBusqueda({
                               onClick={() => handleNichoChange(index)}
                               variant="ghost"
                               className={cn(
-                                'flex flex-col items-center justify-center p-2 gap-2 h-16 rounded-lg border transition-all',
+                                "flex flex-col items-center justify-center p-2 gap-2 h-16 rounded-lg border transition-all",
                                 isActive
-                                  ? 'bg-primary/10 border-primary'
-                                  : 'bg-background hover:bg-accent border-transparent'
+                                  ? "bg-primary/10 border-primary"
+                                  : "bg-background hover:bg-accent border-transparent",
                               )}
                             >
                               <span className="font-medium text-center leading-tight">
@@ -1073,7 +1102,7 @@ export default function ResultadosBusqueda({
                               </p>
                               <div className="text-xs text-muted-foreground space-y-0.5">
                                 <div>
-                                  {nicho.filas.length} filas • {stats.total}{' '}
+                                  {nicho.filas.length} filas • {stats.total}{" "}
                                   medidores
                                 </div>
                                 {stats.critical > 0 && (
@@ -1130,12 +1159,12 @@ export default function ResultadosBusqueda({
                           {results.nichos[selectedNichoIndex].nombre}
                         </h3>
                         <p className="text-xs text-muted-foreground">
-                          {results.nichos[selectedNichoIndex].filas.length}{' '}
-                          filas •{' '}
+                          {results.nichos[selectedNichoIndex].filas.length}{" "}
+                          filas •{" "}
                           {results.nichos[selectedNichoIndex].filas.reduce(
                             (acc, fila) => acc + fila.medidores.length,
-                            0
-                          )}{' '}
+                            0,
+                          )}{" "}
                           medidores
                         </p>
                       </div>
@@ -1170,15 +1199,15 @@ export default function ResultadosBusqueda({
                               <div className="space-y-2">
                                 {/* Lista estática de todos los estados posibles */}
                                 {[
-                                  'SINLEC',
-                                  'SINCLA',
-                                  'CLAINF',
-                                  'CLAREL',
-                                  'CLACRI',
-                                  'LECCER',
-                                  'LECIMP',
-                                  'IMPORT'
-                                ].map(claveHtml => {
+                                  "SINLEC",
+                                  "SINCLA",
+                                  "CLAINF",
+                                  "CLAREL",
+                                  "CLACRI",
+                                  "LECCER",
+                                  "LECIMP",
+                                  "IMPORT",
+                                ].map((claveHtml) => {
                                   const status = getMeterStatus(claveHtml);
                                   return (
                                     <div
@@ -1214,20 +1243,20 @@ export default function ResultadosBusqueda({
                         <DropdownMenuTrigger asChild>
                           <Button variant="outline" size="sm" className="gap-1">
                             {/* ✅ REFACTOR: Extraer lógica de ícono */}
-                            {viewMode === 'detailed' && (
+                            {viewMode === "detailed" && (
                               <BarChart3 className="h-4 w-4" />
                             )}
-                            {viewMode === 'compact' && (
+                            {viewMode === "compact" && (
                               <AlertCircle className="h-4 w-4" />
                             )}
-                            {viewMode === 'cards' && (
+                            {viewMode === "cards" && (
                               <Grid3X3 className="h-4 w-4" />
                             )}
                             <span className="hidden sm:inline">
                               {(() => {
-                                if (viewMode === 'detailed') return 'Lista';
-                                if (viewMode === 'compact') return 'Problemas';
-                                return 'Tarjetas';
+                                if (viewMode === "detailed") return "Lista";
+                                if (viewMode === "compact") return "Problemas";
+                                return "Tarjetas";
                               })()}
                             </span>
                           </Button>
@@ -1235,20 +1264,20 @@ export default function ResultadosBusqueda({
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem
                             className={cn(
-                              viewMode === 'default' && 'bg-accent'
+                              viewMode === "default" && "bg-accent",
                             )}
                             onClick={() => {
-                              setViewMode('default');
+                              setViewMode("default");
                             }}
                           >
                             <Grid3X3 className="mr-2 h-4 w-4" /> Tarjetas
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className={cn(
-                              viewMode === 'detailed' && 'bg-accent'
+                              viewMode === "detailed" && "bg-accent",
                             )}
                             onClick={() => {
-                              setViewMode('detailed');
+                              setViewMode("detailed");
                             }}
                           >
                             <BarChart3 className="mr-2 h-4 w-4" /> Lista
@@ -1256,10 +1285,10 @@ export default function ResultadosBusqueda({
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className={cn(
-                              viewMode === 'compact' && 'bg-accent'
+                              viewMode === "compact" && "bg-accent",
                             )}
                             onClick={() => {
-                              setViewMode('compact');
+                              setViewMode("compact");
                             }}
                           >
                             <AlertCircle className="mr-2 h-4 w-4" /> Solo
@@ -1284,35 +1313,6 @@ export default function ResultadosBusqueda({
                             Ingresar Lecturas
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto flex flex-col">
-                          <DialogHeader className="shrink-0 pb-2 sm:pb-3 lg:pb-4 border-b border-border/40 px-3 sm:px-4 lg:px-6">
-                            <DialogTitle>
-                              <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-primary">
-                                <Gauge className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
-                                <span className="truncate">
-                                  Monitor de Medidores
-                                </span>
-                                {/* Indicador de responsive */}
-                                <div className="hidden sm:flex items-center gap-1 ml-auto">
-                                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                                    {results.nichos[selectedNichoIndex]?.nombre}
-                                  </div>
-                                </div>
-                              </div>
-                            </DialogTitle>
-                          </DialogHeader>
-                          <div className="flex-1 overflow-auto min-h-0">
-                            <div className="h-full p-2 sm:p-3 lg:p-4 xl:p-6">
-                              <MonitorNichos
-                                periodo={periodo}
-                                nicho={
-                                  results.nichos[selectedNichoIndex].nombre
-                                }
-                                onSuccess={handleNichoModalSuccess}
-                              />
-                            </div>
-                          </div>
-                        </DialogContent>
                       </Dialog>
                     </div>
                   </motion.div>
@@ -1320,13 +1320,13 @@ export default function ResultadosBusqueda({
                   {/* Filas Container */}
                   <div className="space-y-2">
                     {results.nichos[selectedNichoIndex].filas.map(
-                      (fila: Fila, filaIndex: number) => {
+                      (fila: MonitorFilas, filaIndex: number) => {
                         const problemCount = fila.medidores.filter(
-                          (m: Medidor) =>
+                          (m: MonitorMedidores) =>
                             getMeterStatus(m.claveHtml).severity > 2
                         ).length;
 
-                        if (viewMode === 'compact' && problemCount === 0) {
+                        if (viewMode === "compact" && problemCount === 0) {
                           return null;
                         }
 
@@ -1370,14 +1370,14 @@ export default function ResultadosBusqueda({
                                           className="ml-2"
                                         >
                                           {problemCount} problema
-                                          {problemCount !== 1 && 's'}
+                                          {problemCount !== 1 && "s"}
                                         </Badge>
                                       )}
                                     </div>
 
                                     <div className="flex items-center gap-3">
                                       <div className="text-sm text-muted-foreground">
-                                        {isExpanded ? 'Ocultar' : 'Mostrar'}
+                                        {isExpanded ? "Ocultar" : "Mostrar"}
                                       </div>
                                       {isExpanded ? (
                                         <ChevronUp className="h-5 w-5 text-muted-foreground" />
@@ -1389,11 +1389,10 @@ export default function ResultadosBusqueda({
                                 </CollapsibleTrigger>
                                 <CollapsibleContent>
                                   <div className="p-3 pt-0">
-                                    {viewMode === 'detailed' ? (
-                                      /* Vista de Lista Compacta */
+                                    {viewMode === "detailed" ? (
                                       <div className="space-y-2">
                                         {fila.medidores.map(
-                                          (medidor: Medidor) => {
+                                          (medidor: MonitorMedidores) => {
                                             return (
                                               <MeterRowDetailed
                                                 key={medidor.id}
@@ -1407,9 +1406,9 @@ export default function ResultadosBusqueda({
                                     ) : (
                                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2">
                                         {fila.medidores.map(
-                                          (medidor: Medidor) => {
+                                          (medidor: MonitorMedidores) => {
                                             if (
-                                              viewMode === 'compact' &&
+                                              viewMode === "compact" &&
                                               getMeterStatus(medidor.claveHtml)
                                                 .severity <= 1
                                             ) {
@@ -1450,10 +1449,10 @@ export default function ResultadosBusqueda({
           title="No se encontraron resultados"
           description="No hay lecturas para los filtros y rango de fechas seleccionados"
           suggestions={[
-            'Verifica que el período tenga lecturas registradas',
-            'Intenta expandir el rango de fechas',
-            'Prueba seleccionando otro sector o clave',
-            'Revisa que los filtros aplicados sean correctos'
+            "Verifica que el período tenga lecturas registradas",
+            "Intenta expandir el rango de fechas",
+            "Prueba seleccionando otro sector o clave",
+            "Revisa que los filtros aplicados sean correctos",
           ]}
         />
       )}
