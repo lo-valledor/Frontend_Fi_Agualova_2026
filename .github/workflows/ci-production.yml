@@ -72,7 +72,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: gbourguett-lv
           password: ${{ secrets.GHCR_PUSH_TOKEN }}
 
       - name: Extract image metadata
@@ -118,7 +118,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: gbourguett-lv
           password: ${{ secrets.GHCR_PUSH_TOKEN }}
 
       - name: Pull image
