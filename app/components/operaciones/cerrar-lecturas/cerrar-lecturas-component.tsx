@@ -1,20 +1,21 @@
 import {
   AlertCircleIcon,
-  AlertTriangle,
-  Ban,
-  CalendarIcon,
-  CheckCircleIcon,
+  Calendar,
   ChevronDown,
   ChevronUp,
-  CircleX,
   Eraser,
-  FileTextIcon,
-  SearchIcon
+  Info,
+  Loader2,
+  Lock,
+  Search,
+  UsersIcon
 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ModernHeader } from '~/components/shared/modern-header';
+import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import {
   Card,
@@ -23,6 +24,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card';
+import { Checkbox } from '~/components/ui/checkbox';
 import { Collapsible, CollapsibleContent } from '~/components/ui/collapsible';
 import { Label } from '~/components/ui/label';
 import {
@@ -32,270 +34,292 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select';
-import api from '~/lib/api';
-import {
-  type Ciclo,
-  type EstadoCierreLecturas,
-  type PeriodoAbierto
+import { Separator } from '~/components/ui/separator';
+import { operacionesService } from '~/services/operacionesService';
+import type {
+  CerrarLecturasFiltrosCiclosResponse,
+  CerrarLecturasFiltrosPeriodosResponse,
+  PrepararLecturasBuscarNichosRequest
 } from '~/types/operaciones';
 
-import { DataTable } from '../../data-table/data-table';
 import AlertCerrarLecturas from './alert-cerrar-lecturas';
-import { columns } from './columns';
+import DialogInformacion from './dialog-informacion';
+
+interface CerrarLecturasComponentProps {
+  readonly periodos: CerrarLecturasFiltrosPeriodosResponse;
+  readonly ciclos: CerrarLecturasFiltrosCiclosResponse;
+  readonly error: string | null;
+}
 
 export default function CerrarLecturasComponent({
-  periodoAbierto,
-  ciclosFacturacion
-}: {
-  periodoAbierto: PeriodoAbierto[];
-  ciclosFacturacion: Ciclo[];
-}) {
+  periodos,
+  ciclos,
+  error
+}: CerrarLecturasComponentProps) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [cicloSeleccionado, setCicloSeleccionado] = useState<string>('');
-  const [estadoCierreLecturas, setEstadoCierreLecturas] = useState<
-    EstadoCierreLecturas[]
-  >([]);
-  const [selectedRows, setSelectedRows] = useState<EstadoCierreLecturas[]>([]);
+  const [periodoId, setPeriodoId] = useState<string>(
+    () => periodos[0]?.id ?? ''
+  );
+  const [cicloId, setCicloId] = useState<string>('');
+  const [nichos, setNichos] = useState<PrepararLecturasBuscarNichosRequest[]>(
+    []
+  );
+  const [selectedIdsNichos, setSelectedIdsNichos] = useState<number[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [totalLecturasCerrar, setTotalLecturasCerrar] = useState(0);
-  const [showSinLecturas, setShowSinLecturas] = useState(false);
 
-  const periodoFormateado = useMemo(() => {
-    if (periodoAbierto && periodoAbierto.length > 0) {
-      const { mes, anio } = periodoAbierto[0];
-      const formatted = `${mes.toString().padStart(2, '0')}${anio.toString()}`;
-
-      return formatted;
+  // Si llegan más periodos desde el loader, mantener selección si sigue válida
+  useEffect(() => {
+    if (periodos.length > 0 && !periodos.some(p => p.id === periodoId)) {
+      setPeriodoId(periodos[0].id);
     }
-    return '';
-  }, [periodoAbierto]);
+  }, [periodos, periodoId]);
 
-  // Separar nichos con lecturas de los sin lecturas
-  const { nichosConLecturas, nichosSinLecturas } = useMemo(() => {
-    const conLecturas: EstadoCierreLecturas[] = [];
-    const sinLecturas: EstadoCierreLecturas[] = [];
+  const cicloIdNumero = useMemo(() => {
+    const n = Number(cicloId);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  }, [cicloId]);
 
-    estadoCierreLecturas.forEach(nicho => {
-      const tieneLecturas =
-        nicho.cantidadLecturasOK > 0 ||
-        nicho.cantidadClaveRoja > 0 ||
-        nicho.cantidadClaveNaranja > 0 ||
-        nicho.cantidadCorregidas > 0;
-
-      if (tieneLecturas) {
-        conLecturas.push(nicho);
-      } else {
-        sinLecturas.push(nicho);
-      }
-    });
-
-    return {
-      nichosConLecturas: conLecturas,
-      nichosSinLecturas: sinLecturas
-    };
-  }, [estadoCierreLecturas]);
-
-  const obtenerCicloParaAPI = (diaFacturacion: string): string => {
-    if (!ciclosFacturacion || ciclosFacturacion.length === 0) {
-      return diaFacturacion;
-    }
-
-    // Buscar el ciclo por día de facturación
-    const ciclo = ciclosFacturacion.find(
-      (c: Ciclo) => c.diaFacturacion === diaFacturacion
-    );
-
-    if (!ciclo) {
-      return diaFacturacion;
-    }
-
-    const descripcion = ciclo.descripcion.toLowerCase();
-
-    // Ciclo 15 (o variantes como 16) → ID 1
-    if (descripcion.includes('15') || descripcion.includes('16')) {
-      return '1';
-    }
-
-    // Ciclo 30 (o fin de mes) → ID 2
-    if (
-      descripcion.includes('30') ||
-      descripcion.includes('31') ||
-      descripcion.includes('fin de mes')
-    ) {
-      return '2';
-    }
-
-    return diaFacturacion;
-  };
-
-  const handleSearch = async () => {
-    if (!periodoFormateado) {
-      toast.error('No hay un periodo abierto disponible');
+  const handleBuscar = async (): Promise<void> => {
+    if (!periodoId) {
+      toast.error('Selecciona un período');
       return;
     }
-
-    if (!cicloSeleccionado) {
-      toast.error('Debe seleccionar un ciclo de facturación');
+    if (!cicloIdNumero) {
+      toast.error('Selecciona un ciclo de facturación');
       return;
     }
 
     try {
       setIsLoading(true);
-      setError(null);
-      setSelectedRows([]); // Limpiar selección en nueva búsqueda
+      setHasSearched(true);
+      setSelectedIdsNichos([]);
 
-      // Convertir el día de facturación al ID del ciclo
-      const cicloParaAPI = obtenerCicloParaAPI(cicloSeleccionado);
+      const result = await operacionesService.getBuscarNichos(
+        cicloIdNumero,
+        periodoId
+      );
 
-      const params = new URLSearchParams();
-      params.append('cicloFacturable', cicloParaAPI);
-      params.append('periodo', periodoFormateado);
-
-      const response = await api.get('/estado-cierre-lecturas', {
-        params
-      });
-
-      // Guardar los datos en el estado
-      if (response.data && Array.isArray(response.data)) {
-        setEstadoCierreLecturas(response.data);
-
-        if (response.data.length > 0) {
-          toast.success(`Se encontraron ${response.data.length} registros`);
-        } else {
-          toast.info(
-            'No se encontraron lecturas para cerrar en este ciclo y periodo'
-          );
-        }
-      } else {
-        setEstadoCierreLecturas([]);
-        toast.info('No se encontraron registros');
+      if (result.error || !result.data) {
+        setNichos([]);
+        toast.info('No se encontraron nichos para los criterios seleccionados');
+        return;
       }
-    } catch (error: any) {
-      setError(`Error: ${error.message || 'Error desconocido'}`);
 
-      if (error.response) {
-        toast.error(
-          `Error ${error.response.status}: ${
-            error.response.data?.mensaje || 'Error en la consulta'
-          }`
-        );
-      } else if (error.request) {
-        toast.error('No se recibió respuesta del servidor');
+      const data = Array.isArray(result.data)
+        ? (result.data as PrepararLecturasBuscarNichosRequest[])
+        : [];
+
+      setNichos(data);
+      if (data.length === 0) {
+        toast.info('No se encontraron nichos para los criterios seleccionados');
       } else {
-        toast.error(`Error: ${error.message}`);
+        toast.success(`Se encontraron ${data.length} nichos`);
       }
+    } catch (err) {
+      const mensaje =
+        err instanceof Error ? err.message : 'Error al buscar nichos';
+      toast.error(mensaje);
+      setNichos([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleClearFilters = () => {
-    setCicloSeleccionado('');
-    setEstadoCierreLecturas([]);
-    setSelectedRows([]);
-    setError(null);
+  const handleLimpiar = (): void => {
+    setPeriodoId(periodos[0]?.id ?? '');
+    setCicloId('');
+    setNichos([]);
+    setSelectedIdsNichos([]);
+    setHasSearched(false);
     toast.success('Filtros limpiados');
   };
 
-  // Función para manejar la actualización después de cerrar lecturas
-  const handleLecturaCerrada = () => {
-    // Volvemos a buscar para actualizar la lista
-    if (cicloSeleccionado && periodoFormateado) {
-      handleSearch();
-    }
+  const toggleNicho = (idNicho: number): void => {
+    setSelectedIdsNichos(prev =>
+      prev.includes(idNicho)
+        ? prev.filter(id => id !== idNicho)
+        : [...prev, idNicho]
+    );
   };
 
-  // Función para verificar si hay claves críticas que bloqueen el cierre
-  const checkCriticalBlockers = (rows: EstadoCierreLecturas[]) => {
-    const criticalRows = rows.filter(row => row.cantidadClaveRoja > 0);
-    const warningRows = rows.filter(row => row.cantidadClaveNaranja > 0);
-
-    return {
-      hasCritical: criticalRows.length > 0,
-      hasWarning: warningRows.length > 0,
-      criticalCount: criticalRows.reduce(
-        (acc, row) => acc + row.cantidadClaveRoja,
-        0
-      ),
-      warningCount: warningRows.reduce(
-        (acc, row) => acc + row.cantidadClaveNaranja,
-        0
-      ),
-      blockedNichos: criticalRows.map(row => row.nichoDescripcion)
-    };
-  };
-
-  const handleOpenAlert = () => {
-    if (selectedRows.length > 0) {
-      const blockers = checkCriticalBlockers(selectedRows);
-
-      // Bloquear si hay claves críticas
-      if (blockers.hasCritical) {
-        toast.error(
-          `No se puede cerrar: ${blockers.criticalCount} lecturas con claves críticas en ${blockers.blockedNichos.length} nicho(s)`,
-          {
-            description: `Nichos bloqueados: ${blockers.blockedNichos.join(', ')}`,
-            duration: 6000
-          }
-        );
-        return;
-      }
-
-      // Advertir si hay claves de alerta pero permitir continuar
-      if (blockers.hasWarning) {
-        toast.warning(
-          `Atención: ${blockers.warningCount} lecturas con claves de alerta en la selección`,
-          {
-            description: 'Se recomienda revisar antes de proceder',
-            duration: 4000
-          }
-        );
-      }
-
-      const total = selectedRows.reduce(
-        (acc, row) =>
-          acc +
-          row.cantidadLecturasOK +
-          row.cantidadClaveRoja +
-          row.cantidadClaveNaranja +
-          row.cantidadCorregidas,
-        0
-      );
-      setTotalLecturasCerrar(total);
-      setIsAlertOpen(true);
+  const toggleSeleccionarTodo = (): void => {
+    if (selectedIdsNichos.length === nichos.length) {
+      setSelectedIdsNichos([]);
     } else {
-      toast.info('Debe seleccionar al menos un nicho para cerrar.');
+      setSelectedIdsNichos(nichos.map(n => n.idNicho));
     }
   };
+
+  const handleAbrirCerrar = (): void => {
+    if (selectedIdsNichos.length === 0) {
+      toast.info('Selecciona al menos un nicho para cerrar');
+      return;
+    }
+    if (!cicloIdNumero || !periodoId) {
+      toast.error('Faltan datos de ciclo o período');
+      return;
+    }
+    setIsAlertOpen(true);
+  };
+
+  const handleCerrado = async (): Promise<void> => {
+    setIsAlertOpen(false);
+    setSelectedIdsNichos([]);
+    await handleBuscar();
+  };
+
+  const renderResultados = () => {
+    if (isLoading) {
+      return (
+        <div className="flex justify-center items-center h-48">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="font-medium text-sm">Buscando nichos...</p>
+            <p className="text-xs text-muted-foreground">Por favor espere</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!hasSearched) {
+      return (
+        <div className="flex flex-col items-center justify-center h-48 gap-3">
+          <Search className="w-10 h-10 text-muted-foreground" />
+          <div className="text-center">
+            <p className="font-medium text-sm">Realizar búsqueda de nichos</p>
+            <p className="text-xs text-muted-foreground">
+              Selecciona período y ciclo, luego haz clic en Buscar.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (nichos.length === 0) {
+      return (
+        <Alert className="border-blue-200 bg-blue-50 dark:bg-blue-950/20 dark:border-blue-900">
+          <Info className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <AlertTitle className="text-blue-800 dark:text-blue-300 font-semibold">
+            Sin nichos pendientes
+          </AlertTitle>
+          <AlertDescription className="text-blue-700 dark:text-blue-400 mt-2">
+            No hay nichos disponibles para el ciclo y período seleccionados.
+          </AlertDescription>
+        </Alert>
+      );
+    }
+
+    const todosSeleccionados =
+      nichos.length > 0 && selectedIdsNichos.length === nichos.length;
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border">
+          <div className="flex items-center gap-3 text-sm">
+            <Checkbox
+              checked={todosSeleccionados}
+              onCheckedChange={toggleSeleccionarTodo}
+              aria-label="Seleccionar todos"
+            />
+            <span>
+              {selectedIdsNichos.length === 0
+                ? 'Selecciona los nichos a cerrar'
+                : `${selectedIdsNichos.length} de ${nichos.length} nichos seleccionados`}
+            </span>
+          </div>
+          <Button
+            onClick={handleAbrirCerrar}
+            disabled={selectedIdsNichos.length === 0}
+            size="sm"
+            className="gap-2 bg-red-600 hover:bg-red-700 text-white"
+          >
+            <Lock className="h-3 w-3 sm:h-4 sm:w-4" />
+            Cerrar lecturas ({selectedIdsNichos.length})
+          </Button>
+        </div>
+
+        <div className="space-y-2">
+          {nichos.map(nicho => (
+            <div
+              key={nicho.idNicho}
+              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                selectedIdsNichos.includes(nicho.idNicho)
+                  ? 'bg-emerald-50/50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-800'
+                  : 'bg-card border-border hover:bg-muted/30'
+              }`}
+            >
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <Checkbox
+                  checked={selectedIdsNichos.includes(nicho.idNicho)}
+                  onCheckedChange={() => toggleNicho(nicho.idNicho)}
+                  aria-label={`Seleccionar nicho ${nicho.idNicho}`}
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-sm truncate">
+                    {nicho.nombreNicho}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {nicho.nombreSector} · {nicho.cantidadMedidores} medidores
+                  </div>
+                </div>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                #{nicho.idNicho}
+              </Badge>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto p-3 space-y-4">
+          <ModernHeader
+            title="Cierre de Lecturas"
+            description="Cerrar lecturas de medidores por ciclo y período"
+          />
+          <Alert variant="destructive">
+            <AlertCircleIcon className="h-4 w-4" />
+            <AlertTitle>Error al cargar datos</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-3 space-y-4">
-        {/* Header */}
-        <ModernHeader
-          title="Cierre de Lecturas"
-          description="Gestión de cierre de lecturas por ciclo de facturación"
-        />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <ModernHeader
+            title="Cierre de Lecturas"
+            description="Cerrar lecturas de medidores por ciclo y período"
+          />
+          <DialogInformacion />
+        </div>
 
-        {/* Filtros de Búsqueda */}
-        <Card className="border-border bg-card">
+        <Card id="filtros-periodo" className="border border-border shadow-sm">
           <Collapsible open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <div
               className="flex justify-between items-center p-3 cursor-pointer hover:bg-muted/50 transition-colors"
               onClick={() => setIsFiltersOpen(!isFiltersOpen)}
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border">
-                  <SearchIcon className="w-4 h-4 text-primary" />
+                <div className="w-8 h-8 bg-muted rounded-xl flex items-center justify-center">
+                  <Search className="w-4 h-4 text-primary" />
                 </div>
                 <div>
                   <CardTitle className="text-base font-medium">
                     Criterios de Búsqueda
                   </CardTitle>
                   <CardDescription className="text-sm">
-                    Selecciona criterios para cerrar lecturas
+                    Selecciona período y ciclo de facturación
                   </CardDescription>
                 </div>
               </div>
@@ -309,450 +333,110 @@ export default function CerrarLecturasComponent({
             </div>
 
             <CollapsibleContent>
-              <CardContent className="p-3">
-                <div className="flex flex-col gap-4 w-full">
-                  {/* Campos de filtro */}
-                  <div className="flex flex-col sm:flex-row gap-4 w-full">
-                    {/* Periodo */}
-                    <div className="flex-1 min-w-0">
-                      <Label className="text-sm font-medium flex items-center gap-2 mb-1">
-                        <CalendarIcon className="w-4 h-4 text-primary" />
-                        Periodo
-                      </Label>
-                      {periodoAbierto && periodoAbierto.length > 0 ? (
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-background border border-border">
-                          <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center shrink-0">
-                            <CalendarIcon className="w-4 h-4 text-primary" />
-                          </div>
-                          <div>
-                            <span className="font-medium text-sm">
-                              {periodoAbierto[0].mes
-                                .toString()
-                                .padStart(2, '0')}
-                              /{periodoAbierto[0].anio}
-                            </span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-3 p-3 rounded-xl bg-background border border-border">
-                          <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center shrink-0">
-                            <AlertCircleIcon className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <span className="font-medium text-sm">
-                              No hay periodo abierto
-                            </span>
-                            <p className="text-xs mt-0.5">
-                              Contacta al administrador
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Ciclo de facturación */}
-                    <div className="flex-1 min-w-0">
-                      <Label
-                        htmlFor="ciclo"
-                        className="text-sm font-medium flex items-center gap-2 mb-1"
-                      >
-                        <FileTextIcon className="w-4 h-4 text-primary" />
-                        Ciclo de facturación
-                      </Label>
-                      <Select
-                        value={cicloSeleccionado}
-                        onValueChange={value => {
-                          setCicloSeleccionado(value);
-                        }}
-                      >
-                        <SelectTrigger
-                          id="ciclo"
-                          className="h-[50px] bg-background border-border w-full text-sm"
-                        >
-                          <SelectValue placeholder="Selecciona un ciclo de facturación" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {ciclosFacturacion?.map(
-                            (ciclo: Ciclo, index: number) => {
-                              return (
-                                <SelectItem
-                                  key={index}
-                                  value={ciclo.diaFacturacion}
-                                >
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                                    <span className="font-medium">
-                                      {ciclo.descripcion}
-                                    </span>
-                                  </div>
-                                </SelectItem>
-                              );
-                            }
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
+              <CardContent className="p-3 space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      Período
+                    </Label>
+                    <Select
+                      value={periodoId}
+                      onValueChange={setPeriodoId}
+                      disabled={periodos.length === 0}
+                    >
+                      <SelectTrigger className="h-9 w-full bg-background border-border">
+                        <SelectValue placeholder="Selecciona un período" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {periodos.map(p => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.descripcion}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  {/* Botones de acción */}
-                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:justify-end">
-                    <Button
-                      onClick={handleClearFilters}
-                      variant="outline"
-                      disabled={isLoading}
-                      className="gap-2 w-full sm:w-auto"
-                    >
-                      <Eraser className="h-4 w-4" />
-                      Limpiar
-                    </Button>
-                    <Button
-                      onClick={handleSearch}
-                      disabled={
-                        isLoading || !cicloSeleccionado || !periodoFormateado
-                      }
-                      className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto"
-                    >
-                      <SearchIcon className="h-4 w-4" />
-                      {isLoading ? 'Buscando...' : 'Buscar Lecturas'}
-                    </Button>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      Ciclo de Facturación
+                    </Label>
+                    <Select value={cicloId} onValueChange={setCicloId}>
+                      <SelectTrigger className="h-9 w-full bg-background border-border">
+                        <SelectValue placeholder="Selecciona un ciclo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ciclos.map(c => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.descripcion}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex flex-col sm:flex-row gap-2 justify-end">
+                  <Button
+                    onClick={handleLimpiar}
+                    variant="outline"
+                    disabled={isLoading}
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <Eraser className="h-4 w-4" />
+                    Limpiar
+                  </Button>
+                  <Button
+                    onClick={handleBuscar}
+                    disabled={isLoading || !cicloIdNumero || !periodoId}
+                    size="sm"
+                    className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+                  >
+                    <Search className="h-4 w-4" />
+                    {isLoading ? 'Buscando...' : 'Buscar Nichos'}
+                  </Button>
                 </div>
               </CardContent>
             </CollapsibleContent>
           </Collapsible>
         </Card>
 
-        {/* Resultados de la búsqueda */}
-        <Card className="border-border bg-card">
+        <Card className="border border-border shadow-sm">
           <CardHeader className="border-b border-border p-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center border border-border">
-                <CheckCircleIcon className="w-4 h-4 text-primary" />
+              <div className="w-8 h-8 bg-muted rounded-xl flex items-center justify-center">
+                <UsersIcon className="w-4 h-4 text-primary" />
               </div>
               <div>
                 <CardTitle className="text-base font-medium">
-                  Estado de Cierre de Lecturas por Nichos
+                  {nichos.length === 0
+                    ? 'Resultados de búsqueda'
+                    : `${nichos.length} nicho${nichos.length === 1 ? '' : 's'} encontrado${nichos.length === 1 ? '' : 's'}`}
                 </CardTitle>
-                <CardDescription className="text-sm">
-                  {estadoCierreLecturas.length > 0
-                    ? `${estadoCierreLecturas.length} nichos disponibles para cierre`
-                    : 'No hay nichos disponibles para cierre'}
+                <CardDescription className="text-xs">
+                  {selectedIdsNichos.length > 0
+                    ? `${selectedIdsNichos.length} seleccionado${selectedIdsNichos.length === 1 ? '' : 's'}`
+                    : 'Selecciona los nichos a cerrar'}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-3">
-            {(() => {
-              if (isLoading) {
-                return (
-                  <div className="flex justify-center items-center h-64">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="relative">
-                        <div className="w-16 h-16 rounded-full border-4 border-border"></div>
-                        <div className="absolute top-0 left-0 w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
-                      </div>
-                      <div className="text-center">
-                        <p className="font-medium">Buscando nichos...</p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Por favor espere mientras procesamos su consulta
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              if (error) {
-                return (
-                  <div className="p-4 rounded-xl bg-background border border-border">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center">
-                        <AlertCircleIcon className="w-4 h-4" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-medium">
-                          Error al cargar los datos
-                        </h4>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {error}
-                        </p>
-                        <Button
-                          onClick={() => setError(null)}
-                          variant="outline"
-                          size="sm"
-                          className="mt-2"
-                        >
-                          Cerrar
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              }
-
-              if (estadoCierreLecturas.length === 0) {
-                return (
-                  <div className="flex flex-col items-center justify-center h-64 gap-4">
-                    <div className="w-16 h-16 bg-background rounded-xl flex items-center justify-center">
-                      <SearchIcon className="w-8 h-8 text-primary" />
-                    </div>
-                    <div className="text-center">
-                      <p className="font-medium text-sm">
-                        Realizar consulta de lecturas
-                      </p>
-                      <p className="text-xs mt-1">
-                        Selecciona un ciclo y haz clic en "Buscar Lecturas" para
-                        ver los resultados
-                      </p>
-                    </div>
-                  </div>
-                );
-              }
-
-              return (
-                <div className="space-y-4">
-                  {/* Estadísticas generales */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
-                      <div className="flex items-center gap-2">
-                        <CheckCircleIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                        <div>
-                          <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
-                            {nichosConLecturas.length}
-                          </div>
-                          <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                            Nichos con lecturas
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/20 border border-slate-200 dark:border-slate-800">
-                      <div className="flex items-center gap-2">
-                        <AlertCircleIcon className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-                        <div>
-                          <div className="text-2xl font-bold text-slate-700 dark:text-slate-300">
-                            {nichosSinLecturas.length}
-                          </div>
-                          <div className="text-xs font-medium text-slate-600 dark:text-slate-400">
-                            Nichos sin lecturas
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
-                      <div className="flex items-center gap-2">
-                        <FileTextIcon className="h-5 w-5 text-primary" />
-                        <div>
-                          <div className="text-2xl font-bold text-primary">
-                            {estadoCierreLecturas.length}
-                          </div>
-                          <div className="text-xs font-medium text-primary">
-                            Total nichos
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Encabezado y botón de acción */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-background rounded-xl flex items-center justify-center shrink-0">
-                        <CheckCircleIcon className="w-4 h-4 text-primary" />
-                      </div>
-                      <div>
-                        <span className="font-medium text-sm">
-                          Nichos disponibles para cierre
-                        </span>
-                        <p className="text-xs text-muted-foreground">
-                          {nichosConLecturas.length} nichos con lecturas listas
-                          para procesar
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const blockers = checkCriticalBlockers(selectedRows);
-                        const isBlocked = blockers.hasCritical;
-                        const hasWarnings = blockers.hasWarning;
-
-                        return (
-                          <>
-                            {/* Indicadores de estado */}
-                            {selectedRows.length > 0 && (
-                              <div className="flex items-center gap-2 mr-2">
-                                {isBlocked && (
-                                  <div className="flex items-center gap-1 text-destructive bg-destructive/10 px-2 py-1 rounded-md border border-destructive/20">
-                                    <AlertCircleIcon className="h-3 w-3" />
-                                    <span className="text-xs font-medium">
-                                      {blockers.criticalCount} Críticas
-                                    </span>
-                                  </div>
-                                )}
-                                {hasWarnings && !isBlocked && (
-                                  <div className="flex items-center gap-1 text-warning bg-warning/10 px-2 py-1 rounded-md border border-warning/20">
-                                    <AlertTriangle className="h-3 w-3" />
-                                    <span className="text-xs font-medium">
-                                      {blockers.warningCount} Alertas
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            <Button
-                              variant={isBlocked ? 'secondary' : 'destructive'}
-                              size="sm"
-                              onClick={handleOpenAlert}
-                              disabled={selectedRows.length === 0 || isBlocked}
-                              className={`gap-2 ${
-                                isBlocked
-                                  ? 'opacity-50 cursor-not-allowed bg-muted hover:bg-muted text-muted-foreground border border-destructive/20'
-                                  : hasWarnings
-                                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                                    : ''
-                              }`}
-                              title={
-                                isBlocked
-                                  ? `Cierre bloqueado: ${blockers.criticalCount} lecturas críticas`
-                                  : hasWarnings
-                                    ? `${blockers.warningCount} lecturas con alertas - Proceder con precaución`
-                                    : 'Cerrar lecturas seleccionadas'
-                              }
-                            >
-                              {isBlocked ? (
-                                <>
-                                  <Ban className="h-4 w-4" />
-                                  Bloqueado por claves críticas (
-                                  {blockers.criticalCount}) nichos (
-                                  {blockers.blockedNichos.length}) )
-                                </>
-                              ) : (
-                                <>
-                                  <CircleX className="h-4 w-4" />
-                                  Cerrar Nichos ({selectedRows.length})
-                                </>
-                              )}
-                            </Button>
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-
-                  {/* Tabla de nichos CON lecturas (virtualizada) */}
-                  {nichosConLecturas.length > 0 ? (
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-sm font-semibold flex items-center gap-2">
-                          <CheckCircleIcon className="h-4 w-4 text-emerald-600" />
-                          Nichos con lecturas ({nichosConLecturas.length})
-                        </h3>
-                        <div className="text-xs text-muted-foreground">
-                          Selecciona los nichos a cerrar
-                        </div>
-                      </div>
-                      <DataTable
-                        columns={columns}
-                        data={nichosConLecturas}
-                        onRowSelectionChange={setSelectedRows}
-                        rowIdKey="nichoId"
-                      />
-                    </div>
-                  ) : (
-                    <div className="p-8 rounded-xl bg-muted/30 border border-border text-center">
-                      <CheckCircleIcon className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
-                      <p className="font-medium text-muted-foreground">
-                        No hay nichos con lecturas para cerrar
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Todos los nichos consultados no tienen lecturas
-                        registradas
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Sección colapsable de nichos SIN lecturas */}
-                  {nichosSinLecturas.length > 0 && (
-                    <div className="space-y-2">
-                      <Card className="border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/20">
-                        <Collapsible
-                          open={showSinLecturas}
-                          onOpenChange={setShowSinLecturas}
-                        >
-                          <button
-                            className="w-full flex justify-between items-center p-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-800/30 transition-colors text-left rounded-lg"
-                            onClick={() => setShowSinLecturas(!showSinLecturas)}
-                            onKeyDown={e => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                setShowSinLecturas(!showSinLecturas);
-                              }
-                            }}
-                            aria-expanded={showSinLecturas}
-                            aria-controls="sin-lecturas-content"
-                            type="button"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 bg-slate-200 dark:bg-slate-800 rounded-xl flex items-center justify-center">
-                                <AlertCircleIcon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                              </div>
-                              <div>
-                                <div className="font-medium text-sm text-slate-700 dark:text-slate-300">
-                                  Nichos sin lecturas (
-                                  {nichosSinLecturas.length})
-                                </div>
-                                <p className="text-xs text-slate-600 dark:text-slate-400">
-                                  Estos nichos no pueden cerrarse (sin lecturas
-                                  registradas)
-                                </p>
-                              </div>
-                            </div>
-                            <div className="flex items-center">
-                              {showSinLecturas ? (
-                                <ChevronUp className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-                              )}
-                            </div>
-                          </button>
-
-                          <CollapsibleContent>
-                            <CardContent className="px-4 pb-4">
-                              <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-card">
-                                <DataTable
-                                  columns={columns}
-                                  data={nichosSinLecturas}
-                                  rowIdKey="nichoId"
-                                  showSearch={false}
-                                  meta={{
-                                    allRowsDisabled: true
-                                  }}
-                                />
-                              </div>
-                            </CardContent>
-                          </CollapsibleContent>
-                        </Collapsible>
-                      </Card>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
-          </CardContent>
+          <CardContent className="p-3">{renderResultados()}</CardContent>
         </Card>
 
-        {isAlertOpen && (
+        {isAlertOpen && cicloIdNumero > 0 && periodoId && (
           <AlertCerrarLecturas
             isOpen={isAlertOpen}
             onOpenChange={setIsAlertOpen}
-            selectedRows={selectedRows}
-            cicloFact={obtenerCicloParaAPI(cicloSeleccionado)}
-            periodo={periodoFormateado}
-            onSuccess={handleLecturaCerrada}
-            totalLecturas={totalLecturasCerrar}
+            idsNichos={selectedIdsNichos}
+            cicloId={cicloIdNumero}
+            periodoId={periodoId}
+            onSuccess={handleCerrado}
           />
         )}
       </div>

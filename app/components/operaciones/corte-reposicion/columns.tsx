@@ -228,7 +228,7 @@ export const columns = (): ColumnDef<CorteReposicionBuscarRequest>[] => [
     header: "Acciones",
     id: "acciones",
     cell: ({ row, table }) => {
-      const acometida = row.original.acometida;
+      const { acometida, contratoId } = row.original;
 
       const handleSuccess = () => {
         (
@@ -247,6 +247,7 @@ export const columns = (): ColumnDef<CorteReposicionBuscarRequest>[] => [
             onSuccess={handleSuccess}
           />
           <ReposicionSolicitadaDialog
+            contratoId={contratoId}
             acometida={acometida}
             onSuccess={handleSuccess}
           />

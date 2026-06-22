@@ -16,6 +16,8 @@ import type {
   PrepararLecturasFiltrosCiclosResponse,
   PrepararLecturasFiltrosPeriodosResponse,
   PrepararLecturasGenerarRequest,
+  RevisarCalculosFiltrosCiclosResponse,
+  RevisarCalculosFiltrosPeriodosResponse,
   RevisarCalculosLanzarCalculoRequest,
   RevisionPreciosConfirmarRequest,
   RevisionPreciosCorregirRequest,
@@ -579,26 +581,19 @@ class OperacionesService {
   /**
    * Revisar Calculos
    */
-  async getRevisarCalculosFiltrosCiclos() {
+  async getRevisarCalculosData() {
     try {
-      const response = await api.get("/revisar-calculos/filtros/ciclos");
+      const [filtrosCiclos, filtrosPeriodos] = await Promise.all([
+        api.get("/revisar-calculos/filtros/ciclos"),
+        api.get("/revisar-calculos/filtros/periodos"),
+      ]);
       return {
-        data: response.data as PrepararLecturasFiltrosCiclosResponse[],
-        error: null,
-      };
-    } catch (error) {
-      return {
-        data: null,
-        error: error instanceof Error ? error.message : "Error desconocido",
-      };
-    }
-  }
-
-  async getRevisarCalculosFiltrosPeriodos() {
-    try {
-      const response = await api.get("/revisar-calculos/filtros/periodos");
-      return {
-        data: response.data as PrepararLecturasFiltrosPeriodosResponse[],
+        data: {
+          filtrosCiclos:
+            filtrosCiclos.data as RevisarCalculosFiltrosCiclosResponse,
+          filtrosPeriodos:
+            filtrosPeriodos.data as RevisarCalculosFiltrosPeriodosResponse,
+        },
         error: null,
       };
     } catch (error) {
@@ -686,7 +681,7 @@ class OperacionesService {
 
   async postRevisarCalculosAceptar(periodoId: string) {
     try {
-      const response = await api.post("/revisar-calculos/aceptar-calculos", {
+      const response = await api.post("/revisar-calculos/aceptar", {
         periodoId,
       });
       return {
@@ -715,7 +710,7 @@ class OperacionesService {
           "Se debe proporcionar al menos un parámetro: acometida o número de serie",
         );
       }
-      const response = await api.get("/cambio-medidor/buscar-medidor-antiguo", {
+      const response = await api.get("/cambio-medidor/buscar-antiguo", {
         params,
       });
       return {

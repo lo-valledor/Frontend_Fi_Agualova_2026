@@ -1,55 +1,55 @@
-import { Download, Eye, MessageSquare, Unlock } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
+import { Download, Eye, MessageSquare, Unlock } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { Button } from "~/components/ui/button";
+import { Button } from '~/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-import { Label } from "~/components/ui/label";
+  DialogTrigger
+} from '~/components/ui/dialog';
+import { Label } from '~/components/ui/label';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "~/components/ui/table";
-import { Textarea } from "~/components/ui/textarea";
+  TableRow
+} from '~/components/ui/table';
+import { Textarea } from '~/components/ui/textarea';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import api from "~/lib/api";
+  TooltipTrigger
+} from '~/components/ui/tooltip';
+import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
-interface ConsultarAcometidaData {
-  ctId: string;
-  seCodigo: string;
-  meNSerie: string;
-  clRut: string;
-  clRazonSocialCompleto: string;
-  niDescripcion: string;
-  secDescripcion: string;
-  reEstado: string;
-  reCantDocumentos: number;
-  reDeudaTotal: number;
-  reFechaIngreso: string;
+interface ConsultaAcometidaDetalle {
+  ctId?: string;
+  seCodigo?: string;
+  meNSerie?: string;
+  clRut?: string;
+  clRazonSocialCompleto?: string;
+  niDescripcion?: string;
+  secDescripcion?: string;
+  reCantDocumentos?: number;
+  reDeudaTotal?: number;
+  reFechaIngreso?: string;
 }
 
 interface FacturaImpaga {
-  clRut: string;
-  seCodigo: string;
-  faNumero: number;
-  faFechaVencimiento: string;
-  faTotal: number;
-  faSaldo: number;
+  clRut?: string;
+  seCodigo?: string;
+  faNumero?: number;
+  faFechaVencimiento?: string;
+  faTotal?: number;
+  faSaldo?: number;
 }
 
 interface ConsultarAcometidaDialogProps {
@@ -57,122 +57,119 @@ interface ConsultarAcometidaDialogProps {
   onSuccess: () => void;
 }
 
+const FORMATO_MONEDA = new Intl.NumberFormat('es-CL', {
+  style: 'currency',
+  currency: 'CLP',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+});
+
+const formatCurrency = (value: number | undefined): string =>
+  FORMATO_MONEDA.format(value ?? 0);
+
+const ColonCell = () => (
+  <TableCell className="text-xs py-1 w-3 text-center">:</TableCell>
+);
+
 export function ConsultarAcometidaDialog({
   acometida,
-  onSuccess,
+  onSuccess
 }: Readonly<ConsultarAcometidaDialogProps>) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<ConsultarAcometidaData | null>(null);
-  const [comentario, setComentario] = useState("");
+  const [data, setData] = useState<ConsultaAcometidaDetalle | null>(null);
+  const [comentario, setComentario] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  // Cargar datos cuando se abre el diálogo
   useEffect(() => {
     if (open) {
       void loadData();
     }
   }, [open]);
 
-  const loadData = async () => {
+  const loadData = async (): Promise<void> => {
     setLoading(true);
     try {
-      const response = await api.get<ConsultarAcometidaData[]>(
-        "corte-reposicion/consulta-deuda",
-        {
-          params: { acometida },
-        },
-      );
-
-      if (
-        response.data &&
-        Array.isArray(response.data) &&
-        response.data.length > 0
-      ) {
-        setData(response.data[0]);
+      const response = await operacionesService.getConsultarDeuda(acometida);
+      const list = Array.isArray(response.data) ? response.data : [];
+      if (list.length > 0) {
+        setData(list[0] as ConsultaAcometidaDetalle);
+      } else if (response.data && !Array.isArray(response.data)) {
+        setData(response.data as ConsultaAcometidaDetalle);
       } else {
-        toast.error("No se encontraron datos para esta acometida");
+        toast.error('No se encontraron datos para esta acometida');
+        setData(null);
       }
-    } catch (error) {
-      toast.error("Error al cargar los datos de la acometida", error as any);
+    } catch (err) {
+      toast.error('Error al cargar los datos de la acometida', {
+        description: String(err)
+      });
+      setData(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleExportarExcel = async () => {
+  const handleExportarExcel = async (): Promise<void> => {
     setIsExporting(true);
     try {
-      const response = await api.get("exportar-facturas-impagas", {
+      const response = await api.get('exportar-facturas-impagas', {
         params: { acometida },
-        responseType: "blob",
+        responseType: 'blob'
       });
 
-      // Crear un link temporal para descargar el archivo
-      // El tipado de axios con responseType: 'blob' retorna response.data como "unknown"
-      // así que lo forzamos a Blob de manera segura para su uso en el objeto URL.
       const blob =
         response.data instanceof Blob
           ? response.data
           : new Blob([response.data as BlobPart]);
       const url = globalThis.URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
-      link.setAttribute("download", `facturas-impagas-${acometida}.xlsx`);
+      link.setAttribute('download', `facturas-impagas-${acometida}.xlsx`);
       document.body.appendChild(link);
-
       link.click();
       link.remove();
       globalThis.URL.revokeObjectURL(url);
 
-      toast.success("Excel exportado correctamente");
-    } catch (error) {
-      toast.error("Error al exportar las facturas a Excel", error as any);
+      toast.success('Excel exportado correctamente');
+    } catch (err) {
+      toast.error('Error al exportar las facturas a Excel', {
+        description: String(err)
+      });
     } finally {
       setIsExporting(false);
     }
   };
 
-  const handleLiberar = async () => {
+  const handleLiberar = async (): Promise<void> => {
     if (!comentario.trim()) {
-      toast.error("El comentario es obligatorio");
+      toast.error('El comentario es obligatorio');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await api.post("marcar-liberar", null, {
-        params: { acometida, comentario },
+      const result = await operacionesService.postLiberarAcometida({
+        acometida,
+        comentario
       });
-      toast.success("Liberación registrada correctamente");
-      onSuccess();
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+      toast.success('Liberación registrada correctamente');
       setOpen(false);
-      // Limpiar formulario
-      setComentario("");
-    } catch (error) {
-      toast.error(
-        "Error al registrar la liberación. Intente nuevamente.",
-        error as any,
-      );
+      setComentario('');
+      onSuccess();
+    } catch (err) {
+      toast.error('Error al registrar la liberación', {
+        description: String(err)
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("es-CL", {
-      style: "currency",
-      currency: "CLP",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
-  // Celda estándar para los dos puntos con ancho y alineación uniforme
-  const ColonCell = () => (
-    <TableCell className="text-xs py-1 w-3 text-center">:</TableCell>
-  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -207,13 +204,25 @@ export function ConsultarAcometidaDialog({
           </DialogDescription>
         </DialogHeader>
 
+        <div className="flex justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportarExcel}
+            disabled={isExporting}
+            className="gap-1.5"
+          >
+            <Download className="h-3 w-3" />
+            {isExporting ? 'Exportando...' : 'Exportar Facturas'}
+          </Button>
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center py-6">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
           </div>
         ) : data ? (
           <div className="space-y-3">
-            {/* Información principal */}
             <div className="bg-muted rounded-lg p-2 border">
               <Table className="table-fixed w-full">
                 <TableBody>
@@ -223,7 +232,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.clRut}
+                      {data.clRut ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -232,14 +241,13 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.clRazonSocialCompleto}
+                      {data.clRazonSocialCompleto ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
 
-            {/* Información de cliente */}
             <div className="bg-card rounded-lg p-2 border">
               <Table className="table-fixed w-full">
                 <TableBody>
@@ -249,7 +257,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.seCodigo}
+                      {data.seCodigo ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow className="border-border">
@@ -258,7 +266,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.ctId}
+                      {data.ctId ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -267,7 +275,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono text-xs py-1">
-                      {data.meNSerie}
+                      {data.meNSerie ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -276,7 +284,7 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.secDescripcion}
+                      {data.secDescripcion ?? '-'}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -285,20 +293,19 @@ export function ConsultarAcometidaDialog({
                     </TableCell>
                     <ColonCell />
                     <TableCell className="text-xs py-1">
-                      {data.niDescripcion}
+                      {data.niDescripcion ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
 
-            {/* Información financiera */}
             <div className="bg-accent rounded-lg p-2 border">
               <Table className="table-fixed w-full">
                 <TableBody>
                   <TableRow className="border-border">
                     <TableCell className="font-medium text-xs py-1 w-2/5">
-                      Total
+                      Deuda Total
                     </TableCell>
                     <ColonCell />
                     <TableCell className="font-mono font-bold text-sm py-1">
@@ -307,29 +314,26 @@ export function ConsultarAcometidaDialog({
                   </TableRow>
                   <TableRow className="border-border">
                     <TableCell className="font-medium text-xs py-1">
-                      Saldo
+                      Documentos Asociados
                     </TableCell>
                     <ColonCell />
-                    <TableCell className="font-mono font-bold text-sm py-1">
-                      {formatCurrency(data.reDeudaTotal)}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow className="border-border">
-                    <TableCell className="font-medium text-xs py-1">
-                      HC Asociada
-                    </TableCell>
-                    <TableCell className="text-xs py-1 w-3 text-center">
-                      :
-                    </TableCell>
                     <TableCell className="font-mono text-xs py-1">
-                      {data.reCantDocumentos}
+                      {data.reCantDocumentos ?? 0}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow className="border-border">
+                    <TableCell className="font-medium text-xs py-1">
+                      Fecha Ingreso
+                    </TableCell>
+                    <ColonCell />
+                    <TableCell className="font-mono text-xs py-1">
+                      {data.reFechaIngreso ?? '-'}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </div>
 
-            {/* Sección de comentario para liberar */}
             <div className="border-t pt-2">
               <p className="text-xs text-muted-foreground mb-2">
                 Para liberar de corte, ingresar motivo y presionar liberar
@@ -346,7 +350,7 @@ export function ConsultarAcometidaDialog({
                   <Textarea
                     id="comentario-liberar"
                     value={comentario}
-                    onChange={(e) => setComentario(e.target.value)}
+                    onChange={e => setComentario(e.target.value)}
                     placeholder="Comentario obligatorio para liberación..."
                     className="min-h-15 resize-none text-xs"
                     maxLength={500}
@@ -361,7 +365,7 @@ export function ConsultarAcometidaDialog({
                   className="w-full text-xs h-8"
                 >
                   <Unlock className="h-3 w-3 mr-1" />
-                  {isSubmitting ? "Liberando..." : "Liberar"}
+                  {isSubmitting ? 'Liberando...' : 'Liberar'}
                 </Button>
               </div>
             </div>

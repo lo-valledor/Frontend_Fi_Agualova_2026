@@ -20,32 +20,38 @@ import {
   TooltipProvider,
   TooltipTrigger
 } from '~/components/ui/tooltip';
-import api from '~/lib/api';
+import { operacionesService } from '~/services/operacionesService';
 
 interface ReposicionSolicitadaDialogProps {
+  contratoId: number;
   acometida: string;
   onSuccess: () => void;
 }
 
 export function ReposicionSolicitadaDialog({
+  contratoId,
   acometida,
   onSuccess
 }: Readonly<ReposicionSolicitadaDialogProps>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (): Promise<void> => {
     setIsSubmitting(true);
     try {
-      await api.post('reposicion-solicitada', null, {
-        params: { acometida }
-      });
+      const result = await operacionesService.postSolicitarReposicion(
+        contratoId,
+        acometida
+      );
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
       toast.success('Reposición solicitada correctamente');
       onSuccess();
-    } catch (error) {
-      toast.error(
-        'Error al solicitar reposición. Intente nuevamente.',
-        error as any
-      );
+    } catch (err) {
+      toast.error('Error al solicitar reposición', {
+        description: String(err)
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -87,7 +93,9 @@ export function ReposicionSolicitadaDialog({
           <div className="bg-muted rounded-lg p-3 border">
             <p className="text-xs text-muted-foreground">
               Esta acción solicitará la reposición para la acometida{' '}
-              <span className="font-mono font-medium">{acometida}</span>.
+              <span className="font-mono font-medium">{acometida}</span> del
+              contrato{' '}
+              <span className="font-mono font-medium">{contratoId}</span>.
             </p>
           </div>
           <div className="flex items-start gap-2 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">

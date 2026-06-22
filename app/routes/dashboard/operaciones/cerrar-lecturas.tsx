@@ -1,6 +1,10 @@
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import CerrarLecturasComponent from '~/components/operaciones/cerrar-lecturas/cerrar-lecturas-component';
 import { operacionesService } from '~/services/operacionesService';
+import type {
+  CerrarLecturasFiltrosCiclosResponse,
+  CerrarLecturasFiltrosPeriodosResponse
+} from '~/types/operaciones';
 
 import type { Route } from './+types/cerrar-lecturas';
 
@@ -11,21 +15,40 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function clientLoader() {
-  const result = await operacionesService.getCerrarLecturasData();
+interface CerrarLecturasLoaderData {
+  periodos: CerrarLecturasFiltrosPeriodosResponse;
+  ciclos: CerrarLecturasFiltrosCiclosResponse;
+  error: string | null;
+}
 
-  if (result.error || !result.data) {
+export async function clientLoader() {
+  const [periodosResult, ciclosResult] = await Promise.all([
+    operacionesService.getPeriodoAbierto(),
+    operacionesService.getCiclosFacturacion()
+  ]);
+
+  if (
+    periodosResult.error ||
+    !periodosResult.data ||
+    ciclosResult.error ||
+    !ciclosResult.data
+  ) {
     return {
-      periodoAbierto: [],
-      ciclosFacturacion: []
-    };
+      periodos: [],
+      ciclos: [],
+      error: 'Error al cargar los datos de cierre de lecturas'
+    } satisfies CerrarLecturasLoaderData;
   }
 
-  return result.data;
+  return {
+    periodos: periodosResult.data,
+    ciclos: ciclosResult.data,
+    error: null
+  } satisfies CerrarLecturasLoaderData;
 }
 
 export default function CerrarLecturas({ loaderData }: Route.ComponentProps) {
-  const { periodoAbierto, ciclosFacturacion } = loaderData;
+  const { periodos, ciclos, error } = loaderData;
   const pageBreadcrumbs = [
     { label: 'Operaciones' },
     { label: 'Cerrar Lecturas' }
@@ -35,8 +58,9 @@ export default function CerrarLecturas({ loaderData }: Route.ComponentProps) {
     <div>
       <BreadcrumbSetter items={pageBreadcrumbs} />
       <CerrarLecturasComponent
-        periodoAbierto={periodoAbierto ?? []}
-        ciclosFacturacion={ciclosFacturacion ?? []}
+        periodos={periodos}
+        ciclos={ciclos}
+        error={error}
       />
     </div>
   );
