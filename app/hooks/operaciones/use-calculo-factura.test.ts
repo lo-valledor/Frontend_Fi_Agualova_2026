@@ -1,6 +1,7 @@
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { toast } from 'sonner';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { operacionesService } from '~/services/operacionesService';
 import { useCalculoFactura } from './use-calculo-factura';
 
 vi.mock('sonner', () => ({
@@ -11,9 +12,9 @@ vi.mock('sonner', () => ({
   }
 }));
 
-vi.mock('~/lib/api', () => ({
-  default: {
-    get: vi.fn()
+vi.mock('~/services/operacionesService', () => ({
+  operacionesService: {
+    getRevisarCalculosBuscarPrefacturas: vi.fn()
   }
 }));
 
@@ -75,55 +76,76 @@ describe('useCalculoFactura', () => {
     expect(typeof result.current.handleRevisarCalculo).toBe('function');
   });
 
-  it('debería filtrar datos según searchTerm', () => {
-    const { result, rerender } = renderHook(
-      ({ periodoFormateado, cicloId }) =>
-        useCalculoFactura({ periodoFormateado, cicloId }),
+  it('debería manejar respuesta exitosa del service', async () => {
+    vi.mocked(operacionesService.getRevisarCalculosBuscarPrefacturas).mockResolvedValue(
       {
-        initialProps: { periodoFormateado: '202401', cicloId: '1' }
+        data: [
+          {
+            contratoId: 1,
+            rut: '12345678-9',
+            nombre: 'Juan',
+            totalFacturado: 1000,
+            consumoPeriodo: 100
+          }
+        ],
+        error: null
       }
     );
 
-    // Establecer datos
-    const mockData = [
-      { contratoId: 1, cliente: 'Juan' } as any,
-      { contratoId: 2, cliente: 'María' } as any
-    ];
-    result.current.setData(mockData);
-
-    // Rerender para actualizar
-    rerender({ periodoFormateado: '202401', cicloId: '1' });
-
-    // Cambiar search term
-    result.current.setSearchTerm('Juan');
-
-    // El filtrado debe ocurrir a través del useEffect
-  });
-
-  it('debería soportar ciclos con formato 15', async () => {
-    renderHook(() =>
-      useCalculoFactura({ periodoFormateado: '202401', cicloId: '15' })
-    );
-
-    // No debe mostrar error por ciclo inválido
-    expect(toast.error).not.toHaveBeenCalled();
-  });
-
-  it('debería tener getter para datos', () => {
     const { result } = renderHook(() =>
       useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
     );
 
-    expect(Array.isArray(result.current.data)).toBe(true);
-    expect(Array.isArray(result.current.filteredData)).toBe(true);
+    await act(async () => {
+      await result.current.handleRevisarCalculo();
+    });
+
+    await waitFor(() => {
+      expect(result.current.data).toHaveLength(1);
+    });
+    expect(result.current.data[0].contratoId).toBe(1);
+    expect(toast.success).toHaveBeenCalledWith('Se encontraron 1 registros');
   });
 
-  it('debería tener estado de carga', () => {
+  it('debería mostrar info si no hay resultados', async () => {
+    vi.mocked(operacionesService.getRevisarCalculosBuscarPrefacturas).mockResolvedValue(
+      {
+        data: [],
+        error: null
+      }
+    );
+
     const { result } = renderHook(() =>
       useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
     );
 
-    expect(typeof result.current.isLoading).toBe('boolean');
+    await result.current.handleRevisarCalculo();
+
+    expect(toast.info).toHaveBeenCalledWith(
+      'No se encontraron prefacturas para el ciclo y período elegidos'
+    );
+  });
+
+  it('debería manejar error del service', async () => {
+    vi.mocked(operacionesService.getRevisarCalculosBuscarPrefacturas).mockResolvedValue(
+      {
+        data: null,
+        error: 'Error de red'
+      }
+    );
+
+    const { result } = renderHook(() =>
+      useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
+    );
+
+    await act(async () => {
+      await result.current.handleRevisarCalculo();
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toBe('Error de red');
+    });
+    expect(toast.error).toHaveBeenCalledWith('Error de red');
   });
 
   it('debería permitir establecer datos manualmente', () => {
@@ -131,11 +153,31 @@ describe('useCalculoFactura', () => {
       useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
     );
 
-    const mockData = [{ contratoId: 1 }] as any;
+    const mockData = [{ contratoId: 1, cliente: 'Juan' }] as never;
     act(() => {
       result.current.setData(mockData);
     });
 
     expect(result.current.data).toEqual(mockData);
+  });
+
+  it('debería filtrar datos según searchTerm', async () => {
+    const { result } = renderHook(() =>
+      useCalculoFactura({ periodoFormateado: '202401', cicloId: '1' })
+    );
+
+    const mockData = [
+      { contratoId: 1, cliente: 'Juan Pérez' },
+      { contratoId: 2, cliente: 'María López' }
+    ] as never;
+    act(() => {
+      result.current.setData(mockData);
+      result.current.setSearchTerm('Juan');
+    });
+
+    await waitFor(() => {
+      expect(result.current.filteredData).toHaveLength(1);
+    });
+    expect(result.current.filteredData[0].contratoId).toBe(1);
   });
 });

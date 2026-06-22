@@ -252,3 +252,24 @@ export type RevisionPreciosCorregirRequest = {
   motivo: string;
   passwordConfirmacion: string;
 };
+
+/**
+ * SAP
+ */
+export type EmpresaSAP = {
+  id: number;
+  nombre: string;
+};
+
+export type NombreSugeridoSAP = {
+  nombreEncabezado: string;
+  nombreDetalle: string;
+};
+
+/**
+ * Anular Factura
+ */
+export type AnularFacturaRequest = {
+  numeroFactura: string;
+  conTomaLectura: boolean;
+};
