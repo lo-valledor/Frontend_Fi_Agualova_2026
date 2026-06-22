@@ -1,29 +1,29 @@
-import { Check, Users, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { Check, Users, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
-import { Checkbox } from '~/components/ui/checkbox';
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
+  DialogTitle,
+} from "~/components/ui/dialog";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from '~/components/ui/table';
-import { rolesPermisosService } from '~/services/rolesPermisosService';
-import type { Usuarios } from '~/types/administracion';
-import type { Roles } from '~/types/roles-permisos';
+  TableRow,
+} from "~/components/ui/table";
+import { rolesPermisosService } from "~/services/rolesPermisosService";
+import type { Usuarios } from "~/types/administracion";
+import type { Roles } from "~/types/roles-permisos";
 
 interface UserRolesModalProps {
   isOpen: boolean;
@@ -36,12 +36,12 @@ export function UserRolesModal({
   isOpen,
   onClose,
   onSuccess,
-  user
+  user,
 }: UserRolesModalProps) {
   const [availableRoles, setAvailableRoles] = useState<Roles[]>([]);
   const [userRoles, setUserRoles] = useState<Roles[]>([]);
   const [selectedRoleIds, setSelectedRoleIds] = useState<Set<number>>(
-    new Set()
+    new Set(),
   );
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -65,7 +65,7 @@ export function UserRolesModal({
 
       // Obtener roles actuales del usuario
       const userRolesResponse = await rolesPermisosService.getRolesUsuario(
-        String(user.idUsuario)
+        String(user.idUsuario),
       );
       if (userRolesResponse.error) {
         throw new Error(userRolesResponse.error);
@@ -78,17 +78,19 @@ export function UserRolesModal({
       setUserRoles(currentUserRoles);
 
       // Pre-seleccionar los roles actuales del usuario
-      const currentRoleIds = new Set(currentUserRoles.map(role => role.idRol));
+      const currentRoleIds = new Set(
+        currentUserRoles.map((role) => role.idRol),
+      );
       setSelectedRoleIds(currentRoleIds);
     } catch (error: any) {
-      toast.error(error.message || 'Error al obtener la información de roles');
+      toast.error(error.message || "Error al obtener la información de roles");
     } finally {
       setLoading(false);
     }
   };
 
   const handleToggleRole = (roleId: number) => {
-    setSelectedRoleIds(prev => {
+    setSelectedRoleIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(roleId)) {
         newSet.delete(roleId);
@@ -104,34 +106,24 @@ export function UserRolesModal({
 
     setSaving(true);
     try {
-      const currentRoleIds = new Set(userRoles.map(role => role.idRol));
+      const currentRoleIds = new Set(userRoles.map((role) => role.idRol));
       const newSelectedRoleIds = selectedRoleIds;
 
       // Roles a agregar
       const rolesToAdd = Array.from(newSelectedRoleIds).filter(
-        id => !currentRoleIds.has(id)
+        (id) => !currentRoleIds.has(id),
       );
 
       // Roles a quitar
       const rolesToRemove = Array.from(currentRoleIds).filter(
-        id => !newSelectedRoleIds.has(id)
+        (id) => !newSelectedRoleIds.has(id),
       );
-
-      console.log('🔍 DEBUG - User ID:', user.idUsuario);
-      console.log('🔍 DEBUG - Roles a agregar:', rolesToAdd);
-      console.log('🔍 DEBUG - Roles a quitar:', rolesToRemove);
-
       // Asignar roles nuevos
       if (rolesToAdd.length > 0) {
-        console.log('📤 DEBUG - Enviando POST a:', `${user.idUsuario}/roles`);
-        console.log('📤 DEBUG - Body:', { roles: rolesToAdd });
-
         const response = await rolesPermisosService.asignarRolesUsuario(
           String(user.idUsuario),
-          { roles: rolesToAdd }
+          { roles: rolesToAdd },
         );
-
-        console.log('📥 DEBUG - Response asignar:', response);
 
         if (response.error) {
           throw new Error(response.error);
@@ -140,36 +132,29 @@ export function UserRolesModal({
 
       // Quitar roles removidos
       for (const roleId of rolesToRemove) {
-        console.log(
-          '📤 DEBUG - Enviando DELETE a:',
-          `${user.idUsuario}/roles/${roleId}`
-        );
-
         const response = await rolesPermisosService.quitarRolUsuario(
           String(user.idUsuario),
-          roleId
+          roleId,
         );
-
-        console.log('📥 DEBUG - Response quitar:', response);
 
         if (response.error) {
           throw new Error(response.error);
         }
       }
 
-      toast.success('Roles actualizados exitosamente');
+      toast.success("Roles actualizados exitosamente");
       onSuccess?.();
       onClose();
     } catch (error: any) {
-      console.error('❌ DEBUG - Error completo:', error);
-      console.error('❌ DEBUG - Error response:', error.response);
-      console.error('❌ DEBUG - Error data:', error.response?.data);
+      console.error("❌ DEBUG - Error completo:", error);
+      console.error("❌ DEBUG - Error response:", error.response);
+      console.error("❌ DEBUG - Error data:", error.response?.data);
 
       const errorMessage =
         error.response?.data?.title ||
         error.response?.data?.message ||
         error.message ||
-        'Error al actualizar los roles';
+        "Error al actualizar los roles";
 
       toast.error(`Error: ${errorMessage}`);
     } finally {
@@ -178,7 +163,7 @@ export function UserRolesModal({
   };
 
   const hasChanges = () => {
-    const currentRoleIds = new Set(userRoles.map(role => role.idRol));
+    const currentRoleIds = new Set(userRoles.map((role) => role.idRol));
     if (currentRoleIds.size !== selectedRoleIds.size) return true;
 
     for (const id of selectedRoleIds) {
@@ -188,15 +173,15 @@ export function UserRolesModal({
   };
 
   const getRoleStatus = (
-    roleId: number
-  ): 'current' | 'new' | 'removed' | 'none' => {
-    const wasCurrent = userRoles.some(role => role.idRol === roleId);
+    roleId: number,
+  ): "current" | "new" | "removed" | "none" => {
+    const wasCurrent = userRoles.some((role) => role.idRol === roleId);
     const isSelected = selectedRoleIds.has(roleId);
 
-    if (wasCurrent && isSelected) return 'current';
-    if (!wasCurrent && isSelected) return 'new';
-    if (wasCurrent && !isSelected) return 'removed';
-    return 'none';
+    if (wasCurrent && isSelected) return "current";
+    if (!wasCurrent && isSelected) return "new";
+    if (wasCurrent && !isSelected) return "removed";
+    return "none";
   };
 
   return (
@@ -212,10 +197,10 @@ export function UserRolesModal({
           <DialogDescription className="text-base text-muted-foreground">
             {user && (
               <span>
-                Asigna o quita roles para{' '}
+                Asigna o quita roles para{" "}
                 <span className="font-semibold">
                   {user.nombres} {user.apellidos}
-                </span>{' '}
+                </span>{" "}
                 (@{user.nombreDeUsuario})
               </span>
             )}
@@ -249,18 +234,18 @@ export function UserRolesModal({
                 </TableHeader>
                 <TableBody>
                   {availableRoles
-                    .filter(role => role.estadoRol) // Solo mostrar roles activos
-                    .map(role => {
+                    .filter((role) => role.estadoRol) // Solo mostrar roles activos
+                    .map((role) => {
                       const status = getRoleStatus(role.idRol);
                       return (
                         <TableRow
                           key={role.idRol}
                           className={
-                            status === 'removed'
-                              ? 'bg-red-50/50 dark:bg-red-950/20'
-                              : status === 'new'
-                                ? 'bg-green-50/50 dark:bg-green-950/20'
-                                : ''
+                            status === "removed"
+                              ? "bg-red-50/50 dark:bg-red-950/20"
+                              : status === "new"
+                                ? "bg-green-50/50 dark:bg-green-950/20"
+                                : ""
                           }
                         >
                           <TableCell>
@@ -275,21 +260,21 @@ export function UserRolesModal({
                             {role.nombreRol}
                           </TableCell>
                           <TableCell className="text-sm text-muted-foreground">
-                            {role.descripcion || 'Sin descripción'}
+                            {role.descripcion || "Sin descripción"}
                           </TableCell>
                           <TableCell className="text-center">
-                            {status === 'current' && (
+                            {status === "current" && (
                               <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                 <Check className="h-3 w-3 mr-1" />
                                 Asignado
                               </Badge>
                             )}
-                            {status === 'new' && (
+                            {status === "new" && (
                               <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                                 Nuevo
                               </Badge>
                             )}
-                            {status === 'removed' && (
+                            {status === "removed" && (
                               <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                                 <X className="h-3 w-3 mr-1" />
                                 Se quitará
@@ -309,8 +294,8 @@ export function UserRolesModal({
           <div className="mt-4 text-sm text-muted-foreground">
             <div className="flex justify-between items-center">
               <span>
-                Roles seleccionados: {selectedRoleIds.size} de{' '}
-                {availableRoles.filter(r => r.estadoRol).length}
+                Roles seleccionados: {selectedRoleIds.size} de{" "}
+                {availableRoles.filter((r) => r.estadoRol).length}
               </span>
               {hasChanges() && (
                 <Badge variant="outline" className="text-amber-600">
@@ -329,7 +314,7 @@ export function UserRolesModal({
             onClick={handleSave}
             disabled={!hasChanges() || saving || loading}
           >
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
+            {saving ? "Guardando..." : "Guardar Cambios"}
           </Button>
         </DialogFooter>
       </DialogContent>

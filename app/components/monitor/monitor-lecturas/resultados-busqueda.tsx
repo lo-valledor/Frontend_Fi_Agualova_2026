@@ -24,7 +24,6 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import DetallesMedidor from "~/components/monitor/monitor-lecturas/detalles-medidor";
-import MonitorNichos from "~/components/monitor/monitor-lecturas/monitor-nichos";
 import { Alert, AlertDescription } from "~/components/ui/alert";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
@@ -60,7 +59,12 @@ import {
 import { useApiWithLoadingBar } from "~/lib/api";
 import { cn } from "~/lib/utils";
 import { monitorService } from "~/services";
-import type { MonitorGrillaProps, MonitorNichosGet } from "~/types/monitor";
+import type {
+  MonitorFilas,
+  MonitorGrillaProps,
+  MonitorMedidores,
+  MonitorNichosGet
+} from "~/types/monitor";
 import {
   calculateNichoStats,
   calculatePercentage,
@@ -415,11 +419,35 @@ export default function ResultadosBusqueda({
     // Early return for null/undefined response
     if (!response) return [];
 
-    // Ensure response has expected structure
+    // Si la respuesta ya es un array, podría ser:
+    // - Array plano de medidores (sin agrupar) → envolver en un nicho virtual
+    // - Array de nichos (cada item con { nombre, filas })
+    if (Array.isArray(response)) {
+      if (response.length === 0) return [];
+      const first = response[0];
+      if (first && typeof first === "object" && "filas" in first) {
+        return response.map((n: any, i: number) => ({
+          nombre: n?.nombre ?? `Nicho ${i + 1}`,
+          filas: Array.isArray(n?.filas) ? n.filas : []
+        }));
+      }
+      // Array plano de medidores → envolver en un nicho virtual
+      return [
+        {
+          nombre: "Resultados",
+          filas: response.map((m: any, idx: number) => ({
+            numero: idx + 1,
+            medidores: Array.isArray(m) ? m : [m]
+          }))
+        }
+      ];
+    }
+
+    // Si es un objeto, buscar nichos en varios paths
     const responseData =
       response.data && typeof response.data === "object"
         ? response.data
-        : { nichos: [] };
+        : response;
 
     // Extract nichos array with type validation
     let rawNichos: any[] = [];
@@ -434,6 +462,20 @@ export default function ResultadosBusqueda({
         : [];
     } else if ("nichos" in responseData && Array.isArray(responseData.nichos)) {
       rawNichos = responseData.nichos;
+    } else if (
+      "medidores" in responseData &&
+      Array.isArray(responseData.medidores)
+    ) {
+      // Array plano de medidores dentro de un objeto
+      return [
+        {
+          nombre: "Resultados",
+          filas: responseData.medidores.map((m: any, idx: number) => ({
+            numero: idx + 1,
+            medidores: [m]
+          }))
+        }
+      ];
     }
 
     // Early return for empty nichos
@@ -994,7 +1036,7 @@ export default function ResultadosBusqueda({
             <div className="space-y-4">
               <ScrollArea className="w-full">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-1 p-1 bg-muted/30 rounded-xl border backdrop-blur-sm">
-                  {results.nichos.map((nicho: NichoBusqueda, index: number) => {
+                  {results.nichos.map((nicho: MonitorNichosGet, index: number) => {
                     const stats = calculateNichoStats(nicho);
                     const isActive = index === selectedNichoIndex;
 
@@ -1271,35 +1313,6 @@ export default function ResultadosBusqueda({
                             Ingresar Lecturas
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="max-w-[99vw] sm:max-w-[96vw] md:max-w-5xl lg:max-w-6xl xl:max-w-7xl 2xl:max-w-[90vw] w-full max-h-[99vh] sm:max-h-[96vh] h-auto flex flex-col">
-                          <DialogHeader className="shrink-0 pb-2 sm:pb-3 lg:pb-4 border-b border-border/40 px-3 sm:px-4 lg:px-6">
-                            <DialogTitle>
-                              <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold flex items-center gap-2 text-primary">
-                                <Gauge className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-primary" />
-                                <span className="truncate">
-                                  Monitor de Medidores
-                                </span>
-                                {/* Indicador de responsive */}
-                                <div className="hidden sm:flex items-center gap-1 ml-auto">
-                                  <div className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                                    {results.nichos[selectedNichoIndex]?.nombre}
-                                  </div>
-                                </div>
-                              </div>
-                            </DialogTitle>
-                          </DialogHeader>
-                          <div className="flex-1 overflow-auto min-h-0">
-                            <div className="h-full p-2 sm:p-3 lg:p-4 xl:p-6">
-                              <MonitorNichos
-                                periodo={periodo}
-                                nicho={
-                                  results.nichos[selectedNichoIndex].nombre
-                                }
-                                onSuccess={handleNichoModalSuccess}
-                              />
-                            </div>
-                          </div>
-                        </DialogContent>
                       </Dialog>
                     </div>
                   </motion.div>
@@ -1307,10 +1320,10 @@ export default function ResultadosBusqueda({
                   {/* Filas Container */}
                   <div className="space-y-2">
                     {results.nichos[selectedNichoIndex].filas.map(
-                      (fila: Fila, filaIndex: number) => {
+                      (fila: MonitorFilas, filaIndex: number) => {
                         const problemCount = fila.medidores.filter(
-                          (m: Medidor) =>
-                            getMeterStatus(m.claveHtml).severity > 2,
+                          (m: MonitorMedidores) =>
+                            getMeterStatus(m.claveHtml).severity > 2
                         ).length;
 
                         if (viewMode === "compact" && problemCount === 0) {
@@ -1327,7 +1340,7 @@ export default function ResultadosBusqueda({
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
                               duration: 0.2,
-                              delay: filaIndex * 0.03,
+                              delay: filaIndex * 0.03
                             }}
                           >
                             <Card className="overflow-hidden border-0 shadow-sm bg-card/50 backdrop-blur-sm">
@@ -1377,10 +1390,9 @@ export default function ResultadosBusqueda({
                                 <CollapsibleContent>
                                   <div className="p-3 pt-0">
                                     {viewMode === "detailed" ? (
-                                      /* Vista de Lista Compacta */
                                       <div className="space-y-2">
                                         {fila.medidores.map(
-                                          (medidor: Medidor) => {
+                                          (medidor: MonitorMedidores) => {
                                             return (
                                               <MeterRowDetailed
                                                 key={medidor.id}
@@ -1388,13 +1400,13 @@ export default function ResultadosBusqueda({
                                                 onRefresh={handleRefresh}
                                               />
                                             );
-                                          },
+                                          }
                                         )}
                                       </div>
                                     ) : (
                                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2">
                                         {fila.medidores.map(
-                                          (medidor: Medidor) => {
+                                          (medidor: MonitorMedidores) => {
                                             if (
                                               viewMode === "compact" &&
                                               getMeterStatus(medidor.claveHtml)
@@ -1410,7 +1422,7 @@ export default function ResultadosBusqueda({
                                                 onRefresh={handleRefresh}
                                               />
                                             );
-                                          },
+                                          }
                                         )}
                                       </div>
                                     )}
@@ -1420,7 +1432,7 @@ export default function ResultadosBusqueda({
                             </Card>
                           </motion.div>
                         );
-                      },
+                      }
                     )}
                   </div>
                 </div>

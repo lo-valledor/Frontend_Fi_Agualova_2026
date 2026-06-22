@@ -19,13 +19,16 @@ import { motion } from "motion/react";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
-import { LoadingSpinner } from "~/components/loading-spinner";
 import ResultadosBusqueda from "~/components/monitor/monitor-lecturas/resultados-busqueda";
+import { LoadingSpinner } from "~/components/loading-spinner";
 import { ModernHeader } from "~/components/shared/modern-header";
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent } from "~/components/ui/card";
-import { Collapsible, CollapsibleContent } from "~/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent
+} from "~/components/ui/collapsible";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import {
@@ -85,9 +88,11 @@ const MonitorLecturasComponent = ({
   const [fechaInicio, setFechaInicio] = useState<string>("");
   const [fechaFin, setFechaFin] = useState<string>("");
 
-  // UI states
+  // Modal state
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [searchTrigger, setSearchTrigger] = useState(0);
+
+  // UI states
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Initialize default period and dates with early returns
@@ -123,8 +128,6 @@ const MonitorLecturasComponent = ({
   }, [selectedPeriodo]);
 
   const handleLimpiezaFiltros = () => {
-    setIsSearchActive(false);
-    setSearchTrigger(0);
     setSelectedSector(null);
 
     const periodoActivo = findActivePeriod(periodos);
@@ -139,18 +142,15 @@ const MonitorLecturasComponent = ({
     setIsFiltersOpen(true);
   };
 
-  const handleSearch = () => {
+  const handleOpenMedidor = () => {
     const validation = validateSearchParams(selectedSector, selectedPeriodo);
-
-    // Early return if validation fails
     if (!validation.isValid) {
       toast.error(validation.error);
       return;
     }
-
     setIsSearchActive(true);
-    setSearchTrigger((prev) => prev + 1);
-    setIsFiltersOpen(false); // Collapse filters after search
+    setSearchTrigger(prev => prev + 1);
+    setIsFiltersOpen(false);
   };
 
   // Keyboard shortcuts for accessibility (after function declarations)
@@ -167,7 +167,7 @@ const MonitorLecturasComponent = ({
         input?.focus();
       }, 100);
     },
-    onRefresh: handleSearch,
+    onRefresh: handleOpenMedidor,
     onEscape: () => setIsFiltersOpen(false),
   });
 
@@ -218,7 +218,7 @@ const MonitorLecturasComponent = ({
       fechaIni: fechaInicio,
       fechaFin: formatDateDDMMYYYY(fechaFin),
       clave: selectedClave?.value ?? "",
-      criterio: selectedStatusFilter,
+      criterio: selectedStatusFilter
     }),
     [
       selectedPeriodo,
@@ -227,8 +227,8 @@ const MonitorLecturasComponent = ({
       fechaInicio,
       fechaFin,
       selectedClave,
-      selectedStatusFilter,
-    ],
+      selectedStatusFilter
+    ]
   );
 
   const tourSteps = [
@@ -484,14 +484,14 @@ const MonitorLecturasComponent = ({
                 </div>
 
                 <Button
-                  id="search-button"
-                  onClick={handleSearch}
+                  id="open-medidor-button"
+                  onClick={handleOpenMedidor}
                   disabled={!selectedSector || !selectedPeriodo}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 sm:py-2 shadow-md hover:shadow-lg transition-all duration-200 order-1 sm:order-2"
                 >
                   <Search className="w-4 h-4 mr-2" />
                   <span className="text-sm sm:text-base">
-                    {isSearchActive ? "Buscar Nuevamente" : "Iniciar Monitoreo"}
+                    Iniciar Monitoreo
                   </span>
                 </Button>
               </div>
@@ -606,13 +606,13 @@ const MonitorLecturasComponent = ({
           </Card>
         </motion.div>
 
-        {/* Results Section */}
+        {/* Grilla de resultados */}
         {isSearchActive && (
           <Suspense
             fallback={
               <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-6">
-                  <LoadingSpinner message="Cargando resultados del monitoreo..." />
+                  <LoadingSpinner message="Cargando grilla de medidores..." />
                 </CardContent>
               </Card>
             }

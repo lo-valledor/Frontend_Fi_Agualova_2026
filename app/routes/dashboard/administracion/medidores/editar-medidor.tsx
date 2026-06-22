@@ -1,7 +1,6 @@
 import { ArrowLeft, CheckCircle2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { toast } from 'sonner';
 import EditarMedidorComponent from '~/components/administracion/medidores/form/editar-medidor-component';
 import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
 import { ModernHeader } from '~/components/shared/modern-header';
@@ -15,6 +14,7 @@ import {
 } from '~/components/ui/dialog';
 import api from '~/lib/api';
 import { administracionService } from '~/services/administracionService';
+import type { Estado, Marca, MedidoresRow, Tipo } from '~/types/administracion';
 
 export function meta() {
   return [
@@ -25,70 +25,49 @@ export function meta() {
 
 export async function clientLoader({ params }: { params: { codigo: string } }) {
   try {
-    // Cargar datos básicos del medidor
     const result = await administracionService.getMedidoresByCodigo({
       codigo: params.codigo
     });
 
-    if (result.error || !result.data) {
+    if (result.error || !result.data || !result.data.medidor) {
       return {
         medidor: null,
-        marca: [],
-        tipoMedidor: [],
-        medidorDetalle: null,
+        marcas: [] as Marca[],
+        tipos: [] as Tipo[],
+        estados: [] as Estado[],
         cantidadLecturas: 0
       };
     }
 
-    // Cargar datos adicionales en paralelo
-    const [detalleResponse, lecturasResponse] = await Promise.allSettled([
-      api.get(`/medidor/${params.codigo}`),
-      api.get(`/medidor/lecturas/${params.codigo}`)
-    ]);
-
-    let medidorDetalle = null;
-    let cantidadLecturas = 0;
-
-    // Procesar respuesta de detalle del medidor
-    if (detalleResponse.status === 'fulfilled' && detalleResponse.value.data) {
-      medidorDetalle = detalleResponse.value.data;
-    }
-
-    // Procesar respuesta de lecturas
-    if (
-      lecturasResponse.status === 'fulfilled' &&
-      lecturasResponse.value.data
-    ) {
-      const lecturasData = lecturasResponse.value.data as {
-        cantidadLecturas: string;
-      };
-      cantidadLecturas = Number(lecturasData.cantidadLecturas) || 0;
-    }
+    const lecturasResponse = await api.get(
+      `/medidor/lecturas/${params.codigo}`
+    );
+    const lecturasData = lecturasResponse.data as { cantidadLecturas?: string };
 
     return {
       medidor: result.data.medidor,
-      marca: result.data.marca,
-      tipoMedidor: result.data.tipoMedidor,
-      medidorDetalle,
-      cantidadLecturas
+      marcas: result.data.marca,
+      tipos: result.data.tipoMedidor,
+      estados: result.data.estados,
+      cantidadLecturas: Number(lecturasData?.cantidadLecturas) || 0
     };
   } catch (error) {
     console.error('Error al cargar datos:', error);
     return {
       medidor: null,
-      marca: [],
-      tipoMedidor: [],
-      medidorDetalle: null,
+      marcas: [] as Marca[],
+      tipos: [] as Tipo[],
+      estados: [] as Estado[],
       cantidadLecturas: 0
     };
   }
 }
 
 interface LoaderData {
-  medidor: any;
-  marca: any[];
-  tipoMedidor: any[];
-  medidorDetalle: any;
+  medidor: MedidoresRow | null;
+  marcas: Marca[];
+  tipos: Tipo[];
+  estados: Estado[];
   cantidadLecturas: number;
 }
 
@@ -97,31 +76,15 @@ export default function EditarMedidor({
   params
 }: Readonly<{ loaderData: LoaderData; params: { codigo: string } }>) {
   const navigate = useNavigate();
-  const { medidor, marca, tipoMedidor, medidorDetalle, cantidadLecturas } =
-    loaderData;
+  const { medidor, marcas, tipos, estados, cantidadLecturas } = loaderData;
   const codigoMedidor = params.codigo;
   const pageBreadcrumbs = [{ label: 'Administracion' }, { label: 'Medidores' }];
-
-  // Estados para el modal de éxito
   const [modalExito, setModalExito] = useState(false);
   const [_medidorModificado, setMedidorModificado] = useState<{
     id: string | number | null;
     fecha: string;
   } | null>(null);
   const [isSubmitting] = useState(false);
-
-  // Función para copiar código al portapapeles
-  const _copiarCodigoMedidor = async (codigo: string | number) => {
-    try {
-      await navigator.clipboard.writeText(codigo.toString());
-      toast.success('ID del medidor copiado al portapapeles', {
-        duration: 2000
-      });
-    } catch (error) {
-      console.error('Error al copiar:', error);
-      toast.error('Error al copiar. Intente seleccionar manualmente el ID.');
-    }
-  };
 
   const handleSuccess = (medidorId: string | number) => {
     const fechaActual = new Date().toLocaleDateString('es-ES', {
@@ -132,10 +95,7 @@ export default function EditarMedidor({
       minute: '2-digit'
     });
 
-    setMedidorModificado({
-      id: medidorId,
-      fecha: fechaActual
-    });
+    setMedidorModificado({ id: medidorId, fecha: fechaActual });
     setModalExito(true);
   };
 
@@ -143,7 +103,6 @@ export default function EditarMedidor({
     navigate('/dashboard/administracion/medidores');
   };
 
-  // Si no hay datos, mostrar mensaje de error o loading
   if (!medidor) {
     return (
       <div>
@@ -161,12 +120,11 @@ export default function EditarMedidor({
     <div className="min-h-screen bg-background">
       <BreadcrumbSetter items={pageBreadcrumbs} />
 
-      {/* Header */}
       <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <ModernHeader
             title="Editar Medidor"
-            description={`Editando medidor ID: ${medidor.mM_ID}`}
+            description={`Editando medidor ID: ${medidor.idMedidor}`}
             actions={
               <>
                 <Button
@@ -191,21 +149,18 @@ export default function EditarMedidor({
         </div>
       </div>
 
-      {/* Contenido principal */}
       <div className="container mx-auto px-4 py-6">
         <EditarMedidorComponent
           medidor={medidor}
-          marca={marca}
-          tipoMedidor={tipoMedidor}
-          medidorDetalle={medidorDetalle}
+          marcas={marcas}
+          tipos={tipos}
+          estados={estados}
           cantidadLecturas={cantidadLecturas}
           codigoMedidor={codigoMedidor}
           onSuccess={handleSuccess}
-          onCancel={handleCancel}
         />
       </div>
 
-      {/* Modal de Éxito - Medidor Modificado */}
       <Dialog open={modalExito} onOpenChange={setModalExito}>
         <DialogContent className="w-[95vw] sm:max-w-[500px] lg:max-w-[600px] max-h-[85vh] overflow-y-auto">
           <DialogHeader className="space-y-4">
@@ -225,7 +180,6 @@ export default function EditarMedidor({
           </DialogHeader>
 
           <div className="space-y-6 pt-4">
-            {/* Botones de acción */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
               <Button
                 variant="outline"
