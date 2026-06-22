@@ -1,4 +1,3 @@
-import { URLSearchParams } from "url";
 import api from "~/lib/api";
 import type {
   BuscarContrato,
