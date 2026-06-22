@@ -1,68 +1,83 @@
-import { useEffect, useState } from 'react';
+import type {
+  MonitorPeriodos,
+  MonitorSectores
+} from '~/types/monitor';
 
-import {
-  type MonitorBasicData,
-  monitorService
-} from '~/services/monitorService';
-import type { Periodo, Sector } from '~/types/monitor';
-import { handleDataLoad } from './utils/data-loader';
+/**
+ * Convierte una fecha a formato DD-MM-YYYY.
+ * - Date → 'DD-MM-YYYY'.
+ * - 'YYYY-MM-DD' → 'DD-MM-YYYY'.
+ * - 'DD-MM-YYYY' u otro string → retorna tal cual.
+ * - null/undefined/'' → ''.
+ */
+export function formatDateDDMMYYYY(
+  date: string | Date | null | undefined
+): string {
+  if (!date) return '';
 
-export function useMonitorData() {
-  const [data, setData] = useState<MonitorBasicData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  if (date instanceof Date) {
+    const d = String(date.getDate()).padStart(2, '0');
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const y = date.getFullYear();
+    return `${d}-${m}-${y}`;
+  }
 
-  useEffect(() => {
-    handleDataLoad(
-      () => monitorService.getBasicData(),
-      setData,
-      setError,
-      setLoading
-    );
-  }, []);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const [y, m, d] = date.split('-');
+    return `${d}-${m}-${y}`;
+  }
 
-  const refreshData = async (): Promise<void> => {
-    await handleDataLoad(
-      () => monitorService.getBasicData(),
-      setData,
-      setError,
-      setLoading
-    );
-  };
-
-  return {
-    data,
-    loading,
-    error,
-    refreshData
-  };
+  return date;
 }
 
-interface PeriodosAndSectoresData {
-  periodos: Periodo[];
-  sectores: Sector[];
-  activePeriodoId: number | null;
+/**
+ * Deriva la fecha de inicio del período (primer día del mes) en formato DD-MM-YYYY
+ * a partir del `value` del período (formato MMYYYY).
+ * Ej: '092025' → '01-09-2025', '122025' → '01-12-2025'.
+ */
+export function getFirstDayOfPeriod(periodo: MonitorPeriodos | null): string {
+  if (!periodo?.value) return '';
+
+  const value = periodo.value;
+  let month: string;
+  let year: string;
+
+  if (value.length >= 6) {
+    month = value.slice(0, 2);
+    year = value.slice(2, 6);
+  } else if (value.length === 5) {
+    month = `0${value.slice(0, 1)}`;
+    year = value.slice(1, 5);
+  } else {
+    return '';
+  }
+
+  return `01-${month}-${year}`;
 }
 
-export function useMonitorPeriodosAndSectores() {
-  const [data, setData] = useState<PeriodosAndSectoresData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+/**
+ * Devuelve los últimos N períodos ordenados por `value` descendente.
+ * Si el período activo (primero del array original) no está dentro de los últimos N,
+ * lo antepone al resultado.
+ */
+export function getLastNPeriods(
+  periodos: MonitorPeriodos[] | null | undefined,
+  count: number
+): MonitorPeriodos[] {
+  if (!periodos || periodos.length === 0) return [];
 
-  useEffect(() => {
-    handleDataLoad(
-      () => monitorService.getPeriodosAndSectores(),
-      setData,
-      setError,
-      setLoading
-    );
-  }, []);
+  if (periodos.length <= count) return periodos;
 
-  return {
-    data,
-    loading,
-    error
-  };
+  const lastN = [...periodos]
+    .sort((a, b) => b.value.localeCompare(a.value))
+    .slice(0, count);
+
+  const active = periodos[0];
+  if (active && !lastN.some(p => p.value === active.value)) {
+    return [active, ...lastN];
+  }
+
+  return lastN;
 }
 
 export const formatDateToYYYYMMDD = (dateString: string): string => {
@@ -79,25 +94,22 @@ export const formatDateToYYYYMMDD = (dateString: string): string => {
   let month: string;
   let day: string;
 
-  // Detect format: YYYY-MM-DD or DD-MM-YYYY
   if (parts[0].length === 4) {
-    // Format: YYYY-MM-DD
     [year, month, day] = parts;
   } else {
-    // Format: DD-MM-YYYY
     [day, month, year] = parts;
   }
 
   return `${year}${month}${day}`;
 };
 
-export const findActivePeriod = (periodos: Periodo[]): Periodo | null => {
+export const findActivePeriod = (
+  periodos: MonitorPeriodos[]
+): MonitorPeriodos | null => {
   if (!periodos || periodos.length === 0) {
     return null;
   }
-
-  const activePeriodo = periodos.find(periodo => periodo.EstadoPeriodo === 2);
-  return activePeriodo || periodos[0];
+  return periodos[0];
 };
 
 interface ValidationResult {
@@ -106,8 +118,8 @@ interface ValidationResult {
 }
 
 export const validateSearchParams = (
-  sector: Sector | null,
-  periodo: Periodo | null
+  sector: MonitorSectores | null,
+  periodo: MonitorPeriodos | null
 ): ValidationResult => {
   if (!sector) {
     return {
@@ -127,15 +139,32 @@ export const validateSearchParams = (
 };
 
 interface DefaultDates {
+  /**
+   * Fecha de inicio en formato DD-MM-YYYY (lo que espera la grilla del backend).
+   */
   fechaInicio: string;
+  /**
+   * Fecha de fin en formato YYYY-MM-DD (lo que requiere <input type="date">).
+   * Convertir a DD-MM-YYYY al enviar con `formatDateDDMMYYYY`.
+   */
   fechaFin: string;
 }
 
-export const getDefaultDates = (periodo: Periodo | null): DefaultDates => {
-  const today = new Date().toISOString().split('T')[0];
+export const getDefaultDates = (
+  periodo: MonitorPeriodos | null
+): DefaultDates => {
+  let fechaInicio = '';
+  if (periodo?.fechaInicio) {
+    fechaInicio = formatDateDDMMYYYY(periodo.fechaInicio);
+  } else if (periodo) {
+    fechaInicio = getFirstDayOfPeriod(periodo);
+  }
+
+  const today = new Date();
+  const fechaFin = today.toISOString().split('T')[0];
 
   return {
-    fechaInicio: periodo?.FechaInicio || '',
-    fechaFin: today
+    fechaInicio,
+    fechaFin
   };
 };

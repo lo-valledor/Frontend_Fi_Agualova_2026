@@ -26,13 +26,13 @@ import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import { ScrollArea } from '~/components/ui/scroll-area';
 import api from '~/lib/api';
-import { type Periodo, type Sector } from '~/types/monitor';
+import { type MonitorPeriodos, type MonitorSectores } from '~/types/monitor';
 
 import { ModernHeader } from '../shared/modern-header';
 
 interface ExportarLecturasComponentProps {
-  periodos: Periodo[];
-  sectores: Sector[];
+  periodos: MonitorPeriodos[];
+  sectores: MonitorSectores[];
   activePeriodoId: number | null;
   error: Error | null;
 }
@@ -43,7 +43,7 @@ export default function ExportarLecturasComponent({
   activePeriodoId,
   error
 }: ExportarLecturasComponentProps) {
-  const [selectedPeriodos, setSelectedPeriodos] = useState<Periodo[]>([]);
+  const [selectedPeriodos, setSelectedPeriodos] = useState<MonitorPeriodos[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const [selectedSectores, setSelectedSectores] = useState<string[]>([]);
   const [selectedNichos, _setSelectedNichos] = useState<string[]>([]);
@@ -63,7 +63,7 @@ export default function ExportarLecturasComponent({
   useEffect(() => {
     if (periodos && periodos.length > 0 && selectedPeriodos.length === 0) {
       const periodoActivo =
-        periodos.find(p => Number(p.IdPeriodo) === Number(activePeriodoId)) ||
+        periodos.find(p => p.value === String(activePeriodoId)) ||
         periodos[0];
 
       if (periodoActivo) {
@@ -73,12 +73,12 @@ export default function ExportarLecturasComponent({
   }, [periodos, activePeriodoId, selectedPeriodos.length]);
 
   // Función para manejar la selección de períodos
-  const handlePeriodoChange = (periodo: Periodo, checked: boolean) => {
+  const handlePeriodoChange = (periodo: MonitorPeriodos, checked: boolean) => {
     if (checked) {
       setSelectedPeriodos([...selectedPeriodos, periodo]);
     } else {
       setSelectedPeriodos(
-        selectedPeriodos.filter(p => p.IdPeriodo !== periodo.IdPeriodo)
+        selectedPeriodos.filter(p => p.value !== periodo.value)
       );
     }
   };
@@ -145,7 +145,7 @@ export default function ExportarLecturasComponent({
       const params = new URLSearchParams();
 
       // Períodos (obligatorio) - separados por comas
-      const periodosIds = selectedPeriodos.map(p => p.IdPeriodo).join(',');
+      const periodosIds = selectedPeriodos.map(p => p.value).join(',');
       params.append('periodo', periodosIds);
 
       // Sectores (opcional)
@@ -185,7 +185,7 @@ export default function ExportarLecturasComponent({
       // Obtener el nombre del archivo del header Content-Disposition
       const contentDisposition = response.headers['content-disposition'];
       const periodosDescripcion = selectedPeriodos
-        .map(p => p.DescripcionPeriodo)
+        .map(p => p.text)
         .join('-');
       let filename = `Lecturas_${
         periodosDescripcion
@@ -275,13 +275,13 @@ export default function ExportarLecturasComponent({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {periodos?.map(periodo => (
                     <div
-                      key={periodo.IdPeriodo}
+                      key={periodo.value}
                       className="flex items-center gap-2"
                     >
                       <Checkbox
-                        id={periodo.IdPeriodo}
+                        id={periodo.value}
                         checked={selectedPeriodos.some(
-                          p => p.IdPeriodo === periodo.IdPeriodo
+                          p => p.value === periodo.value
                         )}
                         onCheckedChange={checked =>
                           handlePeriodoChange(periodo, checked as boolean)
@@ -289,10 +289,10 @@ export default function ExportarLecturasComponent({
                         className="text-primary"
                       />
                       <Label
-                        htmlFor={periodo.IdPeriodo}
+                        htmlFor={periodo.value}
                         className="cursor-pointer text-xs font-medium"
                       >
-                        {periodo.DescripcionPeriodo}
+                        {periodo.text}
                       </Label>
                     </div>
                   ))}
@@ -307,11 +307,11 @@ export default function ExportarLecturasComponent({
                   <div className="flex flex-wrap gap-2">
                     {selectedPeriodos.map(periodo => (
                       <Badge
-                        key={periodo.IdPeriodo}
+                        key={periodo.value}
                         variant="default"
                         className="bg-primary"
                       >
-                        {periodo.DescripcionPeriodo}
+                        {periodo.text}
                         <button
                           className="ml-2"
                           onClick={() => handlePeriodoChange(periodo, false)}
@@ -396,11 +396,11 @@ export default function ExportarLecturasComponent({
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         {sectores?.map(sector => (
                           <div
-                            key={sector.sectorId}
+                            key={sector.secId}
                             className="flex items-center gap-2"
                           >
                             <Checkbox
-                              id={sector.sectorId}
+                              id={String(sector.secId)}
                               checked={selectedSectores.includes(
                                 sector.descripcion
                               )}
@@ -413,7 +413,7 @@ export default function ExportarLecturasComponent({
                               className="text-primary"
                             />
                             <Label
-                              htmlFor={sector.sectorId}
+                              htmlFor={String(sector.secId)}
                               className="cursor-pointer text-xs font-medium"
                             >
                               {sector.descripcion}
@@ -427,7 +427,7 @@ export default function ExportarLecturasComponent({
                       <div className="flex flex-wrap gap-2">
                         {selectedSectores.map(sectorId => {
                           const sector = sectores?.find(
-                            s => s.sectorId === sectorId
+                            s => s.descripcion === sectorId
                           );
                           return (
                             <Badge

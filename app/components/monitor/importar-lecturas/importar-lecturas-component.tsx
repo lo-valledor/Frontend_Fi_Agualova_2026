@@ -39,15 +39,50 @@ import {
   DialogTitle
 } from '~/components/ui/dialog';
 import { Input } from '~/components/ui/input';
-import type {
-  EstadoProcesamiento,
-  ProcesamientoResult,
-  RegistrosPendientes,
-  ValidacionLecturasPendientes
-} from '~/types/monitor';
 import { ResultadoProcesamientoModal } from './resultado-procesamiento-modal';
 
-// Interfaces para los nuevos endpoints
+interface EstadoProcesamiento {
+  periodoActivo: string;
+  registrosPendientes: number;
+  estado: string;
+}
+
+interface DetalleProcesamientoItem {
+  numeroSerie: string;
+  tarifa: string;
+  lecturaAnteriorKwh: number;
+  consumoEnergiaKwh: number;
+  usuarioCarga: string;
+  estado: string;
+  mensaje: string;
+}
+
+interface ProcesamientoResult {
+  exitoso: boolean;
+  mensaje: string;
+  registrosActualizados: number;
+  fechaProcesamiento: string;
+  periodo: string;
+  detalles: DetalleProcesamientoItem[];
+}
+
+interface RegistrosPendientes {
+  mensaje: string;
+}
+
+interface DetallePendiente {
+  sector: string;
+  nicho: string;
+  cantidad: number;
+}
+
+interface ValidacionLecturasPendientes {
+  sinPendientes: boolean;
+  mensaje: string;
+  periodo: string;
+  totalPendientes: number;
+  detalles: DetallePendiente[];
+}
 
 export default function ImportarLecturasComponent() {
   const [file, setFile] = useState<File | null>(null);
