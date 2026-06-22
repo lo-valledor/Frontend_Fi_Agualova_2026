@@ -98,7 +98,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            VITE_API_URL=${{ secrets.STAGING_API_URL }}
+            VITE_API_URL=${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
             VITE_ENV_MODE=uat
             VITE_APP_ENV=staging
 
