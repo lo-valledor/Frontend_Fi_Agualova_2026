@@ -23,12 +23,6 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    outputs:
-      image-tag: ${{ steps.meta.outputs.version }}
-      image-digest: ${{ steps.build.outputs.digest }}
 
     steps:
       - name: Checkout
@@ -62,66 +56,25 @@ jobs:
           VITE_APP_ENV: staging
         run: pnpm run build
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GHCR
-        if: github.event_name == 'push'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: gbourguett-lv
-          password: ${{ secrets.GHCR_PUSH_TOKEN }}
-
-      - name: Extract image metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,prefix=sha-,enable=${{ github.event_name == 'push' }}
-            type=raw,value=develop,enable={{is_default_branch}}
-          labels: |
-            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-            org.opencontainers.image.revision=${{ github.sha }}
-
-      - name: Build & push Docker image
-        id: build
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile
-          push: ${{ github.event_name == 'push' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            VITE_API_URL=${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}
-            VITE_ENV_MODE=uat
-            VITE_APP_ENV=staging
-
   deploy-staging:
     name: Deploy Staging
     needs: ci
     runs-on: [self-hosted, Linux, X64, staging]
     if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
-    permissions:
-      contents: read
-      packages: read
 
     steps:
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: gbourguett-lv
-          password: ${{ secrets.GHCR_PUSH_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Pull image
+      - name: Build Docker image
         run: |
-          docker pull ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+          docker build \
+            --build-arg VITE_API_URL="${{ secrets.STAGING_API_URL || 'http://localhost:8081/Agualova' }}" \
+            --build-arg VITE_ENV_MODE=uat \
+            --build-arg VITE_APP_ENV=staging \
+            -t "${{ env.IMAGE_NAME }}:local" \
+            -t "${{ env.IMAGE_NAME }}:sha-${{ github.sha }}" \
+            .
 
       - name: Stop & remove existing container
         run: |
@@ -141,7 +94,7 @@ jobs:
             -p "${{ env.HOST_PORT }}:80" \
             --label com.github.project=agualova-frontend \
             --label com.github.environment=staging \
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+            "${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
 
       - name: Healthcheck
         run: |
@@ -160,7 +113,8 @@ jobs:
           echo "::error::Deploy failed, removing broken container"
           docker rm -f "${{ env.CONTAINER_NAME }}" || true
           docker images --format '{{.Repository}}:{{.Tag}}' \
-            | grep "ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}" \
+            | grep "${{ env.IMAGE_NAME }}" \
+            | grep -v ':local$' \
             | head -n -5 \
             | xargs -r docker rmi || true
 
@@ -171,8 +125,7 @@ jobs:
             echo "## Staging Deploy - ${{ github.sha }}"
             echo ""
             echo "- **Branch**: \`develop\`"
-            echo "- **Image**: \`ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}\`"
+            echo "- **Image**: \`${{ env.IMAGE_NAME }}:sha-${{ github.sha }}\` (built locally on runner)"
             echo "- **Container**: \`${{ env.CONTAINER_NAME }}\` on port \`${{ env.HOST_PORT }}\`"
             echo "- **Runner**: self-hosted (Linux, X64, staging)"
-            echo "- **Digest**: \`${{ needs.ci.outputs.image-digest }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
