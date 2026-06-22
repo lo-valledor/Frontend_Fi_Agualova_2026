@@ -41,13 +41,14 @@ export const links = () => [
 export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   const isDev =
     import.meta.env.VITE_APP_ENV === 'development' || import.meta.env.DEV;
+  const useHttps = import.meta.env.VITE_HTTPS_ENABLED === 'true';
 
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {!isDev && (
+        {!isDev && useHttps && (
           <meta
             http-equiv="Content-Security-Policy"
             content="upgrade-insecure-requests"
