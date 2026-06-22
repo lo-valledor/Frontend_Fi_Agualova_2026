@@ -1,7 +1,5 @@
 import { Zap } from 'lucide-react';
 
-import React from 'react';
-
 import { Badge } from '~/components/ui/badge';
 import {
   Card,
@@ -12,30 +10,16 @@ import {
 } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import { type DetalleMedidorNuevoProps } from '~/types/operaciones';
+import type { CambioMedidorBuscarNuevoRequest } from '~/types/operaciones';
+
+interface DetalleMedidorNuevoProps {
+  detalleMedidorNuevo: CambioMedidorBuscarNuevoRequest;
+}
 
 export default function DetalleMedidorNuevo({
-  detalleMedidorNuevo,
-  onDetalleMedidorChange
-}: DetalleMedidorNuevoProps) {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-
-    // Convertir valores numéricos
-    if (id === 'constante_multiplicar' || id === 'estado_medidor') {
-      const numValue = value === '' ? 0 : Number(value);
-      if (!Number.isNaN(numValue)) {
-        onDetalleMedidorChange({
-          target: {
-            id,
-            value: numValue.toString()
-          }
-        } as React.ChangeEvent<HTMLInputElement>);
-      }
-    } else {
-      onDetalleMedidorChange(e);
-    }
-  };
+  detalleMedidorNuevo
+}: Readonly<DetalleMedidorNuevoProps>) {
+  const esActivo = detalleMedidorNuevo.idMedidor > 0;
 
   return (
     <Card className="w-full rounded-xl border border-border bg-card/50 backdrop-blur-sm shadow-lg">
@@ -65,32 +49,30 @@ export default function DetalleMedidorNuevo({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-1 sm:space-y-2">
               <Label
-                htmlFor="numero_serie"
+                htmlFor="numeroSerie"
                 className="text-xs sm:text-sm font-medium text-foreground"
               >
                 Número de Serie
               </Label>
               <Input
-                id="numero_serie"
-                value={detalleMedidorNuevo.numero_serie}
-                onChange={handleInputChange}
-                placeholder="Ingrese el número de serie"
+                id="numeroSerie"
+                value={detalleMedidorNuevo.numeroSerie}
+                placeholder="Sin número de serie"
                 readOnly
                 className="bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10"
               />
             </div>
             <div className="space-y-1 sm:space-y-2">
               <Label
-                htmlFor="tipo_medidor"
+                htmlFor="tipo"
                 className="text-xs sm:text-sm font-medium text-foreground"
               >
                 Tipo de Medidor
               </Label>
               <Input
-                id="tipo_medidor"
-                value={detalleMedidorNuevo.tipo_medidor}
-                onChange={handleInputChange}
-                placeholder="Ingrese el tipo de medidor"
+                id="tipo"
+                value={detalleMedidorNuevo.tipo}
+                placeholder="Sin tipo"
                 readOnly
                 className="bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10"
               />
@@ -99,17 +81,16 @@ export default function DetalleMedidorNuevo({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-1 sm:space-y-2">
               <Label
-                htmlFor="constante_multiplicar"
+                htmlFor="constante"
                 className="text-xs sm:text-sm font-medium text-foreground"
               >
                 Constante
               </Label>
               <Input
-                id="constante_multiplicar"
+                id="constante"
                 type="number"
-                value={detalleMedidorNuevo.constante_multiplicar}
-                onChange={handleInputChange}
-                placeholder="Ingrese la constante"
+                value={detalleMedidorNuevo.constante}
+                placeholder="Sin constante"
                 readOnly
                 className="bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10"
               />
@@ -124,8 +105,7 @@ export default function DetalleMedidorNuevo({
               <Input
                 id="marca"
                 value={detalleMedidorNuevo.marca}
-                onChange={handleInputChange}
-                placeholder="Ingrese la marca"
+                placeholder="Sin marca"
                 readOnly
                 className="bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10"
               />
@@ -142,44 +122,25 @@ export default function DetalleMedidorNuevo({
               <Input
                 id="modelo"
                 value={detalleMedidorNuevo.modelo}
-                onChange={handleInputChange}
-                placeholder="Ingrese el modelo"
+                placeholder="Sin modelo"
                 readOnly
                 className="bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10"
               />
             </div>
             <div className="space-y-1 sm:space-y-2">
-              <Label
-                htmlFor="estado_medidor"
-                className="text-xs sm:text-sm font-medium text-foreground"
-              >
+              <Label className="text-xs sm:text-sm font-medium text-foreground">
                 Estado
               </Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="estado_medidor"
-                  type="number"
-                  value={detalleMedidorNuevo.estado_medidor}
-                  onChange={handleInputChange}
-                  placeholder="Ingrese el estado"
-                  readOnly
-                  className="w-16 sm:w-24 bg-muted/30 border-border text-sm sm:text-base h-8 sm:h-10"
-                />
+              <div className="flex items-center gap-2 h-10">
                 <Badge
-                  variant={
-                    detalleMedidorNuevo.estado_medidor === 1
-                      ? 'default'
-                      : 'destructive'
-                  }
+                  variant={esActivo ? 'default' : 'destructive'}
                   className={
-                    detalleMedidorNuevo.estado_medidor === 1
+                    esActivo
                       ? 'bg-emerald-500 text-white text-xs sm:text-sm'
                       : 'text-xs sm:text-sm'
                   }
                 >
-                  {detalleMedidorNuevo.estado_medidor === 1
-                    ? 'Activo'
-                    : 'Inactivo'}
+                  {esActivo ? 'Disponible' : 'No disponible'}
                 </Badge>
               </div>
             </div>

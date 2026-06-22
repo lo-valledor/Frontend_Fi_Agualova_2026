@@ -1,17 +1,18 @@
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import CerrarLecturasComponent from '~/components/operaciones/cerrar-lecturas/cerrar-lecturas-component';
-import { operacionesService } from '~/services/operacionesService';
+/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import CerrarLecturasComponent from "~/components/operaciones/cerrar-lecturas/cerrar-lecturas-component";
+import { operacionesService } from "~/services/operacionesService";
 import type {
   CerrarLecturasFiltrosCiclosResponse,
-  CerrarLecturasFiltrosPeriodosResponse
-} from '~/types/operaciones';
+  CerrarLecturasFiltrosPeriodosResponse,
+} from "~/types/operaciones";
 
-import type { Route } from './+types/cerrar-lecturas';
+import type { Route } from "./+types/cerrar-lecturas";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Agualova | Cerrar Lecturas' },
-    { name: 'description', content: 'Cerrar Lecturas' }
+    { title: "Agualova | Cerrar Lecturas" },
+    { name: "description", content: "Cerrar Lecturas" },
   ];
 }
 
@@ -24,7 +25,7 @@ interface CerrarLecturasLoaderData {
 export async function clientLoader() {
   const [periodosResult, ciclosResult] = await Promise.all([
     operacionesService.getPeriodoAbierto(),
-    operacionesService.getCiclosFacturacion()
+    operacionesService.getCiclosFacturacion(),
   ]);
 
   if (
@@ -36,22 +37,22 @@ export async function clientLoader() {
     return {
       periodos: [],
       ciclos: [],
-      error: 'Error al cargar los datos de cierre de lecturas'
+      error: "Error al cargar los datos de cierre de lecturas",
     } satisfies CerrarLecturasLoaderData;
   }
 
   return {
     periodos: periodosResult.data,
     ciclos: ciclosResult.data,
-    error: null
+    error: null,
   } satisfies CerrarLecturasLoaderData;
 }
 
 export default function CerrarLecturas({ loaderData }: Route.ComponentProps) {
   const { periodos, ciclos, error } = loaderData;
   const pageBreadcrumbs = [
-    { label: 'Operaciones' },
-    { label: 'Cerrar Lecturas' }
+    { label: "Operaciones" },
+    { label: "Cerrar Lecturas" },
   ];
 
   return (

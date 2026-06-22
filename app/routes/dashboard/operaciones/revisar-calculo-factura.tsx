@@ -1,20 +1,21 @@
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import RevisarCalculoFacturaComponent from '~/components/operaciones/revisar-calculo-factura/revisar-calculo-factura-component';
-import { operacionesService } from '~/services/operacionesService';
+/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import RevisarCalculoFacturaComponent from "~/components/operaciones/revisar-calculo-factura/revisar-calculo-factura-component";
+import { operacionesService } from "~/services/operacionesService";
 
-import type { Route } from './+types/revisar-calculo-factura';
+import type { Route } from "./+types/revisar-calculo-factura";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Agualova | Revisar Calculo de Factura' },
-    { name: 'description', content: 'Revisar Calculo de Factura' }
+    { title: "Agualova | Revisar Calculo de Factura" },
+    { name: "description", content: "Revisar Calculo de Factura" },
   ];
 }
 
 export async function clientLoader() {
   const [periodoResult, ciclosResult] = await Promise.all([
     operacionesService.getPeriodoAbierto(),
-    operacionesService.getCiclosFacturacion()
+    operacionesService.getCiclosFacturacion(),
   ]);
 
   const periodoAbierto =
@@ -24,13 +25,13 @@ export async function clientLoader() {
   let estadoCierreLecturas = null;
   if (periodoAbierto.length > 0) {
     const { mes, anio } = periodoAbierto[0];
-    const periodoFormateado = `${mes.toString().padStart(2, '0')}${anio.toString()}`;
-    const cicloId = '1'; // Ciclo día 15 (único ciclo normado)
+    const periodoFormateado = `${mes.toString().padStart(2, "0")}${anio.toString()}`;
+    const cicloId = "1"; // Ciclo día 15 (único ciclo normado)
 
     const estadoCierreResult =
       await operacionesService.verificarEstadoCierreLecturas(
         cicloId,
-        periodoFormateado
+        periodoFormateado,
       );
 
     if (!estadoCierreResult.error && estadoCierreResult.data) {
@@ -42,18 +43,18 @@ export async function clientLoader() {
     periodoAbierto,
     ciclosFacturacionActivos:
       ciclosResult.error || !ciclosResult.data ? [] : ciclosResult.data,
-    estadoCierreLecturas
+    estadoCierreLecturas,
   };
 }
 
 export default function RevisarCalculoFactura({
-  loaderData
+  loaderData,
 }: Route.ComponentProps) {
   const { periodoAbierto, ciclosFacturacionActivos, estadoCierreLecturas } =
     loaderData;
   const pageBreadcrumbs = [
-    { label: 'Operaciones' },
-    { label: 'Revisar Calculo de Factura' }
+    { label: "Operaciones" },
+    { label: "Revisar Calculo de Factura" },
   ];
 
   return (

@@ -1,18 +1,19 @@
 /* eslint-disable no-empty-pattern */
-import { BreadcrumbSetter } from '~/components/breadcrumb-setter';
-import CorteReposicionComponent from '~/components/operaciones/corte-reposicion/corte-reposicion-component';
-import { operacionesService } from '~/services/operacionesService';
+/** biome-ignore-all lint/correctness/noEmptyPattern: <explanation> */
+import { BreadcrumbSetter } from "~/components/breadcrumb-setter";
+import CorteReposicionComponent from "~/components/operaciones/corte-reposicion/corte-reposicion-component";
+import { operacionesService } from "~/services/operacionesService";
 import type {
   CorteReposicionBuscarRequest,
-  CorteReposicionResumenResponse
-} from '~/types/operaciones';
+  CorteReposicionResumenResponse,
+} from "~/types/operaciones";
 
-import type { Route } from './+types/corte-reposicion';
+import type { Route } from "./+types/corte-reposicion";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: 'Agualova | Corte y Reposición' },
-    { name: 'description', content: 'Corte y Reposición' }
+    { title: "Agualova | Corte y Reposición" },
+    { name: "description", content: "Corte y Reposición" },
   ];
 }
 
@@ -29,14 +30,14 @@ export async function clientLoader({}: Route.ClientLoaderArgs) {
     return {
       resumen: null,
       mantenedorCorteData: [],
-      error: 'Error al cargar los datos de corte y reposición'
+      error: "Error al cargar los datos de corte y reposición",
     } satisfies CorteReposicionLoaderData;
   }
 
   return {
     resumen: result.data.resumen,
     mantenedorCorteData: result.data.mantenedorCorteData,
-    error: null
+    error: null,
   } satisfies CorteReposicionLoaderData;
 }
 
@@ -44,8 +45,8 @@ export default function CorteReposicion({ loaderData }: Route.ComponentProps) {
   const { resumen, mantenedorCorteData, error } = loaderData;
 
   const pageBreadcrumbs = [
-    { label: 'Operaciones' },
-    { label: 'Corte y Reposición' }
+    { label: "Operaciones" },
+    { label: "Corte y Reposición" },
   ];
 
   return (

@@ -699,12 +699,12 @@ class OperacionesService {
   /**
    * cambio Medidor
    */
-  async getBuscarMedidorAntiguo(acometida?: string, numeroSerie?: string) {
+  async getBuscarMedidorAntiguo(acometida?: string, serie?: string) {
     try {
       const params = new URLSearchParams();
-      if (acometida || numeroSerie) {
+      if (acometida || serie) {
         if (acometida) params.append("acometida", acometida);
-        if (numeroSerie) params.append("numeroSerie", numeroSerie);
+        if (serie) params.append("serie", serie);
       } else {
         throw new Error(
           "Se debe proporcionar al menos un parámetro: acometida o número de serie",
@@ -728,7 +728,7 @@ class OperacionesService {
   async getBuscarMedidorNuevo(serie: string) {
     try {
       const params = new URLSearchParams();
-      params.append("numeroSerie", serie);
+      params.append("serie", serie);
       const response = await api.get("/cambio-medidor/buscar-nuevo", {
         params,
       });
